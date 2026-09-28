@@ -2,7 +2,6 @@ name: Map workspace quality
 on:
   push:
     branches: [main, 'codex/**']
-    paths-ignore: ['.ci-transfer/**', '.github/workflows/apply-reviewed-map.yml']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -42,8 +41,7 @@ jobs:
       - name: Install test browser
         run: npx playwright install --with-deps chromium
       - name: Offline full-application map interaction checks
-        run: |
-          if test -f tests/browser/map-workspace.mjs; then node tests/browser/map-workspace.mjs; fi
+        run: node tests/browser/map-workspace.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
