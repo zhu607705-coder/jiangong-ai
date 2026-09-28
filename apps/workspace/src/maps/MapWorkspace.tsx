@@ -61,9 +61,10 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     const center = coordinates(current.getCenter())!, bounds = current.getBounds()
     const sw = coordinates(bounds.getSouthWest()), ne = coordinates(bounds.getNorthEast())
     if (!sw || !ne) return
-    const width = Math.min(.018, ne[0] - sw[0]), height = Math.min(.014, ne[1] - sw[1])
+    const width=ne[0]-sw[0],height=ne[1]-sw[1]
+    if(width>.06||height>.06){setScreenError('请放大到街区范围后标色。');return}
     if (width <= 0 || height <= 0) { setScreenError('当前视图不支持此范围，请重新定位到街区。'); return }
-    const target: MapScreenBounds = { west: center[0] - width / 2, east: center[0] + width / 2, south: center[1] - height / 2, north: center[1] + height / 2 }
+    const target: MapScreenBounds = {west:sw[0],east:ne[0],south:sw[1],north:ne[1]}
     clearScreen(); clearSelection(); setLayerPanel(false)
     const controller = new AbortController(), version = ++screenVersion.current
     screenAbort.current = controller; screenView.current = { longitude: center[0], latitude: center[1], zoom: current.getZoom() }
@@ -71,13 +72,14 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     try {
       await scanMap(target, profile, theme, controller.signal, event => {
         if (version !== screenVersion.current || controller.signal.aborted) return
+        if (event.type === 'progress') setNotice(event.message)
         if (event.type === 'start') setScreenCells(event.cells)
         if (event.type === 'cell') { setScreenCells(cells => cells.map(c => c.id === event.cell.id ? event.cell : c)); setScreenProgress(event.completed) }
         if (event.type === 'complete') { setScreenCells(event.result.cells); setScreenResult(event.result) }
         if (event.type === 'error') setScreenError(event.message)
       })
     } catch (error) { if (version === screenVersion.current && !controller.signal.aborted) setScreenError(error instanceof Error ? error.message : '区域筛选未完成。') }
-    finally { if (version === screenVersion.current) setScreenRunning(false) }
+    finally { if (version === screenVersion.current) {setScreenRunning(false);setNotice('')} }
   }
 
   useEffect(() => {
@@ -268,12 +270,17 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
         {expanded && <div className="atlas-selection-icon"><IconMapPin size={28} stroke={1.4} /></div>}<h2>{selection.name}</h2><p>{selection.address || ''}</p>
         <div className="atlas-selection-tags"><span>{selection.category?.split(';')[0] || (selection.kind === 'poi' ? '地图地点' : '坐标点')}</span></div>
         {expanded && <div className="atlas-coordinate"><span>位置 · GCJ-02</span><code>{selection.longitude.toFixed(6)}, {selection.latitude.toFixed(6)}</code></div>}
-        <div hidden={expanded}><PreliminaryCard selection={selection} profile={profile} theme={theme} cell={selectedCell} onProfile={setProfile} onOpenProject={onOpenProject}
+        <div hidden={expanded}><PreliminaryCard selection={selection} profile={profile} theme={theme} cell={selectedCell} onProfile={value=>{
+          setProfile(value)
+          const reset=(cells:MapScreenCell[])=>classifyCells(cells.map(c=>({...c,factors:undefined,dashboard:undefined})),theme)
+          setScreenCells(reset);setSelectedCell(c=>c?reset([c])[0]:null)
+          setScreenResult(prev=>prev?{...prev,profile:value,cells:reset(prev.cells)}:prev)
+        }} onOpenProject={onOpenProject}
           onAssessment={(id, result) => {
-            if (!result.assessment?.factors?.length) return
-            setScreenCells(prev => classifyCells(prev.map(c => c.context?.id === id ? {...c, factors: result.assessment!.factors} : c), theme))
-            setSelectedCell(prev => prev?.context?.id === id ? classifyCells([{...prev, factors: result.assessment!.factors}],theme)[0] : prev)
-            setScreenResult(prev => prev ? {...prev,cells:classifyCells(prev.cells.map(c=>c.context?.id===id?{...c,factors:result.assessment!.factors}:c),theme)} : prev)
+            if (!result.assessment) return
+            setScreenCells(prev => classifyCells(prev.map(c => c.context?.id === id ? {...c, factors: result.assessment!.factors, dashboard: result.decision_support?.dashboard} : c), theme))
+            setSelectedCell(prev => prev?.context?.id === id ? classifyCells([{...prev, factors: result.assessment!.factors, dashboard: result.decision_support?.dashboard}],theme)[0] : prev)
+            setScreenResult(prev => prev ? {...prev,cells:classifyCells(prev.cells.map(c=>c.context?.id===id?{...c,factors:result.assessment!.factors,dashboard:result.decision_support?.dashboard}:c),theme)} : prev)
           }}
           onContext={(id, context) => { setPreviewContext({ forId: id, context }); if (context.address) setSelection(current => current?.id === id ? { ...current, address: context.address! } : current) }} /></div>
         {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>

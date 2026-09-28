@@ -1,0 +1,20 @@
+
+ RUN  v4.1.11 /mnt/data/jiangong-pr2
+
+ ✓ tests/contracts/decision.test.ts (27 tests) 1693ms
+     ✓ survives closing and reopening embedded PostgreSQL  1433ms
+ ✓ tests/contracts/corpus.test.ts (17 tests) 287ms
+ ✓ tests/contracts/map-screening.test.ts (18 tests) 145ms
+ ✓ tests/contracts/decision-model.test.ts (18 tests) 70ms
+ ✓ tests/contracts/live-policy.test.ts (11 tests) 62ms
+ ✓ vendor/dsh/packages/core/agent-loop/tests/tool-updates.spec.ts (2 tests) 52ms
+ ✓ tests/contracts/maps.test.ts (10 tests) 43ms
+ ✓ tests/contracts/map-decision-factors.test.ts (12 tests) 51ms
+ ✓ tests/contracts/public-adapters.test.ts (19 tests) 44ms
+ ✓ tests/contracts/research-dashboard.test.ts (14 tests) 25ms
+
+ Test Files  10 passed (10)
+      Tests  148 passed (148)
+   Start at  10:32:48
+   Duration  5.85s (transform 449ms, setup 0ms, import 2.31s, tests 2.47s, environment 1ms)
+

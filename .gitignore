@@ -35,3 +35,5 @@ research/baseline_logs/*
 !research/baseline_logs/qwen-build.log
 !research/baseline_logs/qwen-browser.log
 output/playwright/minimal-map-*.png
+
+!research/baseline_logs/pr2-*.log

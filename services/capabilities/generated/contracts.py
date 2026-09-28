@@ -625,6 +625,7 @@ class MapScreenTheme(StrEnum):
     implementation = 'implementation'
     adaptation = 'adaptation'
     demand = 'demand'
+    supply = 'supply'
     operations = 'operations'
     resources = 'resources'
     access = 'access'
@@ -806,27 +807,111 @@ class ErrorCode(RootModel[str]):
     root: str = Field(..., max_length=80)
 
 
-class DecisionSupport(BaseModel):
+class PublicField(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    status: Status12
-    provider: Literal['qwen_systemone']
+    key: str = Field(..., max_length=80)
+    label: str = Field(..., max_length=80)
+    value: str | float | None
+    unit: str = Field(..., max_length=40)
+    raw: str = Field(..., max_length=400)
+    locator: str = Field(..., max_length=500)
+
+
+class Adapter(StrEnum):
+    landchina = 'landchina'
+    construction = 'construction'
+    statistics = 'statistics'
+    procurement = 'procurement'
+
+
+class Scope2(StrEnum):
+    object = 'object'
+    area = 'area'
+
+
+class PublicRecord(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=120)
+    adapter: Adapter
+    subject: str = Field(..., max_length=240)
+    scope: Scope2
+    period: str = Field(..., max_length=80)
+    source_id: str = Field(..., max_length=100)
+    fields: list[PublicField] = Field(..., max_length=40)
+
+
+class Status13(StrEnum):
+    success = 'success'
+    empty = 'empty'
+    access_required = 'access_required'
+    schema_changed = 'schema_changed'
+    unsupported = 'unsupported'
+
+
+class RecordId(RootModel[str]):
+    root: str = Field(..., max_length=120)
+
+
+class AdapterReceipt(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    source_id: str = Field(..., max_length=100)
+    adapter: str = Field(..., max_length=40)
+    status: Status13
+    record_ids: list[RecordId] = Field(..., max_length=50)
+
+
+class ResearchDimension(StrEnum):
+    demand = 'demand'
+    supply = 'supply'
+    adaptation = 'adaptation'
+    implementation = 'implementation'
+    operations = 'operations'
+    resources = 'resources'
+
+
+class DimensionScore(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: ResearchDimension
+    value: float | None = Field(..., ge=1.0, le=5.0)
+    confidence: float | None = Field(..., ge=0.0, le=1.0)
+    evidence_refs: list[EvidenceRef1] = Field(..., max_length=8)
+    basis: str = Field(..., max_length=180)
+
+
+class Status14(StrEnum):
+    completed = 'completed'
+    partial = 'partial'
+    unavailable = 'unavailable'
+
+
+class DecisionDashboard(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy_version: str = Field(..., max_length=80)
+    purpose: str = Field(..., max_length=120)
+    dimensions: list[DimensionScore] = Field(..., max_length=6)
     model: str = Field(..., max_length=100)
-    policy_version: str = Field(..., max_length=60)
-    input_hash: str = Field(..., max_length=80)
-    created_at: str = Field(..., max_length=60)
-    request_id: RequestId | None
-    duration_ms: int = Field(..., ge=0)
-    input_tokens: InputTokens | None
-    answers: Answers | None
-    action: Action | None
-    priority: Priority | None
-    next_step: str = Field(..., max_length=96)
-    guard_reasons: list[GuardReason] = Field(..., max_length=12)
-    input_source_ids: list[InputSourceId]
-    thresholds: Thresholds
-    error_code: ErrorCode | None
+    request_id: str | None = Field(..., max_length=200)
+    status: Status14
+
+
+class DimensionEvidence(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: ResearchDimension
+    source_id: str = Field(..., max_length=200)
+    quote: str = Field(..., max_length=180, min_length=8)
+    basis: str = Field(..., max_length=120)
 
 
 class Scope(BaseModel):
@@ -863,45 +948,6 @@ class Scenario(BaseModel):
     demolition_scope: DemolitionScope
     preference_notes: list[str]
     action_specs: list[ActionSpec] | None = Field(None, max_length=6, min_length=1)
-
-
-class DecisionPacket(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    schema_version: Literal['2.0']
-    project_id: str
-    run_id: str
-    revision: int = Field(..., ge=1)
-    snapshot_hash: str
-    context_version: int = Field(..., ge=0)
-    mode: Mode
-    execution_mode: ExecutionMode
-    synthetic: bool
-    status: Status4
-    summary: str
-    as_of: str
-    created_at: str
-    findings: list[Finding]
-    metrics: list[Metric]
-    scenarios: list[Scenario]
-    reviews: list[Review]
-    followups: list[Followup]
-    sources: list[Source]
-    context_rules: list[ExperienceRule]
-    impact: Impact
-    warnings: list[str]
-    missing_fields: list[str]
-    artifact_refs: list[str]
-    runtime: str
-    model: str | None
-    comparison: ComparisonPacket | None = None
-    model_calls: list[ModelCall] | None = None
-    research: ResearchTrace | None = None
-    analysis_method: AnalysisMethod | None = None
-    unresolved_disagreements: list[str] | None = None
-    scope: Scope | None = None
-    decision_support: DecisionSupport | None = None
 
 
 class ProjectInput(BaseModel):
@@ -944,6 +990,7 @@ class MapScreenTarget(BaseModel):
     radius_m: RadiusM | None
     bounds: MapScreenBounds | None
     geometry: MapRegionGeometry | None = None
+    label: str | None = Field(None, max_length=180)
 
 
 class MapScreenContext(BaseModel):
@@ -964,6 +1011,8 @@ class MapScreenContext(BaseModel):
     city: str | None
     local_projects: list[MapProjectEvidence]
     project_revision: str = Field(..., max_length=80)
+    research_sources: list[Source] | None = Field(None, max_length=12)
+    research_records: list[PublicRecord] | None = Field(None, max_length=100)
 
 
 class MapPreliminaryAssessment(BaseModel):
@@ -976,20 +1025,7 @@ class MapPreliminaryAssessment(BaseModel):
     unknowns: list[Unknown] = Field(..., max_length=1)
     next_steps: list[NextStep] = Field(..., max_length=1)
     factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
-
-
-class MapScreenAnalysis(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    context_id: str = Field(..., max_length=100)
-    profile: MapScreenProfile
-    status: Status10
-    assessment: MapPreliminaryAssessment | None
-    model_calls: list[ModelCall] = Field(..., max_length=4)
-    reason: Reason | None
-    created_at: str = Field(..., max_length=50)
-    decision_support: DecisionSupport | None = None
+    dimension_evidence: list[DimensionEvidence] | None = Field(None, max_length=6)
 
 
 class MapScreenCell(BaseModel):
@@ -1008,6 +1044,7 @@ class MapScreenCell(BaseModel):
     boundary_source: str | None = Field(None, max_length=250)
     area_m2: float | None = Field(None, ge=0.0)
     factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
+    dashboard: DecisionDashboard | None = None
 
 
 class MapScreenResult(BaseModel):
@@ -1024,3 +1061,84 @@ class MapScreenResult(BaseModel):
     comparison_count: int = Field(..., ge=0, le=24)
     notes: list[Note] = Field(..., max_length=10)
     theme: MapScreenTheme
+
+
+class DecisionSupport(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    status: Status12
+    provider: Literal['qwen_systemone']
+    model: str = Field(..., max_length=100)
+    policy_version: str = Field(..., max_length=60)
+    input_hash: str = Field(..., max_length=80)
+    created_at: str = Field(..., max_length=60)
+    request_id: RequestId | None
+    duration_ms: int = Field(..., ge=0)
+    input_tokens: InputTokens | None
+    answers: Answers | None
+    action: Action | None
+    priority: Priority | None
+    next_step: str = Field(..., max_length=96)
+    guard_reasons: list[GuardReason] = Field(..., max_length=12)
+    input_source_ids: list[InputSourceId]
+    thresholds: Thresholds
+    error_code: ErrorCode | None
+    dashboard: DecisionDashboard | None = None
+
+
+class DecisionPacket(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    schema_version: Literal['2.0']
+    project_id: str
+    run_id: str
+    revision: int = Field(..., ge=1)
+    snapshot_hash: str
+    context_version: int = Field(..., ge=0)
+    mode: Mode
+    execution_mode: ExecutionMode
+    synthetic: bool
+    status: Status4
+    summary: str
+    as_of: str
+    created_at: str
+    findings: list[Finding]
+    metrics: list[Metric]
+    scenarios: list[Scenario]
+    reviews: list[Review]
+    followups: list[Followup]
+    sources: list[Source]
+    context_rules: list[ExperienceRule]
+    impact: Impact
+    warnings: list[str]
+    missing_fields: list[str]
+    artifact_refs: list[str]
+    runtime: str
+    model: str | None
+    comparison: ComparisonPacket | None = None
+    model_calls: list[ModelCall] | None = None
+    research: ResearchTrace | None = None
+    analysis_method: AnalysisMethod | None = None
+    unresolved_disagreements: list[str] | None = None
+    scope: Scope | None = None
+    decision_support: DecisionSupport | None = None
+
+
+class MapScreenAnalysis(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    context_id: str = Field(..., max_length=100)
+    profile: MapScreenProfile
+    status: Status10
+    assessment: MapPreliminaryAssessment | None
+    model_calls: list[ModelCall] = Field(..., max_length=6)
+    reason: Reason | None
+    created_at: str = Field(..., max_length=50)
+    decision_support: DecisionSupport | None = None
+    research_sources: list[Source] | None = Field(None, max_length=12)
+    research_records: list[PublicRecord] | None = Field(None, max_length=100)
+    adapter_receipts: list[AdapterReceipt] | None = Field(None, max_length=12)
+    research: ResearchTrace | None = None

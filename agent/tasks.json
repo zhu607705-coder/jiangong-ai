@@ -442,6 +442,31 @@
         "research/test_results/qwen-integration.json"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T18",
+      "depends_on": [
+        "T17"
+      ],
+      "goal": "公开记录Adapter、对象参与路径、六维仪表盘、真实流式进度、标色修复与浙大校区研读。",
+      "status": "implemented_local_verification",
+      "expected_artifacts": [
+        "docs/PR2_公开数据与六维研判.md",
+        "docs/浙大七校区参与机会_PR2.md",
+        "research/test_results/pr2-verification.json"
+      ],
+      "definition_of_done": "离线契约、构建、HTTP和浏览器回归通过；原始记录来源与单位保留；实际API联调单独验收。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "runtime/skills/",
+        "services/",
+        "tests/",
+        "data/public_cases/",
+        "docs/",
+        "agent/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

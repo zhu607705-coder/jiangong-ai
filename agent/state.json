@@ -1,5 +1,5 @@
 {
-  "status": "implemented_and_verified_local_qwen_decision",
+  "status": "pr2_implemented_local_verification",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -26,9 +26,9 @@
     "external_production_database_extensions_and_multitenant_deployment_validation",
     "scanned_image_OCR_engine_optional_source_capability"
   ],
-  "next_task": "T14_live_acceptance",
+  "next_task": "T18_configured_environment_acceptance",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-28T06:58:51.380577+00:00",
+  "updated_at": "2026-09-28",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -199,5 +199,14 @@
     "pr1_merge_commit": "1408fee8537ebd47a6ec86c05c4091e4e5275436",
     "decision_integration_evidence": "research/test_results/qwen-integration.json"
   },
-  "release_note": "The earlier v0.2 ZIP is a historical snapshot; current source delivery is GitHub main."
+  "release_note": "The earlier v0.2 ZIP is a historical snapshot; current source delivery is GitHub main.",
+  "pr2": {
+    "branch": "codex/pr2-decision-dashboard",
+    "base": "b589c743ada7a343af00637ad6b6fbe75e6cd965",
+    "documentation": "docs/PR2_公开数据与六维研判.md",
+    "case_study": "docs/浙大七校区参与机会_PR2.md",
+    "evidence": "research/test_results/pr2-verification.json",
+    "live_status": "not_run_this_revision",
+    "next": "Review PR and verify real DSH Search/Qwen/provider responses, latency and record coverage in configured environment."
+  }
 }

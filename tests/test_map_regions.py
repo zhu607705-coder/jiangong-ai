@@ -81,3 +81,22 @@ def test_region_cap_is_explicit():
         polys.append(boundary(str(i),geometry))
     result=regions.segment_regions(request(polys),[])
     assert len(result['cells'])==24 and result['total']==30 and result['truncated']
+
+def test_campus_is_an_object_instead_of_an_arbitrary_road_cell():
+    campus=way(31,boundary()['geometry']['coordinates'][0],{'amenity':'university','name':'测试大学校区'})
+    cells=regions.segment_regions(request(),[campus])['cells']
+    assert len(cells)==1 and cells[0]['label']=='测试大学校区'
+    assert cells[0]['boundary_source']=='osm:way:31'
+
+def test_campus_relation_preserves_inner_courtyard():
+    outer=way(1,boundary()['geometry']['coordinates'][0],{})['geometry']
+    hole=way(2,[(120.157,30.277),(120.160,30.277),(120.160,30.280),(120.157,30.280),(120.157,30.277)],{})['geometry']
+    relation={'type':'relation','id':33,'tags':{'amenity':'university','name':'测试多环校区'},'members':[{'role':'outer','geometry':outer},{'role':'inner','geometry':hole}]}
+    cells=regions.segment_regions(request(),[relation])['cells']
+    assert len(cells)==1 and not shape(cells[0]['geometry']).covers(Point(120.158,30.278))
+
+def test_buildings_outside_a_compound_are_not_silently_dropped():
+    campus=way(31,[(120.151,30.271),(120.155,30.271),(120.155,30.275),(120.151,30.275),(120.151,30.271)],{'amenity':'university','name':'测试校园'})
+    building=way(32,[(120.163,30.282),(120.165,30.282),(120.165,30.284),(120.163,30.284),(120.163,30.282)],{'building':'yes','name':'独立楼宇'})
+    cells=regions.segment_regions(request(),[campus,building])['cells']
+    assert len(cells)==2 and {c['boundary_source'] for c in cells}=={'osm:way:31','osm:way:32'}

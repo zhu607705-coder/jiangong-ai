@@ -7,6 +7,11 @@
 export type CandidateId = "retain_and_reuse" | "selective_rebuild" | "whole_site_rebuild" | "defer_and_investigate";
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ResearchDimension".
+ */
+export type ResearchDimension = "demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources";
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenProfile".
  */
 export type MapScreenProfile = "balanced" | "commercial" | "enterprise";
@@ -15,7 +20,7 @@ export type MapScreenProfile = "balanced" | "commercial" | "enterprise";
  * via the `definition` "MapScreenTheme".
  */
 export type MapScreenTheme =
-  "overall" | "implementation" | "adaptation" | "demand" | "operations" | "resources" | "access";
+  "overall" | "implementation" | "adaptation" | "demand" | "supply" | "operations" | "resources" | "access";
 
 export interface ProjectInput {
   schema_version: "2.0";
@@ -394,6 +399,7 @@ export interface DecisionSupport {
     min_sufficiency: number;
   };
   error_code: string | null;
+  dashboard?: DecisionDashboard;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -405,6 +411,35 @@ export interface DecisionChoice {
   probabilities: {
     [k: string]: number;
   };
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DecisionDashboard".
+ */
+export interface DecisionDashboard {
+  policy_version: string;
+  purpose: string;
+  /**
+   * @maxItems 6
+   */
+  dimensions: DimensionScore[];
+  model: string;
+  request_id: string | null;
+  status: "completed" | "partial" | "unavailable";
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DimensionScore".
+ */
+export interface DimensionScore {
+  key: ResearchDimension;
+  value: number | null;
+  confidence: number | null;
+  /**
+   * @maxItems 8
+   */
+  evidence_refs: string[];
+  basis: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -509,6 +544,7 @@ export interface MapScreenTarget {
   radius_m: number | null;
   bounds: MapScreenBounds | null;
   geometry?: MapRegionGeometry | null;
+  label?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -576,6 +612,14 @@ export interface MapScreenContext {
   city: string | null;
   local_projects: MapProjectEvidence[];
   project_revision: string;
+  /**
+   * @maxItems 12
+   */
+  research_sources?: Source[];
+  /**
+   * @maxItems 100
+   */
+  research_records?: PublicRecord[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -594,6 +638,34 @@ export interface MapProjectEvidence {
   sources: Source[];
   facts: Fact[];
   rules: ExperienceRule[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "PublicRecord".
+ */
+export interface PublicRecord {
+  id: string;
+  adapter: "landchina" | "construction" | "statistics" | "procurement";
+  subject: string;
+  scope: "object" | "area";
+  period: string;
+  source_id: string;
+  /**
+   * @maxItems 40
+   */
+  fields: PublicField[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "PublicField".
+ */
+export interface PublicField {
+  key: string;
+  label: string;
+  value: string | number | null;
+  unit: string;
+  raw: string;
+  locator: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -633,6 +705,10 @@ export interface MapPreliminaryAssessment {
    * @maxItems 6
    */
   factors?: MapDecisionFactor[];
+  /**
+   * @maxItems 6
+   */
+  dimension_evidence?: DimensionEvidence[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -650,6 +726,16 @@ export interface MapDecisionFactor {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DimensionEvidence".
+ */
+export interface DimensionEvidence {
+  key: ResearchDimension;
+  source_id: string;
+  quote: string;
+  basis: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenAnalysis".
  */
 export interface MapScreenAnalysis {
@@ -658,12 +744,38 @@ export interface MapScreenAnalysis {
   status: "completed" | "unavailable" | "failed" | "insufficient_data";
   assessment: MapPreliminaryAssessment | null;
   /**
-   * @maxItems 4
+   * @maxItems 6
    */
   model_calls: ModelCall[];
   reason: string | null;
   created_at: string;
   decision_support?: DecisionSupport;
+  /**
+   * @maxItems 12
+   */
+  research_sources?: Source[];
+  /**
+   * @maxItems 100
+   */
+  research_records?: PublicRecord[];
+  /**
+   * @maxItems 12
+   */
+  adapter_receipts?: AdapterReceipt[];
+  research?: ResearchTrace;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "AdapterReceipt".
+ */
+export interface AdapterReceipt {
+  source_id: string;
+  adapter: string;
+  status: "success" | "empty" | "access_required" | "schema_changed" | "unsupported";
+  /**
+   * @maxItems 50
+   */
+  record_ids: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -689,6 +801,7 @@ export interface MapScreenCell {
    * @maxItems 6
    */
   factors?: MapDecisionFactor[];
+  dashboard?: DecisionDashboard;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

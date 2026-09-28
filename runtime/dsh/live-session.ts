@@ -43,7 +43,7 @@ export class LiveSession {
       await ctx.plugin(Subagents, { maxDepth: 1 }); await ctx.plugin(Spawn, { providerName: 'spawn' })
       await ctx.plugin(DeepSeek, { apiKeyEnv: 'DEEPSEEK_API_KEY' })
       ctx.on('llm/stream', async function* (request, next) {
-        const budget=live.stageScope.getStore()?.startsWith('map_') ? 4 : 20
+        const budget=live.runId.startsWith('MAP-AI-') ? 6 : 20
         if (++live.modelRequests > budget || live.signal.aborted) throw new Error('RUN_MODEL_BUDGET_EXCEEDED')
         const start = Date.now()
         const call: ModelCall = { stage: live.stageScope.getStore() || 'unknown', requested_model: request.model, returned_model: null, finish_reason: 'missing', input_tokens: 0, output_tokens: 0, duration_ms: 0, session_id: null }

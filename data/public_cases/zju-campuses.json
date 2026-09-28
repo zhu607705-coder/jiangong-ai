@@ -1,0 +1,555 @@
+{
+  "schema_version": "1.0",
+  "as_of": "2026-09-28",
+  "purpose": "公开案例研读与UI/Agent质量参考；不自动作为地图中当前对象事实",
+  "selection_method": "覆盖七校区的工程、运营和采购路径，非随机样本",
+  "decision_model_run": false,
+  "scores": "not_run; all dimensions null",
+  "sources": [
+    {
+      "id": "S1",
+      "title": "华家池图书馆外立面改造成交",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/202607/t20260728_27025385.htm",
+      "published_at": "2026-07-28",
+      "content_status": "full_text",
+      "locator": "项目名称、总成交金额、主要标的信息",
+      "verified_summary": "华家池图书馆外立面改造，成交281.24万元，合同签订后75日历天内完成。"
+    },
+    {
+      "id": "S2",
+      "title": "海宁国际校区物业服务中标",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/202608/t20260828_27228886.htm",
+      "published_at": "2026-08-28",
+      "content_status": "full_text",
+      "locator": "总中标金额、主要标的信息／服务时间",
+      "verified_summary": "物业服务中标2579.0602万元，服务期2026-09-01至2027-08-31；一招三年，合同一年一签。"
+    },
+    {
+      "id": "S3",
+      "title": "西溪一食堂改造中标",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/202608/t20260831_27232115.htm",
+      "published_at": "2026-08-31",
+      "content_status": "search_excerpt",
+      "locator": "公告概要",
+      "verified_summary": "一食堂改造工程中标公告，总中标金额1593.325万元。"
+    },
+    {
+      "id": "S4",
+      "title": "玉泉永谦学生活动中心重启运营",
+      "url": "https://zulg.zju.edu.cn/info/1021/93617.htm",
+      "published_at": "2025-10-21",
+      "content_status": "full_text",
+      "locator": "正文第2—3段",
+      "verified_summary": "2025年9月底验收试运行；改造A、B两栋，含10余间会议室和1200余张座椅。"
+    },
+    {
+      "id": "S5",
+      "title": "舟山学生宿舍修缮二期成交",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/202606/t20260608_26706163.htm",
+      "published_at": "2026-06-08",
+      "content_status": "full_text",
+      "locator": "项目编号、总成交金额、主要标的信息",
+      "verified_summary": "宿舍修缮二期成交187.272万元；75日历天。"
+    },
+    {
+      "id": "S6",
+      "title": "饮食服务中心五金及配件采购",
+      "url": "https://zulg.zju.edu.cn/info/1037/99087.htm",
+      "published_at": "2026-05-29",
+      "content_status": "full_text",
+      "locator": "项目概况、配送区域、投标截止时间",
+      "verified_summary": "预估年采购53万元，配送六个校区；计划合同期2026-07-01至2028-06-30，投标截止2026-06-24。"
+    },
+    {
+      "id": "S7",
+      "title": "2026年寒假校园后勤服务安排",
+      "url": "https://zulg.zju.edu.cn/info/1036/96107.htm",
+      "published_at": "2026-01-20",
+      "content_status": "full_text",
+      "locator": "食堂供应表",
+      "verified_summary": "七个校区均列有不停伙食堂，同时列出部分窗口暂停、恢复及缩短供应时间。"
+    },
+    {
+      "id": "S8",
+      "title": "之江高压电缆割接停电通知",
+      "url": "https://zulg.zju.edu.cn/info/1036/93257.htm",
+      "published_at": "2025-09-28",
+      "content_status": "full_text",
+      "locator": "停电事由、分区时间表",
+      "verified_summary": "2025-10-07安排之江新老高配高压电缆割接，按不同变电所分时施工。"
+    },
+    {
+      "id": "S9",
+      "title": "紫金港建工试验大厅和钟楼立面改造成交",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/202607/t20260729_27034649.htm",
+      "published_at": "2026-07-29",
+      "content_status": "search_excerpt",
+      "locator": "公告概要",
+      "verified_summary": "建工试验大厅和钟楼立面改造成交168.3万元。"
+    },
+    {
+      "id": "S10",
+      "title": "紫金港东区规划测绘中标",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/202607/t20260730_27040258.htm",
+      "published_at": "2026-07-30",
+      "content_status": "search_excerpt",
+      "locator": "公告概要",
+      "verified_summary": "东区规划测绘中标100.009万元。"
+    },
+    {
+      "id": "S11",
+      "title": "配电与管控单元招标",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/gkzb/202609/t20260922_27379239.htm",
+      "published_at": "2026-09-22",
+      "content_status": "search_excerpt",
+      "locator": "公告概要／项目概况",
+      "verified_summary": "预算136万元，文件获取至2026-10-08，投标截止2026-10-15；具体校区未由摘要确认。"
+    }
+  ],
+  "cases": [
+    {
+      "id": "ZJU-ZJG",
+      "campus": "紫金港",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S9",
+        "S10",
+        "S6"
+      ],
+      "observed_stage": "awarded_or_closed",
+      "summary": "从单体修缮、测绘和机电服务切入，按采购标包准备交付方案。",
+      "opportunity": "将测绘与现状盘点能力、单栋修缮、机电运维分别形成可采购服务；由具备相应能力的团队选择一个标包入口。",
+      "payer": "已发布工程与测绘采购的采购人为浙江大学；具体付款节点取合同。",
+      "deliverable": "单栋现状图、工程量清单、设备接口表和教学期施工组织方案。",
+      "next_step": "回读立面改造及测绘文件，列清交付界面与下一轮采购窗口。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "采购摘要已出现立面修缮和测绘任务。",
+          "next_evidence": "取得采购文件正文。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "已存在中标供应商，不能把已成交标包当开放订单。",
+          "next_evidence": "核查下一标包与竞争者能力。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "可聚焦单栋外围护及现状数据，不先假设整体新建。",
+          "next_evidence": "读取图纸、清单和检测需求。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "通过学校具体工程或测绘标包进入。",
+          "next_evidence": "确认公告阶段和投标资格。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "工程结算与测绘服务费是拟研究收入路径。",
+          "next_evidence": "取得结算、验收及质保约定。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "不同专业分包能力、进度与垫资分别核算。",
+          "next_evidence": "按实际工程量与工期编制成本。"
+        }
+      ],
+      "alternative": "校外商业作为独立选址题，先调查出入口客流和替代供给，不把校内建筑直接作为开发对象。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    },
+    {
+      "id": "ZJU-YQ",
+      "campus": "玉泉",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S4"
+      ],
+      "observed_stage": "operation_after_renovation",
+      "summary": "永谦场馆已更新，研究系统维护、运行保障和场地效率提升。",
+      "opportunity": "围绕已经投入使用的活动场馆，提出设备台账、故障预防、活动前检查和会务系统运维服务。",
+      "payer": "先识别学校与现有会务运营方的采购职责；付款主体以实际服务合同为准。",
+      "deliverable": "场馆设备台账、活动前检查表、工单闭环和分级响应服务方案。",
+      "next_step": "核查现有维保范围与设备质保期，再拆分新增服务清单。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "运营方发布了更新及试运行记录。",
+          "next_evidence": "取得当前活动及故障工单。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "场馆已有会务团队，应先识别其外采缺口。",
+          "next_evidence": "核对现有供应商与质保覆盖。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "对象是已更新的会议与演出空间。",
+          "next_evidence": "读取设备清单和接口。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "以新增采购或既有授权服务边界为入口。",
+          "next_evidence": "核对可采购的服务范围。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "先研究运维服务费，不从预订量推导利润。",
+          "next_evidence": "取得采购预算和结算口径。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "应按活动频次和设备系统配置值守资源。",
+          "next_evidence": "测算排班、备件与响应成本。"
+        }
+      ],
+      "alternative": "在校外做会议配套服务需要另查可达性、场地使用及付费客户；校内场馆升级已经形成替代供给。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    },
+    {
+      "id": "ZJU-XX",
+      "campus": "西溪",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S3",
+        "S7"
+      ],
+      "observed_stage": "awarded",
+      "summary": "一食堂改造已中标，研究后续专业工程与运维需求，而非重复开店。",
+      "opportunity": "从食堂建筑改造所需的专业工程界面入手，形成施工与设备维护能力方案；设备范围仍由采购文件确定。",
+      "payer": "改造采购人为浙江大学；运营承包不能从工程中标公告推定。",
+      "deliverable": "建筑、设备与运维接口清单；错峰施工和临时供应协调方案。",
+      "next_step": "取得食堂改造采购文件，分清建筑工程、设备采购及运营合同。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "公告摘要明确一食堂改造已成交。",
+          "next_evidence": "核对工程范围与实际进度。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "校内已有食堂供给，新增外部餐饮先看差异需求。",
+          "next_evidence": "调查服务窗口及周边替代供给。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "可研究建筑与设备的改造界面。",
+          "next_evidence": "读取厨房、机电与消防接口资料。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "既有中标包已结束竞争，关注后续独立包。",
+          "next_evidence": "查后续公告，确认采购关系。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "工程收入与食堂经营收入须分别评价。",
+          "next_evidence": "分别取得工程和运营合同条件。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "施工组织需衔接在校供应。",
+          "next_evidence": "核实停供窗口、临时供应及交付时间。"
+        }
+      ],
+      "alternative": "先做短期供应或工程服务能力验证，避免依据学校规模直接承租大面积校外商业。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    },
+    {
+      "id": "ZJU-HJC",
+      "campus": "华家池",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S1",
+        "S7"
+      ],
+      "observed_stage": "awarded",
+      "summary": "以图书馆立面修缮为切口，准备分区施工与验收资料服务。",
+      "opportunity": "把外围护修缮、现场组织和质量验收作为工程能力包，利用已成交项目识别类似后续需求。",
+      "payer": "采购人为浙江大学，现有成交供应商为浙江盈科建设工程有限公司。",
+      "deliverable": "按立面分区的病害记录、清单复核、样板段和施工扰动安排。",
+      "next_step": "回读修缮清单与75天工期安排，核查后续楼栋采购。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "281.24万元修缮成交记录明确。",
+          "next_evidence": "确认当前进度及其他楼栋需求。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "已有成交供应商，后续包才是新参与入口。",
+          "next_evidence": "查询后续标包和资质要求。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "具体对象为图书馆外立面。",
+          "next_evidence": "读取立面清单、检测及工艺要求。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "学校工程采购路径明确。",
+          "next_evidence": "确认新采购或合作授权范围。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "金额锚点可用于规模识别，收益取决于实际成本。",
+          "next_evidence": "取得付款、质保、变更条款。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "公告写明合同签订后75日历天。",
+          "next_evidence": "核查开工日、场地及教学安排。"
+        }
+      ],
+      "alternative": "校外面向培训活动的服务另立研究对象，用真实活动与住宿订单检验需求。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    },
+    {
+      "id": "ZJU-ZJ",
+      "campus": "之江",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S8",
+        "S6",
+        "S7"
+      ],
+      "observed_stage": "historical_operations",
+      "summary": "围绕既有设施运维，先研究分时检修、备件与小型专业服务。",
+      "opportunity": "历史电缆割接记录说明设施服务应落实到系统、区域与停机窗口；以小范围运维交付替代泛化更新方案。",
+      "payer": "优先核对后勤水电保障与修建工程中心的采购职责及当期服务商。",
+      "deliverable": "系统分区表、计划停机协调表、故障分类和备件周转清单。",
+      "next_step": "取得最新年度检修计划，确认当期任务与采购入口。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "2025年有按区域分时的割接通知。",
+          "next_evidence": "查2026年检修需求与工单。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "运行服务已由既有组织承担。",
+          "next_evidence": "了解现有服务商和备件来源。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "需沿具体变配电系统和服务区域开展研究。",
+          "next_evidence": "取得实际系统图、设备台账。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "当前独立采购窗口仍需检索。",
+          "next_evidence": "查当期采购文件。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "六校区配件采购提供跨校区供应线索。",
+          "next_evidence": "核实单价、结算及服务边界。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "小型备件服务适合先核对周转和现场响应。",
+          "next_evidence": "估算配送距离、储备和排班。"
+        }
+      ],
+      "alternative": "不将2025年停电通知当作2026年施工安排；也不把历史建筑外观当作改变使用用途的依据。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    },
+    {
+      "id": "ZJU-HN",
+      "campus": "海宁",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S2",
+        "S6",
+        "S7"
+      ],
+      "observed_stage": "contract_service_period",
+      "summary": "物业已有在执行合同，研究独立专业运维与下一轮服务采购。",
+      "opportunity": "把建筑设备维保、能耗数据整理、工单质量和专项验收做成可计量服务项，先核对现有物业合同覆盖范围。",
+      "payer": "校园物业采购人为浙江大学，已中标方为浙江浙大求是物业管理有限公司。",
+      "deliverable": "合同服务边界表、设备台账、响应指标与专项服务计价表。",
+      "next_step": "核对物业合同与验收指标，寻找覆盖之外的独立专业任务。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "2579.0602万元物业中标记录说明有明确付费服务。",
+          "next_evidence": "取得合同与当期绩效数据。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "现有中标方已确定，不能按空白物业市场处理。",
+          "next_evidence": "区分本体服务与确可外采任务。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "校园建筑运维适合按系统而非整片区打包猜测。",
+          "next_evidence": "读取资产清单及专业维保界面。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "先查独立采购与既有合同授权。",
+          "next_evidence": "查采购安排，不推定可转包。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "服务期2026-09-01至2027-08-31；一年一签。",
+          "next_evidence": "核对考核扣款、支付及续签条件。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "持续服务要核算人员、备件与履约资金。",
+          "next_evidence": "按实际范围计算人员和现金占用。"
+        }
+      ],
+      "alternative": "面向校园人群的校外服务要分学期和假期；采购合同额比POI数量更能说明付费路径。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    },
+    {
+      "id": "ZJU-ZS",
+      "campus": "舟山",
+      "as_of": "2026-09-28",
+      "source_ids": [
+        "S5",
+        "S7"
+      ],
+      "observed_stage": "awarded",
+      "summary": "宿舍修缮二期已有成交，研究后续楼栋维护与假期分期交付。",
+      "opportunity": "形成宿舍分栋修缮、完工验收和交付后维保的标准化能力包，利用二期项目核对连续维护需求。",
+      "payer": "采购人为浙江大学，已成交方为杭州金上田建设工程有限公司。",
+      "deliverable": "逐栋任务清单、房间移交安排、质量验收记录和保修工单机制。",
+      "next_step": "核查二期清单及验收进展，再判断后续楼栋是否形成新采购。",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "需求客群",
+          "value": null,
+          "basis": "187.272万元宿舍修缮二期已成交。",
+          "next_evidence": "取得当前验收和下一批楼栋计划。"
+        },
+        {
+          "key": "supply",
+          "label": "供给竞争",
+          "value": null,
+          "basis": "存在既有承包方，后续服务需清晰范围。",
+          "next_evidence": "核查保修与新增任务责任。"
+        },
+        {
+          "key": "adaptation",
+          "label": "空间工程",
+          "value": null,
+          "basis": "具体对象为学生宿舍。",
+          "next_evidence": "阅读修缮图纸和工程量。"
+        },
+        {
+          "key": "implementation",
+          "label": "实施入口",
+          "value": null,
+          "basis": "由校区工程采购与验收节点进入。",
+          "next_evidence": "确认后续采购窗口。"
+        },
+        {
+          "key": "operations",
+          "label": "运营回款",
+          "value": null,
+          "basis": "工程结算路径明确，维保另看合同。",
+          "next_evidence": "获取结算和保修安排。"
+        },
+        {
+          "key": "resources",
+          "label": "投入交付",
+          "value": null,
+          "basis": "公告工期75日历天，需衔接住宿安排。",
+          "next_evidence": "核实现场资源与假期窗口。"
+        }
+      ],
+      "alternative": "海洋科研配套属于另一采购类别，应逐项目确认场地及需求，不能仅凭校区名称追加实验建设方案。",
+      "analysis_origin": "analyst_reading_of_public_sources",
+      "decision_model_run": false
+    }
+  ],
+  "unlocated_leads": [
+    {
+      "source_id": "S11",
+      "status_as_of": "submission_window_from_indexed_notice",
+      "campus": null,
+      "next_step": "读取采购需求，确认配电与管控单元的功能、使用地点和交付边界；不要仅按名称当成校园配电改造。"
+    }
+  ]
+}

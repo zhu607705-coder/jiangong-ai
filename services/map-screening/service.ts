@@ -1,3 +1,7 @@
+import { config } from '../../apps/host/config'
+import type { ProgressSink } from '../../packages/research/events'
+import { BRIEF_SKILL_VERSION } from '../../runtime/skills/investment-brief'
+import { RESEARCH_POLICY } from '../../packages/research/public-sources'
 import { booleanValid } from '@turf/boolean-valid'
 import { decisionFactors } from '../../packages/maps/decision-factors'
 import { applyDecisionGuards } from '../../packages/decision/structured-route'
@@ -12,7 +16,7 @@ import { targetContains, evidenceAt, type ProjectEvidenceSnapshot } from './proj
 
 import type { RegionResolver } from './regions'
 
-export type ContextAnalyst = (context: MapScreenContext, profile: MapScreenProfile, signal: AbortSignal) => Promise<MapScreenAnalysis>
+export type ContextAnalyst = (context: MapScreenContext, profile: MapScreenProfile, signal: AbortSignal, emit?: ProgressSink) => Promise<MapScreenAnalysis>
 const round = (value: number) => Math.round(value * 1e6) / 1e6
 const stamp = () => new Date().toISOString()
 
@@ -111,19 +115,19 @@ export class MapScreeningService {
     return structuredClone(result)
   }
 
-  async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal): Promise<MapScreenAnalysis> {
+  async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal, emit: ProgressSink = () => {}): Promise<MapScreenAnalysis> {
     if (!/^MAPCTX-[a-f\d-]{36}$/i.test(id)) throw new Error('CONTEXT_NOT_FOUND')
     let context: MapScreenContext
     try { context = validate<MapScreenContext>('MapScreenContext', JSON.parse(await readFile(join(this.directory, 'contexts', id + '.json'), 'utf8'))) }
     catch { throw new Error('CONTEXT_NOT_FOUND') }
     if (Date.parse(context.expires_at) < Date.now()) throw new Error('CONTEXT_EXPIRED')
-    const key = id + ':' + profile, cached = this.analyses.get(key)
-    if (cached?.status === 'completed') return structuredClone(cached)
-    if (context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
+    const key = [id, profile, RESEARCH_POLICY, BRIEF_SKILL_VERSION].join(':'), cached = this.analyses.get(key)
+    if (cached?.status === 'completed') { emit({type:'progress',stage:'sources',status:'completed',message:'复用本次研判'}); return structuredClone(cached) }
+    if (!context.target.label && !context.address && context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return { context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
     this.activeAnalyses++; this.analyzing.add(key)
     try {
-      const analysis = validate<MapScreenAnalysis>('MapScreenAnalysis', await this.analyst(context, profile, signal))
+      const analysis = validate<MapScreenAnalysis>('MapScreenAnalysis', await this.analyst(context, profile, signal, emit))
       signal.throwIfAborted()
       if (analysis.assessment) {
         const extracted = analysis.assessment.factors || []
@@ -131,11 +135,11 @@ export class MapScreeningService {
       }
       if(analysis.decision_support) {
         analysis.decision_support=applyDecisionGuards(analysis.decision_support,decisionFactors(context))
-        if(analysis.assessment && analysis.decision_support.next_step) analysis.assessment.next_steps=[analysis.decision_support.next_step]
       }
       if (this.analyses.size >= 120) this.analyses.delete(this.analyses.keys().next().value!)
       if (analysis.status === 'completed') this.analyses.set(key, analysis)
       await this.save('analyses', id + '-' + profile, analysis)
+      if(analysis.status==='completed')await this.save('scope-analyses',this.scopeKey(context,profile),{saved_at:stamp(),analysis})
       return analysis
     } finally { this.activeAnalyses--; this.analyzing.delete(key) }
   }
@@ -143,6 +147,7 @@ export class MapScreeningService {
   async screen(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, emit: (event: unknown) => void): Promise<MapScreenResult> {
     assertScreenBounds(bounds)
     const id='MAPSCAN-'+randomUUID(), snapshot=await this.loadEvidence()
+    emit({type:'progress',message:'识别园区与道路围合边界'})
     const {cells,notes}=await this.regions(bounds,snapshot,signal)
     signal.throwIfAborted()
     emit({type:'start',id,bounds,profile,theme,cells})
@@ -153,7 +158,7 @@ export class MapScreeningService {
     for(let i=0;i<cells.length;i++) {
       signal.throwIfAborted()
       const cell=cells[i],b=cell.bounds,anchor=cell.anchor||[(b.west+b.east)/2,(b.south+b.north)/2]
-      const target=normalizedTarget({kind:'cell',bounds:b,geometry:cell.geometry, radius_m:null,longitude:anchor[0],latitude:anchor[1]})
+      const target=normalizedTarget({kind:'cell',bounds:b,geometry:cell.geometry, radius_m:null,longitude:anchor[0],latitude:anchor[1],label:cell.label})
       const context=validate<MapScreenContext>('MapScreenContext',{
         ...shared!,id:'MAPCTX-'+randomUUID(),target,
         groups:shared!.groups.map(g=>({...g,reported_count:null,sample:g.sample.filter(p=>targetContains(target,p.longitude,p.latitude))})),
@@ -161,6 +166,17 @@ export class MapScreeningService {
       })
       await this.save('contexts',context.id,context)
       cell.context=context
+      // Recoloring only reuses the identical object/profile/source revision. It never reruns AI.
+      try{
+        const saved=JSON.parse(await readFile(join(this.directory,'scope-analyses',this.scopeKey(context,profile)+'.json'),'utf8'))
+        if(Date.now()-Date.parse(saved.saved_at)<86400000){
+          const analysis=validate<MapScreenAnalysis>('MapScreenAnalysis',saved.analysis)
+          if(analysis.status==='completed'){
+            cell.dashboard=analysis.decision_support?.dashboard
+            cell.factors=decisionFactors(context).map(f=>f.state==='unknown'?analysis.assessment?.factors?.find(p=>p.key===f.key)||f:f)
+          }
+        }
+      }catch{ /* No verified cached judgment for this object. */ }
       const classified=classifyCells([cell],theme)[0]
       cells[i]=classified
       emit({type:'cell',cell:classified,completed:i+1,total:cells.length})
@@ -169,6 +185,12 @@ export class MapScreeningService {
       status:cells.length?'completed':'partial',method:SCREEN_METHOD,
       comparison_count:cells.filter(c=>c.tier!=='incomplete').length,notes})
     await this.save('scans',id,result);emit({type:'complete',result});return result
+  }
+
+  private scopeKey(context:MapScreenContext,profile:MapScreenProfile):string{
+    const t=context.target
+    return fingerprint([RESEARCH_POLICY,BRIEF_SKILL_VERSION,config.DEEPSEEK_MODEL,config.QWEN_DECISION_MODEL,config.QWEN_DECISION_ENDPOINT,config.decisionEnabled,profile,this.provider.revision(),context.project_revision,
+      t.kind,t.geometry||null,t.bounds||null,t.longitude,t.latitude,t.radius_m,t.label||'',context.created_at.slice(0,10)])
   }
 
   private async save(folder: string, id: string, value: unknown) {
