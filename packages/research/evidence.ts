@@ -52,7 +52,7 @@ export function primaryObjectSource(source:Source,context:MapScreenContext):bool
   return publicSourceClass(source.url||'')!=='supplementary'||(!source.url&&source.content_status==='uploaded'&&!!source.object_refs?.includes(context.target.object_ref||''))
 }
 /** A title alone cannot bind a quote taken from another object in the document. */
-export function objectQuoteMatches(source:Source,context:MapScreenContext,name:string,quote:string,records:PublicRecord[]=[],recordId?:string):boolean {
+export function objectQuoteMatches(source:Source,context:MapScreenContext,name:string,quote:string,records:PublicRecord[]=[],recordId?:string,allowVenue=false):boolean {
   const subject=normalizedName(name)
   if(!subject||subject===normalizedName(context.city||''))return false
   if(recordId){
@@ -63,15 +63,20 @@ export function objectQuoteMatches(source:Source,context:MapScreenContext,name:s
     if(typeof location==='string'&&wrongLocation(location,context,name))return false
     const nativeIds=record.fields.filter(f=>f.key==='project_id'||f.key==='parcel_id').map(f=>`${record.adapter}:${f.value}`)
     if(context.target.object_ref?.startsWith(record.adapter+':')&&!nativeIds.includes(context.target.object_ref))return false
-    if(!ownObjectClaim(record.subject,name,true))return false
+    if(!ownObjectClaim(record.subject,name,true,allowVenue))return false
     return record.fields.some(f=>f.value!==null&&f.raw.includes(quote)&&(['buyer','supplier','owner','assignee'].includes(f.key)||!wrongLocation(quote,context,name)))
   }
   if(wrongLocation(quote,context,name))return false
-  return source.untrusted_text!.includes(quote)&&ownObjectClaim(quote,name)
+  return source.untrusted_text!.includes(quote)&&ownObjectClaim(quote,name,false,allowVenue)
 }
-export function eligibleDimension(source:Source,context:MapScreenContext,name:string,evidence:DimensionEvidence,records:PublicRecord[]):boolean {
+export function eligibleDimension(source:Source,context:MapScreenContext,name:string,evidence:DimensionEvidence,records:PublicRecord[],purpose=''):boolean {
   if(!primaryObjectSource(source,context))return false
-  if(!objectQuoteMatches(source,context,name,evidence.quote,records,evidence.record_id))return false
+  // Event location establishes a use of this venue, not maintenance demand,
+  // a procurement right, funding or an operating contract for this building.
+  const venueService=/(?:会务|会议|会场)(?:服务|运营)|场地(?:租赁|运营|服务)/.test(purpose)
+  const venueBasis=/(?:会务|会议|会场|场地).*(?:使用|需求|服务|运营)|(?:开标|评标).*(?:活动|会场|场地)/.test(evidence.basis)
+  const allowVenue=evidence.key==='demand'&&venueService&&venueBasis
+  if(!objectQuoteMatches(source,context,name,evidence.quote,records,evidence.record_id,allowVenue))return false
   return dimensionCurrentAt(source,name,evidence,records,context.created_at)
 }
 /** Reused for scoring and cache reads; the observation clock is not the cache clock. */

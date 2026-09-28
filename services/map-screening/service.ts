@@ -184,8 +184,8 @@ export class MapScreeningService {
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }
       if(!this.currentScores(context,analysis)){
-        analysis.status='partial';delete analysis.decision_support
-        analysis.reason='原简报已保留，部分依据或采购窗口已失效，请重新研判。'
+        analysis.refresh_required=true;analysis.status='partial';delete analysis.decision_support
+        analysis.reason='原简报已保留，部分依据或采购窗口已失效，请重新取证后研判。'
       }
       await this.remember(context,profile,analysis)
       return analysis
@@ -300,21 +300,24 @@ export class MapScreeningService {
         }
         context.address=saved.address;context.city=saved.city||context.city
       }
-      if(!this.currentScores(context,analysis))return null
+      let refreshRequired=!this.currentScores(context,analysis)
       this.refreshConditions(context,analysis)
       const aliases=new Map<string,string>((saved.groups||[]).flatMap((g:{key:string;source_id:string})=>{const now=context.groups.find(n=>n.key===g.key);return now?[[g.source_id,now.source_id]]:[]}))
       for(const claim of [...analysis.assessment.opportunities,...analysis.assessment.cautions,...(analysis.assessment.factors||[])])claim.evidence_refs=claim.evidence_refs.map(id=>aliases.get(id)||id)
       try{
         groundMapAssessment({...analysis.assessment,factors:undefined},context,analysis.research_sources||[],analysis.research_records||[],stamp())
       }catch{
-        // Retain the historical artifact, but do not advertise an impossible
-        // score-only retry when its current inputs no longer qualify.
+        refreshRequired=true
+      }
+      if(refreshRequired){
+        // A known expiry is not a cache miss. Propagate it through the public
+        // research cache too, keeping the same refresh path for scored/partial.
         analysis.refresh_required=true;analysis.status='partial';delete analysis.decision_support
         analysis.reason='此前简报的依据已变化，需重新取证后研判。'
       }
       analysis.reused_from_context_id=analysis.reused_from_context_id||analysis.context_id
       analysis.context_id=context.id
-      if(saved.decision_signature!==this.decisionSignature()){
+      if(!analysis.refresh_required&&saved.decision_signature!==this.decisionSignature()){
         analysis.status='partial';delete analysis.decision_support;analysis.reason='简报已恢复，判断配置已更新，可重新评分。'
       }
       await this.save('contexts',context.id,context)

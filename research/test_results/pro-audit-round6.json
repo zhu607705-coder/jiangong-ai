@@ -1,0 +1,71 @@
+{
+  "baseline_commit": "5bcdab85035f7a27b59e47cb739ce082e72d72b6",
+  "review_id": "JIANGONG-AUDIT-06-5bcdab85",
+  "status": "verified_pending_publication_and_round07",
+  "as_of": "2026-09-28T22:41:40.624274+00:00",
+  "pro_closed_original": 22,
+  "addressed": [
+    "A01",
+    "A15",
+    "F01"
+  ],
+  "verification": {
+    "javascript": 295,
+    "python": 70,
+    "http": 11,
+    "browser": 43,
+    "production_build": "passed",
+    "targeted": 135,
+    "real_public_replay": {
+      "scope": "Offline qualification and arithmetic replay of the saved real public/native request; no new model call.",
+      "request_id": "031b9c4b-ac45-446e-8a83-c6e8262c833b",
+      "qualified_dimensions": [
+        "demand",
+        "resources"
+      ],
+      "question_keys": [
+        "fit_demand",
+        "fit_resources"
+      ],
+      "values": [
+        {
+          "key": "demand",
+          "value": 3.8
+        },
+        {
+          "key": "supply",
+          "value": null
+        },
+        {
+          "key": "adaptation",
+          "value": null
+        },
+        {
+          "key": "implementation",
+          "value": null
+        },
+        {
+          "key": "operations",
+          "value": null
+        },
+        {
+          "key": "resources",
+          "value": 3.9
+        }
+      ]
+    },
+    "scope": [
+      "Actual Adapter/visibleText/ground/fit questions for venue roles and complete monetary owners across all brief fields",
+      "Known expiry through projectInput/evidenceAt, real files and real collector-created old public cache; partial/completed, deadline, restart, and monetary/non-monetary fresh briefs",
+      "Actual reviewed baseline and revised current cache lifecycle scripts; controlled runtime I/O only",
+      "Existing real React historical refresh, score-only retry and scan/cancellation regressions"
+    ]
+  },
+  "source_policy": "public-adapters-v10",
+  "evidence_local": "data/local/pro-audit/round-06/",
+  "limits": [
+    "Exact next source commit requires original Pro round07 review.",
+    "No new paid model calls or enterprise-effectiveness claims.",
+    "Browser map/API boundaries remain synthetic; cache scorer/generator boundaries are controlled fixtures."
+  ]
+}

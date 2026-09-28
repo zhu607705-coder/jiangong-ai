@@ -19,6 +19,44 @@ function entryEligibility(html:string){
 }
 
 describe('monetary claim ownership',()=>{
+  it.each(['甲办公楼和乙办公楼','乙办公楼和甲办公楼'])('does not let an equivalent prose tail override the full structured owner: %s',owner=>{
+    const html=`<html><body><table>${field('项目编号','P-JOINT')}${field('项目名称',owner)}${field('预算金额','120万元')}</table><p>${owner}预算为120万元。</p></body></html>`
+    const original=source(html),records=adaptOfficialSource(original).records,parsed={...original,untrusted_text:visibleText(html,original.url!)}
+    expect(parsed.untrusted_text).toContain(`${owner}预算为120万元。`)
+    expect(()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[parsed],records)).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+    expect(()=>groundMapAssessment(brief(`${owner}预算为120万元。`),context,[parsed],records)).not.toThrow()
+    const result=groundMapAssessment({...brief('研究维护服务。'),dimension_evidence:[{key:'resources',source_id:'S',record_id:records[0].id,quote:owner,basis:'甲办公楼预算为120万元。'}]},context,[parsed],records)
+    expect(result.dimension_evidence).toEqual([])
+    for(const recordsToUse of [records,[]]){
+      const evidenceSource=recordsToUse.length?parsed:source(`${owner}预算为120万元。`)
+      for(const key of ['summary','next_steps','opportunities','cautions'] as const){
+        const wrong=brief('研究维护服务。'),claim='甲办公楼预算为120万元。'
+        if(key==='summary')wrong.summary=claim
+        else if(key==='next_steps')wrong.next_steps=[claim]
+        else wrong[key]=[{text:claim,evidence_refs:['S']}]
+        expect(()=>groundMapAssessment(wrong,context,[evidenceSource],recordsToUse),key).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+      }
+      expect(()=>groundMapAssessment(brief(`${owner}预算为120万元。`),context,[evidenceSource],recordsToUse)).not.toThrow()
+      for(const wrong of ['预算为120万元。','本项目预算为120万元。','甲办公楼预算为120元。','甲办公楼预算为180万元。']){
+        expect(()=>groundMapAssessment(brief(wrong),context,[evidenceSource],recordsToUse)).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+      }
+    }
+  })
+  it('keeps complete literal quantitative claims without accepting a joint-owner tail',()=>{
+    const text='乙办公楼和甲办公楼使用率为30%。'
+    expect(()=>groundMapAssessment(brief(text),context,[source(text)])).not.toThrow()
+    expect(()=>groundMapAssessment(brief('甲办公楼使用率为30%。'),context,[source(text)])).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+    const single='甲办公楼使用率为30%。'
+    expect(()=>groundMapAssessment(brief(single),context,[source(single)])).not.toThrow()
+  })
+  it.each(['/','＋','&'])('treats coordinated owner order symmetrically for %s',separator=>{
+    for(const owner of [`甲办公楼${separator}乙办公楼改造`,`乙办公楼${separator}甲办公楼改造`]){
+      const original=source(`<table>${field('项目编号','JOINT')}${field('项目名称',owner)}${field('预算金额','120万元')}</table>`),records=adaptOfficialSource(original).records
+      const parsed={...original,untrusted_text:visibleText(original.untrusted_text!,original.url!)}
+      expect(()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[parsed],records)).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+      expect(()=>groundMapAssessment(brief(`${owner}预算为120万元。`),context,[parsed],records)).not.toThrow()
+    }
+  })
   it.each(['甲办公楼（含乙办公楼）改造','甲办公楼（包括乙办公楼）改造','甲办公楼连同乙办公楼改造'])('preserves an explicit inclusion scope in both prose and basis: %s',owner=>{
     const original=source(`<table>${field('项目编号','INCLUSION')}${field('项目名称',owner)}${field('预算金额','120万元')}</table>`),records=adaptOfficialSource(original).records
     const parsed={...original,untrusted_text:visibleText(original.untrusted_text!,original.url!)}
@@ -73,6 +111,29 @@ describe('monetary claim ownership',()=>{
 })
 
 describe('the target is the claim object, not just a geographical reference',()=>{
+  it.each([
+    '甲办公楼只是乙办公楼维保项目的开标地点。',
+    '甲办公楼作为乙办公楼维保采购的开标场地。',
+    '甲办公楼为乙办公楼维保采购提供开标场地。',
+    '乙办公楼的维保项目在甲办公楼进行开标。',
+    '乙办公楼维保项目开标地点设在甲办公楼。',
+  ])('binds an event venue to its proposal and dimension, including actual records: %s',quote=>{
+    const html=`<html><body><table>${field('项目编号','VENUE')}${field('项目名称',quote)}</table></body></html>`
+    const raw=source(html),records=adaptOfficialSource(raw).records,parsed={...raw,untrusted_text:visibleText(html,raw.url!)}
+    expect(records).toHaveLength(1)
+    for(const structured of [false,true]){
+      const sources=structured?[parsed]:[source(quote)],record_id=structured?records[0].id:undefined
+      const evaluate=(summary:string,key:'demand'|'implementation'|'resources',basis:string)=>groundMapAssessment({...brief(summary),dimension_evidence:[{key,source_id:'S',record_id,quote,basis}]},context,sources,structured?records:[])
+      const wrong=evaluate('研究甲办公楼设备维护。','demand','甲办公楼存在设备维护采购需求。')
+      expect(wrong.dimension_evidence).toEqual([])
+      expect(dashboardQuestions({purpose:wrong.summary,evidence:wrong.dimension_evidence!})).toEqual({})
+      const meeting=evaluate('研究甲办公楼会务服务。','demand','开标活动提供了本楼会务场地使用线索。')
+      expect(meeting.dimension_evidence).toHaveLength(1)
+      expect(Object.keys(dashboardQuestions({purpose:meeting.summary,evidence:meeting.dimension_evidence!}))).toEqual(['fit_demand'])
+      for(const key of ['implementation','resources'] as const)expect(evaluate('研究甲办公楼会务服务。',key,'开标活动提供了本楼会务场地使用线索。').dimension_evidence).toEqual([])
+      expect(evaluate('研究甲办公楼会务服务。','demand','甲办公楼存在设备维护采购需求。').dimension_evidence).toEqual([])
+    }
+  })
   it.each([
     '乙办公楼（紧邻甲办公楼）本期采购设备维护服务。',
     '乙办公楼的维保项目在甲办公楼进行开标。',

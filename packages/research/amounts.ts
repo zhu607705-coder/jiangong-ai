@@ -44,8 +44,12 @@ export function groundedAmounts(text:string,context:MapScreenContext,name:string
     return sources.some(source=>{
       if(!primaryObjectSource(source,context)||!sourceCurrentAt(source,context.created_at))return false
       if(Date.parse(context.created_at)-Date.parse(source.published_at!)>180*86400000&&!/历史|档案|当年|20\d\d年/.test(text))return false
-      if(source.untrusted_text!.includes(text)&&objectQuoteMatches(source,context,name,text))return true
-      if(!claim||!claim.shorthand&&!claim.subject.includes(normalizedName(name))||amount[2]==='%')return false
+      // Literal suffixes can cut away the first member of a joint owner. Known
+      // monetary fields always use complete record/sentence ownership below.
+      // Other literal numeric facts are retained only as complete statements.
+      if(!claim||amount[2]==='%')return source.untrusted_text!.split(/[。；;\n]/).some(sentence=>
+        sentence.trim()===text.replace(/[。；;\n]+$/,'').trim()&&objectQuoteMatches(source,context,name,sentence))
+      if(!claim.shorthand&&!claim.subject.includes(normalizedName(name)))return false
       const value=number(amount[1])
       // The claim's complete subject phrase must be supported by the same
       // record, not merely contain the selected name somewhere in a paragraph.

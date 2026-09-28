@@ -15,13 +15,15 @@ import { MapScreeningService } from '../../services/map-screening/service'
 import { projectInput } from '../../packages/contracts/validate'
 import { config } from '../../apps/host/config'
 import { RESEARCH_POLICY } from '../../packages/research/public-sources'
+import { DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
 
 const original={dataDir:config.dataDir,modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
 const directories:string[]=[]
 afterEach(async()=>{vi.useRealTimers();Object.assign(config,original);vi.resetAllMocks();for(const dir of directories.splice(0))await rm(dir,{recursive:true,force:true})})
 
 describe('map analyst external-data boundary',()=>{
-  it('marks expired local-source partials for refresh and recovers through the real service after restart',async()=>{
+  it.each([false,true].flatMap(scored=>[false,true].flatMap(restartBeforeRefresh=>[false,true].map(omitFreshMoney=>({scored,restartBeforeRefresh,omitFreshMoney})))))(
+    'refreshes known expiry across both file caches: %j',async({scored,restartBeforeRefresh,omitFreshMoney})=>{
     vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
     const dir=await mkdtemp(join(tmpdir(),'map-refresh-service-'));directories.push(dir)
     Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:false})
@@ -32,34 +34,68 @@ describe('map analyst external-data boundary',()=>{
     projectInput(input)
     const snapshot=async()=>({revision:'unchanged',syntheticCount:0,projects:[{project:{id:input.project_id,name:'公开测试项目',owner_id:'local-operator',input,context_version:0,created_at:'2026-09-28T00:00:00Z',updated_at:'2026-09-28T00:00:00Z'},sources:[old],documentCount:0}]})
     const provider={revision:()=> 'test',query:async(path:string)=>path.includes('regeo')?{regeocode:{formatted_address:'浙江省杭州市西湖区甲办公楼',addressComponent:{city:'杭州市'}}}:{count:'0',pois:[]}}
+    // Build the old public-research cache through the actual collector/Adapter.
+    // It is still current regional news, but contains no updated object budget.
+    const {collectSelectedEvidence}=await vi.importActual<typeof import('../../services/capabilities/research')>('../../services/capabilities/research')
+    const initialResearch=await collectSelectedEvidence({name:'甲办公楼',purpose:'维护采购',asOf:new Date().toISOString()},new AbortController().signal,()=>{}, {
+      search:async()=>({sources:[{url:'https://example.gov.cn/news',title:'片区公开新闻',publishedAt:'2026-09-20'}]}),
+      fetch:async()=>({statusCode:200,truncated:false,body:{kind:'html',content:'<html><head><meta name="PubDate" content="2026-09-20"></head><body><article>本片区将继续完善公共服务，具体采购以采购公告为准。</article></body></html>'}}),
+    },['甲办公楼采购 site:gov.cn'])
+    expect(initialResearch.sources).toHaveLength(1)
     let initial=true
     const analyst:typeof analyzeMapContext=async(ctx,profile,signal,emit=()=>{},previous)=>{
       if(!initial)return analyzeMapContext(ctx,profile,signal,emit,previous)
       initial=false
-      const result:any={context_id:ctx.id,profile,status:'partial',assessment:groundMapAssessment({summary:old.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]},ctx),model_calls:[],reason:'评分尚未完成。',created_at:new Date().toISOString(),research_sources:[],research_records:[]}
+      const result:any={context_id:ctx.id,profile,status:scored?'completed':'partial',assessment:groundMapAssessment({summary:scored?'研究甲办公楼维护。':old.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[],dimension_evidence:[{key:'resources',source_id:'P-REFRESH:OLD',quote:old.untrusted_text,basis:'本楼预算记录。'}]},ctx),model_calls:[],reason:scored?null:'评分尚未完成。',created_at:new Date().toISOString(),research_sources:initialResearch.sources,research_records:initialResearch.records}
+      if(scored)result.decision_support={status:'completed',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:'TEST',duration_ms:0,input_tokens:0,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:['P-REFRESH:OLD'],thresholds:DECISION_THRESHOLDS,error_code:null,
+        dashboard:{policy_version:'test',purpose:result.assessment.summary,model:'decision-model-preview',request_id:'TEST',status:'partial',dimensions:[{key:'resources',value:3.5,confidence:.9,evidence_refs:['P-REFRESH:OLD'],basis:'本楼预算记录。'}]}}
       await emit({type:'brief',result});return result
     }
     const service=new MapScreeningService(provider,dir,analyst,snapshot),signal=new AbortController().signal
     const target:any={kind:'point',longitude:120.16,latitude:30.28,radius_m:800,bounds:null,label:'甲办公楼',label_origin:'public',object_ref:'amap:A'}
-    const ctx=await service.context(target,signal);await service.analyze(ctx.id,'balanced',signal)
+    const ctx=await service.context(target,signal),first=await service.analyze(ctx.id,'balanced',signal)
+    const cacheKey=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name:'甲办公楼',target:ctx.target,profile:'balanced',day:ctx.created_at.slice(0,10)})).digest('hex')
+    const cacheDir=join(dir,'map-screening','public-research');await mkdir(cacheDir,{recursive:true})
+    await writeFile(join(cacheDir,cacheKey+'.json'),JSON.stringify({saved_at:new Date().toISOString(),result:initialResearch}))
     vi.setSystemTime(new Date('2026-09-28T08:00:59Z'))
     expect((await service.savedAnalysis(ctx.id,'balanced',signal))?.refresh_required).not.toBe(true)
+    if(scored){
+      expect((await service.analyze(ctx.id,'balanced',signal)).decision_support?.dashboard?.dimensions[0].value).toBe(3.5)
+      expect(ports.open).not.toHaveBeenCalled()
+    }
     for(const now of ['2026-09-28T08:01:00Z','2026-09-28T08:01:01Z','2026-09-28T08:02:00Z']){
       vi.setSystemTime(new Date(now));const saved=await service.savedAnalysis(ctx.id,'balanced',signal)
-      expect(saved?.refresh_required).toBe(true);expect(saved?.assessment?.summary).toBe(old.untrusted_text);expect(saved?.reason).toContain('重新取证')
+      expect(saved?.refresh_required).toBe(true);expect(saved?.assessment?.summary).toBe(first.assessment?.summary);expect(saved?.reason).toContain('重新取证')
+      expect(saved?.decision_support).toBeUndefined()
     }
-    vi.setSystemTime(new Date('2026-09-28T08:11:00Z'))
-    const restarted=new MapScreeningService(provider,dir,analyst,snapshot),freshContext=await restarted.context(target,signal)
-    expect(freshContext.id).not.toBe(ctx.id)
+    vi.setSystemTime(new Date(restartBeforeRefresh?'2026-09-28T08:11:00Z':'2026-09-28T08:02:00Z'))
+    const restarted=restartBeforeRefresh?new MapScreeningService(provider,dir,analyst,snapshot):service,freshContext=restartBeforeRefresh?await restarted.context(target,signal):ctx
+    expect(freshContext.id===ctx.id).toBe(!restartBeforeRefresh)
     expect((await restarted.savedAnalysis(freshContext.id,'balanced',signal))?.refresh_required).toBe(true)
     const current={...old,id:'NEW',url:'https://www.ccgp.gov.cn/new',expires_at:undefined,published_at:'2026-09-28T08:01:00Z',untrusted_text:'甲办公楼预算为180万元。'}
     const trace={status:'success',queries:[],source_ids:['NEW'],warnings:[],reused:false}
     ports.collect.mockResolvedValue({sources:[current],records:[],receipts:[],trace})
-    ports.open.mockResolvedValue({calls:[],close:async()=>{},call:async(stage:string)=>({value:stage==='research_plan'?trace:{summary:current.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]}}),runReadCapability:async(_name:string,fn:(s:AbortSignal)=>Promise<unknown>)=>fn(signal)})
+    const freshSummary=omitFreshMoney?'研究甲办公楼设备维护。':current.untrusted_text,inputs:any[]=[]
+    ports.open.mockResolvedValue({calls:[],close:async()=>{},call:async(stage:string,prompt:string)=>{
+      if(stage==='research_plan')return {value:trace}
+      inputs.push(JSON.parse(prompt.match(/<untrusted_evidence>(.*?)<\/untrusted_evidence>/s)![1]))
+      return {value:{summary:freshSummary,opportunities:[],cautions:[],unknowns:[],next_steps:[]}}
+    },runReadCapability:async(_name:string,fn:(s:AbortSignal)=>Promise<unknown>)=>fn(signal)})
     const result=await restarted.analyze(freshContext.id,'balanced',signal)
-    expect(result.status).toBe('completed');expect(result.assessment?.summary).toBe(current.untrusted_text);expect(result.refresh_required).not.toBe(true)
+    expect(result.status).toBe('completed');expect(result.assessment?.summary).toBe(freshSummary);expect(result.refresh_required).not.toBe(true)
     expect(ports.collect).toHaveBeenCalledTimes(1)
-    expect((await restarted.savedAnalysis(freshContext.id,'balanced',signal))?.assessment?.summary).toBe(current.untrusted_text)
+    expect(ports.collect.mock.calls[0][0].asOf).toBe(new Date().toISOString())
+    expect(inputs).toHaveLength(1)
+    expect(inputs[0].as_of).toBe(new Date().toISOString())
+    expect(inputs[0].sources.map((s:any)=>s.id)).toContain('NEW')
+    expect(inputs[0].sources.map((s:any)=>s.id)).not.toContain(initialResearch.sources[0].id)
+    expect((await restarted.savedAnalysis(freshContext.id,'balanced',signal))?.assessment?.summary).toBe(freshSummary)
+    await restarted.analyze(freshContext.id,'balanced',signal)
+    vi.setSystemTime(new Date('2026-09-28T08:22:00Z'))
+    const recovered=new MapScreeningService(provider,dir,analyst,snapshot),newContext=await recovered.context(target,signal)
+    expect(newContext.id).not.toBe(freshContext.id)
+    expect((await recovered.analyze(newContext.id,'balanced',signal)).assessment?.summary).toBe(freshSummary)
+    expect(ports.collect).toHaveBeenCalledTimes(1)
   })
   it('refreshes evidence when an expired partial money claim can no longer be reused',async()=>{
     vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))

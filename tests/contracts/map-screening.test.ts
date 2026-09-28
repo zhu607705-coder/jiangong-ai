@@ -339,7 +339,7 @@ describe('persisted object research', () => {
     await engine.analyze(context.id,'balanced',signal)
     expect((await engine.savedAnalysis(context.id,'balanced',signal))?.status).toBe('completed')
     vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
-    expect(await engine.savedAnalysis(context.id,'balanced',signal)).toBeNull()
+    expect(await engine.savedAnalysis(context.id,'balanced',signal)).toMatchObject({status:'partial',refresh_required:true})
     analyst.mockImplementation(async(c,p)=>brief(c,p,'partial'))
     const updated=await engine.analyze(context.id,'balanced',signal)
     expect(updated.decision_support?.dashboard).toBeUndefined()
@@ -364,10 +364,10 @@ describe('persisted object research', () => {
     vi.setSystemTime(new Date('2026-09-28T08:00:59Z'))
     expect((await engine.savedAnalysis(context.id,'balanced',signal))?.status).toBe('completed')
     for(const now of ['2026-09-28T08:01:00Z','2026-09-28T08:01:01Z']){
-      vi.setSystemTime(new Date(now));expect(await engine.savedAnalysis(context.id,'balanced',signal)).toBeNull()
+      vi.setSystemTime(new Date(now));expect(await engine.savedAnalysis(context.id,'balanced',signal)).toMatchObject({status:'partial',refresh_required:true})
     }
     vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
-    expect(await engine.savedAnalysis(context.id,'balanced',signal)).toBeNull()
+    expect(await engine.savedAnalysis(context.id,'balanced',signal)).toMatchObject({status:'partial',refresh_required:true})
     const rescanned=await engine.screen(bounds,'balanced','implementation',signal,()=>{})
     expect(rescanned.cells[0].dashboard).toBeUndefined()
     expect(rescanned.cells[0].tier).not.toBe('strong')
@@ -375,7 +375,7 @@ describe('persisted object research', () => {
     const fresh=await engine.context(context.target,signal)
     expect(fresh.id).not.toBe(context.id)
     const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,regionResolver,async()=>{})
-    expect(await recovered.savedAnalysis(fresh.id,'balanced',signal)).toBeNull()
+    expect(await recovered.savedAnalysis(fresh.id,'balanced',signal)).toMatchObject({status:'partial',refresh_required:true})
     analyst.mockImplementation(async(c,p)=>brief(c,p,'partial'))
     expect((await recovered.analyze(fresh.id,'balanced',signal)).decision_support?.dashboard).toBeUndefined()
     expect(analyst).toHaveBeenCalledTimes(2)
@@ -392,6 +392,8 @@ describe('persisted object research', () => {
     expect(result.status).toBe('partial')
     expect(result.decision_support).toBeUndefined()
     expect(result.reason).toContain('已失效')
+    expect(result.refresh_required).toBe(true)
+    expect((await engine.savedAnalysis(context.id,'balanced',signal))?.refresh_required).toBe(true)
   })
   it('restores color only for the same scope/profile/revision without another model call', async () => {
     const {engine,analyst,loader}=await service();const signal=new AbortController().signal
