@@ -47,7 +47,8 @@ export function ownedModelValue<T>(type: string, value: unknown): T {
 }
 
 /** Resolve our finite canonical definitions for DSH's object-root structured-output seam. */
-export function modelSchema(name: string, candidateIds?: readonly string[]): Record<string, unknown> {
+export type ModelPresentationPolicy = {omitOptionalFields?:readonly string[];evidenceIds?:readonly string[]}
+export function modelSchema(name: string, candidateIds?: readonly string[], policy:ModelPresentationPolicy = {}): Record<string, unknown> {
   const defs = schema.definitions as Record<string, unknown>
   function inline(value: unknown): unknown {
     if (Array.isArray(value)) return value.map(inline)
@@ -73,11 +74,31 @@ export function modelSchema(name: string, candidateIds?: readonly string[]): Rec
       else if (key === 'enum' && candidateIds && Array.isArray(child) && child.includes('defer_and_investigate')) out[key] = child.filter(id => candidateIds.includes(id))
       else if (allowed.has(key)) out[key] = child
     }
+    // DSH's presentation subset omits numeric length keywords. Keep the bound
+    // visible to the model as a description while AJV remains authoritative.
+    const bounds:string[]=[]
+    if(typeof node.maxLength==='number') bounds.push(`最多 ${node.maxLength} 个字符`)
+    if(typeof node.maxItems==='number') bounds.push(`最多 ${node.maxItems} 项`)
+    if(bounds.length) out.description=[node.description,...bounds].filter(Boolean).join('；')
     return out
   }
   // DSH intentionally accepts a smaller presentation subset. The full canonical
   // bounds still run through AJV on the returned value before it is used.
   const result = present(inline(defs[name])) as Record<string, unknown>
+  for(const field of policy.omitOptionalFields || []) {
+    if((result.required as string[] | undefined)?.includes(field)) throw new Error('CANNOT_OMIT_REQUIRED_MODEL_FIELD')
+    delete (result.properties as Record<string,unknown>)[field]
+  }
+  const evidenceIds=policy.evidenceIds
+  if(evidenceIds) {
+    const allowedReferences=[...evidenceIds]
+    function closeReferences(node:any):void {
+      if(!node || typeof node!=='object') return
+      if(node.properties?.evidence_refs) node.properties.evidence_refs.items={type:'string',enum:allowedReferences}
+      for(const child of Object.values(node)) if(Array.isArray(child)) child.forEach(closeReferences); else closeReferences(child)
+    }
+    closeReferences(result)
+  }
   if (name === 'ScenarioProposal') {
     const properties = result.properties as Record<string, Record<string, unknown>>
     const base = properties.scenarios.items as Record<string, unknown>

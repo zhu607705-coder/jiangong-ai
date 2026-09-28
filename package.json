@@ -21,7 +21,8 @@
     "corpus:collect": "tsx scripts/corpus.ts collect",
     "corpus:import": "tsx scripts/corpus.ts import",
     "corpus:export": "tsx scripts/corpus.ts export",
-    "corpus:search": "tsx scripts/corpus.ts search"
+    "corpus:search": "tsx scripts/corpus.ts search",
+    "test:decision:live": "node --use-env-proxy --import tsx scripts/qwen-live-check.ts"
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "1.0.1",

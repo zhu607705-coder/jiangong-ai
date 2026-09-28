@@ -1,10 +1,11 @@
 import { booleanValid } from '@turf/boolean-valid'
 import { decisionFactors } from '../../packages/maps/decision-factors'
+import { applyDecisionGuards } from '../../packages/decision/structured-route'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { validate } from '../../packages/contracts/validate'
-import { EVIDENCE_GROUPS, INVESTIGATION_GAPS, SCREEN_METHOD, assertScreenBounds, classifyCells, contextComparable } from '../../packages/maps/screening-policy'
+import { EVIDENCE_GROUPS, INVESTIGATION_GAPS, SCREEN_METHOD, assertScreenBounds, classifyCells, contextComparable, usableMapEvidence } from '../../packages/maps/screening-policy'
 import type { MapScreenAnalysis, MapScreenBounds, MapScreenContext, MapScreenEvidence, MapScreenPoi, MapScreenProfile, MapScreenResult, MapScreenTarget, MapScreenTheme } from '../../apps/host/generated/contracts'
 import { fingerprint, type MapProvider } from './provider'
 import { targetContains, evidenceAt, type ProjectEvidenceSnapshot } from './project-evidence'
@@ -118,7 +119,7 @@ export class MapScreeningService {
     if (Date.parse(context.expires_at) < Date.now()) throw new Error('CONTEXT_EXPIRED')
     const key = id + ':' + profile, cached = this.analyses.get(key)
     if (cached?.status === 'completed') return structuredClone(cached)
-    if (context.groups.filter(g => g.status === 'available').length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
+    if (context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return { context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
     this.activeAnalyses++; this.analyzing.add(key)
     try {
@@ -127,6 +128,10 @@ export class MapScreeningService {
       if (analysis.assessment) {
         const extracted = analysis.assessment.factors || []
         analysis.assessment.factors = decisionFactors(context).map(f => f.state === 'unknown' ? extracted.find(e => e.key === f.key) || f : f)
+      }
+      if(analysis.decision_support) {
+        analysis.decision_support=applyDecisionGuards(analysis.decision_support,decisionFactors(context))
+        if(analysis.assessment && analysis.decision_support.next_step) analysis.assessment.next_steps=[analysis.decision_support.next_step]
       }
       if (this.analyses.size >= 120) this.analyses.delete(this.analyses.keys().next().value!)
       if (analysis.status === 'completed') this.analyses.set(key, analysis)

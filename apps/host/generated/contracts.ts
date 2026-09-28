@@ -294,6 +294,7 @@ export interface DecisionPacket {
   analysis_method?: "deterministic_checks" | "model_assisted";
   unresolved_disagreements?: string[];
   scope?: Scope;
+  decision_support?: DecisionSupport;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -359,6 +360,51 @@ export interface ResearchTrace {
   source_ids: string[];
   warnings: string[];
   reused: boolean;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DecisionSupport".
+ */
+export interface DecisionSupport {
+  status: "completed" | "unavailable" | "failed";
+  provider: "qwen_systemone";
+  model: string;
+  policy_version: string;
+  input_hash: string;
+  created_at: string;
+  request_id: string | null;
+  duration_ms: number;
+  input_tokens: number | null;
+  answers: {
+    next_action: DecisionChoice;
+    priority_dimension: DecisionChoice;
+    evidence_sufficient: number;
+  } | null;
+  action: ("investigate" | "resolve_blocker" | "compare" | "review") | null;
+  priority: ("implementation" | "adaptation" | "demand" | "operations" | "resources" | "access") | null;
+  next_step: string;
+  /**
+   * @maxItems 12
+   */
+  guard_reasons: string[];
+  input_source_ids: string[];
+  thresholds: {
+    min_confidence: number;
+    min_choice_probability: number;
+    min_sufficiency: number;
+  };
+  error_code: string | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DecisionChoice".
+ */
+export interface DecisionChoice {
+  choice: string;
+  confidence: number;
+  probabilities: {
+    [k: string]: number;
+  };
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -617,6 +663,7 @@ export interface MapScreenAnalysis {
   model_calls: ModelCall[];
   reason: string | null;
   created_at: string;
+  decision_support?: DecisionSupport;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

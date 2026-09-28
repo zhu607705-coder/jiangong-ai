@@ -415,6 +415,33 @@
       ],
       "execution_profile": "local_fixture_then_pr_ci",
       "upstream_verification_required": true
+    },
+    {
+      "id": "T17",
+      "depends_on": [
+        "T16"
+      ],
+      "goal": "合并 PR1，并将 Qwen decision-model-preview 作为 DSH 内的结构化判断能力接入真实地图与完整项目操作链。",
+      "status": "completed",
+      "definition_of_done": "真实网关调用成功；低置信、缺项与阻点处理清楚；来源约束、简报修复、调查项与真实应用链路通过验证；密钥只在本机。",
+      "evidence_log": "research/test_results/qwen-integration.json",
+      "write_scope": [
+        "runtime/",
+        "services/capabilities/",
+        "packages/decision/",
+        "packages/contracts/",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/"
+      ],
+      "expected_artifacts": [
+        "services/capabilities/decision-model.ts",
+        "packages/decision/structured-route.ts",
+        "docs/Qwen决策模型接入.md",
+        "research/test_results/qwen-integration.json"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

@@ -1,0 +1,223 @@
+{
+  "tested_at": "2026-09-28T06:31:29.048Z",
+  "scope": "synthetic protocol and route behavior, not investment quality evaluation",
+  "transport": "DSH ToolRuntime.execute -> Qwen System One",
+  "results": [
+    {
+      "case": "missing",
+      "result": {
+        "status": "completed",
+        "provider": "qwen_systemone",
+        "model": "decision-model-preview",
+        "policy_version": "structured-research-route-v1",
+        "input_hash": "18785fe0774cd455556cdb378043ebaf01e114fd0fe6fd836b8424a9b3fb744e",
+        "created_at": "2026-09-28T06:31:28.355Z",
+        "request_id": "cf39db65-e6ee-4c90-90be-bb6007644e71",
+        "duration_ms": 283,
+        "input_tokens": 651,
+        "answers": {
+          "next_action": {
+            "choice": "investigate",
+            "confidence": 0.89,
+            "probabilities": {
+              "investigate": 0.92,
+              "resolve_blocker": 0.08,
+              "compare": 0,
+              "review": 0
+            }
+          },
+          "priority_dimension": {
+            "choice": "implementation",
+            "confidence": 0.4,
+            "probabilities": {
+              "implementation": 0.5,
+              "adaptation": 0.08,
+              "demand": 0.06,
+              "operations": 0.05,
+              "resources": 0.1,
+              "access": 0.2
+            }
+          },
+          "evidence_sufficient": 0
+        },
+        "action": "investigate",
+        "priority": "implementation",
+        "next_step": "核查用途、权利取得与腾退条件。",
+        "guard_reasons": [
+          "返回的置信度或选项概率未达到当前分流阈值。"
+        ],
+        "input_source_ids": [
+          "SYNTHETIC-PROTOCOL-SOURCE"
+        ],
+        "thresholds": {
+          "min_confidence": 0.8,
+          "min_choice_probability": 0.65,
+          "min_sufficiency": 0.75
+        },
+        "error_code": null
+      }
+    },
+    {
+      "case": "blocked",
+      "result": {
+        "status": "completed",
+        "provider": "qwen_systemone",
+        "model": "decision-model-preview",
+        "policy_version": "structured-research-route-v1",
+        "input_hash": "3cef364421341828d11a1c2cc20c5c536699e7bdccb5a48b4af20b95e8636aa3",
+        "created_at": "2026-09-28T06:31:28.654Z",
+        "request_id": "ffcd713e-6b53-40e6-bdfb-f7aa3511ea5a",
+        "duration_ms": 134,
+        "input_tokens": 676,
+        "answers": {
+          "next_action": {
+            "choice": "resolve_blocker",
+            "confidence": 0.76,
+            "probabilities": {
+              "investigate": 0.16,
+              "resolve_blocker": 0.82,
+              "compare": 0.01,
+              "review": 0
+            }
+          },
+          "priority_dimension": {
+            "choice": "implementation",
+            "confidence": 0.91,
+            "probabilities": {
+              "implementation": 0.92,
+              "adaptation": 0.02,
+              "demand": 0.01,
+              "operations": 0.01,
+              "resources": 0.01,
+              "access": 0.02
+            }
+          },
+          "evidence_sufficient": 0.16
+        },
+        "action": "resolve_blocker",
+        "priority": "implementation",
+        "next_step": "核查用途、权利取得与腾退条件。",
+        "guard_reasons": [
+          "已有来源记录存在明确阻点，优先处理对应条件。"
+        ],
+        "input_source_ids": [
+          "SYNTHETIC-PROTOCOL-SOURCE"
+        ],
+        "thresholds": {
+          "min_confidence": 0.8,
+          "min_choice_probability": 0.65,
+          "min_sufficiency": 0.75
+        },
+        "error_code": null
+      }
+    },
+    {
+      "case": "supported",
+      "result": {
+        "status": "completed",
+        "provider": "qwen_systemone",
+        "model": "decision-model-preview",
+        "policy_version": "structured-research-route-v1",
+        "input_hash": "9351f0d2d80bd98166c3815c3ba5fa5a382599803bd1bd3babc882eb3fa86b12",
+        "created_at": "2026-09-28T06:31:28.788Z",
+        "request_id": "303545ea-1e01-4b25-aecd-68756d6e7484",
+        "duration_ms": 134,
+        "input_tokens": 681,
+        "answers": {
+          "next_action": {
+            "choice": "investigate",
+            "confidence": 0.6,
+            "probabilities": {
+              "investigate": 0.7,
+              "resolve_blocker": 0.09,
+              "compare": 0.21,
+              "review": 0.01
+            }
+          },
+          "priority_dimension": {
+            "choice": "access",
+            "confidence": 0.26,
+            "probabilities": {
+              "implementation": 0.17,
+              "adaptation": 0.14,
+              "demand": 0.08,
+              "operations": 0.1,
+              "resources": 0.11,
+              "access": 0.38
+            }
+          },
+          "evidence_sufficient": 0.61
+        },
+        "action": "review",
+        "priority": "implementation",
+        "next_step": "复核判断依据，确认关键条件后更新研究路径。",
+        "guard_reasons": [
+          "返回的置信度或选项概率未达到当前分流阈值。"
+        ],
+        "input_source_ids": [
+          "SYNTHETIC-PROTOCOL-SOURCE"
+        ],
+        "thresholds": {
+          "min_confidence": 0.8,
+          "min_choice_probability": 0.65,
+          "min_sufficiency": 0.75
+        },
+        "error_code": null
+      }
+    },
+    {
+      "case": "conflict",
+      "result": {
+        "status": "completed",
+        "provider": "qwen_systemone",
+        "model": "decision-model-preview",
+        "policy_version": "structured-research-route-v1",
+        "input_hash": "79bba6d2a1f8cf9a37e723032794f88cde476e4bde261f51189cf70127d5811b",
+        "created_at": "2026-09-28T06:31:28.923Z",
+        "request_id": "0feee10a-faad-4390-9541-f589850c6e4c",
+        "duration_ms": 124,
+        "input_tokens": 682,
+        "answers": {
+          "next_action": {
+            "choice": "review",
+            "confidence": 0.41,
+            "probabilities": {
+              "investigate": 0.24,
+              "resolve_blocker": 0.18,
+              "compare": 0.02,
+              "review": 0.56
+            }
+          },
+          "priority_dimension": {
+            "choice": "resources",
+            "confidence": 0.33,
+            "probabilities": {
+              "implementation": 0.09,
+              "adaptation": 0.08,
+              "demand": 0.06,
+              "operations": 0.1,
+              "resources": 0.44,
+              "access": 0.22
+            }
+          },
+          "evidence_sufficient": 0.14
+        },
+        "action": "review",
+        "priority": "resources",
+        "next_step": "复核判断依据，确认关键条件后更新研究路径。",
+        "guard_reasons": [
+          "返回的置信度或选项概率未达到当前分流阈值。"
+        ],
+        "input_source_ids": [
+          "SYNTHETIC-PROTOCOL-SOURCE"
+        ],
+        "thresholds": {
+          "min_confidence": 0.8,
+          "min_choice_probability": 0.65,
+          "min_sufficiency": 0.75
+        },
+        "error_code": null
+      }
+    }
+  ]
+}

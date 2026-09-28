@@ -24,7 +24,7 @@ class AppProcess:
         self.start()
 
     def start(self):
-        env = {**os.environ, "PORT": "14310", "CAPABILITY_PORT": "14311", "WORKSPACE_PORT": "15173", "DATA_DIR": str(self.directory / "data"), "DEEPSEEK_API_KEY": "", "DEEPSEEK_SEARCH_API_KEY": "", "AMAP_JS_KEY": "", "AMAP_SECURITY_CODE": ""}
+        env = {**os.environ, "PORT": "14310", "CAPABILITY_PORT": "14311", "WORKSPACE_PORT": "15173", "DATA_DIR": str(self.directory / "data"), "DEEPSEEK_API_KEY": "", "DEEPSEEK_SEARCH_API_KEY": "", "AMAP_JS_KEY": "", "AMAP_SECURITY_CODE": "", "QWEN_DECISION_API_KEY": "", "QWEN_DECISION_ENABLED": "false", "QWEN_DECISION_ENDPOINT": ""}
         env.pop("DATABASE_URL", None)
         node = os.environ.get('HZZ_TEST_NODE') or shutil.which('node') or str(ROOT / '.tools/node/bin/node')
         self.process = subprocess.Popen([node, "--import", "tsx", "scripts/dev.ts"], cwd=ROOT, env=env, stdout=self.log, stderr=self.log, start_new_session=True)

@@ -461,3 +461,8 @@
 .map-shell .atlas-search button {color:#355c7d;}
 .map-shell .atlas-search button:disabled {color:#8293a0;}
 @media(max-width:760px){.atlas-view:has(.atlas-inspector) .atlas-layer-control{display:none}}
+.decision-route {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;margin-bottom:10px;border-bottom:1px solid #809d9033;font-size:12px;line-height:1.7}
+.decision-route strong {color:#237563;font-weight:600}.decision-route span {color:#6f817d;font-size:11px}
+.decision-route-details {font-size:12px;line-height:1.8;margin:14px 0;padding:12px;border:1px solid #809d9026;border-radius:7px}
+.decision-route-details > strong {font-size:12px}.decision-route-details small {font-size:10px;overflow-wrap:anywhere}
+.decision-route-details dl > div {display:flex;justify-content:space-between}.decision-route-details dd {margin:0}

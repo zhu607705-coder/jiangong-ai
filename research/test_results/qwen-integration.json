@@ -1,0 +1,193 @@
+{
+  "checked_at": "2026-09-28T06:58:51.380577+00:00",
+  "status": "passed_local_and_live",
+  "merged_pr": {
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/1",
+    "commit": "1408fee8537ebd47a6ec86c05c4091e4e5275436",
+    "pr_head": "d3915a009df7ac6b45297da9f762d94e28a99e00",
+    "ci": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/36382592526"
+  },
+  "gateway": {
+    "general": "https://maas.qianwenaiapi.com/compatible-mode/v1",
+    "general_models_http": 200,
+    "general_systemone_http": 404,
+    "verified_decision_endpoint": "https://trial.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/systemone",
+    "verified_http": 200,
+    "model": "decision-model-preview",
+    "official_source": "https://platform.qianwenai.com/docs/api-reference/decision-model-api"
+  },
+  "automated": {
+    "js_checks": 111,
+    "python_checks": 64,
+    "http_checks": 9,
+    "total": 184,
+    "synthetic_browser_checks": 8,
+    "build": "passed",
+    "log": "research/baseline_logs/qwen-verification.log",
+    "build_log": "research/baseline_logs/qwen-build.log"
+  },
+  "live_map": {
+    "context_id": "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7",
+    "status": "completed",
+    "summary": "先补证据：核查用途、权利取得与腾退条件，再定片区更新路径。",
+    "summary_characters": 29,
+    "canonical_citations": [
+      "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:work_live",
+      "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:activity",
+      "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-da8dac8381143c",
+      "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:work_live"
+    ],
+    "decision_support": {
+      "status": "completed",
+      "provider": "qwen_systemone",
+      "model": "decision-model-preview",
+      "policy_version": "structured-research-route-v1",
+      "input_hash": "7394b4c2b4b8f95f9518e3a3fc4d864d6259d4d24c285de20c2e8f37b6ee6eb0",
+      "created_at": "2026-09-28T06:53:35.279Z",
+      "request_id": "bba2e3b7-5eac-4a30-bee6-01d058d22de5",
+      "duration_ms": 775,
+      "input_tokens": 8148,
+      "answers": {
+        "next_action": {
+          "choice": "investigate",
+          "confidence": 0.32,
+          "probabilities": {
+            "investigate": 0.49,
+            "resolve_blocker": 0.15,
+            "compare": 0.35,
+            "review": 0.01
+          }
+        },
+        "priority_dimension": {
+          "choice": "operations",
+          "confidence": 0.19,
+          "probabilities": {
+            "implementation": 0.14,
+            "adaptation": 0.15,
+            "demand": 0.17,
+            "operations": 0.32,
+            "resources": 0.14,
+            "access": 0.08
+          }
+        },
+        "evidence_sufficient": 0.15
+      },
+      "action": "investigate",
+      "priority": "implementation",
+      "next_step": "核查用途、权利取得与腾退条件。",
+      "guard_reasons": [
+        "返回的置信度或选项概率未达到当前分流阈值。"
+      ],
+      "input_source_ids": [
+        "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:transit",
+        "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:activity",
+        "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:work_live",
+        "MAPCTX-ca07ada1-2243-49ac-b25b-356a914718d7:civic",
+        "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-da8dac8381143c",
+        "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-0dcdd0805ea6c7",
+        "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-0660f343db0f72",
+        "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-882e4af9a489f7",
+        "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-5dc61986bb1e5a"
+      ],
+      "thresholds": {
+        "min_confidence": 0.8,
+        "min_choice_probability": 0.65,
+        "min_sufficiency": 0.75
+      },
+      "error_code": null
+    },
+    "generative_calls": 1
+  },
+  "live_project": {
+    "run_id": "RUN-ee542702-ba93-4927-aeab-8a4d801f1b72",
+    "status": "completed",
+    "summary": "范围同名未解析、无宗地与权属，三条路径暂并列；建议先锁定边界与权属租约，再比较保留利用与部分拆建。",
+    "summary_characters": 49,
+    "decision_support": {
+      "model": "decision-model-preview",
+      "action": "investigate",
+      "status": "completed",
+      "answers": {
+        "next_action": {
+          "choice": "compare",
+          "confidence": 0.71,
+          "probabilities": {
+            "review": 0.01,
+            "compare": 0.78,
+            "investigate": 0.17,
+            "resolve_blocker": 0.04
+          }
+        },
+        "priority_dimension": {
+          "choice": "operations",
+          "confidence": 0.47,
+          "probabilities": {
+            "access": 0.01,
+            "demand": 0.08,
+            "resources": 0.13,
+            "adaptation": 0.1,
+            "operations": 0.56,
+            "implementation": 0.12
+          }
+        },
+        "evidence_sufficient": 0.83
+      },
+      "priority": "implementation",
+      "provider": "qwen_systemone",
+      "next_step": "核查用途、权利取得与腾退条件。",
+      "created_at": "2026-09-28T06:32:03.966Z",
+      "error_code": null,
+      "input_hash": "569b92b20291886c0db5b6bd8441001be6017a8c8eb759db2077429593c84c67",
+      "request_id": "2b148e2b-884e-4c86-877b-5539f183f6d1",
+      "thresholds": {
+        "min_confidence": 0.8,
+        "min_sufficiency": 0.75,
+        "min_choice_probability": 0.65
+      },
+      "duration_ms": 599,
+      "input_tokens": 7135,
+      "guard_reasons": [
+        "核心条件尚未形成完整依据，先补证据再比较。",
+        "返回的置信度或选项概率未达到当前分流阈值。"
+      ],
+      "policy_version": "structured-research-route-v1",
+      "input_source_ids": [
+        "PUB-da8dac8381143c",
+        "PUB-0dcdd0805ea6c7",
+        "PUB-0660f343db0f72",
+        "PUB-882e4af9a489f7",
+        "PUB-5dc61986bb1e5a"
+      ]
+    },
+    "first_followup": "核查用途、权利取得与腾退条件。",
+    "resumed_after_contract_repair": true
+  },
+  "live_regions": {
+    "objects": 16,
+    "sources": [
+      "osm:street-network",
+      "osm:way:1365327562",
+      "osm:way:1365327571"
+    ],
+    "attribution": [
+      "© OpenStreetMap contributors · ODbL 1.0"
+    ]
+  },
+  "native_browser": {
+    "browser": "Windows Chrome 153",
+    "hardware_3d": true,
+    "checks": {
+      "decision": "先补证据优先核查 · 实施条件",
+      "model": "结构化判断依据decision-model-preview · 775 ms原始选择：先补证据 · 置信度 32.0%先补证据49.0%先核查阻点15.0%进入路径比较35.0%复核判断1.0%返回的置信度或选项概率未达到当前分流阈值。分流阈值是当前研究规则，尚未用企业结果校准；模型置信度不作为投资成功率。请求 bba2e3b7-5eac-4a30-bee6-01d058d22de5 · 输入 8148 tokens · structured-research-route-v1",
+      "summary": "先补证据：核查用途、权利取得与腾退条件，再定片区更新路径。",
+      "desktopOverflow": false,
+      "mobileOverflow": false
+    },
+    "screenshots": [
+      "output/playwright/qwen-map-analysis.png",
+      "output/playwright/qwen-map-evidence.png",
+      "output/playwright/qwen-map-mobile.png"
+    ]
+  },
+  "quality_scope": "Live transport and guarded research workflow verified; synthetic route cases are not an investment-quality benchmark. Thresholds are not calibrated business success probabilities."
+}

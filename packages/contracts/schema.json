@@ -887,6 +887,9 @@
         },
         "scope": {
           "$ref": "#/definitions/Scope"
+        },
+        "decision_support": {
+          "$ref": "#/definitions/DecisionSupport"
         }
       },
       "required": [
@@ -1950,6 +1953,9 @@
         "created_at": {
           "type": "string",
           "maxLength": 50
+        },
+        "decision_support": {
+          "$ref": "#/definitions/DecisionSupport"
         }
       },
       "required": [
@@ -2394,6 +2400,232 @@
         "summary",
         "evidence_refs",
         "quote"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionChoice": {
+      "type": "object",
+      "properties": {
+        "choice": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "probabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "required": [
+        "choice",
+        "confidence",
+        "probabilities"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionSupport": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "unavailable",
+            "failed"
+          ]
+        },
+        "provider": {
+          "const": "qwen_systemone",
+          "type": "string"
+        },
+        "model": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "policy_version": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "input_hash": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_tokens": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "answers": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "next_action": {
+                  "$ref": "#/definitions/DecisionChoice"
+                },
+                "priority_dimension": {
+                  "$ref": "#/definitions/DecisionChoice"
+                },
+                "evidence_sufficient": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "next_action",
+                "priority_dimension",
+                "evidence_sufficient"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "action": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "investigate",
+                "resolve_blocker",
+                "compare",
+                "review"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "implementation",
+                "adaptation",
+                "demand",
+                "operations",
+                "resources",
+                "access"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next_step": {
+          "type": "string",
+          "maxLength": 96
+        },
+        "guard_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "maxItems": 12
+        },
+        "input_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 250
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "min_confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "min_choice_probability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "min_sufficiency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "min_confidence",
+            "min_choice_probability",
+            "min_sufficiency"
+          ],
+          "additionalProperties": false
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 80
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "provider",
+        "model",
+        "policy_version",
+        "input_hash",
+        "created_at",
+        "request_id",
+        "duration_ms",
+        "input_tokens",
+        "answers",
+        "action",
+        "priority",
+        "next_step",
+        "guard_reasons",
+        "input_source_ids",
+        "thresholds",
+        "error_code"
       ],
       "additionalProperties": false
     }

@@ -22,6 +22,7 @@ import WorkspaceFrame from "./components/WorkspaceFrame";
 import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext } from '../../host/generated/contracts';
+import { DecisionRoute } from './components/DecisionRoute';
 import { publicMapContext } from '../../../packages/maps/public-context';
 import {
   api,
@@ -617,6 +618,7 @@ export default function App() {
                 </div>
               )}
               <section className="summary-panel">
+                <DecisionRoute value={packet?.decision_support} />
                 <div className="summary-heading">
                   <div>
                     <div className="kicker">DECISION BRIEF</div>
@@ -636,6 +638,7 @@ export default function App() {
                   {packet?.summary ||
                     "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。"}
                 </p>
+                {packet?.decision_support && <details><summary>判断操作依据</summary><DecisionRoute value={packet.decision_support} details /></details>}
                 <div className="summary-bottom">
                   <span>
                     <span className="status-dot" />

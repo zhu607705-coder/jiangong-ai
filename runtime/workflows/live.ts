@@ -2,7 +2,7 @@ import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../
 import { randomUUID } from 'node:crypto'
 import { Store, type RunRecord } from '../../apps/host/store'
 import { config } from '../../apps/host/config'
-import type { CapabilityResult, ComparisonPacket, DecisionPacket, Impact, ProjectInput, ResearchTrace, ReviewPacket, ScenarioProposal, Source } from '../../apps/host/generated/contracts'
+import type { CapabilityResult, ComparisonPacket, DecisionPacket, Impact, ProjectInput, ResearchTrace, ReviewPacket, ScenarioProposal, Source, DecisionSupport } from '../../apps/host/generated/contracts'
 import { validate, decisionPacket } from '../../packages/contracts/validate'
 import { visibleSnapshot } from '../../packages/context/compiler'
 import { assembleDecision, revisionDiff } from '../../packages/decision/evaluate'
@@ -11,6 +11,8 @@ import { collectPublicEvidence } from '../../services/capabilities/research'
 import { LiveSession } from '../dsh/live-session'
 import { roles, type RoleId } from '../roles'
 import { digest, roleDependency } from './run'
+import { evaluateDecision } from '../../services/capabilities/decision-model'
+import { projectDecisionInput, DECISION_POLICY, DECISION_THRESHOLDS, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
 
 /** Truncate text, never source identity/scope; the untruncated local artifact remains stored. */
 function modelView(project: ProjectInput) {
@@ -64,6 +66,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   const previous = (await store.runs(run.project_id)).find(r => r.id !== run.id && r.decision)?.decision || null
   const impact: Impact = { changed_rule_ids: full.context_rules.filter(r => JSON.stringify(r) !== JSON.stringify(previous?.context_rules.find(before => before.id === r.id))).map(r => r.id), reused: [], invalidated: [], changed_paths: [] }
   const live = await LiveSession.open(run.id, signal)
+  let decisionSupport:DecisionSupport|undefined
   try {
     async function cachedStage<T>(kind: string, input: unknown, execute: () => Promise<{ value: T; sessionId: string }>): Promise<{ value: T; sessionId: string }> {
       const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, policy: 'live-stage-v2', brief_skill: BRIEF_SKILL_VERSION, input })
@@ -72,6 +75,20 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
       const result = await execute(), id = `ART-${randomUUID()}`
       await store.db.query('INSERT INTO artifacts(id,project_id,run_id,kind,dependency_hash,payload) VALUES($1,$2,$3,$4,$5,$6)', [id, run.project_id, run.id, kind, key, JSON.stringify(result)])
       artifactRefs.push(id); return result
+    }
+    if(config.decisionEnabled) {
+      const input=projectDecisionInput(full)
+      await store.addEvent(run.id,'decision_route','running','Qwen 正在判断证据是否充分与优先调查方向')
+      const result=await cachedStage<DecisionSupport>('decision_route',{input,policy:DECISION_POLICY,thresholds:DECISION_THRESHOLDS,model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT},async()=>{
+        const value=await live.runReadCapability('qwen_research_route',toolSignal=>evaluateDecision(input,toolSignal))
+        if(value.status!=='completed') {
+          await store.addEvent(run.id,'decision_route','failed','Qwen 决策请求未完成，已保留资料工件')
+          throw new Error(value.error_code || 'DECISION_REQUEST_FAILED')
+        }
+        return {value,sessionId:run.id}
+      })
+      decisionSupport=result.value
+      await store.addEvent(run.id,'decision_route','completed',`${DECISION_ACTIONS[decisionSupport.action!]}：${decisionSupport.next_step}`)
     }
     const results = new Map<RoleId, CapabilityResult>()
     const tasks = roles.map(async role => {
@@ -118,7 +135,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     const findings = roles.map(role => results.get(role.id)!)
     impact.invalidated.push('scenarios', 'critic', 'comparator', 'report')
     await store.addEvent(run.id, 'scenarios', 'running', '模型正在生成可区分的实施路径，包含暂缓基线')
-    const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings })
+    const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings, ...(decisionSupport?{research_route:{action:decisionSupport.action,priority:decisionSupport.priority,next_step:decisionSupport.next_step,guard_reasons:decisionSupport.guard_reasons}}:{}) })
     const referenceCases = selectReferenceCases(JSON.stringify(modelView(modelProject)))
     const scenarioPrompt = `在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；暂缓基线只能 investigate/retain。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>\n以下案例只提供实施机制，不作为本项目事实：${JSON.stringify(referenceCases)}`
     const scenarioResponse = await cachedStage<ScenarioProposal>('scenarios', { shared, candidate_ids: full.candidate_ids }, async () => {
@@ -149,11 +166,16 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     packet.summary = comparison.summary
     packet.reviews.push(...reviews.reviews)
     packet.followups = comparison.followups
+    if(decisionSupport) {
+      packet.followups=prioritizeDecisionFollowups(packet.followups,decisionSupport,packet.scenarios.map(s=>s.id))
+      comparison.followups=packet.followups
+    }
     packet.comparison = comparison
     packet.analysis_method = 'model_assisted'
     packet.status = full.facts.length || full.sources.some(s => s.untrusted_text?.trim()) ? 'partial' : 'empty'
     packet.model_calls = live.calls
     packet.research = research.trace
+    if(decisionSupport) packet.decision_support=decisionSupport
     packet.unresolved_disagreements = [...new Set([...proposal.unresolved, ...reviews.unresolved_disagreements, ...comparison.unresolved_disagreements])]
     packet.warnings.push(...research.trace.warnings, '模型输出经引用与硬约束检查，尚不构成企业决策效用验证。')
     if (!permittedInternal && full.sources.some(s => s.visibility === 'internal')) packet.warnings.push('内部正文未发送至外部模型；企业规则仅在本地执行，模型企业分析使用公开资料。')

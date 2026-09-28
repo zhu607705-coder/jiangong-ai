@@ -43,7 +43,8 @@ app.use(express.json({ limit: '4mb' }))
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'haizhizi-host' }))
 app.get('/api/session', (_req, res) => {
   res.cookie('hzz_session', session, { httpOnly: true, sameSite: 'strict', path: '/' })
-  res.json({ user: { id: config.ownerId, label: '本地项目负责人' }, deployment: 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind })
+  res.json({ user: { id: config.ownerId, label: '本地项目负责人' }, deployment: 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
+    decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL} })
 })
 app.use(['/api', '/_AMapService'], (req, _res, next) => {
   const match = req.headers.cookie?.split(';').map(c => c.trim()).find(c => c.startsWith('hzz_session='))?.slice('hzz_session='.length)

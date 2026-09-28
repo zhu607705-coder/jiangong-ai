@@ -80,7 +80,7 @@ export async function executeRun(store: Store, run: RunRecord, signal: AbortSign
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'RUN_FAILED'
-    const safeCode = message.startsWith('LIVE_STAGE_FAILED:') ? message.split(':').slice(0, 3).join(':') : message.startsWith('CAPABILITY_') || message.startsWith('SPECIALIST_FAILED:') || /^RUN_/.test(message) ? message : 'RUNTIME_FAILED'
+    const safeCode = message.startsWith('LIVE_STAGE_FAILED:') ? message.split(':').slice(0, 3).join(':') : message.startsWith('CAPABILITY_') || message.startsWith('SPECIALIST_FAILED:') || /^RUN_/.test(message) || /^DECISION_[A-Z0-9_]+$/.test(message) ? message : 'RUNTIME_FAILED'
     await store.db.query('UPDATE runs SET status=$2,error_code=$3 WHERE id=$1', [run.id, 'failed', safeCode])
     await store.addEvent(run.id, 'error', 'failed', `执行未完成（${safeCode}），已保留快照与已有工件。`)
     console.error(JSON.stringify({ event: 'run_failed', run_id: run.id, code: safeCode, diagnostic: message.slice(0, 300) }))

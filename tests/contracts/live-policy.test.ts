@@ -38,6 +38,25 @@ describe('live DSH boundary regression', () => {
   it('presents supported DSH schemas while keeping canonical validation separate', () => {
     for (const name of ['ModelContext', 'CapabilityResult', 'ScenarioProposal', 'ReviewPacket', 'ComparisonPacket']) expect(() => assertObjectJsonSchema(modelSchema(name))).not.toThrow()
   })
+  it('makes brief limits visible to DSH and still rejects overlong output instead of truncating it', () => {
+    const schema=modelSchema('MapPreliminaryAssessment') as any
+    expect(schema.properties.summary.description).toContain('64')
+    expect(schema.properties.opportunities.description).toContain('1')
+    expect(()=>assertObjectJsonSchema(schema)).not.toThrow()
+    expect(()=>ownedModelValue('MapPreliminaryAssessment',{summary:'长'.repeat(65),opportunities:[],cautions:[],unknowns:[],next_steps:[]})).toThrow('64')
+  })
+  it('removes optional factor extraction when no project-level sources exist without weakening required fields', () => {
+    const schema=modelSchema('MapPreliminaryAssessment',undefined,{omitOptionalFields:['factors']}) as any
+    expect(schema.properties).not.toHaveProperty('factors')
+    expect(schema.additionalProperties).toBe(false)
+    expect(()=>assertObjectJsonSchema(schema)).not.toThrow()
+    expect(()=>modelSchema('MapPreliminaryAssessment',undefined,{omitOptionalFields:['summary']})).toThrow('CANNOT_OMIT_REQUIRED_MODEL_FIELD')
+  })
+  it('closes brief citations over supplied source IDs rather than casebook IDs or invented fields',()=>{
+    const schema=modelSchema('MapPreliminaryAssessment',undefined,{evidenceIds:['work_live','project_1']}) as any
+    expect(schema.properties.opportunities.items.properties.evidence_refs.items.enum).toEqual(['work_live','project_1'])
+    expect(()=>assertObjectJsonSchema(schema)).not.toThrow()
+  })
   it('limits comparison references to candidates that were actually generated', () => {
     const schema = modelSchema('ComparisonPacket', ['retain_and_reuse', 'defer_and_investigate'])
     expect(JSON.stringify(schema)).not.toContain('selective_rebuild')

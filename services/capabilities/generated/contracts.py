@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel
@@ -38,33 +38,33 @@ class MapAnchor(BaseModel):
     address: str | None = Field(None, max_length=500)
 
 
-class ResolutionStatus(Enum):
+class ResolutionStatus(StrEnum):
     provided_polygon = 'provided_polygon'
     place_point = 'place_point'
     ambiguous = 'ambiguous'
     uncovered = 'uncovered'
 
 
-class DataClass(Enum):
+class DataClass(StrEnum):
     synthetic = 'synthetic'
     public = 'public'
     internal = 'internal'
     semi_synthetic = 'semi_synthetic'
 
 
-class Visibility(Enum):
+class Visibility(StrEnum):
     public = 'public'
     internal = 'internal'
 
 
-class ContentStatus(Enum):
+class ContentStatus(StrEnum):
     full_text = 'full_text'
     excerpt = 'excerpt'
     metadata_only = 'metadata_only'
     uploaded = 'uploaded'
 
 
-class ParseStatus(Enum):
+class ParseStatus(StrEnum):
     extracted = 'extracted'
     empty = 'empty'
     ocr_required = 'ocr_required'
@@ -105,15 +105,15 @@ class Fact(BaseModel):
     )
     id: str = Field(..., min_length=1)
     kind: str = Field(..., min_length=1)
-    value: Inventory | str | float | bool | None = None
-    unit: str | None = None
+    value: Inventory | str | float | bool | None
+    unit: str | None
     source_id: str
     object_ref: str | None = None
     observed_at: str | None = None
     locator: str | None = None
 
 
-class Kind(Enum):
+class Kind(StrEnum):
     organizational_constraint = 'organizational_constraint'
     preference = 'preference'
     capability_lead = 'capability_lead'
@@ -122,11 +122,11 @@ class Kind(Enum):
     heuristic = 'heuristic'
 
 
-class Scope1(Enum):
+class Scope1(StrEnum):
     project = 'project'
 
 
-class AuthorityStatus(Enum):
+class AuthorityStatus(StrEnum):
     project_confirmed = 'project_confirmed'
     unverified = 'unverified'
 
@@ -139,10 +139,10 @@ class ExperienceRule(BaseModel):
     kind: Kind
     scope: Scope1
     predicate: str
-    value: str | float | bool | None = None
+    value: str | float | bool | None
     source_id: str
     authority_status: AuthorityStatus
-    supersedes: str | None = None
+    supersedes: str | None
     note: str
     project_id: str | None = None
     original_text: str | None = None
@@ -158,14 +158,14 @@ class InputEvent(BaseModel):
     revision: int | None = Field(None, ge=1)
 
 
-class CandidateId(Enum):
+class CandidateId(StrEnum):
     retain_and_reuse = 'retain_and_reuse'
     selective_rebuild = 'selective_rebuild'
     whole_site_rebuild = 'whole_site_rebuild'
     defer_and_investigate = 'defer_and_investigate'
 
 
-class Dimension(Enum):
+class Dimension(StrEnum):
     implementation = 'implementation'
     building = 'building'
     demand = 'demand'
@@ -174,7 +174,7 @@ class Dimension(Enum):
     resources = 'resources'
 
 
-class Status(Enum):
+class Status(StrEnum):
     supported = 'supported'
     conditional = 'conditional'
     unknown = 'unknown'
@@ -194,7 +194,7 @@ class Finding(BaseModel):
     unknowns: list[str]
 
 
-class Status1(Enum):
+class Status1(StrEnum):
     known = 'known'
     unknown = 'unknown'
     conflict = 'conflict'
@@ -206,25 +206,25 @@ class Metric(BaseModel):
     )
     key: str
     label: str
-    value: float | None = None
-    unit: str | None = None
+    value: float | None
+    unit: str | None
     status: Status1
     source_refs: list[str]
 
 
-class Status2(Enum):
+class Status2(StrEnum):
     conditional = 'conditional'
     blocked = 'blocked'
     investigate = 'investigate'
 
 
-class DemolitionScope(Enum):
+class DemolitionScope(StrEnum):
     none = 'none'
     partial = 'partial'
     whole_site = 'whole_site'
 
 
-class Severity(Enum):
+class Severity(StrEnum):
     high = 'high'
     medium = 'medium'
     low = 'low'
@@ -242,7 +242,7 @@ class Review(BaseModel):
     recommendation: str
 
 
-class Status3(Enum):
+class Status3(StrEnum):
     suggested = 'suggested'
     requested = 'requested'
 
@@ -269,17 +269,17 @@ class Impact(BaseModel):
     changed_paths: list[CandidateId]
 
 
-class Mode(Enum):
+class Mode(StrEnum):
     automatic = 'automatic'
     enterprise = 'enterprise'
 
 
-class ExecutionMode(Enum):
+class ExecutionMode(StrEnum):
     offline = 'offline'
     live = 'live'
 
 
-class Status4(Enum):
+class Status4(StrEnum):
     success = 'success'
     partial = 'partial'
     empty = 'empty'
@@ -287,7 +287,7 @@ class Status4(Enum):
     failed = 'failed'
 
 
-class AnalysisMethod(Enum):
+class AnalysisMethod(StrEnum):
     deterministic_checks = 'deterministic_checks'
     model_assisted = 'model_assisted'
 
@@ -305,7 +305,7 @@ class CapabilityResult(BaseModel):
     version: str
 
 
-class Status6(Enum):
+class Status6(StrEnum):
     running = 'running'
     completed = 'completed'
     failed = 'failed'
@@ -322,17 +322,17 @@ class RuntimeEvent(BaseModel):
     stage: str
     status: Status6
     message: str
-    artifact_ref: str | None = None
+    artifact_ref: str | None
     created_at: str
 
 
-class Role(Enum):
+class Role(StrEnum):
     investment_manager = 'investment_manager'
     planner = 'planner'
     executive = 'executive'
 
 
-class Kind1(Enum):
+class Kind1(StrEnum):
     retain = 'retain'
     partial_demolition = 'partial_demolition'
     whole_demolition = 'whole_demolition'
@@ -370,7 +370,7 @@ class CriterionJudgment(BaseModel):
     unknowns: list[str]
 
 
-class Criterion(Enum):
+class Criterion(StrEnum):
     implementation = 'implementation'
     building = 'building'
     demand = 'demand'
@@ -398,7 +398,7 @@ class ComparisonPacket(BaseModel):
     followups: list[Followup] = Field(..., max_length=6, min_length=1)
 
 
-class Kind2(Enum):
+class Kind2(StrEnum):
     organizational_constraint = 'organizational_constraint'
     preference = 'preference'
     capability_lead = 'capability_lead'
@@ -407,7 +407,7 @@ class Kind2(Enum):
     heuristic = 'heuristic'
 
 
-class Predicate(Enum):
+class Predicate(StrEnum):
     no_whole_site_demolition = 'no_whole_site_demolition'
     prefer_phasing = 'prefer_phasing'
     renewal_experience = 'renewal_experience'
@@ -423,7 +423,7 @@ class ModelRule(BaseModel):
     )
     kind: Kind2
     predicate: Predicate
-    value: str | bool | None = None
+    value: str | bool | None
     original_text: str
     note: str
 
@@ -443,18 +443,18 @@ class ModelCall(BaseModel):
     )
     stage: str
     requested_model: str
-    returned_model: str | None = None
+    returned_model: str | None
     finish_reason: str
     input_tokens: int = Field(..., ge=0)
     output_tokens: int = Field(..., ge=0)
     duration_ms: int = Field(..., ge=0)
-    session_id: str | None = None
+    session_id: str | None
     cache_read_tokens: int | None = Field(None, ge=0)
     cache_write_tokens: int | None = Field(None, ge=0)
     error_code: str | None = None
 
 
-class Status7(Enum):
+class Status7(StrEnum):
     success = 'success'
     partial = 'partial'
     blocked = 'blocked'
@@ -482,7 +482,7 @@ class GeoPoint(BaseModel):
     source_id: str
 
 
-class MapScreenProfile(Enum):
+class MapScreenProfile(StrEnum):
     balanced = 'balanced'
     commercial = 'commercial'
     enterprise = 'enterprise'
@@ -498,7 +498,7 @@ class MapScreenBounds(BaseModel):
     north: float
 
 
-class Kind3(Enum):
+class Kind3(StrEnum):
     point = 'point'
     cell = 'cell'
 
@@ -518,14 +518,14 @@ class MapScreenPoi(BaseModel):
     latitude: float
 
 
-class Key(Enum):
+class Key(StrEnum):
     transit = 'transit'
     activity = 'activity'
     work_live = 'work_live'
     civic = 'civic'
 
 
-class Status8(Enum):
+class Status8(StrEnum):
     available = 'available'
     failed = 'failed'
     capped = 'capped'
@@ -548,17 +548,17 @@ class MapScreenEvidence(BaseModel):
     label: str = Field(..., max_length=100)
     types_query: str = Field(..., max_length=150)
     status: Status8
-    reported_count: ReportedCount | None = None
+    reported_count: ReportedCount | None
     sample: list[MapScreenPoi] = Field(..., max_length=25)
     retrieved_at: str = Field(..., max_length=50)
-    issue: Issue | None = None
+    issue: Issue | None
 
 
 class Address(RootModel[str]):
     root: str = Field(..., max_length=500)
 
 
-class Status9(Enum):
+class Status9(StrEnum):
     complete = 'complete'
     partial = 'partial'
 
@@ -587,7 +587,7 @@ class NextStep(RootModel[str]):
     root: str = Field(..., max_length=48)
 
 
-class Status10(Enum):
+class Status10(StrEnum):
     completed = 'completed'
     unavailable = 'unavailable'
     failed = 'failed'
@@ -598,7 +598,7 @@ class Reason(RootModel[str]):
     root: str = Field(..., max_length=240)
 
 
-class Tier(Enum):
+class Tier(StrEnum):
     pending = 'pending'
     strong = 'strong'
     moderate = 'moderate'
@@ -611,7 +611,7 @@ class Rank(RootModel[int]):
     root: int = Field(..., ge=1, le=24)
 
 
-class Status11(Enum):
+class Status11(StrEnum):
     completed = 'completed'
     partial = 'partial'
 
@@ -620,7 +620,7 @@ class Note(RootModel[str]):
     root: str = Field(..., max_length=250)
 
 
-class MapScreenTheme(Enum):
+class MapScreenTheme(StrEnum):
     overall = 'overall'
     implementation = 'implementation'
     adaptation = 'adaptation'
@@ -630,7 +630,7 @@ class MapScreenTheme(Enum):
     access = 'access'
 
 
-class Relation(Enum):
+class Relation(StrEnum):
     within_scope = 'within_scope'
     city_background = 'city_background'
 
@@ -702,7 +702,7 @@ class MapRegionGeometry(BaseModel):
     coordinates: list[Coordinate1] = Field(..., max_length=20, min_length=1)
 
 
-class Key1(Enum):
+class Key1(StrEnum):
     implementation = 'implementation'
     adaptation = 'adaptation'
     demand = 'demand'
@@ -711,7 +711,7 @@ class Key1(Enum):
     access = 'access'
 
 
-class State(Enum):
+class State(StrEnum):
     supported = 'supported'
     conditional = 'conditional'
     blocked = 'blocked'
@@ -733,12 +733,108 @@ class MapDecisionFactor(BaseModel):
     quote: str = Field(..., max_length=180)
 
 
+class Probabilities(RootModel[float]):
+    root: float = Field(..., ge=0.0, le=1.0)
+
+
+class DecisionChoice(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    choice: str = Field(..., max_length=60)
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    probabilities: dict[str, Probabilities]
+
+
+class Status12(StrEnum):
+    completed = 'completed'
+    unavailable = 'unavailable'
+    failed = 'failed'
+
+
+class RequestId(RootModel[str]):
+    root: str = Field(..., max_length=200)
+
+
+class InputTokens(RootModel[int]):
+    root: int = Field(..., ge=0)
+
+
+class Answers(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    next_action: DecisionChoice
+    priority_dimension: DecisionChoice
+    evidence_sufficient: float = Field(..., ge=0.0, le=1.0)
+
+
+class Action(StrEnum):
+    investigate = 'investigate'
+    resolve_blocker = 'resolve_blocker'
+    compare = 'compare'
+    review = 'review'
+
+
+class Priority(StrEnum):
+    implementation = 'implementation'
+    adaptation = 'adaptation'
+    demand = 'demand'
+    operations = 'operations'
+    resources = 'resources'
+    access = 'access'
+
+
+class GuardReason(RootModel[str]):
+    root: str = Field(..., max_length=160)
+
+
+class InputSourceId(RootModel[str]):
+    root: str = Field(..., max_length=250)
+
+
+class Thresholds(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    min_confidence: float = Field(..., ge=0.0, le=1.0)
+    min_choice_probability: float = Field(..., ge=0.0, le=1.0)
+    min_sufficiency: float = Field(..., ge=0.0, le=1.0)
+
+
+class ErrorCode(RootModel[str]):
+    root: str = Field(..., max_length=80)
+
+
+class DecisionSupport(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    status: Status12
+    provider: Literal['qwen_systemone']
+    model: str = Field(..., max_length=100)
+    policy_version: str = Field(..., max_length=60)
+    input_hash: str = Field(..., max_length=80)
+    created_at: str = Field(..., max_length=60)
+    request_id: RequestId | None
+    duration_ms: int = Field(..., ge=0)
+    input_tokens: InputTokens | None
+    answers: Answers | None
+    action: Action | None
+    priority: Priority | None
+    next_step: str = Field(..., max_length=96)
+    guard_reasons: list[GuardReason] = Field(..., max_length=12)
+    input_source_ids: list[InputSourceId]
+    thresholds: Thresholds
+    error_code: ErrorCode | None
+
+
 class Scope(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
     name: str = Field(..., max_length=200, min_length=1)
-    geometry: Geometry | None = None
+    geometry: Geometry | None
     coordinate_encoding: Literal['WGS84']
     legal_parcel_confirmed: bool
     city: str | None = Field(None, max_length=100)
@@ -798,13 +894,14 @@ class DecisionPacket(BaseModel):
     missing_fields: list[str]
     artifact_refs: list[str]
     runtime: str
-    model: str | None = None
+    model: str | None
     comparison: ComparisonPacket | None = None
     model_calls: list[ModelCall] | None = None
     research: ResearchTrace | None = None
     analysis_method: AnalysisMethod | None = None
     unresolved_disagreements: list[str] | None = None
     scope: Scope | None = None
+    decision_support: DecisionSupport | None = None
 
 
 class ProjectInput(BaseModel):
@@ -844,8 +941,8 @@ class MapScreenTarget(BaseModel):
     kind: Kind3
     longitude: float = Field(..., ge=-180.0, le=180.0)
     latitude: float = Field(..., ge=-90.0, le=90.0)
-    radius_m: RadiusM | None = None
-    bounds: MapScreenBounds | None = None
+    radius_m: RadiusM | None
+    bounds: MapScreenBounds | None
     geometry: MapRegionGeometry | None = None
 
 
@@ -859,12 +956,12 @@ class MapScreenContext(BaseModel):
     coordinate_encoding: Literal['GCJ-02']
     created_at: str = Field(..., max_length=50)
     expires_at: str = Field(..., max_length=50)
-    address: Address | None = None
+    address: Address | None
     groups: list[MapScreenEvidence] = Field(..., max_length=4)
     status: Status9
     gaps: list[Gap] = Field(..., max_length=12)
     metric_note: str = Field(..., max_length=500)
-    city: str | None = None
+    city: str | None
     local_projects: list[MapProjectEvidence]
     project_revision: str = Field(..., max_length=80)
 
@@ -888,10 +985,11 @@ class MapScreenAnalysis(BaseModel):
     context_id: str = Field(..., max_length=100)
     profile: MapScreenProfile
     status: Status10
-    assessment: MapPreliminaryAssessment | None = None
+    assessment: MapPreliminaryAssessment | None
     model_calls: list[ModelCall] = Field(..., max_length=4)
-    reason: Reason | None = None
+    reason: Reason | None
     created_at: str = Field(..., max_length=50)
+    decision_support: DecisionSupport | None = None
 
 
 class MapScreenCell(BaseModel):
@@ -901,9 +999,9 @@ class MapScreenCell(BaseModel):
     id: str = Field(..., max_length=80)
     label: str = Field(..., max_length=40)
     bounds: MapScreenBounds
-    context: MapScreenContext | None = None
+    context: MapScreenContext | None
     tier: Tier
-    rank: Rank | None = None
+    rank: Rank | None
     metric_value: int | None = Field(..., ge=0)
     geometry: MapRegionGeometry | None = None
     anchor: list[float] | None = Field(None, max_length=2, min_length=2)

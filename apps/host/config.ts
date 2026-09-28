@@ -10,6 +10,9 @@ const env = z.object({
   WORKSPACE_PORT: z.coerce.number().int().default(5173),
   DATA_DIR: z.string().default('data/local'), DATABASE_URL: z.string().optional(),
   DEEPSEEK_MODEL: z.string().default('deepseek-flash'),
+  QWEN_DECISION_ENABLED: z.enum(['true', 'false']).default('false'),
+  QWEN_DECISION_MODEL: z.literal('decision-model-preview').default('decision-model-preview'),
+  QWEN_DECISION_ENDPOINT: z.string().default(''),
   ALLOW_INTERNAL_MODEL: z.enum(['true', 'false']).default('false'),
 }).parse(process.env)
 
@@ -18,5 +21,7 @@ export const config = {
   capabilityUrl: `http://127.0.0.1:${env.CAPABILITY_PORT}`,
   capabilityToken: process.env.CAPABILITY_TOKEN || randomBytes(32).toString('hex'),
   modelConfigured: Boolean(process.env.DEEPSEEK_API_KEY),
+  decisionEnabled: env.QWEN_DECISION_ENABLED === 'true',
+  decisionConfigured: Boolean(process.env.QWEN_DECISION_API_KEY && env.QWEN_DECISION_ENDPOINT),
   searchConfigured: Boolean(process.env.DEEPSEEK_SEARCH_API_KEY || process.env.DEEPSEEK_API_KEY),
 }

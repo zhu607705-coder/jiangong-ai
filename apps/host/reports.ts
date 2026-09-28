@@ -1,5 +1,6 @@
 import type { DecisionPacket } from './generated/contracts'
 import { table } from '../../vendor/cre/scripts/lib/report-table'
+import { DECISION_ACTIONS } from '../../packages/decision/structured-route'
 
 const statusNames = { conditional: '有条件待核', blocked: '组织条件阻断', investigate: '调查基线' }
 export function renderReport(packet: DecisionPacket): string {
@@ -16,6 +17,14 @@ export function renderReport(packet: DecisionPacket): string {
     table(lines, ['维度', '路径', '判断', '尚缺'], packet.comparison.criteria.flatMap(c => c.judgments.map(j => [c.criterion, j.scenario_id, j.conclusion, j.unknowns.join('；')])))
     lines.push('', '## 未解决分歧', ...(packet.unresolved_disagreements || []).map(d => `- ${d}`), '', '## 实际调用记录', '')
     table(lines, ['阶段', '返回模型', '输入 token', '输出 token', '终止状态'], (packet.model_calls || []).map(c => [c.stage, c.returned_model, c.input_tokens, c.output_tokens, c.finish_reason]))
+  }
+  if(packet.decision_support?.status==='completed') {
+    const route=packet.decision_support
+    lines.push('## 结构化判断操作','',`${DECISION_ACTIONS[route.action!]}：${route.next_step}`,
+      `决策模型：${route.model}；请求：${route.request_id}；耗时：${route.duration_ms} ms`,
+      ...route.guard_reasons.map(reason=>`- ${reason}`),'')
+    table(lines,['候选操作','模型选项概率'],Object.entries(route.answers!.next_action.probabilities).map(([key,p])=>[DECISION_ACTIONS[key as keyof typeof DECISION_ACTIONS],`${(100*p).toFixed(1)}%`]))
+    lines.push('','这些概率用于研究流程分流，尚未按企业结果校准。','')
   }
   return lines.join('\n')
 }

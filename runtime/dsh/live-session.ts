@@ -1,5 +1,6 @@
 import { Context } from '@deepseek-ai/cordis'
 import LlmRuntime, { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
+import type { ToolCallId } from '@deepseek-ai/dsh-llm'
 import type { SubagentStartRequest } from '@deepseek-ai/dsh-subagent'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
 import SessionProjection from '@deepseek-ai/dsh-session-projection'
@@ -15,7 +16,7 @@ import { join } from 'node:path'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { config } from '../../apps/host/config'
 import type { ModelCall } from '../../apps/host/generated/contracts'
-import { modelSchema, ownedModelValue } from '../../packages/contracts/validate'
+import { modelSchema, ownedModelValue, ContractError, type ModelPresentationPolicy } from '../../packages/contracts/validate'
 import { INVESTMENT_BRIEF_SKILL } from '../skills/investment-brief'
 import { ensureHarnessNetwork } from './public-web'
 
@@ -42,7 +43,8 @@ export class LiveSession {
       await ctx.plugin(Subagents, { maxDepth: 1 }); await ctx.plugin(Spawn, { providerName: 'spawn' })
       await ctx.plugin(DeepSeek, { apiKeyEnv: 'DEEPSEEK_API_KEY' })
       ctx.on('llm/stream', async function* (request, next) {
-        if (++live.modelRequests > 20 || live.signal.aborted) throw new Error('RUN_MODEL_BUDGET_EXCEEDED')
+        const budget=live.stageScope.getStore()?.startsWith('map_') ? 4 : 20
+        if (++live.modelRequests > budget || live.signal.aborted) throw new Error('RUN_MODEL_BUDGET_EXCEEDED')
         const start = Date.now()
         const call: ModelCall = { stage: live.stageScope.getStore() || 'unknown', requested_model: request.model, returned_model: null, finish_reason: 'missing', input_tokens: 0, output_tokens: 0, duration_ms: 0, session_id: null }
         for await (const chunk of next()) {
@@ -78,24 +80,37 @@ export class LiveSession {
     }))
   }
 
-  async call<T>(stage: string, prompt: string, outputType: string, allowedTools: string[] = [], candidateIds?: readonly string[]): Promise<{ value: T; sessionId: string }> {
+  /** Host-owned fixed-input capabilities still pass through DSH's tool pipeline. */
+  async runReadCapability<T>(name: string, execute: (signal: AbortSignal) => Promise<T>): Promise<T> {
+    this.registerReadTool(name, '对本轮已授权快照执行结构化研究判断。', () => execute(this.signal))
+    const result = await this.ctx.tools.execute({name, arguments:{}, callId:`${this.runId}:${name}` as ToolCallId, agent:this.parent.agent, signal:this.signal})
+    if(result.isError) throw new Error('DECISION_TOOL_FAILED')
+    return JSON.parse(result.value as string) as T
+  }
+
+  async call<T>(stage: string, prompt: string, outputType: string, allowedTools: string[] = [], candidateIds?: readonly string[], presentationPolicy: ModelPresentationPolicy = {}): Promise<{ value: T; sessionId: string }> {
     return this.stageScope.run(stage, async () => {
     const child = await this.ctx.subagents.start('spawn', { parent: this.parent.agent, signal: this.signal, maxDepth: 1, label: stage,
-      persona: persona + '\n' + INVESTMENT_BRIEF_SKILL, toolFilter: { allow: allowedTools }, outputSchema: modelSchema(outputType, candidateIds) as unknown as SubagentStartRequest['outputSchema'],
+      persona: persona + '\n' + INVESTMENT_BRIEF_SKILL, toolFilter: { allow: allowedTools }, outputSchema: modelSchema(outputType, candidateIds, presentationPolicy) as unknown as SubagentStartRequest['outputSchema'],
       prompt: [{ type: 'text', text: prompt }], agentOptions: { provider: 'deepseek-official', model: config.DEEPSEEK_MODEL, reasoningEffort: ReasoningEffortId('off'), maxTokens: stage.startsWith('map_') ? 1800 : stage.startsWith('scenarios') || stage.startsWith('comparator') ? 6500 : 3500 } })
     try {
       const outcome = await child.result
       if (outcome.stopReason !== 'completed' || outcome.structured === undefined) {
         const failure = this.calls.filter(call => call.stage === stage).at(-1)
-        if (failure?.error_code === 'MALFORMED_RESPONSE' && !stage.endsWith('_format_retry')) {
+        if (failure?.error_code === 'MALFORMED_RESPONSE' && !stage.includes('_format_retry')) {
           await child.dispose()
-          return this.call<T>(`${stage}_format_retry`, `${prompt}\n上一次原生工具参数不是有效 JSON。请只调用 structured_output，避免正文，严格转义字符串并压缩内容；结论、条件每项不超过 50 字，列表仅保留必要项。不得修改事实以适应格式。`, outputType, allowedTools, candidateIds)
+          return this.call<T>(`${stage}_format_retry`, `${prompt}\n上一次原生工具参数不是有效 JSON。请只调用 structured_output，避免正文，严格转义字符串并压缩内容；结论、条件每项不超过 50 字，列表仅保留必要项。不得修改事实以适应格式。`, outputType, allowedTools, candidateIds, presentationPolicy)
         }
         throw new Error(`LIVE_STAGE_FAILED:${stage}:${outcome.stopReason}:${failure?.error_code || outcome.diagnostic || 'no structured result'}`)
       }
       // Sequential stages own calls deterministically. Parallel specialists provide tool-specific labels in events.
       for (const call of this.calls.filter(c => c.stage === stage && !c.session_id)) call.session_id = String(child.id)
-      return { value: ownedModelValue<T>(outputType, outcome.structured), sessionId: String(child.id) }
+      try { return { value: ownedModelValue<T>(outputType, outcome.structured), sessionId: String(child.id) } }
+      catch(error) {
+        if(!(error instanceof ContractError) || stage.includes('_contract_retry')) throw error
+        await child.dispose()
+        return this.call<T>(`${stage}_contract_retry`,`${prompt}\n上次结果未通过完整契约：${error.message.slice(0,500)}。按对应字段的字符/条数上限重新组织，保留事实、否定与关键条件；不得截断原句或添加新事实。仅调用 structured_output。`,outputType,allowedTools,candidateIds,presentationPolicy)
+      }
     } finally { await child.dispose() }
     })
   }

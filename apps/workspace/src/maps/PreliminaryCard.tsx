@@ -6,6 +6,7 @@ import type { MapScreenAnalysis, MapScreenCell, MapScreenContext, MapScreenProfi
 import { SCREEN_PROFILES, SCREEN_TIERS } from '../../../../packages/maps/screening-policy'
 
 import { decisionSignals, FACTOR_LABELS } from '../../../../packages/maps/decision-factors'
+import { DecisionRoute } from '../components/DecisionRoute'
 
 export default function PreliminaryCard({ selection, profile, theme, cell, onContext, onProfile, onOpenProject, onAssessment }: {
   selection: PlaceSelection; profile: MapScreenProfile; theme: MapScreenTheme; cell: MapScreenCell | null;
@@ -56,6 +57,7 @@ export default function PreliminaryCard({ selection, profile, theme, cell, onCon
   return <section className="initial-assessment" aria-label="区域初步分析">
     {stage === 'context' && <p role="status">正在读取所选位置…</p>}
     {context && <>
+      <DecisionRoute value={analysis?.decision_support} />
       {cell && <div className="screening-tier" style={{ '--tier-color': SCREEN_TIERS[cell.tier].color } as React.CSSProperties}><i />{SCREEN_TIERS[cell.tier].label}</div>}
       {model ? <div className="assessment-narrative">
         <p className="assessment-headline">{model.summary}</p>
@@ -70,6 +72,7 @@ export default function PreliminaryCard({ selection, profile, theme, cell, onCon
       {stage === 'analysis' && <p role="status">正在研判…</p>}
       <button className="assessment-source-toggle" aria-expanded={sourcesOpen} onClick={() => setSourcesOpen(v => !v)}>查看依据 <IconChevronDown size={14} /></button>
       {sourcesOpen && <div className="assessment-sources">
+        <DecisionRoute value={analysis?.decision_support} details />
         <p>{cell ? cell.boundary_source : '位置周边 800 米'} · {new Date(context.created_at).toLocaleDateString('zh-CN')}</p>
         {context.groups.map(g => <div key={g.key} id={'evidence-' + encodeURIComponent(g.source_id)}><strong>{g.label}</strong><p>{g.sample.map(p => p.name).join('、') || g.issue || '暂无样本'}</p></div>)}
         {signals.map(s=><div key={s.title}><strong>{s.title}的调查用途</strong><p>{s.next}</p></div>)}

@@ -1,4 +1,4 @@
-import type { MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme } from '../../apps/host/generated/contracts'
+import type { MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme, MapScreenEvidence } from '../../apps/host/generated/contracts'
 import { decisionFactors, factorTier, decisionSignals } from './decision-factors'
 export { decisionSignals }
 export const EVIDENCE_GROUPS = [
@@ -7,6 +7,8 @@ export const EVIDENCE_GROUPS = [
   { key:'work_live', label:'居住与办公', types:'120000|170000', note:'楼宇、住宅及场所分类' },
   { key:'civic', label:'公共服务', types:'080000|090000|140000', note:'文教、医疗及体育设施' },
 ] as const
+/** A capped total does not invalidate the provider's individually returned places. */
+export const usableMapEvidence = (group: MapScreenEvidence): boolean => group.status === 'available' || group.status === 'capped' && group.sample.length > 0
 export const SCREEN_PROFILES: Record<MapScreenProfile,{label:string;premise:string}> = {
   balanced:{label:'片区更新',premise:'比较存量利用、实施条件和分期路径。'},
   commercial:{label:'商业配套',premise:'识别使用人群、竞争供给和运营入口。'},

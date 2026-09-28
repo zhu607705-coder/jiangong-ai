@@ -173,6 +173,12 @@ describe('public model evidence boundary', () => {
     const {engine}=await service();const ctx=await engine.context(point,new AbortController().signal)
     const assessment: MapPreliminaryAssessment={summary:'可研究存量利用方向，适用性待核实。',opportunities:[{text:'结合城市背景核查更新实施条件。',evidence_refs:['REAL-P:PUB-REAL']}],cautions:[{text:'先核查同类配套的实际使用。',evidence_refs:['activity']}],unknowns:[],next_steps:['补查权属与工程条件']}
     expect(groundMapAssessment(assessment,ctx).cautions[0].evidence_refs[0]).toBe(ctx.groups[1].source_id)
+    expect(groundMapAssessment({...assessment,opportunities:[{text:'以城市资料定位调查方向。',evidence_refs:['project_1']}]},ctx).opportunities[0].evidence_refs[0]).toBe('REAL-P:PUB-REAL')
+    ctx.groups[1].status='capped'
+    expect(groundMapAssessment(assessment,ctx).cautions[0].evidence_refs[0]).toBe(ctx.groups[1].source_id)
+    ctx.groups[1].status='failed'
+    expect(()=>groundMapAssessment(assessment,ctx)).toThrow('MAP_ASSESSMENT_UNGROUNDED_REFERENCE')
+    ctx.groups[1].status='available'
     for (const ref of ['INVENTED','REAL-P:INTERNAL-REAL']) expect(()=>groundMapAssessment({...assessment,opportunities:[{text:'claim',evidence_refs:[ref]}]},ctx)).toThrow()
     ctx.local_projects[0].sources[0].content_status='metadata_only'
     expect(()=>groundMapAssessment(assessment,ctx)).toThrow()
