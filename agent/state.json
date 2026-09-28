@@ -1,5 +1,5 @@
 {
-  "status": "map_evidence_implemented_publication_verification_pending",
+  "status": "implemented_and_verified_local_v0_2_map_evidence",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -18,7 +18,8 @@
     "125_unique_automated_checks_with_scoped_latest_evidence",
     "real_project_evidence_joined_to_map_previews",
     "fixed_count_thematic_map_screening",
-    "143_checks_and_build_on_clean_publication_source"
+    "143_checks_and_build_on_clean_publication_source",
+    "private_github_repository_created_pushed_and_read_back"
   ],
   "not_completed": [
     "real_enterprise_effectiveness_evaluation_requires_authorized_cases",
@@ -27,7 +28,7 @@
   ],
   "next_task": "T13",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-28T03:36:50.953777+00:00",
+  "updated_at": "2026-09-28T03:43:40.406738+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -67,7 +68,8 @@
     "research/test_results/screening-live.json",
     "research/baseline_logs/screening-tests.log",
     "research/baseline_logs/screening-e2e.log",
-    "research/baseline_logs/screening-build.log"
+    "research/baseline_logs/screening-build.log",
+    "research/test_results/github.json"
   ],
   "current_delivery": "Map-first local workspace with public project evidence, scoped POI facts, fixed-band thematic screening, explicit source-grounded initial analysis and private GitHub source repository.",
   "node_status": {
@@ -86,7 +88,7 @@
     "T12": "completed",
     "T13": "awaiting_authorized_materials_and_human_labels",
     "T14": "completed",
-    "T15": "implemented_pending_publication"
+    "T15": "completed"
   },
   "preview_url": "http://127.0.0.1:5173",
   "source_archive": {
@@ -143,6 +145,16 @@
       "packages/contracts/schema.json",
       "tests/contracts/maps.test.ts",
       "tests/e2e/test_http.py"
+    ],
+    "map_screening": [
+      "services/map-screening/",
+      "apps/host/map-screening.ts",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/maps/ScreeningControls.tsx",
+      "apps/workspace/src/maps/DataSourcesPanel.tsx",
+      "packages/maps/screening-policy.ts",
+      "packages/maps/public-context.ts",
+      "tests/contracts/map-screening.test.ts"
     ]
   },
   "unresolved_questions": [
@@ -156,9 +168,7 @@
     "recovery": "same-run DSH parent recovery and artifact reuse tested after real validation failures",
     "documents": "TXT/MD/CSV/PDF/DOCX/XLSX adapters tested; OCR-required states explicit"
   },
-  "remaining_delivery_work": [
-    "push_and_verify_remote_head"
-  ],
+  "remaining_delivery_work": [],
   "release": "release/海之子_可运行工程_v0.2.zip",
   "startup_verified": "Windows direct loopback HTTP 200; existing-service launch guard tested",
   "corpus": {
@@ -180,6 +190,8 @@
   "github": {
     "url": "https://github.com/zhu607705-coder/jiangong-ai",
     "visibility": "private",
-    "push": "pending"
+    "push": "verified",
+    "implementation_commit": "997cd834f8159b6e1e854c39549020ad6f1aabd3",
+    "evidence": "research/test_results/github.json"
   }
 }

@@ -29,7 +29,9 @@
         "context": 2
       },
       "projectOpened": true,
-      "scanCancellation": true
+      "scanCancellation": true,
+      "explicit_model_button_completed": true,
+      "source_excerpt_viewed": true
     },
     "console_blocking_errors": 0
   },
@@ -65,9 +67,7 @@
     "Cold/cached response times are single samples, not p95."
   ],
   "screenshots": [
-    "output/playwright/screening-selection.png",
     "output/playwright/screening-grid-selection.png",
-    "output/playwright/screening-analysis.png",
     "output/playwright/screening-data.png",
     "output/playwright/screening-mobile.png"
   ]

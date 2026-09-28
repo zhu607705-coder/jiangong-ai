@@ -11,12 +11,25 @@
       "work_live": 600,
       "civic": 587
     },
-    "linked_sources": 5
+    "linked_sources": 5,
+    "target": {
+      "kind": "point",
+      "longitude": 120.162976,
+      "latitude": 30.277522,
+      "radius_m": 800,
+      "bounds": null
+    },
+    "coordinate_encoding": "GCJ-02"
   },
   "live_analysis": {
     "seconds": 4.12,
     "status": "completed",
     "model_calls": 1,
     "uses_project_source": true
+  },
+  "final_host_readback": {
+    "status": "ok",
+    "excerpt_hashes": "passed",
+    "public_sources": 5
   }
 }

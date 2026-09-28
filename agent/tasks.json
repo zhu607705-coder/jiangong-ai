@@ -366,7 +366,7 @@
         "T14"
       ],
       "goal": "首次选中展示真实资料，地图专题标色与项目数据关联；实际模型引用来源，建立私有 GitHub 库。",
-      "status": "implemented_pending_publication",
+      "status": "completed",
       "expected_artifacts": [
         "services/map-screening/",
         "apps/workspace/src/maps/",
@@ -386,7 +386,8 @@
         "agent/"
       ],
       "upstream_verification_required": false,
-      "execution_profile": "local_live_map_evidence_and_private_github"
+      "execution_profile": "local_live_map_evidence_and_private_github",
+      "implementation_note": "143 checks and build pass in a clean staged-source snapshot. Actual AMap and model integration, public project source citations, frozen map scope, cancellation, mobile/desktop and private GitHub commit readback verified."
     }
   ]
 }

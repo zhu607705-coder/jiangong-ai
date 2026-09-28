@@ -1,0 +1,13 @@
+{
+  "verified_at": "2026-09-28T03:43:40.406738+00:00",
+  "url": "https://github.com/zhu607705-coder/jiangong-ai",
+  "visibility": "PRIVATE",
+  "default_branch": "main",
+  "implementation_commit": "997cd834f8159b6e1e854c39549020ad6f1aabd3",
+  "remote_commit_matched": true,
+  "remote_source_files": 174,
+  "forbidden_runtime_paths": [],
+  "credential_scan": "known model and map credentials absent from every published blob",
+  "internal_original_documents": "not included; local database, blobs and model sessions excluded",
+  "public_and_synthetic_evidence": "corpus reproduction artifacts preserved"
+}
