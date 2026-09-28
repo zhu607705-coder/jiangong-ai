@@ -14,6 +14,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
   const [projectsOpen, setProjectsOpen] = useState(false)
   return <div className="map-shell">
     {mapView}
+    <footer className="ai-disclaimer">AI 生成与搜索可能存在错误</footer>
     <nav className="atlas-dock glass-panel" aria-label="主导航">
       <button className="atlas-logo" aria-label="返回地图探索" onClick={onMap}><IconCube size={28} stroke={1.5} /></button>
       <span className="dock-divider" />
@@ -25,7 +26,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
       <span className="atlas-avatar" title="本地项目负责人">项</span>
     </nav>
     <header className="atlas-global-header">
-      <div className="atlas-wordmark"><strong>海之子<span> / </span><em>空间探索</em></strong><small>PRE-CONSTRUCTION · URBAN WORKSPACE</small></div>
+      <div className="atlas-wordmark"><strong>建工 AI</strong></div>
       <button className="atlas-project-switch glass-panel" aria-expanded={projectsOpen} onClick={() => setProjectsOpen(v => !v)}><IconFolder size={17} /><span>{project?.name || '项目空间'}</span><IconChevronDown size={15} /></button>
     </header>
     {projectsOpen && <section className="atlas-project-menu glass-panel" aria-label="项目空间列表">

@@ -1,0 +1,811 @@
+{
+  "version": "2026-09-28.v1",
+  "purpose": "机制参考；不是目标地块事实或当前业绩评估",
+  "selection": "按建筑更新、社区、街区与基础设施机制选取50例：第一批28例、第二批前22例；并非随机代表性样本。",
+  "source_review": "第一批核对公开经验做法正文；第二批核对PDF对应印刷页。",
+  "source_hashes": {
+    "batch2_pdf_sha256": "53293db45d684ca78f2bf3d6e03c76bae7ae749a9dd25f376330e251a6526c59"
+  },
+  "cases": [
+    {
+      "id": "UR1-01",
+      "name": "北京建科院光伏零碳改造",
+      "tags": [
+        "办公",
+        "节能",
+        "光伏"
+      ],
+      "published_fact": "建筑负荷与光伏自发自用配合。",
+      "investment_reading": "节能改造先比较负荷匹配与全寿命支出。",
+      "next_check": "核查逐时电量和屋面可用性。",
+      "transfer_condition": "同类电价、负荷与屋面条件。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例1",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-02",
+      "name": "琼海博鳌零碳示范区",
+      "tags": [
+        "节能",
+        "园区",
+        "运营"
+      ],
+      "published_fact": "示范区将技术建设与社会资本运营衔接。",
+      "investment_reading": "综合能源项目应先落实运营责任与付费安排。",
+      "next_check": "拆分设备投资、维护与能源收益。",
+      "transfer_condition": "存在可签约的能源使用方。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例2",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-03",
+      "name": "重庆红育坡",
+      "tags": [
+        "社区",
+        "停车",
+        "运营"
+      ],
+      "published_fact": "改造整合停车、农贸等经营资源并引入物业。",
+      "investment_reading": "社区更新可组合服务收入支持长期维护。",
+      "next_check": "核查可经营资产与实际收缴。",
+      "transfer_condition": "资源经营权可统一取得。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例3",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-04",
+      "name": "北京昌盛园",
+      "tags": [
+        "社区",
+        "物业",
+        "权利"
+      ],
+      "published_fact": "原分散楼院合并物业管理范围。",
+      "investment_reading": "先解决管理边界，再讨论规模化运营。",
+      "next_check": "核查各楼院移交与业主表决。",
+      "transfer_condition": "有共同管理安排。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例4",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-05",
+      "name": "沈阳牡丹社区",
+      "tags": [
+        "养老",
+        "社区",
+        "需求"
+      ],
+      "published_fact": "社区体检识别养老短板，并引进服务机构。",
+      "investment_reading": "养老空间的面积与配置应从服务人群反推。",
+      "next_check": "核查使用频次与服务采购安排。",
+      "transfer_condition": "明确服务对象和付款主体。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例5",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-06",
+      "name": "杭州缤纷社区",
+      "tags": [
+        "社区",
+        "运营",
+        "闲置"
+      ],
+      "published_fact": "多个社区统筹零散空间和统一运营。",
+      "investment_reading": "整合小空间可先于大规模新建。",
+      "next_check": "盘点可共用房间和维护责任。",
+      "transfer_condition": "空间可共享且运营方稳定。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例6",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-07",
+      "name": "重庆民主村",
+      "tags": [
+        "社区",
+        "需求",
+        "改造"
+      ],
+      "published_fact": "体检结合居民议事补充社区设施。",
+      "investment_reading": "先识别生活服务缺口，再确定施工内容。",
+      "next_check": "调查高频需求及既有服务容量。",
+      "transfer_condition": "需求来自实际使用者。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例7",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-08",
+      "name": "上海临汾路380弄",
+      "tags": [
+        "社区",
+        "养老",
+        "存量"
+      ],
+      "published_fact": "闲置幼儿园、办公空间改为社区服务设施。",
+      "investment_reading": "存量功能转换优先比较空间与服务的匹配。",
+      "next_check": "核查可用面积、无障碍与服务能力。",
+      "transfer_condition": "建筑条件适配目标人群。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例8",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-09",
+      "name": "北京首钢北区",
+      "tags": [
+        "厂房",
+        "园区",
+        "产业"
+      ],
+      "published_fact": "工业遗存保留利用与赛事和产业活动联动。",
+      "investment_reading": "大事件可提供启动需求，长期仍需产业运营。",
+      "next_check": "区分活动期与常态使用。",
+      "transfer_condition": "有持续运营和招商能力。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例9",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-10",
+      "name": "深圳元芬新村",
+      "tags": [
+        "公寓",
+        "租赁",
+        "青年"
+      ],
+      "published_fact": "通过整村长期统租更新并提供物业运营。",
+      "investment_reading": "租期、租客承受能力和改造投入需一并匹配。",
+      "next_check": "核查剩余租期与户型使用。",
+      "transfer_condition": "统租权利与融资期限匹配。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例10",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-11",
+      "name": "重庆戴家巷",
+      "tags": [
+        "商业",
+        "街区",
+        "运营"
+      ],
+      "published_fact": "公共步道、存量房屋改造和商业运营分工推进。",
+      "investment_reading": "公共改善与经营空间宜明确不同投入主体。",
+      "next_check": "拆分公共支出与经营现金流。",
+      "transfer_condition": "运营主体能协调相邻商户。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例11",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-12",
+      "name": "南昌雷公坳",
+      "tags": [
+        "体育",
+        "服务区",
+        "厂房"
+      ],
+      "published_fact": "闲置高速服务区分期改为文体产业园。",
+      "investment_reading": "失去原用途的空间可从新使用场景重新定位。",
+      "next_check": "核查目标客群、到达方式与适配成本。",
+      "transfer_condition": "用途安排和改造条件可实现。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例12",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-13",
+      "name": "西安建国门老菜场",
+      "tags": [
+        "市场",
+        "商业",
+        "文旅"
+      ],
+      "published_fact": "保留菜市场生活功能并导入文创业态。",
+      "investment_reading": "日常生活与新增消费应互补而非相互挤出。",
+      "next_check": "比较常住客群与游客的时段需求。",
+      "transfer_condition": "原服务能够继续运行。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例13",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-14",
+      "name": "上海杨浦滨江",
+      "tags": [
+        "公共空间",
+        "无障碍",
+        "交通"
+      ],
+      "published_fact": "沿岸节点与通行、服务系统同步无障碍提升。",
+      "investment_reading": "空间可达性要看连续通行，不只看附近站点。",
+      "next_check": "走查入口、坡道与休息点。",
+      "transfer_condition": "路径连续且维护有人负责。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例14",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-15",
+      "name": "广州CIM平台",
+      "tags": [
+        "数字化",
+        "基础设施",
+        "运营"
+      ],
+      "published_fact": "平台汇集多部门空间数据并支持建设场景。",
+      "investment_reading": "数字平台的采购价值来自可交付业务流程。",
+      "next_check": "核查授权、更新频率与业务验收。",
+      "transfer_condition": "具备稳定数据与业务使用方。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例15",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-16",
+      "name": "上海一网统管",
+      "tags": [
+        "数字化",
+        "运营",
+        "基础设施"
+      ],
+      "published_fact": "平台连接感知、派单与事件处置流程。",
+      "investment_reading": "传感投入要对应可执行的处置责任。",
+      "next_check": "核查闭环时效和运维合同。",
+      "transfer_condition": "跨部门流程可以持续执行。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例16",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-17",
+      "name": "合肥生命线工程",
+      "tags": [
+        "管线",
+        "基础设施",
+        "风险"
+      ],
+      "published_fact": "按阶段建设监测体系并设置预警处置机制。",
+      "investment_reading": "先覆盖高后果风险，再扩张设备范围。",
+      "next_check": "核查告警到处置的责任与成本。",
+      "transfer_condition": "有长期监测和响应预算。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例17",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-18",
+      "name": "福州水系调度",
+      "tags": [
+        "水系",
+        "基础设施",
+        "运营"
+      ],
+      "published_fact": "水系平台统筹汛期调度和日常生态补水。",
+      "investment_reading": "同一设施的平时与应急用途需分别评估。",
+      "next_check": "核查调度权、控制设施和维护预算。",
+      "transfer_condition": "形成跨设施统一调度。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例18",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-19",
+      "name": "上海静安固废流转中心",
+      "tags": [
+        "改造",
+        "基础设施",
+        "存量"
+      ],
+      "published_fact": "通过内部功能重排提升流转能力并保留开放空间。",
+      "investment_reading": "设备与空间优化可能先于扩建。",
+      "next_check": "比较施工分期与不停运要求。",
+      "transfer_condition": "既有结构和设备流程可调整。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例19",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-20",
+      "name": "合肥园博园",
+      "tags": [
+        "公园",
+        "机场",
+        "文旅"
+      ],
+      "published_fact": "机场建筑保留改造，业态与运营提前介入。",
+      "investment_reading": "先确定接手运营的功能，再安排保留建筑改造。",
+      "next_check": "核查常态运营和公共维护支出。",
+      "transfer_condition": "有适配的运营方与资金。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例20",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-21",
+      "name": "延安宝塔山",
+      "tags": [
+        "山地",
+        "生态",
+        "文旅"
+      ],
+      "published_fact": "边坡与排洪治理后补充游览服务。",
+      "investment_reading": "工程风险处理应先于经营设施配置。",
+      "next_check": "取得地质和排洪工程资料。",
+      "transfer_condition": "治理路径与维护安排明确。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例21",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-22",
+      "name": "深圳茅洲河",
+      "tags": [
+        "水系",
+        "基础设施",
+        "组织"
+      ],
+      "published_fact": "治理以流域组织并统筹厂网河运维。",
+      "investment_reading": "治理对象宜沿水文关系组织，不按等面积网格。",
+      "next_check": "核查上下游责任及维护接口。",
+      "transfer_condition": "治理单位具有跨区域协调能力。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例22",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-23",
+      "name": "九江长江文化公园",
+      "tags": [
+        "滨江",
+        "公共空间",
+        "文旅"
+      ],
+      "published_fact": "滨江贯通与防洪处理结合，运营方参与设计。",
+      "investment_reading": "沿江开发先解决防洪与通行，再组织经营。",
+      "next_check": "核查设计边界和运营职责。",
+      "transfer_condition": "滨江使用与工程限制相容。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例23",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-24",
+      "name": "福州三坊七巷",
+      "tags": [
+        "历史街区",
+        "修缮",
+        "文旅"
+      ],
+      "published_fact": "分步修缮建筑并管理文化业态准入。",
+      "investment_reading": "历史街区更新需匹配修缮周期与租赁运营。",
+      "next_check": "核查修缮资质、招商和维护成本。",
+      "transfer_condition": "经营定位与保护要求相容。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例24",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-25",
+      "name": "苏州平江路",
+      "tags": [
+        "历史街区",
+        "租赁",
+        "运营"
+      ],
+      "published_fact": "国有存量资产与民企投资运营结合。",
+      "investment_reading": "资产持有与经营投入可以分工，但权责要落地。",
+      "next_check": "核查租约、投入归属与期满处理。",
+      "transfer_condition": "合同可覆盖投资回收与维护。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例25",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-26",
+      "name": "景德镇陶阳里",
+      "tags": [
+        "历史街区",
+        "消防",
+        "文旅"
+      ],
+      "published_fact": "以保留修缮为主，并探索项目消防实施路径。",
+      "investment_reading": "业态选择必须同时考虑遗存格局与消防适配。",
+      "next_check": "取得当地适用的消防及修缮资料。",
+      "transfer_condition": "消防路径经项目核实。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例26",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-27",
+      "name": "北京模式口",
+      "tags": [
+        "历史街区",
+        "腾退",
+        "商业"
+      ],
+      "published_fact": "趸租与腾退整合房屋，商户需求进入设计。",
+      "investment_reading": "招商与改造协同可减少重复装修。",
+      "next_check": "核查逐房租约和商户面积需求。",
+      "transfer_condition": "可分批交付给明确使用者。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例27",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR1-28",
+      "name": "南京小西湖",
+      "tags": [
+        "历史街区",
+        "分期",
+        "社区"
+      ],
+      "published_fact": "以院落和单栋为单位渐进更新并改善管线。",
+      "investment_reading": "复杂产权区域宜采用小单元分期实施。",
+      "next_check": "逐院核查产权、居民意愿与施工接口。",
+      "transfer_condition": "小单元能独立交付并共享设施。",
+      "source_url": "https://www.cacp.org.cn/zhcfg/14341.jhtml",
+      "source_locator": "第一批经验做法，案例28",
+      "published_at": "2024-01-24"
+    },
+    {
+      "id": "UR2-01",
+      "name": "北京怀柔金隅兴发科研楼",
+      "tags": [
+        "厂房",
+        "科研",
+        "办公"
+      ],
+      "published_fact": "老厂房布局按科研与配套服务需求调整。",
+      "investment_reading": "科研用途应从工艺和使用者要求反推建筑改造。",
+      "next_check": "核查荷载、设备、使用需求与用途安排。",
+      "transfer_condition": "已有可落地的科研使用方。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页4–5",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-02",
+      "name": "桂林阳朔糖舍酒店",
+      "tags": [
+        "厂房",
+        "酒店",
+        "文旅"
+      ],
+      "published_fact": "保留糖厂空间并嵌入酒店与文化活动。",
+      "investment_reading": "建筑特色需转化为明确的住宿及体验产品。",
+      "next_check": "核查淡旺季使用、服务成本与保护范围。",
+      "transfer_condition": "运营能力与场所特色匹配。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页8–9",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-03",
+      "name": "莆田湄洲岛绿色改造",
+      "tags": [
+        "节能",
+        "民宿",
+        "旅游"
+      ],
+      "published_fact": "居民、企业参与绿色改造并结合民宿经营。",
+      "investment_reading": "技术改造要与民宿经营和实际节能支出共同评估。",
+      "next_check": "核查改造分摊、能耗和经营时段。",
+      "transfer_condition": "住户参与且有持续用能需求。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页12–13",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-04",
+      "name": "贵阳新华印刷厂",
+      "tags": [
+        "厂房",
+        "商业",
+        "权利"
+      ],
+      "published_fact": "闲置厂房权利完善后，由实施主体组织运营。",
+      "investment_reading": "权利整理是旧厂房商业利用的前置工作。",
+      "next_check": "核查建筑档案、租期与经营安排。",
+      "transfer_condition": "取得可实施的权利与管理权限。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页16–17",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-05",
+      "name": "上海锦沧文华",
+      "tags": [
+        "办公",
+        "结构",
+        "酒店"
+      ],
+      "published_fact": "酒店改办公时调整结构与层高布局。",
+      "investment_reading": "同地段用途转换也可能受结构与净高制约。",
+      "next_check": "核查结构方案、机电与目标办公需求。",
+      "transfer_condition": "工程投入与目标产品匹配。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页20–21",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-06",
+      "name": "深圳妇儿大厦",
+      "tags": [
+        "公共服务",
+        "运营",
+        "存量"
+      ],
+      "published_fact": "保留主体结构并组合公共服务与经营功能。",
+      "investment_reading": "公共服务义务和可经营空间需一同写入运营安排。",
+      "next_check": "核查经营期限、免费服务和维护责任。",
+      "transfer_condition": "经营收益能承担约定服务义务。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页24–25",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-07",
+      "name": "重庆塔坪片区",
+      "tags": [
+        "社区",
+        "物业",
+        "商业"
+      ],
+      "published_fact": "将住宅、街区商业和公共区域纳入大物业管理。",
+      "investment_reading": "扩大服务边界前，应盘清收入来源与公共维护责任。",
+      "next_check": "核查授权、服务清单和可收费资源。",
+      "transfer_condition": "统一物业范围能够落地。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页30–31",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-08",
+      "name": "北京平谷南小区",
+      "tags": [
+        "社区",
+        "招商",
+        "分期"
+      ],
+      "published_fact": "设计、建设与运营衔接，招商参与前期策划。",
+      "investment_reading": "先锁定服务使用者可减少重复装修与空置。",
+      "next_check": "核查意向使用者及交付条件。",
+      "transfer_condition": "运营需求可以提前确定。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页34–35",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-09",
+      "name": "上海金牛花苑",
+      "tags": [
+        "社区",
+        "电梯",
+        "改造"
+      ],
+      "published_fact": "通过居民协商推进电梯和环境更新。",
+      "investment_reading": "居民共同承担的更新要先解决出资和施工安排。",
+      "next_check": "核查表决、分摊和持续物业费用。",
+      "transfer_condition": "共同决策与资金安排明确。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页38–39",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-10",
+      "name": "武汉知音东苑",
+      "tags": [
+        "社区",
+        "停车",
+        "商业"
+      ],
+      "published_fact": "停车设施与沿街经营资源打包组织运营。",
+      "investment_reading": "配套经营可支持社区维护，但需核查收入可得性。",
+      "next_check": "核查停车使用、商铺租约和运维支出。",
+      "transfer_condition": "打包资产拥有可执行经营权。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页42–43",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-11",
+      "name": "长沙百川里",
+      "tags": [
+        "社区",
+        "闲置",
+        "资源"
+      ],
+      "published_fact": "闲置空间投入改造，并组合租赁和停车资源。",
+      "investment_reading": "资金统筹应基于可经营资产而不是周边记录。",
+      "next_check": "核查资产移交、居民分担与维护预算。",
+      "transfer_condition": "资金与经营资源权属明确。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页46–47",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-12",
+      "name": "上海江苏路社区",
+      "tags": [
+        "社区",
+        "服务",
+        "文化"
+      ],
+      "published_fact": "整合服务空间并保留便民功能与文化体验。",
+      "investment_reading": "社区文化活动应与高频日常服务共同配置。",
+      "next_check": "核查服务时段与实际使用人群。",
+      "transfer_condition": "运营方能兼顾公益和便民服务。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页52–53",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-13",
+      "name": "宁波明珠社区",
+      "tags": [
+        "社区",
+        "运营",
+        "需求"
+      ],
+      "published_fact": "专业运营团队提前介入需求、设计和服务配置。",
+      "investment_reading": "先明确公共与普惠服务组合，再确定面积。",
+      "next_check": "核查运营合约、实际需求和费用。",
+      "transfer_condition": "有可持续运营主体。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页56–57",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-14",
+      "name": "南通南川园",
+      "tags": [
+        "社区",
+        "市场",
+        "养老"
+      ],
+      "published_fact": "闲置资源共享、食堂市场和物业服务协同更新。",
+      "investment_reading": "复合服务空间需比较各功能的时段互补。",
+      "next_check": "核查供应、使用频次与物业维护。",
+      "transfer_condition": "可共享空间和运营接口明确。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页60–61",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-15",
+      "name": "厦门东荣社区",
+      "tags": [
+        "社区",
+        "商业",
+        "文化"
+      ],
+      "published_fact": "存量街巷与店面联动改造并引入专业运营。",
+      "investment_reading": "传统客群和新增体验业态应通过运营协同。",
+      "next_check": "核查铺面权利、客群与租赁安排。",
+      "transfer_condition": "联动经营可获得商户参与。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页64–65",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-16",
+      "name": "九江孙家垅",
+      "tags": [
+        "社区",
+        "托育",
+        "养老"
+      ],
+      "published_fact": "闲置用地与建筑提供长期使用空间并引入服务。",
+      "investment_reading": "公共服务改造先核查使用权期限和稳定资金。",
+      "next_check": "取得使用权协议及运营资金来源。",
+      "transfer_condition": "期限能够覆盖服务设施投入。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页68–69",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-17",
+      "name": "成都玉林东路",
+      "tags": [
+        "街区",
+        "商业",
+        "运营"
+      ],
+      "published_fact": "运营先行，结合店面优化与街区商户协同。",
+      "investment_reading": "街区更新应先判断保留、补充和替换的业态。",
+      "next_check": "逐店调查经营与改造诉求。",
+      "transfer_condition": "能统一协调而保留日常商业。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页74–75",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-18",
+      "name": "无锡蓝系列园区",
+      "tags": [
+        "园区",
+        "厂房",
+        "租赁"
+      ],
+      "published_fact": "民企长期租赁改造，组合租金与企业服务。",
+      "investment_reading": "产业园不能只靠出租面积，还要验证服务需求。",
+      "next_check": "核查租期、企业服务收费与装修适配。",
+      "transfer_condition": "有产业服务能力和稳定租期。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页78–79",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-19",
+      "name": "贵阳太平路",
+      "tags": [
+        "街区",
+        "商业",
+        "融资"
+      ],
+      "published_fact": "实施主体统筹资金并与运营、商户协同。",
+      "investment_reading": "融资安排与招商经营应在同一分期计划中校核。",
+      "next_check": "核查借款到期、开业节奏与商户意愿。",
+      "transfer_condition": "现金支出与交付节奏匹配。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页82–83",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-20",
+      "name": "威海火炬八街",
+      "tags": [
+        "商业",
+        "文旅",
+        "运营"
+      ],
+      "published_fact": "专业运营结合主理人招商和街区公共服务。",
+      "investment_reading": "游客关注需要转化为可持续的店铺经营。",
+      "next_check": "比较旺季、淡季与常住消费。",
+      "transfer_condition": "有长期运营与公共维护能力。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页86–87",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-21",
+      "name": "苏州十全街",
+      "tags": [
+        "街区",
+        "分期",
+        "施工"
+      ],
+      "published_fact": "小规模分段施工，兼顾商户日常经营。",
+      "investment_reading": "成熟街区宜先减少停业损失，再扩大改造范围。",
+      "next_check": "核查夜间施工和分段交通组织。",
+      "transfer_condition": "可分段交付并维持经营。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页90–91",
+      "published_at": "2025-03-24"
+    },
+    {
+      "id": "UR2-22",
+      "name": "济南舜泰广场",
+      "tags": [
+        "办公",
+        "停车",
+        "公共空间"
+      ],
+      "published_fact": "地下停车商业与地上体育空间分层组织。",
+      "investment_reading": "办公片区可研究错峰使用与分层开发的组合。",
+      "next_check": "核查停车时段、权利分层和运营支出。",
+      "transfer_condition": "实际需求与空间权利安排匹配。",
+      "source_url": "https://download.s21i.co99.net/24959527/0/0/ABUIABA9GAAgxY2IvwYom7uU8wY.pdf",
+      "source_locator": "第二批案例集，印刷页94–97",
+      "published_at": "2025-03-24"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import type { Store, ProjectRecord, RunRecord } from '../../apps/host/store'
 import type { MapDataCatalog, MapProjectEvidence, MapScreenTarget, Source } from '../../apps/host/generated/contracts'
 import { fingerprint } from './provider'
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import { createHash } from 'node:crypto'
 
 export type EvidenceProject = { project: ProjectRecord; sources: Source[]; documentCount: number }
@@ -25,9 +26,10 @@ export async function loadProjectEvidence(store: Store, owner: string): Promise<
 }
 const cityKey = (city: string | null | undefined) => city?.trim().replace(/市$/, '') || ''
 export function targetContains(target: MapScreenTarget, longitude: number, latitude: number): boolean {
+  if (target.geometry) return booleanPointInPolygon([longitude,latitude],target.geometry as any,{ignoreBoundary:true})
   if (target.bounds) {
     const b = target.bounds
-    // Half-open cells avoid counting a project twice on an internal grid edge.
+    // Half-open viewport edges avoid duplicate point association.
     return longitude >= b.west && longitude < b.east && latitude >= b.south && latitude < b.north
   }
   const rad = Math.PI / 180, dlat = (latitude - target.latitude) * rad, dlon = (longitude - target.longitude) * rad
@@ -41,12 +43,12 @@ function sourcePreview(source: Source): Source {
   const excerpt = source.visibility === 'public' && source.data_class === 'public' && source.content_status !== 'metadata_only' ? untrusted_text?.slice(0, 2400) : undefined
   return { ...metadata, ...(excerpt ? {untrusted_text: excerpt, hash: createHash('sha256').update(excerpt).digest('hex'), content_status: 'excerpt' as const} : {}) }
 }
-export function evidenceAt(snapshot: ProjectEvidenceSnapshot, target: MapScreenTarget, city: string | null): MapProjectEvidence[] {
+export function evidenceAt(snapshot: ProjectEvidenceSnapshot, target: MapScreenTarget, city: string | null, boundaryProjectId?: string): MapProjectEvidence[] {
   const result: MapProjectEvidence[] = []
   for (const { project, sources, documentCount } of snapshot.projects) {
     const scope = project.input.scope, anchor = scope.map_anchor
     const located = !!anchor && anchor.coordinate_encoding === 'GCJ-02'
-    const inside = located && targetContains(target, anchor.longitude, anchor.latitude)
+    const inside = (boundaryProjectId === project.id && !!scope.geometry && !!target.geometry) || (located && targetContains(target, anchor.longitude, anchor.latitude))
     // City documents are only background for an explicitly matching city.
     // A located project outside the target is never promoted to city evidence.
     const cityBackground = !located && !scope.geometry && cityKey(city) && cityKey(city) === cityKey(scope.city)
@@ -64,11 +66,11 @@ export function evidenceAt(snapshot: ProjectEvidenceSnapshot, target: MapScreenT
 }
 export function dataCatalog(snapshot: ProjectEvidenceSnapshot): MapDataCatalog {
   const projects = snapshot.projects.map(({project, sources, documentCount}) => ({project_id: project.id, name: project.name,
-    scope_label: project.input.scope.name, city: project.input.scope.city || '', located: !!project.input.scope.map_anchor,
+    scope_label: project.input.scope.name, city: project.input.scope.city || '', located: !!project.input.scope.map_anchor || !!project.input.scope.geometry,
     source_count: sources.length, public_source_count: sources.filter(s => s.visibility === 'public').length,
     internal_source_count: sources.filter(s => s.visibility === 'internal').length, fact_count: project.input.facts.filter(f => sources.some(s => s.id === f.source_id)).length,
     document_count: documentCount, updated_at: new Date(project.updated_at).toISOString()}))
   return {created_at: new Date().toISOString(), projects, real_project_count: projects.length, synthetic_project_count: snapshot.syntheticCount,
     unlocated_project_count: projects.filter(p => !p.located).length,
-    notes: ['项目数据从本地项目库和已完成研究读取；合成样例不进入真实地图统计。', '只有 GCJ-02 地图定位可加入本轮网格统计；城市文档仅作城市背景，其他未定位材料在项目资料页查看。', '高德提供位置与场所记录；成交、租金、产权和工程条件须有单独来源。', '资料获取时间不等于数据发生时间，已有政策仍需核对适用性与现行版本。']}
+    notes: ['项目资料来自本地项目库及已完成研究。', '地图场所用于选择调查方向；研判条件读取项目原文与已核事实。']}
 }

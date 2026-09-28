@@ -388,6 +388,33 @@
       "upstream_verification_required": false,
       "execution_profile": "local_live_map_evidence_and_private_github",
       "implementation_note": "143 checks and build pass in a clean staged-source snapshot. Actual AMap and model integration, public project source citations, frozen map scope, cancellation, mobile/desktop and private GitHub commit readback verified."
+    },
+    {
+      "id": "T14",
+      "depends_on": [
+        "T13"
+      ],
+      "goal": "极简对象研判、GIS分区、DSH短摘要skill与50个来源案例",
+      "status": "implemented_pending_live_acceptance",
+      "expected_artifacts": [
+        "docs/地图对象研判_v1.md",
+        "runtime/skills/investment-brief/",
+        "services/capabilities/map_regions.py",
+        "tests/browser/map-workspace.mjs"
+      ],
+      "definition_of_done": "规则、来源隔离与按需调用通过回归；PR CI通过；真实地图与模型凭据联调单独验收。",
+      "implementation_note": "Local: 92 JS tests, 10 geometry tests, 8 offline full-app browser checks and build pass. New live-provider acceptance not run.",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "runtime/",
+        "services/",
+        "tests/",
+        "docs/",
+        "agent/"
+      ],
+      "execution_profile": "local_fixture_then_pr_ci",
+      "upstream_verification_required": true
     }
   ]
 }

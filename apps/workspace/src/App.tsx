@@ -624,8 +624,8 @@ export default function App() {
                       {running
                         ? "正在整理证据与检查路径"
                         : packet
-                          ? "实施路径已列出，关键前提仍待核"
-                          : "准备好，开始第一次片区初筛"}
+                          ? "实施路径"
+                          : "研究这处空间"}
                     </h2>
                   </div>
                   <span className="version-tag">
@@ -634,7 +634,7 @@ export default function App() {
                 </div>
                 <p>
                   {packet?.summary ||
-                    "使用当前资料检查建筑存量、实施前提与企业条件。即使有缺项，也会给出有边界的路径比较和调查清单。"}
+                    "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。"}
                 </p>
                 <div className="summary-bottom">
                   <span>
@@ -642,7 +642,7 @@ export default function App() {
                     {running
                       ? "研判执行中"
                       : packet
-                        ? "部分结果 · 关键前提待核"
+                        ? "研判结果"
                         : "资料已就绪 · 可运行离线检查"}
                   </span>
                   <button
@@ -670,7 +670,7 @@ export default function App() {
                   </button>
                 </div>
               </section>
-              <section className="metrics" aria-label="当前指标">
+              <details className="project-metrics-details"><summary>项目概况</summary><section className="metrics" aria-label="当前指标">
                 <div>
                   <span>建筑总面积</span>
                   <strong>
@@ -692,29 +692,13 @@ export default function App() {
                       ? "待核实"
                       : `${(vacancy.value * 100).toFixed(0)}%`}
                   </strong>
-                  <p>空置不等于可直接改造</p>
+
                 </div>
-                <div>
-                  <span>候选实施路径</span>
-                  <strong>
-                    {packet?.scenarios.length ?? "—"}
-                    <small>条</small>
-                  </strong>
-                  <p>包含暂缓与调查基线</p>
-                </div>
-                <div>
-                  <span>未解决的关键输入</span>
-                  <strong>
-                    {packet?.missing_fields.length ?? "—"}
-                    <small>项</small>
-                  </strong>
-                  <p>不以默认值补齐未知</p>
-                </div>
-              </section>
+              </section></details>
               <div className="section-head main-section-head">
                 <div>
                   <span className="kicker">PATHWAYS</span>
-                  <h2>同一份证据，不同实施路径</h2>
+                  <h2>实施路径</h2>
                 </div>
                 <button
                   className="text-button"
@@ -1356,9 +1340,9 @@ export default function App() {
                 />
               </details>
               <div className="note-line">
-                真实模式按区域名称检索公开资料。没有边界或工程材料时，不自动生成地块权属或建筑事实。
+                AI 生成与搜索可能存在错误
               </div>
-              {mapAnchor && <div className="note-line">已关联地图点位：{mapAnchor.name}。{mapEvidence ? '将同时带入本次区位初筛资料。' : ''}点位不等于研究边界。<button type="button" className="text-button" onClick={() => { setMapAnchor(undefined); setMapEvidence(null) }}>解除关联</button></div>}
+              {mapAnchor && <div className="note-line">已关联地图点位：{mapAnchor.name}。{mapEvidence ? '将同时带入本次区位初筛资料。' : ''}<button type="button" className="text-button" onClick={() => { setMapAnchor(undefined); setMapEvidence(null) }}>解除关联</button></div>}
               <button
                 className="primary full-width"
                 disabled={busy}
