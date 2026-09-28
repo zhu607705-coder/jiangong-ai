@@ -84,12 +84,13 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     {context&&<>
       {cell&&<div className="screening-tier" style={{'--tier-color':SCREEN_TIERS[cell.tier].color} as React.CSSProperties}><i/>{SCREEN_TIERS[cell.tier].label}</div>}
       {model?<div className="assessment-narrative">
+        {analysis?.refresh_required&&<p className="action-condition">此前简报 · 依据已变化</p>}
         <p className="assessment-headline">{model.summary}</p>
         {model.cautions.slice(0,1).map((c,i)=><p className="action-condition" key={i}>{c.text}<button className="claim-source" onClick={()=>showEvidence(c.evidence_refs)} title={cite(c.evidence_refs)}>依据</button></p>)}
         {model.next_steps.slice(0,1).map((step,i)=><p className="next-action" key={i}><strong>下一步</strong>{step}</p>)}
       </div>:stage!=='analysis'&&<div className="selection-signals">{signals.length?signals.map(s=><article key={s.title}><h4>{s.title}</h4><p className="signal-observation">{s.observation}</p><p>{s.implication}</p></article>):<p>研究这处空间的具体参与路径。</p>}</div>}
       <div className="assessment-ai-action"><select aria-label="初判研究方向" value={profile} disabled={stage==='analysis'} onChange={e=>onProfile(e.target.value as MapScreenProfile)}>{Object.entries(SCREEN_PROFILES).map(([id,p])=><option key={id} value={id}>{p.label}</option>)}</select>
-        {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setStage('done');setError(model?'简报已保留，评分已停止。':'已停止，已取得的过程保留。')}}>停止</button>:<button onClick={()=>void analyze()} disabled={!!model&&analysis?.status==='completed'}><IconSparkles size={15}/>{model?(analysis?.status==='completed'?'已研判':'重试评分'):'研判此处'}</button>}</div>
+        {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setStage('done');setError(model?'简报已保留，评分已停止。':'已停止，已取得的过程保留。')}}>停止</button>:<button onClick={()=>void analyze()} disabled={!!model&&analysis?.status==='completed'&&!analysis.refresh_required}><IconSparkles size={15}/>{analysis?.refresh_required?'重新取证':model?(analysis?.status==='completed'?'已研判':'重试评分'):'研判此处'}</button>}</div>
       <ResearchActivity events={progress} running={stage==='analysis'}/>
       {analysis?.decision_support?.dashboard&&<DecisionDashboard value={analysis.decision_support.dashboard} onEvidence={showEvidence}/>}
       <button className="assessment-source-toggle" aria-expanded={sourcesOpen} onClick={()=>setSourcesOpen(v=>!v)}>查看依据 <IconChevronDown size={14}/></button>
@@ -97,6 +98,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
         {model?.opportunities.map((c,i)=><p key={i}>{c.text}<button className="claim-source" onClick={()=>showEvidence(c.evidence_refs)} title={cite(c.evidence_refs)}>依据</button></p>)}
         <p>{cell?cell.boundary_source:'位置周边 800 米'} · {new Date(analysis?.created_at||context.created_at).toLocaleString('zh-CN')}</p>
         {sources.map(s=><div key={s.ref} id={'evidence-'+encodeURIComponent(s.ref)}><strong>{s.title}</strong><p>{s.synthetic?'测试样本':s.scope} · {s.published_at?.slice(0,10)||'发布日期待补'}</p>
+          {s.body_truncated&&<p>原文未完整取得，当前实施入口待核。</p>}
           {(analysis?.research_records||[]).filter(r=>r.source_id===s.id).map(r=><dl className="record-fields" key={r.id}>{r.fields.filter(f=>f.value!==null).map(f=><div key={f.key}><dt>{f.label}</dt><dd>{String(f.value)}{f.unit?' '+f.unit:''}</dd></div>)}</dl>)}
           {s.untrusted_text&&<details><summary>原文摘录</summary><p className="evidence-excerpt">{s.untrusted_text}</p></details>}{s.url&&/^https?:\/\//.test(s.url)&&<a href={s.url} target="_blank" rel="noreferrer">原始来源 ↗</a>}</div>)}
         <details><summary>地图线索</summary>{context.groups.map(g=><div key={g.key} id={'evidence-'+encodeURIComponent(g.source_id)}><strong>{g.label}</strong><p>{g.sample.map(p=>p.name).join('、')||g.issue||'暂无样本'}</p></div>)}{signals.map(s=><p key={s.title}>{s.next}</p>)}</details>

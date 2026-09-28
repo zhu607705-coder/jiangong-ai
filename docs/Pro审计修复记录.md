@@ -87,3 +87,18 @@ Pro 对 `f69d69277e14216fc2e5bf3214968ab2d53c22b8` 的复审新增关闭 C01、C
 共享的记录窗口规则用于 Adapter、即时准入和缓存恢复；没有取消记录上限。来源覆盖标记在唯一 Canonical schema 中维护并生成 TypeScript/Pydantic。策略更新为 `public-adapters-v8`，旧缓存不沿用此前的准入规则。
 
 第四轮已核对的新 Qwen 原始正向包继续有效。本机在新规则下重放同一公开材料及原响应，需求 3.8、投入交付 3.9 均保留，未重新收费调用或改写原始分数。计数、日志与后续复审状态见 `research/test_results/pro-audit-round4.json`。当前本地修复仍须对新提交做第 5 轮 Pro 复审。
+
+## 第 5 轮复审与修复
+
+Pro 对 `393fafb9c8d36f94c418b8f9bd872d7b7e759b2f` 使用真实锁定的四个词表包复审，独立运行 264 项 JS、70 项 Python、11 项 HTTP、39 项 React 和构建。A12、D01 新增关闭，累计关闭 20 项；A01、A15 仍开放，新增 E01、E02。完整报告保存在本机 `data/local/pro-audit/round-05/pro-repro/JIANGONG-AUDIT-05-393fafb9/report.md`。
+
+| 编号 | 独立处置 | 验证 |
+|---|---|---|
+| A01 | 接受。对象出现于括注邻接或其它工程的开标场地，并不构成自身采购。普通和正式记录主张改为要求可识别的主体、明确参与/受益关系、标签或地址前缀，不再以未命中排除词就放行。 | 实际 Adapter 的括注项目名、开标地址、纯引文及 fit_* 输入；自身否定、合法比较、校园及既有属性说明保留。 |
+| A15 | 接受。明确包含/连同范围及附加括注不能从金额所有者中任意省略；选中对象自身名称中的括号保留既有等价处理。summary 和 basis 使用相同金额准入。 | “甲（含乙）”等包含式范围→单体拒绝，完整总范围和真实单体金额通过；联合/标段/分项回归。 |
+| E01 | 接受。Source.body_truncated 在 Adapter 前记录真实 DSH 读体结果，完整业务族窗口不能由正文前缀推定；回执警告与研究 partial 状态体现取回不全。与仅供展示的 excerpt 分开，维持原抓取预算。 | 真实锁定 HttpFetchProvider.readBody 的字符/字节限额；完整长正文展示摘录、完整独立详情与需求线索正例。 |
+| E02 | 接受。先独立复现失效 partial 的金额校验失败。缓存明确返回 refresh_required 和历史提示；分析器退出无效复用、绕过相同旧取证缓存、按新研究时点更新资料；正常有效 partial 仍只续评分。 | 实际 projectInput/evidenceAt、文件缓存、savedAnalysis/analyze、新 context/重启、到期边界，以及已有过期取证缓存；真实 React 的历史标记、重新取证和成功替换。 |
+
+新字段继续由唯一 Canonical schema 生成 TS/Pydantic。研究策略更新为 `public-adapters-v9`。完整资料不因展示摘录被拒，正文不全的来源仍可保留明确的需求等线索，不据其确认当前实施入口。失效旧简报可展示为历史，不再被标为无需更新资料的普通评分重试。
+
+公开真实请求 `031b9c4b-ac45-446e-8a83-c6e8262c833b` 在新准入下的未改写回放仍保留需求 3.8、投入交付 3.9；本轮没有新增付费模型请求。最终验证范围见 `research/test_results/pro-audit-round5.json`，新提交仍需第 6 轮 Pro 复审确认。

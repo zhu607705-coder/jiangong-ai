@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto'
+import { HttpFetchProvider } from '@deepseek-ai/dsh-web-fetch-http'
 import { describe, expect, it } from 'vitest'
 import { groundMapAssessment } from '../../services/map-screening/analyst'
 import { adaptOfficialSource } from '../../services/capabilities/adapters/public-records'
@@ -18,6 +19,16 @@ function entryEligibility(html:string){
 }
 
 describe('monetary claim ownership',()=>{
+  it.each(['甲办公楼（含乙办公楼）改造','甲办公楼（包括乙办公楼）改造','甲办公楼连同乙办公楼改造'])('preserves an explicit inclusion scope in both prose and basis: %s',owner=>{
+    const original=source(`<table>${field('项目编号','INCLUSION')}${field('项目名称',owner)}${field('预算金额','120万元')}</table>`),records=adaptOfficialSource(original).records
+    const parsed={...original,untrusted_text:visibleText(original.untrusted_text!,original.url!)}
+    expect(()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[parsed],records)).toThrow()
+    expect(()=>groundMapAssessment(brief(`${owner}预算为120万元。`),context,[parsed],records)).not.toThrow()
+    const amount=records[0].fields.find(f=>f.key==='budget')!
+    const result=groundMapAssessment({...brief('研究楼栋维护服务。'),dimension_evidence:[{key:'resources',source_id:'S',record_id:records[0].id,quote:owner,basis:'甲办公楼预算为120万元。'}]},context,[parsed],records)
+    expect(amount.value).toBe(120)
+    expect(result.dimension_evidence).toEqual([])
+  })
   const original=source('杭州市西湖区甲办公楼空调更新预算为120万元。')
   it.each(['甲办公楼空调更新预算为120万元。','甲办公楼预算为120万元。','预算为120万元。','本项目预算为120万元。'])(
     'keeps the supported current-object amount: %s',text=>expect(()=>groundMapAssessment(brief(text),context,[original])).not.toThrow(),
@@ -63,6 +74,21 @@ describe('monetary claim ownership',()=>{
 
 describe('the target is the claim object, not just a geographical reference',()=>{
   it.each([
+    '乙办公楼（紧邻甲办公楼）本期采购设备维护服务。',
+    '乙办公楼的维保项目在甲办公楼进行开标。',
+    '乙办公楼的维保项目开标地点：甲办公楼。',
+  ])('rejects reference-only and tender-venue mentions: %s',quote=>{
+    const result=groundMapAssessment({...brief('研究楼栋维护服务。'),dimension_evidence:[{key:'demand',source_id:'S',quote,basis:'当前楼栋维护需求。'}]},context,[source(quote)])
+    expect(result.dimension_evidence).toEqual([])
+    expect(dashboardQuestions({purpose:result.summary,evidence:result.dimension_evidence!})).toEqual({})
+  })
+  it('checks the same object-role boundary on actual adapter project names',()=>{
+    const subject='乙办公楼（紧邻甲办公楼）设备维护采购项目',original=source(`<table>${field('项目编号','OTHER')}${field('项目名称',subject)}${field('预算金额','120万元')}</table>`)
+    const records=adaptOfficialSource(original).records,parsed={...original,untrusted_text:visibleText(original.untrusted_text!,original.url!)}
+    const result=groundMapAssessment({...brief('研究楼栋维护服务。'),dimension_evidence:[{key:'demand',source_id:'S',record_id:records[0].id,quote:subject,basis:'当前楼栋维护需求。'}]},context,[parsed],records)
+    expect(result.dimension_evidence).toEqual([])
+  })
+  it.each([
     ['甲办公楼本期采购设备维护服务。',true],
     ['甲办公楼目前没有新增采购需求。',true],
     ['乙办公楼旁的甲办公楼本期采购设备维护服务。',true],
@@ -75,6 +101,47 @@ describe('the target is the claim object, not just a geographical reference',()=
     const result=groundMapAssessment({...brief('研究楼栋维护服务。'),dimension_evidence:[{key:'demand',source_id:'S',quote:quote as string,basis:'核对该楼维护需求。'}]},context,[source(quote as string)])
     expect(result.dimension_evidence).toHaveLength(accepted?1:0)
     expect(Object.hasOwn(dashboardQuestions({purpose:result.summary,evidence:result.dimension_evidence!}),'fit_demand')).toBe(accepted)
+  })
+})
+
+describe('actual DSH body completeness before record normalization',()=>{
+  const html='<html><head><meta name="PubDate" content="2026-09-20"></head><body>'+table('2026年10月5日09:00:00')+'<!--'+'x'.repeat(81000)+'-->'+table('2026年9月20日09:00:00')+'</body></html>'
+  it('allows a complete long excerpt and an independent complete detail while preserving partial-source demand',async()=>{
+    const positive=html.replace('2026年9月20日09:00:00','2026年10月5日09:00:00')
+    const research=await collectSelectedEvidence({name:'甲办公楼',purpose:'维护采购',asOf:context.created_at},new AbortController().signal,undefined,{
+      search:async()=>({sources:['partial','complete'].map(key=>({url:`https://www.ccgp.gov.cn/${key}`,title:'甲办公楼采购公告',publishedAt:'2026-09-20'}))}),
+      fetch:async({url},signal)=>{
+        const provider:any=new HttpFetchProvider({maxBodyChars:url.endsWith('partial')?80000:200000,maxResponseBytes:2_000_000,timeoutMs:15000,maxRedirects:2,userAgent:'fixture'})
+        return provider.readBody(new Response(positive,{headers:{'content-type':'text/html; charset=utf-8'}}),new URL(url),signal)
+      },
+    })
+    for(const source of research.sources){
+      expect(source.content_status).toBe('excerpt')
+      const record=research.records.find(record=>record.source_id===source.id)!
+      for(const key of ['implementation','demand'] as const){
+        const result=groundMapAssessment({...brief('研究维护采购。'),dimension_evidence:[{key,source_id:source.id,record_id:record.id,quote:record.subject,basis:'原文采购线索。'}]},context,research.sources,research.records)
+        expect(result.dimension_evidence).toHaveLength(key==='implementation'&&source.body_truncated?0:1)
+      }
+    }
+  })
+  it.each([
+    {name:'complete body, display excerpt',maxBodyChars:200000,maxResponseBytes:2_000_000,truncated:false},
+    {name:'character cap',maxBodyChars:80000,maxResponseBytes:2_000_000,truncated:true},
+    {name:'byte cap',maxBodyChars:200000,maxResponseBytes:80000,truncated:true},
+  ])('keeps current entry unconfirmed under $name',async({maxBodyChars,maxResponseBytes,truncated})=>{
+    const provider:any=new HttpFetchProvider({maxBodyChars,maxResponseBytes,timeoutMs:15000,maxRedirects:2,userAgent:'fixture'})
+    let bodyTruncated=false
+    const research=await collectSelectedEvidence({name:'甲办公楼',purpose:'维护采购',asOf:context.created_at},new AbortController().signal,undefined,{
+      search:async()=>({sources:[{url:'https://www.ccgp.gov.cn/body-fixture',title:'甲办公楼采购公告',publishedAt:'2026-09-20'}]}),
+      fetch:async({url},signal)=>{const result=await provider.readBody(new Response(html,{headers:{'content-type':'text/html; charset=utf-8'}}),new URL(url),signal);bodyTruncated=result.truncated;return result},
+    })
+    expect(bodyTruncated).toBe(truncated)
+    expect(research.sources[0].content_status).toBe('excerpt')
+    const record=research.records[0]
+    expect(record.fields.find(f=>f.key==='deadline_resolved')?.value).toBeNull()
+    const result=groundMapAssessment({...brief('研究维护采购。'),dimension_evidence:[{key:'implementation',source_id:record.source_id,record_id:record.id,quote:record.subject,basis:'当前采购入口。'}]},context,research.sources,research.records)
+    expect(result.dimension_evidence).toEqual([])
+    if(truncated){expect(research.trace.status).toBe('partial');expect(research.trace.warnings.some(w=>w.includes('BODY_TRUNCATED'))).toBe(true)}
   })
 })
 

@@ -153,6 +153,16 @@ try{
  assert.equal(modelCalls,4)
  await page.getByLabel('初判研究方向').selectOption('commercial')
  await page.locator('.decision-dashboard').waitFor()
+ studies.set('balanced',{...studies.get('commercial'),profile:'balanced',status:'partial',refresh_required:true,decision_support:undefined,reason:'此前简报的依据已变化，需重新取证后研判。'})
+ await page.getByLabel('初判研究方向').selectOption('balanced')
+ await page.getByRole('button',{name:'重新取证',exact:true}).waitFor()
+ assert.equal(await page.getByText('此前简报 · 依据已变化',{exact:true}).count(),1)
+ assert.equal(await page.locator('.decision-dashboard').count(),0)
+ assert.equal(modelCalls,4)
+ await page.getByRole('button',{name:'重新取证',exact:true}).click()
+ await page.locator('.decision-dashboard').waitFor()
+ assert.equal(modelCalls,5)
+ assert.equal(await page.getByText('此前简报 · 依据已变化',{exact:true}).count(),0)
  await page.getByRole('button',{name:'建立项目',exact:true}).click()
  await page.locator('#project-name').fill('明确的界面回归项目')
  await page.locator('#region-name').fill('公开测试街区')
@@ -163,8 +173,8 @@ try{
  assert.ok(createdInput.input.scope.boundary_source)
  assert.deepEqual(created.input.scope.geometry,converted)
  assert.deepEqual(errors,[])
- await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained','profile cache revalidated by server','expired dashboard removed','expired parent color removed']},null,2))
- console.log('PASS map UI: 27 checks including phase recovery, server cache validity and polygon handoff; synthetic provider fixtures')
+ await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained','profile cache revalidated by server','expired dashboard removed','expired parent color removed','historical partial explicitly labelled','refresh uses a distinct action','historical data never auto launches a model','successful refresh replaces the historical state']},null,2))
+ console.log('PASS map UI: 31 checks including explicit historical refresh, phase recovery and polygon handoff; synthetic provider fixtures')
  }
 }
 }catch(error){await page.screenshot({path:'output/playwright/minimal-map-failure.png'});console.error(JSON.stringify({created:!!created,createdInput,errorText:await page.locator('body').innerText(),errors},null,2));throw error}finally{await browser.close()}

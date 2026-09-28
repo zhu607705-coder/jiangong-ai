@@ -1,0 +1,71 @@
+{
+  "baseline_commit": "393fafb9c8d36f94c418b8f9bd872d7b7e759b2f",
+  "review_id": "JIANGONG-AUDIT-05-393fafb9",
+  "status": "verified_pending_publication_and_round06",
+  "as_of": "2026-09-28T21:43:09.259631+00:00",
+  "pro_closed_original": 20,
+  "addressed": [
+    "A01",
+    "A15",
+    "E01",
+    "E02"
+  ],
+  "verification": {
+    "javascript": 277,
+    "python": 70,
+    "http": 11,
+    "browser": 43,
+    "production_build": "passed",
+    "real_public_replay": {
+      "scope": "Offline qualification and arithmetic replay of the saved real public/native request; no new model call.",
+      "request_id": "031b9c4b-ac45-446e-8a83-c6e8262c833b",
+      "qualified_dimensions": [
+        "demand",
+        "resources"
+      ],
+      "question_keys": [
+        "fit_demand",
+        "fit_resources"
+      ],
+      "values": [
+        {
+          "key": "demand",
+          "value": 3.8
+        },
+        {
+          "key": "supply",
+          "value": null
+        },
+        {
+          "key": "adaptation",
+          "value": null
+        },
+        {
+          "key": "implementation",
+          "value": null
+        },
+        {
+          "key": "operations",
+          "value": null
+        },
+        {
+          "key": "resources",
+          "value": 3.9
+        }
+      ]
+    },
+    "scope": [
+      "Actual pinned DSH readBody character/byte cap, complete display-excerpt and independent complete-detail controls",
+      "Actual Adapter/ground/request questions for ownership, inclusion and monetary basis",
+      "Actual service/evidenceAt/filecache/newcontext/restart refresh flow",
+      "React historical brief marker and explicit refresh action; valid score-only retry retained"
+    ]
+  },
+  "source_policy": "public-adapters-v9",
+  "evidence_local": "data/local/pro-audit/round-05/",
+  "limits": [
+    "The exact next source commit still requires original Pro round06 review.",
+    "No new paid model calls or enterprise-effectiveness claims.",
+    "Browser map/API boundaries remain explicit synthetic providers."
+  ]
+}

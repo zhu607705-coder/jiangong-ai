@@ -9,8 +9,16 @@ function ownMention(clause:string):boolean {
   return [...clause.matchAll(/\uFFFC/g)].some(match=>{
     const before=clause.slice(0,match.index).trim(),after=clause.slice(match.index+1).trim()
     if(/^(?:的)?(?:旁(?:边)?|附近|周边|对面|隔壁|以[东南西北](?:侧)?|[东南西北](?:侧|面|边)的|相邻|毗邻|相比|相同|相似)/.test(after))return false
-    if(/(?:参考|参照|对比|相比于?|相较于?|毗邻|靠近|邻近|距离)$/.test(before))return false
-    return true
+    if(/(?:参考|参照|对比|相比于?|相较于?|毗邻|紧邻|靠近|邻近|距离)$/.test(before))return false
+    if(/^(?:内|里|中)?(?:进行|举行|召开|举办|办理)?(?:开标|评标|投标(?:登记|会议))/.test(after))return false
+    if(/(?:开标|评标|投标)(?:地点|地址|场地|会场|场所)[为是：:\s]*$/.test(before))return false
+    // Require a nominal subject, an explicit participant/beneficiary, or a
+    // recognised leading label/address. Merely appearing elsewhere is not proof.
+    if(!before)return true
+    if(/(?:为|对|给|针对|面向|服务于|负责|涉及|包括|包含|含|连同|与|和|及|、|暨)$/.test(before))return true
+    if(/(?:旁(?:边)?|附近|周边|对面|隔壁|相邻|毗邻|相比|相较)的$/.test(before))return true
+    if(/^(?:关于|本次|本期|拟对|计划对|\d{4}年(?:度)?|第[一二三四五六七八九十\dA-Z]+标段|项目名称[：:]?|工程名称[：:]?|采购项目(?:名称)?[：:]?)+$/.test(before))return true
+    return /(?:省|市|区|县|镇|街道|路|号|大学|学院|学校|集团|公司|医院|研究院|管理局|管委会)$/.test(before)&&!/(?:采购|维保|开标|评标|参考|相比|邻近|附近|紧邻|靠近)/.test(before)
   })
 }
 /** A location/comparison reference does not transfer another object's claim.
@@ -32,7 +40,9 @@ export function ownObjectClaim(text:string,name:string,nominal=false):boolean {
 /** A joint/lot/component scope cannot be shortened into a single target. */
 export function completeAmountScope(owner:string,name:string):boolean {
   const remainder=markObjectName(owner,name).replaceAll(TARGET,'')
-  return /与|和|及|、|暨|联合|共同|标段|分项|分包|包件|分期|首期|[一二三四五六七八九十\d]+期|[两三四五六七八九十\d]+(?:栋|幢|座|个项目)/.test(remainder)
+  // Parenthetical qualifications are part of the monetary owner. We need not
+  // guess whether an unfamiliar qualifier can be discarded from a total.
+  return /\([^)]*\)|\[[^\]]*\]/.test(remainder)||/与|和|及|、|暨|联合|共同|包含|包括|连同|含|标段|分项|分包|包件|分期|首期|[一二三四五六七八九十\d]+期|[两三四五六七八九十\d]+(?:栋|幢|座|个项目)/.test(remainder)
 }
 export function amountOwnerCore(owner:string,name:string):string {
   const text=normalizedName(owner).replace(/(?:的|合计|总计|总)$/,''),subject=normalizedName(name),index=text.indexOf(subject)

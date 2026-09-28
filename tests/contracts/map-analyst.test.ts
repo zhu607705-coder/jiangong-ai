@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { mkdtemp, rm } from 'node:fs/promises'
+import { mkdtemp, rm, mkdir, writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { MapScreenContext } from '../../apps/host/generated/contracts'
@@ -8,14 +10,81 @@ const ports=vi.hoisted(()=>({open:vi.fn(),collect:vi.fn(),decision:vi.fn()}))
 vi.mock('../../runtime/dsh/live-session',()=>({LiveSession:{open:ports.open}}))
 vi.mock('../../services/capabilities/research',()=>({collectSelectedEvidence:ports.collect}))
 vi.mock('../../services/capabilities/decision-model',()=>({evaluateDecision:ports.decision}))
-import { analyzeMapContext } from '../../services/map-screening/analyst'
+import { analyzeMapContext, groundMapAssessment } from '../../services/map-screening/analyst'
+import { MapScreeningService } from '../../services/map-screening/service'
+import { projectInput } from '../../packages/contracts/validate'
 import { config } from '../../apps/host/config'
+import { RESEARCH_POLICY } from '../../packages/research/public-sources'
 
 const original={dataDir:config.dataDir,modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
 const directories:string[]=[]
 afterEach(async()=>{vi.useRealTimers();Object.assign(config,original);vi.resetAllMocks();for(const dir of directories.splice(0))await rm(dir,{recursive:true,force:true})})
 
 describe('map analyst external-data boundary',()=>{
+  it('marks expired local-source partials for refresh and recovers through the real service after restart',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const dir=await mkdtemp(join(tmpdir(),'map-refresh-service-'));directories.push(dir)
+    Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:false})
+    const old:any={id:'OLD',title:'甲办公楼预算记录',url:'https://www.ccgp.gov.cn/old',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',published_at:'2026-09-20T00:00:00Z',date_status:'verified',expires_at:'2026-09-28T08:01:00Z',untrusted_text:'甲办公楼预算为120万元。'}
+    const input=JSON.parse(readFileSync('fixtures/inputs/01_auto.json','utf8'))
+    Object.assign(input,{project_id:'P-REFRESH',synthetic:false,as_of:'2026-09-28',sources:[old],facts:[],context_rules:[]})
+    input.scope={name:'公开测试项目',city:'杭州市',geometry:null,coordinate_encoding:'WGS84',legal_parcel_confirmed:false,map_anchor:{longitude:120.16,latitude:30.28,coordinate_encoding:'GCJ-02',name:'甲办公楼',provider:'amap'}}
+    projectInput(input)
+    const snapshot=async()=>({revision:'unchanged',syntheticCount:0,projects:[{project:{id:input.project_id,name:'公开测试项目',owner_id:'local-operator',input,context_version:0,created_at:'2026-09-28T00:00:00Z',updated_at:'2026-09-28T00:00:00Z'},sources:[old],documentCount:0}]})
+    const provider={revision:()=> 'test',query:async(path:string)=>path.includes('regeo')?{regeocode:{formatted_address:'浙江省杭州市西湖区甲办公楼',addressComponent:{city:'杭州市'}}}:{count:'0',pois:[]}}
+    let initial=true
+    const analyst:typeof analyzeMapContext=async(ctx,profile,signal,emit=()=>{},previous)=>{
+      if(!initial)return analyzeMapContext(ctx,profile,signal,emit,previous)
+      initial=false
+      const result:any={context_id:ctx.id,profile,status:'partial',assessment:groundMapAssessment({summary:old.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]},ctx),model_calls:[],reason:'评分尚未完成。',created_at:new Date().toISOString(),research_sources:[],research_records:[]}
+      await emit({type:'brief',result});return result
+    }
+    const service=new MapScreeningService(provider,dir,analyst,snapshot),signal=new AbortController().signal
+    const target:any={kind:'point',longitude:120.16,latitude:30.28,radius_m:800,bounds:null,label:'甲办公楼',label_origin:'public',object_ref:'amap:A'}
+    const ctx=await service.context(target,signal);await service.analyze(ctx.id,'balanced',signal)
+    vi.setSystemTime(new Date('2026-09-28T08:00:59Z'))
+    expect((await service.savedAnalysis(ctx.id,'balanced',signal))?.refresh_required).not.toBe(true)
+    for(const now of ['2026-09-28T08:01:00Z','2026-09-28T08:01:01Z','2026-09-28T08:02:00Z']){
+      vi.setSystemTime(new Date(now));const saved=await service.savedAnalysis(ctx.id,'balanced',signal)
+      expect(saved?.refresh_required).toBe(true);expect(saved?.assessment?.summary).toBe(old.untrusted_text);expect(saved?.reason).toContain('重新取证')
+    }
+    vi.setSystemTime(new Date('2026-09-28T08:11:00Z'))
+    const restarted=new MapScreeningService(provider,dir,analyst,snapshot),freshContext=await restarted.context(target,signal)
+    expect(freshContext.id).not.toBe(ctx.id)
+    expect((await restarted.savedAnalysis(freshContext.id,'balanced',signal))?.refresh_required).toBe(true)
+    const current={...old,id:'NEW',url:'https://www.ccgp.gov.cn/new',expires_at:undefined,published_at:'2026-09-28T08:01:00Z',untrusted_text:'甲办公楼预算为180万元。'}
+    const trace={status:'success',queries:[],source_ids:['NEW'],warnings:[],reused:false}
+    ports.collect.mockResolvedValue({sources:[current],records:[],receipts:[],trace})
+    ports.open.mockResolvedValue({calls:[],close:async()=>{},call:async(stage:string)=>({value:stage==='research_plan'?trace:{summary:current.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]}}),runReadCapability:async(_name:string,fn:(s:AbortSignal)=>Promise<unknown>)=>fn(signal)})
+    const result=await restarted.analyze(freshContext.id,'balanced',signal)
+    expect(result.status).toBe('completed');expect(result.assessment?.summary).toBe(current.untrusted_text);expect(result.refresh_required).not.toBe(true)
+    expect(ports.collect).toHaveBeenCalledTimes(1)
+    expect((await restarted.savedAnalysis(freshContext.id,'balanced',signal))?.assessment?.summary).toBe(current.untrusted_text)
+  })
+  it('refreshes evidence when an expired partial money claim can no longer be reused',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+    const dir=await mkdtemp(join(tmpdir(),'map-analyst-'));directories.push(dir)
+    Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:true})
+    const ctx={id:'TEST',created_at:'2026-09-28T08:00:00Z',target:{label_origin:'public',label:'科技大楼'},groups:[],local_projects:[]} as unknown as MapScreenContext
+    const old={id:'OLD',title:'科技大楼采购公告',url:'https://example.gov.cn/old',published_at:'2026-09-28T00:00:00Z',expires_at:'2026-09-28T08:01:00Z',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:'科技大楼空调更新预算为120万元。'}
+    const previous:any={context_id:'TEST',profile:'balanced',status:'partial',created_at:ctx.created_at,model_calls:[],assessment:{summary:old.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]},research_sources:[old]}
+    const fresh={...old,id:'NEW',url:'https://example.gov.cn/new',expires_at:undefined,untrusted_text:'科技大楼空调更新预算为180万元。'}
+    const trace={status:'success',queries:[],source_ids:['NEW'],warnings:[],reused:false}
+    const cacheKey=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name:'科技大楼',target:ctx.target,profile:'balanced',day:ctx.created_at.slice(0,10)})).digest('hex')
+    const cacheDir=join(dir,'map-screening','public-research');await mkdir(cacheDir,{recursive:true})
+    await writeFile(join(cacheDir,cacheKey+'.json'),JSON.stringify({saved_at:new Date().toISOString(),result:{sources:[old],records:[],receipts:[],trace}}))
+    ports.collect.mockResolvedValue({sources:[fresh],records:[],receipts:[],trace})
+    ports.decision.mockResolvedValue({status:'completed',dashboard:{status:'partial',dimensions:[]}})
+    const call=vi.fn(async(stage:string)=>({value:stage==='research_plan'?trace:{summary:fresh.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]}}))
+    ports.open.mockResolvedValue({calls:[],close:async()=>{},call,runReadCapability:async(_name:string,fn:(s:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
+    const result=await analyzeMapContext(ctx,'balanced',new AbortController().signal,()=>{},previous)
+    expect(result.status).toBe('completed')
+    expect(result.assessment?.summary).toBe(fresh.untrusted_text)
+    expect(ports.collect).toHaveBeenCalledTimes(1)
+    expect(ports.collect.mock.calls[0][0].asOf).toBe('2026-09-28T08:02:00.000Z')
+    expect(ports.decision).toHaveBeenCalledTimes(1)
+    expect(previous.assessment.summary).toBe(old.untrusted_text)
+  })
   it('retains a partial historical brief but does not re-score its expired source at the old snapshot time',async()=>{
     vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
     const dir=await mkdtemp(join(tmpdir(),'map-analyst-'));directories.push(dir)

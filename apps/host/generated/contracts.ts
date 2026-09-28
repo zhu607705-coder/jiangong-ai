@@ -157,6 +157,7 @@ export interface Source {
   evidence_scope?: "object" | "area" | "background";
   raw_hash?: string;
   records_truncated?: boolean;
+  body_truncated?: boolean;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -785,6 +786,7 @@ export interface MapScreenAnalysis {
   adapter_receipts?: AdapterReceipt[];
   research?: ResearchTrace;
   reused_from_context_id?: string;
+  refresh_required?: boolean;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

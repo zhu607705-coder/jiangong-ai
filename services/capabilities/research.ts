@@ -62,6 +62,8 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
           const response=await web!.fetch({url:hit.url},signal)
           if(response.statusCode<200||response.statusCode>=300)throw Error('SOURCE_HTTP_'+response.statusCode)
           const raw=response.body.content,bodyDate=documentDate(raw)
+          source.body_truncated=!!response.truncated
+          if(source.body_truncated)warnings.push('SOURCE_BODY_TRUNCATED:'+id)
           if(hit.publishedAt)source.search_published_at=hit.publishedAt.slice(0,100)
           if(bodyDate){
             source.published_at=bodyDate

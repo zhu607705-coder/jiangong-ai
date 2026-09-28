@@ -248,6 +248,9 @@
         },
         "records_truncated": {
           "type": "boolean"
+        },
+        "body_truncated": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -2082,6 +2085,9 @@
         "reused_from_context_id": {
           "type": "string",
           "maxLength": 100
+        },
+        "refresh_required": {
+          "type": "boolean"
         }
       },
       "required": [

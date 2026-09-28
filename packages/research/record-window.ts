@@ -63,18 +63,18 @@ export function currentWindow(records:PublicRecord[],asOf:string):boolean {
 }
 /** Carry complete-family validity into each retained record before either cap.
  * Original fields remain untouched; derived fields retain their actual locator. */
-export function retainRecordWindows(all:PublicRecord[],retained:PublicRecord[]=all):PublicRecord[]{
+export function retainRecordWindows(all:PublicRecord[],retained:PublicRecord[]=all,completeBody=true):PublicRecord[]{
   const cache=new Map<string,PublicField|null>()
   return retained.map(record=>{
     if(record.adapter!=='procurement')return record
     const native=identity(record),key=JSON.stringify([record.source_id,record.adapter,native?[native.key,native.value]:normalizedName(record.subject),lot(record)])
     if(!cache.has(key)){
-      const family=recordFamily(record,all),result=resolveWindow(family)
+      const family=recordFamily(record,all),result:WindowResolution=completeBody?resolveWindow(family):{status:'unresolved'}
       let field:PublicField|null=null
       if(result.status==='resolved')field={...result.field,key:RESOLVED,label:'同编号有效响应截止'}
       if(result.status==='unresolved'){
         const originals=family.flatMap(row=>row.fields.filter(field=>['deadline','deadline_previous','deadline_corrected','opening_at',RESOLVED].includes(field.key)))
-        field={key:RESOLVED,label:'同编号响应截止待核',value:null,unit:'',raw:[...new Set(originals.map(field=>field.raw))].join(' / ').slice(0,400),locator:[...new Set(originals.map(field=>field.locator))].join(' / ').slice(0,200)}
+        field={key:RESOLVED,label:completeBody?'同编号响应截止待核':'正文未完整读取，响应截止待核',value:null,unit:'',raw:[...new Set(originals.map(field=>field.raw))].join(' / ').slice(0,400),locator:[...new Set(originals.map(field=>field.locator))].join(' / ').slice(0,200)}
       }
       cache.set(key,field)
     }

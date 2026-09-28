@@ -89,7 +89,9 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
   let research:PublicResearch={sources:[],records:[],receipts:[],trace:{status:'not_applicable',queries:[],source_ids:[],warnings:[],reused:false}}
   let decisionSupport:DecisionSupport|undefined
   let assessment:MapPreliminaryAssessment|undefined
-  const reuse=!!previous?.assessment&&previous.context_id===context.id&&previous.profile===profile
+  const previousMatches=!!previous?.assessment&&previous.context_id===context.id&&previous.profile===profile
+  let reuse=previousMatches&&!previous!.refresh_required
+  let refreshEvidence=previousMatches&&!!previous!.refresh_required
   const calls=()=>[...(reuse?previous!.model_calls:[]),...live.calls]
   const partial=():MapScreenAnalysis=>({...base,status:'partial',assessment:assessment!,model_calls:calls(),reason:'简报已完成，评分尚未完成。',research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace})
   try{
@@ -97,14 +99,21 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     const originalSources=publicContext.local_projects.flatMap(p=>p.sources.filter(s=>s.untrusted_text&&s.content_status!=='metadata_only').map(s=>({...s,id:`${p.project_id}:${s.id}`})))
     if(reuse){
       research={sources:previous!.research_sources||[],records:previous!.research_records||[],receipts:previous!.adapter_receipts||[],trace:{...(previous!.research||research.trace),reused:true}}
-      assessment=groundMapAssessment(previous!.assessment!,context,research.sources,research.records,new Date().toISOString())
-      emit({type:'progress',stage:'sources',status:'completed',message:'复用已完成的简报与依据'})
+      try{
+        assessment=groundMapAssessment(previous!.assessment!,context,research.sources,research.records,new Date().toISOString())
+        emit({type:'progress',stage:'sources',status:'completed',message:'复用已完成的简报与依据'})
+      }catch{
+        budget.throwIfAborted()
+        reuse=false;refreshEvidence=true
+        research={sources:[],records:[],receipts:[],trace:{status:'not_applicable',queries:[],source_ids:[],warnings:[],reused:false}}
+        emit({type:'progress',stage:'sources',status:'running',message:'原简报依据已变化，重新取得当前资料'})
+      }
     }
     if(!reuse&&name&&config.searchConfigured){
       emit({type:'progress',stage:'sources',status:'running',message:'核对研究对象与公开数据入口'})
-      const key=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name,target:publicContext.target,profile,day:context.created_at.slice(0,10)})).digest('hex')
+      const key=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name,target:publicContext.target,profile,day:base.created_at.slice(0,10)})).digest('hex')
       const path=join(config.dataDir,'map-screening','public-research',key+'.json')
-      try{const cached=JSON.parse(await readFile(path,'utf8'));if(Date.now()-Date.parse(cached.saved_at)>86400000)throw Error('expired');research=cached.result;research.trace.reused=true;emit({type:'progress',stage:'sources',status:'completed',message:'复用当前对象的公开资料'})}
+      try{if(refreshEvidence)throw Error('brief-no-longer-valid');const cached=JSON.parse(await readFile(path,'utf8'));if(Date.now()-Date.parse(cached.saved_at)>86400000)throw Error('expired');research=cached.result;research.trace.reused=true;emit({type:'progress',stage:'sources',status:'completed',message:'复用当前对象的公开资料'})}
       catch{
         let queries=publicSearchPlan(name,SCREEN_PROFILES[profile].label)
         try{
@@ -112,20 +121,20 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
           const proposed=[...new Set(plan.value.queries.map(q=>q.replace(/[\r\n<>]/g,' ').trim()).filter(q=>q.includes(name)&&q.length<=180))].slice(0,4)
           if(proposed.length===4&&proposed.filter(q=>q.includes('site:')).length>=2&&proposed.some(q=>!q.includes('site:')))queries=proposed
         }catch{budget.throwIfAborted()}
-        research=await live.runReadCapability('selected_public_research',s=>collectSelectedEvidence({name,city:context.city||undefined,purpose:SCREEN_PROFILES[profile].label,asOf:context.created_at},s,emit,undefined,queries))
+        research=await live.runReadCapability('selected_public_research',s=>collectSelectedEvidence({name,city:context.city||undefined,purpose:SCREEN_PROFILES[profile].label,asOf:base.created_at},s,emit,undefined,queries))
         await mkdir(join(config.dataDir,'map-screening','public-research'),{recursive:true})
         if(research.sources.some(s=>s.untrusted_text))await writeFile(path,JSON.stringify({saved_at:new Date().toISOString(),result:research}),{mode:0o600})
       }
     }
-    const projectSources=originalSources.map(s=>({id:s.id,title:s.title,text:s.untrusted_text,published_at:s.published_at||null}))
+    const projectSources=originalSources.map(s=>({id:s.id,title:s.title,text:s.untrusted_text,published_at:s.published_at||null,expires_at:s.expires_at||null,date_status:s.date_status,body_truncated:!!s.body_truncated,records_truncated:!!s.records_truncated}))
     const external=research.sources.filter(s=>s.content_status!=='metadata_only'&&s.untrusted_text)
     const places=context.groups.filter(usableMapEvidence).map(g=>({id:g.key,label:g.label,examples:g.sample.slice(0,5).map(p=>({name:p.name,category:p.category}))}))
-    const allSources=[...projectSources,...external.map(s=>({id:s.id,title:s.title,text:s.untrusted_text?.slice(0,10000),published_at:s.published_at||null}))]
-    const payload={target:publicContext.target,address:context.address,as_of:context.created_at,sources:allSources,places,records:research.records}
+    const allSources=[...projectSources,...external.map(s=>({id:s.id,title:s.title,text:s.untrusted_text?.slice(0,10000),published_at:s.published_at||null,expires_at:s.expires_at||null,date_status:s.date_status,body_truncated:!!s.body_truncated,records_truncated:!!s.records_truncated}))]
+    const payload={target:publicContext.target,address:context.address,as_of:base.created_at,sources:allSources,places,records:research.records}
     const evidenceIds=[...places.map(s=>s.id),...allSources.map(s=>s.id)]
     const references=selectReferenceCases(allSources.map(s=>s.text||'').join(' '))
     if(!reuse)emit({type:'progress',stage:'brief',status:'running',message:'形成具体参与路径'})
-    const prompt=`给出所选空间的实际参与建议。方向：${SCREEN_PROFILES[profile].label}。摘要≤64字，机会、行动前提、下一步各最多1项且≤48字。先回答做什么、为谁做、通过什么业务入口；不要只说核查。学校在正常运行时优先研究具体修缮、机电、后勤或周边服务路径，不把校园当待开发土地。只有本方案真实触发的关键前提才填cautions；无新增信息就留空。禁止“用途、权属和腾退未核实”“不可直接套用更新项目”等泛化阻却句。已经成交或截止的公告作为历史采购需求，下一步查后续采购，不能建议投过期标。
+    const prompt=`给出所选空间的实际参与建议。方向：${SCREEN_PROFILES[profile].label}。摘要≤64字，机会、行动前提、下一步各最多1项且≤48字。先回答做什么、为谁做、通过什么业务入口；不要只说核查。学校在正常运行时优先研究具体修缮、机电、后勤或周边服务路径，不把校园当待开发土地。只有本方案真实触发的关键前提才填cautions；无新增信息就留空。禁止“用途、权属和腾退未核实”“不可直接套用更新项目”等泛化阻却句。已经成交或截止的公告作为历史采购需求，下一步查后续采购，不能建议投过期标。expires_at已过或日期冲突的资料仅作历史线索，不能把旧金额写为当前预算；body_truncated表示原文未完整取得，不确认当前实施窗口。
 可选dimension_evidence按demand需求客群、supply供给竞争、adaptation空间工程、implementation实施入口、operations运营回款、resources投入交付最多各1项。每项必须有一个sources.id、该来源8–180字精确quote、≤120字basis，缺证据的维度不填。引文须明确包含当前对象名称；引用结构化记录字段时填写该条records.id作为record_id，并逐字使用该字段raw。不能用标题替另一对象的引文背书。邻楼、相邻对象和比较案例须明确写为周边或比较线索，不能变成当前对象自身的需求、资格或单体预算；联合项目、标段及分项金额保留完整范围。历史档案可以支持空间线索，不把旧采购、已成交或已截止的公告当当前实施入口。不要为填满图表拼接不同校区或不同项目。未知不打0分。不要输出factors，由已有事实规则管理硬约束。evidence_refs只能用给定ID，POI只用于发现对象，不用于维度评分。
 方法案例不作为本地事实：${JSON.stringify(references)}
 <untrusted_evidence>${JSON.stringify(payload)}</untrusted_evidence>`

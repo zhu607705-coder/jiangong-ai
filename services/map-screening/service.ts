@@ -4,6 +4,7 @@ import { BRIEF_SKILL_VERSION } from '../../runtime/skills/investment-brief'
 import { RESEARCH_POLICY } from '../../packages/research/public-sources'
 import { dimensionCurrentAt } from '../../packages/research/evidence'
 import { researchSubject } from '../../packages/maps/public-context'
+import { groundMapAssessment } from './analyst'
 import { booleanValid } from '@turf/boolean-valid'
 import { decisionFactors } from '../../packages/maps/decision-factors'
 import { applyDecisionGuards } from '../../packages/decision/structured-route'
@@ -303,6 +304,14 @@ export class MapScreeningService {
       this.refreshConditions(context,analysis)
       const aliases=new Map<string,string>((saved.groups||[]).flatMap((g:{key:string;source_id:string})=>{const now=context.groups.find(n=>n.key===g.key);return now?[[g.source_id,now.source_id]]:[]}))
       for(const claim of [...analysis.assessment.opportunities,...analysis.assessment.cautions,...(analysis.assessment.factors||[])])claim.evidence_refs=claim.evidence_refs.map(id=>aliases.get(id)||id)
+      try{
+        groundMapAssessment({...analysis.assessment,factors:undefined},context,analysis.research_sources||[],analysis.research_records||[],stamp())
+      }catch{
+        // Retain the historical artifact, but do not advertise an impossible
+        // score-only retry when its current inputs no longer qualify.
+        analysis.refresh_required=true;analysis.status='partial';delete analysis.decision_support
+        analysis.reason='此前简报的依据已变化，需重新取证后研判。'
+      }
       analysis.reused_from_context_id=analysis.reused_from_context_id||analysis.context_id
       analysis.context_id=context.id
       if(saved.decision_signature!==this.decisionSignature()){

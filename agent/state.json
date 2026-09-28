@@ -1,5 +1,5 @@
 {
-  "status": "pro_audit_round_04_verified_awaiting_round05",
+  "status": "pro_audit_round_05_verified_awaiting_round06",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -26,9 +26,9 @@
     "external_production_database_extensions_and_multitenant_deployment_validation",
     "scanned_image_OCR_engine_optional_source_capability"
   ],
-  "next_task": "Submit the verified fourth-round fixes and pinned dependency archives to the original 6 Pro conversation; keep the native goal active until the current source explicitly passes.",
+  "next_task": "Submit verified fifth-round fixes with the real pinned dependency archives to original6Pro; keep native goal active until exact current source passes.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-28T20:25:14.489568+00:00",
+  "updated_at": "2026-09-28T21:43:09.259631+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -65,7 +65,7 @@
     "decision_model": "decision-model-preview via DSH ToolRuntime; official preview endpoint verified"
   },
   "latest_evidence": [
-    "research/test_results/pro-audit-round4.json"
+    "research/test_results/pro-audit-round5.json"
   ],
   "current_delivery": "Merged minimal object map with 50-case DSH brief skill, live Qwen System One decision routing, source-bound concise briefs and prioritized project investigation tasks.",
   "node_status": {
@@ -184,7 +184,7 @@
     "credentials": "ignored data/local/amap-credentials.json",
     "initial_ui": "map_only; detail_requires_selection",
     "data_scope": "Explicit physical objects, source-backed factors; selected-object summaries on demand; 50 public mechanism references.",
-    "verification_scope": "264 JS,70 Python,11 HTTP,39 synthetic-provider real React checks and build; unchanged real public/native response replay retains demand3.8 and resources3.9."
+    "verification_scope": "277 JS,70 Python,11 HTTP,43 synthetic-provider real React checks and build; actual pinned DSH body reader plus unchanged real public/native response replay."
   },
   "github": {
     "url": "https://github.com/zhu607705-coder/jiangong-ai",
@@ -208,27 +208,26 @@
     "next": "Complete original Pro iterative audit on exact latest source."
   },
   "external_audit": {
-    "review_id": "JIANGONG-AUDIT-04-f69d6927",
-    "baseline": "f69d69277e14216fc2e5bf3214968ab2d53c22b8",
+    "review_id": "JIANGONG-AUDIT-05-393fafb9",
+    "baseline": "393fafb9c8d36f94c418b8f9bd872d7b7e759b2f",
     "verdict": "not_passed_on_reviewed_baseline",
     "findings": 4,
     "ledger": "docs/Pro审计修复记录.md",
-    "evidence_local": "data/local/pro-audit/round-04/",
+    "evidence_local": "data/local/pro-audit/round-05/",
     "native_goal": "active",
-    "publication": "fourth-round fixes verified for publication",
+    "publication": "fifth-round fixes verified for publication",
     "completed_local_checks": [
-      "All four remaining findings independently reproduced with actual locked dependencies",
-      "Object-role and complete monetary scope positive/negative controls",
-      "Current positive/negative fact cache, restoration, publication and scan checks",
-      "Per-source50 and aggregate100 truncation with family validity preserved",
-      "264 JS,70 Python,11 HTTP,39 React and production build",
-      "Unchanged real public/native qualification and score replay"
+      "Actual pinned DSH readBody character/byte cap, complete display-excerpt and independent complete-detail controls",
+      "Actual Adapter/ground/request questions for ownership, inclusion and monetary basis",
+      "Actual service/evidenceAt/filecache/newcontext/restart refresh flow",
+      "React historical brief marker and explicit refresh action; valid score-only retry retained",
+      "277 JS,70 Python,11 HTTP,43 React and production build"
     ],
     "pending": [
-      "original Pro round05 review of the exact next commit"
+      "original Pro round06 review of the exact next commit"
     ],
-    "verification": "research/test_results/pro-audit-round4.json",
-    "closed_original": 18,
+    "verification": "research/test_results/pro-audit-round5.json",
+    "closed_original": 20,
     "remaining_on_baseline": 4
   }
 }

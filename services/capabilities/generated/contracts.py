@@ -112,6 +112,7 @@ class Source(BaseModel):
     evidence_scope: EvidenceScope | None = None
     raw_hash: str | None = Field(None, max_length=100)
     records_truncated: bool | None = None
+    body_truncated: bool | None = None
 
 
 class Inventory(BaseModel):
@@ -1194,3 +1195,4 @@ class MapScreenAnalysis(BaseModel):
     adapter_receipts: list[AdapterReceipt] | None = Field(None, max_length=12)
     research: ResearchTrace | None = None
     reused_from_context_id: str | None = Field(None, max_length=100)
+    refresh_required: bool | None = None

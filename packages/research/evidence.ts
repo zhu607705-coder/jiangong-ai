@@ -83,6 +83,7 @@ export function dimensionCurrentAt(source:Source,name:string,evidence:Pick<Dimen
   if(evidence.key!=='adaptation'&&age>180*86400000&&!source.expires_at)return false
   if(evidence.key==='implementation'&&/中标|成交|废标|终止|结果公告/.test(source.title))return false
   if(evidence.key==='implementation'){
+    if(source.body_truncated)return false
     const selected=records.filter(r=>r.source_id===source.id&&(evidence.record_id?r.id===evidence.record_id:normalizedName(r.subject).includes(normalizedName(name))))
     // An omitted structured record is not evidence that no business deadline
     // exists. Other dimensions may still use the retained public original.
