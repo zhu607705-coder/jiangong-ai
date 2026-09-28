@@ -1,0 +1,117 @@
+{
+  "schema_version": "2.0",
+  "project_id": "SYN-INDUSTRIAL-002-ORDER",
+  "synthetic": true,
+  "purpose": "contract_and_workflow_testing_only",
+  "mode": "enterprise",
+  "role": "investment_manager",
+  "as_of": "2026-09-27",
+  "scope": {
+    "name": "虚构示范片区，不对应真实宗地",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            0,
+            0
+          ],
+          [
+            0.01,
+            0
+          ],
+          [
+            0.01,
+            0.01
+          ],
+          [
+            0,
+            0.01
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      ]
+    },
+    "coordinate_encoding": "WGS84",
+    "legal_parcel_confirmed": false
+  },
+  "facts": [
+    {
+      "id": "F-BUILDING",
+      "kind": "building_inventory",
+      "value": {
+        "gfa_m2": 12000,
+        "vacant_m2": 7200
+      },
+      "unit": "m2",
+      "source_id": "S-01"
+    },
+    {
+      "id": "F-RIGHTS",
+      "kind": "rights_status",
+      "value": "unverified",
+      "unit": null,
+      "source_id": "S-02"
+    },
+    {
+      "id": "F-STRUCTURE",
+      "kind": "structural_assessment",
+      "value": "missing",
+      "unit": null,
+      "source_id": "S-02"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S-01",
+      "title": "合成建筑清单",
+      "data_class": "synthetic",
+      "visibility": "public",
+      "synthetic": true
+    },
+    {
+      "id": "S-02",
+      "title": "合成缺项清单",
+      "data_class": "synthetic",
+      "visibility": "public",
+      "synthetic": true
+    },
+    {
+      "id": "S-03",
+      "title": "虚构企业本项目授权意见",
+      "data_class": "synthetic",
+      "visibility": "internal",
+      "synthetic": true
+    }
+  ],
+  "context_rules": [
+    {
+      "id": "R-01",
+      "kind": "organizational_constraint",
+      "scope": "project",
+      "predicate": "no_whole_site_demolition",
+      "value": true,
+      "source_id": "S-03",
+      "authority_status": "project_confirmed",
+      "supersedes": null,
+      "note": "合成组织约束，不是现实法规；不代表已批准某建筑用途变更。"
+    }
+  ],
+  "candidate_ids": [
+    "defer_and_investigate",
+    "selective_rebuild",
+    "retain_and_reuse"
+  ],
+  "events": [
+    {
+      "kind": "context_updated",
+      "changed_rule_ids": [
+        "R-01"
+      ],
+      "revision": 2
+    }
+  ]
+}

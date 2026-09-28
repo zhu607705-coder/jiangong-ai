@@ -1,0 +1,444 @@
+{
+  "status": "selected_ports_and_actual_dsh_live_runtime_verified",
+  "files": [
+    {
+      "name": "hire",
+      "repo": "Husky-989/ReCoQA",
+      "ref": "1ca6fd0e9c627a60e27ecbde71611003f8346885",
+      "path": "LICENSE",
+      "blob": "b23d52bb32abdf0e18235a380b3687d243d00a83",
+      "sha256": "c7a6d6afbac9050dd91e3adc4c8cff13eb3013eb11e08bdebd237c0032df1ffe"
+    },
+    {
+      "name": "hire",
+      "repo": "Husky-989/ReCoQA",
+      "ref": "1ca6fd0e9c627a60e27ecbde71611003f8346885",
+      "path": "HIRE_Agent/DatabaseUtils.py",
+      "blob": "e66526255e42d0cce4fbe3c5009d2e1375db6570",
+      "sha256": "9ade852e394ed35802d4be1a8070c477a012daab3a97eee099269fd7fe5821a6"
+    },
+    {
+      "name": "geoagent",
+      "repo": "opengeos/GeoAgent",
+      "ref": "b08ba5366bfc729506af34bf8d543e7b3cd706d7",
+      "path": "LICENSE",
+      "blob": "a0705f07e8b1d2ed592697e9c0749876c4a94c07",
+      "sha256": "e79a50c62f1c137d93a4fb5e982b5d915d49bf88f7dc3997d77775678bffab77"
+    },
+    {
+      "name": "geoagent",
+      "repo": "opengeos/GeoAgent",
+      "ref": "b08ba5366bfc729506af34bf8d543e7b3cd706d7",
+      "path": "geoagent/core/decorators.py",
+      "blob": "7f4e646919cee089cfeec3058b5f54ab6bf40783",
+      "sha256": "39929e8af9096f90dd3388f5dd2f53b7a4fffe2695a24e574e2bb5cc4ad5df61"
+    },
+    {
+      "name": "geoagent",
+      "repo": "opengeos/GeoAgent",
+      "ref": "b08ba5366bfc729506af34bf8d543e7b3cd706d7",
+      "path": "geoagent/core/registry.py",
+      "blob": "ceda8d28b979d5494a369d07844be498634886c1",
+      "sha256": "35bb77a8504a3788fd230650e7884d3763a66af5a4a363c355f6096de4ee8a43"
+    },
+    {
+      "name": "storm",
+      "repo": "stanford-oval/storm",
+      "ref": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "path": "LICENSE",
+      "blob": "20df92744b57b9644a5b4351758522b8d49c87b5",
+      "sha256": "88241386c28ff04821832762714c9ff0d22c4de6b0633d11554e69a968a718e0"
+    },
+    {
+      "name": "storm",
+      "repo": "stanford-oval/storm",
+      "ref": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "path": "knowledge_storm/storm_wiki/modules/knowledge_curation.py",
+      "blob": "d6b892957e5ef2c68d659c294bf64a02c9135b2e",
+      "sha256": "c3f037dc808287631825e6e9bb4dd0b51b9ca43f1c790a713d41513b7ae2c7e0"
+    },
+    {
+      "name": "storm",
+      "repo": "stanford-oval/storm",
+      "ref": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "path": "knowledge_storm/storm_wiki/modules/storm_dataclass.py",
+      "blob": "119869cd2170a1d35371f47d7ba7d9dabeb3274d",
+      "sha256": "185f8c95181ea201ff66febb8c57f1df4e89d1738ff163a0c718aa2e3b431124"
+    },
+    {
+      "name": "storm",
+      "repo": "stanford-oval/storm",
+      "ref": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "path": "knowledge_storm/utils.py",
+      "blob": "4411b05e48e2fefd16722e395a8318da7296b5ef",
+      "sha256": "de70f1ab3857294e70cd82501693a431d83581697f471848217d27c406fab11b"
+    },
+    {
+      "name": "search_o1",
+      "repo": "RUC-NLPIR/Search-o1",
+      "ref": "c76a700fb2a948039ada577c03b3be958aa57282",
+      "path": "LICENSE",
+      "blob": "b4ac369decf57d84931f3de4cdd8810a9baf6f6a",
+      "sha256": "b101f949ba866c4de767be4b8563ef0bbd54d1b289c4b49c6edda3f2851c848a"
+    },
+    {
+      "name": "search_o1",
+      "repo": "RUC-NLPIR/Search-o1",
+      "ref": "c76a700fb2a948039ada577c03b3be958aa57282",
+      "path": "scripts/prompts.py",
+      "blob": "902e7cb56a4532167aca97234f3e3aa82f486dc5",
+      "sha256": "e44993cbd144d1f7006332d808160890655ad7de727217db00a7d4012c2f5bfb"
+    },
+    {
+      "name": "search_o1",
+      "repo": "RUC-NLPIR/Search-o1",
+      "ref": "c76a700fb2a948039ada577c03b3be958aa57282",
+      "path": "scripts/run_search_o1.py",
+      "blob": "7263e78b0abc6ec1bd43267a408f2369ef0418dc",
+      "sha256": "61e5fa74eec4f135a62ba953c7a216ae424e83b0b4d8abbcb2b15daf75cbe1e5"
+    },
+    {
+      "name": "retqa",
+      "repo": "jensenw1/RETQA",
+      "ref": "f8f015d9c9ba416b7a3f1506f4e5f5679228550a",
+      "path": "LICENSE",
+      "blob": "8169936349fbf9d29ac7eb21a8ac7a60e680d19c",
+      "sha256": "4bb96d82f59f1252b59235db4650b487f938cfa1739e9b3d05bfc2870c1a6d68"
+    },
+    {
+      "name": "retqa",
+      "repo": "jensenw1/RETQA",
+      "ref": "f8f015d9c9ba416b7a3f1506f4e5f5679228550a",
+      "path": "SLUTQA/utils.py",
+      "blob": "96dcfee379282dda59a67b2523f447b3765637f0",
+      "sha256": "701a64f626bd5c2dbd5f18574ca7b4d73fe4d43c734249cd77dfbef9c4b6e9df"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "LICENSE",
+      "blob": "8d31f90a93bf26d74ded7fe73aa008222245a997",
+      "sha256": "556bc10617ff4599572af632fbd662f92b3c29743c086fd589d717f93e6cca1c"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/server/parser-service.ts",
+      "blob": "7b5d00b9f4a47c380aa1557e125cebddd2a7435c",
+      "sha256": "9443d7c34f96d79871101649da8b10b85c4520a15403ac169c0e106c66dd608b"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/lib/safe-paths.js",
+      "blob": "a2c290e88dfdb6977276d0de8c7e3dd78a5811c0",
+      "sha256": "000b88d2700806998a9b35c23ce44a766d2785687484fc198bd597915313e6ec"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/lib/workpaper-renderer.js",
+      "blob": "ca33782d03482018bd4c5f8532722ae80bf1f7d7",
+      "sha256": "3ee3f34c39637e42f95caeed39e660c2a8d0b648dc297abb01e9b60c58480165"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/src/components/workspace/LifecycleSpine.tsx",
+      "blob": "520b6eb29ae876c417705692f99c9ce973919e7c",
+      "sha256": "0f7afa631d5728ee33e697c3c965e5c3328c2cba54540f54920a5c4c6c5e0a1e"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/src/components/workspace/WorkspaceFrame.tsx",
+      "blob": "d7980e5b91a920c70ca24d1a37feef074d515333",
+      "sha256": "7ba347829f29559e5a156de6b8eb96b8a30f08245b88aecbf8fb99d3d44eca03"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/src/components/ErrorBoundary.tsx",
+      "blob": "1030bdac27b60eb75e7d12f7a2e81825faefd9ed",
+      "sha256": "8b3fa36a52539a47fc9c8fe332cb01db1cd5beda6fa32f9a572a24f8861ff7bd"
+    },
+    {
+      "name": "dsh",
+      "repo": "deepseek-ai/deepseek-harness",
+      "ref": "477b4f420553e8a52c2fbccc464d7561b239c443",
+      "path": "LICENSE",
+      "blob": "c1f7a78e89e4e4dc7b86664c3b3c76eb5eee1785",
+      "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be"
+    },
+    {
+      "name": "dsh",
+      "repo": "deepseek-ai/deepseek-harness",
+      "ref": "477b4f420553e8a52c2fbccc464d7561b239c443",
+      "path": "packages/core/agent-loop/tests/mock-adapter.ts",
+      "blob": "f186aeb0a08af5d1fd176dc98227b5eb6899420b",
+      "sha256": "fa5caed34cd334935ddbc5090f71a5fcf0403d2977116631910989b533746e6e"
+    },
+    {
+      "name": "dsh",
+      "repo": "deepseek-ai/deepseek-harness",
+      "ref": "477b4f420553e8a52c2fbccc464d7561b239c443",
+      "path": "packages/core/agent-loop/tests/tool-updates.spec.ts",
+      "blob": "6eca806085cd601d5849b61a1395d6ab20eac374",
+      "sha256": "42723d599db21f355f80aa87c0b1e54341ec6ee2014556517931f869b95b0bfe"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/parse_pdf.py",
+      "blob": "0bd550de603b2c0bcd4cfb4a2c1aabbf20b2bae7",
+      "sha256": "aad9fd7e8092ea4138a7018d3068ea592d63ecfc2d5a61ad83e3cc693347e0a7"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/parse_excel.py",
+      "blob": "8b050e0ff39f6304408bddfbabc8e418979e3e5c",
+      "sha256": "cfece67f64535d61b4aa717c4cf94868deabee418b3c13fc6141e4778007c4c3"
+    }
+  ],
+  "ports": [
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/src/components/workspace/WorkspaceFrame.tsx",
+      "blob": "d7980e5b91a920c70ca24d1a37feef074d515333",
+      "sha256": "7ba347829f29559e5a156de6b8eb96b8a30f08245b88aecbf8fb99d3d44eca03",
+      "target": "apps/workspace/src/components/WorkspaceFrame.tsx",
+      "target_sha256": "50907ba653f4f5eb2ebb4298f5f4c1628925f7fae1a6f2fc4054422bce5da9eb",
+      "patch_reason": [
+        "region project types and Chinese workbench",
+        "remove original controller and investment-price business logic"
+      ],
+      "tests": [
+        "browser walk-through",
+        "npm run build"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/src/components/workspace/LifecycleSpine.tsx",
+      "blob": "520b6eb29ae876c417705692f99c9ce973919e7c",
+      "sha256": "0f7afa631d5728ee33e697c3c965e5c3328c2cba54540f54920a5c4c6c5e0a1e",
+      "target": "apps/workspace/src/components/LifecycleSpine.tsx",
+      "target_sha256": "5b319b849f6ebb6588b73ca9e7e84b1c2e7b502c1d2ae01a46da8421e72d4537",
+      "patch_reason": [
+        "regional lifecycle stages and local styles"
+      ],
+      "tests": [
+        "browser walk-through",
+        "npm run build"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "dashboard/server/parser-service.ts",
+      "blob": "7b5d00b9f4a47c380aa1557e125cebddd2a7435c",
+      "sha256": "9443d7c34f96d79871101649da8b10b85c4520a15403ac169c0e106c66dd608b",
+      "target": "vendor/cre/dashboard/server/parser-service.ts",
+      "target_sha256": "ef49adee1ef7163ead2787b9e8527d812829f11f00d91ce01877a976b76462b4",
+      "patch_reason": [
+        "export parseCsvRows/buildUploadedDataProfile/buildTextUploadedDataProfile",
+        "call only generic parser/profile functions through ParserPort"
+      ],
+      "tests": [
+        "tests/contracts/decision.test.ts",
+        "tests/e2e/test_http.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/lib/workpaper-renderer.js",
+      "blob": "ca33782d03482018bd4c5f8532722ae80bf1f7d7",
+      "sha256": "3ee3f34c39637e42f95caeed39e660c2a8d0b648dc297abb01e9b60c58480165",
+      "target": "vendor/cre/scripts/lib/report-table.ts",
+      "target_sha256": "32ad0dd3de8432a583c1a0f609a1a2542f39ff9c26aca5f1bb543565a3310301",
+      "patch_reason": [
+        "select only table function",
+        "escape table pipes/newlines",
+        "remove all financial fixture output"
+      ],
+      "tests": [
+        "tests/e2e/test_http.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "geoagent",
+      "repo": "opengeos/GeoAgent",
+      "ref": "b08ba5366bfc729506af34bf8d543e7b3cd706d7",
+      "path": "geoagent/core/registry.py",
+      "blob": "ceda8d28b979d5494a369d07844be498634886c1",
+      "sha256": "35bb77a8504a3788fd230650e7884d3763a66af5a4a363c355f6096de4ee8a43",
+      "target": "vendor/geoagent/metadata.py",
+      "target_sha256": "2ae59411817a9a5e67c42cd965a2c6d177c0d46c580adcff23a037af53559e93",
+      "patch_reason": [
+        "select GeoToolMeta and metadata helpers",
+        "remove Strands registration dependency"
+      ],
+      "tests": [
+        "tests/test_capabilities.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "hire",
+      "repo": "Husky-989/ReCoQA",
+      "ref": "1ca6fd0e9c627a60e27ecbde71611003f8346885",
+      "path": "HIRE_Agent/DatabaseUtils.py",
+      "blob": "e66526255e42d0cce4fbe3c5009d2e1375db6570",
+      "sha256": "9ade852e394ed35802d4be1a8070c477a012daab3a97eee099269fd7fe5821a6",
+      "target": "vendor/hire/readonly.py",
+      "target_sha256": "8402f2b44ac644e7828b12f85312a9b8b3887c85a51b3cf091cb18b122b93fb2",
+      "patch_reason": [
+        "remove all credentials and connection creation",
+        "no commit or silent error",
+        "parameterized select-only scoped evidence table",
+        "operation/row/SQL-size budgets"
+      ],
+      "tests": [
+        "tests/test_capabilities.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "storm",
+      "repo": "stanford-oval/storm",
+      "ref": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "path": "knowledge_storm/storm_wiki/modules/storm_dataclass.py",
+      "blob": "119869cd2170a1d35371f47d7ba7d9dabeb3274d",
+      "sha256": "185f8c95181ea201ff66febb8c57f1df4e89d1738ff163a0c718aa2e3b431124",
+      "target": "vendor/storm/curation.py",
+      "target_sha256": "af6a94e4b59b4b8b0390861fe8bf738d324cb4e1177cfff45255afdfedfc23dc",
+      "patch_reason": [
+        "select construct_url_to_info",
+        "immutable input",
+        "stable deduplication",
+        "no DSPy or encoder"
+      ],
+      "tests": [
+        "tests/test_capabilities.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "search_o1",
+      "repo": "RUC-NLPIR/Search-o1",
+      "ref": "c76a700fb2a948039ada577c03b3be958aa57282",
+      "path": "scripts/run_search_o1.py",
+      "blob": "7263e78b0abc6ec1bd43267a408f2369ef0418dc",
+      "sha256": "61e5fa74eec4f135a62ba953c7a216ae424e83b0b4d8abbcb2b15daf75cbe1e5",
+      "target": "vendor/search_o1/gap.py",
+      "target_sha256": "35e475706a42e373261dbb34dde22fa41c86e65cca2ee8af0bc908ec3b0fd7e4",
+      "patch_reason": [
+        "lift extract_between and import digest prompt",
+        "no inference server",
+        "bounded round count in adapter"
+      ],
+      "tests": [
+        "tests/test_capabilities.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "retqa",
+      "repo": "jensenw1/RETQA",
+      "ref": "f8f015d9c9ba416b7a3f1506f4e5f5679228550a",
+      "path": "SLUTQA/utils.py",
+      "blob": "96dcfee379282dda59a67b2523f447b3765637f0",
+      "sha256": "701a64f626bd5c2dbd5f18574ca7b4d73fe4d43c734249cd77dfbef9c4b6e9df",
+      "target": "ported/retqa_slots.py",
+      "target_sha256": "b2ce9718fb71106ef56f01e4bceb3c2257fb6ff697a3515e4264a8aeb6682e29",
+      "patch_reason": [
+        "retain supplied selective port and enterprise-label patch"
+      ],
+      "tests": [
+        "tests/test_pack.py"
+      ],
+      "reuse_scope": "selective_port_or_adaptation_not_full_upstream_application"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/parse_pdf.py",
+      "blob": "0bd550de603b2c0bcd4cfb4a2c1aabbf20b2bae7",
+      "sha256": "aad9fd7e8092ea4138a7018d3068ea592d63ecfc2d5a61ad83e3cc693347e0a7",
+      "target": "vendor/cre/parsers.py",
+      "target_sha256": "a57f184eae26dfba293fe019f6e2143c8dced89f5f894587a2bf43b0768dd733",
+      "patch_reason": [
+        "select generic extraction/header/table provenance functions",
+        "preserve Chinese header tokens",
+        "limit PDF pages; no financial fixed verdicts"
+      ],
+      "tests": [
+        "tests/test_parsers.py"
+      ],
+      "reuse_scope": "selective_generic_parser_port"
+    },
+    {
+      "name": "cre",
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "path": "scripts/parse_excel.py",
+      "blob": "8b050e0ff39f6304408bddfbabc8e418979e3e5c",
+      "sha256": "cfece67f64535d61b4aa717c4cf94868deabee418b3c13fc6141e4778007c4c3",
+      "target": "vendor/cre/parsers.py",
+      "target_sha256": "a57f184eae26dfba293fe019f6e2143c8dced89f5f894587a2bf43b0768dd733",
+      "patch_reason": [
+        "select generic extraction/header/table provenance functions",
+        "preserve Chinese header tokens",
+        "limit PDF pages; no financial fixed verdicts"
+      ],
+      "tests": [
+        "tests/test_parsers.py"
+      ],
+      "reuse_scope": "selective_generic_parser_port"
+    }
+  ],
+  "baseline": {
+    "dsh_original_tests": {
+      "status": "passed",
+      "test_count": 2,
+      "log": "research/baseline_logs/verification-final.log"
+    },
+    "cre_original_parser_suite": {
+      "status": "blocked_local_optional_dependencies",
+      "reason": "Native CSV tests reached; full suite stops at Excel/PDF parser-unavailable. Complete upstream Python parser dependencies not installed.",
+      "log": "research/baseline_logs/cre-parser-upstream.log"
+    },
+    "adapted_text_csv_parser": {
+      "status": "passed",
+      "log": "research/baseline_logs/verification-final.log"
+    }
+  },
+  "runtime_packages": {
+    "dsh": "0.1.7-rc.2",
+    "actual_model_observed": "deepseek-flash",
+    "network": "dsh-http-proxy installProxyFromEnvironment; native DeepSeek search and DSH public HTTP provider",
+    "lock": "package-lock.json"
+  }
+}

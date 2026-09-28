@@ -1,0 +1,392 @@
+{
+  "schema_version": "1.0",
+  "mission": "一次整体实施任务，通过依赖节点持续执行，状态与工件持久化。",
+  "no_person_hour_estimates": true,
+  "tasks": [
+    {
+      "id": "T00",
+      "depends_on": [],
+      "goal": "读取用户新需求和源稿，确认岗位、两模式、建筑/实施决策优先。",
+      "expected_artifacts": [
+        "agent/mission.md",
+        "agent/state.json"
+      ],
+      "definition_of_done": "不引入旧版价格中心、人月排期或逐字段审批。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "agent/mission.md",
+        "agent/state.json"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Mission preserved: building/implementation/demand/enterprise before pricing.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T01",
+      "depends_on": [
+        "T00"
+      ],
+      "goal": "核对上游代码与许可，建立可复用文件清单，先跑原有可运行测试。",
+      "expected_artifacts": [
+        "research/upstream.lock.json",
+        "THIRD_PARTY_NOTICES.md",
+        "research/baseline_logs/"
+      ],
+      "definition_of_done": "保留精确ref/blob与声明；不能把无密钥、未运行或预设Demo记作通过。",
+      "status": "completed_with_documented_baseline_limit",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "research/upstream.lock.json",
+        "THIRD_PARTY_NOTICES.md",
+        "research/baseline_logs/"
+      ],
+      "upstream_verification_required": true,
+      "implementation_note": "Exact selected source refs/blobs/licenses recorded; DSH baseline passes. Full original CRE suite historical optional-dependency failure remains separately recorded; migrated parser tests pass.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T02",
+      "depends_on": [
+        "T01"
+      ],
+      "goal": "建立单一Canonical schema源，生成TS/Pydantic类型与存储迁移。",
+      "expected_artifacts": [
+        "packages/contracts/",
+        "services/capabilities/generated/",
+        "apps/host/generated/"
+      ],
+      "definition_of_done": "不同语言序列化往返通过；scope/来源/时间/unknown/规则作用域完整。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "packages/contracts/",
+        "services/capabilities/generated/",
+        "apps/host/generated/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Canonical schema, generated TS/Pydantic, PostgreSQL storage, semantic round trip and canonical hash verified.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T03",
+      "depends_on": [
+        "T02"
+      ],
+      "goal": "移植CRE界面/解析接口，接入DSH作为单一运行时。",
+      "expected_artifacts": [
+        "apps/workspace/",
+        "apps/host/",
+        "runtime/dsh/"
+      ],
+      "definition_of_done": "禁用原内置控制器；读/写/委派工具范围受控；可显示真实run事件。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "apps/workspace/",
+        "apps/host/",
+        "runtime/dsh/"
+      ],
+      "upstream_verification_required": true,
+      "implementation_note": "CRE selected workbench and DSH single runtime integrated, including actual live agents and SSE.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T04",
+      "depends_on": [
+        "T02"
+      ],
+      "goal": "移植HIRE/RETQA/GeoAgent/STORM等指定模块并封装统一工具。",
+      "expected_artifacts": [
+        "vendor/",
+        "services/capabilities/",
+        "tests/ports/"
+      ],
+      "definition_of_done": "真正调用迁入逻辑；不重复实现搜索/解析；只读SQL/错误/超时测试通过。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "vendor/",
+        "services/capabilities/",
+        "tests/ports/"
+      ],
+      "upstream_verification_required": true,
+      "implementation_note": "Specified bounded ports called through capabilities; scoped rows/SQL, retrieval, source merge, GIS and public research verified. Optional large upstream systems not imported merely for naming.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T05",
+      "depends_on": [
+        "T02"
+      ],
+      "goal": "创建内部材料与经验编译流程，支持事实、组织约束、偏好和线索。",
+      "expected_artifacts": [
+        "packages/context/",
+        "services/capabilities/parsers/",
+        "tests/context/"
+      ],
+      "definition_of_done": "权限与project作用域保留；不把建议变法规；材料提示注入不扩权。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "packages/context/",
+        "services/capabilities/parsers/",
+        "tests/context/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Real model Context compilation plus project-authority normalization; local data policy, formats, source locators, rule revoke and version checks implemented.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T06",
+      "depends_on": [
+        "T02"
+      ],
+      "goal": "建立独立合成数据生成器、gold与变形测试。",
+      "expected_artifacts": [
+        "fixtures/",
+        "tests/contracts/",
+        "tests/metamorphic/"
+      ],
+      "definition_of_done": "输入无答案；明确synthetic；unknown保持未知；真实资料不得被合成值覆盖。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "fixtures/",
+        "tests/contracts/",
+        "tests/metamorphic/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Independent synthetic inputs/gold retained; invariance, unknown, conflict and source-boundary tests run.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T07",
+      "depends_on": [
+        "T03",
+        "T04",
+        "T05",
+        "T06"
+      ],
+      "goal": "研究分工→候选→工具校验→反证→比较→行动包。",
+      "expected_artifacts": [
+        "runtime/roles/",
+        "runtime/workflows/",
+        "packages/decision/"
+      ],
+      "definition_of_done": "有限预算；支持条件化/并列；不按Agent数量投票；日志追到工件。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "runtime/roles/",
+        "runtime/workflows/",
+        "packages/decision/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Actual professional research, candidate generation, independent critic and six-dimensional comparison completed via DSH.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T08",
+      "depends_on": [
+        "T07"
+      ],
+      "goal": "打通自动/企业两模式，并实现Context变化的局部重评与版本diff。",
+      "expected_artifacts": [
+        "apps/workspace/modes/",
+        "packages/decision/impact/",
+        "tests/e2e/"
+      ],
+      "definition_of_done": "不整体拆除等组织条件改变相关路径；只读无关证据不重新抓取。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "apps/workspace/modes/",
+        "packages/decision/impact/",
+        "tests/e2e/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Automatic/enterprise modes and current-input comparison verified; unchanged metrics, binding project constraint and unaffected evidence reuse.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T09",
+      "depends_on": [
+        "T08"
+      ],
+      "goal": "执行离线闭环、恢复、权限隔离、冲突/缺项/失效与对照测试。",
+      "expected_artifacts": [
+        "tests/integration/",
+        "tests/security/",
+        "research/test_results/"
+      ],
+      "definition_of_done": "测试日志可复现；fixture运行不得冒称真实模型推理；跳过项单列。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "tests/integration/",
+        "tests/security/",
+        "research/test_results/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "97 automated tests and bounded actual model/isolation/recovery cases passed; validation scope explicit in the evidence record.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T10",
+      "depends_on": [
+        "T09"
+      ],
+      "goal": "在授权环境验证模型、原生搜索和一处真实公开材料。",
+      "expected_artifacts": [
+        "research/live_smoke/",
+        "data/public_case_snapshot/"
+      ],
+      "definition_of_done": "使用真实返回/时间/版本；失败或缺凭据明确blocked，不伪造证据。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "research/live_smoke/",
+        "data/public_case_snapshot/"
+      ],
+      "upstream_verification_required": true,
+      "implementation_note": "User-configured key; real model and native search succeed. Hangzhou public case includes four government full texts and one explicit metadata-only source.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T11",
+      "depends_on": [
+        "T09"
+      ],
+      "goal": "整理复现、许可证、配置、演示和完成状态，核对申报口径。",
+      "expected_artifacts": [
+        "README.md",
+        "release/",
+        "docs/engineering.md",
+        "docs/proposal.docx"
+      ],
+      "definition_of_done": "live未通时允许仅交离线包但明确状态；不将原研、业务效果或企业试点写成已实现。",
+      "status": "completed",
+      "evidence_log": "research/test_results/verification.json",
+      "write_scope": [
+        "README.md",
+        "release/",
+        "docs/engineering.md",
+        "docs/proposal.docx"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "Runnable source, lockfiles, launchers, current docs/proposal, evidence/screenshots and credential-free source release prepared.",
+      "execution_profile": "local_live_v0.2"
+    },
+    {
+      "id": "T12",
+      "depends_on": [
+        "T10"
+      ],
+      "goal": "整理首批可追溯公开语料，建立来源归集、去重分组、待标注候选、用途记录和本地监督样本导出。",
+      "expected_artifacts": [
+        "data/corpus/",
+        "packages/corpus/",
+        "scripts/corpus.ts",
+        "data/local/corpus/语料台账.md",
+        "research/test_results/corpus.json"
+      ],
+      "definition_of_done": "原文能回读；同源资料不能跨集合；模型输出和回归 gold 不进入监督训练；未标注及无用途凭证的行不能导出；通过针对性检查。",
+      "status": "completed",
+      "evidence_log": "research/test_results/corpus.json",
+      "write_scope": [
+        "data/corpus/",
+        "data/local/corpus/",
+        "packages/corpus/",
+        "scripts/",
+        "tests/contracts/corpus.test.ts"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "6 public sources, 5 with text, 17 chunks/unlabeled candidates; 10 fixtures and 8 model records kept as regression metadata. 17 corpus tests pass; collection/search/export exercised locally. No weight training.",
+      "execution_profile": "local_corpus_v1"
+    },
+    {
+      "id": "T13",
+      "depends_on": [
+        "T12"
+      ],
+      "goal": "持续积累获得允许用途的脱敏项目资料、专家修订理由与决策结果，形成经核对的任务标签。",
+      "expected_artifacts": [
+        "data/local/corpus/reviews.jsonl",
+        "data/local/corpus/grants.jsonl",
+        "data/local/corpus/exports/"
+      ],
+      "definition_of_done": "训练来源用途可追溯；标签有实际核对者与原文依据；同项目和同源修订保持同组；事后结果与决策时点输入分离；独立最终评估集另行确定。",
+      "status": "awaiting_authorized_materials_and_human_labels",
+      "evidence_log": "research/test_results/corpus.json",
+      "write_scope": [
+        "data/local/corpus/"
+      ],
+      "upstream_verification_required": false,
+      "implementation_note": "资料重点和标注步骤已登记在 data/corpus/README.md；当前批准训练行数为 0，不宣称模型训练就绪。",
+      "execution_profile": "data_accumulation"
+    },
+    {
+      "id": "T14",
+      "depends_on": [
+        "T11"
+      ],
+      "goal": "按用户修正将界面改为高德原生 3D 地图入口，支持缩放、倾斜、地点点选浮卡、明确进入详情、卫星/楼块图层及返回地图。",
+      "expected_artifacts": [
+        "apps/workspace/src/maps/",
+        "apps/host/amap.ts",
+        "packages/maps/",
+        "research/test_results/map.json"
+      ],
+      "definition_of_done": "真实高德配置与数据接通；默认不展示完整研判；点选先浮卡后详情；研究面板关闭保持地图；实际 3D 楼块、影像与小屏流程可复现；安全密钥不返回客户端；地图坐标不混标。",
+      "status": "completed",
+      "evidence_log": "research/test_results/map.json",
+      "write_scope": [
+        "apps/host/amap.ts",
+        "apps/host/server.ts",
+        "apps/workspace/src/App.tsx",
+        "apps/workspace/src/components/WorkspaceFrame.tsx",
+        "apps/workspace/src/maps/MapWorkspace.tsx",
+        "apps/workspace/src/maps/MapSettings.tsx",
+        "apps/workspace/src/maps/amap-client.ts",
+        "apps/workspace/src/maps/map.css",
+        "apps/workspace/vite.config.ts",
+        "packages/maps/types.ts",
+        "packages/contracts/schema.json",
+        "tests/contracts/maps.test.ts",
+        "tests/e2e/test_http.py"
+      ],
+      "upstream_verification_required": true,
+      "implementation_note": "Native Windows hardware WebGL displays AMap buildings and imagery; real POI and reverse-geocoding flows verified. Current map tests 10 pass, full baseline suite 124 pass, latest build passes. Software rendering gets explicit 2D fallback.",
+      "execution_profile": "local_live_amap_3d"
+    },
+    {
+      "id": "T15",
+      "depends_on": [
+        "T14"
+      ],
+      "goal": "首次选中展示真实资料，地图专题标色与项目数据关联；实际模型引用来源，建立私有 GitHub 库。",
+      "status": "implemented_pending_publication",
+      "expected_artifacts": [
+        "services/map-screening/",
+        "apps/workspace/src/maps/",
+        "docs/地图初筛与数据关联.md",
+        "research/test_results/screening.json"
+      ],
+      "definition_of_done": "真实数据关联和来源可查，范围不随拖图变化，合成与内部数据边界保持；真实地图和模型联调、必要回归通过；仓库推送验证。",
+      "evidence_log": "research/test_results/screening.json",
+      "write_scope": [
+        "packages/maps/",
+        "services/map-screening/",
+        "apps/host/",
+        "apps/workspace/",
+        "packages/contracts/",
+        "tests/",
+        "docs/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "execution_profile": "local_live_map_evidence_and_private_github"
+    }
+  ]
+}

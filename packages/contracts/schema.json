@@ -1,0 +1,2273 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:haizhizi:contracts:2.0",
+  "title": "ProjectInput",
+  "$ref": "#/definitions/ProjectInput",
+  "definitions": {
+    "Geometry": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Polygon",
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "minItems": 4
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "additionalProperties": false
+    },
+    "MapAnchor": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "const": "amap"
+        },
+        "coordinate_encoding": {
+          "type": "string",
+          "const": "GCJ-02"
+        },
+        "longitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "latitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "poi_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "address": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "provider",
+        "coordinate_encoding",
+        "longitude",
+        "latitude",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "Scope": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "geometry": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Geometry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coordinate_encoding": {
+          "const": "WGS84",
+          "type": "string"
+        },
+        "legal_parcel_confirmed": {
+          "type": "boolean"
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "region_pack": {
+          "type": "string"
+        },
+        "centroid": {
+          "$ref": "#/definitions/GeoPoint"
+        },
+        "map_anchor": {
+          "$ref": "#/definitions/MapAnchor"
+        },
+        "resolution_status": {
+          "type": "string",
+          "enum": [
+            "provided_polygon",
+            "place_point",
+            "ambiguous",
+            "uncovered"
+          ]
+        },
+        "resolution_note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "geometry",
+        "coordinate_encoding",
+        "legal_parcel_confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "Source": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_class": {
+          "type": "string",
+          "enum": [
+            "synthetic",
+            "public",
+            "internal",
+            "semi_synthetic"
+          ]
+        },
+        "visibility": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal"
+          ]
+        },
+        "synthetic": {
+          "type": "boolean"
+        },
+        "untrusted_text": {
+          "type": "string",
+          "maxLength": 100000
+        },
+        "url": {
+          "type": "string"
+        },
+        "retrieved_at": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "content_status": {
+          "type": "string",
+          "enum": [
+            "full_text",
+            "excerpt",
+            "metadata_only",
+            "uploaded"
+          ]
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "parse_status": {
+          "type": "string",
+          "enum": [
+            "extracted",
+            "empty",
+            "ocr_required"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "data_class",
+        "visibility",
+        "synthetic"
+      ],
+      "additionalProperties": false
+    },
+    "Inventory": {
+      "type": "object",
+      "properties": {
+        "gfa_m2": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "vacant_m2": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "gfa_m2",
+        "vacant_m2"
+      ],
+      "additionalProperties": false
+    },
+    "Fact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Inventory"
+            },
+            {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "object_ref": {
+          "type": "string"
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "value",
+        "unit",
+        "source_id"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceRule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "organizational_constraint",
+            "preference",
+            "capability_lead",
+            "fact_candidate",
+            "unknown",
+            "heuristic"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "project"
+          ]
+        },
+        "predicate": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "authority_status": {
+          "type": "string",
+          "enum": [
+            "project_confirmed",
+            "unverified"
+          ]
+        },
+        "supersedes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "original_text": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "scope",
+        "predicate",
+        "value",
+        "source_id",
+        "authority_status",
+        "supersedes",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "InputEvent": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "changed_rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "CandidateId": {
+      "type": "string",
+      "enum": [
+        "retain_and_reuse",
+        "selective_rebuild",
+        "whole_site_rebuild",
+        "defer_and_investigate"
+      ]
+    },
+    "Finding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dimension": {
+          "type": "string",
+          "enum": [
+            "implementation",
+            "building",
+            "demand",
+            "organization",
+            "enterprise",
+            "resources"
+          ]
+        },
+        "claim": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "conditional",
+            "unknown",
+            "conflict"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "opposition_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "dimension",
+        "claim",
+        "status",
+        "evidence_refs",
+        "opposition_refs",
+        "unknowns"
+      ],
+      "additionalProperties": false
+    },
+    "Metric": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "known",
+            "unknown",
+            "conflict"
+          ]
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value",
+        "unit",
+        "status",
+        "source_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Scenario": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/CandidateId"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "conditional",
+            "blocked",
+            "investigate"
+          ]
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rule_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "counterevidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enterprise_fit": {
+          "type": "string"
+        },
+        "resource_status": {
+          "type": "string"
+        },
+        "demolition_scope": {
+          "type": "string",
+          "enum": [
+            "none",
+            "partial",
+            "whole_site"
+          ]
+        },
+        "preference_notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "action_specs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionSpec"
+          },
+          "minItems": 1,
+          "maxItems": 6
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "status",
+        "actions",
+        "prerequisites",
+        "blockers",
+        "evidence_refs",
+        "rule_refs",
+        "counterevidence",
+        "enterprise_fit",
+        "resource_status",
+        "demolition_scope",
+        "preference_notes"
+      ],
+      "additionalProperties": false
+    },
+    "Review": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "issue": {
+          "type": "string"
+        },
+        "target_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "severity",
+        "issue",
+        "target_refs",
+        "evidence_refs",
+        "recommendation"
+      ],
+      "additionalProperties": false
+    },
+    "Followup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "title": {
+          "type": "string"
+        },
+        "why": {
+          "type": "string"
+        },
+        "impacted_paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CandidateId"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "suggested",
+            "requested"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "priority",
+        "title",
+        "why",
+        "impacted_paths",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Impact": {
+      "type": "object",
+      "properties": {
+        "changed_rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "invalidated": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reused": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "changed_paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CandidateId"
+          }
+        }
+      },
+      "required": [
+        "changed_rule_ids",
+        "invalidated",
+        "reused",
+        "changed_paths"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionPacket": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "2.0",
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshot_hash": {
+          "type": "string"
+        },
+        "context_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "automatic",
+            "enterprise"
+          ]
+        },
+        "execution_mode": {
+          "type": "string",
+          "enum": [
+            "offline",
+            "live"
+          ]
+        },
+        "synthetic": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "partial",
+            "empty",
+            "blocked",
+            "failed"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "as_of": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Finding"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Metric"
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Scenario"
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Review"
+          }
+        },
+        "followups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Followup"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "context_rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceRule"
+          }
+        },
+        "impact": {
+          "$ref": "#/definitions/Impact"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime": {
+          "type": "string"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comparison": {
+          "$ref": "#/definitions/ComparisonPacket"
+        },
+        "model_calls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelCall"
+          }
+        },
+        "research": {
+          "$ref": "#/definitions/ResearchTrace"
+        },
+        "analysis_method": {
+          "type": "string",
+          "enum": [
+            "deterministic_checks",
+            "model_assisted"
+          ]
+        },
+        "unresolved_disagreements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "$ref": "#/definitions/Scope"
+        }
+      },
+      "required": [
+        "schema_version",
+        "project_id",
+        "run_id",
+        "revision",
+        "snapshot_hash",
+        "context_version",
+        "mode",
+        "execution_mode",
+        "synthetic",
+        "status",
+        "summary",
+        "as_of",
+        "created_at",
+        "findings",
+        "metrics",
+        "scenarios",
+        "reviews",
+        "followups",
+        "sources",
+        "context_rules",
+        "impact",
+        "warnings",
+        "missing_fields",
+        "artifact_refs",
+        "runtime",
+        "model"
+      ],
+      "additionalProperties": false
+    },
+    "CapabilityResult": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "partial",
+            "empty",
+            "blocked",
+            "failed"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Finding"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Metric"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "findings",
+        "metrics",
+        "warnings",
+        "missing_fields",
+        "artifact_refs",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "RuntimeEvent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "stage": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "running",
+            "completed",
+            "failed",
+            "blocked",
+            "reused"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "artifact_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "stage",
+        "status",
+        "message",
+        "artifact_ref",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "ProjectInput": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "2.0",
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "synthetic": {
+          "type": "boolean"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "automatic",
+            "enterprise"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "investment_manager",
+            "planner",
+            "executive"
+          ]
+        },
+        "as_of": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "scope": {
+          "$ref": "#/definitions/Scope"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Fact"
+          },
+          "maxItems": 5000
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          },
+          "maxItems": 1000
+        },
+        "context_rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceRule"
+          },
+          "maxItems": 1000
+        },
+        "candidate_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CandidateId"
+          },
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InputEvent"
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "project_id",
+        "synthetic",
+        "purpose",
+        "mode",
+        "role",
+        "as_of",
+        "scope",
+        "facts",
+        "sources",
+        "context_rules",
+        "candidate_ids",
+        "events"
+      ],
+      "additionalProperties": false
+    },
+    "ActionSpec": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "retain",
+            "partial_demolition",
+            "whole_demolition",
+            "retrofit",
+            "use_change",
+            "investigate",
+            "phase_work"
+          ]
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "objects",
+        "condition"
+      ],
+      "additionalProperties": false
+    },
+    "ScenarioProposal": {
+      "type": "object",
+      "properties": {
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Scenario"
+          },
+          "minItems": 2,
+          "maxItems": 3
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "unresolved": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "scenarios",
+        "rationale",
+        "unresolved"
+      ],
+      "additionalProperties": false
+    },
+    "ReviewPacket": {
+      "type": "object",
+      "properties": {
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Review"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "unresolved_disagreements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "needs_revision": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reviews",
+        "unresolved_disagreements",
+        "needs_revision"
+      ],
+      "additionalProperties": false
+    },
+    "CriterionJudgment": {
+      "type": "object",
+      "properties": {
+        "scenario_id": {
+          "$ref": "#/definitions/CandidateId"
+        },
+        "conclusion": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "scenario_id",
+        "conclusion",
+        "evidence_refs",
+        "unknowns"
+      ],
+      "additionalProperties": false
+    },
+    "ComparisonCriterion": {
+      "type": "object",
+      "properties": {
+        "criterion": {
+          "type": "string",
+          "enum": [
+            "implementation",
+            "building",
+            "demand",
+            "organization",
+            "enterprise",
+            "resources"
+          ]
+        },
+        "judgments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CriterionJudgment"
+          }
+        }
+      },
+      "required": [
+        "criterion",
+        "judgments"
+      ],
+      "additionalProperties": false
+    },
+    "ComparisonPacket": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComparisonCriterion"
+          },
+          "minItems": 3,
+          "maxItems": 6
+        },
+        "tied_paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CandidateId"
+          }
+        },
+        "unresolved_disagreements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "followups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Followup"
+          },
+          "minItems": 1,
+          "maxItems": 6
+        }
+      },
+      "required": [
+        "summary",
+        "criteria",
+        "tied_paths",
+        "unresolved_disagreements",
+        "followups"
+      ],
+      "additionalProperties": false
+    },
+    "ModelRule": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "organizational_constraint",
+            "preference",
+            "capability_lead",
+            "fact_candidate",
+            "unknown",
+            "heuristic"
+          ]
+        },
+        "predicate": {
+          "type": "string",
+          "enum": [
+            "no_whole_site_demolition",
+            "prefer_phasing",
+            "renewal_experience",
+            "active_lease",
+            "structural_safety",
+            "unclassified_experience",
+            "untrusted_instruction"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "boolean",
+            "null"
+          ]
+        },
+        "original_text": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "predicate",
+        "value",
+        "original_text",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "ModelContext": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelRule"
+          },
+          "maxItems": 20
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unclassified": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "rules",
+        "warnings",
+        "unclassified"
+      ],
+      "additionalProperties": false
+    },
+    "ModelCall": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "string"
+        },
+        "requested_model": {
+          "type": "string"
+        },
+        "returned_model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "finish_reason": {
+          "type": "string"
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cache_read_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cache_write_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "requested_model",
+        "returned_model",
+        "finish_reason",
+        "input_tokens",
+        "output_tokens",
+        "duration_ms",
+        "session_id"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchTrace": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "partial",
+            "blocked",
+            "not_applicable"
+          ]
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reused": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "queries",
+        "source_ids",
+        "warnings",
+        "reused"
+      ],
+      "additionalProperties": false
+    },
+    "GeoPoint": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "longitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "label": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "label",
+        "source_id"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenProfile": {
+      "type": "string",
+      "enum": [
+        "balanced",
+        "commercial",
+        "enterprise"
+      ]
+    },
+    "MapScreenBounds": {
+      "type": "object",
+      "properties": {
+        "west": {
+          "type": "number"
+        },
+        "south": {
+          "type": "number"
+        },
+        "east": {
+          "type": "number"
+        },
+        "north": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "west",
+        "south",
+        "east",
+        "north"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenTarget": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "point",
+            "cell"
+          ]
+        },
+        "longitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "latitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "radius_m": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 1200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bounds": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MapScreenBounds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "longitude",
+        "latitude",
+        "radius_m",
+        "bounds"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenPoi": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "category": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "longitude": {
+          "type": "number"
+        },
+        "latitude": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "longitude",
+        "latitude"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenEvidence": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "transit",
+            "activity",
+            "work_live",
+            "civic"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "types_query": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "available",
+            "failed",
+            "capped"
+          ]
+        },
+        "reported_count": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sample": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapScreenPoi"
+          },
+          "maxItems": 5
+        },
+        "retrieved_at": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "issue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "source_id",
+        "label",
+        "types_query",
+        "status",
+        "reported_count",
+        "sample",
+        "retrieved_at",
+        "issue"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenContext": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "target": {
+          "$ref": "#/definitions/MapScreenTarget"
+        },
+        "provider": {
+          "const": "amap",
+          "type": "string"
+        },
+        "coordinate_encoding": {
+          "const": "GCJ-02",
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "expires_at": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapScreenEvidence"
+          },
+          "maxItems": 4
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial"
+          ]
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 180
+          },
+          "maxItems": 12
+        },
+        "metric_note": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "local_projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapProjectEvidence"
+          }
+        },
+        "project_revision": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "provider",
+        "coordinate_encoding",
+        "created_at",
+        "expires_at",
+        "address",
+        "groups",
+        "status",
+        "gaps",
+        "metric_note",
+        "city",
+        "local_projects",
+        "project_revision"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenClaim": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "minItems": 1,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "text",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "MapPreliminaryAssessment": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "opportunities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapScreenClaim"
+          },
+          "maxItems": 3
+        },
+        "cautions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapScreenClaim"
+          },
+          "maxItems": 3
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 180
+          },
+          "maxItems": 8
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 180
+          },
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "summary",
+        "opportunities",
+        "cautions",
+        "unknowns",
+        "next_steps"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenAnalysis": {
+      "type": "object",
+      "properties": {
+        "context_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "profile": {
+          "$ref": "#/definitions/MapScreenProfile"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "unavailable",
+            "failed",
+            "insufficient_data"
+          ]
+        },
+        "assessment": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MapPreliminaryAssessment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model_calls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelCall"
+          },
+          "maxItems": 4
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 240
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 50
+        }
+      },
+      "required": [
+        "context_id",
+        "profile",
+        "status",
+        "assessment",
+        "model_calls",
+        "reason",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenCell": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "bounds": {
+          "$ref": "#/definitions/MapScreenBounds"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MapScreenContext"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "strong",
+            "moderate",
+            "sparse",
+            "empty",
+            "incomplete"
+          ]
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metric_value": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "bounds",
+        "context",
+        "tier",
+        "rank",
+        "metric_value"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "bounds": {
+          "$ref": "#/definitions/MapScreenBounds"
+        },
+        "profile": {
+          "$ref": "#/definitions/MapScreenProfile"
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapScreenCell"
+          },
+          "maxItems": 9
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "partial"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "comparison_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 250
+          },
+          "maxItems": 10
+        },
+        "theme": {
+          "$ref": "#/definitions/MapScreenTheme"
+        }
+      },
+      "required": [
+        "id",
+        "bounds",
+        "profile",
+        "created_at",
+        "cells",
+        "status",
+        "method",
+        "comparison_count",
+        "notes",
+        "theme"
+      ],
+      "additionalProperties": false
+    },
+    "MapScreenTheme": {
+      "type": "string",
+      "enum": [
+        "transit",
+        "activity",
+        "work_live",
+        "civic",
+        "projects"
+      ]
+    },
+    "MapProjectEvidence": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "relation": {
+          "type": "string",
+          "enum": [
+            "within_scope",
+            "city_background"
+          ]
+        },
+        "scope_label": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "updated_at": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "context_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fact_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "document_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Fact"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceRule"
+          }
+        }
+      },
+      "required": [
+        "project_id",
+        "name",
+        "relation",
+        "scope_label",
+        "updated_at",
+        "context_version",
+        "source_count",
+        "fact_count",
+        "document_count",
+        "sources",
+        "facts",
+        "rules"
+      ],
+      "additionalProperties": false
+    },
+    "MapDataProject": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "scope_label": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "located": {
+          "type": "boolean"
+        },
+        "source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "public_source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "internal_source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fact_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "document_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "updated_at": {
+          "type": "string",
+          "maxLength": 60
+        }
+      },
+      "required": [
+        "project_id",
+        "name",
+        "scope_label",
+        "city",
+        "located",
+        "source_count",
+        "public_source_count",
+        "internal_source_count",
+        "fact_count",
+        "document_count",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "MapDataCatalog": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapDataProject"
+          }
+        },
+        "real_project_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "synthetic_project_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unlocated_project_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 400
+          }
+        }
+      },
+      "required": [
+        "created_at",
+        "projects",
+        "real_project_count",
+        "synthetic_project_count",
+        "unlocated_project_count",
+        "notes"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

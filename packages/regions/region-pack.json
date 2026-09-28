@@ -1,0 +1,18 @@
+{
+  "id": "cn-public-research-v1",
+  "version": "1.0",
+  "country_code": "CN",
+  "language": "zh",
+  "units": "SI",
+  "public_source_domains": ["gov.cn"],
+  "coverage": "best_effort_public_research_not_national_cadastral_coverage",
+  "geocoding": {
+    "provider": "Open-Meteo / GeoNames",
+    "endpoint": "https://geocoding-api.open-meteo.com/v1/search",
+    "usage": "local_noncommercial_research_prototype",
+    "attribution": "Location data: GeoNames via Open-Meteo",
+    "precision": "representative_place_point_not_parcel_boundary"
+  },
+  "unsupported": ["ownership_verification", "statutory_parcel_resolution", "road_network_accessibility_without_road_data"],
+  "policy": "When names are ambiguous or unavailable, retain unknown geometry and continue conditional research. No inferred citywide coverage."
+}

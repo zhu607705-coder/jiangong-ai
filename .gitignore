@@ -1,0 +1,33 @@
+.env
+.env.*
+!.env.example
+.tools/
+.venv/
+.cache/
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+data/local/
+playwright-report/
+test-results/
+*.tsbuildinfo
+release/*.zip
+# Local browser traces can contain signed provider URLs.
+output/playwright/*.log
+output/playwright/*.yml
+output/playwright/*.json
+# Keep only source-backed public/synthetic regression artifacts used by corpus tests.
+research/live_smoke/*
+!research/live_smoke/public-live-run.json
+!research/live_smoke/first-live-run.json
+!research/live_smoke/resumed-live-run.json
+!research/live_smoke/enterprise-live-run.json
+!research/live_smoke/injection-live-run.json
+!research/live_smoke/paired-live-acceptance.json
+!research/live_smoke/structured-context.json
+research/baseline_logs/*
+!research/baseline_logs/verification-screening.log
+!research/baseline_logs/screening-tests.log
+!research/baseline_logs/screening-e2e.log
+!research/baseline_logs/screening-build.log

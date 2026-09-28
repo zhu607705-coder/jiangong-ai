@@ -1,0 +1,2415 @@
+{
+  "scope": "same_base_facts_automatic_vs_enterprise_live_acceptance",
+  "status": "passed",
+  "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+  "automatic": {
+    "id": "RUN-5034e5ed-1f9a-43f6-a926-0c6b09b2ff25",
+    "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+    "revision": 1,
+    "context_version": 0,
+    "status": "completed",
+    "execution_mode": "live",
+    "snapshot_hash": "3f05799d2bf770391082a17f6cb767750770755c4bf90afa8f68db7f7bab7bfa",
+    "decision": {
+      "mode": "automatic",
+      "as_of": "2026-09-27",
+      "model": "deepseek-flash",
+      "scope": {
+        "name": "虚构示范片区，不对应真实宗地",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                0.01,
+                0
+              ],
+              [
+                0.01,
+                0.01
+              ],
+              [
+                0,
+                0.01
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ]
+        },
+        "coordinate_encoding": "WGS84",
+        "legal_parcel_confirmed": false
+      },
+      "impact": {
+        "reused": [],
+        "invalidated": [
+          "building_feasibility",
+          "demand_operations",
+          "case_enterprise",
+          "scenarios",
+          "critic",
+          "comparator",
+          "report"
+        ],
+        "changed_paths": [],
+        "changed_rule_ids": []
+      },
+      "run_id": "RUN-5034e5ed-1f9a-43f6-a926-0c6b09b2ff25",
+      "status": "partial",
+      "metrics": [
+        {
+          "key": "gfa_m2",
+          "unit": "m²",
+          "label": "建筑总面积",
+          "value": 12000,
+          "status": "known",
+          "source_refs": [
+            "S-01"
+          ]
+        },
+        {
+          "key": "vacant_m2",
+          "unit": "m²",
+          "label": "空置面积",
+          "value": 7200,
+          "status": "known",
+          "source_refs": [
+            "S-01"
+          ]
+        },
+        {
+          "key": "vacancy_ratio",
+          "unit": "ratio",
+          "label": "空置比例",
+          "value": 0.6,
+          "status": "known",
+          "source_refs": [
+            "S-01"
+          ]
+        },
+        {
+          "key": "study_area_m2",
+          "unit": "m²",
+          "label": "研究范围面积",
+          "value": 1230907.2,
+          "status": "known",
+          "source_refs": []
+        }
+      ],
+      "reviews": [
+        {
+          "id": "REV-SAFETY",
+          "issue": "结构适配仍未知，不能把更新路径写成确定可实施。",
+          "severity": "high",
+          "target_refs": [
+            "retain_and_reuse",
+            "selective_rebuild"
+          ],
+          "evidence_refs": [
+            "S-02"
+          ],
+          "recommendation": "由有资质的专业人员补充结构检测及消防适配意见。"
+        },
+        {
+          "id": "REV-SCOPE",
+          "issue": "研究范围与开发权利不能等同。",
+          "severity": "high",
+          "target_refs": [
+            "scope"
+          ],
+          "evidence_refs": [],
+          "recommendation": "核实法定地块边界、权属及实施授权。"
+        },
+        {
+          "id": "R-01",
+          "issue": "保留/重建两路径的成立条件均写成\"结构可留用\"，但 F-STRUCTURE 为 missing，F3 明示不得生成结构安全结论；条件本身即无证据的假设。",
+          "severity": "high",
+          "target_refs": [
+            "retain_and_reuse",
+            "selective_rebuild",
+            "FD-B3"
+          ],
+          "evidence_refs": [
+            "S-02"
+          ],
+          "recommendation": "将两路径成立条件改写为待检测结论输入的占位前提，明确在检测前不得视为可满足，并禁止预先设保留或拆除比例。"
+        },
+        {
+          "id": "R-02",
+          "issue": "在建面积 4,800 m² 由 12,000−7,200 推算，快照未给在用面积字段；\"使用方诉求未查明\"以推算数为对象，属拼接推断。",
+          "severity": "high",
+          "target_refs": [
+            "retain_and_reuse"
+          ],
+          "evidence_refs": [
+            "S-01"
+          ],
+          "recommendation": "改为\"在用部分面积与使用方诉求均未知\"，仅保留 S-01 直接记载的总建面与空置面积。"
+        },
+        {
+          "id": "R-03",
+          "issue": "defer_and_investigate 以\"若已有有效检测与权属证明则暂缓必要性下降\"作为反证，隐含两者存在且可获，缺少来源支撑。",
+          "severity": "medium",
+          "target_refs": [
+            "defer_and_investigate"
+          ],
+          "evidence_refs": [
+            "S-02"
+          ],
+          "recommendation": "把该条降为待核线索并标注需权属人或授权主体来源，不作为降低暂缓强度的依据。"
+        },
+        {
+          "id": "R-04",
+          "issue": "三路径均含\"经费、责任主体、访问授权\"等前提，快照无成本与组织材料，易被读作已具备的实施条件而非缺项。",
+          "severity": "medium",
+          "target_refs": [
+            "defer_and_investigate",
+            "retain_and_reuse",
+            "selective_rebuild"
+          ],
+          "evidence_refs": [
+            "S-01"
+          ],
+          "recommendation": "在 prerequisites 标注全部为未核实组织条件，并归入 missing_fields，不作可行性或能力判断。"
+        },
+        {
+          "id": "R-05",
+          "issue": "路径共用 evidence_refs 仅 S-01/S-02，而 S-01、S-02 为合成标题级条目，purpose 为流程测试；部分结论易被当成真实宗地判断。",
+          "severity": "medium",
+          "target_refs": [
+            "rationale",
+            "FD-B4",
+            "F-03"
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "recommendation": "在每条路径统一加注不可外推声明，并将结论限定为流程与缺项结构验证。"
+        }
+      ],
+      "runtime": "DeepSeek Harness 0.1.7-rc.2",
+      "sources": [
+        {
+          "id": "S-01",
+          "title": "合成建筑清单",
+          "synthetic": true,
+          "data_class": "synthetic",
+          "visibility": "public"
+        },
+        {
+          "id": "S-02",
+          "title": "合成缺项清单",
+          "synthetic": true,
+          "data_class": "synthetic",
+          "visibility": "public"
+        }
+      ],
+      "summary": "现阶段只能做流程与缺项验证：三条候选均受同一证据边界约束，仅有 S-01 的 12,000 m² 总建面、7,200 m² 空置可核；权属 unverified、结构 missing、需求与企业能力无来源。不能确定保留、部分拆除或整体重建的物理可行性与排序，也无可外推的真实宗地结论。",
+      "findings": [
+        {
+          "id": "FD-B1",
+          "claim": "冻结快照仅以合成清单给出 12,000 m² 总建筑面积与 7,200 m² 空置面积（空置率 0.6），可作为规模与空置量级的唯一可核查输入；但该清单是标题级合成条目，不含楼栋构成、层高、跨度、建成年代、消防与机电现状等改造适配参数，因此无法据此判断三种候选路径中任何一种的物理可行性。",
+          "status": "unknown",
+          "unknowns": [
+            "楼栋数量与单体面积分布",
+            "结构与层高、楼板荷载等改造适配参数",
+            "消防分区、机电容量与竖向交通现状"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-01"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-B2",
+          "claim": "权属状态在冻结快照中标记为 unverified，结构评估为 missing，且范围几何为合成多边形、legal_parcel_confirmed 为 false。这意味着不存在可用于判断“可否改造、由谁改造、需何种前置审批”的实证基础；研究范围面积（由合成多边形推导）不等同于法定宗地面积或可开发面积，据此推算的任何可实施规模都属推断而非证据。",
+          "status": "unknown",
+          "unknowns": [
+            "权属人与租赁关系",
+            "法定宗地边界与规划条件",
+            "改造所需审批前置路径与门槛"
+          ],
+          "dimension": "implementation",
+          "evidence_refs": [
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-B3",
+          "claim": "在结构评估缺项且本任务不得生成结构安全结论的前提下，三条候选路径的适用条件无法在快照内被区分：retain_and_reuse 与 selective_rebuild 均以结构可留用程度为先决条件，defer_and_investigate 则对应证据不足的状态，因此当前证据仅支持“先补检测”这一顺序判断，不支持对任一改造路径的选定。",
+          "status": "conditional",
+          "unknowns": [
+            "有效结构检测结论",
+            "保留与拆除范围的判定标准",
+            "补检测所需时间与责任主体"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-B4",
+          "claim": "本快照的 purpose 标注为 contract_and_workflow_testing_only 且 synthetic=true，全部事实仅来自两条合成的公开来源（S-01、S-02），无政策文件或第三方数据可引用。因此本产出只能验证建筑与实施前提的分析流程与缺项结构，其数值与结论不可外推为真实宗地的投资或改造依据；若宿主需要可用于决策的版本，必须先置换为真实来源。",
+          "status": "supported",
+          "unknowns": [
+            "真实宗地的权属、检测与规划资料来源是否可获得"
+          ],
+          "dimension": "implementation",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-01",
+          "claim": "需求侧没有任何可核验证据：S-01/S-02 均为 synthetic 且仅有标题（metadata_only），不含正文数据，因此无法据此确定目标使用人群、既有服务供给缺口或运营需求；冻结快照 facts 为空数组也印证这一点。",
+          "status": "unknown",
+          "unknowns": [
+            "目标使用人群构成与规模",
+            "现状同类服务供给与饱和度",
+            "使用需求访谈、客流或问卷原始数据",
+            "拟设运营主体及其运维职责"
+          ],
+          "dimension": "demand",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-02",
+          "claim": "三个候选路径（retain_and_reuse / selective_rebuild / defer_and_investigate）目前无法按人群供给或运营条件排序：快照未提供任何建筑现状调查、权属或改造适用条件的正文证据，且 legal_parcel_confirmed=false、几何为 0.01°×0.01° 占位多边形。",
+          "status": "unknown",
+          "unknowns": [
+            "宗地权属与法定边界",
+            "建筑结构现状与可改造性调查",
+            "现状用途与空置情况",
+            "既有运维与使用方的实际诉求"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-03",
+          "claim": "快照声明 purpose 为 contract_and_workflow_testing_only，scope.name 明确为‘虚构示范片区，不对应真实宗地’，故本次产出仅可视为需求与运营研究流程的联通性验证，任何功能定位或运营假设均不得外推为对真实片区的判断。",
+          "status": "conditional",
+          "unknowns": [
+            "是否后续替换为真实片区快照",
+            "真实片区的法定规划与运营授权文件"
+          ],
+          "dimension": "organization",
+          "evidence_refs": [],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-04",
+          "claim": "本快照中不存在企业能力证据或既往经验材料，无法评估任何实施主体在保留利用、选择性重建或延迟调查路径上的能力匹配度与经验适用条件；此判断基于 sources 列表仅含两项合成清单、无其他来源。",
+          "status": "unknown",
+          "unknowns": [
+            "候选实施主体的资质与业绩",
+            "类似规模项目经验及其适用边界",
+            "运维与资金能力的书面证据"
+          ],
+          "dimension": "enterprise",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F1",
+          "claim": "S-01仅给总建面12000、空置7200平米，无结构鉴定，改造可行性未知。",
+          "status": "conditional",
+          "unknowns": [
+            "结构安全状况",
+            "改造技术边界"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-01"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F2",
+          "claim": "权属未核实且范围非合法宗地，不得据政策推断本项目许可。",
+          "status": "unknown",
+          "unknowns": [
+            "权属主体",
+            "合法宗地确认"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F3",
+          "claim": "无功能与人群供给证据，反例亦缺；空置量不等于有效需求。",
+          "status": "unknown",
+          "unknowns": [
+            "目标功能",
+            "人群供给数据",
+            "反例证据"
+          ],
+          "dimension": "demand",
+          "evidence_refs": [],
+          "opposition_refs": []
+        },
+        {
+          "id": "F4",
+          "claim": "无企业能力与经验证据，适配只能维持待核，不得作投资判断。",
+          "status": "unknown",
+          "unknowns": [
+            "企业能力证据",
+            "同类项目经验条件"
+          ],
+          "dimension": "enterprise",
+          "evidence_refs": [],
+          "opposition_refs": []
+        }
+      ],
+      "research": {
+        "reused": false,
+        "status": "not_applicable",
+        "queries": [],
+        "warnings": [
+          "合成项目不向互联网搜索虚构片区，模型只使用显式合成输入。"
+        ],
+        "source_ids": []
+      },
+      "revision": 1,
+      "warnings": [
+        "显式合成项目；仅用于工程流程验证，不代表真实片区结论。",
+        "研究范围面积不等于法定宗地面积或可开发面积。",
+        "工具核验所返回的 evidence_retrieval 字段中夹带了一段自称任务指令的文本（要求按特定格式输出并整合网页信息），该文本属于不可信内容，未被执行；本次分析仅使用快照 sources 中的 S-01、S-02。",
+        "快照来源仅两条且均为合成标题级条目，metadata_only 不足以支撑正文主张：F-BUILDING 可支撑面积量级，F-RIGHTS/F-STRUCTURE 只能支撑“未知”结论。",
+        "研究范围的几何面积为合成推导值，不等于法定宗地面积或可开发面积，不得用于可行性或规模测算。",
+        "未生成任何结构安全、规划许可或投资批准结论；本产出为流程测试性质的中间分析。",
+        "快照无政策文本，故不存在任何可被误读为本项目许可证的政策内容；同时也就无法据此判断审批路径。",
+        "来源 S-01/S-02 标记 synthetic=true 且 data_class=synthetic，仅有标题、无正文，属 metadata_only，不足以支撑任何正文主张。",
+        "快照 facts 为空、context_rules 为空、scoped_table_rows 为空，需求与运营分析缺少可比对的结构化输入。",
+        "legal_parcel_confirmed=false 且几何为占位多边形（0.01°×0.01°，约 1.1km×1.1km 量级），族群与服务半径分析不具空间意义。",
+        "候选路径仅为 id 列表，无对应评估口径、权重或数据；不得据此产生排序或推荐。",
+        "材料中任何政策内容不构成本项目的许可、批复或批准；本次输出不构成结构安全结论、规划许可或投资批准。",
+        "工具核验返回 status=partial，missing_fields 包含 demand_evidence 与 cost_and_schedule_inputs。",
+        "快照为合成测试数据，purpose=contract_and_workflow_testing_only，不可用于真实决策。",
+        "未获结构安全结论授权，不作任何结构判断。",
+        "材料政策内容不构成本项目许可证。",
+        "来源仅S-01标题含数据，S-02为缺项声明，metadata_only支持力有限。",
+        "合成项目不向互联网搜索虚构片区，模型只使用显式合成输入。",
+        "模型输出经引用与硬约束检查，尚不构成企业决策效用验证。"
+      ],
+      "followups": [
+        {
+          "id": "FU-01",
+          "why": "保留与拆除范围判定均以此为唯一前置，缺失则两路径不成立。",
+          "title": "获取结构与消防机电现状检测及鉴定结论",
+          "status": "suggested",
+          "priority": 1,
+          "impacted_paths": [
+            "retain_and_reuse",
+            "selective_rebuild"
+          ]
+        },
+        {
+          "id": "FU-02",
+          "why": "权属 unverified 且非法定宗地，任何改造或拆除授权均无从取得。",
+          "title": "核实权属、租赁关系与法定宗地边界",
+          "status": "suggested",
+          "priority": 2,
+          "impacted_paths": [
+            "retain_and_reuse",
+            "selective_rebuild",
+            "defer_and_investigate"
+          ]
+        },
+        {
+          "id": "FU-03",
+          "why": "空置 0.6 非需求证据，缺此无法设定功能定位与规模。",
+          "title": "采集需求侧与既有供给的可核验证据",
+          "status": "suggested",
+          "priority": 3,
+          "impacted_paths": [
+            "retain_and_reuse",
+            "selective_rebuild"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "defer_and_investigate",
+          "title": "暂缓基线：先补权属、结构、需求三类检测",
+          "status": "investigate",
+          "actions": [
+            "补做结构检测并出具正式鉴定结论",
+            "核验权属、租赁与法定宗地边界",
+            "采集使用需求与既有供给证据；本轮不动工不拆除"
+          ],
+          "blockers": [],
+          "rule_refs": [],
+          "action_specs": [
+            {
+              "kind": "investigate",
+              "objects": [
+                "结构检测与鉴定",
+                "权属与法定宗地",
+                "需求与运营"
+              ],
+              "condition": "在任一建设或拆除动作前完成，结论未出则维持现状"
+            }
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "prerequisites": [
+            "调查活动需取得相应现场和资料访问授权",
+            "权属人或授权主体可出具检测委托",
+            "检测与调研经费、责任主体落到书面委托",
+            "宿主确认本快照可被真实来源置换"
+          ],
+          "enterprise_fit": "待核：未取得可核验的能力与资源材料",
+          "counterevidence": [
+            "若已存在有效结构鉴定与权属证明，本暂缓的必要性下降",
+            "若宿主明确仅作流程测试，可只保留流程而延长暂缓"
+          ],
+          "resource_status": "未知：不据缺失数据填算成本或工期",
+          "demolition_scope": "none",
+          "preference_notes": [
+            "本路径为其他路径的共同前置，不排序、不推荐",
+            "不作结构安全、规划许可或投资批准结论",
+            "不填成本、IRR、工期数字"
+          ]
+        },
+        {
+          "id": "retain_and_reuse",
+          "title": "条件性保留利用：结构可留用则改造后变更用途",
+          "status": "conditional",
+          "actions": [
+            "结构可留用且权属核清后，对既有建筑做功能性改造",
+            "以补检测结论确定可留用范围，再调整功能与使用方式",
+            "保留既有主体、以变更用途承接需求；不整体拆除"
+          ],
+          "blockers": [],
+          "rule_refs": [],
+          "action_specs": [
+            {
+              "kind": "retain",
+              "objects": [
+                "既有建筑主体"
+              ],
+              "condition": "仅在结构鉴定支持留用且权属核清后成立"
+            },
+            {
+              "kind": "retrofit",
+              "objects": [
+                "留用范围建筑"
+              ],
+              "condition": "以检测结论与消防机电现状调查为前提"
+            },
+            {
+              "kind": "use_change",
+              "objects": [
+                "7,200 m² 空置部分"
+              ],
+              "condition": "需求侧证据到位后方可设定功能"
+            }
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "prerequisites": [
+            "核实地块和建筑权属、现有租约及实施权限",
+            "取得结构检测、消防和用途适配意见",
+            "补齐真实功能需求与运营依据",
+            "有效结构鉴定支持保留与加固",
+            "权属与租赁关系核实完成",
+            "功能需求与运营主体证据到位"
+          ],
+          "enterprise_fit": "待核：未取得可核验的能力与资源材料",
+          "counterevidence": [
+            "若检测显示结构不宜留用，本路径前提不成立",
+            "4,800 m² 在用部分的使用方诉求未查明，可能限制用途变更"
+          ],
+          "resource_status": "未知：不据缺失数据填算成本或工期",
+          "demolition_scope": "none",
+          "preference_notes": [
+            "保留利用属偏好性方向，非证据结论",
+            "空置 60% 不构成需求成立的证据",
+            "不作结构安全或审批保证"
+          ]
+        },
+        {
+          "id": "selective_rebuild",
+          "title": "条件性选择性重建：拆除范围由检测结论界定",
+          "status": "conditional",
+          "actions": [
+            "由结构鉴定界定保留与拆除范围，仅对不适用部分拆除",
+            "保留可留用单体并同步补做基础与市政条件调查",
+            "拆除范围确认前不启动任何拆除作业"
+          ],
+          "blockers": [],
+          "rule_refs": [],
+          "action_specs": [
+            {
+              "kind": "partial_demolition",
+              "objects": [
+                "被鉴定为不可留用的建筑部分"
+              ],
+              "condition": "仅在结构鉴定与权属授权齐备后执行，范围以鉴定为界"
+            },
+            {
+              "kind": "retain",
+              "objects": [
+                "被鉴定为可留用的建筑部分"
+              ],
+              "condition": "鉴定结论支持保留且加固方案成立"
+            },
+            {
+              "kind": "investigate",
+              "objects": [
+                "合法宗地边界与规划条件"
+              ],
+              "condition": "作为拆除作业的前置，未确认则不推进"
+            }
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "prerequisites": [
+            "核实地块和建筑权属、现有租约及实施权限",
+            "取得结构检测、消防和用途适配意见",
+            "补齐真实功能需求与运营依据",
+            "结构检测给出可保留与不可保留的明确边界",
+            "权属核清并取得可拆除部分的处置授权",
+            "合法宗地与规划条件确认"
+          ],
+          "enterprise_fit": "待核：未取得可核验的能力与资源材料",
+          "counterevidence": [
+            "若检测显示整体可留用，本路径应退回保留利用",
+            "若权属未核清，拆除授权无法取得，本路径不成立"
+          ],
+          "resource_status": "未知：不据缺失数据填算成本或工期",
+          "demolition_scope": "partial",
+          "preference_notes": [
+            "选择性重建属偏好性方向，不构成推荐",
+            "本路径不含整体拆除动作",
+            "不作结构安全、许可或投资批准结论"
+          ]
+        }
+      ],
+      "synthetic": true,
+      "comparison": {
+        "summary": "现阶段只能做流程与缺项验证：三条候选均受同一证据边界约束，仅有 S-01 的 12,000 m² 总建面、7,200 m² 空置可核；权属 unverified、结构 missing、需求与企业能力无来源。不能确定保留、部分拆除或整体重建的物理可行性与排序，也无可外推的真实宗地结论。",
+        "criteria": [
+          {
+            "criterion": "building",
+            "judgments": [
+              {
+                "unknowns": [
+                  "结构检测与鉴定结论",
+                  "改造适配参数（层高、荷载、消防机电）"
+                ],
+                "conclusion": "物理可行性不可判：结构评估缺失，保留范围无证据",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "可保留与不可保留边界",
+                  "单体构成与面积分布"
+                ],
+                "conclusion": "拆除边界无依据：缺鉴定即无法界定可留用部分",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "检测所需时间与范围",
+                  "现场与资料访问授权"
+                ],
+                "conclusion": "仅该路径不依赖缺失的建筑结论，与现状证据一致",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "implementation",
+            "judgments": [
+              {
+                "unknowns": [
+                  "权属人与租赁关系",
+                  "规划与审批前置门槛"
+                ],
+                "conclusion": "前置不成立：权属 unverified、非合法宗地、无审批路径",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "可拆除部分的处置授权",
+                  "合法宗地与规划条件"
+                ],
+                "conclusion": "拆除授权无从取得：权属与宗地均未确认",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "检测委托与责任主体",
+                  "经费与授权落实情况"
+                ],
+                "conclusion": "唯一与现有证据相容的动作序列，但委托主体未定",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "demand",
+            "judgments": [
+              {
+                "unknowns": [
+                  "目标使用人群与功能定位",
+                  "现状供给与饱和度"
+                ],
+                "conclusion": "无需求证据；空置 0.6 不等于有效需求或用途适配",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "需求规模与功能组合",
+                  "运营需求原始数据"
+                ],
+                "conclusion": "同等无需求证据，重建后功能规模无法设定",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "调研口径与样本",
+                  "既有使用方实际诉求"
+                ],
+                "conclusion": "把需求调研列为待补项，与需求证据缺失一致",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "organization",
+            "judgments": [
+              {
+                "unknowns": [
+                  "是否置换真实来源快照",
+                  "组织与授权文件"
+                ],
+                "conclusion": "快照为流程测试用途，组织条件全部属未核实前提",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "拆除实施与监管分工",
+                  "审批主体责任"
+                ],
+                "conclusion": "同上：无组织与授权材料，前提不得视为已具备",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "宿主确认可否置换来源",
+                  "后续真实规划授权"
+                ],
+                "conclusion": "仅可作流程联通性验证，输出限定为缺项结构",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "enterprise",
+            "judgments": [
+              {
+                "unknowns": [
+                  "主体资质与业绩",
+                  "运维与资金能力书面证据"
+                ],
+                "conclusion": "无企业能力与经验证据，适配度只能待核",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "同类项目经验与适用边界",
+                  "实施主体与责任划分"
+                ],
+                "conclusion": "无企业能力证据，拆除施工能力无法评估",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "检测与调研承接方",
+                  "既往经验材料"
+                ],
+                "conclusion": "调研与检测主体亦无证据，能力适配待核",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "resources",
+            "judgments": [
+              {
+                "unknowns": [
+                  "改造成本与工期",
+                  "资金安排与来源"
+                ],
+                "conclusion": "无成本工期材料，不填任何数字，规模不可估算",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01"
+                ]
+              },
+              {
+                "unknowns": [
+                  "拆除与保留的资源拆分",
+                  "成本口径与基准"
+                ],
+                "conclusion": "无资源材料；拆除范围未定则资源需求无从测算",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-01"
+                ]
+              },
+              {
+                "unknowns": [
+                  "检测调研预算额度",
+                  "经费来源与审批"
+                ],
+                "conclusion": "仅知需检测与调研经费，额度与来源未知",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          }
+        ],
+        "followups": [
+          {
+            "id": "FU-01",
+            "why": "保留与拆除范围判定均以此为唯一前置，缺失则两路径不成立。",
+            "title": "获取结构与消防机电现状检测及鉴定结论",
+            "status": "suggested",
+            "priority": 1,
+            "impacted_paths": [
+              "retain_and_reuse",
+              "selective_rebuild"
+            ]
+          },
+          {
+            "id": "FU-02",
+            "why": "权属 unverified 且非法定宗地，任何改造或拆除授权均无从取得。",
+            "title": "核实权属、租赁关系与法定宗地边界",
+            "status": "suggested",
+            "priority": 2,
+            "impacted_paths": [
+              "retain_and_reuse",
+              "selective_rebuild",
+              "defer_and_investigate"
+            ]
+          },
+          {
+            "id": "FU-03",
+            "why": "空置 0.6 非需求证据，缺此无法设定功能定位与规模。",
+            "title": "采集需求侧与既有供给的可核验证据",
+            "status": "suggested",
+            "priority": 3,
+            "impacted_paths": [
+              "retain_and_reuse",
+              "selective_rebuild"
+            ]
+          }
+        ],
+        "tied_paths": [],
+        "unresolved_disagreements": [
+          "把 defer_and_investigate 设为其他两路径共同前置属偏好顺序，快照未规定任何路径顺序。",
+          "候选称 selective_rebuild 不含整体拆除，但缺结构证据时无法排除拆除范围扩大至整体。",
+          "各路径 prerequisites 未标注证据层级，事实、组织条件与偏好混同，易被读作已具备条件。"
+        ]
+      },
+      "created_at": "2026-09-27T16:56:22.779Z",
+      "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+      "model_calls": [
+        {
+          "stage": "building_feasibility",
+          "session_id": "957b5ec5-d37c-4c85-b356-ff99756265ed",
+          "duration_ms": 405,
+          "input_tokens": 1553,
+          "finish_reason": "tool-calls",
+          "output_tokens": 32,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1152,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "demand_operations",
+          "session_id": "b29e97ec-aef7-482a-81ef-59a2852b41ce",
+          "duration_ms": 637,
+          "input_tokens": 1448,
+          "finish_reason": "tool-calls",
+          "output_tokens": 32,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1152,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "case_enterprise",
+          "session_id": null,
+          "duration_ms": 1105,
+          "input_tokens": 1553,
+          "finish_reason": "tool-calls",
+          "output_tokens": 33,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1152,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "demand_operations",
+          "session_id": "b29e97ec-aef7-482a-81ef-59a2852b41ce",
+          "duration_ms": 5211,
+          "input_tokens": 2087,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1118,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1408,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "building_feasibility",
+          "session_id": "957b5ec5-d37c-4c85-b356-ff99756265ed",
+          "duration_ms": 5416,
+          "input_tokens": 2472,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1066,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1536,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "case_enterprise",
+          "error_code": "MALFORMED_RESPONSE",
+          "session_id": null,
+          "duration_ms": 5433,
+          "input_tokens": 0,
+          "finish_reason": "error",
+          "output_tokens": 0,
+          "returned_model": null,
+          "requested_model": "deepseek-flash"
+        },
+        {
+          "stage": "case_enterprise_format_retry",
+          "session_id": "b1a6f7c9-ceab-4961-b631-94de27b1c94d",
+          "duration_ms": 398,
+          "input_tokens": 1601,
+          "finish_reason": "tool-calls",
+          "output_tokens": 24,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1280,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "case_enterprise_format_retry",
+          "session_id": "b1a6f7c9-ceab-4961-b631-94de27b1c94d",
+          "duration_ms": 2359,
+          "input_tokens": 2282,
+          "finish_reason": "tool-calls",
+          "output_tokens": 552,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1536,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "demand_operations",
+          "session_id": "b29e97ec-aef7-482a-81ef-59a2852b41ce",
+          "duration_ms": 3458,
+          "input_tokens": 3321,
+          "finish_reason": "tool-calls",
+          "output_tokens": 977,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 3072,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "scenarios",
+          "session_id": "f6037135-fc39-4f2c-bd24-e922f826a1d3",
+          "duration_ms": 9922,
+          "input_tokens": 3813,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1957,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1152,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "scenarios_repair",
+          "session_id": "95695e95-ca19-444c-ada4-f4de850248ba",
+          "duration_ms": 8814,
+          "input_tokens": 3830,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1720,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 3584,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "critic",
+          "session_id": "b2b7a227-a21c-43cc-b0de-88ca86630158",
+          "duration_ms": 4159,
+          "input_tokens": 4880,
+          "finish_reason": "tool-calls",
+          "output_tokens": 806,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 896,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "comparator",
+          "session_id": "25360cdc-36ab-463f-9530-8c60ae3175b1",
+          "duration_ms": 7087,
+          "input_tokens": 5919,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1746,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 768,
+          "cache_write_tokens": 0
+        }
+      ],
+      "artifact_refs": [
+        "ART-ef1d44be-f99d-44fe-ad29-5e10f07e2d4b",
+        "ART-b2272dd8-cf60-4e15-8f7f-7a70750ab1cf",
+        "ART-c9a5c1a7-a5b5-4035-a04f-d01ecfa27eab",
+        "ART-be5ed585-78bd-4c6d-b3a6-2308ca932888",
+        "ART-d6869e47-8638-436a-937f-436efa9208b1",
+        "ART-a064b1a1-f5e9-4bc9-96e5-a515d6d95816",
+        "ART-0b3f606c-5f2b-4b50-9288-59c63c918555",
+        "ART-70c47b74-80e0-4842-a99a-ae39c594377d"
+      ],
+      "context_rules": [],
+      "snapshot_hash": "3f05799d2bf770391082a17f6cb767750770755c4bf90afa8f68db7f7bab7bfa",
+      "execution_mode": "live",
+      "missing_fields": [
+        "structural_safety_conclusion",
+        "verified_rights",
+        "legal_parcel_confirmed",
+        "building_asset_detail_attributes",
+        "regulatory_and_approval_prerequisites",
+        "real_source_replacement",
+        "cost_and_schedule_inputs",
+        "demand_evidence",
+        "legal_parcel_boundary",
+        "building_condition_survey",
+        "ownership_and_tenure_record",
+        "operator_and_maintenance_arrangement",
+        "enterprise_capability_evidence",
+        "rights_verification",
+        "structural_assessment",
+        "demand_supply_evidence"
+      ],
+      "schema_version": "2.0",
+      "analysis_method": "model_assisted",
+      "context_version": 0,
+      "unresolved_disagreements": [
+        "结构检测结论缺失，保留与拆除范围无法判定",
+        "权属状态 unverified，法定宗地与租赁关系不明",
+        "无需求侧与运营主体证据，功能定位无法确定",
+        "无企业能力、成本、工期与资金材料",
+        "研究范围面积为合成推导值，不等于法定宗地面积",
+        "快照 purpose 为流程测试且来源为合成标题级条目，结论不可外推真实宗地",
+        "候选将 defer_and_investigate 设为其他两路径的共同前置，但快照未要求任何路径顺序，该顺序属偏好而非证据结论。",
+        "候选称 selective_rebuild 不含整体拆除，但\"部分拆除范围由鉴定界定\"在缺结构证据前无法排除扩大至整体的可能。",
+        "三条路径均列 prerequisites，却未标注其证据层级，难以区分事实、组织条件与偏好。",
+        "把 defer_and_investigate 设为其他两路径共同前置属偏好顺序，快照未规定任何路径顺序。",
+        "候选称 selective_rebuild 不含整体拆除，但缺结构证据时无法排除拆除范围扩大至整体。",
+        "各路径 prerequisites 未标注证据层级，事实、组织条件与偏好混同，易被读作已具备条件。"
+      ]
+    },
+    "error_code": null,
+    "idempotency_key": "a090e609-6be0-4d4d-aa88-c517148ef009",
+    "created_at": "2026-09-27T16:55:41.286Z"
+  },
+  "enterprise": {
+    "id": "RUN-d8003be0-aa66-496c-8d25-a5146cc55681",
+    "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+    "revision": 2,
+    "context_version": 1,
+    "status": "completed",
+    "execution_mode": "live",
+    "snapshot_hash": "8509f7ed7a4d46d6658e422e512b3768f7f8d2db01fe43767f5daa82aa614fca",
+    "decision": {
+      "mode": "enterprise",
+      "as_of": "2026-09-27",
+      "model": "deepseek-flash",
+      "scope": {
+        "name": "虚构示范片区，不对应真实宗地",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                0.01,
+                0
+              ],
+              [
+                0.01,
+                0.01
+              ],
+              [
+                0,
+                0.01
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ]
+        },
+        "coordinate_encoding": "WGS84",
+        "legal_parcel_confirmed": false
+      },
+      "impact": {
+        "reused": [
+          "building_feasibility",
+          "demand_operations",
+          "case_enterprise"
+        ],
+        "invalidated": [
+          "scenarios",
+          "critic",
+          "comparator",
+          "report"
+        ],
+        "changed_paths": [
+          "retain_and_reuse",
+          "selective_rebuild",
+          "defer_and_investigate"
+        ],
+        "changed_rule_ids": [
+          "RULE-a54e1526-5001-43bc-9694-4aee7f36429a",
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec",
+          "RULE-2619d2d8-7cda-43f7-a2d3-ebe3f8814970"
+        ]
+      },
+      "run_id": "RUN-d8003be0-aa66-496c-8d25-a5146cc55681",
+      "status": "partial",
+      "metrics": [
+        {
+          "key": "gfa_m2",
+          "unit": "m²",
+          "label": "建筑总面积",
+          "value": 12000,
+          "status": "known",
+          "source_refs": [
+            "S-01"
+          ]
+        },
+        {
+          "key": "vacant_m2",
+          "unit": "m²",
+          "label": "空置面积",
+          "value": 7200,
+          "status": "known",
+          "source_refs": [
+            "S-01"
+          ]
+        },
+        {
+          "key": "vacancy_ratio",
+          "unit": "ratio",
+          "label": "空置比例",
+          "value": 0.6,
+          "status": "known",
+          "source_refs": [
+            "S-01"
+          ]
+        },
+        {
+          "key": "study_area_m2",
+          "unit": "m²",
+          "label": "研究范围面积",
+          "value": 1230907.2,
+          "status": "known",
+          "source_refs": []
+        }
+      ],
+      "reviews": [
+        {
+          "id": "REV-SAFETY",
+          "issue": "结构适配仍未知，不能把更新路径写成确定可实施。",
+          "severity": "high",
+          "target_refs": [
+            "retain_and_reuse",
+            "selective_rebuild"
+          ],
+          "evidence_refs": [
+            "S-02"
+          ],
+          "recommendation": "由有资质的专业人员补充结构检测及消防适配意见。"
+        },
+        {
+          "id": "REV-SCOPE",
+          "issue": "研究范围与开发权利不能等同。",
+          "severity": "high",
+          "target_refs": [
+            "scope"
+          ],
+          "evidence_refs": [],
+          "recommendation": "核实法定地块边界、权属及实施授权。"
+        },
+        {
+          "id": "R-01",
+          "issue": "三条候选均用S-01（标题级合成清单）支撑\"空置面积可先行功能调研/功能定位\"等正文主张，实为以标题代正文。",
+          "severity": "high",
+          "target_refs": [
+            "retain_and_reuse.actions[1]",
+            "retain_and_reuse.action_specs[2]",
+            "defer_and_investigate.action_specs[1]",
+            "rationale"
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "recommendation": "明确S-01仅支撑面积量级；功能调研前置条件须以真实需求来源为据，勿挂靠S-01。"
+        },
+        {
+          "id": "R-02",
+          "issue": "selective_rebuild将组织约束（不整体拆除）当作局部拆除的合规判据，\"不触发约束\"成为准入条件，混淆组织边界与技术/审批结论。",
+          "severity": "high",
+          "target_refs": [
+            "selective_rebuild.prerequisites[3]",
+            "selective_rebuild.action_specs[1]",
+            "selective_rebuild.preference_notes[1]"
+          ],
+          "evidence_refs": [
+            "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c",
+            "S-02"
+          ],
+          "recommendation": "改为\"局部拆除尚需权属、结构与审批前置核实\"，不得以组织约束代替合规判定。"
+        },
+        {
+          "id": "R-03",
+          "issue": "\"做过厂房更新\"被写入三条路径的enterprise_fit并复用于路径区分，属把未核能力线索当能力事实；该线索无项目名称、时间、规模。",
+          "severity": "medium",
+          "target_refs": [
+            "retain_and_reuse.enterprise_fit",
+            "selective_rebuild.enterprise_fit",
+            "defer_and_investigate.enterprise_fit"
+          ],
+          "evidence_refs": [
+            "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+          ],
+          "recommendation": "统一表述为\"未核能力线索，不构成资质或业绩\"，且不作为任何路径可选中理由。"
+        },
+        {
+          "id": "R-04",
+          "issue": "defer_and_investigate的action_specs将\"全部现状建筑保留\"写成retain动作，实为证据缺口下的默认状态，易被读作保留可行性判断。",
+          "severity": "medium",
+          "target_refs": [
+            "defer_and_investigate.action_specs[2]",
+            "defer_and_investigate.demolition_scope"
+          ],
+          "evidence_refs": [
+            "S-02"
+          ],
+          "recommendation": "改为\"维持现状使用（非可行性结论）\"，并注明结构缺失下不得推出可留用。"
+        },
+        {
+          "id": "R-05",
+          "issue": "selective_rebuild偏好注称\"分期推进偏好可对应先拆后建次序\"，把偏好错拼为动作次序依据；分期偏好未附任何工程或权属条件。",
+          "severity": "medium",
+          "target_refs": [
+            "selective_rebuild.preference_notes[0]",
+            "RULE-2619d2d8-7cda-43f7-a2d3-ebe3f8814970"
+          ],
+          "evidence_refs": [
+            "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+          ],
+          "recommendation": "删除该映射，或仅标为\"待组织确认的排序偏好，不构成实施条件\"。"
+        }
+      ],
+      "runtime": "DeepSeek Harness 0.1.7-rc.2",
+      "sources": [
+        {
+          "id": "S-01",
+          "title": "合成建筑清单",
+          "synthetic": true,
+          "data_class": "synthetic",
+          "visibility": "public"
+        },
+        {
+          "id": "S-02",
+          "title": "合成缺项清单",
+          "synthetic": true,
+          "data_class": "synthetic",
+          "visibility": "public"
+        },
+        {
+          "id": "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c",
+          "title": "项目经验与组织意见",
+          "synthetic": true,
+          "data_class": "synthetic",
+          "visibility": "internal",
+          "retrieved_at": "2026-09-27T16:56:25.718Z",
+          "untrusted_text": "我们做过厂房更新。本项目不整体拆除。最好分期推进。"
+        }
+      ],
+      "summary": "现有证据仅合成测试快照：可确认1.2万㎡建面、7,200㎡空置量级，并冻结拆改、先补权属与结构两类缺项证据。结构缺失、权属未核、无需求与成本输入，故三路径均不可选定，也不得排序或作合规、安全、投资结论。经验线索未核，组织约束与偏好非批准。",
+      "findings": [
+        {
+          "id": "FD-B1",
+          "claim": "冻结快照仅以合成清单给出 12,000 m² 总建筑面积与 7,200 m² 空置面积（空置率 0.6），可作为规模与空置量级的唯一可核查输入；但该清单是标题级合成条目，不含楼栋构成、层高、跨度、建成年代、消防与机电现状等改造适配参数，因此无法据此判断三种候选路径中任何一种的物理可行性。",
+          "status": "unknown",
+          "unknowns": [
+            "楼栋数量与单体面积分布",
+            "结构与层高、楼板荷载等改造适配参数",
+            "消防分区、机电容量与竖向交通现状"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-01"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-B2",
+          "claim": "权属状态在冻结快照中标记为 unverified，结构评估为 missing，且范围几何为合成多边形、legal_parcel_confirmed 为 false。这意味着不存在可用于判断“可否改造、由谁改造、需何种前置审批”的实证基础；研究范围面积（由合成多边形推导）不等同于法定宗地面积或可开发面积，据此推算的任何可实施规模都属推断而非证据。",
+          "status": "unknown",
+          "unknowns": [
+            "权属人与租赁关系",
+            "法定宗地边界与规划条件",
+            "改造所需审批前置路径与门槛"
+          ],
+          "dimension": "implementation",
+          "evidence_refs": [
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-B3",
+          "claim": "在结构评估缺项且本任务不得生成结构安全结论的前提下，三条候选路径的适用条件无法在快照内被区分：retain_and_reuse 与 selective_rebuild 均以结构可留用程度为先决条件，defer_and_investigate 则对应证据不足的状态，因此当前证据仅支持“先补检测”这一顺序判断，不支持对任一改造路径的选定。",
+          "status": "conditional",
+          "unknowns": [
+            "有效结构检测结论",
+            "保留与拆除范围的判定标准",
+            "补检测所需时间与责任主体"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-B4",
+          "claim": "本快照的 purpose 标注为 contract_and_workflow_testing_only 且 synthetic=true，全部事实仅来自两条合成的公开来源（S-01、S-02），无政策文件或第三方数据可引用。因此本产出只能验证建筑与实施前提的分析流程与缺项结构，其数值与结论不可外推为真实宗地的投资或改造依据；若宿主需要可用于决策的版本，必须先置换为真实来源。",
+          "status": "supported",
+          "unknowns": [
+            "真实宗地的权属、检测与规划资料来源是否可获得"
+          ],
+          "dimension": "implementation",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-01",
+          "claim": "需求侧没有任何可核验证据：S-01/S-02 均为 synthetic 且仅有标题（metadata_only），不含正文数据，因此无法据此确定目标使用人群、既有服务供给缺口或运营需求；冻结快照 facts 为空数组也印证这一点。",
+          "status": "unknown",
+          "unknowns": [
+            "目标使用人群构成与规模",
+            "现状同类服务供给与饱和度",
+            "使用需求访谈、客流或问卷原始数据",
+            "拟设运营主体及其运维职责"
+          ],
+          "dimension": "demand",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-02",
+          "claim": "三个候选路径（retain_and_reuse / selective_rebuild / defer_and_investigate）目前无法按人群供给或运营条件排序：快照未提供任何建筑现状调查、权属或改造适用条件的正文证据，且 legal_parcel_confirmed=false、几何为 0.01°×0.01° 占位多边形。",
+          "status": "unknown",
+          "unknowns": [
+            "宗地权属与法定边界",
+            "建筑结构现状与可改造性调查",
+            "现状用途与空置情况",
+            "既有运维与使用方的实际诉求"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-03",
+          "claim": "快照声明 purpose 为 contract_and_workflow_testing_only，scope.name 明确为‘虚构示范片区，不对应真实宗地’，故本次产出仅可视为需求与运营研究流程的联通性验证，任何功能定位或运营假设均不得外推为对真实片区的判断。",
+          "status": "conditional",
+          "unknowns": [
+            "是否后续替换为真实片区快照",
+            "真实片区的法定规划与运营授权文件"
+          ],
+          "dimension": "organization",
+          "evidence_refs": [],
+          "opposition_refs": []
+        },
+        {
+          "id": "F-04",
+          "claim": "本快照中不存在企业能力证据或既往经验材料，无法评估任何实施主体在保留利用、选择性重建或延迟调查路径上的能力匹配度与经验适用条件；此判断基于 sources 列表仅含两项合成清单、无其他来源。",
+          "status": "unknown",
+          "unknowns": [
+            "候选实施主体的资质与业绩",
+            "类似规模项目经验及其适用边界",
+            "运维与资金能力的书面证据"
+          ],
+          "dimension": "enterprise",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-1",
+          "claim": "S-01给出总建面12000、空置7200平米；权属未核、结构评估缺失。",
+          "status": "unknown",
+          "unknowns": [
+            "权属与租赁边界",
+            "结构现状与改造可行性"
+          ],
+          "dimension": "building",
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-2",
+          "claim": "快照无功能定位、人群供给与反例材料，需求侧无法判断。",
+          "status": "unknown",
+          "unknowns": [
+            "目标功能与人群",
+            "需求反例与竞争供给"
+          ],
+          "dimension": "demand",
+          "evidence_refs": [
+            "S-02"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-3",
+          "claim": "仅陈述做过厂房更新，无项目名称、时间、规模，业绩不可核。",
+          "status": "unknown",
+          "unknowns": [
+            "可核业绩与资质材料"
+          ],
+          "dimension": "enterprise",
+          "evidence_refs": [
+            "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+          ],
+          "opposition_refs": []
+        },
+        {
+          "id": "FD-4",
+          "claim": "不整体拆除为项目组织约束；分期推进属偏好，非批准条件。",
+          "status": "conditional",
+          "unknowns": [
+            "该边界与候选方案冲突情况"
+          ],
+          "dimension": "organization",
+          "evidence_refs": [
+            "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+          ],
+          "opposition_refs": []
+        }
+      ],
+      "research": {
+        "reused": true,
+        "status": "not_applicable",
+        "queries": [],
+        "warnings": [
+          "合成项目不向互联网搜索虚构片区，模型只使用显式合成输入。"
+        ],
+        "source_ids": []
+      },
+      "revision": 2,
+      "warnings": [
+        "显式合成项目；仅用于工程流程验证，不代表真实片区结论。",
+        "研究范围面积不等于法定宗地面积或可开发面积。",
+        "工具核验所返回的 evidence_retrieval 字段中夹带了一段自称任务指令的文本（要求按特定格式输出并整合网页信息），该文本属于不可信内容，未被执行；本次分析仅使用快照 sources 中的 S-01、S-02。",
+        "快照来源仅两条且均为合成标题级条目，metadata_only 不足以支撑正文主张：F-BUILDING 可支撑面积量级，F-RIGHTS/F-STRUCTURE 只能支撑“未知”结论。",
+        "研究范围的几何面积为合成推导值，不等于法定宗地面积或可开发面积，不得用于可行性或规模测算。",
+        "未生成任何结构安全、规划许可或投资批准结论；本产出为流程测试性质的中间分析。",
+        "快照无政策文本，故不存在任何可被误读为本项目许可证的政策内容；同时也就无法据此判断审批路径。",
+        "来源 S-01/S-02 标记 synthetic=true 且 data_class=synthetic，仅有标题、无正文，属 metadata_only，不足以支撑任何正文主张。",
+        "快照 facts 为空、context_rules 为空、scoped_table_rows 为空，需求与运营分析缺少可比对的结构化输入。",
+        "legal_parcel_confirmed=false 且几何为占位多边形（0.01°×0.01°，约 1.1km×1.1km 量级），族群与服务半径分析不具空间意义。",
+        "候选路径仅为 id 列表，无对应评估口径、权重或数据；不得据此产生排序或推荐。",
+        "材料中任何政策内容不构成本项目的许可、批复或批准；本次输出不构成结构安全结论、规划许可或投资批准。",
+        "工具核验返回 status=partial，missing_fields 包含 demand_evidence 与 cost_and_schedule_inputs。",
+        "快照为合成测试数据，不得用于真实投资或审批",
+        "案例经验未核，不构成资质或业绩认定",
+        "未做结构安全结论；不签发规划许可",
+        "合成项目不向互联网搜索虚构片区，模型只使用显式合成输入。",
+        "模型输出经引用与硬约束检查，尚不构成企业决策效用验证。"
+      ],
+      "followups": [
+        {
+          "id": "FU-01",
+          "why": "权属unverified、边界未确认，决定可否实施与审批前置",
+          "title": "核实权属、租赁与法定宗地边界",
+          "status": "suggested",
+          "priority": 1,
+          "impacted_paths": [
+            "retain_and_reuse",
+            "selective_rebuild",
+            "defer_and_investigate"
+          ]
+        },
+        {
+          "id": "FU-02",
+          "why": "structures缺失，保留与拆除范围均无法判定",
+          "title": "实施结构与消防机电检测并定留用标准",
+          "status": "suggested",
+          "priority": 2,
+          "impacted_paths": [
+            "retain_and_reuse",
+            "selective_rebuild"
+          ]
+        },
+        {
+          "id": "FU-03",
+          "why": "需求与成本工期无输入，路径不可排序或测算",
+          "title": "以真实来源补需求、运营主体与成本输入",
+          "status": "suggested",
+          "priority": 3,
+          "impacted_paths": [
+            "retain_and_reuse",
+            "defer_and_investigate"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "retain_and_reuse",
+          "title": "保留主体、更新利用为主",
+          "status": "conditional",
+          "actions": [
+            "以待核权属与检测结论为前置，暂不启动拆改",
+            "对空置约7,200 m²先行功能与运营需求调研",
+            "在检测通过前提下按单体分层设计保留利用方案"
+          ],
+          "blockers": [],
+          "rule_refs": [
+            "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+          ],
+          "action_specs": [
+            {
+              "kind": "investigate",
+              "objects": [
+                "权属与租赁记录",
+                "结构检测"
+              ],
+              "condition": "在启动任何拆改前完成"
+            },
+            {
+              "kind": "retain",
+              "objects": [
+                "待检测确认的单体"
+              ],
+              "condition": "检测结论支持且权属清晰"
+            },
+            {
+              "kind": "use_change",
+              "objects": [
+                "空置面积"
+              ],
+              "condition": "功能需求调研完成并通过组织确认"
+            }
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "prerequisites": [
+            "核实地块和建筑权属、现有租约及实施权限",
+            "取得结构检测、消防和用途适配意见",
+            "补齐真实功能需求与运营依据",
+            "遵守本项目不整体拆除的组织边界；局部拆改仍需单独核实",
+            "取得有效结构检测结论，判定可保留范围",
+            "核验权属、租赁关系与法定宗地边界",
+            "明确功能需求与拟设运营主体职责"
+          ],
+          "enterprise_fit": "存在经验线索；需核实对应团队、项目证据与当前可用资源",
+          "counterevidence": [
+            "若检测显示结构不适用，保留路径不可行",
+            "若功能需求与现状空间不匹配，保留价值下降",
+            "经验线索未核，不能作为能力保证"
+          ],
+          "resource_status": "未知：不据缺失数据填算成本或工期",
+          "demolition_scope": "none",
+          "preference_notes": [
+            "不整体拆除为项目组织约束",
+            "分期推进仅为偏好，非批准条件"
+          ]
+        },
+        {
+          "id": "selective_rebuild",
+          "title": "部分拆除重建、保留其余",
+          "status": "conditional",
+          "actions": [
+            "先定保留与拆除判定标准，再划分单体范围",
+            "对判定不适用的部分做局部拆除与重建",
+            "对其余部分按检测结论实施保留或改造"
+          ],
+          "blockers": [],
+          "rule_refs": [
+            "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+          ],
+          "action_specs": [
+            {
+              "kind": "investigate",
+              "objects": [
+                "保留与拆除判定标准",
+                "单体结构检测"
+              ],
+              "condition": "拆除范围划定之前"
+            },
+            {
+              "kind": "partial_demolition",
+              "objects": [
+                "检测判定不适用且权属清晰的单体"
+              ],
+              "condition": "不触发整体拆除约束，且审批前置明确"
+            },
+            {
+              "kind": "retrofit",
+              "objects": [
+                "判定保留的其余单体"
+              ],
+              "condition": "检测与消防机电条件经核验"
+            }
+          ],
+          "evidence_refs": [
+            "S-01",
+            "S-02"
+          ],
+          "prerequisites": [
+            "核实地块和建筑权属、现有租约及实施权限",
+            "取得结构检测、消防和用途适配意见",
+            "补齐真实功能需求与运营依据",
+            "遵守本项目不整体拆除的组织边界；局部拆改仍需单独核实",
+            "有效检测给出可分单体的保留判定",
+            "权属、规划与审批前置路径核验完成",
+            "拆除范围与既有使用方安排达成一致"
+          ],
+          "enterprise_fit": "存在经验线索；需核实对应团队、项目证据与当前可用资源",
+          "counterevidence": [
+            "不整体拆除的组织约束限制重建规模",
+            "若检测支持整体保留，部分拆除即非必要",
+            "无需求证据支撑新增体量"
+          ],
+          "resource_status": "未知：不据缺失数据填算成本或工期",
+          "demolition_scope": "partial",
+          "preference_notes": [
+            "分期推进偏好可对应先拆除后重建的次序",
+            "不整体拆除边界不可突破"
+          ]
+        },
+        {
+          "id": "defer_and_investigate",
+          "title": "暂缓决策、先补证据",
+          "status": "investigate",
+          "actions": [
+            "维持现状使用，冻结任何拆改动作",
+            "补齐权属、结构与需求三类缺项证据",
+            "以补证结论再区分保留或部分重建路径"
+          ],
+          "blockers": [],
+          "rule_refs": [],
+          "action_specs": [
+            {
+              "kind": "investigate",
+              "objects": [
+                "权属与法定边界",
+                "结构安全检测"
+              ],
+              "condition": "先于任何路径选定"
+            },
+            {
+              "kind": "investigate",
+              "objects": [
+                "功能需求与运营主体"
+              ],
+              "condition": "与结构补证并行，需真实来源"
+            },
+            {
+              "kind": "retain",
+              "objects": [
+                "全部现状建筑"
+              ],
+              "condition": "补证期间维持现状使用"
+            }
+          ],
+          "evidence_refs": [
+            "S-02",
+            "S-01"
+          ],
+          "prerequisites": [
+            "调查活动需取得相应现场和资料访问授权",
+            "明确补检测与补证的责任主体与顺序",
+            "置换为可核查的真实来源材料"
+          ],
+          "enterprise_fit": "存在经验线索；需核实对应团队、项目证据与当前可用资源",
+          "counterevidence": [
+            "若后续检测与需求证据充分，暂缓即失去必要性",
+            "若时间要求紧迫，暂缓成本需另行评估（无工期数字）"
+          ],
+          "resource_status": "未知：不据缺失数据填算成本或工期",
+          "demolition_scope": "none",
+          "preference_notes": [
+            "在证据补齐前不采用任何拆除口径",
+            "组织约束与偏好均不构成批准"
+          ]
+        }
+      ],
+      "synthetic": true,
+      "comparison": {
+        "summary": "现有证据仅合成测试快照：可确认1.2万㎡建面、7,200㎡空置量级，并冻结拆改、先补权属与结构两类缺项证据。结构缺失、权属未核、无需求与成本输入，故三路径均不可选定，也不得排序或作合规、安全、投资结论。经验线索未核，组织约束与偏好非批准。",
+        "criteria": [
+          {
+            "criterion": "building",
+            "judgments": [
+              {
+                "unknowns": [
+                  "单体结构与层高参数",
+                  "消防机电现状"
+                ],
+                "conclusion": "结构评估missing，可保留范围无从判定，仅条件成立",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "可分单体检测结论",
+                  "拆除范围标准"
+                ],
+                "conclusion": "缺保留/拆除判定标准，局部拆除范围不可划",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "补检测责任主体",
+                  "补检测时限"
+                ],
+                "conclusion": "证据缺口下维持现状使用，非留用可行性结论",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "implementation",
+            "judgments": [
+              {
+                "unknowns": [
+                  "权属与租赁关系",
+                  "审批前置门槛"
+                ],
+                "conclusion": "权属unverified、法定宗地未确认，实施权限不可核",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "法定边界与规划条件",
+                  "审批前置路径"
+                ],
+                "conclusion": "局部拆除尚需权属、结构与审批前置，组织约束不等同合规",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-02",
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              },
+              {
+                "unknowns": [
+                  "现场资料访问授权",
+                  "补证顺序安排"
+                ],
+                "conclusion": "先补权属与检测可核，但授权与责任主体未定",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "demand",
+            "judgments": [
+              {
+                "unknowns": [
+                  "目标人群与功能",
+                  "同类供给饱和度"
+                ],
+                "conclusion": "无需求证据，功能调研不可挂靠S-01",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-01",
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "需求规模",
+                  "使用方诉求"
+                ],
+                "conclusion": "新增体量无需求支撑，必要性无从判断",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "真实需求来源",
+                  "拟设运营主体"
+                ],
+                "conclusion": "需求补证可与结构补证并行，尚无输入",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "organization",
+            "judgments": [
+              {
+                "unknowns": [
+                  "边界与方案冲突情形"
+                ],
+                "conclusion": "不整体拆除属项目组织约束，非批准依据",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              },
+              {
+                "unknowns": [
+                  "偏好是否经组织确认",
+                  "局部拆改的授权口径"
+                ],
+                "conclusion": "分期偏好不得映射为先拆后建次序",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              },
+              {
+                "unknowns": [
+                  "冻结期权限归属"
+                ],
+                "conclusion": "补证期间冻结拆改，符合组织边界但需授权",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "enterprise",
+            "judgments": [
+              {
+                "unknowns": [
+                  "可核业绩与资质",
+                  "团队当前可用性"
+                ],
+                "conclusion": "经验仅未核线索，不构成资质或可选中理由",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              },
+              {
+                "unknowns": [
+                  "类似规模项目经验",
+                  "拆除施工能力"
+                ],
+                "conclusion": "无主体能力证据，局部拆除经验匹配度未知",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              },
+              {
+                "unknowns": [
+                  "补证责任主体",
+                  "资料获取能力"
+                ],
+                "conclusion": "调查阶段即需明确责任主体，现无证据",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion": "resources",
+            "judgments": [
+              {
+                "unknowns": [
+                  "改造成本",
+                  "工期"
+                ],
+                "conclusion": "无成本工期输入，不填算任何数字",
+                "scenario_id": "retain_and_reuse",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "拆除成本",
+                  "资金安排"
+                ],
+                "conclusion": "拆除与重建资源无输入，规模不可估",
+                "scenario_id": "selective_rebuild",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              },
+              {
+                "unknowns": [
+                  "暂缓期成本",
+                  "资金与时间约束"
+                ],
+                "conclusion": "暂缓代价无从评估，无工期资金数据",
+                "scenario_id": "defer_and_investigate",
+                "evidence_refs": [
+                  "S-02"
+                ]
+              }
+            ]
+          }
+        ],
+        "followups": [
+          {
+            "id": "FU-01",
+            "why": "权属unverified、边界未确认，决定可否实施与审批前置",
+            "title": "核实权属、租赁与法定宗地边界",
+            "status": "suggested",
+            "priority": 1,
+            "impacted_paths": [
+              "retain_and_reuse",
+              "selective_rebuild",
+              "defer_and_investigate"
+            ]
+          },
+          {
+            "id": "FU-02",
+            "why": "structures缺失，保留与拆除范围均无法判定",
+            "title": "实施结构与消防机电检测并定留用标准",
+            "status": "suggested",
+            "priority": 2,
+            "impacted_paths": [
+              "retain_and_reuse",
+              "selective_rebuild"
+            ]
+          },
+          {
+            "id": "FU-03",
+            "why": "需求与成本工期无输入，路径不可排序或测算",
+            "title": "以真实来源补需求、运营主体与成本输入",
+            "status": "suggested",
+            "priority": 3,
+            "impacted_paths": [
+              "retain_and_reuse",
+              "defer_and_investigate"
+            ]
+          }
+        ],
+        "tied_paths": [
+          "retain_and_reuse",
+          "selective_rebuild",
+          "defer_and_investigate"
+        ],
+        "unresolved_disagreements": [
+          "研究分项对能否排序矛盾：一处称候选仅id列表不得排序，另一处称仅支持先补检测；本产出不作排序。",
+          "以“检测通过”作保留路径前提，但无责任主体与时限，前提可核性存疑。",
+          "暂缓路径无工期与资金输入，暂缓代价与优先性均不可判定。"
+        ]
+      },
+      "created_at": "2026-09-27T17:04:51.894Z",
+      "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+      "model_calls": [
+        {
+          "stage": "scenarios",
+          "session_id": "ef63445f-7688-46b9-b08d-1fde2c2fbe28",
+          "duration_ms": 7844,
+          "input_tokens": 5345,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1601,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 256,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "critic",
+          "session_id": "a5fa4b91-fabc-4463-bafa-c84a8a93d725",
+          "duration_ms": 5056,
+          "input_tokens": 5500,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1042,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 768,
+          "cache_write_tokens": 0
+        },
+        {
+          "stage": "comparator",
+          "session_id": "9d457f15-da39-46a0-ab8d-c907382ba199",
+          "duration_ms": 6845,
+          "input_tokens": 6765,
+          "finish_reason": "tool-calls",
+          "output_tokens": 1839,
+          "returned_model": "deepseek-flash",
+          "requested_model": "deepseek-flash",
+          "cache_read_tokens": 1152,
+          "cache_write_tokens": 0
+        }
+      ],
+      "artifact_refs": [
+        "ART-ef1d44be-f99d-44fe-ad29-5e10f07e2d4b",
+        "ART-a3875770-4e77-4521-acb1-af16a9fe1251",
+        "ART-c9a5c1a7-a5b5-4035-a04f-d01ecfa27eab",
+        "ART-d6869e47-8638-436a-937f-436efa9208b1",
+        "ART-3e52ae3b-4811-4687-865d-2e3ee424b2c1",
+        "ART-ad7bb163-770d-4ea4-b4e6-150d3c97b9f3",
+        "ART-fdb898d6-813d-43af-9832-71f1ef7fbce9",
+        "ART-ddfa4203-b460-4b55-9205-d1ae77859175"
+      ],
+      "context_rules": [
+        {
+          "id": "RULE-a54e1526-5001-43bc-9694-4aee7f36429a",
+          "kind": "capability_lead",
+          "note": "陈述既往经历，属能力线索；未提供项目名称、时间、规模等可核验证据，不能据此认定资质或业绩已核实。",
+          "scope": "project",
+          "value": "做过厂房更新",
+          "active": true,
+          "predicate": "renewal_experience",
+          "source_id": "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c",
+          "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+          "supersedes": null,
+          "original_text": "我们做过厂房更新。",
+          "authority_status": "project_confirmed"
+        },
+        {
+          "id": "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec",
+          "kind": "organizational_constraint",
+          "note": "项目配置人明确提出的不整体拆除边界；属于项目组织约束，不是法规或技术批准。",
+          "scope": "project",
+          "value": true,
+          "active": true,
+          "predicate": "no_whole_site_demolition",
+          "source_id": "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c",
+          "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+          "supersedes": null,
+          "original_text": "本项目不整体拆除。",
+          "authority_status": "project_confirmed"
+        },
+        {
+          "id": "RULE-2619d2d8-7cda-43f7-a2d3-ebe3f8814970",
+          "kind": "preference",
+          "note": "含'最好'的倾向性表述，属偏好，非强制约束。",
+          "scope": "project",
+          "value": "分期推进",
+          "active": true,
+          "predicate": "prefer_phasing",
+          "source_id": "S-CTX-eb551b99-4b09-432d-9487-9a57a0799f4c",
+          "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+          "supersedes": null,
+          "original_text": "最好分期推进。",
+          "authority_status": "project_confirmed"
+        }
+      ],
+      "snapshot_hash": "8509f7ed7a4d46d6658e422e512b3768f7f8d2db01fe43767f5daa82aa614fca",
+      "execution_mode": "live",
+      "missing_fields": [
+        "structural_safety_conclusion",
+        "verified_rights",
+        "legal_parcel_confirmed",
+        "building_asset_detail_attributes",
+        "regulatory_and_approval_prerequisites",
+        "real_source_replacement",
+        "cost_and_schedule_inputs",
+        "demand_evidence",
+        "legal_parcel_boundary",
+        "building_condition_survey",
+        "ownership_and_tenure_record",
+        "operator_and_maintenance_arrangement",
+        "enterprise_capability_evidence",
+        "rights_evidence",
+        "structural_assessment",
+        "demand_supply_evidence"
+      ],
+      "schema_version": "2.0",
+      "analysis_method": "model_assisted",
+      "context_version": 1,
+      "unresolved_disagreements": [
+        "权属与租赁关系未核（F-RIGHTS=unverified）",
+        "结构评估缺失，未生成任何安全结论（F-STRUCTURE=missing）",
+        "法定宗地边界未确认，合成多边形面积不可用于测算",
+        "功能需求、人群与运营主体无证据",
+        "成本、资金与工期无输入，不提供任何数字",
+        "企业资质与业绩不可核，仅存未核经验线索",
+        "规划与审批前置路径未知",
+        "快照为合成测试数据，需置换真实来源方可支撑决策",
+        "两条研究分项对候选路径能否排序相互矛盾：一条称\"候选路径仅为id列表，不得据此产生排序\"，另一条称\"证据仅支持先补检测这一顺序判断\"；提案采纳后一立场，未说明理由。",
+        "提案以\"结构检测通过\"作为retain_and_reuse前提，但快照F-STRUCTURE=missing且无检测责任主体、时限，该前提的达成条件无从核验，是否应保留为前置条件存在分歧。",
+        "提案将defer_and_investigate设为investigate状态并冻结拆改，但快照无工期与资金输入，无法评估暂缓代价，路径优先性仍不可判定。",
+        "研究分项对能否排序矛盾：一处称候选仅id列表不得排序，另一处称仅支持先补检测；本产出不作排序。",
+        "以“检测通过”作保留路径前提，但无责任主体与时限，前提可核性存疑。",
+        "暂缓路径无工期与资金输入，暂缓代价与优先性均不可判定。"
+      ]
+    },
+    "error_code": null,
+    "idempotency_key": "81e9c457-7df8-4399-a783-0dee2514db6d",
+    "created_at": "2026-09-27T16:56:25.729Z"
+  },
+  "diff": {
+    "available": true,
+    "from_revision": 1,
+    "to_revision": 2,
+    "changes": [
+      {
+        "path_id": "retain_and_reuse",
+        "title": "保留主体、更新利用为主",
+        "field": "prerequisites",
+        "before": [
+          "核实地块和建筑权属、现有租约及实施权限",
+          "取得结构检测、消防和用途适配意见",
+          "补齐真实功能需求与运营依据",
+          "有效结构鉴定支持保留与加固",
+          "权属与租赁关系核实完成",
+          "功能需求与运营主体证据到位"
+        ],
+        "after": [
+          "核实地块和建筑权属、现有租约及实施权限",
+          "取得结构检测、消防和用途适配意见",
+          "补齐真实功能需求与运营依据",
+          "遵守本项目不整体拆除的组织边界；局部拆改仍需单独核实",
+          "取得有效结构检测结论，判定可保留范围",
+          "核验权属、租赁关系与法定宗地边界",
+          "明确功能需求与拟设运营主体职责"
+        ],
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "retain_and_reuse",
+        "title": "保留主体、更新利用为主",
+        "field": "enterprise_fit",
+        "before": "待核：未取得可核验的能力与资源材料",
+        "after": "存在经验线索；需核实对应团队、项目证据与当前可用资源",
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "retain_and_reuse",
+        "title": "保留主体、更新利用为主",
+        "field": "preference_notes",
+        "before": [
+          "保留利用属偏好性方向，非证据结论",
+          "空置 60% 不构成需求成立的证据",
+          "不作结构安全或审批保证"
+        ],
+        "after": [
+          "不整体拆除为项目组织约束",
+          "分期推进仅为偏好，非批准条件"
+        ],
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "retain_and_reuse",
+        "title": "保留主体、更新利用为主",
+        "field": "actions",
+        "before": [
+          "结构可留用且权属核清后，对既有建筑做功能性改造",
+          "以补检测结论确定可留用范围，再调整功能与使用方式",
+          "保留既有主体、以变更用途承接需求；不整体拆除"
+        ],
+        "after": [
+          "以待核权属与检测结论为前置，暂不启动拆改",
+          "对空置约7,200 m²先行功能与运营需求调研",
+          "在检测通过前提下按单体分层设计保留利用方案"
+        ],
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "selective_rebuild",
+        "title": "部分拆除重建、保留其余",
+        "field": "prerequisites",
+        "before": [
+          "核实地块和建筑权属、现有租约及实施权限",
+          "取得结构检测、消防和用途适配意见",
+          "补齐真实功能需求与运营依据",
+          "结构检测给出可保留与不可保留的明确边界",
+          "权属核清并取得可拆除部分的处置授权",
+          "合法宗地与规划条件确认"
+        ],
+        "after": [
+          "核实地块和建筑权属、现有租约及实施权限",
+          "取得结构检测、消防和用途适配意见",
+          "补齐真实功能需求与运营依据",
+          "遵守本项目不整体拆除的组织边界；局部拆改仍需单独核实",
+          "有效检测给出可分单体的保留判定",
+          "权属、规划与审批前置路径核验完成",
+          "拆除范围与既有使用方安排达成一致"
+        ],
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "selective_rebuild",
+        "title": "部分拆除重建、保留其余",
+        "field": "enterprise_fit",
+        "before": "待核：未取得可核验的能力与资源材料",
+        "after": "存在经验线索；需核实对应团队、项目证据与当前可用资源",
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "selective_rebuild",
+        "title": "部分拆除重建、保留其余",
+        "field": "preference_notes",
+        "before": [
+          "选择性重建属偏好性方向，不构成推荐",
+          "本路径不含整体拆除动作",
+          "不作结构安全、许可或投资批准结论"
+        ],
+        "after": [
+          "分期推进偏好可对应先拆除后重建的次序",
+          "不整体拆除边界不可突破"
+        ],
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "selective_rebuild",
+        "title": "部分拆除重建、保留其余",
+        "field": "actions",
+        "before": [
+          "由结构鉴定界定保留与拆除范围，仅对不适用部分拆除",
+          "保留可留用单体并同步补做基础与市政条件调查",
+          "拆除范围确认前不启动任何拆除作业"
+        ],
+        "after": [
+          "先定保留与拆除判定标准，再划分单体范围",
+          "对判定不适用的部分做局部拆除与重建",
+          "对其余部分按检测结论实施保留或改造"
+        ],
+        "rule_refs": [
+          "RULE-af378fbe-d35b-4676-8686-48aa2a9402ec"
+        ]
+      },
+      {
+        "path_id": "defer_and_investigate",
+        "title": "暂缓决策、先补证据",
+        "field": "prerequisites",
+        "before": [
+          "调查活动需取得相应现场和资料访问授权",
+          "权属人或授权主体可出具检测委托",
+          "检测与调研经费、责任主体落到书面委托",
+          "宿主确认本快照可被真实来源置换"
+        ],
+        "after": [
+          "调查活动需取得相应现场和资料访问授权",
+          "明确补检测与补证的责任主体与顺序",
+          "置换为可核查的真实来源材料"
+        ],
+        "rule_refs": []
+      },
+      {
+        "path_id": "defer_and_investigate",
+        "title": "暂缓决策、先补证据",
+        "field": "enterprise_fit",
+        "before": "待核：未取得可核验的能力与资源材料",
+        "after": "存在经验线索；需核实对应团队、项目证据与当前可用资源",
+        "rule_refs": []
+      },
+      {
+        "path_id": "defer_and_investigate",
+        "title": "暂缓决策、先补证据",
+        "field": "preference_notes",
+        "before": [
+          "本路径为其他路径的共同前置，不排序、不推荐",
+          "不作结构安全、规划许可或投资批准结论",
+          "不填成本、IRR、工期数字"
+        ],
+        "after": [
+          "在证据补齐前不采用任何拆除口径",
+          "组织约束与偏好均不构成批准"
+        ],
+        "rule_refs": []
+      },
+      {
+        "path_id": "defer_and_investigate",
+        "title": "暂缓决策、先补证据",
+        "field": "actions",
+        "before": [
+          "补做结构检测并出具正式鉴定结论",
+          "核验权属、租赁与法定宗地边界",
+          "采集使用需求与既有供给证据；本轮不动工不拆除"
+        ],
+        "after": [
+          "维持现状使用，冻结任何拆改动作",
+          "补齐权属、结构与需求三类缺项证据",
+          "以补证结论再区分保留或部分重建路径"
+        ],
+        "rule_refs": []
+      }
+    ],
+    "reused": [
+      "building_feasibility",
+      "demand_operations",
+      "case_enterprise"
+    ],
+    "invalidated": [
+      "scenarios",
+      "critic",
+      "comparator",
+      "report"
+    ]
+  }
+}

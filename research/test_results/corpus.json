@@ -1,0 +1,73 @@
+{
+  "checked_at": "2026-09-27T17:40:44.097934+00:00",
+  "scope": "local_corpus_preparation_not_model_training_or_business_effectiveness",
+  "status": "verified",
+  "build_id": "a268f56c85f291f20d02d39b0fec762a85136c0e10039cde2f1811320c3b7626",
+  "counts": {
+    "admitted_records": 11,
+    "documents": 6,
+    "with_text": 5,
+    "metadata_only": 1,
+    "text_characters": 11691,
+    "chunks": 17,
+    "unlabeled_candidates": 17,
+    "source_groups": 2,
+    "exact_duplicates": 5,
+    "near_duplicate_links": 0,
+    "excluded_private_or_synthetic": 0,
+    "regression_fixtures": 10,
+    "archived_model_records": 8,
+    "failed_model_runs": 1,
+    "missing_published_at": 6,
+    "missing_retrieved_at": 0,
+    "locked_audit_examples": 0
+  },
+  "new_tests": {
+    "passed": 17,
+    "failed": 0,
+    "command": "npx vitest run tests/contracts/corpus.test.ts",
+    "log": "research/baseline_logs/corpus-tests.log"
+  },
+  "typescript": {
+    "status": "passed",
+    "log": "research/baseline_logs/corpus-typecheck.log"
+  },
+  "application_build": {
+    "status": "passed",
+    "log": "research/baseline_logs/corpus-build.log"
+  },
+  "local_run_collection": {
+    "status": "passed",
+    "run_id": "RUN-4aa39374-6648-4922-bbc8-b494dd3a69aa",
+    "duplicate_records_merged": 5,
+    "log": "research/baseline_logs/corpus-collect.log"
+  },
+  "search": {
+    "status": "passed",
+    "query": "城市更新 实施组织",
+    "returned_chunks": 5,
+    "distinct_source_urls": 3,
+    "chunk_ids": [
+      "DOC-95ab085ddd38f70e8422128e-C0-875",
+      "DOC-637ed181394ab06386dfb370-C3741-4542",
+      "DOC-b4ed8f8d4dbe20192f274c9e-C1421-2319",
+      "DOC-b4ed8f8d4dbe20192f274c9e-C718-1541",
+      "DOC-637ed181394ab06386dfb370-C0-894"
+    ]
+  },
+  "export": {
+    "status": "awaiting_approved_training_rows",
+    "training_rows": 0,
+    "development_rows": 0,
+    "recorded_permissions": 0,
+    "log": "research/baseline_logs/corpus-export.log"
+  },
+  "credential_exclusion": "verified_against_actual_local_key_without_recording_it",
+  "external_model_calls_this_lane": 0,
+  "weight_training_started": false,
+  "next_data_priorities": [
+    "authorized_deidentified_project_inputs",
+    "expert_edits_with_reasons",
+    "decision_time_and_later_outcomes_separated"
+  ]
+}

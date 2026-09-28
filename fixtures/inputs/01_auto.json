@@ -1,0 +1,90 @@
+{
+  "schema_version": "2.0",
+  "project_id": "SYN-INDUSTRIAL-001",
+  "synthetic": true,
+  "purpose": "contract_and_workflow_testing_only",
+  "mode": "automatic",
+  "role": "investment_manager",
+  "as_of": "2026-09-27",
+  "scope": {
+    "name": "虚构示范片区，不对应真实宗地",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            0,
+            0
+          ],
+          [
+            0.01,
+            0
+          ],
+          [
+            0.01,
+            0.01
+          ],
+          [
+            0,
+            0.01
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      ]
+    },
+    "coordinate_encoding": "WGS84",
+    "legal_parcel_confirmed": false
+  },
+  "facts": [
+    {
+      "id": "F-BUILDING",
+      "kind": "building_inventory",
+      "value": {
+        "gfa_m2": 12000,
+        "vacant_m2": 7200
+      },
+      "unit": "m2",
+      "source_id": "S-01"
+    },
+    {
+      "id": "F-RIGHTS",
+      "kind": "rights_status",
+      "value": "unverified",
+      "unit": null,
+      "source_id": "S-02"
+    },
+    {
+      "id": "F-STRUCTURE",
+      "kind": "structural_assessment",
+      "value": "missing",
+      "unit": null,
+      "source_id": "S-02"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S-01",
+      "title": "合成建筑清单",
+      "data_class": "synthetic",
+      "visibility": "public",
+      "synthetic": true
+    },
+    {
+      "id": "S-02",
+      "title": "合成缺项清单",
+      "data_class": "synthetic",
+      "visibility": "public",
+      "synthetic": true
+    }
+  ],
+  "context_rules": [],
+  "candidate_ids": [
+    "retain_and_reuse",
+    "selective_rebuild",
+    "defer_and_investigate"
+  ],
+  "events": []
+}

@@ -1,0 +1,100 @@
+{
+  "checked_at": "2026-09-28T02:05:57.979869+00:00",
+  "status": "passed",
+  "scope": "live_amap_map_first_ui_not_photogrammetry_or_enterprise_business_validation",
+  "provider": {
+    "sdk": "AMap JS API 2.0",
+    "loader": "1.0.1",
+    "configuration": "user_supplied_Web_JS_API_key_and_server_security_code",
+    "security_code_returned_to_frontend": false,
+    "js_key_usage": "provider_required_browser_identifier",
+    "service_proxy": "fixed_amap_domains_authenticated_local_proxy"
+  },
+  "browser": {
+    "platform": "native_Windows_Chrome_153",
+    "renderer": "hardware_WebGL_Intel_Direct3D11",
+    "actual_3d_rendering": true,
+    "default_pitch_degrees": 55,
+    "buildings_and_landscape": "native_provider_layers_visually_checked",
+    "ui_flow": {
+      "briefBeforeDetails": true,
+      "detailRequestDelta": 1,
+      "detailText": "详细地址\n中山北路581号(西湖文化广场地铁站C口步行440米)\n地点分类\n商务住宅;楼宇;商务写字楼",
+      "view2d": "ZOOM 18.2\nPITCH 0°",
+      "view3d": "ZOOM 18.2\nPITCH 55°",
+      "buildingToggle": true,
+      "satelliteSelectionPreserved": true,
+      "researchOpened": true,
+      "researchClosed": true,
+      "mapPreserved": true,
+      "mapClickSelection": "选中的地图位置",
+      "pointProjectRegion": "浙江省杭州市拱墅区朝晖街道环球中心西湖文化广场",
+      "mobile": {
+        "width": 390,
+        "documentWidth": 390,
+        "card": {
+          "x": 78,
+          "y": 454.8125,
+          "width": 299,
+          "height": 298.1875,
+          "top": 454.8125,
+          "right": 377,
+          "bottom": 753,
+          "left": 78
+        },
+        "blockedControls": []
+      }
+    },
+    "software_renderer_fallback": {
+      "status": "高德地图 · 2D 浏览空间探索",
+      "viewToggleDisabled": true,
+      "notice": "当前浏览器未启用高德 3D，已显示 2D 地图。可在支持硬件加速的浏览器中打开。"
+    },
+    "blocking_console_errors": 0,
+    "provider_warning": "Canvas2D willReadFrequently performance hint; no functional failure"
+  },
+  "tests": {
+    "full_suite_passed": 124,
+    "full_suite_log": "research/baseline_logs/verification-map.log",
+    "latest_map_unit_passed": 10,
+    "latest_map_unit_log": "research/baseline_logs/map-final-tests.log",
+    "latest_map_tests_supersede": 9,
+    "unique_tests_with_current_relevant_evidence": 125,
+    "latest_build": "research/baseline_logs/map-final-build.log",
+    "build_status": "passed"
+  },
+  "snapshots": {
+    "desktop": "output/playwright/map-desktop.png",
+    "selected_brief": "output/playwright/map-selection.png",
+    "place_details": "output/playwright/map-details.png",
+    "satellite_with_buildings": "output/playwright/map-satellite.png",
+    "satellite_ground": "output/playwright/map-satellite-ground.png",
+    "mobile": "output/playwright/map-mobile.png"
+  },
+  "source_hashes": {
+    "apps/host/amap.ts": "c985690d056288d1edccfcfbcde93de5ba30a4bacbcd0438857c5284a7d7b854",
+    "apps/host/server.ts": "b6719fa6697802013daf76e99745dfedc43e6fe9279c53eff33b00fbd496a89d",
+    "apps/workspace/src/App.tsx": "10b64bf20ffed1ce0af3e4c16e97803dea224e78140fd5490a188e5a4cf5e151",
+    "apps/workspace/src/components/WorkspaceFrame.tsx": "d27754cc8b5f28d625b8d42439e7cb4ab5751657dfc9173a967e9f6c82045a9a",
+    "apps/workspace/src/maps/MapWorkspace.tsx": "75331f03df8f06a44289a1ac10b18c6f8a61e8b3d8036db36211a9afe8b54545",
+    "apps/workspace/src/maps/MapSettings.tsx": "5d4753ed6acb7b75b2b138f0efa992f7dc3274eeba783899899314f0a9bd29d1",
+    "apps/workspace/src/maps/amap-client.ts": "fa5b2cd025d5501d540eb2783cfc9ff3db5a246bc4607a1b09d91eaa1f74aa64",
+    "apps/workspace/src/maps/map.css": "8c015f6aca3db3fc2e53dc72d16279302c06ae39bb154de07f2bce16cb12f703",
+    "apps/workspace/vite.config.ts": "ee49a45e258068b3b0f6943b8017ce5f94e796862a009c635b9d23a871eb646b",
+    "packages/maps/types.ts": "d10c0cc63e03a9bdc640d44b54733cc03e7edbd22e84e4b0e9a158b67bc22129",
+    "packages/contracts/schema.json": "24e7196b370a942a77f0d9afa52fdb37a6229326ab6efee67ad1ccecf2623754",
+    "tests/contracts/maps.test.ts": "f77168862ad3f558a9108df3dd0ebd9920866f6abaa5200a411a050bfa4ade04",
+    "tests/e2e/test_http.py": "5e1a7ed24c1243293c78eb5b5250b4c8f6d2a1758f45c302ca8cd6063aceb49d"
+  },
+  "limits": [
+    "Map buildings are provider block models, not a photorealistic or indoor VR reconstruction.",
+    "Map and POI coverage does not establish structural safety, ownership or lease facts.",
+    "No new model inference or model training was performed for this UI change."
+  ],
+  "official_references": [
+    "https://lbs.amap.com/api/javascript-api-v2/guide/abc/jscode",
+    "https://lbs.amap.com/api/javascript-api-v2/guide/map/3d-map",
+    "https://lbs.amap.com/api/javascript-api-v2/guide/layers/official-layers",
+    "https://v6.vite.dev/config/server-options#server-watch"
+  ]
+}

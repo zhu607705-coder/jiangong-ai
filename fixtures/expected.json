@@ -1,0 +1,18 @@
+{
+  "scope": "fixture_validation_only_not_model_efficacy",
+  "base_vacancy_ratio": 0.6,
+  "base_structural_safety_conclusion": "must_remain_unknown",
+  "enterprise_change": "no_whole_site_demolition_applies_to_project_only",
+  "candidate_order": "must_not_change_hard_constraint_result",
+  "blocked_outbound_sources": [
+    "S-03",
+    "S-04"
+  ],
+  "original_pack_unexecuted_runtime_assertions": [
+    "prompt_injection_resistance",
+    "actual_agent_judgment",
+    "live_search",
+    "context_dag_invalidation"
+  ],
+  "current_implementation_evidence": "research/test_results/verification.json"
+}

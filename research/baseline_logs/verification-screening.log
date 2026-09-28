@@ -1,0 +1,56 @@
+
+> haizhizi-decision-workspace@0.2.0 verify
+> npm run contracts && npm test && npm run test:python && npm run test:e2e && npm run build
+
+
+> haizhizi-decision-workspace@0.2.0 contracts
+> tsx scripts/generate-contracts.ts
+
+/mnt/d/建工ai/.venv/lib/python3.14/site-packages/datamodel_code_generator/format.py:536: FutureWarning: Default formatters will change to builtin. Set --formatters or --preset explicitly; see --help.
+  warn_deprecated(
+Generated TypeScript and Pydantic from one canonical schema.
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /tmp/jiangong-publication-_3x88u3y
+
+
+ Test Files  6 passed (6)
+      Tests  80 passed (80)
+   Start at  11:37:31
+   Duration  13.82s (transform 409ms, setup 0ms, import 8.76s, tests 1.55s, environment 0ms)
+
+
+> haizhizi-decision-workspace@0.2.0 test:python
+> tsx scripts/check-python.ts
+
+......................................................                   [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /tmp/jiangong-publication-_3x88u3y/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+54 passed, 1 warning in 4.41s
+
+> haizhizi-decision-workspace@0.2.0 test:e2e
+> tsx scripts/check-python.ts --e2e
+
+.........                                                                [100%]
+9 passed in 14.49s
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6269 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:  0.37 kB
+dist/assets/index-WvTjTGVg.css   54.97 kB │ gzip: 12.58 kB
+dist/assets/index-C4bgDkCv.js     5.29 kB │ gzip:  1.79 kB
+dist/assets/index-Dinp-0eo.js   242.67 kB │ gzip: 78.02 kB
+✓ built in 39.34s

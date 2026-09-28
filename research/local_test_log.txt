@@ -1,0 +1,21 @@
+test_area (test_pack.FixtureTests.test_area) ... ok
+test_geometry_closed (test_pack.FixtureTests.test_geometry_closed) ... ok
+test_labels_and_references (test_pack.FixtureTests.test_labels_and_references) ... ok
+test_missing_preserved (test_pack.FixtureTests.test_missing_preserved) ... ok
+test_no_hidden_truth_in_input (test_pack.FixtureTests.test_no_hidden_truth_in_input) ... ok
+test_permutation_pairs (test_pack.FixtureTests.test_permutation_pairs) ... ok
+test_project_rule (test_pack.FixtureTests.test_project_rule) ... ok
+test_rule_source_private (test_pack.FixtureTests.test_rule_source_private) ... ok
+test_ten_inputs (test_pack.FixtureTests.test_ten_inputs) ... ok
+test_city (test_pack.PortTests.test_city) ... ok
+test_cls_sep (test_pack.PortTests.test_cls_sep) ... ok
+test_empty (test_pack.PortTests.test_empty) ... ok
+test_enterprise_bug_patch (test_pack.PortTests.test_enterprise_bug_patch) ... ok
+test_length (test_pack.PortTests.test_length) ... ok
+test_orphan (test_pack.PortTests.test_orphan) ... ok
+test_separate_entity (test_pack.PortTests.test_separate_entity) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.001s
+
+OK

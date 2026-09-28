@@ -1,0 +1,22 @@
+{
+  "verified_at": "2026-09-28T03:26:41Z",
+  "point_context": {
+    "cold_seconds": 2.156,
+    "cached_seconds": 0.009,
+    "city": "杭州市",
+    "status": "partial",
+    "counts": {
+      "transit": 52,
+      "activity": 600,
+      "work_live": 600,
+      "civic": 587
+    },
+    "linked_sources": 5
+  },
+  "live_analysis": {
+    "seconds": 4.12,
+    "status": "completed",
+    "model_calls": 1,
+    "uses_project_source": true
+  }
+}

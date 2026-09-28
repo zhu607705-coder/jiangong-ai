@@ -1,0 +1,11 @@
+{
+  "url": "https://www.mee.gov.cn/zcwj/zyygwj/202505/t20250516_1119546.shtml",
+  "retrieved_at": "2026-09-27T14:20:36.320258+00:00",
+  "scope": "public_source_http_snapshot_only_not_local_project_applicability_or_model_validation",
+  "status": "success",
+  "http_status": 200,
+  "content_type": "text/html",
+  "bytes": 56180,
+  "sha256": "d44f35cad1861dfb5aaf2ae32cf6c9d5094d24f5b6aba3d2e093cf072c0d9f36",
+  "title": "中共中央办公厅 国务院办公厅关于持续推进城市更新行动的意见"
+}

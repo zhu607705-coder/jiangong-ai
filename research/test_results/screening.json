@@ -1,0 +1,74 @@
+{
+  "checked_at": "2026-09-28T03:36:50.953777+00:00",
+  "status": "verified_local_with_explicit_data_limits",
+  "browser": {
+    "platform": "Windows Chrome 153",
+    "renderer": "Intel Direct3D11 hardware WebGL",
+    "actual_3d": true,
+    "desktop": [
+      1366,
+      900
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "checks": {
+      "mobileOverflow": false,
+      "counts": {
+        "context": 0,
+        "analysis": 0,
+        "scan": 1
+      },
+      "scanMs": 22454,
+      "projectCells": "C1\n0\nC2\n0\nC3\n0\nC4\n0\nC5\n0\nC6\n0\nC7\n0\nC8\n0\nC9\n0",
+      "desktopOverflow": false,
+      "selectionTitle": "西湖文化广场",
+      "raceAndDetailsRequests": {
+        "analysis": 0,
+        "context": 2
+      },
+      "projectOpened": true,
+      "scanCancellation": true
+    },
+    "console_blocking_errors": 0
+  },
+  "automated": {
+    "typescript": 80,
+    "python": 54,
+    "http": 9,
+    "unique_checks": 143,
+    "full_baseline": "research/baseline_logs/verification-screening.log",
+    "current_map_unit": "research/baseline_logs/screening-tests.log",
+    "current_http": "research/baseline_logs/screening-e2e.log",
+    "current_build": "research/baseline_logs/screening-build.log",
+    "publication_snapshot_verification": "passed: staged files only, reused installed dependencies; no .env, local database, .tools or raw sessions",
+    "final_verification": "143 checks passed and production build passed in clean source snapshot"
+  },
+  "live": "research/test_results/screening-live.json",
+  "data_scope": {
+    "real_projects": 1,
+    "public_sources": 5,
+    "source_texts": 4,
+    "metadata_only": 1,
+    "structured_real_facts": 0,
+    "real_uploaded_documents": 0,
+    "located_real_projects": 0,
+    "synthetic_projects_excluded": 5,
+    "investment_financial_dataset": false
+  },
+  "limitations": [
+    "POI counts are provider-reported matching records, not buildings, footfall, population or value.",
+    "Results at or above the application completeness threshold of 600 are not ranked. This is not a claim of the provider limit.",
+    "City-level documents remain city background. No parcel approval, real enterprise effectiveness or investment score is claimed.",
+    "Synthetic fixtures test engineering behavior only.",
+    "Cold/cached response times are single samples, not p95."
+  ],
+  "screenshots": [
+    "output/playwright/screening-selection.png",
+    "output/playwright/screening-grid-selection.png",
+    "output/playwright/screening-analysis.png",
+    "output/playwright/screening-data.png",
+    "output/playwright/screening-mobile.png"
+  ]
+}

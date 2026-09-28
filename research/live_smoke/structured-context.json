@@ -1,0 +1,44 @@
+{
+  "value": {
+    "rules": [
+      {
+        "kind": "organizational_constraint",
+        "predicate": "no_whole_site_demolition",
+        "value": true,
+        "original_text": "本项目不整体拆除",
+        "note": "合成项目意见中的显式约束：不得整体拆除。属于组织/项目条件类表述，非本角色的技术判定；不构成结构安全结论。"
+      },
+      {
+        "kind": "preference",
+        "predicate": "prefer_phasing",
+        "value": true,
+        "original_text": "最好分期推进",
+        "note": "用『最好』表述，属偏好而非硬性约束；未给出分期依据、分期数量或范围。"
+      }
+    ],
+    "warnings": [
+      "输入仅为一句合成意见，无来源文件、日期、签发主体或责任方信息，无法核实其权威性与适用范围。",
+      "『不整体拆除』与『最好分期推进』之间存在语义依赖关系（分期方案需在保留部分结构的前提下成立），但原文未说明先后或因果，未作推断。",
+      "本角色不得签发结构安全、规划许可或投资批准；上述条目均不构成此类结论，任何保留/分期方案的可行性仍需按各自渠道合规核定。",
+      "识别到本会话为受限子代理，权限在启动时固定；如需访问快照之外的来源证据，须由委派方处理。"
+    ],
+    "unclassified": [
+      "未出现可核验的来源引用（文件编号、图号、会议纪要或审批记录）",
+      "未出现期限、阶段划分、成本或技术约束等可用于后续研究的具体参数",
+      "仅『最好』一词为程度不明的偏好表述，其是否代表有决策权的责任方意见无法判定"
+    ]
+  },
+  "session_id": "555c3984-4e91-4705-8d1e-a144535399df",
+  "calls": [
+    {
+      "stage": "context_compile",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 807,
+      "output_tokens": 406,
+      "duration_ms": 2677,
+      "session_id": "555c3984-4e91-4705-8d1e-a144535399df"
+    }
+  ]
+}

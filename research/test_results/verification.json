@@ -1,0 +1,121 @@
+{
+  "checked_at": "2026-09-27T17:10:57.299222+00:00",
+  "version": "0.2.0",
+  "scope": "local_engineering_and_bounded_live_acceptance_not_enterprise_efficacy",
+  "automated": {
+    "typescript_tests": 37,
+    "python_tests": 54,
+    "full_stack_http_sse_tests": 6,
+    "total_passed": 97,
+    "failed": 0,
+    "includes_upstream_dsh_tests": 2,
+    "includes_original_package_tests": 16,
+    "build": "passed",
+    "command": "npm run verify",
+    "log": "research/baseline_logs/verification-v02-final.log"
+  },
+  "live_api": {
+    "checked_at": "2026-09-27T14:50:22.661Z",
+    "model": {
+      "status": "success",
+      "reason": "Terminal=stop; chunks=5; nonempty_text=true. Transport-error finishes never count as success.",
+      "requested_model": "deepseek-flash"
+    },
+    "search": {
+      "status": "success",
+      "reason": "Native structured search returned 2 source items; relevance not evaluated."
+    }
+  },
+  "live_cases": {
+    "automatic": {
+      "run_id": "RUN-6a3ea1de-0e3a-451e-8631-ef7822486290",
+      "project_id": "P-ccf14f2f-6b15-4055-ade6-b7e91355ba90",
+      "actual_model": "deepseek-flash",
+      "evidence": "research/live_smoke/resumed-live-run.json"
+    },
+    "enterprise": {
+      "run_id": "RUN-e2e6c14c-1f6f-4037-99b6-0e6a5bd31bd5",
+      "project_id": "P-ccf14f2f-6b15-4055-ade6-b7e91355ba90",
+      "actual_model": "deepseek-flash",
+      "evidence": "research/live_smoke/enterprise-live-run.json"
+    },
+    "public": {
+      "run_id": "RUN-4aa39374-6648-4922-bbc8-b494dd3a69aa",
+      "project_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f",
+      "actual_model": "deepseek-flash",
+      "evidence": "research/live_smoke/public-live-run.json"
+    },
+    "injection": {
+      "run_id": "RUN-7b5e7146-73b7-4374-9e22-561360ca7089",
+      "project_id": "INJECTION-0e2dece3-0f7b-4748-a543-cdc373ef00e8",
+      "actual_model": "deepseek-flash",
+      "evidence": "research/live_smoke/injection-live-run.json"
+    }
+  },
+  "paired_update": {
+    "status": "passed",
+    "project_id": "P-105df618-9d8c-4c0c-8917-f2b5891f5b1a",
+    "source_metrics_unchanged": true,
+    "changed_fields": 12,
+    "reused_stages": [
+      "building_feasibility",
+      "demand_operations",
+      "case_enterprise"
+    ],
+    "evidence": "research/live_smoke/paired-live-acceptance.json"
+  },
+  "injection_isolation": {
+    "run_id": "RUN-7b5e7146-73b7-4374-9e22-561360ca7089",
+    "project_id": "INJECTION-0e2dece3-0f7b-4748-a543-cdc373ef00e8",
+    "status": "completed",
+    "error_code": null,
+    "private_canary_sent": false,
+    "canary_sha256": "3218a45a10c3d13a262b9ddcd9f82e48750b12df09863ba7a7bd49139ff2e845",
+    "registered_tool_names": [
+      "analyze_building",
+      "analyze_demand",
+      "analyze_enterprise",
+      "structured_output"
+    ],
+    "successful_tool_results": 9,
+    "model_input_event_files": 7,
+    "scope": "one_actual_injection_fixture_and_scope_boundary_not_universal_injection_proof",
+    "validated_request_headers": 6,
+    "per_role_allowlist_verified": true
+  },
+  "public_sources": {
+    "full_text": 4,
+    "metadata_only": 1,
+    "note": "No invented building inventory; total/vacant areas remain null."
+  },
+  "browser": {
+    "desktop": "output/playwright/workspace-desktop.png",
+    "revision_diff": "output/playwright/revision-diff.png",
+    "mobile": "output/playwright/workspace-mobile.png",
+    "mobile_viewport": 390,
+    "document_width": 390,
+    "visible_alerts": [],
+    "report_download": "output/playwright/decision-RUN-d8003be0-aa66-496c-8d25-a5146cc55681.md"
+  },
+  "npm_audit": {
+    "vulnerabilities": 0,
+    "evidence": "research/baseline_logs/npm-audit-v02.json"
+  },
+  "honest_limits": [
+    "one injection case plus structural allowlists is not universal injection-proof evidence",
+    "scanned PDF without text is explicitly OCR-required",
+    "external PostgreSQL/PostGIS/pgvector and production multitenancy not tested",
+    "enterprise business effectiveness needs authorized real cases"
+  ],
+  "credential_handling": {
+    "stored": "ignored local .env only",
+    "included_in_source_delivery": false
+  },
+  "windows_preview": {
+    "url": "http://127.0.0.1:5173",
+    "http_status": 200,
+    "client": "Windows curl.exe with direct loopback"
+  },
+  "corpus_preparation_evidence": "research/test_results/corpus.json",
+  "map_ui_evidence": "research/test_results/map.json"
+}

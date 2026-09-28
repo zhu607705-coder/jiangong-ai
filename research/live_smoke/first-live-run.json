@@ -1,0 +1,13 @@
+{
+  "id": "RUN-6a3ea1de-0e3a-451e-8631-ef7822486290",
+  "project_id": "P-ccf14f2f-6b15-4055-ade6-b7e91355ba90",
+  "revision": 1,
+  "context_version": 0,
+  "status": "failed",
+  "execution_mode": "live",
+  "snapshot_hash": "e51b1d6f8be5aea016b795d8d83594dc5f9c26fc6bc59fc7ce6ba5efc768c5fd",
+  "decision": null,
+  "error_code": "RUNTIME_FAILED",
+  "idempotency_key": "c928d1a9-4a47-4f9d-a5b4-e90126e713b7",
+  "created_at": "2026-09-27T15:15:26.593Z"
+}

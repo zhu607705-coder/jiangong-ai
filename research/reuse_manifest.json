@@ -1,0 +1,127 @@
+{
+  "status": "original_design_manifest_with_current_implementation_pointer",
+  "verified_on": "2026-09-27",
+  "entries": [
+    {
+      "repo": "deepseek-ai/deepseek-harness",
+      "ref": "477b4f420553e8a52c2fbccc464d7561b239c443",
+      "files": [
+        "LICENSE",
+        "docs/subsystems/subagent.md",
+        "packages/web/web-search-deepseek/README.md"
+      ],
+      "reuse": "runtime_dependency_planned",
+      "license": "MIT_verified",
+      "completed": false,
+      "current_implementation": "integrated_offline_runtime_live_not_verified"
+    },
+    {
+      "repo": "ahacker-1/cre-acquisition-orchestrator",
+      "indexed_ref": "a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878",
+      "file": "dashboard/server/parser-service.ts",
+      "blob": "7b5d00b9f4a47c380aa1557e125cebddd2a7435c",
+      "reuse": "application_shell_and_selected_modules_planned",
+      "license": "Apache-2.0_repo_statement_dependencies_need_audit",
+      "completed": false,
+      "warning": "Remove canned expectedVerdict and avoid retaining two runtime controllers.",
+      "current_implementation": "selected_ui_parser_report_adaptations"
+    },
+    {
+      "repo": "Husky-989/ReCoQA",
+      "file": "HIRE_Agent/DatabaseUtils.py",
+      "blob": "e66526255e42d0cce4fbe3c5009d2e1375db6570",
+      "reuse": "selective_port_planned",
+      "completed": false,
+      "patches": [
+        "remove_hardcoded_credentials",
+        "readonly_role",
+        "parameterized_queries",
+        "explicit_errors"
+      ],
+      "current_implementation": "limited_query_port"
+    },
+    {
+      "repo": "jensenw1/RETQA",
+      "file": "SLUTQA/utils.py",
+      "blob": "96dcfee379282dda59a67b2523f447b3765637f0",
+      "symbol": "restore_keywords_from_query",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2024 jensen-w",
+      "target": "ported/retqa_slots.py",
+      "reuse": "small_selective_port_completed",
+      "tests": "tests/test_pack.py::PortTests",
+      "patches": [
+        "typed_entity_output",
+        "empty_input",
+        "length_and_tag_validation",
+        "enterprise_label_fix",
+        "strip_unrelated_imports"
+      ],
+      "current_implementation": "limited_slot_port"
+    },
+    {
+      "repo": "opengeos/GeoAgent",
+      "ref": "b08ba5366bfc729506af34bf8d543e7b3cd706d7",
+      "file": "geoagent/core/decorators.py",
+      "reuse": "metadata_tool_bridge_planned",
+      "completed": false,
+      "current_implementation": "metadata_port_plus_library_GIS"
+    },
+    {
+      "repo": "stanford-oval/storm",
+      "ref": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "files": [
+        "knowledge_storm/storm_wiki/modules/knowledge_curation.py",
+        "knowledge_storm/storm_wiki/modules/storm_dataclass.py"
+      ],
+      "reuse": "selected_curation_planned",
+      "completed": false,
+      "current_implementation": "limited_information_merge_port"
+    },
+    {
+      "repo": "RUC-NLPIR/Search-o1",
+      "files": [
+        "scripts/prompts.py",
+        "scripts/run_search_o1.py"
+      ],
+      "reuse": "selected_policy_planned",
+      "verification": "entrypoint_only_symbols_and_dependencies_pending",
+      "completed": false,
+      "current_implementation": "limited_prompt_and_query_policy_port"
+    },
+    {
+      "repo": "tsinghua-fib-lab/CityBench",
+      "ref": "37f3b0bc63fcfb259ee366cb43f098f3da5f6ad1",
+      "file": "global_utils.py",
+      "symbol": "load_map",
+      "reuse": "optional_runtime_data_adapter",
+      "warning": "Mongo/routing dependencies require real need, not mere name inclusion",
+      "completed": false,
+      "current_implementation": "not_integrated"
+    },
+    {
+      "repo": "tsinghua-fib-lab/PlanBench",
+      "path": "QAGenSuite",
+      "reuse": "ingestion_material_transformation_candidate",
+      "verification": "directory_level_function_verification_pending",
+      "completed": false,
+      "current_implementation": "not_integrated"
+    },
+    {
+      "repo": "jensenw1/BacktestBench",
+      "path": "AutoBacktest",
+      "reuse": "conditional_candidate",
+      "license": "not_confirmed_not_automatically_prohibited",
+      "completed": false,
+      "current_implementation": "not_integrated"
+    },
+    {
+      "repo": "gladcolor/LLM-Geo",
+      "reuse": "conditional_candidate",
+      "license": "GPL-3.0_requires_distribution_review",
+      "completed": false,
+      "current_implementation": "not_integrated"
+    }
+  ],
+  "implementation_record": "research/upstream.lock.json"
+}

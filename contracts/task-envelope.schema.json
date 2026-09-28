@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:haizhizi:task-envelope:v2",
+  "title": "TaskEnvelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "run_id",
+    "role",
+    "question",
+    "snapshot_ref",
+    "allowed_tools",
+    "output_schema",
+    "scope",
+    "budget"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "enum": [
+        "building_feasibility",
+        "demand_operations",
+        "case_enterprise",
+        "critic",
+        "comparator"
+      ]
+    },
+    "question": {
+      "type": "string"
+    },
+    "snapshot_ref": {
+      "type": "string"
+    },
+    "context_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "output_schema": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "project_id",
+        "visibility"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "max_tool_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_gap_rounds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

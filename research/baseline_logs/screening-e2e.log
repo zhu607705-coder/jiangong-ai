@@ -1,0 +1,6 @@
+
+> haizhizi-decision-workspace@0.2.0 test:e2e
+> tsx scripts/check-python.ts --e2e
+
+.........                                                                [100%]
+9 passed in 14.30s

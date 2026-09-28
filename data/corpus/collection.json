@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {"kind": "run_sources", "path": "research/live_smoke/public-live-run.json", "family_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f", "split": "development"},
+    {"kind": "html_snapshot", "path": "data/public_case_snapshot/urban-renewal-policy.html", "metadata_path": "data/public_case_snapshot/snapshot.json", "family_id": "national-urban-renewal-policy-2025", "split": "development"}
+  ],
+  "regression": [
+    {"kind": "fixture", "path": "fixtures/inputs/01_auto.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/01_auto_reordered.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/02_enterprise.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/02_enterprise_reordered.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/03_missing.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/03_missing_reordered.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/04_conflict.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/04_conflict_reordered.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/05_injection.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "fixture", "path": "fixtures/inputs/05_injection_reordered.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/first-live-run.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/resumed-live-run.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/enterprise-live-run.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/injection-live-run.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/paired-live-acceptance.json", "pointer": "/automatic", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/paired-live-acceptance.json", "pointer": "/enterprise", "family_id": "synthetic-industrial-fixture-v1"},
+    {"kind": "model_run", "path": "research/live_smoke/public-live-run.json", "pointer": "", "family_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f"},
+    {"kind": "context_output", "path": "research/live_smoke/structured-context.json", "pointer": "", "family_id": "synthetic-industrial-fixture-v1"}
+  ]
+}
