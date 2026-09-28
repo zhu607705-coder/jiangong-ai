@@ -97,6 +97,9 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       const candidates=source.content_status==='metadata_only'?[]:records.filter(r=>r.source_id===source.id)
       const kept=candidates.slice(0,Math.max(0,MAX_RESEARCH_RECORDS-finalRecords.length))
       finalRecords.push(...kept)
+      // The Source is the durable project/document handoff. Its bounded record
+      // snapshot survives callers that only retain sources (including projects).
+      source.public_records=kept
       const receipt=receipts.find(r=>r.source_id===source.id)
       if(receipt){
         const truncated=receipt.status==='truncated'||kept.length<candidates.length

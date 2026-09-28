@@ -143,6 +143,29 @@ def test_selected_polygon_conversion_creation_and_readback_preserve_holes(runnin
     assert client.post('/api/maps/geometry/wgs84',json={'geometry':invalid}).status_code==422
 
 
+
+def test_project_http_preserves_structured_public_record_snapshot(running_app):
+    import hashlib
+    import uuid
+    c = running_app.client
+    text = "接口契约样本：甲办公楼设备维护采购，响应截止2026年9月28日17时。"
+    digest = hashlib.sha256(text.encode()).hexdigest()
+    record = {'id':'R-HANDOFF','adapter':'procurement','subject':'甲办公楼设备维护采购','scope':'object','period':'2026-09-28','source_id':'S-ORIGINAL','source_hash':digest,
+              'fields':[{'key':'deadline_resolved','label':'响应截止','value':'2026年9月28日17时','unit':'','raw':'2026年9月28日17时','locator':'fixture:deadline'}]}
+    # The original record identifier survives a project-level Source alias.
+    source = {'id':'P-OLD:S-ORIGINAL','title':'公开形状的HTTP契约样本','data_class':'public','visibility':'public','synthetic':False,'content_status':'full_text',
+              'untrusted_text':text,'raw_hash':digest,'records_truncated':False,'public_records':[record]}
+    value = json.loads((ROOT/'fixtures/inputs/01_auto.json').read_text())
+    value.update(project_id='HANDOFF-'+str(uuid.uuid4()),synthetic=False,sources=[source],facts=[],context_rules=[])
+    made = c.post('/api/projects',json={'input':value})
+    assert made.status_code == 201, made.text
+    read = c.get('/api/projects/'+made.json()['id'])
+    assert read.status_code == 200 and read.json()['input']['sources'] == [source]
+    value['project_id'] = 'HASH-MISMATCH-'+str(uuid.uuid4())
+    value['sources'][0]['public_records'][0]['source_hash'] = 'wrong-original-hash'
+    assert c.post('/api/projects',json={'input':value}).status_code == 422
+
+
 def test_context_optimistic_concurrency_and_cross_project_followup(running_app):
     app = running_app; p = app.create(); other = app.create(); run = app.run(p)
     args = {"text": "本项目不整体拆除。", "expected_version": 0}

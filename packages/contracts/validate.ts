@@ -33,6 +33,7 @@ export function projectInput(value: unknown): ProjectInput {
   }
   for (const source of project.sources) {
     if (source.synthetic !== (source.data_class === 'synthetic')) throw new ContractError('合成标记与来源分类不一致')
+    if(source.public_records?.some(record=>!source.raw_hash||record.source_hash!==source.raw_hash))throw new ContractError('结构化记录与原始来源哈希不一致')
   }
   if (project.synthetic && project.sources.some(s => !s.synthetic)) throw new ContractError('全合成项目不能混入真实来源；请创建真实项目')
   if (!project.synthetic && project.sources.some(s => s.synthetic)) throw new ContractError('真实项目不能混入未逐字段标注的合成资料')

@@ -7,6 +7,7 @@ import areas from '@province-city-china/area'
 import { normalizedName } from '../maps/object-identity'
 import { currentWindow, recordFamily } from './record-window'
 import { markObjectName, ownObjectClaim } from './claim-object'
+import { sourceRecords } from './source-records'
 export { normalizedName } from '../maps/object-identity'
 // A versioned lexical reference, not a geocoder or proof of an object's identity.
 // Prefixes must be actual administrative names: arbitrary prose ending in 区/市
@@ -56,7 +57,7 @@ export function objectQuoteMatches(source:Source,context:MapScreenContext,name:s
   const subject=normalizedName(name)
   if(!subject||subject===normalizedName(context.city||''))return false
   if(recordId){
-    const record=records.find(r=>r.id===recordId&&r.source_id===source.id)
+    const record=sourceRecords(source,records).find(r=>r.id===recordId)
     if(!record||record.scope!=='object'||!source.raw_hash||record.source_hash!==source.raw_hash)return false
     if(wrongLocation(record.subject,context,name))return false
     const location=record.fields.find(f=>f.key==='location')?.value
@@ -89,11 +90,15 @@ export function dimensionCurrentAt(source:Source,name:string,evidence:Pick<Dimen
   if(evidence.key==='implementation'&&/中标|成交|废标|终止|结果公告/.test(source.title))return false
   if(evidence.key==='implementation'){
     if(source.body_truncated)return false
-    const selected=records.filter(r=>r.source_id===source.id&&(evidence.record_id?r.id===evidence.record_id:normalizedName(r.subject).includes(normalizedName(name))))
+    const available=sourceRecords(source,records)
+    // A legacy collector Source with its record context missing cannot prove an
+    // open window. A current, explicitly empty parse is distinct from that loss.
+    if(source.records_truncated!==undefined&&source.public_records===undefined&&!available.length)return false
+    const selected=available.filter(r=>evidence.record_id?r.id===evidence.record_id:normalizedName(r.subject).includes(normalizedName(name)))
     // An omitted structured record is not evidence that no business deadline
     // exists. Other dimensions may still use the retained public original.
-    if(source.records_truncated&&!selected.length)return false
-    const applicable=[...new Map(selected.flatMap(record=>recordFamily(record,records)).map(record=>[record.id,record])).values()]
+    if((source.records_truncated||source.public_records?.length)&&!selected.length)return false
+    const applicable=[...new Map(selected.flatMap(record=>recordFamily(record,available)).map(record=>[record.id,record])).values()]
     if(!currentWindow(applicable,asOf))return false
   }
   return true

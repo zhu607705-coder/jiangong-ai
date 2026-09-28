@@ -2,6 +2,7 @@ import type { MapScreenContext, PublicRecord, Source } from '../../apps/host/gen
 import { normalizedName, objectQuoteMatches, primaryObjectSource } from './evidence'
 import { sourceCurrentAt } from './public-sources'
 import { amountOwnerCore, completeAmountScope, ownObjectClaim } from './claim-object'
+import { sourceRecords } from './source-records'
 
 const money=/(\d[\d,，]*(?:\.\d+)?)\s*(亿元|万元|元|%)/g
 const fields=[
@@ -53,7 +54,7 @@ export function groundedAmounts(text:string,context:MapScreenContext,name:string
       const value=number(amount[1])
       // The claim's complete subject phrase must be supported by the same
       // record, not merely contain the selected name somewhere in a paragraph.
-      const structured=records.filter(r=>r.source_id===source.id&&r.fields.some(field=>field.key===claim.field.key))
+      const structured=sourceRecords(source,records).filter(r=>r.fields.some(field=>field.key===claim.field.key))
       if(structured.length)return structured.some(r=>matchingOwner(r.subject,claim,name,String(r.fields.find(f=>f.key==='lot_id')?.value||''))&&r.fields.some(f=>f.key===claim.field.key&&f.value===value&&f.unit===amount[2]&&objectQuoteMatches(source,context,name,f.raw,records,r.id)))
       return source.untrusted_text!.split(/[。；;\n]/).some(sentence=>{
         if(!objectQuoteMatches(source,context,name,sentence))return false

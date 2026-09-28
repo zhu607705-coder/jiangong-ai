@@ -117,3 +117,18 @@ Pro 对 `5bcdab85035f7a27b59e47cb739ce082e72d72b6` 判定不通过，关闭 E01�
 政策版本 `public-adapters-v10` 隔离旧资格缓存。修复前后缓存 JSON 分别为 `round-06/independent-cache-before.json`、`round-06/independent-cache-after.json`；前者来自归档的精确审计源码，后者在当前源码上将断言改为正确行为。基线为已评分分支取证 0 次、重试失败；当前两分支均只取证 1 次，取得新简报，重试和重启复用结果。测试替身仅在生成/评分、时钟与外部 I/O 边界，不把它们计为实网模型效果。
 
 验证：295 项 JS、70 项 Python、11 项 HTTP、43 项真实 React/合成 provider 交互及生产构建通过。保存的真实公开 Qwen 请求回放仍保留需求 3.8、投入交付 3.9，没有新付费请求。可复核计数见 `research/test_results/pro-audit-round6.json`。新提交仍待原 Pro 的第 7 轮结论，本地通过不等于审计完成。
+
+
+## 第 7 轮复审与修复
+
+Pro 对 `491d3578b2232c2f173e0ae4953ffdd441df9431` 关闭 A01、A15、F01，此前 22 项保持，累计关闭 25 项。正式报告唯一新增项为 G01（P1）：context 尚未返回时，地点详情页独立实现的“建立项目”按钮把已选面变成无面项目。报告见本机 `data/local/pro-audit/round-07/pro-repro/JIANGONG-AUDIT-07-491d3578/report.md`。
+
+**G01 接受并修复。** 在当前生产 React 上独立运行报告中的正确行为断言，得到同样的空面失败。两个创建按钮现在共用 `createSelectedProject`，统一读取当前对象的已加载 context 或选中 cell 的原始 context；不依赖资料请求完成，不强制普通点项目拥有多边形。新增六种入口/网络状态组合，以及 A→B 后 A 响应晚到、普通点项目两种控制。每个多边形测试包含两环，核对具体坐标与原边界来源；八份真实 React 创建请求均经实际本地 HTTP、校验及 PGlite 保存/GET 读回，七个面项目保留面和来源，点项目合法保持无面，模型运行数均为 0。
+
+**独立补充：结构化记录随资料交接丢失。** 该项不冒称正式报告的 G01。实际 Adapter→地图原文→`handoffPublicSources`→`projectInput`→`evidenceAt`→ground/fit_* 的独立反例显示：截止15:59的同一公告在16:00时原入口不产生实施问题，交接后却产生；17:00截止的控制前后均产生。修复前后 JSON 见 `round-07/handoff-before.jsonl` 和 `handoff-after.jsonl`。
+
+复用已有 PublicRecord 与业务族窗口规则，在 Source 增加最多50条的 `public_records` 快照。collector 在既有50/100预算内保留记录；项目交接、存储、再次投影维持原 record ID、raw_hash、字段和 locator，读取时仅映射工作 source_id。原文展示的2400字裁切不再裁掉截止依据，金额同样使用保留下来的完整记录所有者。模型输入包含对应的本地记录；项目入口校验关联哈希，内部结构化原文不会进入地图公开预览。已有 collector 来源若遗失了记录快照，不能用“无记录”推定仍可投；历史需求用途保留。没有把整份多项目公告统一设成过期，没有提高抓取或记录预算。
+
+新增实际 collector、数据库关闭重开、再交接、旧快照缺失与内部资料隔离测试，以及 HTTP 结构化资料读回/哈希不符拒绝。Canonical schema 统一生成 TS/Pydantic；策略为 `public-adapters-v11`。最终本地证据：299 JS、70 Python、12 HTTP；34项基础界面检查、8项扫描交错检查和8组创建场景的48项核心断言，共90项浏览器核心断言；另有8组真实创建请求的HTTP读回与生产构建。浏览器测试中曾修正“等待被详情页收起的卡片可见”和重叠的测试标签定位；这是测试夹具问题；前者完整日志保留，后者的观察摘要和修正记录在 `round-07/harness-notes.json`。
+
+保存的真实公开 Qwen 响应仍可回放为需求3.8、投入交付3.9，没有新增付费调用。原始脚本与日志边界、验证顺序见 `research/test_results/pro-audit-round7.json`；新提交及补充修复继续送原 Pro 第8轮审计。

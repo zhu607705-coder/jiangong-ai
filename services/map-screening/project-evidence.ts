@@ -39,9 +39,9 @@ export function targetContains(target: MapScreenTarget, longitude: number, latit
 function sourcePreview(source: Source): Source {
   // Internal text stays in the existing project evidence viewer. Even the map
   // snapshot does not duplicate it into public-source handoffs or model prompts.
-  const { untrusted_text, hash, ...metadata } = source
+  const { untrusted_text, hash, public_records, ...metadata } = source
   const excerpt = source.visibility === 'public' && source.data_class === 'public' && source.content_status !== 'metadata_only' ? untrusted_text?.slice(0, 2400) : undefined
-  return { ...metadata, ...(excerpt ? {untrusted_text: excerpt, hash: createHash('sha256').update(excerpt).digest('hex'), content_status: 'excerpt' as const} : {}) }
+  return { ...metadata, ...(excerpt ? {untrusted_text: excerpt, hash: createHash('sha256').update(excerpt).digest('hex'), content_status: 'excerpt' as const, ...(public_records?{public_records}: {})} : {}) }
 }
 export function evidenceAt(snapshot: ProjectEvidenceSnapshot, target: MapScreenTarget, city: string | null, boundaryProjectId?: string): MapProjectEvidence[] {
   const result: MapProjectEvidence[] = []

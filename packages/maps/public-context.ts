@@ -1,5 +1,6 @@
 import type { MapScreenContext, Source } from '../../apps/host/generated/contracts'
 import { genericMapLabel } from './object-identity'
+import { withSourceRecords } from '../research/source-records'
 
 export function researchSubject(context:MapScreenContext):string {
   const label=context.target.label_origin==='public'?context.target.label?.trim()||'':''
@@ -32,6 +33,6 @@ export function publicMapContext(context: MapScreenContext): MapScreenContext {
 /** Keep each original public document addressable when a map study becomes a project. */
 export function handoffPublicSources(context:MapScreenContext):Source[]{
   const clean=publicMapContext(context)
-  const all=[...(clean.research_sources||[]),...clean.local_projects.flatMap(p=>p.sources.map(s=>({...s,id:`${p.project_id}:${s.id}`,locator:`${p.relation}:${s.locator||s.url||s.id}`})))]
+  const all=[...(clean.research_sources||[]).map(s=>withSourceRecords(s,clean.research_records||[])),...clean.local_projects.flatMap(p=>p.sources.map(s=>({...s,id:`${p.project_id}:${s.id}`,locator:`${p.relation}:${s.locator||s.url||s.id}`})))]
   return [...new Map(all.filter(s=>s.content_status!=='metadata_only').map(s=>[s.id,s])).values()]
 }

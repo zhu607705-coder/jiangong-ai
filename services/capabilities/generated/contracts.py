@@ -87,34 +87,6 @@ class EvidenceScope(StrEnum):
     background = 'background'
 
 
-class Source(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    id: str = Field(..., min_length=1)
-    title: str = Field(..., min_length=1)
-    data_class: DataClass
-    visibility: Visibility
-    synthetic: bool
-    untrusted_text: str | None = Field(None, max_length=100000)
-    url: str | None = None
-    retrieved_at: str | None = None
-    expires_at: str | None = None
-    locator: str | None = None
-    hash: str | None = None
-    license: str | None = None
-    content_status: ContentStatus | None = None
-    published_at: str | None = None
-    parse_status: ParseStatus | None = None
-    search_published_at: str | None = Field(None, max_length=100)
-    date_status: DateStatus | None = None
-    object_refs: list[ObjectRef] | None = Field(None, max_length=100)
-    evidence_scope: EvidenceScope | None = None
-    raw_hash: str | None = Field(None, max_length=100)
-    records_truncated: bool | None = None
-    body_truncated: bool | None = None
-
-
 class Inventory(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -679,24 +651,6 @@ class Relation(StrEnum):
     city_background = 'city_background'
 
 
-class MapProjectEvidence(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    project_id: str = Field(..., max_length=100)
-    name: str = Field(..., max_length=200)
-    relation: Relation
-    scope_label: str = Field(..., max_length=200)
-    updated_at: str = Field(..., max_length=60)
-    context_version: int = Field(..., ge=0)
-    source_count: int = Field(..., ge=0)
-    fact_count: int = Field(..., ge=0)
-    document_count: int = Field(..., ge=0)
-    sources: list[Source]
-    facts: list[Fact]
-    rules: list[ExperienceRule]
-
-
 class MapDataProject(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -978,6 +932,39 @@ class Scope(BaseModel):
     boundary_source: str | None = Field(None, max_length=250)
 
 
+class Source(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., min_length=1)
+    title: str = Field(..., min_length=1)
+    data_class: DataClass
+    visibility: Visibility
+    synthetic: bool
+    untrusted_text: str | None = Field(None, max_length=100000)
+    url: str | None = None
+    retrieved_at: str | None = None
+    expires_at: str | None = None
+    locator: str | None = None
+    hash: str | None = None
+    license: str | None = None
+    content_status: ContentStatus | None = None
+    published_at: str | None = None
+    parse_status: ParseStatus | None = None
+    search_published_at: str | None = Field(None, max_length=100)
+    date_status: DateStatus | None = None
+    object_refs: list[ObjectRef] | None = Field(None, max_length=100)
+    evidence_scope: EvidenceScope | None = None
+    raw_hash: str | None = Field(None, max_length=100)
+    records_truncated: bool | None = None
+    body_truncated: bool | None = None
+    public_records: list[PublicRecord] | None = Field(
+        None,
+        description='原始结构化记录快照，保留解析时的来源标识和原文哈希；读取时映射到当前来源命名空间。缺失表示未保留，空数组表示解析后无保留记录。',
+        max_length=50,
+    )
+
+
 class Scenario(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1044,28 +1031,6 @@ class MapScreenTarget(BaseModel):
     boundary_source: str | None = Field(None, max_length=250)
 
 
-class MapScreenContext(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    id: str = Field(..., max_length=100)
-    target: MapScreenTarget
-    provider: Literal['amap']
-    coordinate_encoding: Literal['GCJ-02']
-    created_at: str = Field(..., max_length=50)
-    expires_at: str = Field(..., max_length=50)
-    address: Address | None
-    groups: list[MapScreenEvidence] = Field(..., max_length=4)
-    status: Status9
-    gaps: list[Gap] = Field(..., max_length=12)
-    metric_note: str = Field(..., max_length=500)
-    city: str | None
-    local_projects: list[MapProjectEvidence]
-    project_revision: str = Field(..., max_length=80)
-    research_sources: list[Source] | None = Field(None, max_length=12)
-    research_records: list[PublicRecord] | None = Field(None, max_length=100)
-
-
 class MapPreliminaryAssessment(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1079,40 +1044,22 @@ class MapPreliminaryAssessment(BaseModel):
     dimension_evidence: list[DimensionEvidence] | None = Field(None, max_length=6)
 
 
-class MapScreenCell(BaseModel):
+class MapProjectEvidence(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    id: str = Field(..., max_length=80)
-    label: str = Field(..., max_length=40)
-    bounds: MapScreenBounds
-    context: MapScreenContext | None
-    tier: Tier
-    rank: Rank | None
-    metric_value: int | None = Field(..., ge=0)
-    geometry: MapRegionGeometry | None = None
-    anchor: list[float] | None = Field(None, max_length=2, min_length=2)
-    boundary_source: str | None = Field(None, max_length=250)
-    area_m2: float | None = Field(None, ge=0.0)
-    factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
-    dashboard: DecisionDashboard | None = None
-    analysis_available: bool | None = None
-
-
-class MapScreenResult(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    id: str = Field(..., max_length=100)
-    bounds: MapScreenBounds
-    profile: MapScreenProfile
-    created_at: str = Field(..., max_length=50)
-    cells: list[MapScreenCell] = Field(..., max_length=24)
-    status: Status11
-    method: str = Field(..., max_length=100)
-    comparison_count: int = Field(..., ge=0, le=24)
-    notes: list[Note] = Field(..., max_length=10)
-    theme: MapScreenTheme
+    project_id: str = Field(..., max_length=100)
+    name: str = Field(..., max_length=200)
+    relation: Relation
+    scope_label: str = Field(..., max_length=200)
+    updated_at: str = Field(..., max_length=60)
+    context_version: int = Field(..., ge=0)
+    source_count: int = Field(..., ge=0)
+    fact_count: int = Field(..., ge=0)
+    document_count: int = Field(..., ge=0)
+    sources: list[Source]
+    facts: list[Fact]
+    rules: list[ExperienceRule]
 
 
 class DecisionSupport(BaseModel):
@@ -1178,6 +1125,28 @@ class DecisionPacket(BaseModel):
     decision_support: DecisionSupport | None = None
 
 
+class MapScreenContext(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=100)
+    target: MapScreenTarget
+    provider: Literal['amap']
+    coordinate_encoding: Literal['GCJ-02']
+    created_at: str = Field(..., max_length=50)
+    expires_at: str = Field(..., max_length=50)
+    address: Address | None
+    groups: list[MapScreenEvidence] = Field(..., max_length=4)
+    status: Status9
+    gaps: list[Gap] = Field(..., max_length=12)
+    metric_note: str = Field(..., max_length=500)
+    city: str | None
+    local_projects: list[MapProjectEvidence]
+    project_revision: str = Field(..., max_length=80)
+    research_sources: list[Source] | None = Field(None, max_length=12)
+    research_records: list[PublicRecord] | None = Field(None, max_length=100)
+
+
 class MapScreenAnalysis(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1196,3 +1165,39 @@ class MapScreenAnalysis(BaseModel):
     research: ResearchTrace | None = None
     reused_from_context_id: str | None = Field(None, max_length=100)
     refresh_required: bool | None = None
+
+
+class MapScreenCell(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=80)
+    label: str = Field(..., max_length=40)
+    bounds: MapScreenBounds
+    context: MapScreenContext | None
+    tier: Tier
+    rank: Rank | None
+    metric_value: int | None = Field(..., ge=0)
+    geometry: MapRegionGeometry | None = None
+    anchor: list[float] | None = Field(None, max_length=2, min_length=2)
+    boundary_source: str | None = Field(None, max_length=250)
+    area_m2: float | None = Field(None, ge=0.0)
+    factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
+    dashboard: DecisionDashboard | None = None
+    analysis_available: bool | None = None
+
+
+class MapScreenResult(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=100)
+    bounds: MapScreenBounds
+    profile: MapScreenProfile
+    created_at: str = Field(..., max_length=50)
+    cells: list[MapScreenCell] = Field(..., max_length=24)
+    status: Status11
+    method: str = Field(..., max_length=100)
+    comparison_count: int = Field(..., ge=0, le=24)
+    notes: list[Note] = Field(..., max_length=10)
+    theme: MapScreenTheme

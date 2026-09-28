@@ -7,6 +7,7 @@ import type { ResearchSink } from '../../packages/research/events'
 import type { Source, PublicRecord, DimensionEvidence, ResearchTrace } from '../../apps/host/generated/contracts'
 import { eligibleDimension } from '../../packages/research/evidence'
 import { groundedAmounts } from '../../packages/research/amounts'
+import { sourceRecords } from '../../packages/research/source-records'
 import { LiveSession } from '../../runtime/dsh/live-session'
 import { config } from '../../apps/host/config'
 import { hasUnqualifiedAssurance } from '../../packages/decision/model-policy'
@@ -130,7 +131,8 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     const external=research.sources.filter(s=>s.content_status!=='metadata_only'&&s.untrusted_text)
     const places=context.groups.filter(usableMapEvidence).map(g=>({id:g.key,label:g.label,examples:g.sample.slice(0,5).map(p=>({name:p.name,category:p.category}))}))
     const allSources=[...projectSources,...external.map(s=>({id:s.id,title:s.title,text:s.untrusted_text?.slice(0,10000),published_at:s.published_at||null,expires_at:s.expires_at||null,date_status:s.date_status,body_truncated:!!s.body_truncated,records_truncated:!!s.records_truncated}))]
-    const payload={target:publicContext.target,address:context.address,as_of:base.created_at,sources:allSources,places,records:research.records}
+    const allRecords=[...research.records,...originalSources.flatMap(source=>sourceRecords(source))]
+    const payload={target:publicContext.target,address:context.address,as_of:base.created_at,sources:allSources,places,records:allRecords}
     const evidenceIds=[...places.map(s=>s.id),...allSources.map(s=>s.id)]
     const references=selectReferenceCases(allSources.map(s=>s.text||'').join(' '))
     if(!reuse)emit({type:'progress',stage:'brief',status:'running',message:'形成具体参与路径'})
@@ -167,7 +169,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
       const scoringIds=new Set(assessment!.dimension_evidence?.map(e=>e.source_id)||[])
       input.state={target:publicContext.target,as_of:asOf,verified_conditions:input.factors,proposal:assessment!.summary,
         public_sources:allSources.filter(s=>scoringIds.has(s.id)).map(s=>({id:s.id,title:s.title,published_at:s.published_at})),
-        records:research.records.slice(0,8).map(r=>({...r,fields:r.fields.slice(0,20).map(f=>({key:f.key,value:typeof f.value==='string'?f.value.slice(0,200):f.value,unit:f.unit,locator:f.locator}))}))}
+        records:allRecords.slice(0,8).map(r=>({...r,fields:r.fields.slice(0,20).map(f=>({key:f.key,value:typeof f.value==='string'?f.value.slice(0,200):f.value,unit:f.unit,locator:f.locator}))}))}
 
       input.sourceIds=[...input.sourceIds,...external.map(s=>s.id)]
       input.dashboard={purpose:assessment!.summary,evidence:assessment!.dimension_evidence||[]}

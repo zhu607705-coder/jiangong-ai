@@ -1,0 +1,74 @@
+{
+  "baseline_commit": "491d3578b2232c2f173e0ae4953ffdd441df9431",
+  "review_id": "JIANGONG-AUDIT-07-491d3578",
+  "status": "verified_pending_publication_and_round08",
+  "as_of": "2026-09-28T23:36:59.116437+00:00",
+  "pro_closed_original": 25,
+  "addressed": [
+    "G01"
+  ],
+  "independently_addressed": [
+    "structured_source_records_lost_on_project_handoff"
+  ],
+  "verification": {
+    "javascript": 299,
+    "python": 70,
+    "http": 12,
+    "browser_core_assertions": 90,
+    "browser_handoff_cases": 8,
+    "actual_ui_request_http_readbacks": 8,
+    "production_build": "passed",
+    "real_public_replay": {
+      "scope": "Offline qualification and arithmetic replay of the saved real public/native request; no new model call.",
+      "request_id": "031b9c4b-ac45-446e-8a83-c6e8262c833b",
+      "qualified_dimensions": [
+        "demand",
+        "resources"
+      ],
+      "question_keys": [
+        "fit_demand",
+        "fit_resources"
+      ],
+      "values": [
+        {
+          "key": "demand",
+          "value": 3.8
+        },
+        {
+          "key": "supply",
+          "value": null
+        },
+        {
+          "key": "adaptation",
+          "value": null
+        },
+        {
+          "key": "implementation",
+          "value": null
+        },
+        {
+          "key": "operations",
+          "value": null
+        },
+        {
+          "key": "resources",
+          "value": 3.9
+        }
+      ]
+    },
+    "scope": [
+      "Both actual React creation buttons share the selected context; normal/detail by pending/ready/failed, late A after B, and point-only creation",
+      "Two-ring geometry and boundary provenance captured from real React POST; real local host/session/projectInput/PGlite GET readback, no model launches",
+      "Real collector/Adapter, source handoff, ProjectInput, PostgreSQL close/reopen, local map projection, grounding and fit_* checks",
+      "Raw record/hash/origin preserved through second source namespace, legacy missing windows remain unknown, internal records not exposed"
+    ]
+  },
+  "source_policy": "public-adapters-v11",
+  "evidence_local": "data/local/pro-audit/round-07/",
+  "limits": [
+    "Original Pro round08 must review the exact next commit, including the additional source-provenance change.",
+    "No new paid model requests or enterprise-effectiveness claims.",
+    "Browser SDK and conversion/API providers controlled; final project creation/readback uses actual local HTTP and PGlite."
+  ],
+  "validation_sequence": "299 JS/70 Python/12 HTTP and initial build after record handoff changes; then only frontend handler/browser fixtures changed, followed by final build and complete browser suite. Exact publication CI will repeat its standard checks."
+}

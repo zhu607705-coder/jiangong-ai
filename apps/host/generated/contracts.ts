@@ -158,6 +158,41 @@ export interface Source {
   raw_hash?: string;
   records_truncated?: boolean;
   body_truncated?: boolean;
+  /**
+   * 原始结构化记录快照，保留解析时的来源标识和原文哈希；读取时映射到当前来源命名空间。缺失表示未保留，空数组表示解析后无保留记录。
+   *
+   * @maxItems 50
+   */
+  public_records?: PublicRecord[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "PublicRecord".
+ */
+export interface PublicRecord {
+  id: string;
+  adapter: "landchina" | "construction" | "statistics" | "procurement";
+  subject: string;
+  scope: "object" | "area";
+  period: string;
+  source_id: string;
+  /**
+   * @maxItems 40
+   */
+  fields: PublicField[];
+  source_hash?: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "PublicField".
+ */
+export interface PublicField {
+  key: string;
+  label: string;
+  value: string | number | null;
+  unit: string;
+  raw: string;
+  locator: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -657,35 +692,6 @@ export interface MapProjectEvidence {
   sources: Source[];
   facts: Fact[];
   rules: ExperienceRule[];
-}
-/**
- * This interface was referenced by `ProjectInput`'s JSON-Schema
- * via the `definition` "PublicRecord".
- */
-export interface PublicRecord {
-  id: string;
-  adapter: "landchina" | "construction" | "statistics" | "procurement";
-  subject: string;
-  scope: "object" | "area";
-  period: string;
-  source_id: string;
-  /**
-   * @maxItems 40
-   */
-  fields: PublicField[];
-  source_hash?: string;
-}
-/**
- * This interface was referenced by `ProjectInput`'s JSON-Schema
- * via the `definition` "PublicField".
- */
-export interface PublicField {
-  key: string;
-  label: string;
-  value: string | number | null;
-  unit: string;
-  raw: string;
-  locator: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

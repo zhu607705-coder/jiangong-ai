@@ -224,6 +224,11 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     catch (e) { if (selectionVersion.current === version) setDetailsError(e instanceof Error ? e.message : '详情加载失败') }
     finally { if (selectionVersion.current === version) setDetailLoading(false) }
   }
+  function createSelectedProject() {
+    if (!selection) return
+    const context=previewContext?.forId===selection.id?previewContext.context:selectedCell?.context||null
+    onCreateFromPlace(placeForResearch(selection,details),context)
+  }
   const interactive = phase === 'ready'
   return <section className="atlas-view" aria-label="地图空间探索">
     <div className="atlas-map" ref={canvas} aria-label="高德交互地图" data-map-status={phase} />
@@ -297,14 +302,14 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
             setScreenResult(prev=>prev?{...prev,cells:classifyCells(prev.cells.map(update),theme)}:prev)
             if(context.address)setSelection(current=>current?.id===id?{...current,address:context.address!}:current)
           }} /></div>
-        {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : selectedCell?.context || null)}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
+        {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
           <div className="atlas-detail-divider" />
           {detailLoading && <p role="status" className="atlas-detail-loading">正在读取地点资料…</p>}
           {detailsError && <div className="map-error" role="alert">{detailsError}<button className="map-text-button" onClick={() => void openDetails()}>重试</button></div>}
           {details && <><dl className="atlas-detail-fields"><div><dt>详细地址</dt><dd>{details.address || '该地点未返回详细地址'}</dd></div><div><dt>地点分类</dt><dd>{details.category}</dd></div>{details.telephone && <div><dt>联系电话</dt><dd>{details.telephone}</dd></div>}</dl>
             {details.photos.length > 0 && <div className="atlas-photos">{details.photos.map(photo => <img key={photo.url} src={photo.url} alt={photo.title || `${selection.name}的地点照片`} loading="lazy" referrerPolicy="no-referrer" />)}</div>}
             </>}
-          <button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>建立项目 <IconArrowRight size={17} /></button>
+          <button className="map-primary" onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button>
           <div className="atlas-detail-actions"><button className="map-text-button" onClick={() => { selectionVersion.current++; setExpanded(false); setDetailLoading(false) }}><IconArrowLeft size={14} />返回简要信息</button>
             <a href={`https://uri.amap.com/marker?position=${selection.longitude},${selection.latitude}&name=${encodeURIComponent(selection.name)}&coordinate=gaode&callnative=0`} target="_blank" rel="noreferrer">高德查看 <IconExternalLink size={13} /></a></div>
         </>}

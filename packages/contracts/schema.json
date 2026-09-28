@@ -251,6 +251,14 @@
         },
         "body_truncated": {
           "type": "boolean"
+        },
+        "public_records": {
+          "type": "array",
+          "description": "原始结构化记录快照，保留解析时的来源标识和原文哈希；读取时映射到当前来源命名空间。缺失表示未保留，空数组表示解析后无保留记录。",
+          "items": {
+            "$ref": "#/definitions/PublicRecord"
+          },
+          "maxItems": 50
         }
       },
       "required": [
