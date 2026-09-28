@@ -53,6 +53,15 @@ def test_selected_geometry_does_not_silently_repair_invalid_input():
     with pytest.raises(ValueError):
         regions.selected_geometry_wgs84(regions.GeometryConversionRequest(geometry={'type':'Polygon','coordinates':[[[120,30],[121,31],[120,31],[121,30],[120,30]]]}))
 
+def test_topology_gate_rejects_external_and_intersecting_holes():
+    outer=[[120,30],[121,30],[121,31],[120,31],[120,30]]
+    outside=[[121.1,30.1],[121.2,30.1],[121.2,30.2],[121.1,30.2],[121.1,30.1]]
+    one=[[120.2,30.2],[120.4,30.2],[120.4,30.4],[120.2,30.4],[120.2,30.2]]
+    two=[[120.3,30.3],[120.5,30.3],[120.5,30.5],[120.3,30.5],[120.3,30.3]]
+    for rings in [[outer,outside],[outer,one,two]]:
+        with pytest.raises(ValueError):regions.checked_polygon({'type':'Polygon','coordinates':rings})
+    assert regions.checked_polygon({'type':'Polygon','coordinates':[outer,one]}).is_valid
+
 def test_crossing_surface_roads_make_four_blocks_not_nine():
     roads=[way(1,[(120.14,30.28),(120.18,30.28)],{'highway':'primary'}),way(2,[(120.16,30.26),(120.16,30.3)],{'highway':'secondary'})]
     cells=regions.segment_regions(request(),roads)['cells']

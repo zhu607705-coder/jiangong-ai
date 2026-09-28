@@ -16,7 +16,7 @@ import type { MapScreenAnalysis, MapScreenBounds, MapScreenContext, MapScreenEvi
 import { fingerprint, type MapProvider } from './provider'
 import { targetContains, evidenceAt, type ProjectEvidenceSnapshot } from './project-evidence'
 
-import type { RegionResolver } from './regions'
+import { validateRegionTopology, type RegionResolver, type TopologyValidator } from './regions'
 
 export type ContextAnalyst = (context: MapScreenContext, profile: MapScreenProfile, signal: AbortSignal, emit?: ResearchSink, previous?:MapScreenAnalysis) => Promise<MapScreenAnalysis>
 const stamp = () => new Date().toISOString()
@@ -58,17 +58,19 @@ export function normalizedTarget(value: unknown): MapScreenTarget {
 
 export class MapScreeningService {
   private contexts = new Map<string, MapScreenContext>()
-  private analyses = new Map<string, MapScreenAnalysis>()
   private activeAnalyses = 0
   private analyzing = new Set<string>()
+  private validGeometries=new Set<string>()
   constructor(private provider: MapProvider, private directory: string, private analyst: ContextAnalyst,
     private loadEvidence: () => Promise<ProjectEvidenceSnapshot> = async () => ({revision: 'empty', projects: [], syntheticCount: 0}),
-    private regions: RegionResolver = async () => ({cells:[],notes:['此处暂未取得街区边界，可点选建筑研判。']})) {}
+    private regions: RegionResolver = async () => ({cells:[],notes:['此处暂未取得街区边界，可点选建筑研判。']}),
+    private topology:TopologyValidator=validateRegionTopology) {}
 
   async context(value: unknown, signal: AbortSignal, snapshot?: ProjectEvidenceSnapshot): Promise<MapScreenContext> {
     signal.throwIfAborted()
     snapshot ??= await this.loadEvidence()
     const target = normalizedTarget(value)
+    await this.checkTopology(target,signal)
     const key = fingerprint([this.provider.revision(), target])
     const cached = this.contexts.get(key)
     if (cached && Date.parse(cached.expires_at) > Date.now()) {
@@ -125,6 +127,7 @@ export class MapScreeningService {
     try { context = validate<MapScreenContext>('MapScreenContext', JSON.parse(await readFile(join(this.directory, 'contexts', id + '.json'), 'utf8'))) }
     catch { throw new Error('CONTEXT_NOT_FOUND') }
     if (Date.parse(context.expires_at) < Date.now()) throw new Error('CONTEXT_EXPIRED')
+    await this.checkTopology(context.target,signal)
     // A persisted snapshot must not outlive a public-source revocation or edit,
     // including when the completed result is already in the analysis cache.
     if ((await this.loadEvidence()).revision !== context.project_revision) throw new Error('CONTEXT_EXPIRED')
@@ -146,19 +149,24 @@ export class MapScreeningService {
 
   async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal, emit: ResearchSink = () => {}): Promise<MapScreenAnalysis> {
     const context=await this.loadContext(id,signal,true)
-    const key = [id, profile, RESEARCH_POLICY, BRIEF_SKILL_VERSION].join(':'), cached = this.analyses.get(key)||await this.restore(context,profile)
+    const key = [id, profile, RESEARCH_POLICY, BRIEF_SKILL_VERSION].join(':'), cached = await this.restore(context,profile)
     if (cached?.status === 'completed') { emit({type:'progress',stage:'sources',status:'completed',message:'复用本次研判'}); return structuredClone(cached) }
     if (!context.target.label && !context.address && context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return cached?.assessment?{...structuredClone(cached),status:'partial',reason:'上一轮研究正在结束，请稍后重试评分。'}:{ context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
     this.activeAnalyses++; this.analyzing.add(key)
     try {
-      const receive:ResearchSink=async event=>{
-        if(event.type==='brief'||event.stage==='decision'&&event.status==='running'){
+      const receive:ResearchSink=event=>{
+        // Ordinary notifications are synchronous and callers may intentionally
+        // ignore their return value. Cancellation must not create a rejected,
+        // unobserved Promise that can terminate the Node host.
+        if(signal.aborted)return
+        if(event.type==='brief'||event.stage==='decision'&&event.status==='running')return (async()=>{
           signal.throwIfAborted()
           if((await this.loadEvidence()).revision!==context.project_revision)throw new Error('CONTEXT_EXPIRED')
-        }
-        if(event.type==='brief')await this.remember(context,profile,key,validate<MapScreenAnalysis>('MapScreenAnalysis',event.result))
-        signal.throwIfAborted();await emit(event)
+          if(event.type==='brief')await this.remember(context,profile,validate<MapScreenAnalysis>('MapScreenAnalysis',event.result))
+          signal.throwIfAborted();await emit(event)
+        })()
+        return emit(event)
       }
       const analysis = validate<MapScreenAnalysis>('MapScreenAnalysis', await this.analyst(context, profile, signal, receive,cached||undefined))
       signal.throwIfAborted()
@@ -174,7 +182,7 @@ export class MapScreeningService {
       if(analysis.status==='completed'&&analysis.decision_support&&analysis.decision_support.status!=='completed'){
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }
-      await this.remember(context,profile,key,analysis)
+      await this.remember(context,profile,analysis)
       return analysis
     } finally { this.activeAnalyses--; this.analyzing.delete(key) }
   }
@@ -196,6 +204,7 @@ export class MapScreeningService {
       const target=normalizedTarget({kind:'cell',bounds:b,geometry:cell.geometry, radius_m:null,longitude:anchor[0],latitude:anchor[1],label:cell.label,
         label_origin:cell.boundary_source?.startsWith('project:')?'project':'public',
         object_ref:/^(?:osm:(?:way|relation):\d+|project:.+)$/.test(cell.boundary_source||'')?cell.boundary_source:cell.id,boundary_source:cell.boundary_source})
+      await this.checkTopology(target,signal)
       const context=validate<MapScreenContext>('MapScreenContext',{
         ...shared!,id:'MAPCTX-'+randomUUID(),target,address:null,
         groups:shared!.groups.map(g=>({...g,reported_count:null,sample:g.sample.filter(p=>targetContains(target,p.longitude,p.latitude))})),
@@ -231,9 +240,17 @@ export class MapScreeningService {
 
   private decisionSignature():string{return fingerprint([DECISION_POLICY,DASHBOARD_POLICY,DECISION_THRESHOLDS,config.QWEN_DECISION_MODEL,config.QWEN_DECISION_ENDPOINT,config.decisionEnabled])}
 
-  private async remember(context:MapScreenContext,profile:MapScreenProfile,key:string,analysis:MapScreenAnalysis){
-    if(this.analyses.size>=120)this.analyses.delete(this.analyses.keys().next().value!)
-    this.analyses.set(key,structuredClone(analysis))
+  private async checkTopology(target:MapScreenTarget,signal:AbortSignal){
+    if(!target.geometry)return
+    const key=fingerprint(target.geometry)
+    if(this.validGeometries.has(key))return
+    await this.topology(target.geometry,signal)
+    signal.throwIfAborted()
+    if(this.validGeometries.size>=120)this.validGeometries.delete(this.validGeometries.values().next().value!)
+    this.validGeometries.add(key)
+  }
+
+  private async remember(context:MapScreenContext,profile:MapScreenProfile,analysis:MapScreenAnalysis){
     await this.save('analyses',context.id+'-'+profile,analysis)
     if(analysis.assessment)await this.save('scope-analyses',this.scopeKey(context,profile),{
       saved_at:stamp(),analysis,decision_signature:this.decisionSignature(),

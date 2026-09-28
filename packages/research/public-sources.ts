@@ -1,6 +1,6 @@
 import type { Source } from '../../apps/host/generated/contracts'
 
-export const RESEARCH_POLICY = 'public-adapters-v3'
+export const RESEARCH_POLICY = 'public-adapters-v4'
 /** Publication age alone is not expiry; old, still-applicable archives survive. */
 export function sourceCurrentAt(source:Source,asOf:string):boolean {
   const cutoff=Date.parse(asOf),published=Date.parse(source.published_at||'')

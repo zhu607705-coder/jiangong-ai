@@ -14,7 +14,7 @@ import type { ProjectRecord, RunRecord } from '../../apps/host/store'
 import type { MapScreenAnalysis, MapScreenContext, MapScreenTarget, MapScreenCell, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
 
 const directories: string[] = []
-afterEach(async () => { for (const path of directories.splice(0)) await rm(path, {recursive:true,force:true}) })
+afterEach(async () => { vi.useRealTimers();for (const path of directories.splice(0)) await rm(path, {recursive:true,force:true}) })
 const point: MapScreenTarget = {kind:'point', longitude:120.16, latitude:30.28, radius_m:800,bounds:null}
 const bounds = {west:120.15,east:120.17,south:30.27,north:30.29}
 function regions(): MapScreenCell[] {
@@ -48,7 +48,7 @@ async function service(evidence = snapshot(), failGroup = false) {
   })
   const analyst = vi.fn<ContextAnalyst>(async (ctx,profile) => ({context_id:ctx.id,profile,status:'unavailable',assessment:null,model_calls:[],reason:'fixture no model',created_at:new Date().toISOString()}))
   const loader = vi.fn(async () => evidence)
-  return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,async()=>({cells:regions(),notes:['Fixture polygons']})),query,analyst,directory,loader}
+  return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,async()=>({cells:regions(),notes:['Fixture polygons']}),async()=>{}),query,analyst,directory,loader}
 }
 
 describe('real project provenance and spatial scale', () => {
@@ -261,7 +261,7 @@ describe('persisted object research', () => {
     const first=await engine.screen(bounds,'balanced','overall',signal,()=>{})
     await engine.analyze(first.cells[0].context!.id,'balanced',signal)
     const resumedAnalyst=vi.fn<ContextAnalyst>(async()=>{throw Error('A valid saved study must not invoke the model')})
-    const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,resumedAnalyst,loader,async()=>({cells:regions(),notes:[]}))
+    const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,resumedAnalyst,loader,async()=>({cells:regions(),notes:[]}),async()=>{})
     const next=await recovered.screen(bounds,'balanced','overall',signal,()=>{})
     expect(next.cells[0].analysis_available).toBe(true)
     const study=await recovered.savedAnalysis(next.cells[0].context!.id,'balanced',signal)
@@ -271,6 +271,20 @@ describe('persisted object research', () => {
     expect(study?.reused_from_context_id).toBe(first.cells[0].context!.id)
     await recovered.analyze(next.cells[0].context!.id,'balanced',signal)
     expect(resumedAnalyst).not.toHaveBeenCalled()
+  })
+  it('uses the same expiry gate for saved reads and repeated analyze calls',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const {engine,analyst}=await service();const signal=new AbortController().signal
+    analyst.mockImplementationOnce(async(c,p)=>({...brief(c,p,'completed'),research_sources:[{...publicSource,id:'S',expires_at:'2026-09-28T08:01:00Z'}],decision_support:{status:'completed',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:'TEST',duration_ms:0,input_tokens:0,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:['S'],thresholds:DECISION_THRESHOLDS,error_code:null,dashboard:{policy_version:'test',purpose:'测试',model:'decision-model-preview',request_id:'TEST',status:'partial',dimensions:[{key:'demand',value:4.5,confidence:.9,evidence_refs:['S'],basis:'测试'}]}}}))
+    const context=await engine.context(point,signal)
+    await engine.analyze(context.id,'balanced',signal)
+    expect((await engine.savedAnalysis(context.id,'balanced',signal))?.status).toBe('completed')
+    vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+    expect(await engine.savedAnalysis(context.id,'balanced',signal)).toBeNull()
+    analyst.mockImplementation(async(c,p)=>brief(c,p,'partial'))
+    const updated=await engine.analyze(context.id,'balanced',signal)
+    expect(updated.decision_support?.dashboard).toBeUndefined()
+    expect(analyst).toHaveBeenCalledTimes(2)
   })
   it('restores color only for the same scope/profile/revision without another model call', async () => {
     const {engine,analyst,loader}=await service();const signal=new AbortController().signal

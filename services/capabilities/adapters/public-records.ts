@@ -36,7 +36,8 @@ const specifications:Record<Exclude<Adapter,'statistics'>,Spec[]>={
     {key:'budget',label:'预算',aliases:['预算金额'],unit:'万元'},
     {key:'ceiling',label:'最高限价',aliases:['最高限价'],unit:'万元'},
     {key:'award',label:'成交金额',aliases:['总成交金额','总中标金额','中标（成交）金额'],unit:'万元'},
-    {key:'deadline',label:'响应截止',aliases:['开标时间','响应文件开启时间','提交投标文件截止时间','响应文件提交截止时间','响应文件递交截止时间','响应截止时间']},
+    {key:'deadline',label:'响应截止',aliases:['提交投标文件截止时间','响应文件提交截止时间','响应文件递交截止时间','响应截止时间','投标截止时间']},
+    {key:'opening_at',label:'开标时间',aliases:['开标时间','响应文件开启时间']},
     {key:'duration',label:'履约期限',aliases:['合同履行期限','施工工期']},
   ],
 }
@@ -108,7 +109,17 @@ function parseTableSource(source:Source,kind:Exclude<Adapter,'statistics'>):Publ
   }
   return groups.flatMap((pairs,index)=>{
     const fields:PublicField[]=[]
-    for(const [key,raw,loc] of pairs){const spec=specs.find(s=>s.aliases.some(a=>label(a)===label(key)));if(spec&&!fields.some(f=>f.key===spec.key))fields.push(field(spec,raw,loc,key))}
+    for(const [key,raw,loc] of pairs){
+      const spec=specs.find(s=>s.aliases.some(a=>label(a)===label(key)))
+      if(!spec)continue
+      const existing=fields.find(f=>f.key===spec.key),next=field(spec,raw,loc,key)
+      if(!existing)fields.push(next)
+      else if(existing.value!==next.value||existing.unit!==next.unit){
+        // Row order cannot establish which correction is current.
+        existing.value=null;existing.raw=[existing.raw,next.raw].join(' / ').slice(0,400)
+        existing.locator=[existing.locator,next.locator].join(' / ').slice(0,200)
+      }
+    }
     const idField=fields.find(f=>(f.key==='parcel_id'||f.key==='project_id')&&f.value!==null&&String(f.value).trim()),name=fields.find(f=>f.key==='project_name'&&f.value!==null&&String(f.value).trim())
     if(!idField&&!name)return []
     if(fields.length<2)return []

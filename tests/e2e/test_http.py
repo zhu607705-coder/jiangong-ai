@@ -249,3 +249,17 @@ def test_map_screening_requires_valid_scope_and_server_issued_evidence(running_a
     assert c.post('/api/maps/screening/scan', json={'bounds':{},'profile':'balanced','theme':'transit'}).status_code == 422
     assert c.post('/api/maps/screening/analysis', json={'context_id':'../../.env','profile':'balanced'}).status_code == 409
     assert httpx.get('http://127.0.0.1:14310/api/maps/data').status_code == 401
+
+
+def test_map_context_and_conversion_share_the_topology_gate(running_app):
+    client=running_app.client
+    assert client.post('/api/maps/config',json={'js_key':'d'*32,'security_code':'e'*32}).status_code==200
+    shapes=[
+        ([[[120.15,30.27],[120.16,30.28],[120.15,30.28],[120.16,30.27],[120.15,30.27]]],[120.155,30.279]),
+        ([[[120.15,30.27],[120.154,30.27],[120.154,30.274],[120.15,30.274],[120.15,30.27]],[[120.156,30.276],[120.158,30.276],[120.158,30.278],[120.156,30.278],[120.156,30.276]]],[120.151,30.271]),
+    ]
+    for rings,anchor in shapes:
+        geometry={'type':'Polygon','coordinates':rings}
+        target={'kind':'cell','bounds':{'west':120.15,'east':120.16,'south':30.27,'north':30.28},'geometry':geometry,'longitude':anchor[0],'latitude':anchor[1],'radius_m':None}
+        assert client.post('/api/maps/screening/context',json={'target':target}).status_code==422
+        assert client.post('/api/maps/geometry/wgs84',json={'geometry':geometry}).status_code==422

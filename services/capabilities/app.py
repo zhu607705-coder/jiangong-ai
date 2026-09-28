@@ -78,7 +78,15 @@ def capability(name: str, request: Request):
         raise HTTPException(422, str(exc)) from exc
 
 # The existing authorized capability host owns topology and CRS conversion.
-from services.capabilities.map_regions import RegionRequest, resolve_regions, GeometryConversionRequest, selected_geometry_wgs84
+from services.capabilities.map_regions import RegionRequest, resolve_regions, GeometryConversionRequest, selected_geometry_wgs84, checked_polygon
+
+@app.post('/spatial/validate-geometry', dependencies=[Depends(authorize)])
+def validate_geometry(request: GeometryConversionRequest):
+    try:
+        checked_polygon(request.geometry)
+        return {'valid': True}
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, 'invalid polygon topology') from exc
 
 @app.post('/spatial/selected-geometry', dependencies=[Depends(authorize)])
 def selected_geometry(request: GeometryConversionRequest):

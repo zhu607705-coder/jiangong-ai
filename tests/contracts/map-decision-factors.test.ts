@@ -33,6 +33,15 @@ describe('source-backed factors',()=>{
     for(const patch of [{observed_at:'2020-01-01'},{observed_at:'2030-01-01'},{observed_at:'invalid'},{object_ref:undefined},{locator:undefined},{source_id:'MISSING'}])
       expect(decisionFactors(context([{...fact('rights_secured'),...patch}]))[0].state).toBe('unknown')
   })
+  it('does not revive an expired or contradictory document with a recent fact timestamp',()=>{
+    for(const patch of [{expires_at:'2019-01-01'},{expires_at:'invalid'},{published_at:'2030-01-01'},{date_status:'conflict'}]){
+      const ctx=context(FACTOR_FIELDS.demand.map(f=>fact(f)))
+      Object.assign(ctx.local_projects[0].sources[0],patch)
+      expect(decisionFactors(ctx).find(f=>f.key==='demand')?.state).toBe('unknown')
+    }
+    const observed=context(FACTOR_FIELDS.demand.map(f=>fact(f)))
+    expect(decisionFactors(observed).find(f=>f.key==='demand')?.state).toBe('supported')
+  })
   it('ignores synthetic, metadata-only and city-wide assertions',()=>{
     const ctx=context([fact('rights_secured')]);ctx.local_projects[0].relation='city_background';expect(decisionFactors(ctx)[0].state).toBe('unknown')
     ctx.local_projects[0].relation='within_scope';ctx.local_projects[0].sources[0].synthetic=true;expect(decisionFactors(ctx)[0].state).toBe('unknown')

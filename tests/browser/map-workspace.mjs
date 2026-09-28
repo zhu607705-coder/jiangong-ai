@@ -4,6 +4,9 @@ import { chromium } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import assert from 'node:assert/strict'
 import { build } from 'esbuild'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+const earlyCreate=process.env.HZZ_UI_EARLY_CREATE==='1'
 const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox']})
 const page=await browser.newPage({viewport:{width:1440,height:960},deviceScaleFactor:1})
 const errors=[];page.on('pageerror',e=>errors.push(String(e)))
@@ -20,7 +23,7 @@ export default {reset:no,load:async()=>({Map,Marker,Polygon,Scale:Base,TileLayer
 
 const bounds={west:120.145,east:120.162,south:30.281,north:30.294}
 const ring=[[120.15,30.292],[120.154,30.2916],[120.1553,30.2878],[120.1511,30.2873],[120.15,30.292]]
-const ctx={id:'MAPCTX-00000000-0000-4000-8000-000000000001',target:{kind:'cell',bounds,geometry:{type:'Polygon',coordinates:[ring]},longitude:120.1525,latitude:30.2895,radius_m:null},provider:'amap',coordinate_encoding:'GCJ-02',created_at:new Date().toISOString(),expires_at:new Date(Date.now()+600000).toISOString(),address:'示例街区',city:null,groups:[{key:'work_live',source_id:'office',label:'办公与居住',status:'available',reported_count:120,sample:[{id:'p1',name:'科创商务楼',category:'商务住宅;商务写字楼',longitude:120.152,latitude:30.289}],retrieved_at:new Date().toISOString(),types_query:'120000',issue:null},{key:'activity',source_id:'retail',label:'商业配套',status:'available',reported_count:99,sample:[{id:'p2',name:'沿街餐饮与社区商业',category:'餐饮服务',longitude:120.152,latitude:30.289}],retrieved_at:new Date().toISOString(),types_query:'050000',issue:null}],local_projects:[],project_revision:'fixture-v1',status:'complete',gaps:[],metric_note:'fixture'}
+const ctx={id:'MAPCTX-00000000-0000-4000-8000-000000000001',target:{kind:'cell',bounds,geometry:{type:'Polygon',coordinates:[ring]},longitude:120.1525,latitude:30.2895,radius_m:null},provider:'amap',coordinate_encoding:'GCJ-02',created_at:new Date().toISOString(),expires_at:new Date(Date.now()+600000).toISOString(),address:earlyCreate?null:'示例街区',city:null,groups:[{key:'work_live',source_id:'office',label:'办公与居住',status:'available',reported_count:120,sample:[{id:'p1',name:'科创商务楼',category:'商务住宅;商务写字楼',longitude:120.152,latitude:30.289}],retrieved_at:new Date().toISOString(),types_query:'120000',issue:null},{key:'activity',source_id:'retail',label:'商业配套',status:'available',reported_count:99,sample:[{id:'p2',name:'沿街餐饮与社区商业',category:'餐饮服务',longitude:120.152,latitude:30.289}],retrieved_at:new Date().toISOString(),types_query:'050000',issue:null}],local_projects:[],project_revision:'fixture-v1',status:'complete',gaps:[],metric_note:'fixture'}
 const cell={id:'R-fixture',label:'沿街建筑群',bounds,geometry:ctx.target.geometry,anchor:[120.1525,30.2895],boundary_source:'fixture:survey',context:ctx,metric_value:null,rank:null,tier:'incomplete',factors:[]}
 const scan={id:'MAPSCAN-fixture',bounds,profile:'balanced',theme:'overall',created_at:new Date().toISOString(),cells:[cell],status:'completed',method:'fixture',comparison_count:0,notes:[]}
 await page.exposeFunction('__fixtureFrame',event=>{if(event.type==='brief'||event.type==='complete')studies.set(event.result.profile,event.result)})
@@ -36,7 +39,7 @@ await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
  else if(path.startsWith('/api/maps/screening/analysis/'))data=studies.get(url.searchParams.get('profile'))||null
  else if(path==='/api/maps/config')data={provider:'amap',configured:true,js_key:'TEST_ONLY',revision:'ui-fixture',service_path:'/_AMapService',sdk_version:'2.0'}
  else if(path==='/api/maps/screening/scan'){scanCalls++;requestedBounds=JSON.parse(body).bounds;return {contentType:'application/x-ndjson',body:[{type:'start',id:scan.id,cells:[{...cell,context:null,tier:'pending'}]},{type:'cell',cell,completed:1,total:1},{type:'complete',result:scan}].map(x=>JSON.stringify(x)).join('\n')}}
- else if(path==='/api/maps/screening/context'){contextCalls++;data=ctx}
+ else if(path==='/api/maps/screening/context'){contextCalls++;if(earlyCreate)await new Promise(r=>setTimeout(r,1500));data={...ctx,address:'示例街区'}}
  else if(path==='/api/maps/screening/analysis'){
    modelCalls++
    const result={context_id:ctx.id,profile:JSON.parse(body).profile,status:'completed',assessment:{summary:'从楼宇机电更新切入，按单栋分期交付。',opportunities:[{text:'组合提供电力改造与后续维保。',evidence_refs:['PUBLIC-FIXTURE']}],cautions:[],unknowns:[],next_steps:['编制分栋工程量与不停业施工方案，核对采购窗口。'],factors:[]},model_calls:[],reason:null,created_at:new Date().toISOString(),research_sources:[{id:'PUBLIC-FIXTURE',title:'公开采购解析样本',url:'https://example.org/fixtures/procurement',data_class:'synthetic',visibility:'public',synthetic:true,content_status:'excerpt',published_at:'2026-07-01',untrusted_text:'明确的合成测试样本：两栋楼分期更新供配电系统，测试预算为120万元。'}],research_records:[{id:'REC-TEST',adapter:'procurement',subject:'合成测试采购',scope:'object',period:'2026-07-01',source_id:'PUBLIC-FIXTURE',fields:[{key:'budget',label:'预算',value:120,unit:'万元',raw:'120万元',locator:'fixture'}]}],decision_support:{status:'completed',provider:'qwen_systemone',model:'decision-model-preview',answers:null,dashboard:{policy_version:'opportunity-fit-v2',purpose:'测试方案',model:'decision-model-preview',request_id:'FIXTURE-ONLY',status:'partial',dimensions:[{key:'demand',value:4.2},{key:'supply',value:null},{key:'adaptation',value:3.8},{key:'implementation',value:4.1},{key:'operations',value:3.6},{key:'resources',value:3.7}].map(d=>({...d,confidence:d.value===null?null:.9,basis:d.value===null?'供给资料待调查':'该数字仅用于界面回归测试。',evidence_refs:d.value===null?[]:['PUBLIC-FIXTURE']}))}}}
@@ -58,6 +61,18 @@ try{
  assert.equal(modelCalls,0);assert.equal(contextCalls,0)
  await page.getByRole('button',{name:'一键标色',exact:true}).click()
  await page.getByRole('button',{name:'查看沿街建筑群初筛'}).click()
+ if(earlyCreate){
+   await page.getByRole('button',{name:'建立项目',exact:true}).click()
+   await page.locator('#project-name').fill('即时建项目回归')
+   await page.locator('#region-name').fill('公开测试街区')
+   await page.locator('.modal button[type="submit"]').click()
+   await page.getByRole('dialog').waitFor({state:'hidden',timeout:5000})
+   assert.deepEqual(createdInput.input.scope.geometry,converted)
+   assert.ok(createdInput.input.scope.geometry)
+   assert.ok(createdInput.input.scope.boundary_source)
+   assert.equal(modelCalls,0)
+   console.log('PASS early polygon handoff while context is pending: 4 checks')
+ }else{
  await page.getByText('办公线索',{exact:true}).waitFor()
  assert.equal(modelCalls,0);assert.equal(contextCalls,0);assert.equal(scanCalls,1);assert.deepEqual(requestedBounds,bounds)
  assert.equal(await page.getByRole('button',{name:'查看依据',exact:true}).getAttribute('aria-expanded'),'false')
@@ -122,4 +137,7 @@ try{
  assert.deepEqual(errors,[])
  await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained']},null,2))
  console.log('PASS map UI: 24 checks including phase recovery, profile cache and polygon handoff; synthetic provider fixtures')
+}
 }catch(error){await page.screenshot({path:'output/playwright/minimal-map-failure.png'});console.error(JSON.stringify({created:!!created,createdInput,errorText:await page.locator('body').innerText(),errors},null,2));throw error}finally{await browser.close()}
+
+if(!earlyCreate){const child=await promisify(execFile)(process.execPath,['tests/browser/map-workspace.mjs'],{env:{...process.env,HZZ_UI_EARLY_CREATE:'1'},timeout:90000});process.stdout.write(child.stdout)}

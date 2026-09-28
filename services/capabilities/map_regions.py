@@ -69,8 +69,7 @@ class GeometryConversionRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
     geometry: dict
 
-def selected_geometry_wgs84(request: GeometryConversionRequest):
-    raw = request.geometry
+def checked_polygon(raw: dict):
     if raw.get('type') != 'Polygon' or len(json.dumps(raw)) > 1_000_000:
         raise ValueError('INVALID_BOUNDARY')
     polygon = shape(raw)
@@ -79,6 +78,10 @@ def selected_geometry_wgs84(request: GeometryConversionRequest):
     rings = [polygon.exterior, *polygon.interiors]
     if any(len(r.coords) > 512 for r in rings) or any(not isfinite(v) for r in rings for xy in r.coords for v in xy) or not box(-180,-85,180,85).covers(polygon):
         raise ValueError('INVALID_BOUNDARY')
+    return polygon
+
+def selected_geometry_wgs84(request: GeometryConversionRequest):
+    polygon = checked_polygon(request.geometry)
     converted = _coordinate(polygon, inverse=True)
     if not converted.is_valid or converted.is_empty:
         raise ValueError('INVALID_CONVERSION')

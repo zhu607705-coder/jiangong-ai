@@ -71,6 +71,8 @@ describe('six-dimension decision dashboard',()=>{
     const base={id:'S',title:'甲园区A楼资料',url:'https://example.gov.cn/notice',published_at:'2026-09-01',content_status:'full_text',visibility:'public',data_class:'public',synthetic:false} as Source
     const ground=(s:Source,quote=s.untrusted_text!)=>groundMapAssessment({summary:'调查具体设备维护。',opportunities:[],cautions:[],unknowns:[],next_steps:[],dimension_evidence:[{...evidence,source_id:'S',quote}]},ctx,[s]).dimension_evidence
     expect(ground({...base,untrusted_text:'甲园区A楼位于杭州市余杭区，本期开展设备维护。'})).toEqual([])
+    expect(ground({...base,untrusted_text:'杭州市余杭区甲园区A楼本期采购设备维护服务。'})).toEqual([])
+    expect(ground({...base,untrusted_text:'建设地点：杭州市余杭区甲园区A楼，本期采购设备维护服务。'})).toEqual([])
     expect(ground({...base,object_refs:['amap:B'],untrusted_text:'甲园区A楼本期开展设备维护。'})).toEqual([])
     expect(ground({...base,untrusted_text:'甲园区A楼正常使用。乙园区B楼本期采购设备维护服务。'},'乙园区B楼本期采购设备维护服务。')).toEqual([])
     expect(ground({...base,untrusted_text:'甲园区A楼位于杭州市西湖区，本期采购设备维护服务。'})).toHaveLength(1)
@@ -80,7 +82,9 @@ describe('six-dimension decision dashboard',()=>{
     const src={id:'S',title:'甲园区A楼设备采购',url:'https://www.ccgp.gov.cn/test',published_at:'2026-09-01',content_status:'full_text',visibility:'public',data_class:'public',synthetic:false,untrusted_text:'甲园区A楼空调更新预算为120万元。乙园区B楼空调更新预算为900万元。'} as Source
     const value=(text:string)=>({summary:text,opportunities:[{text,evidence_refs:['S']}],cautions:[],unknowns:[],next_steps:[]})
     expect(()=>groundMapAssessment(value('甲园区A楼空调更新预算为120万元。'),ctx,[src])).not.toThrow()
-    for(const text of ['甲园区A楼空调更新预算为121万元。','甲园区A楼空调更新预算为120亿元。','甲园区A楼空调更新预算为900万元。','甲园区A楼可获得120万元收益。'])expect(()=>groundMapAssessment(value(text),ctx,[src])).toThrow()
+    expect(()=>groundMapAssessment(value('预算为120万元。'),ctx,[src])).not.toThrow()
+    expect(()=>groundMapAssessment(value('甲园区A楼空调更新预算为120万元。'),ctx,[{...src,untrusted_text:'乙园区B楼空调更新预算为120万元。'}])).toThrow()
+    for(const text of ['甲园区A楼空调更新预算为121万元。','甲园区A楼空调更新预算为120亿元。','甲园区A楼空调更新预算为900万元。','甲园区A楼可获得120万元收益。','乙园区B楼空调更新预算为120万元。'])expect(()=>groundMapAssessment(value(text),ctx,[src])).toThrow()
   })
   it('does not score a closed participation window merely because the notice was published recently',()=>{
     const ctx={created_at:'2026-09-28T08:00:00Z',target:{label_origin:'public',label:'甲园区A楼'},groups:[],local_projects:[]} as unknown as MapScreenContext
@@ -91,6 +95,12 @@ describe('six-dimension decision dashboard',()=>{
     record.fields[0].value='2026年10月20日09点30分'
     expect(groundMapAssessment(value,ctx,[src],[record]).dimension_evidence).toHaveLength(1)
     expect(groundMapAssessment(value,ctx,[{...src,title:'甲园区A楼成交公告'}],[record]).dimension_evidence).toEqual([])
+    record.fields[0].value='2026年9月28日16点00分00秒'
+    expect(groundMapAssessment(value,ctx,[src],[record]).dimension_evidence).toEqual([])
+    ctx.created_at='2026-09-28T07:59:59Z'
+    expect(groundMapAssessment(value,ctx,[src],[record]).dimension_evidence).toHaveLength(1)
+    record.fields[0].key='opening_at'
+    expect(groundMapAssessment(value,ctx,[src],[record]).dimension_evidence).toEqual([])
   })
 })
 describe('real streaming lifecycle',()=>{

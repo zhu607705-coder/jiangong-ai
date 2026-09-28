@@ -1,10 +1,15 @@
 import { config } from '../../apps/host/config'
 import { validate } from '../../packages/contracts/validate'
-import type { MapScreenBounds, MapScreenCell } from '../../apps/host/generated/contracts'
+import type { MapScreenBounds, MapScreenCell, MapRegionGeometry } from '../../apps/host/generated/contracts'
 import type { ProjectEvidenceSnapshot } from './project-evidence'
 
 export type RegionResult = { cells:MapScreenCell[]; notes:string[] }
 export type RegionResolver = (bounds:MapScreenBounds,snapshot:ProjectEvidenceSnapshot,signal:AbortSignal)=>Promise<RegionResult>
+export type TopologyValidator=(geometry:MapRegionGeometry,signal:AbortSignal)=>Promise<void>
+export const validateRegionTopology:TopologyValidator=async(geometry,signal)=>{
+  const response=await fetch(config.capabilityUrl+'/spatial/validate-geometry',{method:'POST',signal:AbortSignal.any([signal,AbortSignal.timeout(10000)]),headers:{'Content-Type':'application/json','X-Capability-Token':config.capabilityToken},body:JSON.stringify({geometry})})
+  if(!response.ok||(await response.json() as {valid?:boolean}).valid!==true)throw new Error('INVALID_REGION_TOPOLOGY')
+}
 export const resolveMapRegions:RegionResolver = async(bounds,snapshot,signal)=> {
   const boundaries=snapshot.projects.filter(p=>!p.project.input.synthetic&&p.project.input.scope.geometry).slice(0,100).map(({project})=>({
     id:project.id,label:project.name.slice(0,40),geometry:project.input.scope.geometry,coordinate_encoding:project.input.scope.coordinate_encoding,

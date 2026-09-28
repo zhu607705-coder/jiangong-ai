@@ -16,6 +16,10 @@ export function groundedAmounts(text:string,context:MapScreenContext,name:string
   if(/收益|回报|IRR|ROI|利润/i.test(text))return false
   return amounts.every(amount=>{
     const before=text.slice(0,amount.index),kind=fields.flatMap(f=>[...before.matchAll(f.label)].map(m=>({field:f,index:m.index}))).sort((a,b)=>b.index-a.index)[0]?.field
+    const clause=before.split(/[。；;\n]/).at(-1)!.trim()
+    const explicit=normalizedName(clause).includes(normalizedName(name))
+    const shorthand=/^(?:本项目|该项目|本处|所选对象)?(?:的)?(?:预算|最高限价|中标|成交|合同金额)/.test(clause)
+    if(!name||!explicit&&!shorthand)return false
     return sources.some(source=>{
       if(!primaryObjectSource(source,context)||!sourceCurrentAt(source,context.created_at))return false
       if(Date.parse(context.created_at)-Date.parse(source.published_at!)>180*86400000&&!/历史|档案|当年|20\d\d年/.test(text))return false

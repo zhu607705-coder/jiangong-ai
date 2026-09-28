@@ -89,6 +89,22 @@ describe('map selection data remains spatially honest', () => {
       expect(project.input.scope.geometry?.coordinates).toEqual(rings)
     }finally{vi.unstubAllGlobals()}
   })
+  it.each([40,41,80,81])('converts all %i vertices without exceeding the provider limit',async(count)=>{
+    const outer=Array.from({length:count-6},(_,i)=>{const angle=i/(count-6)*2*Math.PI;return [120.15+.005*Math.cos(angle),30.28+.005*Math.sin(angle)]})
+    outer.push([...outer[0]])
+    const hole=[[120.149,30.279],[120.149,30.281],[120.151,30.281],[120.151,30.279],[120.149,30.279]]
+    const rings=[outer,hole],input=JSON.parse(await readFile('fixtures/inputs/01_auto.json','utf8'))
+    Object.assign(input,{synthetic:false,sources:[],facts:[],context_rules:[]})
+    input.scope={name:'转换上限回归',geometry:{type:'Polygon',coordinates:rings},coordinate_encoding:'WGS84',legal_parcel_confirmed:false}
+    const calls:number[]=[]
+    const sdk={convertFrom:(points:number[][],_type:string,done:Function)=>{calls.push(points.length);done(points.length<=40?'complete':'error',{locations:points.map(([lng,lat])=>({lng:lng+.005,lat:lat+.003}))})}}
+    vi.stubGlobal('window',{setTimeout,clearTimeout})
+    try{
+      const result=await mapCoordinates(sdk as any,{id:'BATCH',name:'测试',context_version:0,input:projectInput(input)})
+      expect(result?.points).toEqual(rings.map(r=>r.map(([x,y])=>[x+.005,y+.003])))
+      expect(calls.every(n=>n<=40)).toBe(true);expect(calls.reduce((sum,n)=>sum+n,0)).toBe(count)
+    }finally{vi.unstubAllGlobals()}
+  })
   it('rejects an anchor incorrectly declared as WGS84 at the shared contract boundary', async () => {
     const fixture = JSON.parse(await readFile('fixtures/inputs/01_auto.json', 'utf8'))
     fixture.scope.map_anchor = { ...toProjectAnchor(normalizePoi(place)!), coordinate_encoding: 'WGS84' }

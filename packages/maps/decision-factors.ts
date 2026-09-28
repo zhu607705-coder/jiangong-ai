@@ -31,9 +31,12 @@ export function decisionFactors(context: MapScreenContext): MapDecisionFactor[] 
       const field = f.kind.replace(/^screening\./, '')
       const source = p.sources.find(s => s.id === f.source_id)
       const observed = Date.parse(f.observed_at || '')
+      const expired=source?.expires_at!==undefined&&(!Number.isFinite(Date.parse(source.expires_at))||Date.parse(source.expires_at)<=asOf)
+      const invalidPublication=source?.published_at!==undefined&&(!Number.isFinite(Date.parse(source.published_at))||Date.parse(source.published_at)>asOf)
       if (!f.kind.startsWith('screening.') || !FACTOR_FIELDS[key].includes(field) || typeof f.value !== 'boolean'
           || !factAppliesToTarget(f,p,context.target)
           || !f.locator || !f.object_ref || !source || source.synthetic || source.content_status === 'metadata_only'
+          || expired || invalidPublication || source.date_status==='conflict'
           || !Number.isFinite(observed) || observed > asOf || asOf - observed > 180 * 86400000) return []
       return [{ field, value:f.value, ref:`${p.project_id}:${f.source_id}`, project:p.project_id, subject:`${p.project_id}:${f.object_ref}` }]
     }))

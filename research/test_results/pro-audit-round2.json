@@ -1,0 +1,80 @@
+{
+  "baseline_commit": "763ad5124aa66847338fce5f55efd7cb3fa2af8c",
+  "review_id": "JIANGONG-AUDIT-02-763ad512",
+  "status": "fixed_locally_pending_round_03",
+  "as_of": "2026-09-28T17:02:44.014018+00:00",
+  "pro_closed_original": 11,
+  "addressed": [
+    "A01",
+    "A02",
+    "A07",
+    "A12",
+    "A15",
+    "B01",
+    "B02",
+    "B03"
+  ],
+  "additional_fix": "Unawaited progress notification after cancellation cannot terminate Node host.",
+  "verification": {
+    "javascript": 199,
+    "python": 70,
+    "http": 11,
+    "browser_normal": 24,
+    "browser_pending_context": 4,
+    "production_build": "passed",
+    "subsequent_targeted_checks": [
+      "27 cache/topology/cancellation checks",
+      "22 object/amount/deadline checks"
+    ],
+    "live": {
+      "seconds": 25.67,
+      "terminal_event": "complete",
+      "status": "completed",
+      "reason": null,
+      "summary": "紫金港校区持续有单体装修改造与立面修缮采购，可从在运校园更新切入。",
+      "sources": 10,
+      "records": 9,
+      "decision_status": "completed",
+      "dashboard_status": "partial",
+      "dimensions": [
+        {
+          "key": "demand",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "supply",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "adaptation",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "implementation",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "operations",
+          "value": 3.3,
+          "confidence": 0.89
+        },
+        {
+          "key": "resources",
+          "value": null,
+          "confidence": null
+        }
+      ]
+    }
+  },
+  "evidence_local": "data/local/pro-audit/round-02/",
+  "public_evidence_for_rereview": "data/local/pro-audit/round-03/public-live-evidence.json",
+  "limits": [
+    "The current fix commit still requires Pro round03 review.",
+    "The live score is a model fit judgement, not demonstrated enterprise effectiveness.",
+    "Browser provider fixtures are distinct from the real live provider study."
+  ]
+}

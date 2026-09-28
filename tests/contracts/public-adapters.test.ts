@@ -51,6 +51,19 @@ describe('dedicated public-data adapters',()=>{
     const [r]=adaptProcurement(source(JSON.stringify({项目名称:'测试', '中标（成交）金额':'2.5万元'})))
     expect(r.fields.find(f=>f.key==='award')?.value).toBe(2.5)
   })
+  it.each([false,true])('keeps opening and submission deadlines distinct regardless of row order: %s',reverse=>{
+    const dates=[['开标时间','2026年10月5日09点00分'],['响应文件提交截止时间','2026年9月20日09点00分']]
+    if(reverse)dates.reverse()
+    const body=html('<table><tr><td>项目名称</td><td>甲楼维修</td></tr>'+dates.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')+'</table>')
+    const [r]=adaptProcurement(source(body))
+    expect(r.fields.find(f=>f.key==='deadline')?.value).toBe('2026年9月20日09点00分')
+    expect(r.fields.find(f=>f.key==='opening_at')?.value).toBe('2026年10月5日09点00分')
+  })
+  it('does not choose a disputed deadline by table order',()=>{
+    const body=html('<table><tr><td>项目名称</td><td>甲楼维修</td></tr><tr><td>响应截止时间</td><td>2026-09-20</td></tr><tr><td>响应截止时间</td><td>2026-10-05</td></tr></table>')
+    const field=adaptProcurement(source(body))[0].fields.find(f=>f.key==='deadline')!
+    expect(field.value).toBeNull();expect(field.raw).toContain('2026-09-20');expect(field.raw).toContain('2026-10-05')
+  })
   it('keeps CCGP award-header labels out of facts and retains separate construction lots',()=>{
     // Reduced layout from the live CCGP campus awards: the summary is a key/value
     // table, followed by a column-oriented main-award table with td headers.

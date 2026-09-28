@@ -111,11 +111,18 @@ export async function mapCoordinates(sdk: AmapSdk, project: Project): Promise<Ma
   if (!location) return null
   if (location.encoding === 'GCJ-02') return { points: location.coordinates, polygon: location.polygon }
   const flat=location.polygon?location.coordinates.flat():location.coordinates
-  const points = await serviceCall<[number, number][]>(done => sdk.convertFrom(flat, 'gps', done), data => {
-    const converted = (data.locations || []).map(coordinates)
-    if (converted.length !== flat.length || converted.some((p: unknown) => !p)) throw new Error('转换失败')
-    return converted
-  })
+  const points:[number,number][]=[]
+  // AMap JS API permits at most 40 coordinates per conversion request.
+  // Sequential batches preserve vertex order and avoid a burst of quota usage.
+  for(let start=0;start<flat.length;start+=40){
+    const batch=flat.slice(start,start+40)
+    const converted=await serviceCall<[number,number][]>(done=>sdk.convertFrom(batch,'gps',done),data=>{
+      const values=(data.locations||[]).map(coordinates)
+      if(values.length!==batch.length||values.some((p:unknown)=>!p))throw new Error('转换失败')
+      return values
+    })
+    points.push(...converted)
+  }
   if(!location.polygon)return {points,polygon:false}
   let offset=0
   return {points:location.coordinates.map(ring=>{const result=points.slice(offset,offset+ring.length);offset+=ring.length;return result}),polygon:true}
