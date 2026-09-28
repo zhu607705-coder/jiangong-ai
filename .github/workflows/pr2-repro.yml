@@ -8,22 +8,14 @@ permissions:
 jobs:
   source:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 6
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-      - run: npm ci
-      - run: |
-          mkdir -p .offline-bin
-          cp "$(command -v node)" .offline-bin/node
-          tar -czf /tmp/offline-deps.tar.gz node_modules .offline-bin
+          python-version: '3.13'
+      - run: pip download --dest /tmp/python-wheels 'datamodel-code-generator>=0.33,<1' 'eviltransform==0.1.1' 'rank-bm25==0.2.2' 'jieba==0.42.1' 'sqlglot>=27,<31'
       - uses: actions/upload-artifact@v4
         with:
-          name: pr2-offline-deps
-          path: /tmp/offline-deps.tar.gz
+          name: pr2-python-wheels
+          path: /tmp/python-wheels
           retention-days: 1
