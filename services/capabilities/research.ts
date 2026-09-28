@@ -1,10 +1,12 @@
 import { Context } from '@deepseek-ai/cordis'
 import { Readability } from '@mozilla/readability'
 import { parseHTML } from 'linkedom'
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { mountPublicWeb } from '../../runtime/dsh/public-web'
+import { LiveSession } from '../../runtime/dsh/live-session'
+import { config } from '../../apps/host/config'
 import type { ProjectInput, ResearchTrace, Source } from '../../apps/host/generated/contracts'
-import { classifyPublicSource, publicSearchPlan, type PublicSourceTier } from '../../packages/research/public-sources'
+import { classifyPublicSource, publicSearchPlan, PUBLIC_SOURCE_CATALOG, type PublicSourceTier } from '../../packages/research/public-sources'
 import { resolveScope } from './scope'
 
 export function visibleText(html: string, url: string): string {
@@ -17,18 +19,34 @@ export function visibleText(html: string, url: string): string {
 type SearchHit = { url: string; title?: string; snippet?: string; publishedAt?: string; tier: PublicSourceTier; catalogId: string | null }
 const tierRank: Record<PublicSourceTier, number> = { primary_database: 0, official_publication: 1, supplementary: 2 }
 
+async function dshSearchQueries(project: ProjectInput, region: string, signal: AbortSignal): Promise<string[]> {
+  const fallback = publicSearchPlan(region).map(need => need.queries[0]).slice(0, 6)
+  if (!config.modelConfigured) return fallback
+  const allowedFacts = [...new Set(project.facts.filter(f => project.sources.find(s => s.id === f.source_id)?.visibility === 'public').map(f => f.kind))].slice(0, 20)
+  const catalog = PUBLIC_SOURCE_CATALOG.map(item => ({ name: item.name, domains: item.domains, uses: item.uses }))
+  const live = await LiveSession.open('RESEARCH-PLAN-' + randomUUID(), signal)
+  try {
+    const prompt = '你负责为建造前投资研判规划公开资料检索。研究范围：' + region + '。当前已有公开事实类型：' + JSON.stringify(allowedFacts) +
+      '。优先从公开数据库和官方业务系统核实事实，再用开放式全网查询补充最新公告、运营和反证。可用来源目录：' + JSON.stringify(catalog) +
+      '。生成4–6条互补搜索式，每条都必须包含“' + region + '”，避免同义重复；至少3条面向官方数据库或政府系统，最多2条开放式全网查询。只规划会改变实施路径的资料，不做城市百科式搜索。使用ResearchTrace结构返回：status=partial，queries填写检索式，source_ids=[]，warnings=[]，reused=false。'
+    const result = await live.call<ResearchTrace>('research_plan', prompt, 'ResearchTrace')
+    const queries = [...new Set(result.value.queries.map(q => q.replace(/[\\r\\n<>]/g, ' ').trim()).filter(q => q.includes(region) && q.length >= region.length + 2 && q.length <= 180))].slice(0, 6)
+    return queries.length >= 3 ? queries : fallback
+  } catch {
+    signal.throwIfAborted()
+    return fallback
+  } finally { await live.close() }
+}
+
 /**
- * Public research uses DSH Search across the web, but source selection is evidence-first:
- * public databases and official systems are fetched before general web material.
+ * DSH plans evidence-gap queries and DSH Search executes them across the web.
+ * Public databases and official systems are fetched before general web material.
  */
 export async function collectPublicEvidence(project: ProjectInput, signal: AbortSignal): Promise<{ sources: Source[]; trace: ResearchTrace; scope?: ProjectInput['scope'] }> {
   if (project.synthetic) return { sources: [], trace: { status: 'not_applicable', queries: [], source_ids: [], warnings: [], reused: false } }
   const ctx = new Context(), sources: Source[] = [], warnings: string[] = []
   const region = project.scope.name.replace(/[\r\n<>]/g, ' ').slice(0, 100)
-  const plan = publicSearchPlan(region)
-  // One query per decision need keeps latency bounded; DSH still searches the full web.
-  // The second query is a documented fallback for a later gap-research round.
-  const queries = plan.map(need => need.queries[0])
+  const queries = await dshSearchQueries(project, region, signal)
   const found = new Map<string, SearchHit>()
   try {
     await mountPublicWeb(ctx)
