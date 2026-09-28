@@ -76,3 +76,13 @@ def capability(name: str, request: Request):
         raise HTTPException(404, "unknown capability")
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
+
+# The existing authorized capability host owns topology and CRS conversion.
+from services.capabilities.map_regions import RegionRequest, resolve_regions
+
+@app.post('/spatial/regions', dependencies=[Depends(authorize)])
+def map_regions(request: RegionRequest):
+    try:
+        return resolve_regions(request)
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, 'invalid region geometry') from exc

@@ -4,18 +4,28 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { readFileSync } from 'node:fs'
 import { MapScreeningService, normalizeEvidence, normalizedTarget } from '../../services/map-screening/service'
-import { EVIDENCE_GROUPS, classifyCells, screeningGrid } from '../../packages/maps/screening-policy'
+import { EVIDENCE_GROUPS, classifyCells, assertScreenBounds } from '../../packages/maps/screening-policy'
 import { dataCatalog, evidenceAt, mergeProjectSources, targetContains, type ProjectEvidenceSnapshot } from '../../services/map-screening/project-evidence'
 import { publicMapContext } from '../../packages/maps/public-context'
 import { groundMapAssessment } from '../../services/map-screening/analyst'
 import { validate } from '../../packages/contracts/validate'
 import type { ProjectRecord, RunRecord } from '../../apps/host/store'
-import type { MapScreenContext, MapScreenTarget, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
+import type { MapScreenContext, MapScreenTarget, MapScreenCell, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
 
 const directories: string[] = []
 afterEach(async () => { for (const path of directories.splice(0)) await rm(path, {recursive:true,force:true}) })
 const point: MapScreenTarget = {kind:'point', longitude:120.16, latitude:30.28, radius_m:800,bounds:null}
 const bounds = {west:120.15,east:120.17,south:30.27,north:30.29}
+function regions(): MapScreenCell[] {
+  // Three surveyed polygons are fixtures, not a production tiling algorithm.
+  return [0,1,2].map(i => {
+    const x=120.151+i*.006, y=30.272
+    const ring=[[x,y],[x+.004,y],[x+.005,y+.01],[x+.001,y+.014],[x,y]]
+    return {id:`R-fixture-${i}`,label:`建筑群 ${i}`,bounds:{west:x,east:x+.005,south:y,north:y+.014},
+      geometry:{type:'Polygon',coordinates:[ring]},anchor:[x+.002,y+.006],boundary_source:'fixture:survey',
+      context:null,metric_value:null,tier:'pending',rank:null}
+  })
+}
 const publicSource: Source = {id:'PUB-REAL',title:'公开政策测试样本',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:'市级政策用于背景，地块适用需单独核验。',retrieved_at:'2026-09-28T00:00:00Z'}
 const privateSource: Source = {id:'INTERNAL-REAL',title:'项目内部材料',data_class:'internal',visibility:'internal',synthetic:false,content_status:'uploaded',untrusted_text:'PRIVATE_CANARY'}
 function project(id = 'REAL-P', located = false): ProjectRecord {
@@ -37,7 +47,7 @@ async function service(evidence = snapshot(), failGroup = false) {
   })
   const analyst = vi.fn(async (ctx: MapScreenContext, profile: 'balanced'|'commercial'|'enterprise') => ({context_id:ctx.id,profile,status:'unavailable' as const,assessment:null,model_calls:[],reason:'fixture no model',created_at:new Date().toISOString()}))
   const loader = vi.fn(async () => evidence)
-  return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader),query,analyst,directory,loader}
+  return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,async()=>({cells:regions(),notes:['Fixture polygons']})),query,analyst,directory,loader}
 }
 
 describe('real project provenance and spatial scale', () => {
@@ -73,9 +83,12 @@ describe('real project provenance and spatial scale', () => {
     expect(catalog.synthetic_project_count).toBe(4)
     expect(catalog.projects[0].public_source_count).toBe(1)
   })
-  it('does not double-count points on internal grid boundaries', () => {
-    const grid=screeningGrid(bounds), c=grid[4], lon=c.bounds.west, lat=(c.bounds.south+c.bounds.north)/2
-    expect(grid.filter(cell=>targetContains({kind:'cell',longitude:0,latitude:0,radius_m:null,bounds:cell.bounds},lon,lat))).toHaveLength(1)
+  it('uses the actual polygon and excludes holes and exterior points', () => {
+    const cell=regions()[0], target:MapScreenTarget={kind:'cell',longitude:cell.anchor![0],latitude:cell.anchor![1],radius_m:null,bounds:cell.bounds,geometry:cell.geometry}
+    expect(targetContains(target,cell.anchor![0],cell.anchor![1])).toBe(true)
+    expect(targetContains(target,cell.bounds.east,cell.bounds.south)).toBe(false)
+    target.geometry!.coordinates.push([[120.152,30.275],[120.153,30.275],[120.153,30.276],[120.152,30.276],[120.152,30.275]])
+    expect(targetContains(target,120.1525,30.2755)).toBe(false)
   })
 })
 
@@ -87,7 +100,7 @@ describe('evidence acquisition and cache lifecycle', () => {
     for (const raw of [{count:8,pois:[]},{count:-1,pois:[]},{count:0,pois:response().pois},{count:'no',pois:[]}]) expect(()=>normalizeEvidence(EVIDENCE_GROUPS[0],raw,'s')).toThrow()
   })
   it('rejects overlarge ranges and inconsistent point/cell targets', () => {
-    expect(()=>screeningGrid({...bounds,east:121})).toThrow()
+    expect(()=>assertScreenBounds({...bounds,east:121})).toThrow()
     expect(()=>normalizedTarget({...point,bounds})).toThrow()
     expect(()=>normalizedTarget({...point,kind:'cell',radius_m:null,bounds,longitude:130})).toThrow()
   })
@@ -112,32 +125,32 @@ describe('evidence acquisition and cache lifecycle', () => {
     const {engine}=await service(snapshot(),true)
     const ctx=await engine.context(point,new AbortController().signal)
     expect(ctx.status).toBe('partial');expect(ctx.groups[0].reported_count).toBeNull()
-    const cells=screeningGrid(bounds);cells[0].context=ctx
-    expect(classifyCells(cells,'transit')[0].tier).toBe('incomplete')
-    expect(classifyCells(cells,'activity')[0].metric_value).toBe(12)
+    const cells=regions();cells[0].context=ctx
+    expect(classifyCells(cells,'overall')[0].tier).toBe('incomplete')
+    expect(classifyCells(cells,'demand')[0].metric_value).toBeNull()
   })
-  it('uses fixed bands across scopes and never counts city background as a located project', async () => {
+  it('raw counts and city background cannot turn objects into investment recommendations', async () => {
     const {engine}=await service();const ctx=await engine.context(point,new AbortController().signal)
-    const cells=screeningGrid(bounds);cells[0].context=ctx
-    const first=classifyCells(cells,'transit')[0]
+    const cells=regions();cells[0].context=ctx
+    const first=classifyCells(cells,'overall')[0]
     cells[1].context=structuredClone(ctx);cells[1].context.groups[0].reported_count=900
-    expect(classifyCells(cells,'transit')[0].tier).toBe(first.tier)
-    expect(first.metric_value).toBe(12)
-    expect(classifyCells(cells,'projects')[0].metric_value).toBe(0)
-    expect(classifyCells(cells,'projects')[0].tier).toBe('empty')
+    expect(classifyCells(cells,'overall')[0].tier).toBe(first.tier)
+    expect(first.metric_value).toBeNull()
+    expect(classifyCells(cells,'implementation')[0].metric_value).toBeNull()
+    expect(classifyCells(cells,'implementation')[0].tier).toBe('incomplete')
   })
   it('cancellation prevents subsequent cells and never emits a completed result', async () => {
     const {engine,analyst}=await service();const controller=new AbortController(),events:any[]=[]
-    await expect(engine.screen(bounds,'balanced','transit',controller.signal,e=>{events.push(e);if ((e as any).type==='cell') controller.abort()})).rejects.toThrow()
+    await expect(engine.screen(bounds,'balanced','overall',controller.signal,e=>{events.push(e);if ((e as any).type==='cell') controller.abort()})).rejects.toThrow()
     expect(events.map(e=>e.type)).toEqual(['start','cell']);expect(analyst).not.toHaveBeenCalled()
   })
   it('completed screens freeze one project snapshot, retain source references and persist results', async () => {
-    const {engine,loader,directory}=await service();const events:any[]=[]
-    const result=await engine.screen(bounds,'balanced','transit',new AbortController().signal,e=>events.push(e))
-    expect(result.cells).toHaveLength(9);expect(loader).toHaveBeenCalledTimes(1)
-    expect(events.filter(e=>e.type==='cell')).toHaveLength(9)
-    expect(result.comparison_count).toBe(9)
-    expect(JSON.parse(await readFile(join(directory,'screens',result.id+'.json'),'utf8')).id).toBe(result.id)
+    const {engine,loader,directory,query,analyst}=await service();const events:any[]=[]
+    const result=await engine.screen(bounds,'balanced','overall',new AbortController().signal,e=>events.push(e))
+    expect(result.cells).toHaveLength(3);expect(query).toHaveBeenCalledTimes(5);expect(analyst).not.toHaveBeenCalled();expect(loader).toHaveBeenCalledTimes(1)
+    expect(events.filter(e=>e.type==='cell')).toHaveLength(3)
+    expect(result.comparison_count).toBe(0)
+    expect(JSON.parse(await readFile(join(directory,'scans',result.id+'.json'),'utf8')).id).toBe(result.id)
   })
   it('model analysis is explicit and rejects unissued snapshot paths', async () => {
     const {engine,analyst}=await service();const signal=new AbortController().signal
@@ -158,7 +171,7 @@ describe('public model evidence boundary', () => {
   })
   it('rejects fabricated, internal and metadata-only citations while accepting scoped public sources', async () => {
     const {engine}=await service();const ctx=await engine.context(point,new AbortController().signal)
-    const assessment: MapPreliminaryAssessment={summary:'可研究存量利用方向，适用性待核实。',opportunities:[{text:'结合城市背景核查更新实施条件。',evidence_refs:['REAL-P:PUB-REAL']}],cautions:[{text:'配套供给不代表新增需求。',evidence_refs:['activity']}],unknowns:[],next_steps:['补查权属与工程条件']}
+    const assessment: MapPreliminaryAssessment={summary:'可研究存量利用方向，适用性待核实。',opportunities:[{text:'结合城市背景核查更新实施条件。',evidence_refs:['REAL-P:PUB-REAL']}],cautions:[{text:'先核查同类配套的实际使用。',evidence_refs:['activity']}],unknowns:[],next_steps:['补查权属与工程条件']}
     expect(groundMapAssessment(assessment,ctx).cautions[0].evidence_refs[0]).toBe(ctx.groups[1].source_id)
     for (const ref of ['INVENTED','REAL-P:INTERNAL-REAL']) expect(()=>groundMapAssessment({...assessment,opportunities:[{text:'claim',evidence_refs:[ref]}]},ctx)).toThrow()
     ctx.local_projects[0].sources[0].content_status='metadata_only'

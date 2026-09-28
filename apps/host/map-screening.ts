@@ -8,6 +8,7 @@ import { dataCatalog, loadProjectEvidence } from '../../services/map-screening/p
 import { AmapEvidenceProvider } from '../../services/map-screening/provider'
 import { MapScreeningService } from '../../services/map-screening/service'
 import { analyzeMapContext } from '../../services/map-screening/analyst'
+import { resolveMapRegions } from '../../services/map-screening/regions'
 import { assertScreenBounds, SCREEN_PROFILES } from '../../packages/maps/screening-policy'
 
 const profileSchema = z.enum(['balanced', 'commercial', 'enterprise'])
@@ -25,7 +26,7 @@ function failure(res: Response, error: unknown) {
 }
 export function registerMapScreening(app: Express, settings: AmapSettings, store: Store) {
   const loadEvidence = () => loadProjectEvidence(store, config.ownerId)
-  const service = new MapScreeningService(new AmapEvidenceProvider(settings), join(config.dataDir, 'map-screening'), analyzeMapContext, loadEvidence)
+  const service = new MapScreeningService(new AmapEvidenceProvider(settings), join(config.dataDir, 'map-screening'), analyzeMapContext, loadEvidence, resolveMapRegions)
   let activeScreens = 0
   app.get('/api/maps/data', async (_req, res) => res.json(dataCatalog(await loadEvidence())))
   app.get('/api/maps/screening/profiles', (_req, res) => res.json(SCREEN_PROFILES))
@@ -46,8 +47,8 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
   })
   app.post('/api/maps/screening/scan', async (req, res) => {
     if (!settings.publicConfiguration().configured) return res.status(424).json({ code: 'MAP_NOT_CONFIGURED', detail: '请先连接高德地图。' })
-    if (activeScreens >= 1) return res.status(409).json({ code: 'MAP_SCAN_ACTIVE', detail: '已有区域筛选正在进行，请等待完成或先停止。' })
-    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['transit', 'activity', 'work_live', 'civic', 'projects']) }).strict()
+    if (activeScreens >= 1) return res.status(409).json({ code: 'MAP_SCAN_ACTIVE', detail: '已有区域标色正在进行，可先停止。' })
+    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','operations','resources','access']) }).strict()
     let body: z.infer<typeof bodySchema>
     try { body = bodySchema.parse(req.body); assertScreenBounds(body.bounds) }
     catch { return res.status(422).json({ code: 'MAP_SCAN_RANGE', detail: '请在街区范围内筛选，或放大地图后重试。' }) }
@@ -56,7 +57,7 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
     const emit = (event: unknown) => { if (!res.destroyed && !res.writableEnded) res.write(JSON.stringify(event) + '\n') }
     activeScreens++
     try { await service.screen(body.bounds, body.profile, body.theme, signal, emit) }
-    catch { emit({ type: 'error', message: signal.aborted ? '本轮筛选已停止或超过时间预算。已显示资料仅代表已完成的网格。' : '本轮区域筛选未完成，可稍后重试。' }) }
+    catch { emit({ type: 'error', message: signal.aborted ? '本轮标色已停止。' : '本轮区域筛选未完成，可稍后重试。' }) }
     finally { activeScreens--; if (!res.destroyed) res.end() }
   })
 }

@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from enum import StrEnum
+from enum import Enum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel
@@ -38,33 +38,33 @@ class MapAnchor(BaseModel):
     address: str | None = Field(None, max_length=500)
 
 
-class ResolutionStatus(StrEnum):
+class ResolutionStatus(Enum):
     provided_polygon = 'provided_polygon'
     place_point = 'place_point'
     ambiguous = 'ambiguous'
     uncovered = 'uncovered'
 
 
-class DataClass(StrEnum):
+class DataClass(Enum):
     synthetic = 'synthetic'
     public = 'public'
     internal = 'internal'
     semi_synthetic = 'semi_synthetic'
 
 
-class Visibility(StrEnum):
+class Visibility(Enum):
     public = 'public'
     internal = 'internal'
 
 
-class ContentStatus(StrEnum):
+class ContentStatus(Enum):
     full_text = 'full_text'
     excerpt = 'excerpt'
     metadata_only = 'metadata_only'
     uploaded = 'uploaded'
 
 
-class ParseStatus(StrEnum):
+class ParseStatus(Enum):
     extracted = 'extracted'
     empty = 'empty'
     ocr_required = 'ocr_required'
@@ -105,15 +105,15 @@ class Fact(BaseModel):
     )
     id: str = Field(..., min_length=1)
     kind: str = Field(..., min_length=1)
-    value: Inventory | str | float | bool | None
-    unit: str | None
+    value: Inventory | str | float | bool | None = None
+    unit: str | None = None
     source_id: str
     object_ref: str | None = None
     observed_at: str | None = None
     locator: str | None = None
 
 
-class Kind(StrEnum):
+class Kind(Enum):
     organizational_constraint = 'organizational_constraint'
     preference = 'preference'
     capability_lead = 'capability_lead'
@@ -122,11 +122,11 @@ class Kind(StrEnum):
     heuristic = 'heuristic'
 
 
-class Scope1(StrEnum):
+class Scope1(Enum):
     project = 'project'
 
 
-class AuthorityStatus(StrEnum):
+class AuthorityStatus(Enum):
     project_confirmed = 'project_confirmed'
     unverified = 'unverified'
 
@@ -139,10 +139,10 @@ class ExperienceRule(BaseModel):
     kind: Kind
     scope: Scope1
     predicate: str
-    value: str | float | bool | None
+    value: str | float | bool | None = None
     source_id: str
     authority_status: AuthorityStatus
-    supersedes: str | None
+    supersedes: str | None = None
     note: str
     project_id: str | None = None
     original_text: str | None = None
@@ -158,14 +158,14 @@ class InputEvent(BaseModel):
     revision: int | None = Field(None, ge=1)
 
 
-class CandidateId(StrEnum):
+class CandidateId(Enum):
     retain_and_reuse = 'retain_and_reuse'
     selective_rebuild = 'selective_rebuild'
     whole_site_rebuild = 'whole_site_rebuild'
     defer_and_investigate = 'defer_and_investigate'
 
 
-class Dimension(StrEnum):
+class Dimension(Enum):
     implementation = 'implementation'
     building = 'building'
     demand = 'demand'
@@ -174,7 +174,7 @@ class Dimension(StrEnum):
     resources = 'resources'
 
 
-class Status(StrEnum):
+class Status(Enum):
     supported = 'supported'
     conditional = 'conditional'
     unknown = 'unknown'
@@ -194,7 +194,7 @@ class Finding(BaseModel):
     unknowns: list[str]
 
 
-class Status1(StrEnum):
+class Status1(Enum):
     known = 'known'
     unknown = 'unknown'
     conflict = 'conflict'
@@ -206,25 +206,25 @@ class Metric(BaseModel):
     )
     key: str
     label: str
-    value: float | None
-    unit: str | None
+    value: float | None = None
+    unit: str | None = None
     status: Status1
     source_refs: list[str]
 
 
-class Status2(StrEnum):
+class Status2(Enum):
     conditional = 'conditional'
     blocked = 'blocked'
     investigate = 'investigate'
 
 
-class DemolitionScope(StrEnum):
+class DemolitionScope(Enum):
     none = 'none'
     partial = 'partial'
     whole_site = 'whole_site'
 
 
-class Severity(StrEnum):
+class Severity(Enum):
     high = 'high'
     medium = 'medium'
     low = 'low'
@@ -242,7 +242,7 @@ class Review(BaseModel):
     recommendation: str
 
 
-class Status3(StrEnum):
+class Status3(Enum):
     suggested = 'suggested'
     requested = 'requested'
 
@@ -269,17 +269,17 @@ class Impact(BaseModel):
     changed_paths: list[CandidateId]
 
 
-class Mode(StrEnum):
+class Mode(Enum):
     automatic = 'automatic'
     enterprise = 'enterprise'
 
 
-class ExecutionMode(StrEnum):
+class ExecutionMode(Enum):
     offline = 'offline'
     live = 'live'
 
 
-class Status4(StrEnum):
+class Status4(Enum):
     success = 'success'
     partial = 'partial'
     empty = 'empty'
@@ -287,7 +287,7 @@ class Status4(StrEnum):
     failed = 'failed'
 
 
-class AnalysisMethod(StrEnum):
+class AnalysisMethod(Enum):
     deterministic_checks = 'deterministic_checks'
     model_assisted = 'model_assisted'
 
@@ -305,7 +305,7 @@ class CapabilityResult(BaseModel):
     version: str
 
 
-class Status6(StrEnum):
+class Status6(Enum):
     running = 'running'
     completed = 'completed'
     failed = 'failed'
@@ -322,17 +322,17 @@ class RuntimeEvent(BaseModel):
     stage: str
     status: Status6
     message: str
-    artifact_ref: str | None
+    artifact_ref: str | None = None
     created_at: str
 
 
-class Role(StrEnum):
+class Role(Enum):
     investment_manager = 'investment_manager'
     planner = 'planner'
     executive = 'executive'
 
 
-class Kind1(StrEnum):
+class Kind1(Enum):
     retain = 'retain'
     partial_demolition = 'partial_demolition'
     whole_demolition = 'whole_demolition'
@@ -370,7 +370,7 @@ class CriterionJudgment(BaseModel):
     unknowns: list[str]
 
 
-class Criterion(StrEnum):
+class Criterion(Enum):
     implementation = 'implementation'
     building = 'building'
     demand = 'demand'
@@ -391,14 +391,14 @@ class ComparisonPacket(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    summary: str
+    summary: str = Field(..., max_length=96)
     criteria: list[ComparisonCriterion] = Field(..., max_length=6, min_length=3)
     tied_paths: list[CandidateId]
     unresolved_disagreements: list[str]
     followups: list[Followup] = Field(..., max_length=6, min_length=1)
 
 
-class Kind2(StrEnum):
+class Kind2(Enum):
     organizational_constraint = 'organizational_constraint'
     preference = 'preference'
     capability_lead = 'capability_lead'
@@ -407,7 +407,7 @@ class Kind2(StrEnum):
     heuristic = 'heuristic'
 
 
-class Predicate(StrEnum):
+class Predicate(Enum):
     no_whole_site_demolition = 'no_whole_site_demolition'
     prefer_phasing = 'prefer_phasing'
     renewal_experience = 'renewal_experience'
@@ -423,7 +423,7 @@ class ModelRule(BaseModel):
     )
     kind: Kind2
     predicate: Predicate
-    value: str | bool | None
+    value: str | bool | None = None
     original_text: str
     note: str
 
@@ -443,18 +443,18 @@ class ModelCall(BaseModel):
     )
     stage: str
     requested_model: str
-    returned_model: str | None
+    returned_model: str | None = None
     finish_reason: str
     input_tokens: int = Field(..., ge=0)
     output_tokens: int = Field(..., ge=0)
     duration_ms: int = Field(..., ge=0)
-    session_id: str | None
+    session_id: str | None = None
     cache_read_tokens: int | None = Field(None, ge=0)
     cache_write_tokens: int | None = Field(None, ge=0)
     error_code: str | None = None
 
 
-class Status7(StrEnum):
+class Status7(Enum):
     success = 'success'
     partial = 'partial'
     blocked = 'blocked'
@@ -482,7 +482,7 @@ class GeoPoint(BaseModel):
     source_id: str
 
 
-class MapScreenProfile(StrEnum):
+class MapScreenProfile(Enum):
     balanced = 'balanced'
     commercial = 'commercial'
     enterprise = 'enterprise'
@@ -498,24 +498,13 @@ class MapScreenBounds(BaseModel):
     north: float
 
 
-class Kind3(StrEnum):
+class Kind3(Enum):
     point = 'point'
     cell = 'cell'
 
 
 class RadiusM(RootModel[int]):
     root: int = Field(..., ge=100, le=1200)
-
-
-class MapScreenTarget(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    kind: Kind3
-    longitude: float = Field(..., ge=-180.0, le=180.0)
-    latitude: float = Field(..., ge=-90.0, le=90.0)
-    radius_m: RadiusM | None
-    bounds: MapScreenBounds | None
 
 
 class MapScreenPoi(BaseModel):
@@ -529,14 +518,14 @@ class MapScreenPoi(BaseModel):
     latitude: float
 
 
-class Key(StrEnum):
+class Key(Enum):
     transit = 'transit'
     activity = 'activity'
     work_live = 'work_live'
     civic = 'civic'
 
 
-class Status8(StrEnum):
+class Status8(Enum):
     available = 'available'
     failed = 'failed'
     capped = 'capped'
@@ -559,17 +548,17 @@ class MapScreenEvidence(BaseModel):
     label: str = Field(..., max_length=100)
     types_query: str = Field(..., max_length=150)
     status: Status8
-    reported_count: ReportedCount | None
-    sample: list[MapScreenPoi] = Field(..., max_length=5)
+    reported_count: ReportedCount | None = None
+    sample: list[MapScreenPoi] = Field(..., max_length=25)
     retrieved_at: str = Field(..., max_length=50)
-    issue: Issue | None
+    issue: Issue | None = None
 
 
 class Address(RootModel[str]):
     root: str = Field(..., max_length=500)
 
 
-class Status9(StrEnum):
+class Status9(Enum):
     complete = 'complete'
     partial = 'partial'
 
@@ -586,30 +575,19 @@ class MapScreenClaim(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    text: str = Field(..., max_length=180, min_length=1)
+    text: str = Field(..., max_length=48, min_length=1)
     evidence_refs: list[EvidenceRef] = Field(..., max_length=4, min_length=1)
 
 
 class Unknown(RootModel[str]):
-    root: str = Field(..., max_length=180)
+    root: str = Field(..., max_length=48)
 
 
 class NextStep(RootModel[str]):
-    root: str = Field(..., max_length=180)
+    root: str = Field(..., max_length=48)
 
 
-class MapPreliminaryAssessment(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    summary: str = Field(..., max_length=240, min_length=1)
-    opportunities: list[MapScreenClaim] = Field(..., max_length=3)
-    cautions: list[MapScreenClaim] = Field(..., max_length=3)
-    unknowns: list[Unknown] = Field(..., max_length=8)
-    next_steps: list[NextStep] = Field(..., max_length=3)
-
-
-class Status10(StrEnum):
+class Status10(Enum):
     completed = 'completed'
     unavailable = 'unavailable'
     failed = 'failed'
@@ -620,20 +598,7 @@ class Reason(RootModel[str]):
     root: str = Field(..., max_length=240)
 
 
-class MapScreenAnalysis(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    context_id: str = Field(..., max_length=100)
-    profile: MapScreenProfile
-    status: Status10
-    assessment: MapPreliminaryAssessment | None
-    model_calls: list[ModelCall] = Field(..., max_length=4)
-    reason: Reason | None
-    created_at: str = Field(..., max_length=50)
-
-
-class Tier(StrEnum):
+class Tier(Enum):
     pending = 'pending'
     strong = 'strong'
     moderate = 'moderate'
@@ -643,10 +608,10 @@ class Tier(StrEnum):
 
 
 class Rank(RootModel[int]):
-    root: int = Field(..., ge=1, le=9)
+    root: int = Field(..., ge=1, le=24)
 
 
-class Status11(StrEnum):
+class Status11(Enum):
     completed = 'completed'
     partial = 'partial'
 
@@ -655,15 +620,17 @@ class Note(RootModel[str]):
     root: str = Field(..., max_length=250)
 
 
-class MapScreenTheme(StrEnum):
-    transit = 'transit'
-    activity = 'activity'
-    work_live = 'work_live'
-    civic = 'civic'
-    projects = 'projects'
+class MapScreenTheme(Enum):
+    overall = 'overall'
+    implementation = 'implementation'
+    adaptation = 'adaptation'
+    demand = 'demand'
+    operations = 'operations'
+    resources = 'resources'
+    access = 'access'
 
 
-class Relation(StrEnum):
+class Relation(Enum):
     within_scope = 'within_scope'
     city_background = 'city_background'
 
@@ -719,12 +686,59 @@ class MapDataCatalog(BaseModel):
     notes: list[Note1]
 
 
+class Coordinate1Item(RootModel[list[float]]):
+    root: list[float] = Field(..., max_length=2, min_length=2)
+
+
+class Coordinate1(RootModel[list[Coordinate1Item]]):
+    root: list[Coordinate1Item] = Field(..., max_length=512, min_length=4)
+
+
+class MapRegionGeometry(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    type: Literal['Polygon']
+    coordinates: list[Coordinate1] = Field(..., max_length=20, min_length=1)
+
+
+class Key1(Enum):
+    implementation = 'implementation'
+    adaptation = 'adaptation'
+    demand = 'demand'
+    operations = 'operations'
+    resources = 'resources'
+    access = 'access'
+
+
+class State(Enum):
+    supported = 'supported'
+    conditional = 'conditional'
+    blocked = 'blocked'
+    unknown = 'unknown'
+
+
+class EvidenceRef1(RootModel[str]):
+    root: str = Field(..., max_length=200)
+
+
+class MapDecisionFactor(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: Key1
+    state: State
+    summary: str = Field(..., max_length=60, min_length=1)
+    evidence_refs: list[EvidenceRef1] = Field(..., max_length=4)
+    quote: str = Field(..., max_length=180)
+
+
 class Scope(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
     name: str = Field(..., max_length=200, min_length=1)
-    geometry: Geometry | None
+    geometry: Geometry | None = None
     coordinate_encoding: Literal['WGS84']
     legal_parcel_confirmed: bool
     city: str | None = Field(None, max_length=100)
@@ -784,7 +798,7 @@ class DecisionPacket(BaseModel):
     missing_fields: list[str]
     artifact_refs: list[str]
     runtime: str
-    model: str | None
+    model: str | None = None
     comparison: ComparisonPacket | None = None
     model_calls: list[ModelCall] | None = None
     research: ResearchTrace | None = None
@@ -823,6 +837,18 @@ class ScenarioProposal(BaseModel):
     unresolved: list[str]
 
 
+class MapScreenTarget(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    kind: Kind3
+    longitude: float = Field(..., ge=-180.0, le=180.0)
+    latitude: float = Field(..., ge=-90.0, le=90.0)
+    radius_m: RadiusM | None = None
+    bounds: MapScreenBounds | None = None
+    geometry: MapRegionGeometry | None = None
+
+
 class MapScreenContext(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -833,14 +859,39 @@ class MapScreenContext(BaseModel):
     coordinate_encoding: Literal['GCJ-02']
     created_at: str = Field(..., max_length=50)
     expires_at: str = Field(..., max_length=50)
-    address: Address | None
+    address: Address | None = None
     groups: list[MapScreenEvidence] = Field(..., max_length=4)
     status: Status9
     gaps: list[Gap] = Field(..., max_length=12)
     metric_note: str = Field(..., max_length=500)
-    city: str | None
+    city: str | None = None
     local_projects: list[MapProjectEvidence]
     project_revision: str = Field(..., max_length=80)
+
+
+class MapPreliminaryAssessment(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    summary: str = Field(..., max_length=64, min_length=1)
+    opportunities: list[MapScreenClaim] = Field(..., max_length=1)
+    cautions: list[MapScreenClaim] = Field(..., max_length=1)
+    unknowns: list[Unknown] = Field(..., max_length=1)
+    next_steps: list[NextStep] = Field(..., max_length=1)
+    factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
+
+
+class MapScreenAnalysis(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    context_id: str = Field(..., max_length=100)
+    profile: MapScreenProfile
+    status: Status10
+    assessment: MapPreliminaryAssessment | None = None
+    model_calls: list[ModelCall] = Field(..., max_length=4)
+    reason: Reason | None = None
+    created_at: str = Field(..., max_length=50)
 
 
 class MapScreenCell(BaseModel):
@@ -850,10 +901,15 @@ class MapScreenCell(BaseModel):
     id: str = Field(..., max_length=80)
     label: str = Field(..., max_length=40)
     bounds: MapScreenBounds
-    context: MapScreenContext | None
+    context: MapScreenContext | None = None
     tier: Tier
-    rank: Rank | None
+    rank: Rank | None = None
     metric_value: int | None = Field(..., ge=0)
+    geometry: MapRegionGeometry | None = None
+    anchor: list[float] | None = Field(None, max_length=2, min_length=2)
+    boundary_source: str | None = Field(None, max_length=250)
+    area_m2: float | None = Field(None, ge=0.0)
+    factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
 
 
 class MapScreenResult(BaseModel):
@@ -864,9 +920,9 @@ class MapScreenResult(BaseModel):
     bounds: MapScreenBounds
     profile: MapScreenProfile
     created_at: str = Field(..., max_length=50)
-    cells: list[MapScreenCell] = Field(..., max_length=9)
+    cells: list[MapScreenCell] = Field(..., max_length=24)
     status: Status11
     method: str = Field(..., max_length=100)
-    comparison_count: int = Field(..., ge=0, le=9)
+    comparison_count: int = Field(..., ge=0, le=24)
     notes: list[Note] = Field(..., max_length=10)
     theme: MapScreenTheme

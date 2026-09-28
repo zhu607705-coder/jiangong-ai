@@ -14,7 +14,8 @@ export type MapScreenProfile = "balanced" | "commercial" | "enterprise";
  * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenTheme".
  */
-export type MapScreenTheme = "transit" | "activity" | "work_live" | "civic" | "projects";
+export type MapScreenTheme =
+  "overall" | "implementation" | "adaptation" | "demand" | "operations" | "resources" | "access";
 
 export interface ProjectInput {
   schema_version: "2.0";
@@ -461,6 +462,19 @@ export interface MapScreenTarget {
   latitude: number;
   radius_m: number | null;
   bounds: MapScreenBounds | null;
+  geometry?: MapRegionGeometry | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "MapRegionGeometry".
+ */
+export interface MapRegionGeometry {
+  type: "Polygon";
+  /**
+   * @minItems 1
+   * @maxItems 20
+   */
+  coordinates: number[][][];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -485,7 +499,7 @@ export interface MapScreenEvidence {
   status: "available" | "failed" | "capped";
   reported_count: number | null;
   /**
-   * @maxItems 5
+   * @maxItems 25
    */
   sample: MapScreenPoi[];
   retrieved_at: string;
@@ -554,21 +568,39 @@ export interface MapScreenClaim {
 export interface MapPreliminaryAssessment {
   summary: string;
   /**
-   * @maxItems 3
+   * @maxItems 1
    */
   opportunities: MapScreenClaim[];
   /**
-   * @maxItems 3
+   * @maxItems 1
    */
   cautions: MapScreenClaim[];
   /**
-   * @maxItems 8
+   * @maxItems 1
    */
   unknowns: string[];
   /**
-   * @maxItems 3
+   * @maxItems 1
    */
   next_steps: string[];
+  /**
+   * @maxItems 6
+   */
+  factors?: MapDecisionFactor[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "MapDecisionFactor".
+ */
+export interface MapDecisionFactor {
+  key: "implementation" | "adaptation" | "demand" | "operations" | "resources" | "access";
+  state: "supported" | "conditional" | "blocked" | "unknown";
+  summary: string;
+  /**
+   * @maxItems 4
+   */
+  evidence_refs: string[];
+  quote: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -598,6 +630,18 @@ export interface MapScreenCell {
   tier: "pending" | "strong" | "moderate" | "sparse" | "empty" | "incomplete";
   rank: number | null;
   metric_value: number | null;
+  geometry?: MapRegionGeometry;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  anchor?: number[];
+  boundary_source?: string;
+  area_m2?: number;
+  /**
+   * @maxItems 6
+   */
+  factors?: MapDecisionFactor[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -609,7 +653,7 @@ export interface MapScreenResult {
   profile: MapScreenProfile;
   created_at: string;
   /**
-   * @maxItems 9
+   * @maxItems 24
    */
   cells: MapScreenCell[];
   status: "completed" | "partial";

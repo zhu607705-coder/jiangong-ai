@@ -1,3 +1,4 @@
+import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../skills/investment-brief'
 import { randomUUID } from 'node:crypto'
 import { Store, type RunRecord } from '../../apps/host/store'
 import { config } from '../../apps/host/config'
@@ -65,7 +66,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   const live = await LiveSession.open(run.id, signal)
   try {
     async function cachedStage<T>(kind: string, input: unknown, execute: () => Promise<{ value: T; sessionId: string }>): Promise<{ value: T; sessionId: string }> {
-      const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, policy: 'live-stage-v1', input })
+      const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, policy: 'live-stage-v2', brief_skill: BRIEF_SKILL_VERSION, input })
       const cached = (await store.db.query<{ id: string; payload: { value: T; sessionId: string } }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [run.project_id, kind, key])).rows[0]
       if (cached) { artifactRefs.push(cached.id); impact.reused.push(kind); await store.addEvent(run.id, kind, 'reused', '复用已验证的模型阶段工件', cached.id); return cached.payload }
       const result = await execute(), id = `ART-${randomUUID()}`
@@ -76,7 +77,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     const tasks = roles.map(async role => {
       const roleProject = specialistSnapshot(modelProject, role.id)
       const { mode: _mode, events: _events, ...completeToolInput } = roleProject
-      const key = digest({ policy: 'model-v3', model: config.DEEPSEEK_MODEL, day, role: role.id, actual_model_input: completeToolInput })
+      const key = digest({ policy: 'model-v4', brief_skill: BRIEF_SKILL_VERSION, model: config.DEEPSEEK_MODEL, day, role: role.id, actual_model_input: completeToolInput })
       const cached = (await store.db.query<{ id: string; payload: CapabilityResult }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [run.project_id, role.id, key])).rows[0]
       if (cached) { results.set(role.id, validate<CapabilityResult>('CapabilityResult', cached.payload)); impact.reused.push(role.id); artifactRefs.push(cached.id); await store.addEvent(run.id, role.id, 'reused', '模型输入依赖未变化，复用已校验工件', cached.id); return }
       impact.invalidated.push(role.id)
@@ -118,7 +119,8 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     impact.invalidated.push('scenarios', 'critic', 'comparator', 'report')
     await store.addEvent(run.id, 'scenarios', 'running', '模型正在生成可区分的实施路径，包含暂缓基线')
     const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings })
-    const scenarioPrompt = `在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；暂缓基线只能 investigate/retain。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>`
+    const referenceCases = selectReferenceCases(JSON.stringify(modelView(modelProject)))
+    const scenarioPrompt = `在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；暂缓基线只能 investigate/retain。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>\n以下案例只提供实施机制，不作为本项目事实：${JSON.stringify(referenceCases)}`
     const scenarioResponse = await cachedStage<ScenarioProposal>('scenarios', { shared, candidate_ids: full.candidate_ids }, async () => {
       let response = await live.call<ScenarioProposal>('scenarios', scenarioPrompt, 'ScenarioProposal', [], full.candidate_ids)
       try { response.value = enforceScenarioPolicy(modelProject, response.value) }
@@ -136,8 +138,8 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     await store.addEvent(run.id, 'critic', 'completed', '独立反证结果已记录，分歧不会被投票消除', `dsh:${reviewed.sessionId}`)
     await store.addEvent(run.id, 'comparator', 'running', '按硬约束和共同证据比较路径；允许并列和暂缓')
     const compared = await cachedStage<ComparisonPacket>('comparator', { shared, proposal, reviews }, async () => {
-      const response = await live.call<ComparisonPacket>('comparator', `比较下面已通过工具硬约束检查的候选。实际候选只有 ${JSON.stringify(proposal.scenarios.map(s => s.id))}，不能添加池中未入选的路径。不得改变路径状态，不用多数票或自造成功概率。按六个维度给出所有实际候选的条件化判断，每个 conclusion 不超过 45 字，unknowns 最多两个短语；阻断路径不能进入 tied_paths。证据不足可并列，也可仅建议调查。summary 不超过 120 字，只说明现阶段可做什么、不能确定什么。followups 只取 3 项最重要调查，每条 why 不超过 50 字；status=suggested，priority 1–3。分歧最多 3 条。所有 evidence_refs 只能来自 sources.id。保持合法且简短的 JSON 工具参数。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>\n<independent_review>${JSON.stringify(reviews)}</independent_review>`, 'ComparisonPacket', [], proposal.scenarios.map(s => s.id))
-      validateComparison(modelProject, proposal, response.value); return response
+      const response = await live.call<ComparisonPacket>('comparator', `比较下面已通过工具硬约束检查的候选。实际候选只有 ${JSON.stringify(proposal.scenarios.map(s => s.id))}，不能添加池中未入选的路径。不得改变路径状态，不用多数票或自造成功概率。按六个维度给出所有实际候选的条件化判断，每个 conclusion 不超过 45 字，unknowns 最多两个短语；阻断路径不能进入 tied_paths。证据不足可并列，也可仅建议调查。summary 不超过 96 字，直接说明建议路径、关键条件与下一步，不复述免责声明。followups 只取 2 项最重要调查，每条 why 不超过 50 字；status=suggested，priority 1–3。分歧最多 3 条。所有 evidence_refs 只能来自 sources.id。保持合法且简短的 JSON 工具参数。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>\n<independent_review>${JSON.stringify(reviews)}</independent_review>`, 'ComparisonPacket', [], proposal.scenarios.map(s => s.id))
+      validateComparison(modelProject, proposal, response.value); assertBriefProse(response.value); return response
     })
     const comparison = validateComparison(modelProject, proposal, compared.value)
     impact.invalidated = impact.invalidated.filter(kind => !impact.reused.includes(kind))

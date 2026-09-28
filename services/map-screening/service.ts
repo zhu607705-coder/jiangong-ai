@@ -1,11 +1,15 @@
+import { booleanValid } from '@turf/boolean-valid'
+import { decisionFactors } from '../../packages/maps/decision-factors'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { validate } from '../../packages/contracts/validate'
-import { EVIDENCE_GROUPS, INVESTIGATION_GAPS, SCREEN_METHOD, assertScreenBounds, classifyCells, contextComparable, screeningGrid } from '../../packages/maps/screening-policy'
+import { EVIDENCE_GROUPS, INVESTIGATION_GAPS, SCREEN_METHOD, assertScreenBounds, classifyCells, contextComparable } from '../../packages/maps/screening-policy'
 import type { MapScreenAnalysis, MapScreenBounds, MapScreenContext, MapScreenEvidence, MapScreenPoi, MapScreenProfile, MapScreenResult, MapScreenTarget, MapScreenTheme } from '../../apps/host/generated/contracts'
 import { fingerprint, type MapProvider } from './provider'
-import { evidenceAt, type ProjectEvidenceSnapshot } from './project-evidence'
+import { targetContains, evidenceAt, type ProjectEvidenceSnapshot } from './project-evidence'
+
+import type { RegionResolver } from './regions'
 
 export type ContextAnalyst = (context: MapScreenContext, profile: MapScreenProfile, signal: AbortSignal) => Promise<MapScreenAnalysis>
 const round = (value: number) => Math.round(value * 1e6) / 1e6
@@ -16,7 +20,7 @@ export function normalizeEvidence(key: typeof EVIDENCE_GROUPS[number], raw: any,
   if (!Number.isSafeInteger(count) || count! < 0 || !Array.isArray(raw?.pois)) throw new Error('INVALID_AMAP_COUNTS')
   const sample: MapScreenPoi[] = []
   const seen = new Set<string>()
-  for (const p of raw.pois.slice(0, 5)) {
+  for (const p of raw.pois.slice(0, 25)) {
     const parts = typeof p.location === 'string' ? p.location.split(',') : []
     const [longitude, latitude] = parts.map(Number)
     if (typeof p.id !== 'string' || typeof p.name !== 'string' || parts.length !== 2 || parts.some((v: string) => !v.trim()) || !Number.isFinite(longitude) || !Number.isFinite(latitude) || Math.abs(longitude) > 180 || Math.abs(latitude) > 90 || seen.has(p.id)) continue
@@ -26,17 +30,21 @@ export function normalizeEvidence(key: typeof EVIDENCE_GROUPS[number], raw: any,
   if (count! > 0 && !sample.length) throw new Error('INVALID_AMAP_SAMPLE')
   if (count === 0 && raw.pois.length) throw new Error('INVALID_AMAP_COUNTS')
   return { key: key.key, source_id: sourceId, label: key.label, types_query: key.types, status: count! >= 600 ? 'capped' : 'available', reported_count: count,
-    sample, retrieved_at: stamp(), issue: count! >= 600 ? '检索数量较大，完整性需补核；完整性未经核查，不纳入数量分级。' : null }
+    sample, retrieved_at: stamp(), issue: count! >= 600 ? '样本较多，可缩小范围查看。' : null }
 }
 
 export function normalizedTarget(value: unknown): MapScreenTarget {
   const target = validate<MapScreenTarget>('MapScreenTarget', value)
-  if (target.kind === 'point' && (target.bounds !== null || target.radius_m === null)) throw new Error('INVALID_TARGET')
+  if (target.kind === 'point' && (target.bounds !== null || target.radius_m === null || !!target.geometry)) throw new Error('INVALID_TARGET')
   if (target.kind === 'cell') {
     if (!target.bounds || target.radius_m !== null) throw new Error('INVALID_TARGET')
     assertScreenBounds(target.bounds)
-    if (Math.abs(target.longitude - (target.bounds.west + target.bounds.east) / 2) > 1e-5 || Math.abs(target.latitude - (target.bounds.south + target.bounds.north) / 2) > 1e-5) throw new Error('INVALID_CELL_CENTER')
+    if (!target.geometry && (Math.abs(target.longitude - (target.bounds.west + target.bounds.east) / 2) > 1e-5 || Math.abs(target.latitude - (target.bounds.south + target.bounds.north) / 2) > 1e-5)) throw new Error('INVALID_CELL_CENTER')
   }
+  if (target.geometry) {
+    if (!booleanValid(target.geometry as any) || !target.bounds || target.geometry.coordinates.some(ring => ring.some(([x,y]) => x < target.bounds!.west-1e-7 || x > target.bounds!.east+1e-7 || y < target.bounds!.south-1e-7 || y > target.bounds!.north+1e-7))) throw new Error('INVALID_REGION_GEOMETRY')
+  }
+  if (target.geometry && !targetContains(target, target.longitude, target.latitude)) throw new Error('INVALID_REGION_ANCHOR')
   return { ...target, longitude: round(target.longitude), latitude: round(target.latitude), bounds: target.bounds ? Object.fromEntries(Object.entries(target.bounds).map(([k, v]) => [k, round(v)])) as unknown as MapScreenBounds : null }
 }
 
@@ -46,7 +54,8 @@ export class MapScreeningService {
   private activeAnalyses = 0
   private analyzing = new Set<string>()
   constructor(private provider: MapProvider, private directory: string, private analyst: ContextAnalyst,
-    private loadEvidence: () => Promise<ProjectEvidenceSnapshot> = async () => ({revision: 'empty', projects: [], syntheticCount: 0})) {}
+    private loadEvidence: () => Promise<ProjectEvidenceSnapshot> = async () => ({revision: 'empty', projects: [], syntheticCount: 0}),
+    private regions: RegionResolver = async () => ({cells:[],notes:['此处暂未取得街区边界，可点选建筑研判。']})) {}
 
   async context(value: unknown, signal: AbortSignal, snapshot?: ProjectEvidenceSnapshot): Promise<MapScreenContext> {
     signal.throwIfAborted()
@@ -61,7 +70,7 @@ export class MapScreeningService {
       return structuredClone(rebound)
     }
     const id = 'MAPCTX-' + randomUUID(), created = stamp()
-    const params: Record<string, string> = { offset: '5', page: '1', extensions: 'base', children: '0' }
+    const params: Record<string, string> = { offset: '25', page: '1', extensions: 'base', children: '0' }
     if (target.kind === 'point') Object.assign(params, { location: `${target.longitude},${target.latitude}`, radius: String(target.radius_m), sortrule: 'distance' })
     else {
       const b = target.bounds!
@@ -71,10 +80,12 @@ export class MapScreeningService {
       const sourceId = `${id}:${group.key}`
       try {
         const data = await this.provider.query(target.kind === 'point' ? '/v3/place/around' : '/v3/place/polygon', { ...params, types: group.types }, signal)
-        return normalizeEvidence(group, data, sourceId)
+        const normalized = normalizeEvidence(group, data, sourceId)
+        if (target.geometry) { normalized.sample = normalized.sample.filter(p => targetContains(target,p.longitude,p.latitude)); normalized.reported_count = null }
+        return normalized
       } catch {
         signal.throwIfAborted()
-        return { key: group.key, source_id: sourceId, label: group.label, types_query: group.types, status: 'failed' as const, reported_count: null, sample: [], retrieved_at: stamp(), issue: '本轮来源未成功返回；不把失败记为零。' }
+        return { key: group.key, source_id: sourceId, label: group.label, types_query: group.types, status: 'failed' as const, reported_count: null, sample: [], retrieved_at: stamp(), issue: '来源暂未返回。' }
       }
     }))
     let address: string | null = null, city: string | null = null
@@ -92,7 +103,7 @@ export class MapScreeningService {
       expires_at: new Date(Date.now() + (groups.every(g => g.status !== 'failed') ? 600_000 : 30_000)).toISOString(), address, city, groups,
       local_projects: evidenceAt(snapshot, target, city), project_revision: snapshot.revision,
       status: groups.every(g => g.status === 'available') ? 'complete' : 'partial', gaps: INVESTIGATION_GAPS,
-      metric_note: '数量是高德检索报告的匹配记录，样例只保留前五条；可能含出入口、子场所及重复实体，不是独立建筑、人口、客流或真实需求。' })
+      metric_note: '场所按高德分类检索；保留至多25个样本，并按所选多边形过滤。' })
     if (this.contexts.size >= 120) this.contexts.delete(this.contexts.keys().next().value!)
     this.contexts.set(key, result)
     await this.save('contexts', id, result)
@@ -107,12 +118,16 @@ export class MapScreeningService {
     if (Date.parse(context.expires_at) < Date.now()) throw new Error('CONTEXT_EXPIRED')
     const key = id + ':' + profile, cached = this.analyses.get(key)
     if (cached?.status === 'completed') return structuredClone(cached)
-    if (context.groups.filter(g => g.status === 'available').length < 2) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用周边资料不足，保留已取得事实，暂不生成投资潜力解读。', created_at: stamp() }
+    if (context.groups.filter(g => g.status === 'available').length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return { context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
     this.activeAnalyses++; this.analyzing.add(key)
     try {
       const analysis = validate<MapScreenAnalysis>('MapScreenAnalysis', await this.analyst(context, profile, signal))
       signal.throwIfAborted()
+      if (analysis.assessment) {
+        const extracted = analysis.assessment.factors || []
+        analysis.assessment.factors = decisionFactors(context).map(f => f.state === 'unknown' ? extracted.find(e => e.key === f.key) || f : f)
+      }
       if (this.analyses.size >= 120) this.analyses.delete(this.analyses.keys().next().value!)
       if (analysis.status === 'completed') this.analyses.set(key, analysis)
       await this.save('analyses', id + '-' + profile, analysis)
@@ -121,25 +136,36 @@ export class MapScreeningService {
   }
 
   async screen(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, emit: (event: unknown) => void): Promise<MapScreenResult> {
-    const cells = screeningGrid(bounds), id = 'MAPSCAN-' + randomUUID()
-    const snapshot = await this.loadEvidence()
-    emit({ type: 'start', id, bounds, profile, theme, cells })
-    for (let i = 0; i < cells.length; i++) {
+    assertScreenBounds(bounds)
+    const id='MAPSCAN-'+randomUUID(), snapshot=await this.loadEvidence()
+    const {cells,notes}=await this.regions(bounds,snapshot,signal)
+    signal.throwIfAborted()
+    emit({type:'start',id,bounds,profile,theme,cells})
+    // One shared map snapshot, not 5 requests multiplied by every polygon.
+    // POI samples are filtered into objects; counts never enter the decision.
+    let shared:MapScreenContext|null=null
+    if(cells.length) shared=await this.context({kind:'cell',bounds,radius_m:null,longitude:(bounds.west+bounds.east)/2,latitude:(bounds.south+bounds.north)/2},signal,snapshot)
+    for(let i=0;i<cells.length;i++) {
       signal.throwIfAborted()
-      const cell = cells[i], b = cell.bounds
-      cell.context = await this.context({ kind: 'cell', bounds: b, radius_m: null, longitude: (b.west + b.east) / 2, latitude: (b.south + b.north) / 2 }, signal, snapshot)
-      cell.tier = 'pending'
-      emit({ type: 'cell', cell, completed: i + 1, total: cells.length })
+      const cell=cells[i],b=cell.bounds,anchor=cell.anchor||[(b.west+b.east)/2,(b.south+b.north)/2]
+      const target=normalizedTarget({kind:'cell',bounds:b,geometry:cell.geometry, radius_m:null,longitude:anchor[0],latitude:anchor[1]})
+      const context=validate<MapScreenContext>('MapScreenContext',{
+        ...shared!,id:'MAPCTX-'+randomUUID(),target,
+        groups:shared!.groups.map(g=>({...g,reported_count:null,sample:g.sample.filter(p=>targetContains(target,p.longitude,p.latitude))})),
+        local_projects:evidenceAt(snapshot,target,shared!.city,cell.boundary_source?.startsWith('project:') ? cell.boundary_source.slice(8) : undefined),
+      })
+      await this.save('contexts',context.id,context)
+      cell.context=context
+      const classified=classifyCells([cell],theme)[0]
+      cells[i]=classified
+      emit({type:'cell',cell:classified,completed:i+1,total:cells.length})
     }
-    const classified = classifyCells(cells, theme)
-    const result = validate<MapScreenResult>('MapScreenResult', { id, bounds, profile, theme, created_at: stamp(), cells: classified,
-      status: classified.every(c => c.metric_value !== null) ? 'completed' : 'partial', method: SCREEN_METHOD,
-      comparison_count: classified.filter(c => c.metric_value !== null).length,
-      notes: ['分析格网不是法定地块或建筑边界。', '颜色为所选指标的固定数量分级，不是综合投资分数或收益预测。', '项目资料按实际范围关联；同城政策仅作背景，不推断单地块适用性。', '图例固定；不同网格面积或时点的记录数不能直接比较密度或变化。'] })
-    await this.save('screens', id, result)
-    emit({ type: 'complete', result })
-    return result
+    const result=validate<MapScreenResult>('MapScreenResult',{id,bounds,profile,theme,created_at:stamp(),cells,
+      status:cells.length?'completed':'partial',method:SCREEN_METHOD,
+      comparison_count:cells.filter(c=>c.tier!=='incomplete').length,notes})
+    await this.save('scans',id,result);emit({type:'complete',result});return result
   }
+
   private async save(folder: string, id: string, value: unknown) {
     await mkdir(join(this.directory, folder), { recursive: true })
     await writeFile(join(this.directory, folder, id + '.json'), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 })

@@ -32,7 +32,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
   const [buildingControl, setBuildingControl] = useState(false)
   const searchVersion = useRef(0), selectionVersion = useRef(0)
   const [profile, setProfile] = useState<MapScreenProfile>('balanced')
-  const [theme, setTheme] = useState<MapScreenTheme>('transit'), [dataOpen, setDataOpen] = useState(false)
+  const [theme, setTheme] = useState<MapScreenTheme>('overall'), [dataOpen, setDataOpen] = useState(false)
   const [screenCells, setScreenCells] = useState<MapScreenCell[]>([]), [screenResult, setScreenResult] = useState<MapScreenResult | null>(null)
   const [screenRunning, setScreenRunning] = useState(false), [screenProgress, setScreenProgress] = useState(0), [screenError, setScreenError] = useState(''), [screenStale, setScreenStale] = useState(false)
   const [selectedCell, setSelectedCell] = useState<MapScreenCell | null>(null)
@@ -49,8 +49,8 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
   function clearSelection() { selectionVersion.current++; setSelection(null); setSelectedCell(null); setProjectPreview(false); setExpanded(false); setDetails(null); setDetailLoading(false) }
   const selectRef = useRef(selectPlace); selectRef.current = selectPlace
   function chooseCell(cell: MapScreenCell) {
-    if (!cell.context) { setNotice(screenRunning ? '这个网格还在汇集资料，请稍候。' : '这个网格尚未完成，请重新运行区域初筛。'); return }
-    selectPlace({ id: cell.context.id, kind: 'point', name: `${cell.label} · 初筛网格`, longitude: cell.context.target.longitude, latitude: cell.context.target.latitude, coordinate_encoding: 'GCJ-02', category: '分析格网（非宗地）' }, false)
+    if (!cell.context) { setNotice(screenRunning ? '正在读取街区资料。' : '请重新读取此街区。'); return }
+    selectPlace({ id: cell.context.id, kind: 'point', name: cell.label, longitude: cell.context.target.longitude, latitude: cell.context.target.latitude, coordinate_encoding: 'GCJ-02', category: '街区' }, false)
     setSelectedCell(cell)
   }
   const chooseCellRef = useRef(chooseCell); chooseCellRef.current = chooseCell
@@ -146,27 +146,28 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     const current = map.current, api = sdk.current
     if (!current || !api || phase !== 'ready') return
     marker.current?.setMap(null); marker.current = null
-    if (!selection) return
+    if (!selection || selectedCell) return
     const point = document.createElement('div'); point.className = 'atlas-marker'
     const core = document.createElement('span'); core.className = 'atlas-marker-core'; point.append(core)
     const label = document.createElement('span'); label.className = 'atlas-marker-label'; label.textContent = selection.name; point.append(label)
     marker.current = new api.Marker({ position: [selection.longitude, selection.latitude], content: point, anchor: 'center', bubble: false, zIndex: 200 })
     current.add(marker.current)
-  }, [selection, phase])
+  }, [selection, selectedCell?.id, phase])
   useEffect(() => {
     const current = map.current, api = sdk.current
     if (!current || !api || phase !== 'ready') return
     current.remove(screenOverlays.current); screenOverlays.current = []
     for (const cell of screenCells) {
+      if (!cell.geometry) continue
       const b = cell.bounds, color = SCREEN_TIERS[cell.tier].color
-      const polygon = new api.Polygon({ path: [[b.west,b.south],[b.east,b.south],[b.east,b.north],[b.west,b.north],[b.west,b.south]], fillColor: color,
+      const polygon = new api.Polygon({ path: cell.geometry?.coordinates as AMap.Vector2[][], fillColor: color,
         fillOpacity: cell.tier === 'pending' ? .05 : .27, strokeColor: color, strokeWeight: selectedCell?.id === cell.id ? 3 : 1.5, strokeStyle: cell.tier === 'incomplete' ? 'dashed' : 'solid', bubble: false, zIndex: 130 })
       polygon.on('click', () => chooseCellRef.current(cell))
-      const label = document.createElement('button'); label.type = 'button'; label.className = 'screen-grid-label'; label.textContent = cell.id
+      const label = document.createElement('button'); label.type = 'button'; label.className = 'screen-grid-label'; label.textContent = cell.label
       label.setAttribute('aria-label', `查看${cell.label}初筛`)
       label.style.borderColor = color
       label.onclick = event => { event.stopPropagation(); chooseCellRef.current(cell) }
-      const pin = new api.Marker({ position: [(b.west+b.east)/2,(b.south+b.north)/2], content: label, anchor: 'center', bubble: false, zIndex: 140 })
+      const pin = new api.Marker({ position: cell.anchor as AMap.Vector2, content: label, anchor: 'center', bubble: false, zIndex: 140 })
       screenOverlays.current.push(polygon, pin)
     }
     current.add(screenOverlays.current)
@@ -237,25 +238,25 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     </div>
     <ScreeningControls theme={theme} onTheme={value => {
       setTheme(value)
-      if (screenResult) { const cells = classifyCells(screenResult.cells, value); setScreenCells(cells); setScreenResult({...screenResult, theme: value, cells, status: cells.every(c => c.metric_value !== null) ? 'completed' : 'partial', comparison_count: cells.filter(c => c.metric_value !== null).length}); setSelectedCell(current => current ? cells.find(c => c.id === current.id) || null : null) }
+      if (screenResult) { const cells = classifyCells(screenResult.cells, value); setScreenCells(cells); setScreenResult({...screenResult, theme: value, cells, status: cells.length ? 'completed' : 'partial', comparison_count: cells.filter(c => c.tier !== 'incomplete').length}); setSelectedCell(current => current ? cells.find(c => c.id === current.id) || null : null) }
     }} running={screenRunning} completed={screenProgress}
       cells={screenCells} result={screenResult} error={screenError} enabled={interactive} stale={screenStale}
-      onScan={() => void startScreen()} onCancel={() => { screenAbort.current?.abort(); screenVersion.current++; setScreenRunning(false); setScreenCells(cells => cells.map(c => ({ ...c, tier: 'incomplete' }))); setScreenError('本轮已停止；灰色网格尚未完成比较。') }} onClear={clearScreen} onCell={chooseCell} onData={() => setDataOpen(true)} />
+      onScan={() => void startScreen()} onCancel={() => { screenAbort.current?.abort(); screenVersion.current++; setScreenRunning(false); setScreenCells(cells => cells.map(c => ({ ...c, tier: 'incomplete' }))); setScreenError('已停止。') }} onClear={clearScreen} onCell={chooseCell} onData={() => setDataOpen(true)} />
     {dataOpen && <DataSourcesPanel onClose={() => setDataOpen(false)} onOpenProject={id => { setDataOpen(false); onOpenProject(id) }} />}
-    <div className="atlas-status glass-panel"><i className={interactive ? 'is-live' : ''} />{interactive ? `高德地图 · ${satellite ? '卫星影像' : webgl && camera.pitch > 0 ? '3D 城市' : '2D 浏览'}` : phase === 'loading' ? '地图连接中' : '地图待连接'}<span>空间探索</span></div>
+    <div className="atlas-status glass-panel"><i className={interactive ? 'is-live' : ''} />{interactive ? `高德地图 · ${satellite ? '卫星影像' : webgl && camera.pitch > 0 ? '3D 城市' : '2D 浏览'}` : phase === 'loading' ? '地图连接中' : '地图待连接'}</div>
 
     {phase !== 'ready' && <div className="atlas-connection">
       <div className="atlas-orbit" aria-hidden="true"><IconCube size={56} stroke={1} /><span /><span /></div>
-      <div className="map-eyebrow">A NEW PERSPECTIVE ON THE CITY</div>
+      <div className="map-eyebrow">建工 AI</div>
       <h1>{phase === 'loading' ? '正在展开城市空间' : phase === 'unconfigured' ? '从一张真实地图开始' : '地图连接暂未完成'}</h1>
       <p>{phase === 'loading' ? '正在连接高德底图与地点服务…' : phase === 'unconfigured' ? '连接高德后，缩放街区、查看 3D 建筑，\n点选感兴趣的位置，再深入了解。' : mapError}</p>
       {phase !== 'loading' && <button className="map-primary" onClick={() => setSettings(true)}><IconKeyVisual />{config?.configured ? '检查地图配置' : '连接高德地图'}<IconArrowRight size={17} /></button>}
       {phase === 'error' && <button className="map-text-button" onClick={() => window.location.reload()}>重新加载地图</button>}
-      {phase === 'unconfigured' && <small>尚未配置地图 Key，当前未显示真实地图内容。</small>}
+      {phase === 'unconfigured' && <small>请配置地图 Key</small>}
     </div>}
 
     {(selection || projectPreview && project) && <aside className={`atlas-inspector glass-panel ${expanded ? 'is-expanded' : ''} ${selection ? 'with-assessment' : ''}`} aria-label={expanded ? '地点详细信息' : '选中对象简要信息'}>
-      <div className="map-card-heading"><span className="map-eyebrow">{projectPreview ? 'PROJECT / 已选项目' : expanded ? 'PLACE / 地点详情' : 'SELECTED / 已选位置'}</span><button className="map-icon-button" onClick={clearSelection} aria-label="取消选中"><IconX size={18} /></button></div>
+      <div className="map-card-heading"><span className="map-eyebrow">{projectPreview ? '项目' : expanded ? '地点详情' : '已选位置'}</span><button className="map-icon-button" onClick={clearSelection} aria-label="取消选中"><IconX size={18} /></button></div>
       {projectPreview && project ? <>
         <div className="atlas-selection-icon"><IconBuildingSkyscraper size={27} stroke={1.4} /></div><h2>{project.name}</h2><p>{project.input.scope.name}</p>
         <div className="atlas-selection-tags"><span>{project.input.synthetic ? '合成项目' : '研究项目'}</span><span>经验 v{project.context_version}</span></div>
@@ -264,19 +265,25 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
         {project.runs?.find(r => r.decision)?.decision && <p className="project-last-summary">上次研判：{project.runs.find(r => r.decision)!.decision!.summary}</p>}
         <button className="map-primary" onClick={() => onOpenProject()}>进入项目研判 <IconArrowRight size={17} /></button>
       </> : selection && <>
-        {expanded && <div className="atlas-selection-icon"><IconMapPin size={28} stroke={1.4} /></div>}<h2>{selection.name}</h2><p>{selection.address || (selectedCell ? '用于同口径比较的分析格网，不代表法定宗地。' : selection.kind === 'point' ? '地图位置已记录，周边资料见下方初筛。' : '高德地图地点')}</p>
-        <div className="atlas-selection-tags"><span>{selection.category?.split(';')[0] || (selection.kind === 'poi' ? '地图地点' : '坐标点')}</span><span>已选中</span></div>
+        {expanded && <div className="atlas-selection-icon"><IconMapPin size={28} stroke={1.4} /></div>}<h2>{selection.name}</h2><p>{selection.address || ''}</p>
+        <div className="atlas-selection-tags"><span>{selection.category?.split(';')[0] || (selection.kind === 'poi' ? '地图地点' : '坐标点')}</span></div>
         {expanded && <div className="atlas-coordinate"><span>位置 · GCJ-02</span><code>{selection.longitude.toFixed(6)}, {selection.latitude.toFixed(6)}</code></div>}
         <div hidden={expanded}><PreliminaryCard selection={selection} profile={profile} theme={theme} cell={selectedCell} onProfile={setProfile} onOpenProject={onOpenProject}
+          onAssessment={(id, result) => {
+            if (!result.assessment?.factors?.length) return
+            setScreenCells(prev => classifyCells(prev.map(c => c.context?.id === id ? {...c, factors: result.assessment!.factors} : c), theme))
+            setSelectedCell(prev => prev?.context?.id === id ? classifyCells([{...prev, factors: result.assessment!.factors}],theme)[0] : prev)
+            setScreenResult(prev => prev ? {...prev,cells:classifyCells(prev.cells.map(c=>c.context?.id===id?{...c,factors:result.assessment!.factors}:c),theme)} : prev)
+          }}
           onContext={(id, context) => { setPreviewContext({ forId: id, context }); if (context.address) setSelection(current => current?.id === id ? { ...current, address: context.address! } : current) }} /></div>
-        {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>带入项目继续研判 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
+        {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
           <div className="atlas-detail-divider" />
           {detailLoading && <p role="status" className="atlas-detail-loading">正在读取地点资料…</p>}
           {detailsError && <div className="map-error" role="alert">{detailsError}<button className="map-text-button" onClick={() => void openDetails()}>重试</button></div>}
           {details && <><dl className="atlas-detail-fields"><div><dt>详细地址</dt><dd>{details.address || '该地点未返回详细地址'}</dd></div><div><dt>地点分类</dt><dd>{details.category}</dd></div>{details.telephone && <div><dt>联系电话</dt><dd>{details.telephone}</dd></div>}</dl>
             {details.photos.length > 0 && <div className="atlas-photos">{details.photos.map(photo => <img key={photo.url} src={photo.url} alt={photo.title || `${selection.name}的地点照片`} loading="lazy" referrerPolicy="no-referrer" />)}</div>}
-            <p className="atlas-evidence-note">地图信息用于定位。建筑结构、权属、租赁和实际用途需由项目材料核实。</p></>}
-          <button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>以此处创建研究项目 <IconArrowRight size={17} /></button>
+            </>}
+          <button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>建立项目 <IconArrowRight size={17} /></button>
           <div className="atlas-detail-actions"><button className="map-text-button" onClick={() => { selectionVersion.current++; setExpanded(false); setDetailLoading(false) }}><IconArrowLeft size={14} />返回简要信息</button>
             <a href={`https://uri.amap.com/marker?position=${selection.longitude},${selection.latitude}&name=${encodeURIComponent(selection.name)}&coordinate=gaode&callnative=0`} target="_blank" rel="noreferrer">高德查看 <IconExternalLink size={13} /></a></div>
         </>}
@@ -289,7 +296,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
         <button disabled={!interactive} aria-pressed={!satellite} onClick={() => setSatellite(false)}><IconCube size={20} /><span>城市地图<small>道路、建筑与景观标注</small></span>{!satellite && <i />}</button>
         <button disabled={!interactive} aria-pressed={satellite} onClick={() => setSatellite(true)}><IconSatellite size={20} /><span>卫星影像<small>查看地表与周边环境</small></span>{satellite && <i />}</button>
         <label><span><IconBuildingSkyscraper size={17} /> 3D 建筑楼块</span><input type="checkbox" checked={buildings} disabled={!interactive || !webgl || !buildingControl} onChange={e => setBuildings(e.target.checked)} /></label>
-        <p>{satellite ? '卫星影像可叠加 3D 楼块；关闭楼块可查看完整地表。' : '建筑楼块按地图覆盖显示，使用默认高度比例；不代表实景模型。'}</p>
+        <p>{satellite ? '卫星影像' : '城市地图'}</p>
       </section>}
       <button className={`atlas-layer-toggle glass-panel ${layerPanel ? 'active' : ''}`} aria-expanded={layerPanel} onClick={() => setLayerPanel(v => !v)}><IconLayersIntersect size={19} />图层<span>{satellite ? '卫星' : '城市'}</span></button>
     </div>

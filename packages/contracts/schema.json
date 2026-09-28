@@ -1268,7 +1268,8 @@
       "type": "object",
       "properties": {
         "summary": {
-          "type": "string"
+          "type": "string",
+          "maxLength": 96
         },
         "criteria": {
           "type": "array",
@@ -1591,6 +1592,16 @@
               "type": "null"
             }
           ]
+        },
+        "geometry": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MapRegionGeometry"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1681,7 +1692,7 @@
           "items": {
             "$ref": "#/definitions/MapScreenPoi"
           },
-          "maxItems": 5
+          "maxItems": 25
         },
         "retrieved_at": {
           "type": "string",
@@ -1816,7 +1827,7 @@
         "text": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 180
+          "maxLength": 48
         },
         "evidence_refs": {
           "type": "array",
@@ -1840,37 +1851,44 @@
         "summary": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 240
+          "maxLength": 64
         },
         "opportunities": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/MapScreenClaim"
           },
-          "maxItems": 3
+          "maxItems": 1
         },
         "cautions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/MapScreenClaim"
           },
-          "maxItems": 3
+          "maxItems": 1
         },
         "unknowns": {
           "type": "array",
           "items": {
             "type": "string",
-            "maxLength": 180
+            "maxLength": 48
           },
-          "maxItems": 8
+          "maxItems": 1
         },
         "next_steps": {
           "type": "array",
           "items": {
             "type": "string",
-            "maxLength": 180
+            "maxLength": 48
           },
-          "maxItems": 3
+          "maxItems": 1
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapDecisionFactor"
+          },
+          "maxItems": 6
         }
       },
       "required": [
@@ -1985,7 +2003,7 @@
             {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9
+              "maximum": 24
             },
             {
               "type": "null"
@@ -1998,6 +2016,32 @@
             "null"
           ],
           "minimum": 0
+        },
+        "geometry": {
+          "$ref": "#/definitions/MapRegionGeometry"
+        },
+        "anchor": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "boundary_source": {
+          "type": "string",
+          "maxLength": 250
+        },
+        "area_m2": {
+          "type": "number",
+          "minimum": 0
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MapDecisionFactor"
+          },
+          "maxItems": 6
         }
       },
       "required": [
@@ -2033,7 +2077,7 @@
           "items": {
             "$ref": "#/definitions/MapScreenCell"
           },
-          "maxItems": 9
+          "maxItems": 24
         },
         "status": {
           "type": "string",
@@ -2049,7 +2093,7 @@
         "comparison_count": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9
+          "maximum": 24
         },
         "notes": {
           "type": "array",
@@ -2080,11 +2124,13 @@
     "MapScreenTheme": {
       "type": "string",
       "enum": [
-        "transit",
-        "activity",
-        "work_live",
-        "civic",
-        "projects"
+        "overall",
+        "implementation",
+        "adaptation",
+        "demand",
+        "operations",
+        "resources",
+        "access"
       ]
     },
     "MapProjectEvidence": {
@@ -2266,6 +2312,88 @@
         "synthetic_project_count",
         "unlocated_project_count",
         "notes"
+      ],
+      "additionalProperties": false
+    },
+    "MapRegionGeometry": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Polygon",
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "minItems": 4,
+            "maxItems": 512
+          },
+          "minItems": 1,
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "additionalProperties": false
+    },
+    "MapDecisionFactor": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "implementation",
+            "adaptation",
+            "demand",
+            "operations",
+            "resources",
+            "access"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "conditional",
+            "blocked",
+            "unknown"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 4
+        },
+        "quote": {
+          "type": "string",
+          "maxLength": 180
+        }
+      },
+      "required": [
+        "key",
+        "state",
+        "summary",
+        "evidence_refs",
+        "quote"
       ],
       "additionalProperties": false
     }
