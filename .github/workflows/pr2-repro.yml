@@ -8,14 +8,22 @@ permissions:
 jobs:
   source:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - run: git archive --format=tar.gz --output=/tmp/source.tar.gz HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: |
+          mkdir -p .offline-bin
+          cp "$(command -v node)" .offline-bin/node
+          tar -czf /tmp/offline-deps.tar.gz node_modules .offline-bin
       - uses: actions/upload-artifact@v4
         with:
-          name: pr2-source-${{ github.sha }}
-          path: /tmp/source.tar.gz
+          name: pr2-offline-deps
+          path: /tmp/offline-deps.tar.gz
           retention-days: 1
