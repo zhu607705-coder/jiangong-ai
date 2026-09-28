@@ -1,3 +1,4 @@
+import { dashboardQuestions, parseDashboard } from '../../packages/decision/dashboard'
 import { createHash } from 'node:crypto'
 import { config } from '../../apps/host/config'
 import type { DecisionChoice, DecisionSupport } from '../../apps/host/generated/contracts'
@@ -39,7 +40,7 @@ export function parseDecisionResponse(raw:any):Pick<DecisionSupport,'answers'|'r
 }
 export type DecisionSettings={apiKey:string;endpoint:string;model:string}
 export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, settings:DecisionSettings={apiKey:process.env.QWEN_DECISION_API_KEY||'',endpoint:config.QWEN_DECISION_ENDPOINT,model:config.QWEN_DECISION_MODEL}, transport:typeof fetch=fetch):Promise<DecisionSupport> {
-  const start=Date.now(), body={model:settings.model,state:input.state,questions:DECISION_QUESTIONS}
+  const start=Date.now(), body={model:settings.model,state:input.dashboard?{evidence:input.state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:input.state,questions:{...DECISION_QUESTIONS,...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
   const base:DecisionSupport={status:'unavailable',provider:'qwen_systemone',model:settings.model,policy_version:DECISION_POLICY,
     input_hash:createHash('sha256').update(JSON.stringify(body)).digest('hex'),created_at:new Date().toISOString(),request_id:null,duration_ms:0,input_tokens:null,
     answers:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:input.sourceIds,thresholds:DECISION_THRESHOLDS,error_code:null}
@@ -57,7 +58,7 @@ export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, 
     try {while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>100000)throw new Error('DECISION_RESPONSE_LIMIT');parts.push(value)}} finally {await reader.cancel().catch(()=>undefined)}
     const raw=JSON.parse(Buffer.concat(parts).toString('utf8'))
     signal.throwIfAborted()
-    return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw),status:'completed',duration_ms:Date.now()-start},input.factors))
+    return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw),status:'completed',duration_ms:Date.now()-start,...(input.dashboard?{dashboard:parseDashboard(raw,input.dashboard)}:{})},input.factors))
   } catch(error) {
     signal.throwIfAborted()
     const message=error instanceof Error ? error.message : ''

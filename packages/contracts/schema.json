@@ -1605,6 +1605,10 @@
               "type": "null"
             }
           ]
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 180
         }
       },
       "required": [
@@ -1804,6 +1808,20 @@
         "project_revision": {
           "type": "string",
           "maxLength": 80
+        },
+        "research_sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          },
+          "maxItems": 12
+        },
+        "research_records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PublicRecord"
+          },
+          "maxItems": 100
         }
       },
       "required": [
@@ -1892,6 +1910,13 @@
             "$ref": "#/definitions/MapDecisionFactor"
           },
           "maxItems": 6
+        },
+        "dimension_evidence": {
+          "type": "array",
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/definitions/DimensionEvidence"
+          }
         }
       },
       "required": [
@@ -1937,7 +1962,7 @@
           "items": {
             "$ref": "#/definitions/ModelCall"
           },
-          "maxItems": 4
+          "maxItems": 6
         },
         "reason": {
           "anyOf": [
@@ -1956,6 +1981,30 @@
         },
         "decision_support": {
           "$ref": "#/definitions/DecisionSupport"
+        },
+        "research_sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          },
+          "maxItems": 12
+        },
+        "research_records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PublicRecord"
+          },
+          "maxItems": 100
+        },
+        "adapter_receipts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdapterReceipt"
+          },
+          "maxItems": 12
+        },
+        "research": {
+          "$ref": "#/definitions/ResearchTrace"
         }
       },
       "required": [
@@ -2048,6 +2097,9 @@
             "$ref": "#/definitions/MapDecisionFactor"
           },
           "maxItems": 6
+        },
+        "dashboard": {
+          "$ref": "#/definitions/DecisionDashboard"
         }
       },
       "required": [
@@ -2134,6 +2186,7 @@
         "implementation",
         "adaptation",
         "demand",
+        "supply",
         "operations",
         "resources",
         "access"
@@ -2606,6 +2659,9 @@
               "type": "null"
             }
           ]
+        },
+        "dashboard": {
+          "$ref": "#/definitions/DecisionDashboard"
         }
       },
       "required": [
@@ -2628,6 +2684,270 @@
         "error_code"
       ],
       "additionalProperties": false
+    },
+    "PublicField": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "raw": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "locator": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value",
+        "unit",
+        "raw",
+        "locator"
+      ],
+      "additionalProperties": false
+    },
+    "PublicRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "adapter": {
+          "type": "string",
+          "enum": [
+            "landchina",
+            "construction",
+            "statistics",
+            "procurement"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "object",
+            "area"
+          ]
+        },
+        "period": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "source_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PublicField"
+          },
+          "maxItems": 40
+        }
+      },
+      "required": [
+        "id",
+        "adapter",
+        "subject",
+        "scope",
+        "period",
+        "source_id",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "AdapterReceipt": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "adapter": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "empty",
+            "access_required",
+            "schema_changed",
+            "unsupported"
+          ]
+        },
+        "record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "maxItems": 50
+        }
+      },
+      "required": [
+        "source_id",
+        "adapter",
+        "status",
+        "record_ids"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDimension": {
+      "type": "string",
+      "enum": [
+        "demand",
+        "supply",
+        "adaptation",
+        "implementation",
+        "operations",
+        "resources"
+      ]
+    },
+    "DimensionScore": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/ResearchDimension"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 8
+        },
+        "basis": {
+          "type": "string",
+          "maxLength": 180
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "confidence",
+        "evidence_refs",
+        "basis"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionDashboard": {
+      "type": "object",
+      "properties": {
+        "policy_version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "purpose": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "dimensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DimensionScore"
+          },
+          "maxItems": 6
+        },
+        "model": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "partial",
+            "unavailable"
+          ]
+        }
+      },
+      "required": [
+        "policy_version",
+        "purpose",
+        "dimensions",
+        "model",
+        "request_id",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "DimensionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/ResearchDimension"
+        },
+        "source_id": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 180
+        },
+        "basis": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      "required": [
+        "key",
+        "source_id",
+        "quote",
+        "basis"
+      ]
     }
   }
 }

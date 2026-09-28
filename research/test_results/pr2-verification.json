@@ -1,0 +1,66 @@
+{
+  "as_of": "2026-09-28",
+  "base_commit": "b589c743ada7a343af00637ad6b6fbe75e6cd965",
+  "verification": {
+    "javascript": {
+      "passed": 148,
+      "files": 10
+    },
+    "python": {
+      "passed": 67,
+      "includes_spatial": 13
+    },
+    "http_end_to_end": {
+      "passed": 9
+    },
+    "browser": {
+      "checks": 18,
+      "provider_data": "synthetic",
+      "model_calls": 2,
+      "cancelled_model_calls": 1,
+      "screens": 1
+    },
+    "typecheck": "passed",
+    "production_build": "passed"
+  },
+  "live_services": {
+    "dsh_search": "not_run_this_revision",
+    "qwen_decision": "not_run_this_revision",
+    "official_databases": "not_authenticated_or_live_API_tested_this_revision",
+    "amap_overpass": "not_run_this_revision"
+  },
+  "public_case_review": {
+    "campuses": 7,
+    "sources": 11,
+    "full_text": 7,
+    "search_excerpt": 4,
+    "numerical_scores": "not_run"
+  },
+  "logs": {
+    "tests": {
+      "path": "research/baseline_logs/pr2-tests.log",
+      "sha256": "0a1993919c9b7d29d44cf1afb7338818d99c6e8314ea18044f491d93fe69ad01"
+    },
+    "python": {
+      "path": "research/baseline_logs/pr2-python.log",
+      "sha256": "fd4e449ef68bac2204fa5c06300e130c8955ef86809fc711107917e79337c347"
+    },
+    "http": {
+      "path": "research/baseline_logs/pr2-http.log",
+      "sha256": "3a9a0a742bb4910e5f056cc0cd2195e2fe5dbb0e57fb328c52f0b7cb974d12c1"
+    },
+    "browser": {
+      "path": "research/baseline_logs/pr2-browser.log",
+      "sha256": "6be703185e48b92b7e16fe57547713afe6392090f8e2d5fc2a5905a98c4a5cf6"
+    },
+    "build": {
+      "path": "research/baseline_logs/pr2-build.log",
+      "sha256": "2198ebbd24060a9c964e907df583e27b4f229880d5ba60ac6b47b4c057ca6cc7"
+    }
+  },
+  "environment": {
+    "node": "24.21.0",
+    "python": "3.13.5",
+    "browser": "system chromium"
+  }
+}

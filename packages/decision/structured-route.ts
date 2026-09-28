@@ -1,3 +1,4 @@
+import type { DashboardInput } from './dashboard'
 import type { DecisionSupport, MapDecisionFactor, MapScreenContext, ProjectInput, Followup, CandidateId } from '../../apps/host/generated/contracts'
 import { decisionFactors, FACTOR_LABELS } from '../maps/decision-factors'
 import { publicMapContext } from '../maps/public-context'
@@ -11,7 +12,7 @@ export const INVESTIGATION_STEPS = {
   resources:'核查改造投入、分期资金和企业能力。', access:'实测站点到建筑入口的步行衔接。',
 } as const
 export type ResearchDimension = keyof typeof FACTOR_LABELS
-export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]}
+export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]; dashboard?: DashboardInput}
 const essentials: ResearchDimension[] = ['implementation','adaptation','demand','operations','resources']
 
 export function mapDecisionInput(context: MapScreenContext, purpose: string): DecisionInput {
@@ -65,6 +66,7 @@ export function applyDecisionGuards(result: DecisionSupport, factors: MapDecisio
 }
 
 export function prioritizeDecisionFollowups(existing:Followup[], route:DecisionSupport, paths:CandidateId[]):Followup[] {
+  if(existing.length)return existing // Keep specific, source-grounded actions ahead of the generic fallback.
   if(route.status!=='completed' || !route.action || route.action==='compare' || !route.next_step) return existing
   const item:Followup={id:'decision-'+route.input_hash.slice(0,16),priority:1,title:route.next_step,
     why:route.guard_reasons[0] || `本轮判断优先核查${FACTOR_LABELS[route.priority!] }，补充依据后再更新路径。`,

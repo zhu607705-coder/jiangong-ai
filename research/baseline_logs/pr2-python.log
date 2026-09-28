@@ -1,0 +1,8 @@
+...................................................................      [100%]
+=============================== warnings summary ===============================
+../../../opt/pyvenv/lib/python3.13/site-packages/ddtrace/internal/module.py:313
+  /opt/pyvenv/lib/python3.13/site-packages/ddtrace/internal/module.py:313: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    self.loader.exec_module(module)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+67 passed, 1 warning in 1.81s

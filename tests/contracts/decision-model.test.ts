@@ -124,3 +124,23 @@ describe('bounded research operations',()=>{
   expect(prepared.factors.every(f=>f.state==='unknown')).toBe(true)
  })
 })
+
+
+describe('decision scoring integration',()=>{
+ it('passes and validates all six score questions on the same decision endpoint',async()=>{
+  const dimensions=['demand','supply','adaptation','implementation','operations','resources'] as const
+  const dashboard={purpose:'校园机电服务',evidence:dimensions.map(key=>({key,source_id:'TEST-SOURCE',quote:'合成测试资料包含本栋楼的工程与运营需求。',basis:'合成测试'}))}
+  const raw=response() as any
+  for(const key of dimensions)raw.answers['fit_'+key]={type:'score',score:3,confidence:.9,probabilities:{0:0,1:0,2:0,3:1,4:0}}
+  const transport=vi.fn(async()=>new Response(JSON.stringify(raw),{status:200}))
+  const r=await evaluateDecision({...input(),dashboard},new AbortController().signal,settings,transport as typeof fetch)
+  const sent=JSON.parse((transport.mock.calls[0] as unknown as [string,RequestInit])[1].body as string)
+  expect(Object.keys(sent.questions)).toHaveLength(9);expect(r.dashboard?.dimensions).toHaveLength(6)
+  expect(r.dashboard?.dimensions.every(d=>d.value===4)).toBe(true)
+ })
+ it('does not replace a concrete next action with a generic decision checklist',()=>{
+  const action={id:'A',title:'提交单栋机电工程量及停电切换方案。',why:'与既有教学时间协调。',priority:1,status:'suggested',impacted_paths:['defer_and_investigate']} as any
+  const r=prioritizeDecisionFollowups([action],applyDecisionGuards(result(),factors()),['defer_and_investigate'])
+  expect(r[0]).toEqual(action);expect(r).toHaveLength(1)
+ })
+})

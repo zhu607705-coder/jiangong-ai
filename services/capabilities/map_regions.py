@@ -82,7 +82,7 @@ way["highway"~"^(primary|secondary|tertiary|residential|unclassified|living_stre
 way["railway"="rail"]["tunnel"!="yes"]({bbox});
 way["natural"="water"]({bbox});relation["natural"="water"]({bbox});
 way["waterway"~"^(river|canal)$"]({bbox});
-way["building"]({bbox});way["landuse"~"^(industrial|commercial|retail)$"]({bbox});
+way["building"]({bbox});way["amenity"="university"]({bbox});relation["amenity"="university"]({bbox});way["landuse"~"^(industrial|commercial|retail)$"]({bbox});
 );out geom;'''
     with httpx.Client(timeout=httpx.Timeout(16,connect=4),follow_redirects=False) as client:
         with client.stream('POST',OVERPASS,data={'data':query},headers={'User-Agent':'JiangongAI/0.2 public-boundary-research'}) as response:
@@ -116,7 +116,7 @@ def segment_regions(request:RegionRequest, elements:list[dict]) -> dict:
         explicit.append((transform(forward,g).intersection(clip),b.label,f'project:{b.id}'))
     for element in sorted(elements,key=lambda e:(str(e.get('type')),str(e.get('id')))):
         tags=element.get('tags') or {}; ref=f"osm:{element.get('type')}:{element.get('id')}"
-        if element.get('type')=='relation' and tags.get('natural')=='water':
+        if element.get('type')=='relation' and (tags.get('natural')=='water' or tags.get('amenity')=='university'):
             rings={}
             for member in element.get('members',[]):
                 points=[(p['lon'],p['lat']) for p in member.get('geometry',[]) if 'lon'in p and 'lat'in p]
@@ -124,7 +124,10 @@ def segment_regions(request:RegionRequest, elements:list[dict]) -> dict:
                     rings.setdefault(member.get('role','outer'),[]).append(transform(forward,LineString(points)))
             outer=unary_union(list(polygonize(unary_union(rings.get('outer',[])))))
             inner=unary_union(list(polygonize(unary_union(rings.get('inner',[])))))
-            water.append(outer.difference(inner));continue
+            polygon=outer.difference(inner)
+            if tags.get('natural')=='water':water.append(polygon)
+            else:compounds.append((polygon,tags.get('name') or '校园',ref))
+            continue
         points=[(p['lon'],p['lat']) for p in element.get('geometry',[]) if 'lon'in p and 'lat'in p]
         if not 2<=len(points)<=2000 or any(not isfinite(v) for p in points for v in p):continue
         # Keep a small overhang so GEOS nodes crossings on the clip boundary,
@@ -140,7 +143,7 @@ def segment_regions(request:RegionRequest, elements:list[dict]) -> dict:
         elif len(points)>=4 and points[0]==points[-1]:
             poly=make_valid(transform(forward,Polygon(points))).intersection(clip)
             if tags.get('natural')=='water':water.append(poly)
-            elif tags.get('landuse'):compounds.append((poly,tags.get('name') or '园区',ref))
+            elif tags.get('landuse') or tags.get('amenity')=='university':compounds.append((poly,tags.get('name') or '园区',ref))
             elif tags.get('building'):buildings.append((poly,tags.get('name') or '建筑',ref))
     excluded=unary_union(water)
     occupied=Polygon();candidates=[]
@@ -163,8 +166,8 @@ def segment_regions(request:RegionRequest, elements:list[dict]) -> dict:
             road_space=unary_union(roads).buffer(3)
             for g in sorted(blocks,key=lambda p:(p.centroid.x,p.centroid.y)):
                 if clip.covers(g.representative_point()):add(g.difference(road_space),'街区','osm:street-network',1500)
-    if not candidates:
-        for g,label,ref in buildings:add(g,label,ref,25)
+    # Fill uncovered areas even when another part of the viewport has a compound.
+    for g,label,ref in buildings:add(g,label,ref,25)
     # Stable, geographic priority, never record-count priority.
     candidates.sort(key=lambda c:(0 if c[2].startswith('project:') else 1,c[0].distance(clip.centroid),c[2]))
     total=len(candidates);cells=[]

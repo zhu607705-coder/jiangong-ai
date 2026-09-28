@@ -6,9 +6,10 @@ import { readFileSync } from 'node:fs'
 import { MapScreeningService, normalizeEvidence, normalizedTarget } from '../../services/map-screening/service'
 import { EVIDENCE_GROUPS, classifyCells, assertScreenBounds } from '../../packages/maps/screening-policy'
 import { dataCatalog, evidenceAt, mergeProjectSources, targetContains, type ProjectEvidenceSnapshot } from '../../services/map-screening/project-evidence'
-import { publicMapContext } from '../../packages/maps/public-context'
+import { handoffPublicSources, publicMapContext } from '../../packages/maps/public-context'
 import { groundMapAssessment } from '../../services/map-screening/analyst'
 import { validate } from '../../packages/contracts/validate'
+import { DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
 import type { ProjectRecord, RunRecord } from '../../apps/host/store'
 import type { MapScreenContext, MapScreenTarget, MapScreenCell, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
 
@@ -142,7 +143,7 @@ describe('evidence acquisition and cache lifecycle', () => {
   it('cancellation prevents subsequent cells and never emits a completed result', async () => {
     const {engine,analyst}=await service();const controller=new AbortController(),events:any[]=[]
     await expect(engine.screen(bounds,'balanced','overall',controller.signal,e=>{events.push(e);if ((e as any).type==='cell') controller.abort()})).rejects.toThrow()
-    expect(events.map(e=>e.type)).toEqual(['start','cell']);expect(analyst).not.toHaveBeenCalled()
+    expect(events.map(e=>e.type)).toEqual(['progress','start','cell']);expect(analyst).not.toHaveBeenCalled()
   })
   it('completed screens freeze one project snapshot, retain source references and persist results', async () => {
     const {engine,loader,directory,query,analyst}=await service();const events:any[]=[]
@@ -182,5 +183,32 @@ describe('public model evidence boundary', () => {
     for (const ref of ['INVENTED','REAL-P:INTERNAL-REAL']) expect(()=>groundMapAssessment({...assessment,opportunities:[{text:'claim',evidence_refs:[ref]}]},ctx)).toThrow()
     ctx.local_projects[0].sources[0].content_status='metadata_only'
     expect(()=>groundMapAssessment(assessment,ctx)).toThrow()
+  })
+})
+
+
+describe('persisted object research', () => {
+  it('restores color only for the same scope/profile/revision without another model call', async () => {
+    const {engine,analyst,loader}=await service();const signal=new AbortController().signal
+    const scanned=await engine.screen(bounds,'balanced','demand',signal,()=>{})
+    const ctx=scanned.cells[0].context!
+    analyst.mockImplementation(async(c,profile)=>({context_id:c.id,profile,status:'completed' as any,assessment:{summary:'研究单栋修缮服务。',opportunities:[],cautions:[],unknowns:[],next_steps:['核对采购窗口。']},model_calls:[],reason:null,created_at:new Date().toISOString(),decision_support:{status:'unavailable',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:null,duration_ms:0,input_tokens:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:[],thresholds:DECISION_THRESHOLDS,error_code:null,dashboard:{policy_version:'opportunity-fit-v2',purpose:'测试工程',model:'decision-model-preview',request_id:'FIXTURE',status:'partial',dimensions:[{key:'demand',value:4,confidence:.9,evidence_refs:['S'],basis:'测试证据'}]}}} as any))
+    await engine.analyze(ctx.id,'balanced',signal)
+    const same=await engine.screen(bounds,'balanced','demand',signal,()=>{})
+    expect(same.cells[0].tier).toBe('strong');expect(same.cells[1].dashboard).toBeUndefined()
+    const changed=await engine.screen(bounds,'commercial','demand',signal,()=>{})
+    expect(changed.cells[0].dashboard).toBeUndefined()
+    loader.mockResolvedValue({...snapshot(),revision:'changed-public-input'})
+    const revision=await engine.screen(bounds,'balanced','demand',signal,()=>{})
+    expect(revision.cells[0].dashboard).toBeUndefined();expect(analyst).toHaveBeenCalledTimes(1)
+  })
+  it('hands off actual public originals while removing internal and synthetic additions',async()=>{
+    const {engine}=await service();const ctx=await engine.context(point,new AbortController().signal)
+    ctx.research_sources=[{...publicSource,id:'LIVE',url:'https://example.gov.cn/original'},privateSource,{...publicSource,id:'SYN',synthetic:true}]
+    ctx.research_records=[{id:'R1',adapter:'procurement',subject:'PRIVATE_RECORD',scope:'object',period:'',source_id:'INTERNAL-REAL',fields:[]}]
+    const clean=publicMapContext(ctx);expect(clean.research_records).toEqual([])
+    const out=handoffPublicSources(ctx)
+    expect(out.find(s=>s.id==='LIVE')?.url).toBe('https://example.gov.cn/original')
+    expect(JSON.stringify(out)).not.toMatch(/PRIVATE_CANARY|PRIVATE_RECORD|INTERNAL-REAL|"SYN"/)
   })
 })

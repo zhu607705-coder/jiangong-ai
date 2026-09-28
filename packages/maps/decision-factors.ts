@@ -62,6 +62,8 @@ export type DecisionSignal = { title:string; observation:string; implication:str
 export function decisionSignals(context: MapScreenContext): DecisionSignal[] {
   const result: DecisionSignal[] = []
   const samples = (key:string) => context.groups.find(g => g.key === key)?.sample || []
+  const campus=samples('civic').filter(p=>/大学|校区/.test(p.name))
+  if(/大学|校区/.test(context.target?.label||'')||campus.length)return [{title:'校园服务',observation:context.target?.label||campus.slice(0,2).map(p=>p.name).join('、'),implication:'先查修缮采购和后勤服务，再比较校外配套。',next:'查采购计划、建设项目和教学运行安排。'}]
   const office = samples('work_live').filter(p => /商务|写字楼|办公|产业园/.test(p.category))
   const homes = samples('work_live').filter(p => /住宅|小区|公寓/.test(p.category))
   if (office.length) result.push({title:'办公线索', observation:office.slice(0,2).map(p=>p.name).join('、'), implication:'优先调查工作日餐饮与企业服务。', next:'核查入驻企业、实际到岗和楼宇空置。'})

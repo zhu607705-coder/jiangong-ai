@@ -23,7 +23,7 @@ import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
-import { publicMapContext } from '../../../packages/maps/public-context';
+import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import {
   api,
   type Project,
@@ -348,17 +348,14 @@ export default function App() {
             <div className="kicker">研究对象</div>
             <h3>{project.name}</h3>
             <p>
-              研究范围与开发权利分开判断。结构、权属与审批条件以有效材料核实。
+              {packet?.summary || "比较参与路径、实施对象与下一步。"}
             </p>
             <dl>
               <div>
                 <dt>资料时点</dt>
                 <dd>{project.input.as_of}</dd>
               </div>
-              <div>
-                <dt>资料来源</dt>
-                <dd>{displayedSources.length} 份</dd>
-              </div>
+
               <div>
                 <dt>当前模式</dt>
                 <dd>
@@ -371,9 +368,11 @@ export default function App() {
           </div>
           <div className="rail-section">
             <div className="section-head">
-              <h3>执行记录</h3>
+              <h3>研究进度</h3>
               <span className={running ? "running-dot" : "muted-dot"} />
             </div>
+            <p className="project-run-status" role="status">{running ? (events.at(-1)?.message || "正在启动研究") : packet ? "本轮研判已完成" : "选择对象后开始研究"}</p>
+            <details className="run-history"><summary>执行记录</summary>
             {events.length ? (
               <ol className="event-list">
                 {events.slice(-8).map((event) => (
@@ -399,9 +398,9 @@ export default function App() {
               </ol>
             ) : (
               <p className="muted">
-                开始研判后，运行阶段与证据工件会显示在这里。
+                暂无执行记录。
               </p>
-            )}
+            )}</details>
           </div>
         </>
       ) : (
@@ -409,15 +408,12 @@ export default function App() {
           <p>创建项目后，可以查看输入来源、研究边界和运行进度。</p>
           <div className="principle">
             <IconShieldCheck size={25} />
-            <h3>未知，保留为未知</h3>
-            <p>不以缺失资料推断安全可改，不以演示结果替代企业验证。</p>
+            <h3>从具体项目开始</h3>
+            <p>选择具体对象，形成参与路径与行动清单。</p>
           </div>
         </div>
       )}
-      <div className="rail-footnote">
-        真实模式调用 DeepSeek
-        并检索公开资料；内部正文默认不外发。离线模式仅作工程验证。
-      </div>
+
     </>
   );
   return (
@@ -618,7 +614,7 @@ export default function App() {
                 </div>
               )}
               <section className="summary-panel">
-                <DecisionRoute value={packet?.decision_support} />
+                <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} details /></details>
                 <div className="summary-heading">
                   <div>
                     <div className="kicker">DECISION BRIEF</div>
@@ -1288,7 +1284,7 @@ export default function App() {
                     sources: mapEvidence && mapAnchor ? [{ id: mapEvidence.id, title: '高德区位初筛资料快照', data_class: 'public', visibility: 'public', synthetic: false,
                       retrieved_at: mapEvidence.created_at, content_status: 'excerpt', locator: `map-screening:${mapEvidence.id}`,
                       url: `https://uri.amap.com/marker?position=${mapAnchor.longitude},${mapAnchor.latitude}&coordinate=gaode`,
-                      untrusted_text: '应用采集的公开地图及关联公开资料快照。匹配记录不是人口、客流或独立建筑数；城市背景不是本地块审批或工程证据。\n' + JSON.stringify(publicMapContext(mapEvidence)) }] : [],
+                      untrusted_text: JSON.stringify({target:mapEvidence.target,address:mapEvidence.address,groups:mapEvidence.groups}) }, ...handoffPublicSources(mapEvidence)] : [],
                     context_rules: [],
                     candidate_ids: [
                       "retain_and_reuse",

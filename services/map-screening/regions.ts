@@ -6,8 +6,8 @@ import type { ProjectEvidenceSnapshot } from './project-evidence'
 export type RegionResult = { cells:MapScreenCell[]; notes:string[] }
 export type RegionResolver = (bounds:MapScreenBounds,snapshot:ProjectEvidenceSnapshot,signal:AbortSignal)=>Promise<RegionResult>
 export const resolveMapRegions:RegionResolver = async(bounds,snapshot,signal)=> {
-  const boundaries=snapshot.projects.filter(p=>p.project.input.scope.geometry).slice(0,100).map(({project})=>({
-    id:project.id,label:project.name.slice(0,40),geometry:project.input.scope.geometry,coordinate_encoding:'WGS84',
+  const boundaries=snapshot.projects.filter(p=>!p.project.input.synthetic&&p.project.input.scope.geometry).slice(0,100).map(({project})=>({
+    id:project.id,label:project.name.slice(0,40),geometry:project.input.scope.geometry,coordinate_encoding:project.input.scope.coordinate_encoding,
   }))
   const response=await fetch(config.capabilityUrl+'/spatial/regions',{
     method:'POST',signal:AbortSignal.any([signal,AbortSignal.timeout(22000)]),

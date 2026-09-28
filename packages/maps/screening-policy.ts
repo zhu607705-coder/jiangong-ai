@@ -15,16 +15,16 @@ export const SCREEN_PROFILES: Record<MapScreenProfile,{label:string;premise:stri
   enterprise:{label:'产业办公',premise:'识别产业需求、建筑适配和企业参与方式。'},
 }
 export const SCREEN_THEMES: Record<MapScreenTheme,{label:string}> = {
-  overall:{label:'综合研判'},implementation:{label:'实施条件'},adaptation:{label:'空间适配'},
-  demand:{label:'使用需求'},operations:{label:'运营组织'},resources:{label:'资源安排'},access:{label:'交通衔接'},
+  overall:{label:'综合研判'},implementation:{label:'实施入口'},adaptation:{label:'空间工程'},
+  demand:{label:'需求客群'},supply:{label:'供给竞争'},operations:{label:'运营回款'},resources:{label:'投入交付'},access:{label:'交通衔接'},
 }
 export const SCREEN_TIERS = {
-  pending:{label:'读取中',color:'#b2bcc6'},strong:{label:'进入研究',color:'#258b73'},
-  moderate:{label:'核查条件',color:'#547db0'},sparse:{label:'存在阻点',color:'#b87b43'},
+  pending:{label:'读取中',color:'#b2bcc6'},strong:{label:'优先研究',color:'#418577'},
+  moderate:{label:'按项推进',color:'#648899'},sparse:{label:'调整路径',color:'#b18b59'},
   empty:{label:'待研判',color:'#a3acb7'},incomplete:{label:'待研判',color:'#a3acb7'},
 } as const
 export const INVESTIGATION_GAPS: string[] = []
-export const SCREEN_METHOD = 'object-boundaries_source-factors-v1'
+export const SCREEN_METHOD = 'object-boundaries_six-dimension-v2'
 export function assertScreenBounds(b:MapScreenBounds):void {
   if (![b.west,b.east,b.south,b.north].every(Number.isFinite) || b.west < -180 || b.east > 180 || b.south < -90 || b.north > 90 || b.east <= b.west || b.north <= b.south || b.east-b.west>.060001 || b.north-b.south>.060001) throw new Error('请放大到街区范围。')
 }
@@ -34,7 +34,17 @@ export function contextComparable(context:MapScreenContext|null):boolean {
 export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme):MapScreenCell[] {
   return input.map(c => {
     const factors = c.factors || (c.context ? decisionFactors(c.context) : [])
-    return {...c,factors,tier:c.context ? factorTier(factors,theme) : 'pending',rank:null,metric_value:null}
+    const existing=factorTier(factors,theme)
+    // Explicit object-bound blockers take precedence over model fit levels.
+    let tier:MapScreenCell['tier']=c.context ? existing : 'pending'
+    if(c.context&&existing!=='sparse'&&c.dashboard&&theme!=='access'){
+      const rows=theme==='overall'?c.dashboard.dimensions:c.dashboard.dimensions.filter(d=>d.key===theme)
+      const values=rows.flatMap(d=>d.value===null?[]:[d.value])
+      if(values.length){
+        tier=values.some(v=>v<=2)?'sparse':values.length===(theme==='overall'?6:1)&&values.every(v=>v>=3.5)?'strong':'moderate'
+      }
+    }
+    return {...c,factors,tier,rank:null,metric_value:null}
   })
 }
 export function contextHeadline(context:MapScreenContext):string {

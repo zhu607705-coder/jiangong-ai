@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 const skillText = readFileSync(new URL('./SKILL.md', import.meta.url), 'utf8')
 export const BRIEF_SKILL_VERSION = 'brief-' + createHash('sha256').update(skillText).digest('hex').slice(0,12)
 export const INVESTMENT_BRIEF_SKILL = skillText
-const defensive = /不是线路数|不等同于客观需求|不代表|不构成|仅供参考|AI\s*生成与搜索可能存在错误/
+const defensive = /用途.{0,14}权属.{0,14}腾退.{0,18}未核实|不可直接套用更新项目|不是线路数|不等同于客观需求|不代表|不构成|仅供参考|AI\s*生成与搜索可能存在错误/
 /** Reject, never trim a negation or silently rewrite a model's meaning. */
 export function assertBriefProse(value: {summary?:string;opportunities?:{text:string}[];cautions?:{text:string}[];next_steps?:string[]}) {
   const prose=[value.summary,...(value.opportunities||[]).map(x=>x.text),...(value.cautions||[]).map(x=>x.text),...(value.next_steps||[])].filter(Boolean).join('\n')

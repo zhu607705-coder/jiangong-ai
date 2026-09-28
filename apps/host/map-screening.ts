@@ -39,16 +39,24 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
     } catch (error) { failure(res, error) }
   })
   app.post('/api/maps/screening/analysis', async (req, res) => {
+    let streaming=false
     try {
-      const body = z.object({ context_id: z.string().max(100), profile: profileSchema }).strict().parse(req.body)
-      const result = await service.analyze(body.context_id, body.profile, requestSignal(req, res, 40000))
-      if (!res.destroyed) res.json(result)
-    } catch (error) { failure(res, error) }
+      const body=z.object({context_id:z.string().max(100),profile:profileSchema}).strict().parse(req.body)
+      streaming=req.headers.accept?.includes('application/x-ndjson')||false
+      const signal=requestSignal(req,res,115000)
+      if(streaming){res.type('application/x-ndjson');res.setHeader('Cache-Control','no-store');res.setHeader('X-Accel-Buffering','no');res.flushHeaders()}
+      const emit=(event:unknown)=>{if(streaming&&!res.destroyed&&!res.writableEnded)res.write(JSON.stringify(event)+'\n')}
+      const result=await service.analyze(body.context_id,body.profile,signal,emit)
+      if(!res.destroyed){if(streaming){emit({type:'complete',result});res.end()}else res.json(result)}
+    } catch(error){
+      if(streaming){if(!res.destroyed){res.write(JSON.stringify({type:'error',message:'本轮研究已结束，请刷新资料后重试。'})+'\n');res.end()}}
+      else failure(res,error)
+    }
   })
   app.post('/api/maps/screening/scan', async (req, res) => {
     if (!settings.publicConfiguration().configured) return res.status(424).json({ code: 'MAP_NOT_CONFIGURED', detail: '请先连接高德地图。' })
     if (activeScreens >= 1) return res.status(409).json({ code: 'MAP_SCAN_ACTIVE', detail: '已有区域标色正在进行，可先停止。' })
-    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','operations','resources','access']) }).strict()
+    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','supply','operations','resources','access']) }).strict()
     let body: z.infer<typeof bodySchema>
     try { body = bodySchema.parse(req.body); assertScreenBounds(body.bounds) }
     catch { return res.status(422).json({ code: 'MAP_SCAN_RANGE', detail: '请在街区范围内筛选，或放大地图后重试。' }) }

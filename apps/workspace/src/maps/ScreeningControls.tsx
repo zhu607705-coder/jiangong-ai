@@ -10,10 +10,10 @@ export default function ScreeningControls({ theme, onTheme, running, completed, 
 }) {
   const [methodOpen, setMethodOpen] = useState(false)
   return <section className="screening-controls glass-panel" aria-label="地图快速筛选">
-    <div className="screening-control-row"><select aria-label="地图标色专题" value={theme} disabled={running} onChange={e => onTheme(e.target.value as MapScreenTheme)}>{Object.entries(SCREEN_THEMES).map(([id,p]) => <option value={id} key={id}>{p.label}</option>)}</select>
+    <div className="screening-control-row"><select aria-label="地图标色专题" value={theme} disabled={running} onChange={e => onTheme(e.target.value as MapScreenTheme)}>{Object.entries(SCREEN_THEMES).filter(([id])=>id!=='access').map(([id,p]) => <option value={id} key={id}>{p.label}</option>)}</select>
       <button className="screening-start" disabled={!enabled || running} onClick={onScan}><IconScan size={17} />{running ? '正在读取…' : '一键标色'}</button>
       <button aria-label="项目数据" title="项目数据" onClick={onData}><IconDatabase size={18} /></button></div>
-    {running && <div className="screening-progress"><progress max={cells.length || 1} value={completed} /><button onClick={onCancel}>停止</button></div>}
+    {running && <div className="screening-progress"><progress aria-label="区块读取进度" max={cells.length || 1} value={cells.length?completed:undefined} /><button onClick={onCancel}>停止</button></div>}
     {(result || error) && <div className="screening-results-summary">
       {error && <p role="status">{error}</p>}
       {result && <><div className="screening-legend">{(['strong','moderate','sparse','incomplete'] as const).map(tier => <span key={tier}><i style={{background:SCREEN_TIERS[tier].color}} />{SCREEN_TIERS[tier].label}</span>)}</div>
@@ -23,6 +23,6 @@ export default function ScreeningControls({ theme, onTheme, running, completed, 
       </>}
     </div>}
     {result?.notes.some(n => n.includes("OpenStreetMap")) && <a className="map-boundary-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>}
-    {methodOpen && <div className="screening-method"><p>按项目范围、道路水系与建筑轮廓划分。颜色读取实施、空间、需求、运营与资源条件；灰色表示待研判。</p><p>点选后研判；切换维度复用本轮资料。</p>{result?.notes.map((note,i)=><p key={i}>{note}</p>)}<div className="screening-cell-list">{cells.map(c=><button key={c.id} onClick={()=>onCell(c)}>{c.label}</button>)}</div></div>}
+    {methodOpen && <div className="screening-method"><p>按项目范围、道路水系与建筑轮廓划分。颜色读取当前方案的六维研判；灰色对象点选后研究。</p><p>切换维度复用本轮资料。适配度≥3.5为优先研究，≤2为调整路径；综合视图需六维齐全，明确阻点优先。</p>{result?.notes.map((note,i)=><p key={i}>{note}</p>)}<div className="screening-cell-list">{cells.map(c=><button key={c.id} onClick={()=>onCell(c)}>{c.label}</button>)}</div></div>}
   </section>
 }
