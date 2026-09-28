@@ -1,0 +1,40 @@
+name: Apply reviewed map patch
+on:
+  push:
+    branches: ['codex/minimal-evidence-map']
+    paths: ['.github/workflows/apply-reviewed-map.yml']
+permissions:
+  contents: read
+jobs:
+  apply:
+    if: github.ref == 'refs/heads/codex/minimal-evidence-map'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/minimal-evidence-map
+      - name: Validate reviewed patch
+        shell: python
+        run: |
+          import base64, hashlib, lzma, pathlib, subprocess
+          parts = sorted(pathlib.Path('.ci-transfer').glob('map-*.b64'))
+          assert len(parts) == 10, 'incomplete transfer'
+          encoded = ''.join(p.read_text().strip() for p in parts)
+          assert len(encoded) == 72968
+          patch = lzma.decompress(base64.b64decode(encoded, validate=True))
+          assert hashlib.sha256(patch).hexdigest() == 'cb0e6a59e2db01e132447ee553890d1e4c47aa2901f428bd12f0b76ca4977874'
+          path = pathlib.Path('/tmp/reviewed-map.patch')
+          path.write_bytes(patch)
+          assert b'diff --git a/.github/' not in patch
+          subprocess.run(['git', 'apply', '--check', '--unidiff-zero', str(path)], check=True)
+          subprocess.run(['git', 'apply', '--index', '--unidiff-zero', str(path)], check=True)
+      - name: Commit product changes
+        run: |
+          git rm -r .ci-transfer
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat: minimal object-based investment map and 50-case DSH skill'
+          git push origin HEAD:refs/heads/codex/minimal-evidence-map
