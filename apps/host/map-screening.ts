@@ -10,6 +10,7 @@ import { MapScreeningService } from '../../services/map-screening/service'
 import { analyzeMapContext } from '../../services/map-screening/analyst'
 import { resolveMapRegions } from '../../services/map-screening/regions'
 import { assertScreenBounds, SCREEN_PROFILES } from '../../packages/maps/screening-policy'
+import { validate } from '../../packages/contracts/validate'
 
 const profileSchema = z.enum(['balanced', 'commercial', 'enterprise'])
 const boundsSchema = z.object({ west: z.number().finite(), south: z.number().finite(), east: z.number().finite(), north: z.number().finite() }).strict()
@@ -30,6 +31,21 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
   let activeScreens = 0
   app.get('/api/maps/data', async (_req, res) => res.json(dataCatalog(await loadEvidence())))
   app.get('/api/maps/screening/profiles', (_req, res) => res.json(SCREEN_PROFILES))
+  app.get('/api/maps/screening/analysis/:id',async(req,res)=>{
+    try{const profile=profileSchema.parse(req.query.profile);res.json(await service.savedAnalysis(String(req.params.id),profile,requestSignal(req,res,10000)))}
+    catch(error){failure(res,error)}
+  })
+  app.post('/api/maps/geometry/wgs84',async(req,res)=>{
+    try{
+      const body=z.object({geometry:z.unknown()}).strict().parse(req.body)
+      const geometry=validate('MapRegionGeometry',body.geometry)
+      const response=await fetch(config.capabilityUrl+'/spatial/selected-geometry',{method:'POST',signal:requestSignal(req,res,12000),headers:{'Content-Type':'application/json','X-Capability-Token':config.capabilityToken},body:JSON.stringify({geometry})})
+      if(!response.ok)throw new Error('GEOMETRY_CONVERSION_FAILED')
+      const result=await response.json() as {geometry:unknown;coordinate_encoding:string}
+      if(result.coordinate_encoding!=='WGS84')throw new Error('GEOMETRY_CONVERSION_FAILED')
+      res.json({geometry:validate('Geometry',result.geometry),coordinate_encoding:'WGS84'})
+    }catch{if(!res.destroyed)res.status(422).json({code:'GEOMETRY_CONVERSION_FAILED',detail:'所选边界转换未完成，请保留当前选区并重试。'})}
+  })
   app.post('/api/maps/screening/context', async (req, res) => {
     if (!settings.publicConfiguration().configured) return res.status(424).json({ code: 'MAP_NOT_CONFIGURED', detail: '请先连接高德地图。' })
     try {

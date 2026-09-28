@@ -282,7 +282,13 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
             setSelectedCell(prev => prev?.context?.id === id ? classifyCells([{...prev, factors: result.assessment!.factors, dashboard: result.decision_support?.dashboard}],theme)[0] : prev)
             setScreenResult(prev => prev ? {...prev,cells:classifyCells(prev.cells.map(c=>c.context?.id===id?{...c,factors:result.assessment!.factors,dashboard:result.decision_support?.dashboard}:c),theme)} : prev)
           }}
-          onContext={(id, context) => { setPreviewContext({ forId: id, context }); if (context.address) setSelection(current => current?.id === id ? { ...current, address: context.address! } : current) }} /></div>
+          onContext={(id, context) => {
+            setPreviewContext({forId:id,context})
+            const update=(c:MapScreenCell)=>c.context?.id===id||c.context?.id===context.id?{...c,context,...(c.context.id!==context.id?{factors:undefined,dashboard:undefined,analysis_available:false}:{})}:c
+            setScreenCells(prev=>classifyCells(prev.map(update),theme));setSelectedCell(prev=>prev?classifyCells([update(prev)],theme)[0]:null)
+            setScreenResult(prev=>prev?{...prev,cells:classifyCells(prev.cells.map(update),theme)}:prev)
+            if(context.address)setSelection(current=>current?.id===id?{...current,address:context.address!}:current)
+          }} /></div>
         {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={() => onCreateFromPlace(placeForResearch(selection, details), previewContext?.forId === selection.id ? previewContext.context : null)}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
           <div className="atlas-detail-divider" />
           {detailLoading && <p role="status" className="atlas-detail-loading">正在读取地点资料…</p>}

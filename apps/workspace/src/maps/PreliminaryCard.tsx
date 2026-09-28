@@ -19,6 +19,9 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const [stage,setStage]=useState<'context'|'analysis'|'done'>('context'),[error,setError]=useState(''),[retry,setRetry]=useState(0)
   const [sourcesOpen,setSourcesOpen]=useState(false),[progress,setProgress]=useState<ResearchProgress[]>([])
   const analysisAbort=useRef<AbortController|null>(null),cache=useRef(new Map<string,MapScreenAnalysis>())
+  const callbacks=useRef({onContext,onAssessment});callbacks.current={onContext,onAssessment}
+  const restoreAbort=useRef<AbortController|null>(null),viewIdentity=useRef('')
+  viewIdentity.current=[selection.id,context?.id,profile].join('|')
   const card=useRef<HTMLElement|null>(null)
   useEffect(()=>{if(!sourcesOpen)card.current?.closest('aside')?.scrollTo({top:0,behavior:'auto'})},[selection.id,profile,sourcesOpen])
   useEffect(()=>{
@@ -26,29 +29,45 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     setContext(null);setAnalysis(null);setStage('context');setError('');setSourcesOpen(false);setProgress([])
     const timer=window.setTimeout(async()=>{
       try{
-        const target=cell?.context?.target||{kind:'point',longitude:selection.longitude,latitude:selection.latitude,radius_m:800,bounds:null,label:selection.name}
-        const snapshot=!retry&&cell?.context&&Date.parse(cell.context.expires_at)>Date.now()?cell.context:await api<MapScreenContext>('/maps/screening/context',{target},controller.signal)
+        const target=cell?.context?.target||{kind:'point',longitude:selection.longitude,latitude:selection.latitude,radius_m:800,bounds:null,label:selection.name,
+          label_origin:selection.poi_id?'public':'unresolved',...(selection.poi_id?{object_ref:`amap:${selection.poi_id}`}:{})}
+        if(target.label)target.label=target.label.slice(0,180)
+        const snapshot=!retry&&cell?.context?.address&&Date.parse(cell.context.expires_at)>Date.now()?cell.context:await api<MapScreenContext>('/maps/screening/context',{target},controller.signal)
         if(controller.signal.aborted)return
         setContext(snapshot);setStage('done');onContext(selection.id,snapshot)
       }catch(e){if(!controller.signal.aborted){setStage('done');setError(e instanceof Error?e.message:'资料暂未取得。')}}
     },180)
     return()=>{window.clearTimeout(timer);controller.abort();analysisAbort.current?.abort()}
   },[selection.id,selection.longitude,selection.latitude,cell?.context?.id,retry])
-  useEffect(()=>{analysisAbort.current?.abort();setAnalysis(context?cache.current.get(context.id+':'+profile)||null:null);setProgress([]);setStage(s=>s==='analysis'?'done':s)},[profile,context?.id])
+  function receiveStudy(result:MapScreenAnalysis,snapshot:MapScreenContext){
+    setAnalysis(result)
+    callbacks.current.onContext(selection.id,{...snapshot,research_sources:result.research_sources,research_records:result.research_records})
+    callbacks.current.onAssessment?.(snapshot.id,result)
+    if(result.assessment){if(cache.current.size>=24)cache.current.delete(cache.current.keys().next().value!);cache.current.set(snapshot.id+':'+result.profile,result)}
+  }
+  useEffect(()=>{
+    analysisAbort.current?.abort();setAnalysis(null);setProgress([]);setError('');setStage(s=>s==='analysis'?'done':s)
+    if(!context)return
+    const controller=new AbortController(),saved=cache.current.get(context.id+':'+profile),identity=viewIdentity.current
+    restoreAbort.current=controller
+    if(saved)receiveStudy(saved,context)
+    else void api<MapScreenAnalysis|null>(`/maps/screening/analysis/${encodeURIComponent(context.id)}?profile=${profile}`,undefined,controller.signal).then(result=>{
+      if(!controller.signal.aborted&&viewIdentity.current===identity&&result)receiveStudy(result,context)
+    }).catch(()=>{})
+    return()=>controller.abort()
+  },[profile,context?.id])
   async function analyze(){
     if(!context||stage==='analysis')return
+    restoreAbort.current?.abort()
     const controller=new AbortController();analysisAbort.current=controller
+    const identity=viewIdentity.current
     setStage('analysis');setError('');setProgress([])
     try{
       await analyzeSelection(context.id,profile,controller.signal,event=>{
-        if(controller.signal.aborted||analysisAbort.current!==controller)return
+        if(controller.signal.aborted||analysisAbort.current!==controller||viewIdentity.current!==identity)return
         if(event.type==='progress')setProgress(old=>[...old,event].slice(-40))
         if(event.type==='error')setError(event.message)
-        if(event.type==='complete'){
-          setAnalysis(event.result);onAssessment?.(context.id,event.result)
-          onContext(selection.id,{...context,research_sources:event.result.research_sources,research_records:event.result.research_records})
-          if(event.result.status==='completed'){if(cache.current.size>=24)cache.current.delete(cache.current.keys().next().value!);cache.current.set(context.id+':'+profile,event.result)}
-        }
+        if(event.type==='brief'||event.type==='complete')receiveStudy(event.result,context)
       })
     }catch(e){if(!controller.signal.aborted)setError(e instanceof Error?e.message:'研究未完成。')}
     finally{if(!controller.signal.aborted&&analysisAbort.current===controller)setStage('done')}
@@ -70,13 +89,13 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
         {model.next_steps.slice(0,1).map((step,i)=><p className="next-action" key={i}><strong>下一步</strong>{step}</p>)}
       </div>:stage!=='analysis'&&<div className="selection-signals">{signals.length?signals.map(s=><article key={s.title}><h4>{s.title}</h4><p className="signal-observation">{s.observation}</p><p>{s.implication}</p></article>):<p>研究这处空间的具体参与路径。</p>}</div>}
       <div className="assessment-ai-action"><select aria-label="初判研究方向" value={profile} disabled={stage==='analysis'} onChange={e=>onProfile(e.target.value as MapScreenProfile)}>{Object.entries(SCREEN_PROFILES).map(([id,p])=><option key={id} value={id}>{p.label}</option>)}</select>
-        {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setStage('done');setError('已停止，已取得的过程保留。')}}>停止</button>:<button onClick={()=>void analyze()} disabled={!!model}><IconSparkles size={15}/>{model?'已研判':'研判此处'}</button>}</div>
+        {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setStage('done');setError(model?'简报已保留，评分已停止。':'已停止，已取得的过程保留。')}}>停止</button>:<button onClick={()=>void analyze()} disabled={!!model&&analysis?.status==='completed'}><IconSparkles size={15}/>{model?(analysis?.status==='completed'?'已研判':'重试评分'):'研判此处'}</button>}</div>
       <ResearchActivity events={progress} running={stage==='analysis'}/>
       {analysis?.decision_support?.dashboard&&<DecisionDashboard value={analysis.decision_support.dashboard} onEvidence={showEvidence}/>}
       <button className="assessment-source-toggle" aria-expanded={sourcesOpen} onClick={()=>setSourcesOpen(v=>!v)}>查看依据 <IconChevronDown size={14}/></button>
       {sourcesOpen&&<div className="assessment-sources">
         {model?.opportunities.map((c,i)=><p key={i}>{c.text}<button className="claim-source" onClick={()=>showEvidence(c.evidence_refs)} title={cite(c.evidence_refs)}>依据</button></p>)}
-        <p>{cell?cell.boundary_source:'位置周边 800 米'} · {new Date(context.created_at).toLocaleDateString('zh-CN')}</p>
+        <p>{cell?cell.boundary_source:'位置周边 800 米'} · {new Date(analysis?.created_at||context.created_at).toLocaleString('zh-CN')}</p>
         {sources.map(s=><div key={s.ref} id={'evidence-'+encodeURIComponent(s.ref)}><strong>{s.title}</strong><p>{s.synthetic?'测试样本':s.scope} · {s.published_at?.slice(0,10)||'发布日期待补'}</p>
           {(analysis?.research_records||[]).filter(r=>r.source_id===s.id).map(r=><dl className="record-fields" key={r.id}>{r.fields.filter(f=>f.value!==null).map(f=><div key={f.key}><dt>{f.label}</dt><dd>{String(f.value)}{f.unit?' '+f.unit:''}</dd></div>)}</dl>)}
           {s.untrusted_text&&<details><summary>原文摘录</summary><p className="evidence-excerpt">{s.untrusted_text}</p></details>}{s.url&&/^https?:\/\//.test(s.url)&&<a href={s.url} target="_blank" rel="noreferrer">原始来源 ↗</a>}</div>)}

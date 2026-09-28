@@ -6,7 +6,7 @@ import { mountPublicWeb } from '../../runtime/dsh/public-web'
 import type { ProjectInput, ResearchTrace, Source, PublicRecord, AdapterReceipt } from '../../apps/host/generated/contracts'
 import type { ProgressSink } from '../../packages/research/events'
 import { PUBLIC_SOURCES, publicSourceClass, publicSearchPlan, safePublicUrl } from '../../packages/research/public-sources'
-import { adaptOfficialSource } from './adapters/public-records'
+import { adaptOfficialSource, MAX_RESEARCH_RECORDS } from './adapters/public-records'
 import { resolveScope } from './scope'
 
 export function visibleText(html:string,_url:string):string {
@@ -21,6 +21,12 @@ type SearchHit={url:string;title?:string;snippet?:string;publishedAt?:string}
 // Transport injection keeps contract tests offline; production reuses DSH Web.
 export type ResearchWeb={search:(request:{query:string;maxResults:number},signal:AbortSignal)=>Promise<{sources:SearchHit[]}>;fetch:(request:{url:string},signal:AbortSignal)=>Promise<{statusCode:number;body:{kind:string;content:string};truncated?:boolean}>}
 const rank={database:0,official:1,primary:2,supplementary:3}
+function documentDate(raw:string):string|undefined {
+  const match=raw.match(/(?:name|property)=["'](?:PubDate|pubdate|publishdate|publish_date|date|article:published_time)["'][^>]*content=["'](\d{4}-\d{2}-\d{2}(?:T[^"']+)?)|(?:发布时间|发布日期|公告时间)[^\d]{0,12}(\d{4}[年/-]\d{1,2}[月/-]\d{1,2})/i)
+  if(!match)return undefined
+  const value=(match[1]||match[2]).replace(/[年月/]/g,'-').replace(/日/g,'')
+  return Number.isFinite(Date.parse(value))?new Date(value).toISOString():undefined
+}
 export async function collectSelectedEvidence(request:ResearchRequest,signal:AbortSignal,emit:ProgressSink=()=>{},web?:ResearchWeb,plannedQueries?:string[]):Promise<PublicResearch>{
   const ctx=web?null:new Context(),sources:Source[]=[],records:PublicRecord[]=[],receipts:AdapterReceipt[]=[],warnings:string[]=[]
   const name=request.name.replace(/[\r\n<>]/g,' ').trim().slice(0,180)
@@ -55,16 +61,26 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
         try{
           const response=await web!.fetch({url:hit.url},signal)
           if(response.statusCode<200||response.statusCode>=300)throw Error('SOURCE_HTTP_'+response.statusCode)
-          const raw=response.body.content
+          const raw=response.body.content,bodyDate=documentDate(raw)
+          if(hit.publishedAt)source.search_published_at=hit.publishedAt.slice(0,100)
+          if(bodyDate){
+            source.published_at=bodyDate
+            source.date_status=hit.publishedAt&&Number.isFinite(Date.parse(hit.publishedAt))&&new Date(hit.publishedAt).toISOString().slice(0,10)!==bodyDate.slice(0,10)?'conflict':'verified'
+          }else{
+            source.date_status=source.published_at&&Number.isFinite(Date.parse(source.published_at))?'search_only':'undated'
+            if(source.date_status==='undated')delete source.published_at
+          }
+          if(source.date_status==='conflict')warnings.push('SOURCE_DATE_CONFLICT:'+id)
+          if(source.published_at&&Date.parse(source.published_at)>end){warnings.push('SOURCE_FUTURE_PUBLICATION:'+id);return null}
+          source.raw_hash=createHash('sha256').update(raw).digest('hex')
           const adapted=adaptOfficialSource({...source,content_status:'full_text',untrusted_text:raw})
           records.push(...adapted.records);receipts.push(adapted.receipt)
           source.untrusted_text=response.body.kind==='html'?visibleText(raw,hit.url):raw.slice(0,30000)
           // Captcha/login and snippets never masquerade as retrieved factual text.
-          source.content_status=adapted.receipt.status==='access_required'||raw.length<5000&&/人机验证|访问过于频繁|请先登录|验证码|安全验证/.test(raw)?'metadata_only':!source.untrusted_text?'metadata_only':response.truncated||raw.length>30000?'excerpt':'full_text'
+          source.content_status=adapted.receipt.status==='access_required'?'metadata_only':!source.untrusted_text?'metadata_only':response.truncated||raw.length>30000?'excerpt':'full_text'
           if(source.content_status==='metadata_only')source.untrusted_text=''
-          const htmlDate=raw.match(/(?:name=["'](?:PubDate|pubdate|publishdate|date)["'][^>]*content=["'](\d{4}-\d{2}-\d{2})|(?:发布时间|发布日期|公告时间)[^\d]{0,12}(\d{4}[年/-]\d{1,2}[月/-]\d{1,2}))/i)
-          if(!source.published_at&&htmlDate){const date=(htmlDate[1]||htmlDate[2]).replace(/[年月/]/g,'-').replace(/日/g,'');if(Number.isFinite(Date.parse(date)))source.published_at=new Date(date).toISOString()}
-          if(source.published_at&&Date.parse(source.published_at)>end)return null
+          if(source.content_status==='metadata_only')warnings.push('SOURCE_NOT_READ:'+id)
+          else if(adapted.receipt.status==='schema_changed')warnings.push('SOURCE_SCHEMA_CHANGED:'+id)
           for(const record of adapted.records)if(!record.period)record.period=source.published_at?.slice(0,10)||''
         }catch{signal.throwIfAborted();warnings.push('SOURCE_FETCH_FAILED:'+id);receipts.push({source_id:id,adapter:PUBLIC_SOURCES.find(s=>hit.url.includes(s.domain))?.id||'none',status:'empty',record_ids:[]})}
         source.hash=createHash('sha256').update(source.untrusted_text||'').digest('hex')
@@ -74,8 +90,19 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       for(const source of batch)if(source)sources.push(source)
     }
     const ids=new Set(sources.map(s=>s.id)),usable=sources.some(s=>!!s.untrusted_text&&s.content_status!=='metadata_only')
-    const finalRecords=records.filter(r=>ids.has(r.source_id)),finalReceipts=receipts.filter(r=>ids.has(r.source_id))
-    emit({type:'progress',stage:'adapters',status:finalRecords.length?'completed':'partial',message:finalRecords.length?'已提取项目、金额与统计口径':'已整理原文依据'})
+    const finalRecords:PublicRecord[]=[],finalReceipts:AdapterReceipt[]=[]
+    for(const source of sources){
+      const candidates=source.content_status==='metadata_only'?[]:records.filter(r=>r.source_id===source.id)
+      const kept=candidates.slice(0,Math.max(0,MAX_RESEARCH_RECORDS-finalRecords.length))
+      finalRecords.push(...kept)
+      const receipt=receipts.find(r=>r.source_id===source.id)
+      if(receipt){
+        const truncated=receipt.status==='truncated'||kept.length<candidates.length
+        finalReceipts.push({...receipt,status:truncated?'truncated':receipt.status,record_ids:kept.map(r=>r.id)})
+        if(truncated)warnings.push('RECORD_BUDGET_TRUNCATED:'+source.id)
+      }
+    }
+    emit({type:'progress',stage:'adapters',status:finalRecords.length&&!warnings.length?'completed':'partial',message:finalRecords.length?'已提取项目、金额与统计口径':'已整理原文依据'})
     return {sources,records:finalRecords,receipts:finalReceipts,trace:{status:usable?(warnings.length?'partial':'success'):'partial',queries,source_ids:[...ids],warnings,reused:false}}
   }finally{if(ctx)await ctx.fiber.dispose()}
 }

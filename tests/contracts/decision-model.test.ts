@@ -29,6 +29,12 @@ describe('Qwen System One protocol',()=>{
   expect(r.answers?.next_action.probabilities.compare).toBe(.97)
   expect(r.answers?.evidence_sufficient).toBe(.93)
  })
+ it('accounts for two-decimal probability rounding without accepting an impossible mass',()=>{
+  const r=response();r.answers.priority_dimension.probabilities={implementation:.1,adaptation:.1,demand:.52,operations:.1,resources:.1,access:.1}
+  expect(()=>parseDecisionResponse(r)).not.toThrow()
+  r.answers.priority_dimension.probabilities.demand=.7
+  expect(()=>parseDecisionResponse(r)).toThrow('DECISION_INVALID_RESPONSE')
+ })
  it('rejects unrequested models, out-of-range confidence, incomplete distributions and arbitrary choices',()=>{
   const invalid:any[]=[]
   let r=response();r.model='text-model';invalid.push(r)

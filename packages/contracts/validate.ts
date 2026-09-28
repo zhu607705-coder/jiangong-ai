@@ -95,6 +95,7 @@ export function modelSchema(name: string, candidateIds?: readonly string[], poli
     function closeReferences(node:any):void {
       if(!node || typeof node!=='object') return
       if(node.properties?.evidence_refs) node.properties.evidence_refs.items={type:'string',enum:allowedReferences}
+      if(node.properties?.source_id) node.properties.source_id={...node.properties.source_id,enum:allowedReferences}
       for(const child of Object.values(node)) if(Array.isArray(child)) child.forEach(closeReferences); else closeReferences(child)
     }
     closeReferences(result)

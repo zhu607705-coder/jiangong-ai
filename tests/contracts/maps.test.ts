@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { AmapSettings, amapUpstream } from '../../apps/host/amap'
-import { coordinates, normalizePoi, normalizeDetails, placeForResearch, projectCoordinates, toProjectAnchor } from '../../apps/workspace/src/maps/amap-client'
+import { coordinates, normalizePoi, normalizeDetails, placeForResearch, projectCoordinates, mapCoordinates, toProjectAnchor } from '../../apps/workspace/src/maps/amap-client'
 import { projectInput } from '../../packages/contracts/validate'
 import type { Project } from '../../apps/workspace/src/api'
 
@@ -74,6 +74,20 @@ describe('map selection data remains spatially honest', () => {
     expect(projectCoordinates(project)).toEqual({ coordinates: [[120.1, 30.2]], encoding: 'GCJ-02', polygon: false })
     value.synthetic = true
     expect(projectCoordinates(project)).toBeNull()
+  })
+  it('converts and preserves every project polygon ring, including multiple holes',async()=>{
+    const rings=[[[120,30],[121,30],[121,31],[120,31],[120,30]],[[120.2,30.2],[120.2,30.3],[120.3,30.3],[120.3,30.2],[120.2,30.2]],[[120.6,30.6],[120.6,30.7],[120.7,30.7],[120.7,30.6],[120.6,30.6]]]
+    const input=JSON.parse(await readFile('fixtures/inputs/01_auto.json','utf8'))
+    Object.assign(input,{synthetic:false,sources:[],facts:[],context_rules:[]})
+    input.scope={name:'明确的空间回归样本',geometry:{type:'Polygon',coordinates:rings},coordinate_encoding:'WGS84',legal_parcel_confirmed:false}
+    const project={id:'RINGS',name:'测试',context_version:0,input:projectInput(input)} as Project
+    vi.stubGlobal('window',{setTimeout,clearTimeout})
+    try{
+      const sdk={convertFrom:(points:number[][],_type:string,done:Function)=>done('complete',{locations:points.map(([lng,lat])=>({lng:lng+.005,lat:lat+.003}))})}
+      expect(projectCoordinates(project)?.coordinates).toEqual(rings)
+      expect((await mapCoordinates(sdk as any,project))?.points).toEqual(rings.map(r=>r.map(([x,y])=>[x+.005,y+.003])))
+      expect(project.input.scope.geometry?.coordinates).toEqual(rings)
+    }finally{vi.unstubAllGlobals()}
   })
   it('rejects an anchor incorrectly declared as WGS84 at the shared contract boundary', async () => {
     const fixture = JSON.parse(await readFile('fixtures/inputs/01_auto.json', 'utf8'))

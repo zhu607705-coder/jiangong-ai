@@ -1,4 +1,5 @@
 import type { MapDecisionFactor, MapScreenContext, MapScreenTheme } from '../../apps/host/generated/contracts'
+import { factAppliesToTarget } from './object-identity'
 
 export const FACTOR_LABELS = {
   implementation: '实施条件', adaptation: '空间适配', demand: '使用需求',
@@ -31,6 +32,7 @@ export function decisionFactors(context: MapScreenContext): MapDecisionFactor[] 
       const source = p.sources.find(s => s.id === f.source_id)
       const observed = Date.parse(f.observed_at || '')
       if (!f.kind.startsWith('screening.') || !FACTOR_FIELDS[key].includes(field) || typeof f.value !== 'boolean'
+          || !factAppliesToTarget(f,p,context.target)
           || !f.locator || !f.object_ref || !source || source.synthetic || source.content_status === 'metadata_only'
           || !Number.isFinite(observed) || observed > asOf || asOf - observed > 180 * 86400000) return []
       return [{ field, value:f.value, ref:`${p.project_id}:${f.source_id}`, project:p.project_id, subject:`${p.project_id}:${f.object_ref}` }]
@@ -45,12 +47,13 @@ export function decisionFactors(context: MapScreenContext): MapDecisionFactor[] 
       && scopedProjects.every(p => rows.some(r => r.project === p.project_id))
     const state = conflict ? 'conditional' : negative.length ? 'blocked' : allCovered ? 'supported' : positive.length ? 'conditional' : 'unknown'
     return { key, state, summary: conflict ? `${FACTOR_LABELS[key]}资料存在分歧` : negative.length ? `${FIELD_LABELS[negative[0].field]}受限` : positive.length ? `${[...new Set(positive.map(r => FIELD_LABELS[r.field]))].join('、')}已有依据` : `${FACTOR_LABELS[key]}待核查`,
-      evidence_refs:[...new Set(rows.map(r => r.ref))].slice(0,4), quote:'' } as MapDecisionFactor
+      evidence_refs:[...new Set(rows.map(r => r.ref))].slice(0,4), quote:'', conflict } as MapDecisionFactor
   })
 }
 export function factorTier(factors: MapDecisionFactor[], theme: MapScreenTheme) {
-  const rows = theme === 'overall' ? factors : factors.filter(f => f.key === theme)
+  const rows = theme === 'overall' ? factors : factors.filter(f => f.key === (theme==='supply'?'demand':theme))
   if (rows.some(f => f.state === 'blocked')) return 'sparse' as const
+  if (rows.some(f => f.conflict)) return 'moderate' as const
   if (theme !== 'overall') return rows.some(f => f.state === 'supported') ? 'strong' as const : rows.some(f => f.state === 'conditional') ? 'moderate' as const : 'incomplete' as const
   const essential = ['implementation','adaptation','demand','operations','resources']
   if (essential.every(k => rows.some(f => f.key === k && f.state === 'supported'))) return 'strong' as const

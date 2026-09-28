@@ -3,15 +3,15 @@ import { mkdtemp, rm, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { readFileSync } from 'node:fs'
-import { MapScreeningService, normalizeEvidence, normalizedTarget } from '../../services/map-screening/service'
+import { MapScreeningService, normalizeEvidence, normalizedTarget, type ContextAnalyst } from '../../services/map-screening/service'
 import { EVIDENCE_GROUPS, classifyCells, assertScreenBounds } from '../../packages/maps/screening-policy'
 import { dataCatalog, evidenceAt, mergeProjectSources, targetContains, type ProjectEvidenceSnapshot } from '../../services/map-screening/project-evidence'
 import { handoffPublicSources, publicMapContext } from '../../packages/maps/public-context'
-import { groundMapAssessment } from '../../services/map-screening/analyst'
+import { groundMapAssessment, researchSubject } from '../../services/map-screening/analyst'
 import { validate } from '../../packages/contracts/validate'
-import { DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
+import { DECISION_THRESHOLDS, mapDecisionInput } from '../../packages/decision/structured-route'
 import type { ProjectRecord, RunRecord } from '../../apps/host/store'
-import type { MapScreenContext, MapScreenTarget, MapScreenCell, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
+import type { MapScreenAnalysis, MapScreenContext, MapScreenTarget, MapScreenCell, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
 
 const directories: string[] = []
 afterEach(async () => { for (const path of directories.splice(0)) await rm(path, {recursive:true,force:true}) })
@@ -46,7 +46,7 @@ async function service(evidence = snapshot(), failGroup = false) {
     if (failGroup && params.types === EVIDENCE_GROUPS[0].types) throw new Error('FIXTURE_SOURCE_TIMEOUT')
     return response()
   })
-  const analyst = vi.fn(async (ctx: MapScreenContext, profile: 'balanced'|'commercial'|'enterprise') => ({context_id:ctx.id,profile,status:'unavailable' as const,assessment:null,model_calls:[],reason:'fixture no model',created_at:new Date().toISOString()}))
+  const analyst = vi.fn<ContextAnalyst>(async (ctx,profile) => ({context_id:ctx.id,profile,status:'unavailable',assessment:null,model_calls:[],reason:'fixture no model',created_at:new Date().toISOString()}))
   const loader = vi.fn(async () => evidence)
   return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,async()=>({cells:regions(),notes:['Fixture polygons']})),query,analyst,directory,loader}
 }
@@ -105,6 +105,16 @@ describe('evidence acquisition and cache lifecycle', () => {
     expect(()=>normalizedTarget({...point,bounds})).toThrow()
     expect(()=>normalizedTarget({...point,kind:'cell',radius_m:null,bounds,longitude:130})).toThrow()
   })
+  it('preserves valid precision across normalization and JSON round trips, including narrow polygons',()=>{
+    for(const width of [.0049988,.0000004]){
+      const west=120.1500006,south=30.2700006,east=west+width,north=south+width
+      const ring=[[west,south],[east,south],[east,north],[west,north],[west,south]]
+      const target={kind:'cell',longitude:(west+east)/2,latitude:(south+north)/2,radius_m:null,bounds:{west,east,south,north},geometry:{type:'Polygon',coordinates:[ring]}}
+      const first=normalizedTarget(target)
+      expect(normalizedTarget(JSON.parse(JSON.stringify(first)))).toEqual(first)
+      expect(first.geometry?.coordinates).toEqual([ring])
+    }
+  })
   it('maps complete provider facts and project evidence without calling the model', async () => {
     const {engine,query,analyst}=await service()
     const ctx=await engine.context(point,new AbortController().signal)
@@ -121,6 +131,23 @@ describe('evidence acquisition and cache lifecycle', () => {
     const next=await engine.context(point,new AbortController().signal)
     expect(next.id).not.toBe(ctx.id);expect(next.project_revision).toBe('v2')
     expect(next.local_projects[0].relation).toBe('within_scope');expect(query).toHaveBeenCalledTimes(5)
+  })
+  it('rejects a saved context before model use when public source permission changes',async()=>{
+    const {engine,loader,analyst}=await service();const signal=new AbortController().signal
+    const ctx=await engine.context(point,signal)
+    loader.mockResolvedValue({...snapshot(),revision:'revoked-public-source'})
+    await expect(engine.analyze(ctx.id,'balanced',signal)).rejects.toThrow('CONTEXT_EXPIRED')
+    expect(analyst).not.toHaveBeenCalled()
+  })
+  it('does not publish or persist a result whose source revision changed during analysis',async()=>{
+    const {engine,loader,analyst,directory}=await service();const signal=new AbortController().signal
+    const ctx=await engine.context(point,signal)
+    analyst.mockImplementation(async(c,profile)=>{
+      loader.mockResolvedValue({...snapshot(),revision:'changed-during-analysis'})
+      return {context_id:c.id,profile,status:'completed' as any,assessment:{summary:'测试结果',opportunities:[],cautions:[],unknowns:[],next_steps:[]},model_calls:[],reason:null,created_at:new Date().toISOString()} as any
+    })
+    await expect(engine.analyze(ctx.id,'balanced',signal)).rejects.toThrow('CONTEXT_EXPIRED')
+    await expect(readFile(join(directory,'analyses',ctx.id+'-balanced.json'))).rejects.toThrow()
   })
   it('partial failure preserves other facts and never colors unavailable counts as zero', async () => {
     const {engine}=await service(snapshot(),true)
@@ -153,6 +180,18 @@ describe('evidence acquisition and cache lifecycle', () => {
     expect(result.comparison_count).toBe(0)
     expect(JSON.parse(await readFile(join(directory,'scans',result.id+'.json'),'utf8')).id).toBe(result.id)
   })
+  it('resolves an unnamed selected cell at its own anchor without copying the viewport address',async()=>{
+    const {engine,query}=await service();const signal=new AbortController().signal
+    query.mockImplementation(async(path,params)=>path.includes('regeo')?{regeocode:{formatted_address:Number(params.location.split(',')[0])<120.156?'杭州市甲街区':'杭州市乙街区',addressComponent:{city:'杭州市'}}}:response())
+    const result=await engine.screen(bounds,'balanced','overall',signal,()=>{})
+    expect(result.cells.every(c=>c.context?.address===null)).toBe(true)
+    expect(query).toHaveBeenCalledTimes(5)
+    const one=await engine.context(result.cells[0].context!.target,signal),two=await engine.context(result.cells[1].context!.target,signal)
+    expect(one.address).toBe('杭州市甲街区');expect(two.address).toBe('杭州市乙街区')
+    expect(researchSubject(one)).toBe(one.address);expect(researchSubject(two)).toBe(two.address)
+    expect(one.target.object_ref).not.toBe(two.target.object_ref)
+    expect(query).toHaveBeenCalledTimes(7)
+  })
   it('model analysis is explicit and rejects unissued snapshot paths', async () => {
     const {engine,analyst}=await service();const signal=new AbortController().signal
     await expect(engine.analyze('../secrets','balanced',signal)).rejects.toThrow('CONTEXT_NOT_FOUND')
@@ -169,6 +208,20 @@ describe('public model evidence boundary', () => {
     const payload=JSON.stringify(publicMapContext(ctx))
     expect(payload).not.toContain('PRIVATE_CANARY');expect(payload).not.toContain('PRIVATE_PROJECT_NAME')
     expect(payload).toContain('PUB-REAL')
+  })
+  it('does not send a project boundary display name through the target label',async()=>{
+    const p=project('REAL-L',true)
+    const {engine}=await service(snapshot(p));const ctx=await engine.context(point,new AbortController().signal)
+    ctx.target.label=p.name
+    expect(JSON.stringify(publicMapContext(ctx))).not.toContain('PRIVATE_PROJECT_NAME')
+    expect(researchSubject(ctx)).toBe(ctx.address)
+    expect(JSON.stringify(mapDecisionInput(ctx,'建筑服务'))).not.toContain('PRIVATE_PROJECT_NAME')
+    p.name='PRIVATE_PROJECT_NAME_'+ '机密'.repeat(30)
+    ctx.local_projects[0].name=p.name;ctx.target.label=p.name.slice(0,40)
+    expect(publicMapContext(ctx).target.label).toBeUndefined()
+    ctx.target.label_origin='project';ctx.local_projects=[]
+    expect(JSON.stringify(publicMapContext(ctx))).not.toContain('PRIVATE_PROJECT_NAME')
+    expect(researchSubject(ctx)).toBe(ctx.address)
   })
   it('rejects fabricated, internal and metadata-only citations while accepting scoped public sources', async () => {
     const {engine}=await service();const ctx=await engine.context(point,new AbortController().signal)
@@ -188,11 +241,42 @@ describe('public model evidence boundary', () => {
 
 
 describe('persisted object research', () => {
+  const brief=(ctx:MapScreenContext,profile:MapScreenAnalysis['profile'],status:MapScreenAnalysis['status']='partial'):MapScreenAnalysis=>({context_id:ctx.id,profile,status,created_at:new Date().toISOString(),reason:null,model_calls:[],assessment:{summary:'调查单栋设备维护。',opportunities:[{text:'按原文调查维护范围。',evidence_refs:['S']}],cautions:[],unknowns:[],next_steps:['核对采购窗口。']},research_sources:[{...publicSource,id:'S'}],research_records:[]})
+  it('persists a validated brief through cancellation and passes it into the next scoring attempt',async()=>{
+    const {engine,analyst,directory,query,loader}=await service();const stop=new AbortController()
+    const ctx=await engine.context(point,stop.signal)
+    analyst.mockImplementationOnce(async(c,p,signal,emit)=>{await emit?.({type:'brief',result:brief(c,p)});signal.throwIfAborted();throw Error('Scoring must not start after cancellation')})
+    await expect(engine.analyze(ctx.id,'balanced',stop.signal,e=>{if(e.type==='brief')stop.abort()})).rejects.toThrow()
+    const nextAnalyst=vi.fn<ContextAnalyst>(async(c,p,_signal,_emit,previous)=>{expect(previous?.assessment?.summary).toBe('调查单栋设备维护。');return brief(c,p,'completed')})
+    const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,nextAnalyst,loader)
+    const saved=await recovered.savedAnalysis(ctx.id,'balanced',new AbortController().signal)
+    expect(saved?.status).toBe('partial');expect(saved?.research_sources?.[0].id).toBe('S')
+    await recovered.analyze(ctx.id,'balanced',new AbortController().signal)
+    await recovered.analyze(ctx.id,'balanced',new AbortController().signal)
+    expect(nextAnalyst).toHaveBeenCalledTimes(1)
+  })
+  it('restores the complete persisted study after a restart and rescan without another analysis call',async()=>{
+    const {engine,analyst,directory,query,loader}=await service();const signal=new AbortController().signal
+    analyst.mockImplementation(async(c,p)=>brief(c,p,'completed'))
+    const first=await engine.screen(bounds,'balanced','overall',signal,()=>{})
+    await engine.analyze(first.cells[0].context!.id,'balanced',signal)
+    const resumedAnalyst=vi.fn<ContextAnalyst>(async()=>{throw Error('A valid saved study must not invoke the model')})
+    const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,resumedAnalyst,loader,async()=>({cells:regions(),notes:[]}))
+    const next=await recovered.screen(bounds,'balanced','overall',signal,()=>{})
+    expect(next.cells[0].analysis_available).toBe(true)
+    const study=await recovered.savedAnalysis(next.cells[0].context!.id,'balanced',signal)
+    expect(study?.assessment?.summary).toBe('调查单栋设备维护。')
+    expect(study?.research_sources?.[0].id).toBe('S')
+    expect(study?.context_id).toBe(next.cells[0].context!.id)
+    expect(study?.reused_from_context_id).toBe(first.cells[0].context!.id)
+    await recovered.analyze(next.cells[0].context!.id,'balanced',signal)
+    expect(resumedAnalyst).not.toHaveBeenCalled()
+  })
   it('restores color only for the same scope/profile/revision without another model call', async () => {
     const {engine,analyst,loader}=await service();const signal=new AbortController().signal
     const scanned=await engine.screen(bounds,'balanced','demand',signal,()=>{})
     const ctx=scanned.cells[0].context!
-    analyst.mockImplementation(async(c,profile)=>({context_id:c.id,profile,status:'completed' as any,assessment:{summary:'研究单栋修缮服务。',opportunities:[],cautions:[],unknowns:[],next_steps:['核对采购窗口。']},model_calls:[],reason:null,created_at:new Date().toISOString(),decision_support:{status:'unavailable',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:null,duration_ms:0,input_tokens:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:[],thresholds:DECISION_THRESHOLDS,error_code:null,dashboard:{policy_version:'opportunity-fit-v2',purpose:'测试工程',model:'decision-model-preview',request_id:'FIXTURE',status:'partial',dimensions:[{key:'demand',value:4,confidence:.9,evidence_refs:['S'],basis:'测试证据'}]}}} as any))
+    analyst.mockImplementation(async(c,profile)=>({context_id:c.id,profile,status:'completed' as any,assessment:{summary:'研究单栋修缮服务。',opportunities:[],cautions:[],unknowns:[],next_steps:['核对采购窗口。']},model_calls:[],reason:null,created_at:new Date().toISOString(),research_sources:[{...publicSource,id:'S'}],decision_support:{status:'completed',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:null,duration_ms:0,input_tokens:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:[],thresholds:DECISION_THRESHOLDS,error_code:null,dashboard:{policy_version:'opportunity-fit-v2',purpose:'测试工程',model:'decision-model-preview',request_id:'FIXTURE',status:'partial',dimensions:[{key:'demand',value:4,confidence:.9,evidence_refs:['S'],basis:'测试证据'}]}}} as any))
     await engine.analyze(ctx.id,'balanced',signal)
     const same=await engine.screen(bounds,'balanced','demand',signal,()=>{})
     expect(same.cells[0].tier).toBe('strong');expect(same.cells[1].dashboard).toBeUndefined()

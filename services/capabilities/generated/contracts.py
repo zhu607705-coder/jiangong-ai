@@ -70,6 +70,23 @@ class ParseStatus(StrEnum):
     ocr_required = 'ocr_required'
 
 
+class DateStatus(StrEnum):
+    verified = 'verified'
+    search_only = 'search_only'
+    conflict = 'conflict'
+    undated = 'undated'
+
+
+class ObjectRef(RootModel[str]):
+    root: str = Field(..., max_length=200)
+
+
+class EvidenceScope(StrEnum):
+    object = 'object'
+    area = 'area'
+    background = 'background'
+
+
 class Source(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -89,6 +106,11 @@ class Source(BaseModel):
     content_status: ContentStatus | None = None
     published_at: str | None = None
     parse_status: ParseStatus | None = None
+    search_published_at: str | None = Field(None, max_length=100)
+    date_status: DateStatus | None = None
+    object_refs: list[ObjectRef] | None = Field(None, max_length=100)
+    evidence_scope: EvidenceScope | None = None
+    raw_hash: str | None = Field(None, max_length=100)
 
 
 class Inventory(BaseModel):
@@ -97,6 +119,16 @@ class Inventory(BaseModel):
     )
     gfa_m2: float | None = Field(..., ge=0.0)
     vacant_m2: float | None = Field(..., ge=0.0)
+
+
+class ScopeKind(StrEnum):
+    object = 'object'
+    project = 'project'
+    shared = 'shared'
+
+
+class AppliesToItem(RootModel[str]):
+    root: str = Field(..., max_length=200)
 
 
 class Fact(BaseModel):
@@ -111,6 +143,8 @@ class Fact(BaseModel):
     object_ref: str | None = None
     observed_at: str | None = None
     locator: str | None = None
+    scope_kind: ScopeKind | None = None
+    applies_to: list[AppliesToItem] | None = Field(None, max_length=100)
 
 
 class Kind(StrEnum):
@@ -507,6 +541,12 @@ class RadiusM(RootModel[int]):
     root: int = Field(..., ge=100, le=1200)
 
 
+class LabelOrigin(StrEnum):
+    public = 'public'
+    project = 'project'
+    unresolved = 'unresolved'
+
+
 class MapScreenPoi(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -592,6 +632,7 @@ class Status10(StrEnum):
     unavailable = 'unavailable'
     failed = 'failed'
     insufficient_data = 'insufficient_data'
+    partial = 'partial'
 
 
 class Reason(RootModel[str]):
@@ -732,6 +773,7 @@ class MapDecisionFactor(BaseModel):
     summary: str = Field(..., max_length=60, min_length=1)
     evidence_refs: list[EvidenceRef1] = Field(..., max_length=4)
     quote: str = Field(..., max_length=180)
+    conflict: bool | None = None
 
 
 class Probabilities(RootModel[float]):
@@ -842,6 +884,7 @@ class PublicRecord(BaseModel):
     period: str = Field(..., max_length=80)
     source_id: str = Field(..., max_length=100)
     fields: list[PublicField] = Field(..., max_length=40)
+    source_hash: str | None = Field(None, max_length=100)
 
 
 class Status13(StrEnum):
@@ -850,6 +893,7 @@ class Status13(StrEnum):
     access_required = 'access_required'
     schema_changed = 'schema_changed'
     unsupported = 'unsupported'
+    truncated = 'truncated'
 
 
 class RecordId(RootModel[str]):
@@ -912,6 +956,7 @@ class DimensionEvidence(BaseModel):
     source_id: str = Field(..., max_length=200)
     quote: str = Field(..., max_length=180, min_length=8)
     basis: str = Field(..., max_length=120)
+    record_id: str | None = Field(None, max_length=120)
 
 
 class Scope(BaseModel):
@@ -928,6 +973,7 @@ class Scope(BaseModel):
     map_anchor: MapAnchor | None = None
     resolution_status: ResolutionStatus | None = None
     resolution_note: str | None = None
+    boundary_source: str | None = Field(None, max_length=250)
 
 
 class Scenario(BaseModel):
@@ -991,6 +1037,9 @@ class MapScreenTarget(BaseModel):
     bounds: MapScreenBounds | None
     geometry: MapRegionGeometry | None = None
     label: str | None = Field(None, max_length=180)
+    object_ref: str | None = Field(None, max_length=200)
+    label_origin: LabelOrigin | None = None
+    boundary_source: str | None = Field(None, max_length=250)
 
 
 class MapScreenContext(BaseModel):
@@ -1045,6 +1094,7 @@ class MapScreenCell(BaseModel):
     area_m2: float | None = Field(None, ge=0.0)
     factors: list[MapDecisionFactor] | None = Field(None, max_length=6)
     dashboard: DecisionDashboard | None = None
+    analysis_available: bool | None = None
 
 
 class MapScreenResult(BaseModel):
@@ -1142,3 +1192,4 @@ class MapScreenAnalysis(BaseModel):
     research_records: list[PublicRecord] | None = Field(None, max_length=100)
     adapter_receipts: list[AdapterReceipt] | None = Field(None, max_length=12)
     research: ResearchTrace | None = None
+    reused_from_context_id: str | None = Field(None, max_length=100)

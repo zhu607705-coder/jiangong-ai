@@ -1,5 +1,5 @@
 {
-  "status": "pr2_implemented_local_verification",
+  "status": "pro_audit_round_01_verified_pending_push_and_rereview",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -26,9 +26,9 @@
     "external_production_database_extensions_and_multitenant_deployment_validation",
     "scanned_image_OCR_engine_optional_source_capability"
   ],
-  "next_task": "T18_configured_environment_acceptance",
+  "next_task": "Push the audited fix commit, attach its source snapshot and A01–A16 dispositions to the original 6 Pro chat, then continue until explicit pass.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-28",
+  "updated_at": "2026-09-28T15:01:07.679815+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -65,10 +65,7 @@
     "decision_model": "decision-model-preview via DSH ToolRuntime; official preview endpoint verified"
   },
   "latest_evidence": [
-    "research/test_results/qwen-integration.json",
-    "research/test_results/qwen-live-cases.json",
-    "research/baseline_logs/qwen-verification.log",
-    "research/baseline_logs/qwen-build.log"
+    "research/test_results/pro-audit-round1.json"
   ],
   "current_delivery": "Merged minimal object map with 50-case DSH brief skill, live Qwen System One decision routing, source-bound concise briefs and prioritized project investigation tasks.",
   "node_status": {
@@ -187,7 +184,7 @@
     "credentials": "ignored data/local/amap-credentials.json",
     "initial_ui": "map_only; detail_requires_selection",
     "data_scope": "Explicit physical objects, source-backed factors; selected-object summaries on demand; 50 public mechanism references.",
-    "verification_scope": "Live AMap, Overpass physical objects, Qwen and DSH map/project workflow; 184 automated checks, 8 synthetic browser checks and native browser validation."
+    "verification_scope": "189 JS, 69 Python, 10 HTTP and 24 synthetic-browser checks; production build; actual public AMap/DSH/Qwen study and cached readback."
   },
   "github": {
     "url": "https://github.com/zhu607705-coder/jiangong-ai",
@@ -197,7 +194,8 @@
     "initial_publication_commit": "997cd834f8159b6e1e854c39549020ad6f1aabd3",
     "current_source_branch": "main",
     "pr1_merge_commit": "1408fee8537ebd47a6ec86c05c4091e4e5275436",
-    "decision_integration_evidence": "research/test_results/qwen-integration.json"
+    "decision_integration_evidence": "research/test_results/qwen-integration.json",
+    "pr2_merge_commit": "644cd56a69f8d77690f73efd9d8b1cb4e9ae6848"
   },
   "release_note": "The earlier v0.2 ZIP is a historical snapshot; current source delivery is GitHub main.",
   "pr2": {
@@ -206,7 +204,30 @@
     "documentation": "docs/PR2_公开数据与六维研判.md",
     "case_study": "docs/浙大七校区参与机会_PR2.md",
     "evidence": "research/test_results/pr2-verification.json",
-    "live_status": "not_run_this_revision",
+    "live_status": "live_flow_exercised_during_audit; source_quality_and_recovery_fixes_in_progress",
     "next": "Review PR and verify real DSH Search/Qwen/provider responses, latency and record coverage in configured environment."
+  },
+  "external_audit": {
+    "review_id": "JIANGONG-AUDIT-01-644cd56a",
+    "baseline": "644cd56a69f8d77690f73efd9d8b1cb4e9ae6848",
+    "verdict": "not_passed",
+    "findings": 16,
+    "ledger": "docs/Pro审计修复记录.md",
+    "evidence_local": "data/local/pro-audit/round-01",
+    "native_goal": "active",
+    "publication": "fixes not yet committed or pushed",
+    "completed_local_checks": [
+      "frozen-baseline independent logic/service/coordinate counterexamples",
+      "A06/A08 geometry regression 33 checks",
+      "A09/A10/A14 and document-date conflict 33 checks",
+      "A03/A04 factors and routing 34 checks",
+      "A05 per-object location and label boundary 23 checks",
+      "A07 geometry converter 15 Python checks and typecheck"
+    ],
+    "pending": [
+      "push exact commit",
+      "Pro re-review and any further accepted fixes"
+    ],
+    "verification": "research/test_results/pro-audit-round1.json"
   }
 }

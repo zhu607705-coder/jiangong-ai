@@ -1,4 +1,5 @@
 import type { DecisionDashboard, DimensionEvidence, ResearchDimension } from '../../apps/host/generated/contracts'
+import { validProbabilityMass, compatibleExpectedScore } from './probabilities'
 
 export const DASHBOARD_POLICY='opportunity-fit-v2'
 export const DASHBOARD_DIMENSIONS:{key:ResearchDimension;label:string;question:string;levels:string[]}[]=[
@@ -21,10 +22,9 @@ export function parseDashboard(raw:any,input:DashboardInput):DecisionDashboard{
     if(!evidence.length){missing=true;return base}
     if(answer?.type!=='score'||!Number.isFinite(answer.score)||answer.score<0||answer.score>4||!Number.isFinite(answer.confidence)||answer.confidence<0||answer.confidence>1)throw new Error('DECISION_INVALID_RESPONSE')
     const probabilities=answer.probabilities,keys=Object.keys(probabilities||{}).sort()
-    if(keys.join()!=='0,1,2,3,4'||keys.some(k=>!Number.isFinite(probabilities[k])||probabilities[k]<0||probabilities[k]>1)||Math.abs(keys.reduce((sum,k)=>sum+probabilities[k],0)-1)>.02)throw new Error('DECISION_INVALID_RESPONSE')
+    if(Array.isArray(probabilities)||keys.join()!=='0,1,2,3,4'||!validProbabilityMass(keys.map(k=>probabilities[k])))throw new Error('DECISION_INVALID_RESPONSE')
     // System One's score is the 0-based probability-weighted expected level.
-    const mean=keys.reduce((sum,k)=>sum+Number(k)*probabilities[k],0)
-    if(Math.abs(mean-answer.score)>.05)throw new Error('DECISION_INVALID_RESPONSE')
+    if(!compatibleExpectedScore(answer.score,keys.map(k=>probabilities[k])))throw new Error('DECISION_INVALID_RESPONSE')
     if(answer.confidence<.65){missing=true;return base}
     return {...base,value:Math.round((answer.score+1)*10)/10,confidence:answer.confidence}
   })

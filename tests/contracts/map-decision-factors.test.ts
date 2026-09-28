@@ -3,6 +3,9 @@ import { readFileSync } from 'node:fs'
 import { decisionFactors, factorTier, decisionSignals, FACTOR_FIELDS } from '../../packages/maps/decision-factors'
 import { assertBriefProse, selectReferenceCases } from '../../runtime/skills/investment-brief'
 import { normalizedTarget } from '../../services/map-screening/service'
+import { classifyCells } from '../../packages/maps/screening-policy'
+import { DASHBOARD_DIMENSIONS } from '../../packages/decision/dashboard'
+import { mapDecisionInput } from '../../packages/decision/structured-route'
 import type { MapScreenContext, MapProjectEvidence } from '../../apps/host/generated/contracts'
 function context(facts:any[]=[]):MapScreenContext {
   return {id:'fixture',created_at:'2026-09-28T00:00:00Z',groups:[],local_projects:[{project_id:'P1',relation:'within_scope',
@@ -46,6 +49,34 @@ describe('source-backed factors',()=>{
   it('turns office places into an investigation, not a demand estimate',()=>{
     const ctx=context();ctx.groups=[{key:'work_live',sample:[{name:'测试商务楼',category:'商务住宅;商务写字楼'}],reported_count:999} as any]
     const signal=decisionSignals(ctx)[0];expect(signal.title).toBe('办公线索');expect(signal.next).toContain('空置');expect(JSON.stringify(signal)).not.toContain('999')
+  })
+  it('does not project another building facts or blockers onto a selected object',()=>{
+    const ctx=context([fact('rights_secured',false,'building-B'),...FACTOR_FIELDS.demand.map(f=>fact(f,true,'building-B'))])
+    ctx.target={kind:'point',longitude:120,latitude:30,radius_m:800,bounds:null,object_ref:'building-A'}
+    expect(decisionFactors(ctx).every(f=>f.state==='unknown')).toBe(true)
+    expect(JSON.stringify(mapDecisionInput(ctx,'研究'))).not.toContain('building-B')
+    ctx.local_projects[0].facts=FACTOR_FIELDS.demand.map(f=>fact(f,true,'building-A'))
+    expect(decisionFactors(ctx).find(f=>f.key==='demand')?.state).toBe('supported')
+  })
+  it('accepts explicitly shared and project-wide scope without inferring it from an anchor',()=>{
+    const ctx=context(FACTOR_FIELDS.demand.map(f=>({...fact(f),scope_kind:'shared',applies_to:['amap:A']})))
+    ctx.target={kind:'point',longitude:120,latitude:30,radius_m:800,bounds:null,object_ref:'amap:A'}
+    expect(decisionFactors(ctx).find(f=>f.key==='demand')?.state).toBe('supported')
+    ctx.target.object_ref='amap:B'
+    expect(decisionFactors(ctx).find(f=>f.key==='demand')?.state).toBe('unknown')
+    ctx.local_projects[0].facts=FACTOR_FIELDS.demand.map(f=>({...fact(f),scope_kind:'project' as const}))
+    ctx.target.boundary_source='project:P1'
+    expect(decisionFactors(ctx).find(f=>f.key==='demand')?.state).toBe('supported')
+  })
+  it('does not turn an unresolved conflict green, but releases the guard after evidence is reconciled',()=>{
+    const ctx=context([fact('user_need_verified'),fact('user_need_verified',false)])
+    const dashboard={policy_version:'test',purpose:'合成测试',status:'completed',model:'decision-model-preview',request_id:'TEST',dimensions:DASHBOARD_DIMENSIONS.map(d=>({key:d.key,value:4.5,confidence:.9,evidence_refs:['P1:S1'],basis:'测试'}))}
+    const cell={id:'C',context:ctx,dashboard,factors:decisionFactors(ctx)} as any
+    expect(cell.factors.find((f:any)=>f.key==='demand').conflict).toBe(true)
+    expect(classifyCells([cell],'overall')[0].tier).toBe('moderate')
+    expect(classifyCells([cell],'supply')[0].tier).toBe('moderate')
+    ctx.local_projects[0].facts=[fact('user_need_verified')]
+    expect(classifyCells([{...cell,factors:decisionFactors(ctx)}],'overall')[0].tier).toBe('strong')
   })
 })
 describe('brief skill and casebook',()=>{

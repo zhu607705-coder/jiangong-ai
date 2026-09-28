@@ -65,6 +65,7 @@ export interface Scope {
   map_anchor?: MapAnchor;
   resolution_status?: "provided_polygon" | "place_point" | "ambiguous" | "uncovered";
   resolution_note?: string;
+  boundary_source?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -113,6 +114,11 @@ export interface Fact {
   object_ref?: string;
   observed_at?: string;
   locator?: string;
+  scope_kind?: "object" | "project" | "shared";
+  /**
+   * @maxItems 100
+   */
+  applies_to?: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -142,6 +148,14 @@ export interface Source {
   content_status?: "full_text" | "excerpt" | "metadata_only" | "uploaded";
   published_at?: string;
   parse_status?: "extracted" | "empty" | "ocr_required";
+  search_published_at?: string;
+  date_status?: "verified" | "search_only" | "conflict" | "undated";
+  /**
+   * @maxItems 100
+   */
+  object_refs?: string[];
+  evidence_scope?: "object" | "area" | "background";
+  raw_hash?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -545,6 +559,9 @@ export interface MapScreenTarget {
   bounds: MapScreenBounds | null;
   geometry?: MapRegionGeometry | null;
   label?: string;
+  object_ref?: string;
+  label_origin?: "public" | "project" | "unresolved";
+  boundary_source?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -654,6 +671,7 @@ export interface PublicRecord {
    * @maxItems 40
    */
   fields: PublicField[];
+  source_hash?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -723,6 +741,7 @@ export interface MapDecisionFactor {
    */
   evidence_refs: string[];
   quote: string;
+  conflict?: boolean;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -733,6 +752,7 @@ export interface DimensionEvidence {
   source_id: string;
   quote: string;
   basis: string;
+  record_id?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -741,7 +761,7 @@ export interface DimensionEvidence {
 export interface MapScreenAnalysis {
   context_id: string;
   profile: MapScreenProfile;
-  status: "completed" | "unavailable" | "failed" | "insufficient_data";
+  status: "completed" | "unavailable" | "failed" | "insufficient_data" | "partial";
   assessment: MapPreliminaryAssessment | null;
   /**
    * @maxItems 6
@@ -763,6 +783,7 @@ export interface MapScreenAnalysis {
    */
   adapter_receipts?: AdapterReceipt[];
   research?: ResearchTrace;
+  reused_from_context_id?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -771,7 +792,7 @@ export interface MapScreenAnalysis {
 export interface AdapterReceipt {
   source_id: string;
   adapter: string;
-  status: "success" | "empty" | "access_required" | "schema_changed" | "unsupported";
+  status: "success" | "empty" | "access_required" | "schema_changed" | "unsupported" | "truncated";
   /**
    * @maxItems 50
    */
@@ -802,6 +823,7 @@ export interface MapScreenCell {
    */
   factors?: MapDecisionFactor[];
   dashboard?: DecisionDashboard;
+  analysis_available?: boolean;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

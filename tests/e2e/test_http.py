@@ -119,6 +119,30 @@ def test_scope_csrf_auth_and_live_blocking(running_app):
         assert c.post("/api/projects", json={"fixture": "01_auto"}).status_code == 403
 
 
+def test_selected_polygon_conversion_creation_and_readback_preserve_holes(running_app):
+    client=running_app.client
+    geometry={'type':'Polygon','coordinates':[
+        [[120.15,30.27],[120.16,30.27],[120.16,30.28],[120.15,30.28],[120.15,30.27]],
+        [[120.152,30.272],[120.152,30.274],[120.154,30.274],[120.154,30.272],[120.152,30.272]],
+    ]}
+    response=client.post('/api/maps/geometry/wgs84',json={'geometry':geometry})
+    assert response.status_code==200,response.text
+    converted=response.json()
+    assert converted['coordinate_encoding']=='WGS84'
+    assert len(converted['geometry']['coordinates'])==2
+    assert converted['geometry']['coordinates']!=geometry['coordinates']
+    value=json.loads((ROOT/'fixtures/inputs/01_auto.json').read_text())
+    value.update(synthetic=False,sources=[],facts=[],context_rules=[])
+    value['scope']={'name':'明确的HTTP几何回归样本','geometry':converted['geometry'],'coordinate_encoding':'WGS84','legal_parcel_confirmed':False,'boundary_source':'fixture:survey'}
+    created=client.post('/api/projects',json={'input':value,'name':'几何交接回归'})
+    assert created.status_code==201,created.text
+    reopened=client.get('/api/projects/'+created.json()['id']).json()
+    assert reopened['input']['scope']['geometry']==converted['geometry']
+    assert reopened['input']['scope']['boundary_source']=='fixture:survey'
+    invalid={'type':'Polygon','coordinates':[[[120,30],[121,31],[120,31],[121,30],[120,30]]]}
+    assert client.post('/api/maps/geometry/wgs84',json={'geometry':invalid}).status_code==422
+
+
 def test_context_optimistic_concurrency_and_cross_project_followup(running_app):
     app = running_app; p = app.create(); other = app.create(); run = app.run(p)
     args = {"text": "本项目不整体拆除。", "expected_version": 0}

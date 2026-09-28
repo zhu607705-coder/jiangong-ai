@@ -2,6 +2,7 @@ import type { DashboardInput } from './dashboard'
 import type { DecisionSupport, MapDecisionFactor, MapScreenContext, ProjectInput, Followup, CandidateId } from '../../apps/host/generated/contracts'
 import { decisionFactors, FACTOR_LABELS } from '../maps/decision-factors'
 import { publicMapContext } from '../maps/public-context'
+import { factAppliesToTarget } from '../maps/object-identity'
 
 export const DECISION_POLICY = 'structured-research-route-v1'
 export const DECISION_THRESHOLDS = {min_confidence: 0.8, min_choice_probability: 0.65, min_sufficiency: 0.75}
@@ -20,10 +21,10 @@ export function mapDecisionInput(context: MapScreenContext, purpose: string): De
   const factors = decisionFactors(publicContext)
   const projects = publicContext.local_projects.map(p => ({scope:p.relation, scope_label:p.scope_label,
     sources:p.sources.filter(s=>s.content_status!=='metadata_only' && !!s.untrusted_text).map(s=>({id:`${p.project_id}:${s.id}`,title:s.title,text:s.untrusted_text?.slice(0,2400),published_at:s.published_at||null})),
-    facts:p.facts}))
+    facts:p.facts.filter(f=>factAppliesToTarget(f,p,publicContext.target))}))
   const places = context.groups.map(g => ({source_id:g.source_id,category:g.label,status:g.status,
     examples:g.sample.slice(0,5).map(p=>({name:p.name,category:p.category}))}))
-  return {state:{purpose,as_of:context.created_at,address:context.address,scope:context.target,verified_conditions:factors,
+  return {state:{purpose,as_of:context.created_at,address:context.address,scope:publicContext.target,verified_conditions:factors,
     projects,place_clues:places,missing_categories:context.groups.filter(g=>g.status==='failed').map(g=>g.label)}, factors,
     sourceIds:[...context.groups.filter(g=>g.status!=='failed').map(g=>g.source_id),...projects.flatMap(p=>p.sources.map(s=>s.id))]}
 }
@@ -48,14 +49,15 @@ export function applyDecisionGuards(result: DecisionSupport, factors: MapDecisio
   const answers=next.answers!, thresholds=next.thresholds
   let action=answers.next_action.choice as NonNullable<DecisionSupport['action']>
   let priority=answers.priority_dimension.choice as ResearchDimension
-  const blocked=factors.find(f=>f.state==='blocked'), gaps=essentials.filter(k=>!factors.some(f=>f.key===k && f.state==='supported'))
+  const blocked=factors.find(f=>f.state==='blocked'), conflict=factors.find(f=>f.conflict), gaps=essentials.filter(k=>!factors.some(f=>f.key===k && f.state==='supported'))
   const uncertain=[answers.next_action,answers.priority_dimension].some(a=>a.confidence<thresholds.min_confidence || a.probabilities[a.choice]<thresholds.min_choice_probability)
   if(blocked) {action='resolve_blocker';priority=blocked.key;reasons.push('已有来源记录存在明确阻点，优先处理对应条件。')}
+  else if(conflict) {action='review';priority=conflict.key;reasons.push('当前对象的来源记录存在未解决分歧，先复核对应条件。')}
   else if(gaps.length && action==='compare') {action='investigate';reasons.push('核心条件尚未形成完整依据，先补证据再比较。')}
   if(!blocked && action==='resolve_blocker') {action='investigate';reasons.push('输入没有明确阻点，模型建议按待核线索处理。')}
   if(!blocked && uncertain) {
     action=action==='review'?'review':gaps.length?'investigate':'review'
-    priority=gaps[0] || 'implementation'
+    priority=conflict?.key || gaps[0] || 'implementation'
     reasons.push('返回的置信度或选项概率未达到当前分流阈值。')
   }
   if(!blocked && action==='compare' && answers.evidence_sufficient<thresholds.min_sufficiency) {action='review';reasons.push('模型对证据充分性的判断尚不足以进入比较。')}

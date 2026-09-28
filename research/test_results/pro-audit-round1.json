@@ -1,0 +1,120 @@
+{
+  "baseline_commit": "644cd56a69f8d77690f73efd9d8b1cb4e9ae6848",
+  "review_id": "JIANGONG-AUDIT-01-644cd56a",
+  "status": "fixed_locally_awaiting_pro_rereview",
+  "as_of": "2026-09-28T15:01:07.679815+00:00",
+  "checks": {
+    "javascript": 189,
+    "python": 69,
+    "http": 10,
+    "browser": 24,
+    "production_build": "passed",
+    "diff_check": "passed"
+  },
+  "verification_scope": {
+    "browser": "Real React application with explicitly synthetic map/API fixtures; no live AMap claim from these screenshots",
+    "http": "Real local host, PGlite and Python conversion; isolated data directory",
+    "live": "Actual AMap point selection, DSH Search/fetch/brief and Qwen System One; public-only input"
+  },
+  "live": {
+    "seconds": 25.72,
+    "terminal_event": "complete",
+    "status": "completed",
+    "reason": null,
+    "summary": "紫金港校区在用，宿舍、立面、图C改造已成交，研究后续楼栋修缮与校园服务采购。",
+    "sources": 10,
+    "records": 9,
+    "decision_status": "completed",
+    "dashboard_status": "partial",
+    "dimensions": [
+      {
+        "key": "demand",
+        "value": 3.4,
+        "confidence": 0.88
+      },
+      {
+        "key": "supply",
+        "value": null,
+        "confidence": null
+      },
+      {
+        "key": "adaptation",
+        "value": null,
+        "confidence": null
+      },
+      {
+        "key": "implementation",
+        "value": null,
+        "confidence": null
+      },
+      {
+        "key": "operations",
+        "value": null,
+        "confidence": null
+      },
+      {
+        "key": "resources",
+        "value": null,
+        "confidence": null
+      }
+    ]
+  },
+  "cache_readback": {
+    "cache_read": true,
+    "same_summary": true,
+    "same_model_calls": true,
+    "sources": 10,
+    "structured_brief_before_complete": true
+  },
+  "additional_live_protocol_regression": {
+    "issue": "two-decimal provider probabilities sum to 1.02; old fixed tolerance rejected floating boundary",
+    "response_replay": "passed without changing the returned score",
+    "raw_record_location": "ignored data/local/pro-audit/round-01/qwen-probe-response.json"
+  },
+  "source_hashes": {
+    "apps/host/generated/contracts.ts": "b74b082c5d92c867adc6740a5e9b775f2b00168b64134f03e48b29ffd5f4821a",
+    "apps/host/map-screening.ts": "bb421d966fd54f7cba0c2c1f7a45d177b56fa1d9416bfe426d5ae8f1c0db538d",
+    "apps/workspace/src/App.tsx": "f8affd1e22ffd4ea09afb0897f13697ea8eacb37d222b6be3b81ded239539eb6",
+    "apps/workspace/src/maps/MapWorkspace.tsx": "2f44fd44a0d4e4dac8237ff879fa15289f44888af1ec95f70c1c918aa565e88c",
+    "apps/workspace/src/maps/PreliminaryCard.tsx": "cc599de621cfc7ac11e5831620a99d5d53e916ea577cb287edd85403470bb729",
+    "apps/workspace/src/maps/amap-client.ts": "7b5fac2ee5daf761274a789dcf2549f3d9a44b5d7f7421f09e71e03fc0f0a658",
+    "packages/contracts/schema.json": "b52d1eb8840c25e469c9b590e8706fa1d077fb643a4e503c2647d2bc2d282ab8",
+    "packages/contracts/validate.ts": "81afa33e884a24343d19d9eed3dfeea936f35f05f06173ff45c63fd3d4d84588",
+    "packages/decision/dashboard.ts": "f3503add960101e03a6d1b17ae99354203cb6224bab41a21e86ee0ee2150030e",
+    "packages/decision/structured-route.ts": "69cd297855da127937404bb74beba8ec04e64e6739ad91cca740f76fc02117ce",
+    "packages/maps/decision-factors.ts": "efb2db84a136fa5d87d8ac2fdca4ca2c98d7c60a4aa038f737a7790b34e12205",
+    "packages/maps/public-context.ts": "8ac18dbd22982985ceed7bf3a4990303b9fc90114ad36bbfdd92ac786373b328",
+    "packages/maps/screening-policy.ts": "e931995a36232296ae462189e9b58fca75f4ed65cbf939eacd1725ef9e1ce015",
+    "packages/research/events.ts": "a107f88a76566732370b842a97e87a969980e8e1ec1fc50c28ae980a43fa6eb4",
+    "packages/research/public-sources.ts": "fce6412668ba9bdcd6b6c30731ac361c982d2706f519b4810aec45752d76c855",
+    "services/capabilities/adapters/public-records.ts": "bd478e993003da30c853d129d5b636855b80d70585d3f442bdea8cafdb3c4645",
+    "services/capabilities/app.py": "df2a6bc51d68d80bd5edbb22e79c8d343a96c32bf2b18147a633916be5d3bd9b",
+    "services/capabilities/decision-model.ts": "15399d70377dc51d24a04c80ca5c6cc31f77d654fd4164eb835d6221a02c43c0",
+    "services/capabilities/generated/contracts.py": "44ce3ba74e957b113b63eeff8a1f59395649613d1abb98fbb97c1f442c3613ae",
+    "services/capabilities/map_regions.py": "5c70eade8a8d13f798333078f996118380d3d6e8716a834e53a9faa9bce64bc6",
+    "services/capabilities/research.ts": "0b7c513b991fe8d3f072f3427060771c2ab8e1ed5cfabb758e42684161f0862d",
+    "services/map-screening/analyst.ts": "1a15bfc21487a395febafe374fea8a990ef1c922a0aa468e8502d5143789fde1",
+    "services/map-screening/project-evidence.ts": "ee8f63a4fbce6585c96fd3b25aa9ea7666d7603fc0eccc662ec9efd2e3bde9e3",
+    "services/map-screening/service.ts": "3a051d6c464cb5189b88a514216da513ceb7446df7f8b5cea49dfbd5f8259889",
+    "tests/browser/map-workspace.mjs": "858faa04c7e6ff1c019ee3c60f19c53a525e875db6b26ed5f7673d7e81713b9e",
+    "tests/contracts/decision-model.test.ts": "6b0f857879c5c3993d302f394516907943502a81147129575e5f815ada979b30",
+    "tests/contracts/live-policy.test.ts": "7275e6b5d066b3072c8351cf3b3fd57b918395a4b3a6af72dd152dcde23d9d60",
+    "tests/contracts/map-decision-factors.test.ts": "ee15a5b599db696cfd1df2bde03e34a1fb39ce9925445c23915dc7a86e1f477d",
+    "tests/contracts/map-screening.test.ts": "ff9c3945ce53e4196e4d62fd61f52b22856f1eb37fce15e2ee2b59e4a37e7f69",
+    "tests/contracts/maps.test.ts": "63012edc5a29c34d7709a593f44f60a098947a241ab2b71f6ce2333ffae6fbe1",
+    "tests/contracts/public-adapters.test.ts": "89ce4acecaacf75c893da584b8039688aaeae3bccaf2a2cd12f540845d7e83d9",
+    "tests/contracts/research-dashboard.test.ts": "5112c808f04968f401ac6eddce202e17012dec59c934a86c9d73f3cae491838c",
+    "tests/e2e/test_http.py": "2a9b5a86fddaf402ce77f8e93c06299033e686f88bbedde5e4fb3a828d666ed7",
+    "tests/test_map_regions.py": "8d897c457afece42bee5408b5c9d492f62d1317bf841bdd95981ec9c94287641",
+    "packages/decision/probabilities.ts": "0bf25c05bf87459706d50f36adb21eff135c4d3279755889f7eb40a8cc817f58",
+    "packages/maps/object-identity.ts": "ec142969e5c95a47c6b492e6e0cc278e0ba641640ca5081c8262e4ca2e7be97d",
+    "packages/research/amounts.ts": "643cb795d13c375a9f562251be5a945587112a41ee6cbcfdc649d17ca159f43e",
+    "packages/research/evidence.ts": "4a6e6f6155f1f98c27d9b20440261fc7381f1f696ebd7fdadf3705f3d0b360c2",
+    "tests/contracts/map-analyst.test.ts": "8c49b3072f9960d3de71ff858a6b8a5abd63a6e629d7abba57037224e01f56d0"
+  },
+  "limits": [
+    "No claim of enterprise effectiveness or calibrated investment success probability.",
+    "Missing/currently ineligible dimensions remain null.",
+    "Original 6 Pro second review still required before the goal is complete."
+  ]
+}

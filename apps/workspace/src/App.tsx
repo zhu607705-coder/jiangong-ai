@@ -434,7 +434,14 @@ export default function App() {
       onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
       mapView={<MapWorkspace ready={!loading} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onOpenProject={id => { void (async () => { if (id && id !== project?.id) await loadProject(id); setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
-        onCreateFromPlace={(place, context) => { const unnamed = place.kind === 'point' && !place.address; setMapAnchor(toProjectAnchor(place)); setMapEvidence(context || null); setProjectName(unnamed ? '地图选点研究' : `${place.name} · 片区研究`.slice(0,120)); setRegionName(unnamed ? '' : [...new Set([place.city, place.address, place.name].filter(Boolean))].join(' ').slice(0,120)); setGeometryText(''); setCreateOpen(true); }} />}
+        onCreateFromPlace={(place, context) => {
+          const clean=context?publicMapContext(context):null
+          const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
+          setMapAnchor(toProjectAnchor({...place,name:publicName||'地图选点'}));setMapEvidence(clean)
+          setProjectName(publicName?`${publicName} · 片区研究`.slice(0,120):'地图选点研究')
+          setRegionName([...new Set([clean?.city||place.city,publicName].filter(Boolean))].join(' ').slice(0,120))
+          setGeometryText('');setCreateOpen(true)
+        }} />}
       detailsOpen={detailsOpen}
       onMap={() => setDetailsOpen(false)}
       onSettings={() => setMapSettings(v => v + 1)}
@@ -1264,7 +1271,9 @@ export default function App() {
                 void action(async () => {
                   const geometry = geometryText.trim()
                     ? JSON.parse(geometryText)
-                    : null;
+                    : mapEvidence?.target.geometry
+                      ? (await api<{geometry:NonNullable<ProjectInput['scope']['geometry']>}>('/maps/geometry/wgs84',{geometry:mapEvidence.target.geometry})).geometry
+                      : null;
                   const input: ProjectInput = {
                     schema_version: "2.0",
                     project_id: `P-${crypto.randomUUID()}`,
@@ -1279,6 +1288,7 @@ export default function App() {
                       coordinate_encoding: "WGS84",
                       legal_parcel_confirmed: false,
                       ...(mapAnchor ? { map_anchor: mapAnchor } : {}),
+                      ...(geometry?{boundary_source:geometryText.trim()?'user:provided-geometry':mapEvidence?.target.boundary_source||'map:selected-boundary'}:{}),
                     },
                     facts: [],
                     sources: mapEvidence && mapAnchor ? [{ id: mapEvidence.id, title: '高德区位初筛资料快照', data_class: 'public', visibility: 'public', synthetic: false,
@@ -1341,7 +1351,7 @@ export default function App() {
               <div className="note-line">
                 AI 生成与搜索可能存在错误
               </div>
-              {mapAnchor && <div className="note-line">已关联地图点位：{mapAnchor.name}。{mapEvidence ? '将同时带入本次区位初筛资料。' : ''}<button type="button" className="text-button" onClick={() => { setMapAnchor(undefined); setMapEvidence(null) }}>解除关联</button></div>}
+              {mapAnchor && <div className="note-line">已关联地图位置：{mapAnchor.name}。{mapEvidence?.target.geometry?'所选边界将作为项目范围。':mapEvidence?'将同时带入本次区位初筛资料。':''}<button type="button" className="text-button" onClick={() => { setMapAnchor(undefined); setMapEvidence(null) }}>解除关联</button></div>}
               <button
                 className="primary full-width"
                 disabled={busy}

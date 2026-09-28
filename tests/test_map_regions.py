@@ -37,6 +37,22 @@ def test_holes_and_water_are_not_colored():
     cells=regions.segment_regions(request([boundary()]),[water])['cells']
     assert all(not shape(c['geometry']).covers(Point(120.158,30.278)) for c in cells)
 
+def test_selected_geometry_is_converted_to_wgs84_with_holes_and_round_trip():
+    raw=boundary()['geometry']
+    raw['coordinates'].append([[120.157,30.277],[120.16,30.277],[120.16,30.28],[120.157,30.28],[120.157,30.277]])
+    result=regions.selected_geometry_wgs84(regions.GeometryConversionRequest(geometry=raw))
+    assert result['coordinate_encoding']=='WGS84'
+    converted=shape(result['geometry'])
+    assert converted.is_valid and len(converted.interiors)==1
+    assert converted.bounds != shape(raw).bounds
+    restored=regions._coordinate(converted)
+    assert restored.hausdorff_distance(shape(raw))<2e-6
+    assert not restored.covers(Point(120.158,30.278))
+
+def test_selected_geometry_does_not_silently_repair_invalid_input():
+    with pytest.raises(ValueError):
+        regions.selected_geometry_wgs84(regions.GeometryConversionRequest(geometry={'type':'Polygon','coordinates':[[[120,30],[121,31],[120,31],[121,30],[120,30]]]}))
+
 def test_crossing_surface_roads_make_four_blocks_not_nine():
     roads=[way(1,[(120.14,30.28),(120.18,30.28)],{'highway':'primary'}),way(2,[(120.16,30.26),(120.16,30.3)],{'highway':'secondary'})]
     cells=regions.segment_regions(request(),roads)['cells']

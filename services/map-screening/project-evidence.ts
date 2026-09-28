@@ -22,7 +22,7 @@ export async function loadProjectEvidence(store: Store, owner: string): Promise<
     return { project, sources: mergeProjectSources(project, runs), documentCount: Number(documents.rows[0].count) }
   }))
   return { projects, syntheticCount: all.filter(p => p.input.synthetic).length,
-    revision: fingerprint(projects.map(p => [p.project.id, p.project.context_version, p.project.updated_at, p.project.input.facts, p.sources.map(s => [s.id, s.hash, s.retrieved_at, s.visibility]), p.documentCount])) }
+    revision: fingerprint(projects.map(p => [p.project.id, p.project.context_version, p.project.updated_at, p.project.input.scope, p.project.input.facts, p.sources, p.documentCount])) }
 }
 const cityKey = (city: string | null | undefined) => city?.trim().replace(/市$/, '') || ''
 export function targetContains(target: MapScreenTarget, longitude: number, latitude: number): boolean {

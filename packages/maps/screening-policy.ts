@@ -37,7 +37,8 @@ export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme):MapScr
     const existing=factorTier(factors,theme)
     // Explicit object-bound blockers take precedence over model fit levels.
     let tier:MapScreenCell['tier']=c.context ? existing : 'pending'
-    if(c.context&&existing!=='sparse'&&c.dashboard&&theme!=='access'){
+    const conflict=factors.some(f=>f.conflict&&(theme==='overall'||f.key===(theme==='supply'?'demand':theme)))
+    if(c.context&&existing!=='sparse'&&!conflict&&c.dashboard&&theme!=='access'){
       const rows=theme==='overall'?c.dashboard.dimensions:c.dashboard.dimensions.filter(d=>d.key===theme)
       const values=rows.flatMap(d=>d.value===null?[]:[d.value])
       if(values.length){

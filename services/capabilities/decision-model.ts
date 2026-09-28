@@ -1,4 +1,5 @@
 import { dashboardQuestions, parseDashboard } from '../../packages/decision/dashboard'
+import { validProbabilityMass } from '../../packages/decision/probabilities'
 import { createHash } from 'node:crypto'
 import { config } from '../../apps/host/config'
 import type { DecisionChoice, DecisionSupport } from '../../apps/host/generated/contracts'
@@ -27,7 +28,7 @@ function choice(value:any, options:string[]):DecisionChoice {
   if(value?.type!=='choice' || !options.includes(value.choice) || !Number.isFinite(value.confidence) || value.confidence<0 || value.confidence>1
     || !value.probabilities || Array.isArray(value.probabilities) || Object.keys(value.probabilities).sort().join()!==[...options].sort().join()) throw new Error('DECISION_INVALID_RESPONSE')
   const probabilities=Object.values(value.probabilities) as number[]
-  if(probabilities.some(p=>!Number.isFinite(p)||p<0||p>1)||Math.abs(probabilities.reduce((n,p)=>n+p,0)-1)>.02) throw new Error('DECISION_INVALID_RESPONSE')
+  if(!validProbabilityMass(probabilities)) throw new Error('DECISION_INVALID_RESPONSE')
   return {choice:value.choice,confidence:value.confidence,probabilities:value.probabilities}
 }
 export function parseDecisionResponse(raw:any):Pick<DecisionSupport,'answers'|'request_id'|'input_tokens'> {

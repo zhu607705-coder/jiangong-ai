@@ -127,6 +127,10 @@
         },
         "resolution_note": {
           "type": "string"
+        },
+        "boundary_source": {
+          "type": "string",
+          "maxLength": 250
         }
       },
       "required": [
@@ -208,6 +212,39 @@
             "empty",
             "ocr_required"
           ]
+        },
+        "search_published_at": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "date_status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "search_only",
+            "conflict",
+            "undated"
+          ]
+        },
+        "object_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 100
+        },
+        "evidence_scope": {
+          "type": "string",
+          "enum": [
+            "object",
+            "area",
+            "background"
+          ]
+        },
+        "raw_hash": {
+          "type": "string",
+          "maxLength": 100
         }
       },
       "required": [
@@ -286,6 +323,22 @@
         },
         "locator": {
           "type": "string"
+        },
+        "scope_kind": {
+          "type": "string",
+          "enum": [
+            "object",
+            "project",
+            "shared"
+          ]
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 100
         }
       },
       "required": [
@@ -1609,6 +1662,22 @@
         "label": {
           "type": "string",
           "maxLength": 180
+        },
+        "object_ref": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "label_origin": {
+          "type": "string",
+          "enum": [
+            "public",
+            "project",
+            "unresolved"
+          ]
+        },
+        "boundary_source": {
+          "type": "string",
+          "maxLength": 250
         }
       },
       "required": [
@@ -1944,7 +2013,8 @@
             "completed",
             "unavailable",
             "failed",
-            "insufficient_data"
+            "insufficient_data",
+            "partial"
           ]
         },
         "assessment": {
@@ -2005,6 +2075,10 @@
         },
         "research": {
           "$ref": "#/definitions/ResearchTrace"
+        },
+        "reused_from_context_id": {
+          "type": "string",
+          "maxLength": 100
         }
       },
       "required": [
@@ -2100,6 +2174,9 @@
         },
         "dashboard": {
           "$ref": "#/definitions/DecisionDashboard"
+        },
+        "analysis_available": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -2445,6 +2522,9 @@
         "quote": {
           "type": "string",
           "maxLength": 180
+        },
+        "conflict": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -2767,6 +2847,10 @@
             "$ref": "#/definitions/PublicField"
           },
           "maxItems": 40
+        },
+        "source_hash": {
+          "type": "string",
+          "maxLength": 100
         }
       },
       "required": [
@@ -2798,7 +2882,8 @@
             "empty",
             "access_required",
             "schema_changed",
-            "unsupported"
+            "unsupported",
+            "truncated"
           ]
         },
         "record_ids": {
@@ -2938,6 +3023,10 @@
           "maxLength": 180
         },
         "basis": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "record_id": {
           "type": "string",
           "maxLength": 120
         }

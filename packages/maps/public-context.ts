@@ -3,6 +3,9 @@ import type { MapScreenContext, Source } from '../../apps/host/generated/contrac
 /** The same public-only boundary is used by the model and new-project handoff. */
 export function publicMapContext(context: MapScreenContext): MapScreenContext {
   const result = structuredClone(context)
+  // The display name is not an external-query identity. Legacy/unresolved labels
+  // are also private by default, even after a refresh loses a local project join.
+  if (result.target?.label_origin !== 'public') delete result.target?.label
   result.research_sources=result.research_sources?.filter(s=>s.visibility==='public'&&s.data_class==='public'&&!s.synthetic)
   const publicIds=new Set(result.research_sources?.map(s=>s.id)||[])
   result.research_records=result.research_records?.filter(r=>publicIds.has(r.source_id))

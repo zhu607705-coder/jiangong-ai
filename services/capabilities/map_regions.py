@@ -65,6 +65,25 @@ def _coordinate(geom, inverse=False):
         return (lon,lat)
     return transform(xy,geom)
 
+class GeometryConversionRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    geometry: dict
+
+def selected_geometry_wgs84(request: GeometryConversionRequest):
+    raw = request.geometry
+    if raw.get('type') != 'Polygon' or len(json.dumps(raw)) > 1_000_000:
+        raise ValueError('INVALID_BOUNDARY')
+    polygon = shape(raw)
+    if polygon.is_empty or not polygon.is_valid or len(polygon.interiors) > 19:
+        raise ValueError('INVALID_BOUNDARY')
+    rings = [polygon.exterior, *polygon.interiors]
+    if any(len(r.coords) > 512 for r in rings) or any(not isfinite(v) for r in rings for xy in r.coords for v in xy) or not box(-180,-85,180,85).covers(polygon):
+        raise ValueError('INVALID_BOUNDARY')
+    converted = _coordinate(polygon, inverse=True)
+    if not converted.is_valid or converted.is_empty:
+        raise ValueError('INVALID_CONVERSION')
+    return {'geometry': mapping(converted), 'coordinate_encoding': 'WGS84'}
+
 def _parts(g):
     if g.is_empty: return []
     if isinstance(g, Polygon): return [g]

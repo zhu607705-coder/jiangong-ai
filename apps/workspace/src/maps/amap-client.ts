@@ -96,22 +96,27 @@ export function toProjectAnchor(selection: PlaceSelection): NonNullable<Project[
   return { provider: 'amap', coordinate_encoding: 'GCJ-02', longitude: selection.longitude, latitude: selection.latitude,
     name: selection.name.slice(0, 200), ...(selection.poi_id ? { poi_id: selection.poi_id } : {}), ...(selection.address ? { address: selection.address } : {}) }
 }
-export function projectCoordinates(project: Project): { coordinates: [number, number][]; encoding: 'WGS84' | 'GCJ-02'; polygon: boolean } | null {
+type ProjectCoordinates = {coordinates:[number,number][][];encoding:'WGS84';polygon:true}|{coordinates:[number,number][];encoding:'WGS84'|'GCJ-02';polygon:false}
+type MappedProject = {points:[number,number][][];polygon:true}|{points:[number,number][];polygon:false}
+export function projectCoordinates(project: Project): ProjectCoordinates | null {
   if (project.input.synthetic) return null
   const scope = project.input.scope
-  if (scope.geometry) return { coordinates: scope.geometry.coordinates[0].map(p => [p[0], p[1]]), encoding: 'WGS84', polygon: true }
+  if (scope.geometry) return { coordinates: scope.geometry.coordinates.map(ring=>ring.map(p => [p[0], p[1]])), encoding: 'WGS84', polygon: true }
   if (scope.map_anchor) return { coordinates: [[scope.map_anchor.longitude, scope.map_anchor.latitude]], encoding: 'GCJ-02', polygon: false }
   if (scope.centroid) return { coordinates: [[scope.centroid.longitude, scope.centroid.latitude]], encoding: 'WGS84', polygon: false }
   return null
 }
-export async function mapCoordinates(sdk: AmapSdk, project: Project): Promise<{ points: [number, number][]; polygon: boolean } | null> {
+export async function mapCoordinates(sdk: AmapSdk, project: Project): Promise<MappedProject | null> {
   const location = projectCoordinates(project)
   if (!location) return null
   if (location.encoding === 'GCJ-02') return { points: location.coordinates, polygon: location.polygon }
-  const points = await serviceCall<[number, number][]>(done => sdk.convertFrom(location.coordinates, 'gps', done), data => {
+  const flat=location.polygon?location.coordinates.flat():location.coordinates
+  const points = await serviceCall<[number, number][]>(done => sdk.convertFrom(flat, 'gps', done), data => {
     const converted = (data.locations || []).map(coordinates)
-    if (converted.length !== location.coordinates.length || converted.some((p: unknown) => !p)) throw new Error('转换失败')
+    if (converted.length !== flat.length || converted.some((p: unknown) => !p)) throw new Error('转换失败')
     return converted
   })
-  return { points, polygon: location.polygon }
+  if(!location.polygon)return {points,polygon:false}
+  let offset=0
+  return {points:location.coordinates.map(ring=>{const result=points.slice(offset,offset+ring.length);offset+=ring.length;return result}),polygon:true}
 }

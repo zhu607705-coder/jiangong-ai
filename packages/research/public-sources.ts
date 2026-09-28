@@ -1,4 +1,14 @@
-export const RESEARCH_POLICY = 'public-adapters-v2'
+import type { Source } from '../../apps/host/generated/contracts'
+
+export const RESEARCH_POLICY = 'public-adapters-v3'
+/** Publication age alone is not expiry; old, still-applicable archives survive. */
+export function sourceCurrentAt(source:Source,asOf:string):boolean {
+  const cutoff=Date.parse(asOf),published=Date.parse(source.published_at||'')
+  if(!Number.isFinite(cutoff)||!Number.isFinite(published)||published>cutoff)return false
+  if(source.date_status&&source.date_status!=='verified')return false
+  if(source.expires_at!==undefined){const expires=Date.parse(source.expires_at);if(!Number.isFinite(expires)||expires<=cutoff)return false}
+  return true
+}
 export const PUBLIC_SOURCES = [
   {id:'landchina',name:'中国土地市场网',domain:'landchina.com',use:'宗地、供地、用途与成交'},
   {id:'construction',name:'四库一平台',domain:'jzsc.mohurd.gov.cn',use:'工程身份、施工许可与参建单位'},

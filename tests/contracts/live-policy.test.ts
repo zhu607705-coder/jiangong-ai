@@ -55,6 +55,7 @@ describe('live DSH boundary regression', () => {
   it('closes brief citations over supplied source IDs rather than casebook IDs or invented fields',()=>{
     const schema=modelSchema('MapPreliminaryAssessment',undefined,{evidenceIds:['work_live','project_1']}) as any
     expect(schema.properties.opportunities.items.properties.evidence_refs.items.enum).toEqual(['work_live','project_1'])
+    expect(schema.properties.dimension_evidence.items.properties.source_id.enum).toEqual(['work_live','project_1'])
     expect(()=>assertObjectJsonSchema(schema)).not.toThrow()
   })
   it('limits comparison references to candidates that were actually generated', () => {

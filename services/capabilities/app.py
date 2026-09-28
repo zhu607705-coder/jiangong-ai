@@ -78,7 +78,14 @@ def capability(name: str, request: Request):
         raise HTTPException(422, str(exc)) from exc
 
 # The existing authorized capability host owns topology and CRS conversion.
-from services.capabilities.map_regions import RegionRequest, resolve_regions
+from services.capabilities.map_regions import RegionRequest, resolve_regions, GeometryConversionRequest, selected_geometry_wgs84
+
+@app.post('/spatial/selected-geometry', dependencies=[Depends(authorize)])
+def selected_geometry(request: GeometryConversionRequest):
+    try:
+        return selected_geometry_wgs84(request)
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, 'invalid selected geometry') from exc
 
 @app.post('/spatial/regions', dependencies=[Depends(authorize)])
 def map_regions(request: RegionRequest):
