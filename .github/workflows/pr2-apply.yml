@@ -1,0 +1,87 @@
+name: Apply verified PR2 source
+on:
+  push:
+    branches: [codex/pr2-decision-dashboard]
+    paths: [.github/workflows/pr2-apply.yml]
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Validate and apply reviewed source manifest
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, lzma, pathlib, shutil
+          root = pathlib.Path.cwd().resolve()
+          sha = lambda data: hashlib.sha256(data).hexdigest()
+          expected = [
+              '80f168bcf3f02acb0a4ca00be29e0002dab49986ba64042d6b3f561307dc43f8',
+              'f208edd5f2b89c43119166d7bdcac1e06045100ee0985041e770e9da477a9e3b',
+              '3e151e716c836ca75634728c43bbf13f20f92d40f96adb849aadd7ce548a6f19',
+              '9ac042b08ece52773f230dbb701b1fedae12e58c242ac3452133931da8772592',
+              'ff4e291719149dc076f1b7ae447d68a4f80fc3ab8326fd28c0507ffc3b0717f3',
+              'e286bcbc4168f4ac0164200e61a41fb93ef95e1a1f5c3cf2f0916354c7a7a524',
+          ]
+          parts = []
+          for i, digest in enumerate(expected):
+              part = (root / '.github/pr2-transfer' / f'{i:02d}.txt').read_bytes()
+              if sha(part) != digest:
+                  raise ValueError(f'Transfer checksum mismatch: part {i}')
+              parts.append(part)
+          raw = lzma.decompress(base64.b64decode(b''.join(parts), validate=True))
+          if sha(raw) != 'be9e1dad74ed40fee2d8a7fc2428397f1d1f83d4e7d5258807da32585454b630':
+              raise ValueError('Manifest checksum mismatch')
+          manifest = json.loads(raw)
+          if len(manifest) != 48:
+              raise ValueError('Unexpected file count')
+          prepared = []
+          seen = set()
+          for item in manifest:
+              relative = pathlib.PurePosixPath(item['path'])
+              if relative.is_absolute() or '..' in relative.parts or '.git' in relative.parts or relative in seen:
+                  raise ValueError('Invalid or duplicated path')
+              seen.add(relative)
+              path = root.joinpath(*relative.parts)
+              if not path.resolve().is_relative_to(root):
+                  raise ValueError('Path escapes repository')
+              if item['before'] is None:
+                  if path.exists():
+                      raise ValueError(f'New file already exists: {relative}')
+                  text = item['text']
+              else:
+                  original = path.read_bytes()
+                  if sha(original) != item['before']:
+                      raise ValueError(f'Base changed: {relative}')
+                  lines = original.decode('utf-8').splitlines(keepends=True)
+                  limit = len(lines)
+                  for start, end, replacement in reversed(item['edits']):
+                      if not 0 <= start <= end <= limit:
+                          raise ValueError(f'Invalid edit: {relative}')
+                      lines[start:end] = [replacement]
+                      limit = start
+                  text = ''.join(lines)
+              output = text.encode('utf-8')
+              if sha(output) != item['after']:
+                  raise ValueError(f'Result checksum mismatch: {relative}')
+              prepared.append((path, output))
+          for path, output in prepared:
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(output)
+          shutil.rmtree(root / '.github/pr2-transfer')
+          (root / '.github/workflows/pr2-repro.yml').unlink(missing_ok=True)
+          (root / '.github/workflows/pr2-apply.yml').unlink()
+          print(f'Applied {len(prepared)} verified source files; temporary transfer files removed.')
+          PY
+      - name: Commit only to PR2 branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: public record adapters, six-axis research dashboard and ZJU cases'
+          git push origin HEAD:refs/heads/codex/pr2-decision-dashboard
