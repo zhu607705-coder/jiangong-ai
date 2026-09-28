@@ -15,8 +15,8 @@ export const PUBLIC_SOURCE_CATALOG: readonly PublicSourceCatalogItem[] = [
   { id: 'construction', name: '全国建筑市场监管公共服务平台', domains: ['jzsc.mohurd.gov.cn'], tier: 'primary_database', uses: ['工程项目', '参建单位', '建设规模', '企业业绩'] },
   { id: 'enterprise', name: '国家企业信用信息公示系统', domains: ['gsxt.gov.cn'], tier: 'primary_database', uses: ['企业主体', '经营异常', '严重违法失信'] },
   { id: 'credit', name: '信用中国', domains: ['creditchina.gov.cn'], tier: 'primary_database', uses: ['行政许可', '行政处罚', '信用记录'] },
-  { id: 'statistics', name: '国家统计局数据发布库', domains: ['data.stats.gov.cn', 'stats.gov.cn'], tier: 'primary_database', uses: ['人口', '就业', '固定资产投资', '房地产', '消费'] },
-  { id: 'public_data_registry', name: '国家公共数据资源登记平台', domains: ['sjdj.nda.gov.cn', 'nda.gov.cn'], tier: 'primary_database', uses: ['公共数据目录', '数据资源发现'] },
+  { id: 'statistics', name: '国家统计局数据发布库', domains: ['data.stats.gov.cn'], tier: 'primary_database', uses: ['人口', '就业', '固定资产投资', '房地产', '消费'] },
+  { id: 'public_data_registry', name: '国家公共数据资源登记平台', domains: ['sjdj.nda.gov.cn'], tier: 'primary_database', uses: ['公共数据目录', '数据资源发现'] },
   { id: 'hangzhou_open_data', name: '杭州市数据开放平台', domains: ['data.hangzhou.gov.cn'], tier: 'primary_database', uses: ['杭州公共数据', '数据集', 'API'] },
   { id: 'tianditu', name: '天地图', domains: ['webmap.cn', 'tianditu.gov.cn'], tier: 'primary_database', uses: ['基础地理信息', '影像', '自然资源专题'] },
 ] as const
@@ -29,6 +29,7 @@ export function classifyPublicSource(url: string): { tier: PublicSourceTier; cat
   for (const item of PUBLIC_SOURCE_CATALOG) {
     if (item.domains.some(domain => hostMatches(hostname, domain))) return { tier: item.tier, catalog_id: item.id, label: item.name }
   }
+  if (hostname.startsWith('data.') && hostname.endsWith('.gov.cn')) return { tier: 'primary_database', catalog_id: null, label: '地方公共数据开放平台' }
   if (hostname === 'gov.cn' || hostname.endsWith('.gov.cn')) return { tier: 'official_publication', catalog_id: null, label: '政府公开来源' }
   return { tier: 'supplementary', catalog_id: null, label: '补充来源' }
 }
