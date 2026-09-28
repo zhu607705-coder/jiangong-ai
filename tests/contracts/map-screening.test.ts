@@ -10,6 +10,7 @@ import { handoffPublicSources, publicMapContext } from '../../packages/maps/publ
 import { groundMapAssessment, researchSubject } from '../../services/map-screening/analyst'
 import { validate } from '../../packages/contracts/validate'
 import { DECISION_THRESHOLDS, mapDecisionInput } from '../../packages/decision/structured-route'
+import { FACTOR_FIELDS, decisionFactors } from '../../packages/maps/decision-factors'
 import type { ProjectRecord, RunRecord } from '../../apps/host/store'
 import type { MapScreenAnalysis, MapScreenContext, MapScreenTarget, MapScreenCell, Source, MapPreliminaryAssessment } from '../../apps/host/generated/contracts'
 
@@ -243,6 +244,63 @@ describe('public model evidence boundary', () => {
 
 describe('persisted object research', () => {
   const brief=(ctx:MapScreenContext,profile:MapScreenAnalysis['profile'],status:MapScreenAnalysis['status']='partial'):MapScreenAnalysis=>({context_id:ctx.id,profile,status,created_at:new Date().toISOString(),reason:null,model_calls:[],assessment:{summary:'调查单栋设备维护。',opportunities:[{text:'按原文调查维护范围。',evidence_refs:['S']}],cautions:[],unknowns:[],next_steps:['核对采购窗口。']},research_sources:[{...publicSource,id:'S'}],research_records:[]})
+  it.each([true,false])('revalidates expired canonical facts even when every model score is null: positive=%s',async(positive)=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const p=project('FACT-CACHE',true)
+    p.input.sources=[{...publicSource,expires_at:'2026-09-28T08:01:00Z'}]
+    p.input.facts=Object.values(FACTOR_FIELDS).flat().map((key,i)=>({id:`F-${i}`,kind:`screening.${key}`,value:key==='user_need_verified'?positive:true,unit:null,source_id:publicSource.id,object_ref:'amap:FACT-TARGET',locator:`fixture[${i}]`,observed_at:'2026-09-28T07:00:00Z'}))
+    const {engine,analyst,query,loader,directory}=await service(snapshot(p));const signal=new AbortController().signal
+    const target={...point,label:'甲办公楼',label_origin:'public' as const,object_ref:'amap:FACT-TARGET'}
+    const ctx=await engine.context(target,signal)
+    analyst.mockImplementation(async(c,profile)=>({...brief(c,profile,'completed'),decision_support:{status:'completed',provider:'qwen_systemone',model:'decision-model-preview',policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:'TEST',duration_ms:0,input_tokens:0,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:[],thresholds:DECISION_THRESHOLDS,error_code:null,
+      answers:{next_action:{choice:'compare',confidence:1,probabilities:{investigate:0,resolve_blocker:0,compare:1,review:0}},priority_dimension:{choice:'demand',confidence:1,probabilities:{implementation:0,adaptation:0,demand:1,operations:0,resources:0,access:0}},evidence_sufficient:1},
+      dashboard:{policy_version:'test',purpose:'条件缓存检查',model:'decision-model-preview',request_id:'TEST',status:'partial',dimensions:['demand','supply','adaptation','implementation','operations','resources'].map(key=>({key,value:null,confidence:null,basis:'',evidence_refs:[]}))}}} as MapScreenAnalysis))
+    const first=await engine.analyze(ctx.id,'balanced',signal)
+    expect(first.assessment!.factors!.find(f=>f.key==='demand')!.state).toBe(positive?'supported':'blocked')
+    vi.setSystemTime(new Date('2026-09-28T08:00:59Z'))
+    expect((await engine.savedAnalysis(ctx.id,'balanced',signal))?.status).toBe('completed')
+    const check=(result:MapScreenAnalysis|null,current=ctx)=>{
+      expect(result?.assessment?.factors?.find(f=>f.key==='demand')?.state).toBe('unknown')
+      expect(classifyCells([{id:'C',context:current,factors:result!.assessment!.factors,dashboard:result!.decision_support?.dashboard} as MapScreenCell],'demand')[0].tier).toBe('incomplete')
+      expect(result?.decision_support?.action).not.toBe('compare')
+    }
+    for(const now of ['2026-09-28T08:01:00Z','2026-09-28T08:01:01Z','2026-09-28T08:02:00Z']){
+      vi.setSystemTime(new Date(now));check(await engine.savedAnalysis(ctx.id,'balanced',signal))
+    }
+    expect(decisionFactors({...ctx,created_at:new Date().toISOString()}).find(f=>f.key==='demand')?.state).toBe('unknown')
+    check(await engine.analyze(ctx.id,'balanced',signal))
+    vi.setSystemTime(new Date('2026-09-28T08:11:00Z'))
+    const fresh=await engine.context(target,signal)
+    const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader)
+    check(await recovered.savedAnalysis(fresh.id,'balanced',signal),fresh)
+  })
+  it('checks canonical facts at publication time when the source expires during analysis',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const p=project('FACT-MIDRUN',true)
+    p.input.sources=[{...publicSource,expires_at:'2026-09-28T08:01:00Z'}]
+    p.input.facts=FACTOR_FIELDS.demand.map((key,i)=>({id:`F-${i}`,kind:`screening.${key}`,value:true,unit:null,source_id:publicSource.id,object_ref:'amap:MIDRUN',locator:`fixture[${i}]`,observed_at:'2026-09-28T07:00:00Z'}))
+    const {engine,analyst}=await service(snapshot(p));const signal=new AbortController().signal
+    const ctx=await engine.context({...point,object_ref:'amap:MIDRUN'},signal)
+    analyst.mockImplementation(async(c,profile)=>{vi.setSystemTime(new Date('2026-09-28T08:02:00Z'));return brief(c,profile,'completed')})
+    expect((await engine.analyze(ctx.id,'balanced',signal)).assessment?.factors?.find(f=>f.key==='demand')?.state).toBe('unknown')
+  })
+  it('revalidates conditions while rescanning instead of refilling them from the former study',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const p=project('FACT-SCAN',true)
+    p.input.sources=[{...publicSource,expires_at:'2026-09-28T08:01:00Z'}]
+    p.input.facts=FACTOR_FIELDS.demand.map((key,i)=>({id:`F-${i}`,kind:`screening.${key}`,value:true,unit:null,source_id:publicSource.id,object_ref:'osm:way:100',locator:`fixture[${i}]`,observed_at:'2026-09-28T07:00:00Z'}))
+    const {engine,analyst,regionResolver}=await service(snapshot(p));const signal=new AbortController().signal
+    regionResolver.mockImplementation(async()=>({cells:[{...regions()[1],label:'甲办公楼',boundary_source:'osm:way:100'}],notes:[]}))
+    const before=await engine.screen(bounds,'balanced','demand',signal,()=>{})
+    expect(before.cells[0].tier).toBe('strong')
+    analyst.mockImplementation(async(c,profile)=>brief(c,profile,'completed'))
+    await engine.analyze(before.cells[0].context!.id,'balanced',signal)
+    vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+    const after=await engine.screen(bounds,'balanced','demand',signal,()=>{})
+    expect(after.cells[0].factors?.find(f=>f.key==='demand')?.state).toBe('unknown')
+    expect(after.cells[0].tier).toBe('incomplete')
+    expect(analyst).toHaveBeenCalledTimes(1)
+  })
   it('persists a validated brief through cancellation and passes it into the next scoring attempt',async()=>{
     const {engine,analyst,directory,query,loader}=await service();const stop=new AbortController()
     const ctx=await engine.context(point,stop.signal)

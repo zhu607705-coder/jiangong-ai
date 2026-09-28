@@ -9,10 +9,11 @@ import PreliminaryCard from './PreliminaryCard'
 import ScreeningControls from './ScreeningControls'
 import DataSourcesPanel from './DataSourcesPanel'
 import { scanMap } from './screening-stream'
-import { SCREEN_TIERS, classifyCells } from '../../../../packages/maps/screening-policy'
+import { SCREEN_TIERS, classifyCells as classifySnapshotCells } from '../../../../packages/maps/screening-policy'
 import type { MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
 
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
+const classifyCells=(cells:MapScreenCell[],theme:MapScreenTheme)=>classifySnapshotCells(cells,theme,new Date().toISOString())
 const cellWithStudy=(cell:MapScreenCell,result:MapScreenAnalysis|null):MapScreenCell=>({...cell,factors:result?.assessment?.factors,dashboard:result?.decision_support?.dashboard,analysis_available:!!result?.assessment})
 export default function MapWorkspace({ ready, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace }: {
   ready: boolean; project: Project | null; focusProject: number; settingsRequest: number;

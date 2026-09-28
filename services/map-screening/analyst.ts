@@ -74,6 +74,7 @@ export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: M
     const id=known.get(e.source_id)||e.source_id,source=sourceTexts.get(id)
     if(dimensionSeen.has(e.key)||!source||e.quote.trim().length<8||backgroundIds.has(id))return []
     if(!eligibleDimension(source,context,subject,e,records))return []
+    if(hasUnqualifiedAssurance(e.basis)||!groundedAmounts(e.basis,context,subject,[source],records))return []
     dimensionSeen.add(e.key);return [{...e,source_id:id}]
   })
   result.factors = deterministic
@@ -125,7 +126,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     const references=selectReferenceCases(allSources.map(s=>s.text||'').join(' '))
     if(!reuse)emit({type:'progress',stage:'brief',status:'running',message:'形成具体参与路径'})
     const prompt=`给出所选空间的实际参与建议。方向：${SCREEN_PROFILES[profile].label}。摘要≤64字，机会、行动前提、下一步各最多1项且≤48字。先回答做什么、为谁做、通过什么业务入口；不要只说核查。学校在正常运行时优先研究具体修缮、机电、后勤或周边服务路径，不把校园当待开发土地。只有本方案真实触发的关键前提才填cautions；无新增信息就留空。禁止“用途、权属和腾退未核实”“不可直接套用更新项目”等泛化阻却句。已经成交或截止的公告作为历史采购需求，下一步查后续采购，不能建议投过期标。
-可选dimension_evidence按demand需求客群、supply供给竞争、adaptation空间工程、implementation实施入口、operations运营回款、resources投入交付最多各1项。每项必须有一个sources.id、该来源8–180字精确quote、≤120字basis，缺证据的维度不填。引文须明确包含当前对象名称；引用结构化记录字段时填写该条records.id作为record_id，并逐字使用该字段raw。不能用标题替另一对象的引文背书。历史档案可以支持空间线索，不把旧采购、已成交或已截止的公告当当前实施入口。不要为填满图表拼接不同校区或不同项目。未知不打0分。不要输出factors，由已有事实规则管理硬约束。evidence_refs只能用给定ID，POI只用于发现对象，不用于维度评分。
+可选dimension_evidence按demand需求客群、supply供给竞争、adaptation空间工程、implementation实施入口、operations运营回款、resources投入交付最多各1项。每项必须有一个sources.id、该来源8–180字精确quote、≤120字basis，缺证据的维度不填。引文须明确包含当前对象名称；引用结构化记录字段时填写该条records.id作为record_id，并逐字使用该字段raw。不能用标题替另一对象的引文背书。邻楼、相邻对象和比较案例须明确写为周边或比较线索，不能变成当前对象自身的需求、资格或单体预算；联合项目、标段及分项金额保留完整范围。历史档案可以支持空间线索，不把旧采购、已成交或已截止的公告当当前实施入口。不要为填满图表拼接不同校区或不同项目。未知不打0分。不要输出factors，由已有事实规则管理硬约束。evidence_refs只能用给定ID，POI只用于发现对象，不用于维度评分。
 方法案例不作为本地事实：${JSON.stringify(references)}
 <untrusted_evidence>${JSON.stringify(payload)}</untrusted_evidence>`
     let repairNote=''
@@ -137,7 +138,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
         if(!attempt&&(value.dimension_evidence?.length||0)>(grounded.dimension_evidence?.length||0)){
           const accepted=new Set(grounded.dimension_evidence?.map(e=>e.key))
           const rejected=value.dimension_evidence?.filter(e=>!accepted.has(e.key)).map(e=>e.key)
-          repairNote=`\n以下维度的来源、对象或逐字引用未通过校验：${JSON.stringify(rejected)}。只尝试纠正一次：source_id 必须完整复制给定 ID，quote 必须是同一来源内连续的原文，不加省略号、不拼接、不改空格。只采用对应选中对象的原文；不能核实就删除该维度。保留已成立的简报，不为补齐图表虚构依据。`
+          repairNote=`\n以下维度的来源、对象或逐字引用未通过校验：${JSON.stringify(rejected)}。只尝试纠正一次：source_id 必须完整复制给定 ID，quote 必须是同一来源内连续的原文，不加省略号、不拼接、不改空格。只采用对应选中对象自身主张的原文；相邻或比较对象只能明确标为背景线索，不能核实就删除该维度。保留已成立的简报，不为补齐图表虚构依据。`
           continue
         }
         break

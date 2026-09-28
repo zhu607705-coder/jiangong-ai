@@ -24,8 +24,8 @@ const FIELD_LABELS: Record<string, string> = {
 }
 /** Only current, object-bound boolean source facts enter the screening rubric.
  * Raw POI counts, publication counts, model prose and city background never enter it. */
-export function decisionFactors(context: MapScreenContext): MapDecisionFactor[] {
-  const asOf = Date.parse(context.created_at)
+export function decisionFactors(context: MapScreenContext, evaluatedAt=context.created_at): MapDecisionFactor[] {
+  const asOf = Date.parse(evaluatedAt)
   return (Object.keys(FACTOR_LABELS) as FactorKey[]).map(key => {
     const rows = context.local_projects.filter(p => p.relation === 'within_scope').flatMap(p => p.facts.flatMap(f => {
       const field = f.kind.replace(/^screening\./, '')

@@ -2,6 +2,7 @@ import { parseHTML } from 'linkedom'
 import { createHash } from 'node:crypto'
 import type { Source, PublicRecord, PublicField, AdapterReceipt } from '../../../apps/host/generated/contracts'
 import { publicSourceClass } from '../../../packages/research/public-sources'
+import { retainRecordWindows } from '../../../packages/research/record-window'
 
 type Adapter=PublicRecord['adapter']
 export const MAX_SOURCE_RECORDS=50
@@ -152,7 +153,7 @@ export function adaptStatistics(source:Source):PublicRecord[]{
 }
 export const adaptLandchina=(s:Source)=>parseTableSource(s,'landchina')
 export const adaptConstruction=(s:Source)=>parseTableSource(s,'construction')
-export const adaptProcurement=(s:Source)=>parseTableSource(s,'procurement')
+export const adaptProcurement=(s:Source)=>retainRecordWindows(parseTableSource(s,'procurement'))
 export function adaptOfficialSource(source:Source):{records:PublicRecord[];receipt:AdapterReceipt}{
   const host=(()=>{try{return new URL(source.url||'').hostname}catch{return ''}})(),content=source.untrusted_text||''
   let adapter:Adapter|null=host==='landchina.com'||host.endsWith('.landchina.com')?'landchina':host==='jzsc.mohurd.gov.cn'||host.startsWith('jzsc.')&&host.endsWith('.gov.cn')?'construction':host==='data.stats.gov.cn'?'statistics':host==='ccgp.gov.cn'||host.endsWith('.ccgp.gov.cn')?'procurement':null
@@ -166,6 +167,6 @@ export function adaptOfficialSource(source:Source):{records:PublicRecord[];recei
   if(accessRequired(content))return {records:[],receipt:{...receipt,status:'access_required'}}
   if(!adapter)return {records:[],receipt}
   const parsed=adapter==='statistics'?adaptStatistics(source):parseTableSource(source,adapter)
-  const records=parsed.slice(0,MAX_SOURCE_RECORDS).map(r=>({...r,...(source.raw_hash?{source_hash:source.raw_hash}:{})}))
+  const records=retainRecordWindows(parsed,parsed.slice(0,MAX_SOURCE_RECORDS)).map(r=>({...r,...(source.raw_hash?{source_hash:source.raw_hash}:{})}))
   return {records,receipt:{...receipt,status:parsed.length>MAX_SOURCE_RECORDS?'truncated':records.length?'success':'schema_changed',record_ids:records.map(r=>r.id)}}
 }

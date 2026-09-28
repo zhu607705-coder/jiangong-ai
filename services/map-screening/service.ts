@@ -165,7 +165,11 @@ export class MapScreeningService {
         if(event.type==='brief'||event.stage==='decision'&&event.status==='running')return (async()=>{
           signal.throwIfAborted()
           if((await this.loadEvidence()).revision!==context.project_revision)throw new Error('CONTEXT_EXPIRED')
-          if(event.type==='brief')await this.remember(context,profile,validate<MapScreenAnalysis>('MapScreenAnalysis',event.result))
+          if(event.type==='brief'){
+            const result=validate<MapScreenAnalysis>('MapScreenAnalysis',event.result)
+            this.refreshConditions(context,result)
+            await this.remember(context,profile,result)
+          }
           signal.throwIfAborted();await emit(event)
         })()
         return emit(event)
@@ -174,13 +178,7 @@ export class MapScreeningService {
       signal.throwIfAborted()
       if ((await this.loadEvidence()).revision !== context.project_revision) throw new Error('CONTEXT_EXPIRED')
       signal.throwIfAborted()
-      if (analysis.assessment) {
-        const extracted = analysis.assessment.factors || []
-        analysis.assessment.factors = decisionFactors(context).map(f => f.state === 'unknown' ? extracted.find(e => e.key === f.key) || f : f)
-      }
-      if(analysis.decision_support) {
-        analysis.decision_support=applyDecisionGuards(analysis.decision_support,decisionFactors(context))
-      }
+      this.refreshConditions(context,analysis)
       if(analysis.status==='completed'&&analysis.decision_support&&analysis.decision_support.status!=='completed'){
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }
@@ -220,13 +218,14 @@ export class MapScreeningService {
       if(this.contexts.size>=120)this.contexts.delete(this.contexts.keys().next().value!)
       this.contexts.set(fingerprint([this.provider.revision(),target]),context)
       cell.context=context
+      cell.factors=decisionFactors(context,stamp())
       // Full results stay behind a selected-object read, not duplicated into every
       // scan polygon. The same snapshot supplies both the color and detail view.
       const restored=await this.restore(context,profile)
       if(restored){
         cell.analysis_available=true
         cell.dashboard=restored.decision_support?.dashboard
-        cell.factors=decisionFactors(context).map(f=>f.state==='unknown'?restored.assessment?.factors?.find(p=>p.key===f.key)||f:f)
+        cell.factors=restored.assessment?.factors||cell.factors
       }
       const classified=classifyCells([cell],theme)[0]
       cells[i]=classified
@@ -273,6 +272,17 @@ export class MapScreeningService {
     })))
   }
 
+  private refreshConditions(context:MapScreenContext,analysis:MapScreenAnalysis):void {
+    const factors=decisionFactors(context,stamp()),previous=analysis.assessment?.factors||[]
+    const invalidated=previous.some(old=>old.state!=='unknown'&&factors.some(current=>current.key===old.key&&(current.state!==old.state||old.evidence_refs.some(ref=>!current.evidence_refs.includes(ref)))))
+    // Canonical conditions are derived again, never filled from a cached verdict.
+    // The brief and provider answers remain historical artifacts; local guards
+    // apply the current conditions to the route without another model request.
+    if(analysis.assessment)analysis.assessment.factors=factors
+    if(analysis.decision_support)analysis.decision_support=applyDecisionGuards(analysis.decision_support,factors)
+    if(invalidated&&!analysis.reason)analysis.reason='原简报已保留，条件已按当前资料时效重新核对。'
+  }
+
   private async restore(context:MapScreenContext,profile:MapScreenProfile):Promise<MapScreenAnalysis|null>{
     try{
       const saved=JSON.parse(await readFile(join(this.directory,'scope-analyses',this.scopeKey(context,profile)+'.json'),'utf8'))
@@ -290,6 +300,7 @@ export class MapScreeningService {
         context.address=saved.address;context.city=saved.city||context.city
       }
       if(!this.currentScores(context,analysis))return null
+      this.refreshConditions(context,analysis)
       const aliases=new Map<string,string>((saved.groups||[]).flatMap((g:{key:string;source_id:string})=>{const now=context.groups.find(n=>n.key===g.key);return now?[[g.source_id,now.source_id]]:[]}))
       for(const claim of [...analysis.assessment.opportunities,...analysis.assessment.cautions,...(analysis.assessment.factors||[])])claim.evidence_refs=claim.evidence_refs.map(id=>aliases.get(id)||id)
       analysis.reused_from_context_id=analysis.reused_from_context_id||analysis.context_id

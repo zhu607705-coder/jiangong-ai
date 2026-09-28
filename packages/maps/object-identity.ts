@@ -1,5 +1,7 @@
 import type { Fact, MapProjectEvidence, MapScreenTarget } from '../../apps/host/generated/contracts'
 
+export const normalizedName=(text:string)=>text.normalize('NFKC').replace(/[\s\p{P}\p{S}]/gu,'').toLowerCase()
+
 export const genericMapLabel=(label:string)=>/^(道路|水系|建筑轮廓|街区|片区|建筑群|园区|建筑|校园|校区|选中的地图位置)[\s\d]*$/.test(label.trim())
 
 /** A project's presence nearby is not a mapping from every fact to this object. */

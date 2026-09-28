@@ -1,0 +1,77 @@
+{
+  "baseline_commit": "f69d69277e14216fc2e5bf3214968ab2d53c22b8",
+  "review_id": "JIANGONG-AUDIT-04-f69d6927",
+  "status": "verified_pending_publication_and_round05",
+  "as_of": "2026-09-28T20:25:14.489568+00:00",
+  "pro_closed_original": 18,
+  "addressed": [
+    "A01",
+    "A12",
+    "A15",
+    "D01"
+  ],
+  "verification": {
+    "javascript": 264,
+    "python": 70,
+    "http": 11,
+    "browser": 39,
+    "production_build": "passed",
+    "before_after": [
+      "own/reference claim and joint money ownership",
+      "expired positive/negative fact cache and publication",
+      "51st-record contradiction and correction",
+      "actual aggregate100 record omission"
+    ],
+    "real_public_replay": {
+      "scope": "Offline qualification and arithmetic replay of the saved real public/native request; no new model call.",
+      "request_id": "031b9c4b-ac45-446e-8a83-c6e8262c833b",
+      "qualified_dimensions": [
+        "demand",
+        "resources"
+      ],
+      "question_keys": [
+        "fit_demand",
+        "fit_resources"
+      ],
+      "values": [
+        {
+          "key": "demand",
+          "value": 3.8
+        },
+        {
+          "key": "supply",
+          "value": null
+        },
+        {
+          "key": "adaptation",
+          "value": null
+        },
+        {
+          "key": "implementation",
+          "value": null
+        },
+        {
+          "key": "operations",
+          "value": null
+        },
+        {
+          "key": "resources",
+          "value": 3.9
+        }
+      ]
+    }
+  },
+  "source_policy": "public-adapters-v8",
+  "evidence_local": "data/local/pro-audit/round-04/",
+  "next_review_dependencies": {
+    "archive": "data/local/pro-audit/round-04/jiangong-audit-new-dependencies.zip",
+    "packages": 4,
+    "version": "8.5.8",
+    "integrity": "Each published npm tarball SHA512 matches package-lock.json."
+  },
+  "limits": [
+    "Exact new commit still requires original Pro round05 review.",
+    "Pro round04 explicitly used an external lexical-data boundary for some tests; current local reproductions use the real pinned packages.",
+    "The real public/native response is replayed unchanged; no claim of a new model call or enterprise effectiveness."
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "status": "pro_audit_round_03_verified_pending_push_and_rereview",
+  "status": "pro_audit_round_04_verified_awaiting_round05",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -26,9 +26,9 @@
     "external_production_database_extensions_and_multitenant_deployment_validation",
     "scanned_image_OCR_engine_optional_source_capability"
   ],
-  "next_task": "Push exact third-round fixes and submit round04 in the original 6 Pro conversation; keep native goal active until explicit pass.",
+  "next_task": "Submit the verified fourth-round fixes and pinned dependency archives to the original 6 Pro conversation; keep the native goal active until the current source explicitly passes.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-28T18:32:19.457733+00:00",
+  "updated_at": "2026-09-28T20:25:14.489568+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -65,7 +65,7 @@
     "decision_model": "decision-model-preview via DSH ToolRuntime; official preview endpoint verified"
   },
   "latest_evidence": [
-    "research/test_results/pro-audit-round3.json"
+    "research/test_results/pro-audit-round4.json"
   ],
   "current_delivery": "Merged minimal object map with 50-case DSH brief skill, live Qwen System One decision routing, source-bound concise briefs and prioritized project investigation tasks.",
   "node_status": {
@@ -184,7 +184,7 @@
     "credentials": "ignored data/local/amap-credentials.json",
     "initial_ui": "map_only; detail_requires_selection",
     "data_scope": "Explicit physical objects, source-backed factors; selected-object summaries on demand; 50 public mechanism references.",
-    "verification_scope": "237 JS,70 Python,11 HTTP,39 synthetic-provider real React checks and build; actual full AMap/DSH/Qwen run plus distinct source-grounded native positive replay."
+    "verification_scope": "264 JS,70 Python,11 HTTP,39 synthetic-provider real React checks and build; unchanged real public/native response replay retains demand3.8 and resources3.9."
   },
   "github": {
     "url": "https://github.com/zhu607705-coder/jiangong-ai",
@@ -208,26 +208,27 @@
     "next": "Complete original Pro iterative audit on exact latest source."
   },
   "external_audit": {
-    "review_id": "JIANGONG-AUDIT-03-84d12343",
-    "baseline": "84d12343fbc2f97c7c90297098c6c1ba0ccd3022",
-    "verdict": "not_passed_on_baseline",
-    "findings": 5,
+    "review_id": "JIANGONG-AUDIT-04-f69d6927",
+    "baseline": "f69d69277e14216fc2e5bf3214968ab2d53c22b8",
+    "verdict": "not_passed_on_reviewed_baseline",
+    "findings": 4,
     "ledger": "docs/Pro审计修复记录.md",
-    "evidence_local": "data/local/pro-audit/round-03/",
+    "evidence_local": "data/local/pro-audit/round-04/",
     "native_goal": "active",
-    "publication": "third-round fixes verified; pending commit/push",
+    "publication": "fourth-round fixes verified for publication",
     "completed_local_checks": [
-      "Actual failed-before/passed-after object, amount, procurement identity and cache checks",
-      "39 real React checks including expiry, late scan and cancelled scan",
-      "237 JS,70 Python,11 HTTP and production build",
-      "Distinct native Qwen positive replay with public originals and raw response"
+      "All four remaining findings independently reproduced with actual locked dependencies",
+      "Object-role and complete monetary scope positive/negative controls",
+      "Current positive/negative fact cache, restoration, publication and scan checks",
+      "Per-source50 and aggregate100 truncation with family validity preserved",
+      "264 JS,70 Python,11 HTTP,39 React and production build",
+      "Unchanged real public/native qualification and score replay"
     ],
     "pending": [
-      "push exact third-round fixes",
-      "Pro round04 review"
+      "original Pro round05 review of the exact next commit"
     ],
-    "verification": "research/test_results/pro-audit-round3.json",
-    "closed_original": 16,
-    "remaining_on_baseline": 5
+    "verification": "research/test_results/pro-audit-round4.json",
+    "closed_original": 18,
+    "remaining_on_baseline": 4
   }
 }

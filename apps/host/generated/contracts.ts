@@ -156,6 +156,7 @@ export interface Source {
   object_refs?: string[];
   evidence_scope?: "object" | "area" | "background";
   raw_hash?: string;
+  records_truncated?: boolean;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

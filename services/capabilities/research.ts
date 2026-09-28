@@ -98,6 +98,7 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       const receipt=receipts.find(r=>r.source_id===source.id)
       if(receipt){
         const truncated=receipt.status==='truncated'||kept.length<candidates.length
+        source.records_truncated=truncated
         finalReceipts.push({...receipt,status:truncated?'truncated':receipt.status,record_ids:kept.map(r=>r.id)})
         if(truncated)warnings.push('RECORD_BUDGET_TRUNCATED:'+source.id)
       }

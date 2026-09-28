@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import { groundMapAssessment } from '../../services/map-screening/analyst'
 import { adaptOfficialSource } from '../../services/capabilities/adapters/public-records'
-import { visibleText } from '../../services/capabilities/research'
+import { dashboardQuestions } from '../../packages/decision/dashboard'
+import { collectSelectedEvidence, visibleText } from '../../services/capabilities/research'
 import type { MapPreliminaryAssessment, MapScreenContext, Source } from '../../apps/host/generated/contracts'
 
 const context={created_at:'2026-09-28T08:00:00Z',city:'杭州市',address:'浙江省杭州市西湖区',target:{label:'甲办公楼',label_origin:'public',object_ref:'amap:A'},groups:[],local_projects:[]} as unknown as MapScreenContext
@@ -30,9 +31,100 @@ describe('monetary claim ownership',()=>{
   ])('does not move a real amount to a different claim owner: %s',text=>{
     expect(()=>groundMapAssessment(brief(text),context,[original])).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
   })
+  it('keeps a joint budget on its full owner rather than assigning it to one building',()=>{
+    const html=`<table>${field('项目编号','JOINT')}${field('项目名称','甲办公楼与乙办公楼联合改造')}${field('预算金额','120万元')}</table>`
+    const original=source(html),records=adaptOfficialSource(original).records,parsed={...original,untrusted_text:visibleText(html,original.url!)}
+    for(const text of ['甲办公楼预算为120万元。','预算为120万元。','本项目预算为120万元。'])expect(()=>groundMapAssessment(brief(text),context,[parsed],records)).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+    expect(()=>groundMapAssessment(brief('甲办公楼与乙办公楼联合改造预算为120万元。'),context,[parsed],records)).not.toThrow()
+    expect(()=>groundMapAssessment(brief('甲办公楼与乙办公楼各预算120万元。'),context,[parsed],records)).toThrow()
+  })
+  it('does not erase a lot or a stated cost component when paraphrasing its amount',()=>{
+    const html=`<table>${field('项目编号','P-LOT')}${field('项目名称','甲办公楼改造A标段')}${field('标段编号','A')}${field('预算金额','120万元')}</table>`
+    const original=source(html),records=adaptOfficialSource(original).records,parsed={...original,untrusted_text:visibleText(html,original.url!)}
+    expect(()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[parsed],records)).toThrow()
+    expect(()=>groundMapAssessment(brief('甲办公楼改造A标段预算为120万元。'),context,[parsed],records)).not.toThrow()
+    const sub=source('甲办公楼电梯分项预算为120万元。')
+    expect(()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[sub])).toThrow()
+    expect(()=>groundMapAssessment(brief('甲办公楼电梯分项预算为120万元。'),context,[sub])).not.toThrow()
+  })
+  it.each(['甲办公楼、乙办公楼联合改造','乙办公楼、甲办公楼联合改造'])('preserves the full owner when a joint name uses list punctuation: %s',owner=>{
+    const original=source(`<table>${field('项目编号','JOINT')}${field('项目名称',owner)}${field('预算金额','120万元')}</table>`),records=adaptOfficialSource(original).records
+    const parsed={...original,untrusted_text:visibleText(original.untrusted_text!,original.url!)}
+    expect(()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[parsed],records)).toThrow()
+    expect(()=>groundMapAssessment(brief(`${owner}预算为120万元。`),context,[parsed],records)).not.toThrow()
+  })
+  it.each([[150,120,'万元',false],[120,120,'万元',true],[120,120,'元',false]] as const)('does not borrow a neighbouring row through flattened table text: %s/%s %s', (own,other,unit,valid)=>{
+    const original=source(`<table>${field('项目编号','P-A')}${field('项目名称','甲办公楼改造')}${field('预算金额',own+unit)}</table><table>${field('项目编号','P-B')}${field('项目名称','乙办公楼改造')}${field('预算金额',other+'万元')}</table>`),records=adaptOfficialSource(original).records
+    const parsed={...original,untrusted_text:visibleText(original.untrusted_text!,original.url!)}
+    const run=()=>groundMapAssessment(brief('甲办公楼预算为120万元。'),context,[parsed],records)
+    if(valid)expect(run).not.toThrow();else expect(run).toThrow('MAP_ASSESSMENT_UNGROUNDED_AMOUNT')
+  })
+})
+
+describe('the target is the claim object, not just a geographical reference',()=>{
+  it.each([
+    ['甲办公楼本期采购设备维护服务。',true],
+    ['甲办公楼目前没有新增采购需求。',true],
+    ['乙办公楼旁的甲办公楼本期采购设备维护服务。',true],
+    ['与乙办公楼相比，甲办公楼更需要设备维护。',true],
+    ['甲办公楼旁的乙办公楼本期采购设备维护服务。',false],
+    ['与甲办公楼相邻的乙办公楼本期采购设备维护服务。',false],
+    ['甲办公楼正常运营。乙办公楼本期采购设备维护服务。',false],
+    ['与甲办公楼相比，乙办公楼本期采购设备维护服务。',false],
+  ])('checks the scoring request, preserving positive and negative own claims: %s',(quote,accepted)=>{
+    const result=groundMapAssessment({...brief('研究楼栋维护服务。'),dimension_evidence:[{key:'demand',source_id:'S',quote:quote as string,basis:'核对该楼维护需求。'}]},context,[source(quote as string)])
+    expect(result.dimension_evidence).toHaveLength(accepted?1:0)
+    expect(Object.hasOwn(dashboardQuestions({purpose:result.summary,evidence:result.dimension_evidence!}),'fit_demand')).toBe(accepted)
+  })
 })
 
 describe('same procurement identity across actual adapter records',()=>{
+  it.each([49,50,51])('keeps the target conflict when unrelated rows move the counterexample to position %s',position=>{
+    const filler=Array.from({length:position-2},(_,i)=>table('2026年10月8日09:00:00',`OTHER-${i}`).replaceAll('甲办公楼空调维护采购项目',`其他办公楼${i}维护项目`)).join('')
+    for(const [first,last] of [['2026年10月5日09:00:00','2026年9月20日09:00:00'],['2026年9月20日09:00:00','2026年10月5日09:00:00']]){
+      const result=entryEligibility(table(first)+filler+table(last))
+      expect(result.records.length).toBeLessThanOrEqual(50)
+      expect(result.accepted[0]).toBe(0)
+    }
+  })
+  it('does not treat records omitted by the aggregate budget as a source with no deadline',async()=>{
+    const pages={
+      a:Array.from({length:50},(_,i)=>table('2026年10月5日09:00:00',`P-A-${i}`)).join(''),
+      b:Array.from({length:50},(_,i)=>table('2026年10月5日09:00:00',`P-B-${i}`)).join(''),
+      c:table('2026年9月20日09:00:00'),
+    }
+    const research=await collectSelectedEvidence({name:'甲办公楼',purpose:'楼栋维护',asOf:context.created_at},new AbortController().signal,undefined,{
+      search:async()=>({sources:Object.keys(pages).map(key=>({url:`https://www.ccgp.gov.cn/${key}`,title:'甲办公楼采购公告',publishedAt:'2026-09-20'}))}),
+      fetch:async({url})=>({statusCode:200,body:{kind:'html',content:`<html><head><meta name="PubDate" content="2026-09-20"></head><body>${pages[url.at(-1) as keyof typeof pages]}</body></html>`}}),
+    })
+    const omitted=research.sources.find(source=>source.url!.endsWith('/c'))!
+    expect(research.records).toHaveLength(100)
+    expect(research.records.some(record=>record.source_id===omitted.id)).toBe(false)
+    expect(research.receipts.find(receipt=>receipt.source_id===omitted.id)?.status).toBe('truncated')
+    const result=groundMapAssessment({...brief('研究楼栋维护采购。'),dimension_evidence:[{key:'implementation',source_id:omitted.id,quote:'甲办公楼空调维护采购项目',basis:'核查当前采购入口。'}]},context,research.sources,research.records)
+    expect(result.dimension_evidence).toEqual([])
+  })
+  it('retains a same-identity contradiction beyond the per-source record limit',()=>{
+    const rows=Array.from({length:50},(_,i)=>table('2026年10月5日09:00:00','P-ONE',field('采购单位',`采购单位${i}`)))
+    const result=entryEligibility(rows.join('')+table('2026年9月20日09:00:00'))
+    expect(result.records).toHaveLength(50)
+    expect(result.accepted.every(value=>value===0)).toBe(true)
+  })
+  it('keeps an unrelated truncated record from invalidating a complete target identity',()=>{
+    const rows=Array.from({length:50},(_,i)=>table('2026年10月5日09:00:00',`P-${i}`))
+    const result=entryEligibility(rows.join('')+table('2026年9月20日09:00:00','P-OTHER'))
+    expect(result.records).toHaveLength(50)
+    expect(result.accepted.every(value=>value===1)).toBe(true)
+  })
+  it.each([true,false])('keeps an explicit correction beyond the cap: currently open=%s',open=>{
+    const old='2026年10月5日09:00:00',current=open?'2026年10月8日09:00:00':'2026年9月20日09:00:00'
+    const rows=Array.from({length:50},(_,i)=>table(old,'P-ONE',field('采购单位',`采购单位${i}`)))
+    const correction=`<table>${field('项目编号','P-ONE')}${field('项目名称','甲办公楼空调维护采购项目')}${field('更正前响应截止时间',old)}${field('更正后响应截止时间',current)}</table>`
+    const result=entryEligibility(rows.join('')+correction)
+    expect(result.records).toHaveLength(50)
+    expect(result.accepted.every(value=>value===Number(open))).toBe(true)
+    if(open)expect(result.records[0].fields.find(f=>f.key==='deadline_resolved')?.raw).toBe(current)
+  })
   it.each([false,true])('keeps conflicting deadlines unresolved regardless of row order: reverse=%s',reverse=>{
     const rows=[table('2026年9月20日09:00:00'),table('2026年10月5日09:00:00')]
     const result=entryEligibility(`<html><body>${(reverse?rows.reverse():rows).join('')}</body></html>`)

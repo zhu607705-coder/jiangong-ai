@@ -245,6 +245,9 @@
         "raw_hash": {
           "type": "string",
           "maxLength": 100
+        },
+        "records_truncated": {
+          "type": "boolean"
         }
       },
       "required": [

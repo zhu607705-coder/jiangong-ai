@@ -31,9 +31,9 @@ export function assertScreenBounds(b:MapScreenBounds):void {
 export function contextComparable(context:MapScreenContext|null):boolean {
   return !!context && decisionFactors(context).some(f => f.state !== 'unknown')
 }
-export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme):MapScreenCell[] {
+export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme,evaluatedAt?:string):MapScreenCell[] {
   return input.map(c => {
-    const factors = c.factors || (c.context ? decisionFactors(c.context) : [])
+    const factors = c.factors || (c.context ? decisionFactors(c.context,evaluatedAt) : [])
     const existing=factorTier(factors,theme)
     // Explicit object-bound blockers take precedence over model fit levels.
     let tier:MapScreenCell['tier']=c.context ? existing : 'pending'

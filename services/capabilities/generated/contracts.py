@@ -111,6 +111,7 @@ class Source(BaseModel):
     object_refs: list[ObjectRef] | None = Field(None, max_length=100)
     evidence_scope: EvidenceScope | None = None
     raw_hash: str | None = Field(None, max_length=100)
+    records_truncated: bool | None = None
 
 
 class Inventory(BaseModel):
