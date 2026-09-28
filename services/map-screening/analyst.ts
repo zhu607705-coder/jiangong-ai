@@ -14,12 +14,13 @@ import { INVESTIGATION_GAPS, SCREEN_PROFILES, usableMapEvidence } from '../../pa
 import type { MapPreliminaryAssessment, MapScreenAnalysis, MapScreenContext, MapScreenProfile, DecisionSupport } from '../../apps/host/generated/contracts'
 import { assertBriefProse, selectReferenceCases } from '../../runtime/skills/investment-brief'
 import { decisionFactors } from '../../packages/maps/decision-factors'
-import { publicMapContext } from '../../packages/maps/public-context'
-import { genericMapLabel } from '../../packages/maps/object-identity'
+import { publicMapContext, researchSubject } from '../../packages/maps/public-context'
+export { researchSubject } from '../../packages/maps/public-context'
 import { evaluateDecision } from '../capabilities/decision-model'
 import { mapDecisionInput, DECISION_ACTIONS } from '../../packages/decision/structured-route'
 
-export function groundMapAssessment(value: MapPreliminaryAssessment, context: MapScreenContext, external: Source[] = [], records:PublicRecord[]=context.research_records||[]): MapPreliminaryAssessment {
+export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: MapScreenContext, external: Source[] = [], records:PublicRecord[]=snapshot.research_records||[], asOf=snapshot.created_at): MapPreliminaryAssessment {
+  const context={...snapshot,created_at:asOf}
   assertBriefProse(value)
   const result = structuredClone(value)
   const known = new Map<string, string>()
@@ -79,13 +80,6 @@ export function groundMapAssessment(value: MapPreliminaryAssessment, context: Ma
   return result
 }
 
-export function researchSubject(context:MapScreenContext):string{
-  const label=publicMapContext(context).target.label?.trim()||''
-  if(label&&!genericMapLabel(label))return label
-  // Nearby POIs remain leads; they must not replace the selected object's identity.
-  return (context.address||'').trim().slice(0,180)
-}
-
 export async function analyzeMapContext(context:MapScreenContext,profile:MapScreenProfile,signal:AbortSignal,emit:ResearchSink=()=>{},previous?:MapScreenAnalysis):Promise<MapScreenAnalysis>{
   const base={context_id:context.id,profile,created_at:new Date().toISOString()}
   if(!config.modelConfigured)return {...base,status:'unavailable',assessment:null,model_calls:[],reason:'请配置模型接口。'}
@@ -102,7 +96,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     const originalSources=publicContext.local_projects.flatMap(p=>p.sources.filter(s=>s.untrusted_text&&s.content_status!=='metadata_only').map(s=>({...s,id:`${p.project_id}:${s.id}`})))
     if(reuse){
       research={sources:previous!.research_sources||[],records:previous!.research_records||[],receipts:previous!.adapter_receipts||[],trace:{...(previous!.research||research.trace),reused:true}}
-      assessment=groundMapAssessment(previous!.assessment!,context,research.sources,research.records)
+      assessment=groundMapAssessment(previous!.assessment!,context,research.sources,research.records,new Date().toISOString())
       emit({type:'progress',stage:'sources',status:'completed',message:'复用已完成的简报与依据'})
     }
     if(!reuse&&name&&config.searchConfigured){
@@ -138,7 +132,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     for(let attempt=0;!reuse&&attempt<2;attempt++){
       try{
         const {value}=await live.call<MapPreliminaryAssessment>('map_initial_screen'+(attempt?'_repair':''),prompt+repairNote,'MapPreliminaryAssessment',[],undefined,{omitOptionalFields:['factors'],evidenceIds})
-        const grounded=groundMapAssessment(value,context,external,research.records)
+        const grounded=groundMapAssessment(value,context,external,research.records,new Date().toISOString())
         assessment=grounded
         if(!attempt&&(value.dimension_evidence?.length||0)>(grounded.dimension_evidence?.length||0)){
           const accepted=new Set(grounded.dimension_evidence?.map(e=>e.key))
@@ -157,9 +151,11 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     emit({type:'progress',stage:'brief',status:'completed',message:assessment!.summary})
     if(config.decisionEnabled){
       await emit({type:'progress',stage:'decision',status:'running',message:'评估六维方案适配'})
-      const input=mapDecisionInput(context,SCREEN_PROFILES[profile].label)
+      const asOf=new Date().toISOString()
+      assessment=groundMapAssessment(assessment!,context,external,research.records,asOf)
+      const input=mapDecisionInput({...context,created_at:asOf},SCREEN_PROFILES[profile].label)
       const scoringIds=new Set(assessment!.dimension_evidence?.map(e=>e.source_id)||[])
-      input.state={target:publicContext.target,as_of:context.created_at,verified_conditions:input.factors,proposal:assessment!.summary,
+      input.state={target:publicContext.target,as_of:asOf,verified_conditions:input.factors,proposal:assessment!.summary,
         public_sources:allSources.filter(s=>scoringIds.has(s.id)).map(s=>({id:s.id,title:s.title,published_at:s.published_at})),
         records:research.records.slice(0,8).map(r=>({...r,fields:r.fields.slice(0,20).map(f=>({key:f.key,value:typeof f.value==='string'?f.value.slice(0,200):f.value,unit:f.unit,locator:f.locator}))}))}
 

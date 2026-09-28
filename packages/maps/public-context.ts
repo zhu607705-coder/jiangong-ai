@@ -1,4 +1,12 @@
 import type { MapScreenContext, Source } from '../../apps/host/generated/contracts'
+import { genericMapLabel } from './object-identity'
+
+export function researchSubject(context:MapScreenContext):string {
+  const label=context.target.label_origin==='public'?context.target.label?.trim()||'':''
+  if(label&&!genericMapLabel(label))return label
+  // Nearby POIs remain leads; they must not replace the selected object's identity.
+  return (context.address||'').trim().slice(0,180)
+}
 
 /** The same public-only boundary is used by the model and new-project handoff. */
 export function publicMapContext(context: MapScreenContext): MapScreenContext {

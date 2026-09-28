@@ -7,10 +7,12 @@ import { build } from 'esbuild'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 const earlyCreate=process.env.HZZ_UI_EARLY_CREATE==='1'
+const cancelScan=process.env.HZZ_UI_SCAN_CANCEL==='1'
+const scanRace=process.env.HZZ_UI_SCAN_RACE==='1'||cancelScan
 const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox']})
 const page=await browser.newPage({viewport:{width:1440,height:960},deviceScaleFactor:1})
 const errors=[];page.on('pageerror',e=>errors.push(String(e)))
-let modelCalls=0,scanCalls=0,contextCalls=0;let requestedBounds=null
+let modelCalls=0,scanCalls=0,contextCalls=0,studyReads=0;let requestedBounds=null
 const studies=new Map();let created=null,createdInput=null;const converted={type:"Polygon",coordinates:[]}
 const sdk=`const no=()=>{};const point=p=>({getLng:()=>p[0],getLat:()=>p[1]});
 class Base{constructor(o={}){this.o=o;this.handlers={}}on(n,f){this.handlers[n]=f}setMap(m){if(!m)this.el?.remove()}show(){}hide(){}}
@@ -26,7 +28,7 @@ const ring=[[120.15,30.292],[120.154,30.2916],[120.1553,30.2878],[120.1511,30.28
 const ctx={id:'MAPCTX-00000000-0000-4000-8000-000000000001',target:{kind:'cell',bounds,geometry:{type:'Polygon',coordinates:[ring]},longitude:120.1525,latitude:30.2895,radius_m:null},provider:'amap',coordinate_encoding:'GCJ-02',created_at:new Date().toISOString(),expires_at:new Date(Date.now()+600000).toISOString(),address:earlyCreate?null:'示例街区',city:null,groups:[{key:'work_live',source_id:'office',label:'办公与居住',status:'available',reported_count:120,sample:[{id:'p1',name:'科创商务楼',category:'商务住宅;商务写字楼',longitude:120.152,latitude:30.289}],retrieved_at:new Date().toISOString(),types_query:'120000',issue:null},{key:'activity',source_id:'retail',label:'商业配套',status:'available',reported_count:99,sample:[{id:'p2',name:'沿街餐饮与社区商业',category:'餐饮服务',longitude:120.152,latitude:30.289}],retrieved_at:new Date().toISOString(),types_query:'050000',issue:null}],local_projects:[],project_revision:'fixture-v1',status:'complete',gaps:[],metric_note:'fixture'}
 const cell={id:'R-fixture',label:'沿街建筑群',bounds,geometry:ctx.target.geometry,anchor:[120.1525,30.2895],boundary_source:'fixture:survey',context:ctx,metric_value:null,rank:null,tier:'incomplete',factors:[]}
 const scan={id:'MAPSCAN-fixture',bounds,profile:'balanced',theme:'overall',created_at:new Date().toISOString(),cells:[cell],status:'completed',method:'fixture',comparison_count:0,notes:[]}
-await page.exposeFunction('__fixtureFrame',event=>{if(event.type==='brief'||event.type==='complete')studies.set(event.result.profile,event.result)})
+await page.exposeFunction('__fixtureFrame',event=>{if((event.type==='brief'||event.type==='complete')&&event.result.context_id)studies.set(event.result.profile,event.result)})
 await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
  const url=new URL(route,'https://fixture.invalid'),path=url.pathname
  let data
@@ -36,9 +38,13 @@ await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
  else if(created&&path==='/api/projects/'+created.id)data=created
  else if(created&&path.startsWith('/api/projects/'+created.id+'/'))data=[]
  else if(path==='/api/maps/geometry/wgs84'){converted.coordinates=JSON.parse(body).geometry.coordinates.map(r=>r.map(([x,y])=>[x-.005,y-.003]));data={geometry:converted,coordinate_encoding:'WGS84'}}
- else if(path.startsWith('/api/maps/screening/analysis/'))data=studies.get(url.searchParams.get('profile'))||null
+ else if(path.startsWith('/api/maps/screening/analysis/')){studyReads++;data=studies.get(url.searchParams.get('profile'))||null}
  else if(path==='/api/maps/config')data={provider:'amap',configured:true,js_key:'TEST_ONLY',revision:'ui-fixture',service_path:'/_AMapService',sdk_version:'2.0'}
- else if(path==='/api/maps/screening/scan'){scanCalls++;requestedBounds=JSON.parse(body).bounds;return {contentType:'application/x-ndjson',body:[{type:'start',id:scan.id,cells:[{...cell,context:null,tier:'pending'}]},{type:'cell',cell,completed:1,total:1},{type:'complete',result:scan}].map(x=>JSON.stringify(x)).join('\n')}}
+ else if(path==='/api/maps/screening/scan'){
+   scanCalls++;requestedBounds=JSON.parse(body).bounds
+   const frames=[{type:'start',id:scan.id,cells:[{...cell,context:null,tier:'pending'}]},{type:'cell',cell,completed:1,total:1},{type:'complete',result:scan}].map(x=>JSON.stringify(x)+'\n')
+   return {contentType:'application/x-ndjson',...(scanRace?{frames,delays:[180,4500,180]}:{body:frames.join('')})}
+ }
  else if(path==='/api/maps/screening/context'){contextCalls++;if(earlyCreate)await new Promise(r=>setTimeout(r,1500));data={...ctx,address:'示例街区'}}
  else if(path==='/api/maps/screening/analysis'){
    modelCalls++
@@ -55,11 +61,12 @@ try{
  await page.goto('https://fixture.invalid/')
  await page.setContent('<html lang="zh-CN"><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style></head><body><div id="root"></div></body></html>')
  await page.evaluate(()=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '00000000-0000-4000-8000-000000000099'});window.fetch=async(input,options={})=>{if(options.signal?.aborted)throw new DOMException('Aborted','AbortError');const response=await window.__fixtureRequest(new URL(String(input),'https://fixture.invalid').pathname+new URL(String(input),'https://fixture.invalid').search,options.body,options.method||'GET');
- if(response.frames){let ended=false;const stream=new ReadableStream({async start(c){const abort=()=>{if(!ended){ended=true;c.error(new DOMException('Aborted','AbortError'))}};options.signal?.addEventListener('abort',abort,{once:true});for(const frame of response.frames){if(ended)break;await window.__fixtureFrame(JSON.parse(frame));c.enqueue(new TextEncoder().encode(frame));await new Promise(r=>setTimeout(r,180))}if(!ended){ended=true;c.close()}options.signal?.removeEventListener('abort',abort)},cancel(){ended=true}});return new Response(stream,{status:200,headers:{'content-type':response.contentType}})}
+ if(response.frames){let ended=false;const stream=new ReadableStream({async start(c){const abort=()=>{if(!ended){ended=true;c.error(new DOMException('Aborted','AbortError'))}};options.signal?.addEventListener('abort',abort,{once:true});for(const [index,frame] of response.frames.entries()){if(ended)break;await window.__fixtureFrame(JSON.parse(frame));c.enqueue(new TextEncoder().encode(frame));await new Promise(r=>setTimeout(r,response.delays?.[index]??180))}if(!ended){ended=true;c.close()}options.signal?.removeEventListener('abort',abort)},cancel(){ended=true}});return new Response(stream,{status:200,headers:{'content-type':response.contentType}})}
  return new Response(response.body,{status:200,headers:{'content-type':response.contentType}})}})
  await page.addScriptTag({content:js});await page.locator('[data-map-status="ready"]').waitFor()
  assert.equal(modelCalls,0);assert.equal(contextCalls,0)
  await page.getByRole('button',{name:'一键标色',exact:true}).click()
+ if(scanRace)await page.waitForTimeout(250)
  await page.getByRole('button',{name:'查看沿街建筑群初筛'}).click()
  if(earlyCreate){
    await page.getByRole('button',{name:'建立项目',exact:true}).click()
@@ -86,6 +93,15 @@ try{
  assert.equal(await page.locator('.dimension-readout button').count(),6)
  assert.equal(await page.locator('.dimension-readout strong').filter({hasText:'—'}).count(),1)
  assert.equal(modelCalls,1)
+ if(scanRace){
+   if(cancelScan)await page.locator('.screening-progress button').click()
+   await page.waitForFunction(()=>!document.querySelector('.screening-start').disabled)
+   assert.equal(await page.locator('.screen-grid-label').evaluate(el=>getComputedStyle(el).borderColor),'rgb(100, 136, 153)','Late scan must retain the newer study color')
+   assert.equal(await page.locator('.screening-tier').innerText(),'按项推进')
+   assert.equal(await page.locator('.decision-dashboard').count(),1)
+   assert.equal(modelCalls,1)
+   console.log(`PASS ${cancelScan?'cancelled':'late'} scan cannot overwrite the newer study: 4 checks`)
+ }else{
  await page.getByLabel('地图标色专题').selectOption('operations')
  assert.equal(modelCalls,1);assert.equal(scanCalls,1)
  await page.screenshot({path:'output/playwright/minimal-map-assessed.png'})
@@ -125,6 +141,18 @@ try{
  await page.getByRole('button',{name:'重试评分',exact:true}).click()
  await page.locator('.decision-dashboard').waitFor()
  assert.equal(modelCalls,4)
+ // The server revoked/expired the former result. A browser memo must not bypass
+ // that authoritative read when the user returns to the same research profile.
+ studies.delete('balanced')
+ const readsBefore=studyReads
+ await page.getByLabel('初判研究方向').selectOption('balanced')
+ await page.waitForTimeout(120)
+ assert.ok(studyReads>readsBefore,'Profile re-entry must revalidate the saved study')
+ assert.equal(await page.locator('.decision-dashboard').count(),0)
+ assert.equal(await page.locator('.screening-tier').innerText(),'待研判')
+ assert.equal(modelCalls,4)
+ await page.getByLabel('初判研究方向').selectOption('commercial')
+ await page.locator('.decision-dashboard').waitFor()
  await page.getByRole('button',{name:'建立项目',exact:true}).click()
  await page.locator('#project-name').fill('明确的界面回归项目')
  await page.locator('#region-name').fill('公开测试街区')
@@ -135,9 +163,10 @@ try{
  assert.ok(createdInput.input.scope.boundary_source)
  assert.deepEqual(created.input.scope.geometry,converted)
  assert.deepEqual(errors,[])
- await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained']},null,2))
- console.log('PASS map UI: 24 checks including phase recovery, profile cache and polygon handoff; synthetic provider fixtures')
+ await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained','profile cache revalidated by server','expired dashboard removed','expired parent color removed']},null,2))
+ console.log('PASS map UI: 27 checks including phase recovery, server cache validity and polygon handoff; synthetic provider fixtures')
+ }
 }
 }catch(error){await page.screenshot({path:'output/playwright/minimal-map-failure.png'});console.error(JSON.stringify({created:!!created,createdInput,errorText:await page.locator('body').innerText(),errors},null,2));throw error}finally{await browser.close()}
 
-if(!earlyCreate){const child=await promisify(execFile)(process.execPath,['tests/browser/map-workspace.mjs'],{env:{...process.env,HZZ_UI_EARLY_CREATE:'1'},timeout:90000});process.stdout.write(child.stdout)}
+if(!earlyCreate&&!scanRace){for(const mode of ['HZZ_UI_EARLY_CREATE','HZZ_UI_SCAN_RACE','HZZ_UI_SCAN_CANCEL']){const child=await promisify(execFile)(process.execPath,['tests/browser/map-workspace.mjs'],{env:{...process.env,[mode]:'1'},timeout:90000});process.stdout.write(child.stdout)}}

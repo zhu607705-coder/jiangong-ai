@@ -1,5 +1,5 @@
 {
-  "status": "pro_audit_round_02_verified_pending_push_and_rereview",
+  "status": "pro_audit_round_03_verified_pending_push_and_rereview",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -26,9 +26,9 @@
     "external_production_database_extensions_and_multitenant_deployment_validation",
     "scanned_image_OCR_engine_optional_source_capability"
   ],
-  "next_task": "Push the exact second-round fix commit and request round03 in the original 6 Pro conversation; keep the goal active until explicit pass.",
+  "next_task": "Push exact third-round fixes and submit round04 in the original 6 Pro conversation; keep native goal active until explicit pass.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-28T17:02:44.014018+00:00",
+  "updated_at": "2026-09-28T18:32:19.457733+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -65,7 +65,7 @@
     "decision_model": "decision-model-preview via DSH ToolRuntime; official preview endpoint verified"
   },
   "latest_evidence": [
-    "research/test_results/pro-audit-round2.json"
+    "research/test_results/pro-audit-round3.json"
   ],
   "current_delivery": "Merged minimal object map with 50-case DSH brief skill, live Qwen System One decision routing, source-bound concise briefs and prioritized project investigation tasks.",
   "node_status": {
@@ -184,7 +184,7 @@
     "credentials": "ignored data/local/amap-credentials.json",
     "initial_ui": "map_only; detail_requires_selection",
     "data_scope": "Explicit physical objects, source-backed factors; selected-object summaries on demand; 50 public mechanism references.",
-    "verification_scope": "189 JS, 69 Python, 10 HTTP and 24 synthetic-browser checks; production build; actual public AMap/DSH/Qwen study and cached readback."
+    "verification_scope": "237 JS,70 Python,11 HTTP,39 synthetic-provider real React checks and build; actual full AMap/DSH/Qwen run plus distinct source-grounded native positive replay."
   },
   "github": {
     "url": "https://github.com/zhu607705-coder/jiangong-ai",
@@ -204,32 +204,30 @@
     "documentation": "docs/PR2_公开数据与六维研判.md",
     "case_study": "docs/浙大七校区参与机会_PR2.md",
     "evidence": "research/test_results/pr2-verification.json",
-    "live_status": "live_flow_exercised_during_audit; source_quality_and_recovery_fixes_in_progress",
-    "next": "Review PR and verify real DSH Search/Qwen/provider responses, latency and record coverage in configured environment."
+    "live_status": "live_flow_verified_with_documented_partial_evidence",
+    "next": "Complete original Pro iterative audit on exact latest source."
   },
   "external_audit": {
-    "review_id": "JIANGONG-AUDIT-02-763ad512",
-    "baseline": "763ad5124aa66847338fce5f55efd7cb3fa2af8c",
+    "review_id": "JIANGONG-AUDIT-03-84d12343",
+    "baseline": "84d12343fbc2f97c7c90297098c6c1ba0ccd3022",
     "verdict": "not_passed_on_baseline",
-    "findings": 16,
+    "findings": 5,
     "ledger": "docs/Pro审计修复记录.md",
-    "evidence_local": "data/local/pro-audit/round-01",
+    "evidence_local": "data/local/pro-audit/round-03/",
     "native_goal": "active",
-    "publication": "fixes not yet committed or pushed",
+    "publication": "third-round fixes verified; pending commit/push",
     "completed_local_checks": [
-      "frozen-baseline independent logic/service/coordinate counterexamples",
-      "A06/A08 geometry regression 33 checks",
-      "A09/A10/A14 and document-date conflict 33 checks",
-      "A03/A04 factors and routing 34 checks",
-      "A05 per-object location and label boundary 23 checks",
-      "A07 geometry converter 15 Python checks and typecheck"
+      "Actual failed-before/passed-after object, amount, procurement identity and cache checks",
+      "39 real React checks including expiry, late scan and cancelled scan",
+      "237 JS,70 Python,11 HTTP and production build",
+      "Distinct native Qwen positive replay with public originals and raw response"
     ],
     "pending": [
-      "push exact second-round fix commit",
-      "Pro round03 review"
+      "push exact third-round fixes",
+      "Pro round04 review"
     ],
-    "verification": "research/test_results/pro-audit-round2.json",
-    "closed_original": 11,
-    "remaining_on_baseline": 8
+    "verification": "research/test_results/pro-audit-round3.json",
+    "closed_original": 16,
+    "remaining_on_baseline": 5
   }
 }

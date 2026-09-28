@@ -13,12 +13,12 @@ import { analyzeSelection } from './screening-stream'
 
 export default function PreliminaryCard({ selection, profile, cell, onContext, onProfile, onOpenProject, onAssessment }: {
   selection: PlaceSelection; profile: MapScreenProfile; theme: MapScreenTheme; cell: MapScreenCell | null;
-  onContext: (id: string, context: MapScreenContext) => void; onProfile: (profile: MapScreenProfile) => void; onOpenProject: (id: string) => void; onAssessment?: (contextId: string, result: MapScreenAnalysis) => void;
+  onContext: (id: string, context: MapScreenContext) => void; onProfile: (profile: MapScreenProfile) => void; onOpenProject: (id: string) => void; onAssessment?: (contextId: string, result: MapScreenAnalysis|null) => void;
 }) {
   const [context,setContext]=useState<MapScreenContext|null>(null),[analysis,setAnalysis]=useState<MapScreenAnalysis|null>(null)
   const [stage,setStage]=useState<'context'|'analysis'|'done'>('context'),[error,setError]=useState(''),[retry,setRetry]=useState(0)
   const [sourcesOpen,setSourcesOpen]=useState(false),[progress,setProgress]=useState<ResearchProgress[]>([])
-  const analysisAbort=useRef<AbortController|null>(null),cache=useRef(new Map<string,MapScreenAnalysis>())
+  const analysisAbort=useRef<AbortController|null>(null)
   const callbacks=useRef({onContext,onAssessment});callbacks.current={onContext,onAssessment}
   const restoreAbort=useRef<AbortController|null>(null),viewIdentity=useRef('')
   viewIdentity.current=[selection.id,context?.id,profile].join('|')
@@ -39,20 +39,20 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     },180)
     return()=>{window.clearTimeout(timer);controller.abort();analysisAbort.current?.abort()}
   },[selection.id,selection.longitude,selection.latitude,cell?.context?.id,retry])
-  function receiveStudy(result:MapScreenAnalysis,snapshot:MapScreenContext){
+  function receiveStudy(result:MapScreenAnalysis|null,snapshot:MapScreenContext){
     setAnalysis(result)
-    callbacks.current.onContext(selection.id,{...snapshot,research_sources:result.research_sources,research_records:result.research_records})
+    callbacks.current.onContext(selection.id,{...snapshot,research_sources:result?.research_sources,research_records:result?.research_records})
     callbacks.current.onAssessment?.(snapshot.id,result)
-    if(result.assessment){if(cache.current.size>=24)cache.current.delete(cache.current.keys().next().value!);cache.current.set(snapshot.id+':'+result.profile,result)}
   }
   useEffect(()=>{
     analysisAbort.current?.abort();setAnalysis(null);setProgress([]);setError('');setStage(s=>s==='analysis'?'done':s)
     if(!context)return
-    const controller=new AbortController(),saved=cache.current.get(context.id+':'+profile),identity=viewIdentity.current
+    const controller=new AbortController(),identity=viewIdentity.current
     restoreAbort.current=controller
-    if(saved)receiveStudy(saved,context)
-    else void api<MapScreenAnalysis|null>(`/maps/screening/analysis/${encodeURIComponent(context.id)}?profile=${profile}`,undefined,controller.signal).then(result=>{
-      if(!controller.signal.aborted&&viewIdentity.current===identity&&result)receiveStudy(result,context)
+    // The local server owns validity, including deadlines, source edits and model
+    // configuration. A component memo must not bypass that check on re-entry.
+    void api<MapScreenAnalysis|null>(`/maps/screening/analysis/${encodeURIComponent(context.id)}?profile=${profile}`,undefined,controller.signal).then(result=>{
+      if(!controller.signal.aborted&&viewIdentity.current===identity)receiveStudy(result,context)
     }).catch(()=>{})
     return()=>controller.abort()
   },[profile,context?.id])

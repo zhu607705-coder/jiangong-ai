@@ -10,9 +10,10 @@ import ScreeningControls from './ScreeningControls'
 import DataSourcesPanel from './DataSourcesPanel'
 import { scanMap } from './screening-stream'
 import { SCREEN_TIERS, classifyCells } from '../../../../packages/maps/screening-policy'
-import type { MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
+import type { MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
 
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
+const cellWithStudy=(cell:MapScreenCell,result:MapScreenAnalysis|null):MapScreenCell=>({...cell,factors:result?.assessment?.factors,dashboard:result?.decision_support?.dashboard,analysis_available:!!result?.assessment})
 export default function MapWorkspace({ ready, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace }: {
   ready: boolean; project: Project | null; focusProject: number; settingsRequest: number;
   onOpenProject: (id?: string) => void; onCreateFromPlace: (place: PlaceSelection, context?: MapScreenContext | null) => void;
@@ -38,6 +39,8 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
   const [selectedCell, setSelectedCell] = useState<MapScreenCell | null>(null)
   const [previewContext, setPreviewContext] = useState<{ forId: string; context: MapScreenContext } | null>(null)
   const screenAbort = useRef<AbortController | null>(null), screenVersion = useRef(0), screenOverlays = useRef<any[]>([])
+  // Only reconcile events in the running scan; this is not an analysis cache.
+  const studiesDuringScan=useRef<Map<string,MapScreenAnalysis|null>|null>(null)
   const screenView = useRef<{ longitude: number; latitude: number; zoom: number } | null>(null)
 
   function selectPlace(place: PlaceSelection, move = true) {
@@ -54,7 +57,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     setSelectedCell(cell)
   }
   const chooseCellRef = useRef(chooseCell); chooseCellRef.current = chooseCell
-  function clearScreen() { screenAbort.current?.abort(); screenVersion.current++; setScreenRunning(false); setScreenCells([]); setScreenResult(null); setScreenError(''); setScreenProgress(0); setScreenStale(false); screenView.current = null; if (selectedCell) clearSelection() }
+  function clearScreen() { screenAbort.current?.abort(); screenVersion.current++; studiesDuringScan.current=null; setScreenRunning(false); setScreenCells([]); setScreenResult(null); setScreenError(''); setScreenProgress(0); setScreenStale(false); screenView.current = null; if (selectedCell) clearSelection() }
   async function startScreen() {
     const current = map.current
     if (!current) return
@@ -67,6 +70,8 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     const target: MapScreenBounds = {west:sw[0],east:ne[0],south:sw[1],north:ne[1]}
     clearScreen(); clearSelection(); setLayerPanel(false)
     const controller = new AbortController(), version = ++screenVersion.current
+    const updates=new Map<string,MapScreenAnalysis|null>();studiesDuringScan.current=updates
+    const reconcile=(cells:MapScreenCell[])=>classifyCells(cells.map(cell=>cell.context&&updates.has(cell.context.id)?cellWithStudy(cell,updates.get(cell.context.id)!):cell),theme)
     screenAbort.current = controller; screenView.current = { longitude: center[0], latitude: center[1], zoom: current.getZoom() }
     setScreenRunning(true)
     try {
@@ -74,12 +79,12 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
         if (version !== screenVersion.current || controller.signal.aborted) return
         if (event.type === 'progress') setNotice(event.message)
         if (event.type === 'start') setScreenCells(event.cells)
-        if (event.type === 'cell') { setScreenCells(cells => cells.map(c => c.id === event.cell.id ? event.cell : c)); setScreenProgress(event.completed) }
-        if (event.type === 'complete') { setScreenCells(event.result.cells); setScreenResult(event.result) }
+        if (event.type === 'cell') { setScreenCells(cells => reconcile(cells.map(c => c.id === event.cell.id ? event.cell : c))); setScreenProgress(event.completed) }
+        if (event.type === 'complete') { const cells=reconcile(event.result.cells);setScreenCells(cells);setScreenResult({...event.result,cells,comparison_count:cells.filter(cell=>cell.tier!=='incomplete').length}) }
         if (event.type === 'error') setScreenError(event.message)
       })
     } catch (error) { if (version === screenVersion.current && !controller.signal.aborted) setScreenError(error instanceof Error ? error.message : '区域筛选未完成。') }
-    finally { if (version === screenVersion.current) {setScreenRunning(false);setNotice('')} }
+    finally { if (version === screenVersion.current) {studiesDuringScan.current=null;setScreenRunning(false);setNotice('')} }
   }
 
   useEffect(() => {
@@ -243,7 +248,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
       if (screenResult) { const cells = classifyCells(screenResult.cells, value); setScreenCells(cells); setScreenResult({...screenResult, theme: value, cells, status: cells.length ? 'completed' : 'partial', comparison_count: cells.filter(c => c.tier !== 'incomplete').length}); setSelectedCell(current => current ? cells.find(c => c.id === current.id) || null : null) }
     }} running={screenRunning} completed={screenProgress}
       cells={screenCells} result={screenResult} error={screenError} enabled={interactive} stale={screenStale}
-      onScan={() => void startScreen()} onCancel={() => { screenAbort.current?.abort(); screenVersion.current++; setScreenRunning(false); setScreenCells(cells => cells.map(c => ({ ...c, tier: 'incomplete' }))); setScreenError('已停止。') }} onClear={clearScreen} onCell={chooseCell} onData={() => setDataOpen(true)} />
+      onScan={() => void startScreen()} onCancel={() => { screenAbort.current?.abort(); screenVersion.current++; studiesDuringScan.current=null; setScreenRunning(false); setScreenCells(cells => classifyCells(cells,theme).map(c=>c.context?c:{...c,tier:'incomplete'})); setScreenError('已停止。') }} onClear={clearScreen} onCell={chooseCell} onData={() => setDataOpen(true)} />
     {dataOpen && <DataSourcesPanel onClose={() => setDataOpen(false)} onOpenProject={id => { setDataOpen(false); onOpenProject(id) }} />}
     <div className="atlas-status glass-panel"><i className={interactive ? 'is-live' : ''} />{interactive ? `高德地图 · ${satellite ? '卫星影像' : webgl && camera.pitch > 0 ? '3D 城市' : '2D 浏览'}` : phase === 'loading' ? '地图连接中' : '地图待连接'}</div>
 
@@ -271,16 +276,18 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
         <div className="atlas-selection-tags"><span>{selection.category?.split(';')[0] || (selection.kind === 'poi' ? '地图地点' : '坐标点')}</span></div>
         {expanded && <div className="atlas-coordinate"><span>位置 · GCJ-02</span><code>{selection.longitude.toFixed(6)}, {selection.latitude.toFixed(6)}</code></div>}
         <div hidden={expanded}><PreliminaryCard selection={selection} profile={profile} theme={theme} cell={selectedCell} onProfile={value=>{
+          screenAbort.current?.abort();screenVersion.current++;studiesDuringScan.current=null;setScreenRunning(false)
           setProfile(value)
           const reset=(cells:MapScreenCell[])=>classifyCells(cells.map(c=>({...c,factors:undefined,dashboard:undefined})),theme)
           setScreenCells(reset);setSelectedCell(c=>c?reset([c])[0]:null)
           setScreenResult(prev=>prev?{...prev,profile:value,cells:reset(prev.cells)}:prev)
         }} onOpenProject={onOpenProject}
           onAssessment={(id, result) => {
-            if (!result.assessment) return
-            setScreenCells(prev => classifyCells(prev.map(c => c.context?.id === id ? {...c, factors: result.assessment!.factors, dashboard: result.decision_support?.dashboard} : c), theme))
-            setSelectedCell(prev => prev?.context?.id === id ? classifyCells([{...prev, factors: result.assessment!.factors, dashboard: result.decision_support?.dashboard}],theme)[0] : prev)
-            setScreenResult(prev => prev ? {...prev,cells:classifyCells(prev.cells.map(c=>c.context?.id===id?{...c,factors:result.assessment!.factors,dashboard:result.decision_support?.dashboard}:c),theme)} : prev)
+            studiesDuringScan.current?.set(id,result)
+            const update=(c:MapScreenCell)=>c.context?.id===id?cellWithStudy(c,result):c
+            setScreenCells(prev => classifyCells(prev.map(update),theme))
+            setSelectedCell(prev => prev?classifyCells([update(prev)],theme)[0]:null)
+            setScreenResult(prev => prev?{...prev,cells:classifyCells(prev.cells.map(update),theme)}:prev)
           }}
           onContext={(id, context) => {
             setPreviewContext({forId:id,context})

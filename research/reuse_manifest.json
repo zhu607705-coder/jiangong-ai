@@ -121,6 +121,22 @@
       "license": "GPL-3.0_requires_distribution_review",
       "completed": false,
       "current_implementation": "not_integrated"
+    },
+    {
+      "repo": "uiwjs/province-city-china",
+      "ref": "c2180d384d6c6b332e01adeb0815ebd4a741be5f",
+      "files": [
+        "packages/province",
+        "packages/city",
+        "packages/area"
+      ],
+      "reuse": "published_dependencies",
+      "license": "MIT; licenses/province-city-china-LICENSE.txt",
+      "package_version": "8.5.8",
+      "completed": true,
+      "target": "packages/research/evidence.ts",
+      "scope": "Administrative-name lexical recognition only, not current geocoding or positive object-identity proof.",
+      "tests": "tests/contracts/evidence-location.test.ts"
     }
   ],
   "implementation_record": "research/upstream.lock.json"

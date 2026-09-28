@@ -13,9 +13,47 @@ import { config } from '../../apps/host/config'
 
 const original={dataDir:config.dataDir,modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
 const directories:string[]=[]
-afterEach(async()=>{Object.assign(config,original);vi.resetAllMocks();for(const dir of directories.splice(0))await rm(dir,{recursive:true,force:true})})
+afterEach(async()=>{vi.useRealTimers();Object.assign(config,original);vi.resetAllMocks();for(const dir of directories.splice(0))await rm(dir,{recursive:true,force:true})})
 
 describe('map analyst external-data boundary',()=>{
+  it('retains a partial historical brief but does not re-score its expired source at the old snapshot time',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+    const dir=await mkdtemp(join(tmpdir(),'map-analyst-'));directories.push(dir)
+    Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:true})
+    ports.decision.mockResolvedValue({status:'completed',dashboard:{status:'partial',dimensions:[]}})
+    const call=vi.fn();ports.open.mockResolvedValue({calls:[],close:async()=>{},call,runReadCapability:async(_name:string,fn:(s:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
+    const ctx={id:'TEST',created_at:'2026-09-28T08:00:00Z',target:{label_origin:'public',label:'科技大楼'},groups:[],local_projects:[]} as unknown as MapScreenContext
+    const quote='科技大楼本期采购设备维护服务。'
+    const previous:any={context_id:'TEST',profile:'balanced',status:'partial',created_at:ctx.created_at,model_calls:[],assessment:{summary:'调查科技大楼维护服务。',opportunities:[],cautions:[],unknowns:[],next_steps:[],dimension_evidence:[{key:'demand',source_id:'DOC',quote,basis:'维护采购。'}]},research_sources:[{id:'DOC',title:'科技大楼采购公告',url:'https://example.gov.cn/notice',published_at:'2026-09-28T00:00:00Z',expires_at:'2026-09-28T08:01:00Z',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:quote}]}
+    const result=await analyzeMapContext(ctx,'balanced',new AbortController().signal,()=>{},previous)
+    expect(result.assessment?.summary).toBe(previous.assessment.summary)
+    expect(result.assessment?.dimension_evidence).toEqual([])
+    expect(ports.decision.mock.calls[0][0].dashboard.evidence).toEqual([])
+    expect(call).not.toHaveBeenCalled();expect(ports.collect).not.toHaveBeenCalled()
+  })
+  it.each(['brief generation','before scoring'])('rechecks the clock when a procurement deadline passes during %s',async(stage)=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const dir=await mkdtemp(join(tmpdir(),'map-analyst-'));directories.push(dir)
+    Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:true})
+    const quote='科技大楼本期采购设备维护服务。'
+    const trace={status:'success',queries:[],source_ids:['DOC'],warnings:[],reused:false}
+    ports.collect.mockResolvedValue({sources:[{id:'DOC',title:'科技大楼采购公告',url:'https://example.gov.cn/notice',published_at:'2026-09-28T00:00:00Z',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:quote}],
+      records:[{id:'R',source_id:'DOC',adapter:'procurement',subject:'科技大楼',scope:'object',period:'2026-09-28',fields:[{key:'deadline',label:'响应截止',value:'2026年9月28日16点01分',unit:'',raw:'2026年9月28日16点01分',locator:'test'}]}],receipts:[],trace})
+    ports.decision.mockResolvedValue({status:'completed',dashboard:{status:'partial',dimensions:[]}})
+    ports.open.mockResolvedValue({calls:[],close:async()=>{},call:async(name:string)=>{
+      if(name==='research_plan')return {value:trace}
+      if(stage==='brief generation')vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+      return {value:{summary:'调查科技大楼维护服务。',opportunities:[],cautions:[],unknowns:[],next_steps:[],dimension_evidence:[{key:'implementation',source_id:'DOC',quote,basis:'采购参与窗口。'}]}}
+    },runReadCapability:async(_name:string,fn:(signal:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
+    const ctx={id:'TEST',created_at:'2026-09-28T08:00:00Z',target:{label_origin:'public',label:'科技大楼'},city:'杭州市',address:'杭州市西湖区',groups:[],local_projects:[]} as unknown as MapScreenContext
+    const result=await analyzeMapContext(ctx,'balanced',new AbortController().signal,event=>{
+      if(stage==='before scoring'&&event.type==='progress'&&event.stage==='decision')vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+    })
+    expect(result.assessment?.dimension_evidence).toEqual([])
+    expect(ports.decision.mock.calls[0][0].dashboard.evidence).toEqual([])
+    expect(ports.decision.mock.calls[0][0].state.as_of).toBe('2026-09-28T08:02:00.000Z')
+    expect(ctx.created_at).toBe('2026-09-28T08:00:00Z')
+  })
   it('redacts private boundary names and facts at every public service call',async()=>{
     const dir=await mkdtemp(join(tmpdir(),'map-analyst-'));directories.push(dir)
     Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:true})

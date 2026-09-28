@@ -32,11 +32,15 @@ const specifications:Record<Exclude<Adapter,'statistics'>,Spec[]>={
   procurement:[
     {key:'project_id',label:'采购编号',aliases:['项目编号','采购项目编号']},
     {key:'project_name',label:'采购项目',aliases:['采购项目名称','项目名称','工程名称']},
+    {key:'lot_id',label:'标段或包号',aliases:['标段编号','标段号','包号','包件号','分包编号']},
+    {key:'location',label:'项目地址',aliases:['建设地点','建设地址','项目地址','工程地点']},
     {key:'buyer',label:'采购单位',aliases:['采购单位','采购人名称']},
     {key:'budget',label:'预算',aliases:['预算金额'],unit:'万元'},
     {key:'ceiling',label:'最高限价',aliases:['最高限价'],unit:'万元'},
     {key:'award',label:'成交金额',aliases:['总成交金额','总中标金额','中标（成交）金额'],unit:'万元'},
     {key:'deadline',label:'响应截止',aliases:['提交投标文件截止时间','响应文件提交截止时间','响应文件递交截止时间','响应截止时间','投标截止时间']},
+    {key:'deadline_previous',label:'更正前截止',aliases:['更正前响应截止时间','更正前提交投标文件截止时间','原响应截止时间','原提交投标文件截止时间']},
+    {key:'deadline_corrected',label:'更正后截止',aliases:['更正后响应截止时间','更正后提交投标文件截止时间']},
     {key:'opening_at',label:'开标时间',aliases:['开标时间','响应文件开启时间']},
     {key:'duration',label:'履约期限',aliases:['合同履行期限','施工工期']},
   ],
@@ -82,9 +86,12 @@ function parseTableSource(source:Source,kind:Exclude<Adapter,'statistics'>):Publ
       let current:[string,string,string][]=[]
       for(const pair of pairs){
         const spec=specs.find(s=>s.aliases.some(a=>label(a)===label(pair[0])))
-        if(spec&&['project_id','parcel_id','project_name'].includes(spec.key)){
+        if(spec&&['project_id','parcel_id','project_name','lot_id'].includes(spec.key)){
           const previous=current.find(p=>spec.aliases.some(a=>label(a)===label(p[0])))
-          if(previous&&clean(previous[1])!==clean(pair[1])){groups.push(current);current=[]}
+          if(previous&&clean(previous[1])!==clean(pair[1])){
+            const shared=spec.key==='lot_id'?current.filter(p=>specs.some(s=>['project_id','project_name'].includes(s.key)&&s.aliases.some(a=>label(a)===label(p[0])))):[]
+            groups.push(current);current=shared
+          }
         }
         current.push(pair)
       }

@@ -1,0 +1,100 @@
+{
+  "baseline_commit": "84d12343fbc2f97c7c90297098c6c1ba0ccd3022",
+  "review_id": "JIANGONG-AUDIT-03-84d12343",
+  "status": "verified_pending_push_and_round04",
+  "as_of": "2026-09-28T18:32:19.457733+00:00",
+  "pro_closed_original": 16,
+  "addressed": [
+    "A01",
+    "A12",
+    "A15",
+    "C01",
+    "C02"
+  ],
+  "verification": {
+    "javascript": 237,
+    "python": 70,
+    "http": 11,
+    "browser_normal": 27,
+    "browser_early_create": 4,
+    "browser_late_scan": 4,
+    "browser_cancelled_scan": 4,
+    "production_build": "passed",
+    "live_end_to_end": {
+      "seconds": 28.96,
+      "terminal_event": "complete",
+      "status": "completed",
+      "reason": null,
+      "summary": "紫金港校区在运，从立面与机电修缮、电梯等既有采购切入，研究后续单栋工程与运维服务。",
+      "sources": 10,
+      "records": 2,
+      "decision_status": "completed",
+      "dashboard_status": "partial",
+      "dimensions": [
+        {
+          "key": "demand",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "supply",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "adaptation",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "implementation",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "operations",
+          "value": null,
+          "confidence": null
+        },
+        {
+          "key": "resources",
+          "value": null,
+          "confidence": null
+        }
+      ]
+    },
+    "public_positive_native": {
+      "scope": "New Qwen request through DSH for preserved real public originals; separate from old demand3.4 and from the new full search run.",
+      "request_id": "031b9c4b-ac45-446e-8a83-c6e8262c833b",
+      "raw_fit_demand": {
+        "type": "score",
+        "score": 2.76,
+        "legend": {
+          "0": "需求与方案明显冲突",
+          "1": "仅有明确需求线索",
+          "2": "已有使用或采购需求",
+          "3": "明确需求与方案匹配",
+          "4": "有持续使用和需求验证"
+        },
+        "probabilities": {
+          "0": 0.01,
+          "1": 0.04,
+          "2": 0.47,
+          "3": 0.16,
+          "4": 0.32
+        },
+        "confidence": 0.79
+      },
+      "display_value": 3.8,
+      "duration_ms": 363
+    }
+  },
+  "evidence_local": "data/local/pro-audit/round-03/",
+  "source_policy": "public-adapters-v7",
+  "limits": [
+    "Exact new commit still requires original Pro round04 review.",
+    "Synthetic browser/provider regression is separate from actual external calls.",
+    "Historical demand3.4 raw probabilities were not retained in its normalized artifact; the new native response is a distinct request.",
+    "No enterprise effectiveness claim."
+  ]
+}

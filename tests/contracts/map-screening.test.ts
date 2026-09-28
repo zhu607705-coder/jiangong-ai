@@ -27,7 +27,7 @@ function regions(): MapScreenCell[] {
       context:null,metric_value:null,tier:'pending',rank:null}
   })
 }
-const publicSource: Source = {id:'PUB-REAL',title:'公开政策测试样本',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:'市级政策用于背景，地块适用需单独核验。',retrieved_at:'2026-09-28T00:00:00Z'}
+const publicSource: Source = {id:'PUB-REAL',title:'公开政策测试样本',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:'市级政策用于背景，地块适用需单独核验。',published_at:'2026-09-28T00:00:00Z',retrieved_at:'2026-09-28T00:00:00Z'}
 const privateSource: Source = {id:'INTERNAL-REAL',title:'项目内部材料',data_class:'internal',visibility:'internal',synthetic:false,content_status:'uploaded',untrusted_text:'PRIVATE_CANARY'}
 function project(id = 'REAL-P', located = false): ProjectRecord {
   const input = JSON.parse(readFileSync('fixtures/inputs/01_auto.json','utf8'))
@@ -48,7 +48,8 @@ async function service(evidence = snapshot(), failGroup = false) {
   })
   const analyst = vi.fn<ContextAnalyst>(async (ctx,profile) => ({context_id:ctx.id,profile,status:'unavailable',assessment:null,model_calls:[],reason:'fixture no model',created_at:new Date().toISOString()}))
   const loader = vi.fn(async () => evidence)
-  return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,async()=>({cells:regions(),notes:['Fixture polygons']}),async()=>{}),query,analyst,directory,loader}
+  const regionResolver=vi.fn(async()=>({cells:regions(),notes:['Fixture polygons']}))
+  return {engine:new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,regionResolver,async()=>{}),query,analyst,directory,loader,regionResolver}
 }
 
 describe('real project provenance and spatial scale', () => {
@@ -285,6 +286,54 @@ describe('persisted object research', () => {
     const updated=await engine.analyze(context.id,'balanced',signal)
     expect(updated.decision_support?.dashboard).toBeUndefined()
     expect(analyst).toHaveBeenCalledTimes(2)
+  })
+  it('expires a procurement score at its record deadline on read, rescan and repeated analysis',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const {engine,analyst,regionResolver,directory,query,loader}=await service();const signal=new AbortController().signal
+    regionResolver.mockImplementation(async()=>({cells:regions().map((cell,i)=>({...cell,label:`科技楼${i}`})),notes:[]}))
+    const first=await engine.screen(bounds,'balanced','implementation',signal,()=>{})
+    const context=first.cells[0].context!
+    analyst.mockImplementationOnce(async(c,p)=>{
+      const quote=`${c.target.label}本期采购设备维护服务。`
+      return {...brief(c,p,'completed'),assessment:{...brief(c,p).assessment!,dimension_evidence:[{key:'implementation',source_id:'S',quote,basis:'当前采购窗口。'}]},
+        research_sources:[{...publicSource,id:'S',title:`${c.target.label}采购公告`,url:'https://example.gov.cn/notice',published_at:'2026-09-28T00:00:00Z',untrusted_text:quote}],
+        research_records:[{id:'R',source_id:'S',adapter:'procurement',subject:c.target.label!,scope:'object',period:'2026-09-28',fields:[{key:'deadline',label:'响应截止',value:'2026年9月28日16点01分00秒',unit:'',raw:'2026年9月28日16点01分00秒',locator:'test'}]}],
+        decision_support:{status:'completed',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:'TEST',duration_ms:0,input_tokens:0,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:['S'],thresholds:DECISION_THRESHOLDS,error_code:null,
+          dashboard:{policy_version:'test',purpose:'测试',model:'decision-model-preview',request_id:'TEST',status:'partial',dimensions:[{key:'implementation',value:4.5,confidence:.9,evidence_refs:['S'],basis:'当前采购窗口。'}]}}}
+    })
+    await engine.analyze(context.id,'balanced',signal)
+    expect((await engine.savedAnalysis(context.id,'balanced',signal))?.decision_support?.dashboard?.dimensions[0].value).toBe(4.5)
+    vi.setSystemTime(new Date('2026-09-28T08:00:59Z'))
+    expect((await engine.savedAnalysis(context.id,'balanced',signal))?.status).toBe('completed')
+    for(const now of ['2026-09-28T08:01:00Z','2026-09-28T08:01:01Z']){
+      vi.setSystemTime(new Date(now));expect(await engine.savedAnalysis(context.id,'balanced',signal)).toBeNull()
+    }
+    vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+    expect(await engine.savedAnalysis(context.id,'balanced',signal)).toBeNull()
+    const rescanned=await engine.screen(bounds,'balanced','implementation',signal,()=>{})
+    expect(rescanned.cells[0].dashboard).toBeUndefined()
+    expect(rescanned.cells[0].tier).not.toBe('strong')
+    vi.setSystemTime(new Date('2026-09-28T08:11:00Z'))
+    const fresh=await engine.context(context.target,signal)
+    expect(fresh.id).not.toBe(context.id)
+    const recovered=new MapScreeningService({query,revision:()=> 'provider-v1'},directory,analyst,loader,regionResolver,async()=>{})
+    expect(await recovered.savedAnalysis(fresh.id,'balanced',signal)).toBeNull()
+    analyst.mockImplementation(async(c,p)=>brief(c,p,'partial'))
+    expect((await recovered.analyze(fresh.id,'balanced',signal)).decision_support?.dashboard).toBeUndefined()
+    expect(analyst).toHaveBeenCalledTimes(2)
+  })
+  it('does not publish a fresh score whose source expires while the scorer is running',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
+    const {engine,analyst}=await service();const signal=new AbortController().signal
+    const context=await engine.context(point,signal)
+    analyst.mockImplementationOnce(async(c,p)=>{
+      vi.setSystemTime(new Date('2026-09-28T08:02:00Z'))
+      return {...brief(c,p,'completed'),research_sources:[{...publicSource,id:'S',expires_at:'2026-09-28T08:01:00Z'}],decision_support:{status:'completed',provider:'qwen_systemone',model:'decision-model-preview',answers:null,policy_version:'test',input_hash:'test',created_at:new Date().toISOString(),request_id:'TEST',duration_ms:0,input_tokens:0,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:['S'],thresholds:DECISION_THRESHOLDS,error_code:null,dashboard:{policy_version:'test',purpose:'测试',model:'decision-model-preview',request_id:'TEST',status:'partial',dimensions:[{key:'demand',value:4.5,confidence:.9,evidence_refs:['S'],basis:'测试'}]}}}
+    })
+    const result=await engine.analyze(context.id,'balanced',signal)
+    expect(result.status).toBe('partial')
+    expect(result.decision_support).toBeUndefined()
+    expect(result.reason).toContain('已失效')
   })
   it('restores color only for the same scope/profile/revision without another model call', async () => {
     const {engine,analyst,loader}=await service();const signal=new AbortController().signal

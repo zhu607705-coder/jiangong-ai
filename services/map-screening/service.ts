@@ -2,6 +2,8 @@ import { config } from '../../apps/host/config'
 import type { ResearchSink } from '../../packages/research/events'
 import { BRIEF_SKILL_VERSION } from '../../runtime/skills/investment-brief'
 import { RESEARCH_POLICY } from '../../packages/research/public-sources'
+import { dimensionCurrentAt } from '../../packages/research/evidence'
+import { researchSubject } from '../../packages/maps/public-context'
 import { booleanValid } from '@turf/boolean-valid'
 import { decisionFactors } from '../../packages/maps/decision-factors'
 import { applyDecisionGuards } from '../../packages/decision/structured-route'
@@ -182,6 +184,10 @@ export class MapScreeningService {
       if(analysis.status==='completed'&&analysis.decision_support&&analysis.decision_support.status!=='completed'){
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }
+      if(!this.currentScores(context,analysis)){
+        analysis.status='partial';delete analysis.decision_support
+        analysis.reason='原简报已保留，部分依据或采购窗口已失效，请重新研判。'
+      }
       await this.remember(context,profile,analysis)
       return analysis
     } finally { this.activeAnalyses--; this.analyzing.delete(key) }
@@ -258,6 +264,15 @@ export class MapScreeningService {
     })
   }
 
+  private currentScores(context:MapScreenContext,analysis:MapScreenAnalysis):boolean {
+    const sources=new Map([...(analysis.research_sources||[]).map(s=>[s.id,s] as const),...context.local_projects.flatMap(p=>p.sources.map(s=>[`${p.project_id}:${s.id}`,{...s,id:`${p.project_id}:${s.id}`}] as const))])
+    const name=researchSubject(context),records=analysis.research_records||[],asOf=stamp()
+    return (analysis.decision_support?.dashboard?.dimensions||[]).every(dimension=>dimension.value===null||(dimension.evidence_refs.length>0&&dimension.evidence_refs.every(id=>{
+      const source=sources.get(id),evidence=analysis.assessment?.dimension_evidence?.find(e=>e.key===dimension.key&&e.source_id===id)
+      return !!source&&source.content_status!=='metadata_only'&&dimensionCurrentAt(source,name,{key:dimension.key,record_id:evidence?.record_id},records,asOf)
+    })))
+  }
+
   private async restore(context:MapScreenContext,profile:MapScreenProfile):Promise<MapScreenAnalysis|null>{
     try{
       const saved=JSON.parse(await readFile(join(this.directory,'scope-analyses',this.scopeKey(context,profile)+'.json'),'utf8'))
@@ -274,11 +289,7 @@ export class MapScreeningService {
         }
         context.address=saved.address;context.city=saved.city||context.city
       }
-      const sources=new Map([...(analysis.research_sources||[]).map(s=>[s.id,s] as const),...context.local_projects.flatMap(p=>p.sources.map(s=>[`${p.project_id}:${s.id}`,s] as const))])
-      for(const dimension of analysis.decision_support?.dashboard?.dimensions||[])if(dimension.value!==null&&dimension.evidence_refs.some(id=>{
-        const source=sources.get(id)
-        return !source||source.content_status==='metadata_only'||source.expires_at&&(!Number.isFinite(Date.parse(source.expires_at))||Date.parse(source.expires_at)<=Date.now())
-      }))return null
+      if(!this.currentScores(context,analysis))return null
       const aliases=new Map<string,string>((saved.groups||[]).flatMap((g:{key:string;source_id:string})=>{const now=context.groups.find(n=>n.key===g.key);return now?[[g.source_id,now.source_id]]:[]}))
       for(const claim of [...analysis.assessment.opportunities,...analysis.assessment.cautions,...(analysis.assessment.factors||[])])claim.evidence_refs=claim.evidence_refs.map(id=>aliases.get(id)||id)
       analysis.reused_from_context_id=analysis.reused_from_context_id||analysis.context_id

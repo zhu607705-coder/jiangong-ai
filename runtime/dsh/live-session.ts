@@ -92,7 +92,9 @@ export class LiveSession {
     return this.stageScope.run(stage, async () => {
     const child = await this.ctx.subagents.start('spawn', { parent: this.parent.agent, signal: this.signal, maxDepth: 1, label: stage,
       persona: persona + '\n' + INVESTMENT_BRIEF_SKILL, toolFilter: { allow: allowedTools }, outputSchema: modelSchema(outputType, candidateIds, presentationPolicy) as unknown as SubagentStartRequest['outputSchema'],
-      prompt: [{ type: 'text', text: prompt }], agentOptions: { provider: 'deepseek-official', model: config.DEEPSEEK_MODEL, reasoningEffort: ReasoningEffortId('off'), maxTokens: stage.startsWith('map_') ? 1800 : stage.startsWith('scenarios') || stage.startsWith('comparator') ? 6500 : 3500 } })
+      // Six source-bound dimensions can exceed 1800 tokens even with a short
+      // visible brief. Keep the standard bounded research budget for map output.
+      prompt: [{ type: 'text', text: prompt }], agentOptions: { provider: 'deepseek-official', model: config.DEEPSEEK_MODEL, reasoningEffort: ReasoningEffortId('off'), maxTokens: stage.startsWith('scenarios') || stage.startsWith('comparator') ? 6500 : 3500 } })
     try {
       const outcome = await child.result
       if (outcome.stopReason !== 'completed' || outcome.structured === undefined) {
