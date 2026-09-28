@@ -30,7 +30,7 @@ async function dshSearchQueries(project: ProjectInput, region: string, signal: A
       '。优先从公开数据库和官方业务系统核实事实，再用开放式全网查询补充最新公告、运营和反证。可用来源目录：' + JSON.stringify(catalog) +
       '。生成4–6条互补搜索式，每条都必须包含“' + region + '”，避免同义重复；至少3条面向官方数据库或政府系统，最多2条开放式全网查询。只规划会改变实施路径的资料，不做城市百科式搜索。使用ResearchTrace结构返回：status=partial，queries填写检索式，source_ids=[]，warnings=[]，reused=false。'
     const result = await live.call<ResearchTrace>('research_plan', prompt, 'ResearchTrace')
-    const queries = [...new Set(result.value.queries.map(q => q.replace(/[\\r\\n<>]/g, ' ').trim()).filter(q => q.includes(region) && q.length >= region.length + 2 && q.length <= 180))].slice(0, 6)
+    const queries = [...new Set(result.value.queries.map(q => q.replace(/[\r\n<>]/g, ' ').trim()).filter(q => q.includes(region) && q.length >= region.length + 2 && q.length <= 180))].slice(0, 6)
     return queries.length >= 3 ? queries : fallback
   } catch {
     signal.throwIfAborted()
