@@ -28,9 +28,30 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Python runtime
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
       - name: Install locked dependencies
         run: npm ci
+      - name: Package offline verification dependencies
+        run: |
+          mkdir -p /tmp/verification
+          cp $(command -v node) /tmp/verification/node
+          tar czf /tmp/verification/node_modules.tar.gz node_modules
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verification-dependencies
+          path: /tmp/verification/
+          retention-days: 1
       - name: Unit and contract tests
         run: npm test
       - name: Type check and build
+        if: always()
         run: npm run build
+      - name: Python tests
+        if: always()
+        run: npm run test:python
