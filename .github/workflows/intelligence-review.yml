@@ -28,5 +28,12 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Locked review dependencies
+        run: tar -czf /tmp/intelligence-node-modules.tgz node_modules
+      - uses: actions/upload-artifact@v4
+        with:
+          name: intelligence-node-modules
+          path: /tmp/intelligence-node-modules.tgz
+          retention-days: 1
       - run: npm test
       - run: npm run build
