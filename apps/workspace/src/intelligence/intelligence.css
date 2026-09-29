@@ -20,3 +20,4 @@
 .intel-reading-quote{margin-top:10px;font-size:14px}
 .intel-reading-quote>strong{font-size:13px;font-weight:500;color:var(--atlas-muted,#64757c)}
 .intel-reading-quote blockquote{margin:5px 0 0;padding-left:10px;border-left:2px solid var(--atlas-line,#dce3eb);line-height:1.7;overflow-wrap:anywhere;white-space:pre-wrap}
+.map-shell .intel-panel .intel-reading-title{color:var(--atlas-text,#243a43);font-size:15px;font-weight:600}
