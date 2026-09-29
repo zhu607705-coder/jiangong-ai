@@ -89,14 +89,25 @@ describe('source-backed factors',()=>{
   })
 })
 describe('brief skill and casebook',()=>{
-  it('has exactly 50 distinct traceable cases with separate source facts and analyst readings',()=>{
+  it('has 50 original and 10 cross-domain traceable cases with separate source facts and analyst readings',()=>{
     const data=JSON.parse(readFileSync('runtime/skills/investment-brief/references/cases.json','utf8'))
-    expect(data.cases).toHaveLength(50);expect(new Set(data.cases.map((c:any)=>c.name)).size).toBe(50)
+    expect(data.cases).toHaveLength(60);expect(new Set(data.cases.map((c:any)=>c.name)).size).toBe(60)
     for(const c of data.cases) for(const key of ['source_url','source_locator','published_at','published_fact','investment_reading','next_check','transfer_condition']) expect(c[key]).toBeTruthy()
+    const topical=data.cases.filter((c:any)=>c.id.startsWith('HOT26-'))
+    expect(topical).toHaveLength(10)
+    expect(new Set(topical.map((c:any)=>c.domain)).size).toBe(10)
+    expect(topical.every((c:any)=>['project','program','demonstration'].includes(c.case_kind)&&c.status_note)).toBe(true)
+    expect(topical.every((c:any)=>{const url=new URL(c.source_url);return url.protocol==='https:'&&url.hostname.endsWith('.gov.cn')})).toBe(true)
   })
   it('retrieves at most three relevant references and no unrelated fallback',()=>{
     expect(selectReferenceCases('办公 改造 社区 服务')).toHaveLength(3)
     expect(selectReferenceCases('no matching topic')).toEqual([])
+    for(const [query,id] of [['零碳园区 源荷匹配','HOT26-02'],['绿色算力 算力设施','HOT26-03'],['TOD 站城融合','HOT26-05'],['低空基础设施 垂直起降','HOT26-06'],['排水防涝 雨污水管网','HOT26-07']])
+      expect(selectReferenceCases(query).map(c=>c.id)).toContain(id)
+    const topical=JSON.parse(readFileSync('runtime/skills/investment-brief/references/cases.json','utf8')).cases.filter((c:any)=>c.id.startsWith('HOT26-'))
+    for(const c of topical) expect(selectReferenceCases(c.tags.join(' ')).map(x=>x.id)).toContain(c.id)
+    expect(selectReferenceCases('浙江大学(紫金港校区) · 片区研究')).toEqual([])
+    expect(selectReferenceCases('毛家桥社区嵌入式养老服务').map(c=>c.id)).toContain('HOT26-04')
   })
   it('rejects boilerplate without deleting material negative conditions',()=>{
     expect(()=>assertBriefProse({summary:'不代表真实需求。'})).toThrow('BRIEF_STYLE_RETRY')

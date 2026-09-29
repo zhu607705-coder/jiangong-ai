@@ -136,10 +136,12 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     if (failure?.status === 'rejected') throw failure.reason
     const findings = roles.map(role => results.get(role.id)!)
     impact.invalidated.push('scenarios', 'critic', 'comparator', 'report')
-    await store.addEvent(run.id, 'scenarios', 'running', '模型正在生成可区分的实施路径，包含暂缓基线')
+    await store.addEvent(run.id, 'scenarios', 'running', '模型正在生成不同实施路径，并保留具体调查选项')
     const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings, ...(decisionSupport?{research_route:{action:decisionSupport.action,priority:decisionSupport.priority,next_step:decisionSupport.next_step,guard_reasons:decisionSupport.guard_reasons}}:{}) })
-    const referenceCases = selectReferenceCases(JSON.stringify(modelView(modelProject)))
-    const scenarioPrompt = `在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；暂缓基线只能 investigate/retain。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>\n以下案例只提供实施机制，不作为本项目事实：${JSON.stringify(referenceCases)}`
+    // Source bodies contain many unrelated terms; match examples to the selected
+    // research object so a campus does not inherit incidental community cases.
+    const referenceCases = selectReferenceCases(full.scope.name)
+    const scenarioPrompt = `在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异；每条先写本路径独有的对象、文件和参与条件，不重复抄写通用缺项。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；defer_and_investigate 只做 investigate/retain，其标题应说明本项目要查的具体对象，不写“暂缓基线”。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>\n以下案例只提供实施机制，不作为本项目事实：${JSON.stringify(referenceCases)}`
     const scenarioResponse = await cachedStage<ScenarioProposal>('scenarios', { shared, candidate_ids: full.candidate_ids }, async () => {
       let response = await live.call<ScenarioProposal>('scenarios', scenarioPrompt, 'ScenarioProposal', [], full.candidate_ids)
       try { response.value = enforceScenarioPolicy(modelProject, response.value) }
