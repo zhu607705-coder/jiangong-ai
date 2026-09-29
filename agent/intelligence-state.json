@@ -1,5 +1,5 @@
 {
-  "status": "pr3_merged_live_search_verified_dsh_rc1_candidate_verified",
+  "status": "pr4_merged_main_runtime_search_and_model_verified",
   "base_main": "36ee5901a334a8332a3ffaf7615f7cde9de53670",
   "merged_pr": 3,
   "branch": "codex/dsh-rc1-search",
@@ -10,7 +10,10 @@
     "dsh_0_2_0_rc1_dependency_and_schema_adapter_verified",
     "public_material_qwen_prefilter_deepseek_structure_and_two_score_calls_verified_in_isolated_pglite",
     "source_quote_and_project_identity_guards_preserved",
-    "system_architecture_algorithms_and_http_interfaces_documented"
+    "system_architecture_algorithms_and_http_interfaces_documented",
+    "pr4_merged_and_pulled_to_local_main",
+    "main_runtime_dsh_rc1_real_public_item_ready",
+    "real_browser_search_and_scored_detail_readback"
   ],
   "tests": {
     "vitest": 376,
@@ -20,14 +23,14 @@
     "production_build": "passed",
     "synthetic_intelligence_browser_assertions": 8,
     "real_public_search_documents": 8,
+    "real_public_scored_items_checked": 1,
     "evidence": "research/test_results/dsh-rc1-intelligence.json"
   },
   "not_completed": [
-    "dsh_rc1_branch_merge_and_main_runtime_readback",
     "representative_human_holdout_quality_evaluation",
     "enterprise_effectiveness_validation",
     "weight_training_not_started"
   ],
-  "next_task": "Merge verified DSH update, update local main and perform same-process live search/model readback without retrying an ambiguous prior receipt.",
+  "next_task": "Improve deadline/stage visibility and source-grounded project location display, then collect human development/holdout labels before calibrating selection or training.",
   "evidence": "research/test_results/dsh-rc1-intelligence.json"
 }

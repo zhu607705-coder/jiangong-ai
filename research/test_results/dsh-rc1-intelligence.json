@@ -32,6 +32,24 @@
     "receipts_completed": ["prefilter", "structure", "score-1", "score-2"],
     "method": "DeepSeek structure was called separately on the same public input, then its captured result was reused in an isolated in-memory PGlite pipeline with real Qwen prefilter and two real DeepSeek score calls; no live project DB was modified."
   },
+  "mainline_live_runtime": {
+    "merge_commit": "4618f8f37d8f1e5049e6d7e7a54ba1dbbc6b7cd9",
+    "pr": 4,
+    "ci": "Intelligence integration review and Map workspace quality passed",
+    "installed_dsh_version": "0.2.0-rc.1",
+    "search_documents": 8,
+    "explicit_analyze_job": "IJ-9b5ec272-1362-4e75-8c84-e398f724765d",
+    "job_status": "completed",
+    "item_status": "ready",
+    "prefilter": "PASS",
+    "category": "procurement",
+    "object_id": "ZTB-202601",
+    "city": null,
+    "scores": [78, 82],
+    "reading_priority_score": 80,
+    "quote_in_source_excerpt": true,
+    "real_browser": "8 search results; first is classified; detail shows procurement/classified; zero page errors"
+  },
   "remaining_limits": [
     "Historical failed root job remains visible from the pre-upgrade schema error; its ambiguous receipt was not blindly retried.",
     "Eight public documents are an integration sample, not calibrated precision, recall, current opportunity coverage, or enterprise outcome evidence.",
