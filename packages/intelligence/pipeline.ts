@@ -14,7 +14,18 @@ export async function analyzeMaterial(repo:IntelRepository,m:Material,judge:Judg
   const pre=await call('prefilter',input)
   if(!['PASS','BLOCK','UNKNOWN'].includes(String(pre.label)))throw new Error('INVALID_PREFILTER_OUTPUT')
   if(pre.label==='BLOCK'){await repo.analyze(m.id,m.version,{...unscored(),status:'irrelevant',prefilter:'BLOCK',model,prompt_version:PROMPT_VERSION});return}
-  const structure=structureOf(await call('structure',input),m.text)
+  const extracted=await call('structure',input)
+  let structure:Structure
+  try {
+    // The model sees both fields, and the publisher's title is also source text.
+    structure=structureOf(extracted,m.title+'\n'+m.text)
+  } catch(error) {
+    const issue=error instanceof Error?error.message:''
+    if(!['QUOTE_NOT_IN_SOURCE','OBJECT_ID_NOT_IN_QUOTE'].includes(issue))throw error
+    // An ungrounded identity is a review item, never a scored opportunity.
+    await repo.analyze(m.id,m.version,{...unscored(m.title),status:'needs_review',prefilter:pre.label as 'PASS'|'UNKNOWN',model,prompt_version:PROMPT_VERSION,issue})
+    return
+  }
   const first=await call('score',input,'score-1'),second=await call('score',input,'score-2')
   const analysis=finishAnalysis(pre.label as 'PASS'|'UNKNOWN',structure,[Number(first.attentionScore),Number(second.attentionScore)],model,threshold)
   analysis.prompt_version=PROMPT_VERSION

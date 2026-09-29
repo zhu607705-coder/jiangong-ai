@@ -85,7 +85,9 @@ export function structureOf(value: unknown, original: string): Structure {
   for(const k of ['subject','action','object','object_id','city','locator_quote'] as const){const v=x[k];if(v!==null&&v!==undefined&&(typeof v!=='string'||v.length>500))throw new Error('INVALID_STRUCTURE_FIELD');out[k]=typeof v==='string'&&v.trim()?v.trim():null}
   if(out.locator_quote&&!original.includes(out.locator_quote))throw new Error('QUOTE_NOT_IN_SOURCE')
   if(out.object_id&&(!out.locator_quote||!out.locator_quote.includes(out.object_id)))throw new Error('OBJECT_ID_NOT_IN_QUOTE')
-  if(out.city&&(!out.locator_quote||!out.locator_quote.includes(out.city)))throw new Error('CITY_NOT_IN_QUOTE')
+  // A city elsewhere in the source is not evidence that the quoted project is there.
+  // Drop the unbound location while retaining a verifiable project identifier.
+  if(out.city&&!out.locator_quote?.includes(out.city))out.city=null
   // Extracted identities require a source quote; the model never assigns a map coordinate.
   if(!out.locator_quote){out.object_id=null;out.city=null}
   for(const k of ['occurred_at','effective_at'] as const){
