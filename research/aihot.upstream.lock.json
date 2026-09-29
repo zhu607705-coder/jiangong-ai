@@ -1,0 +1,107 @@
+{
+  "upstream": {
+    "repository": "KKKKhazix/AIHOT",
+    "ref": "589f79eff09470b31ba8a7f1d9eb62d36ff2be6c",
+    "license": "MIT"
+  },
+  "source_files": [
+    {
+      "path": "packages/backend/src/events/relate.ts",
+      "blob": "b88662f33b6a125080ad38d53066176d0a1fe331",
+      "reuse": "selected_code"
+    },
+    {
+      "path": "packages/backend/src/sources/json-list.ts",
+      "blob": "f9869b7a3a1190d2da21f194ab98c6a9e24d14bb",
+      "reuse": "selected_code"
+    },
+    {
+      "path": "packages/backend/src/editorial/analyze.ts",
+      "blob": "6ad735911e444e9064be46268d1749fd572d6182",
+      "reuse": "mechanism_adaptation"
+    },
+    {
+      "path": "packages/backend/src/events/hot.ts",
+      "blob": "cf3f8c98a3b9374a77a2d09c7dd885a0c440da00",
+      "reuse": "algorithm_adaptation"
+    },
+    {
+      "path": "scripts/eval-selection.ts",
+      "blob": "d6b886c1458c429563d59c334828f2d9f5f041c4",
+      "reuse": "evaluation_adaptation"
+    },
+    {
+      "path": "LICENSE",
+      "blob": "2d848c9f3fed5317d59e0b88cafa289b42a29d2d",
+      "reuse": "license_copy"
+    }
+  ],
+  "targets": [
+    {
+      "path": "vendor/aihot/algorithms.ts",
+      "sha256": "1065cf238d3113710cf625cb8a6a492dff8fa044cc2a210786131d66018f0f76"
+    },
+    {
+      "path": "packages/intelligence/domain.ts",
+      "sha256": "8134ba3eb087bcc0aaf036bc3fdef29abd3dd9a7fedd47f13d8fef97268bcd6a"
+    },
+    {
+      "path": "packages/intelligence/pipeline.ts",
+      "sha256": "81e1312bff4d7260c014013775718b99cc0f5d1fe3c9c024e14212a6e050ac41"
+    },
+    {
+      "path": "packages/intelligence/evaluation.ts",
+      "sha256": "3096b5676c35952ecd9be1626a559771345ce030d26cc8af8ba6f704a7ee729a"
+    },
+    {
+      "path": "licenses/AIHOT-LICENSE.txt",
+      "sha256": "b7f53d07ea4ae2eef26a4f8b28cb7d4df95586e2aa713df408f1ffde9f5a0fea"
+    }
+  ],
+  "runtime_edges": [
+    {
+      "caller": "apps/host/server.ts",
+      "contains": "registerIntelligence(app,store)"
+    },
+    {
+      "caller": "apps/workspace/src/maps/DataSourcesPanel.tsx",
+      "contains": "<IntelligencePanel"
+    },
+    {
+      "caller": "packages/intelligence/domain.ts",
+      "contains": "../../vendor/aihot/algorithms"
+    },
+    {
+      "caller": "packages/intelligence/pipeline.ts",
+      "contains": "../../vendor/aihot/algorithms"
+    },
+    {
+      "caller": "services/capabilities/research.ts",
+      "contains": "recallIntelligence"
+    },
+    {
+      "caller": "services/capabilities/research.ts",
+      "contains": "rememberIntelligence"
+    },
+    {
+      "caller": "packages/intelligence/service.ts",
+      "contains": "/capabilities/retrieval.query"
+    },
+    {
+      "caller": "runtime/intelligence/judge.ts",
+      "contains": "runReadCapability"
+    },
+    {
+      "caller": "services/capabilities/intelligence-decision.ts",
+      "contains": "requestDecisionQuestions"
+    }
+  ],
+  "not_imported": [
+    "AIHOT_full_web_app",
+    "AI_model_leaderboard",
+    "paid_X_or_WeChat_clients",
+    "pg_boss_second_database_worker",
+    "AIHOT_brand_assets"
+  ],
+  "verification": "research/test_results/aihot-core.json"
+}

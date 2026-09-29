@@ -1,0 +1,54 @@
+name: Intelligence integration review
+on:
+  push:
+    branches: ['codex/aihot-intelligence-desktop']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: intelligence-review-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install runtime
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+          npm ci
+      - name: Source attribution and integration audit
+        run: node --import tsx scripts/upstream-aihot-audit.ts
+      - name: Full unit and contract tests
+        run: npm test
+      - name: Optional footprint isolation and strict selected geometry
+        run: .venv/bin/python -m pytest tests/test_map_region_intake.py -q
+      - name: Type check and production build
+        run: npm run build
+      - name: Browser setup
+        run: npx playwright install --with-deps chromium
+      - name: Desktop rectangle regression
+        run: HZZ_UI_AREA=1 node tests/browser/map-workspace.mjs
+      - name: Desktop intelligence regression
+        run: node tests/browser/intelligence.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intelligence-desktop-review
+          path: |
+            output/playwright/desktop-area-*.png
+            output/playwright/intelligence-desktop-*.png
+            output/playwright/intelligence-desktop-check.json
+          if-no-files-found: ignore
+          retention-days: 7

@@ -13,8 +13,11 @@ const pointHandoff=handoffCase==='point-ready',switchHandoff=handoffCase==='expa
 let releaseContext;const contextBarrier=new Promise(resolve=>releaseContext=resolve)
 let contextFinished=false,secondContextFinished=false,conversionCalls=0
 async function waitUntil(check){for(let i=0;i<200;i++){if(check())return;await new Promise(r=>setTimeout(r,10))}throw Error('Expected context transition did not occur')}
+const areaSelection=process.env.HZZ_UI_AREA==='1'
+let areaTarget=null,requestedGeometry=null
 const cancelScan=process.env.HZZ_UI_SCAN_CANCEL==='1'
 const scanRace=process.env.HZZ_UI_SCAN_RACE==='1'||cancelScan
+const testOrigin=process.env.HZZ_TEST_ORIGIN||'https://fixture.invalid/'
 const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox']})
 const page=await browser.newPage({viewport:{width:1440,height:960},deviceScaleFactor:1})
 const errors=[];page.on('pageerror',e=>errors.push(String(e)))
@@ -26,9 +29,10 @@ const xy=p=>[(p[0]-120.144)/.019*1440,(30.295-p[1])/.016*960];
 class Marker extends Base{mount(map){this.el=document.createElement('div');this.el.style.cssText='position:absolute;z-index:8;transform:translate(-50%,-50%)';const [x,y]=xy(this.o.position);this.el.style.left=x/1440*100+'%';this.el.style.top=y/960*100+'%';if(this.o.content instanceof Node)this.el.append(this.o.content);map.el.append(this.el)}}
 class Polygon extends Base{mount(map){const el=document.createElementNS('http://www.w3.org/2000/svg','path');const rings=typeof this.o.path[0][0]==='number'?[this.o.path]:this.o.path;el.setAttribute('d',rings.map(r=>'M'+r.map(p=>xy(p).join(',')).join('L')+'Z').join(''));el.setAttribute('fill',this.o.fillColor||'#a0b5c1');el.setAttribute('fill-opacity',this.o.fillOpacity||.25);el.setAttribute('stroke',this.o.strokeColor||'#638ca7');el.setAttribute('stroke-width','2');el.setAttribute('fill-rule','evenodd');el.style.cursor='pointer';el.addEventListener('click',e=>{e.stopPropagation();this.handlers.click?.(e)});map.svg.append(el);this.el=el}}
 class Map extends Base{constructor(el,o){super(o);this.el=el;this.svg=document.createElementNS('http://www.w3.org/2000/svg','svg');this.svg.setAttribute('viewBox','0 0 1440 960');this.svg.setAttribute('preserveAspectRatio','none');this.svg.style.cssText='position:absolute;inset:0;width:100%;height:100%;background:#eef1ed';this.svg.innerHTML='<defs><pattern id="b" width="118" height="97" patternTransform="rotate(-9)" patternUnits="userSpaceOnUse"><rect x="15" y="14" width="32" height="58" rx="2" fill="#d8dfdc"/><rect x="58" y="14" width="43" height="23" rx="2" fill="#dee3df"/><rect x="58" y="47" width="43" height="25" rx="2" fill="#d8dfdc"/></pattern></defs><rect width="1440" height="960" fill="url(#b)"/><path d="M 1080 -100 Q 650 250 900 590 T 720 1050" stroke="#c1d9e1" stroke-width="85" fill="none"/><path d="M-20 230L1500 460 M0 690L1500 640 M460 -100L590 1050 M1010 0L900 960" stroke="#fff" stroke-width="25" fill="none"/><path d="M-20 230L1500 460 M0 690L1500 640 M460 -100L590 1050 M1010 0L900 960" stroke="#d5d7ca" stroke-width="2" fill="none"/><text x="720" y="918" fill="#71808c" font-size="14">交互测试样本 · 非真实地块</text>';el.append(this.svg);el.addEventListener('click',e=>{const r=el.getBoundingClientRect();this.handlers.click?.({lnglat:point([120.144+(e.clientX-r.left)/r.width*.019,30.295-(e.clientY-r.top)/r.height*.016])})});setTimeout(()=>this.handlers.complete?.(),100)}
-add(items){for(const item of Array.isArray(items)?items:[items])item.mount?.(this)}remove(items){for(const item of Array.isArray(items)?items:[items])item.el?.remove()}destroy(){this.el.innerHTML=''}addControl(){}getLayers(){return []}getZoom(){return 17.2}getPitch(){return 55}getRotation(){return 0}getCenter(){return point([120.153576,30.287459])}getBounds(){return {getSouthWest:()=>point([120.145,30.281]),getNorthEast:()=>point([120.162,30.294])}}setZoomAndCenter(){}setFitView(){}setRotation(){}setPitch(){}zoomIn(){}zoomOut(){}}
+add(items){for(const item of Array.isArray(items)?items:[items])item.mount?.(this)}remove(items){for(const item of Array.isArray(items)?items:[items])item.el?.remove()}destroy(){this.el.innerHTML=''}addControl(){}getStatus(){return {dragEnable:true,zoomEnable:true}}setStatus(s){this.status=s}containerToLngLat(p){return point([120.144+p.x/1440*.019,30.295-p.y/960*.016])}getLayers(){return []}getZoom(){return 17.2}getPitch(){return 55}getRotation(){return 0}getCenter(){return point([120.153576,30.287459])}getBounds(){return {getSouthWest:()=>point([120.145,30.281]),getNorthEast:()=>point([120.162,30.294])}}setZoomAndCenter(){}setFitView(){}setRotation(){}setPitch(){}zoomIn(){}zoomOut(){}}
+class Pixel{constructor(x,y){this.x=x;this.y=y}}
 class Geocoder{getAddress(_point,done){done('complete',{regeocode:{formattedAddress:'浙江省杭州市西湖区公开测试位置',addressComponent:{city:'杭州市',district:'西湖区'}}})}}
-export default {reset:no,load:async()=>({Map,Marker,Polygon,Scale:Base,TileLayer:{Satellite:Base},PlaceSearch:Base,Geocoder,Pixel:Base,convertFrom:(points,type,done)=>done('complete',{locations:points.map(([lng,lat])=>({lng:lng+.005,lat:lat+.003}))})})};`
+export default {reset:no,load:async()=>({Map,Marker,Polygon,Scale:Base,TileLayer:{Satellite:Base},PlaceSearch:Base,Geocoder,Pixel,convertFrom:(points,type,done)=>done('complete',{locations:points.map(([lng,lat])=>({lng:lng+.005,lat:lat+.003}))})})};`
 
 const bounds={west:120.145,east:120.162,south:30.281,north:30.294}
 const ring=[[120.15,30.292],[120.154,30.2916],[120.1553,30.2878],[120.1511,30.2873],[120.15,30.292]]
@@ -52,12 +56,13 @@ await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
  else if(path.startsWith('/api/maps/screening/analysis/')){studyReads++;data=studies.get(url.searchParams.get('profile'))||null}
  else if(path==='/api/maps/config')data={provider:'amap',configured:true,js_key:'TEST_ONLY',revision:'ui-fixture',service_path:'/_AMapService',sdk_version:'2.0'}
  else if(path==='/api/maps/screening/scan'){
-   scanCalls++;requestedBounds=JSON.parse(body).bounds
+   scanCalls++;requestedBounds=JSON.parse(body).bounds;requestedGeometry=JSON.parse(body).geometry
    const frames=[{type:'start',id:scan.id,cells:scan.cells.map(c=>({...c,context:null,tier:'pending'}))},...scan.cells.map((c,i)=>({type:'cell',cell:c,completed:i+1,total:scan.cells.length})),{type:'complete',result:scan}].map(x=>JSON.stringify(x)+'\n')
    return {contentType:'application/x-ndjson',...(scanRace?{frames,delays:[180,4500,180]}:{body:frames.join('')})}
  }
  else if(path==='/api/maps/screening/context'){
    contextCalls++;const selected=JSON.parse(body).target
+   if(areaSelection){areaTarget=selected;return {contentType:'application/json',body:JSON.stringify({...ctx,target:selected,address:null})}}
    if(switchHandoff&&selected.longitude===secondCell.context.target.longitude){secondContextFinished=true;data={...secondCell.context,address:'第二街区'}}
    else{if(earlyCreate)await contextBarrier;contextFinished=true;if(handoffCase.endsWith('failed'))return {status:503,contentType:'application/json',body:JSON.stringify({detail:'FIXTURE_CONTEXT_FAILURE'})};data={...ctx,...(pointHandoff?{target:selected}:{}),address:'示例街区'}}
  }
@@ -77,14 +82,28 @@ await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
 try{
  const built=await build({entryPoints:['apps/workspace/src/main.tsx'],bundle:true,write:false,outfile:'map-ui.js',format:'iife',platform:'browser',define:{'process.env.NODE_ENV':'"production"'},plugins:[{name:'synthetic-amap',setup(b){b.onResolve({filter:/^@amap\/amap-jsapi-loader$/},()=>({path:'sdk',namespace:'fixture'}));b.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:sdk,loader:'js'}))}}]})
  const css=built.outputFiles.find(f=>f.path.endsWith('.css')).text;const js=built.outputFiles.find(f=>f.path.endsWith('.js')).text
- await page.route('https://fixture.invalid/',route=>route.fulfill({contentType:'text/html',body:'<html><body></body></html>'}))
- await page.goto('https://fixture.invalid/')
+ if(testOrigin!=='about:blank'){await page.route(testOrigin,route=>route.fulfill({contentType:'text/html',body:'<html><body></body></html>'}));await page.goto(testOrigin)}
  await page.setContent('<html lang="zh-CN"><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style></head><body><div id="root"></div></body></html>')
- await page.evaluate(()=>{if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '00000000-0000-4000-8000-000000000099'});window.fetch=async(input,options={})=>{if(options.signal?.aborted)throw new DOMException('Aborted','AbortError');const response=await window.__fixtureRequest(new URL(String(input),'https://fixture.invalid').pathname+new URL(String(input),'https://fixture.invalid').search,options.body,options.method||'GET');
+ await page.evaluate(()=>{if(location.href==='about:blank'){const data=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)}})}if(!crypto.randomUUID)Object.defineProperty(crypto,'randomUUID',{value:()=> '00000000-0000-4000-8000-000000000099'});window.fetch=async(input,options={})=>{if(options.signal?.aborted)throw new DOMException('Aborted','AbortError');const response=await window.__fixtureRequest(new URL(String(input),'https://fixture.invalid').pathname+new URL(String(input),'https://fixture.invalid').search,options.body,options.method||'GET');
  if(response.frames){let ended=false;const stream=new ReadableStream({async start(c){const abort=()=>{if(!ended){ended=true;c.error(new DOMException('Aborted','AbortError'))}};options.signal?.addEventListener('abort',abort,{once:true});for(const [index,frame] of response.frames.entries()){if(ended)break;await window.__fixtureFrame(JSON.parse(frame));c.enqueue(new TextEncoder().encode(frame));await new Promise(r=>setTimeout(r,response.delays?.[index]??180))}if(!ended){ended=true;c.close()}options.signal?.removeEventListener('abort',abort)},cancel(){ended=true}});return new Response(stream,{status:200,headers:{'content-type':response.contentType}})}
  return new Response(response.body,{status:response.status||200,headers:{'content-type':response.contentType}})}})
  await page.addScriptTag({content:js});await page.locator('[data-map-status="ready"]').waitFor()
  assert.equal(modelCalls,0);assert.equal(contextCalls,0)
+ if(areaSelection){
+   await page.keyboard.press('r');await page.getByRole('region',{name:'区域框选画布'}).waitFor()
+   await page.mouse.move(400,300);await page.mouse.down();await page.mouse.move(700,550,{steps:4});await page.mouse.up()
+   assert.equal(contextCalls,0);assert.equal(modelCalls,0)
+   await page.screenshot({path:'output/playwright/desktop-area-draft.png'})
+   await page.keyboard.press('Enter');await page.getByText('已固定框选范围',{exact:true}).waitFor()
+   assert.equal(contextCalls,1);assert.equal(areaTarget.kind,'cell');assert.equal(areaTarget.boundary_source,'user:rectangle');assert.equal(areaTarget.geometry.coordinates[0].length,5);assert.equal(modelCalls,0)
+   await page.getByRole('button',{name:'一键标色',exact:true}).click();await waitUntil(()=>scanCalls===1)
+   assert.deepEqual(requestedBounds,areaTarget.bounds);assert.deepEqual(requestedGeometry,areaTarget.geometry)
+   await page.waitForFunction(()=>!document.querySelector('.screening-start').disabled)
+   await page.keyboard.press('r');await page.getByRole('region',{name:'区域框选画布'}).waitFor();await page.keyboard.press('Escape')
+   assert.equal(await page.getByRole('region',{name:'区域框选画布'}).count(),0);assert.equal(contextCalls,1);assert.equal(modelCalls,0);assert.deepEqual(errors,[])
+   await page.screenshot({path:'output/playwright/desktop-area-fixed.png'})
+   console.log('PASS desktop rectangle: draft/Enter/frozen bounds/geometry/Esc/no model (13 assertions)')
+ } else {
  if(pointHandoff)await page.locator('.atlas-map').click({position:{x:100,y:700}})
  else{await page.getByRole('button',{name:'一键标色',exact:true}).click();if(scanRace)await page.waitForTimeout(250);await page.getByRole('button',{name:'查看沿街建筑群初筛'}).click()}
  if(earlyCreate){
@@ -210,9 +229,10 @@ try{
  console.log('PASS map UI: 34 checks including historical refresh, polygon and structured evidence handoff; synthetic provider fixtures')
  }
 }
-}catch(error){await page.screenshot({path:'output/playwright/minimal-map-failure.png'});console.error(JSON.stringify({created:!!created,createdInput,errorText:await page.locator('body').innerText(),errors},null,2));throw error}finally{releaseContext();await browser.close()}
+ }
+}catch(error){await page.screenshot({path:'output/playwright/minimal-map-failure.png'}).catch(()=>{});console.error(JSON.stringify({created:!!created,createdInput,errorText:await page.locator('body').innerText(),errors},null,2));throw error}finally{releaseContext();await browser.close()}
 
-if(!earlyCreate&&!scanRace){
+if(!earlyCreate&&!scanRace&&!areaSelection){
  for(const mode of ['HZZ_UI_SCAN_RACE','HZZ_UI_SCAN_CANCEL']){const child=await promisify(execFile)(process.execPath,['tests/browser/map-workspace.mjs'],{env:{...process.env,[mode]:'1'},timeout:90000});process.stdout.write(child.stdout)}
  for(const mode of ['normal-pending','normal-ready','normal-failed','expanded-pending','expanded-ready','expanded-failed','expanded-switch','point-ready']){const child=await promisify(execFile)(process.execPath,['tests/browser/map-workspace.mjs'],{env:{...process.env,HZZ_UI_HANDOFF:mode},timeout:90000});process.stdout.write(child.stdout)}
 }

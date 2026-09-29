@@ -1,3 +1,4 @@
+import {intelligenceScopeRevision} from '../../packages/intelligence/research-bridge'
 import { randomUUID, createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -112,7 +113,8 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     }
     if(!reuse&&name&&config.searchConfigured){
       emit({type:'progress',stage:'sources',status:'running',message:'核对研究对象与公开数据入口'})
-      const key=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name,target:publicContext.target,profile,day:base.created_at.slice(0,10)})).digest('hex')
+      const intelligenceRevision=await intelligenceScopeRevision({name,city:context.city||undefined,purpose:SCREEN_PROFILES[profile].label,asOf:base.created_at})
+      const key=createHash('sha256').update(JSON.stringify({intelligenceRevision,policy:RESEARCH_POLICY,name,target:publicContext.target,profile,day:base.created_at.slice(0,10)})).digest('hex')
       const path=join(config.dataDir,'map-screening','public-research',key+'.json')
       try{if(refreshEvidence)throw Error('brief-no-longer-valid');const cached=JSON.parse(await readFile(path,'utf8'));if(Date.now()-Date.parse(cached.saved_at)>86400000)throw Error('expired');research=cached.result;research.trace.reused=true;emit({type:'progress',stage:'sources',status:'completed',message:'复用当前对象的公开资料'})}
       catch{

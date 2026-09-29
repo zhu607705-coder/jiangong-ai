@@ -1,3 +1,4 @@
+import { screeningError } from '../../packages/maps/screening-errors'
 import { config } from '../../apps/host/config'
 import type { ResearchSink } from '../../packages/research/events'
 import { BRIEF_SKILL_VERSION } from '../../runtime/skills/investment-brief'
@@ -15,7 +16,7 @@ import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { validate } from '../../packages/contracts/validate'
 import { EVIDENCE_GROUPS, INVESTIGATION_GAPS, SCREEN_METHOD, assertScreenBounds, classifyCells, contextComparable, usableMapEvidence } from '../../packages/maps/screening-policy'
-import type { MapScreenAnalysis, MapScreenBounds, MapScreenContext, MapScreenEvidence, MapScreenPoi, MapScreenProfile, MapScreenResult, MapScreenTarget, MapScreenTheme } from '../../apps/host/generated/contracts'
+import type { MapRegionGeometry, MapScreenAnalysis, MapScreenBounds, MapScreenContext, MapScreenEvidence, MapScreenPoi, MapScreenProfile, MapScreenResult, MapScreenTarget, MapScreenTheme } from '../../apps/host/generated/contracts'
 import { fingerprint, type MapProvider } from './provider'
 import { targetContains, evidenceAt, type ProjectEvidenceSnapshot } from './project-evidence'
 
@@ -192,20 +193,25 @@ export class MapScreeningService {
     } finally { this.activeAnalyses--; this.analyzing.delete(key) }
   }
 
-  async screen(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, emit: (event: unknown) => void): Promise<MapScreenResult> {
+  async screen(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, emit: (event: unknown) => void, geometry?:MapRegionGeometry): Promise<MapScreenResult> {
     assertScreenBounds(bounds)
     const id='MAPSCAN-'+randomUUID(), snapshot=await this.loadEvidence()
     emit({type:'progress',message:'识别园区与道路围合边界'})
-    const {cells,notes}=await this.regions(bounds,snapshot,signal)
+    if(geometry){const center=[(bounds.west+bounds.east)/2,(bounds.south+bounds.north)/2];await this.checkTopology(normalizedTarget({kind:'cell',bounds,geometry,radius_m:null,longitude:center[0],latitude:center[1]}),signal)}
+    const {cells,notes}=await this.regions(bounds,snapshot,signal,geometry)
+    let failedCells=0
     signal.throwIfAborted()
     emit({type:'start',id,bounds,profile,theme,cells})
     // One shared map snapshot, not 5 requests multiplied by every polygon.
     // POI samples are filtered into objects; counts never enter the decision.
     let shared:MapScreenContext|null=null
     if(cells.length) shared=await this.context({kind:'cell',bounds,radius_m:null,longitude:(bounds.west+bounds.east)/2,latitude:(bounds.south+bounds.north)/2},signal,snapshot)
+    if(shared?.groups.some(g=>g.status==='failed'))notes.push('部分场所数据未返回，请检查高德服务鉴权、配额与网络；缺失项不会标为零。')
     for(let i=0;i<cells.length;i++) {
       signal.throwIfAborted()
-      const cell=cells[i],b=cell.bounds,anchor=cell.anchor||[(b.west+b.east)/2,(b.south+b.north)/2]
+      const cell=cells[i]
+      try {
+      const b=cell.bounds,anchor=cell.anchor||[(b.west+b.east)/2,(b.south+b.north)/2]
       const target=normalizedTarget({kind:'cell',bounds:b,geometry:cell.geometry, radius_m:null,longitude:anchor[0],latitude:anchor[1],label:cell.label,
         label_origin:cell.boundary_source?.startsWith('project:')?'project':'public',
         object_ref:/^(?:osm:(?:way|relation):\d+|project:.+)$/.test(cell.boundary_source||'')?cell.boundary_source:cell.id,boundary_source:cell.boundary_source})
@@ -231,9 +237,17 @@ export class MapScreeningService {
       const classified=classifyCells([cell],theme)[0]
       cells[i]=classified
       emit({type:'cell',cell:classified,completed:i+1,total:cells.length})
+      } catch(error) {
+        signal.throwIfAborted();failedCells++
+        cells[i]={...cell,context:null,tier:'incomplete',rank:null,metric_value:null}
+        const failure=screeningError(error)
+        notes.push(`${cell.label}：${failure.message}`)
+        emit({type:'cell',cell:cells[i],completed:i+1,total:cells.length})
+        emit({type:'progress',message:`已跳过一个未能完成校验的对象，其余继续。`})
+      }
     }
     const result=validate<MapScreenResult>('MapScreenResult',{id,bounds,profile,theme,created_at:stamp(),cells,
-      status:cells.length?'completed':'partial',method:SCREEN_METHOD,
+      status:cells.length&&!failedCells&&shared?.status==='complete'?'completed':'partial',method:SCREEN_METHOD,
       comparison_count:cells.filter(c=>c.tier!=='incomplete').length,notes})
     await this.save('scans',id,result);emit({type:'complete',result});return result
   }

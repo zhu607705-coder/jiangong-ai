@@ -1,0 +1,27 @@
+{
+  "scope": "offline integration; external models/data mocked where invoked",
+  "vitest": {
+    "test_files": 20,
+    "passed": 372
+  },
+  "production_build": "passed",
+  "browser": {
+    "rectangle_assertions": 13,
+    "intelligence_assertions": 8,
+    "legacy_map_partial_run": "34 main + two race suites + six handoff suites observed; not counted as complete suite"
+  },
+  "python_region": "not_run_locally_missing_dependencies; current PR CI required",
+  "live_providers": "not_run",
+  "weight_training_started": false,
+  "commands": [
+    "npm test",
+    "npm run build",
+    "HZZ_UI_AREA=1 node tests/browser/map-workspace.mjs",
+    "node tests/browser/intelligence.mjs"
+  ],
+  "runtime": {
+    "node": "22.16.0",
+    "target_ci_node": "24",
+    "database": "real PGlite for storage and HTTP tests"
+  }
+}

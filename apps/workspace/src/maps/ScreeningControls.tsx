@@ -17,7 +17,8 @@ export default function ScreeningControls({ theme, onTheme, running, completed, 
     {(result || error) && <div className="screening-results-summary">
       {error && <p role="status">{error}</p>}
       {result && <><div className="screening-legend">{(['strong','moderate','sparse','incomplete'] as const).map(tier => <span key={tier}><i style={{background:SCREEN_TIERS[tier].color}} />{SCREEN_TIERS[tier].label}</span>)}</div>
-        {!cells.length && <p>暂无街区边界，可点选建筑研判。</p>}
+        {!cells.length && <p>暂无街区边界，可框选区域或点选建筑研判。</p>}
+        {result.status==='partial'&&result.notes.find(n=>/未返回|隔离/.test(n))&&<p role="status">{result.notes.find(n=>/未返回|隔离/.test(n))}</p>}
         {stale && <p>已保留上次范围</p>}
         <div className="screening-tools"><button onClick={() => setMethodOpen(v => !v)} aria-expanded={methodOpen}>标色依据 <IconChevronDown size={14} /></button><button onClick={onClear}>清除</button></div>
       </>}

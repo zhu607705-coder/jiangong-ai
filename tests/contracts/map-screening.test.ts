@@ -419,3 +419,21 @@ describe('persisted object research', () => {
     expect(JSON.stringify(out)).not.toMatch(/PRIVATE_CANARY|PRIVATE_RECORD|INTERNAL-REAL|"SYN"/)
   })
 })
+
+
+describe('partial scan fault isolation',()=>{
+  it('one invalid optional cell does not erase validated neighbours',async()=>{
+    const {query,analyst,directory,loader}=await service()
+    let checked=0
+    const engine=new MapScreeningService({query,revision:()=> 'fixture-v1'},directory,analyst,loader,async()=>({cells:regions(),notes:[]}),async()=>{if(++checked===2)throw Error('INVALID_REGION_TOPOLOGY')})
+    const result=await engine.screen(bounds,'balanced','overall',new AbortController().signal,()=>{})
+    expect(result.status).toBe('partial');expect(result.cells.filter(c=>c.context)).toHaveLength(2)
+    expect(result.cells[1].tier).toBe('incomplete');expect(result.notes.join()).toContain('边界无效')
+  })
+  it('an explicit study rectangle reaches the region resolver without model invocation',async()=>{
+    const {engine,regionResolver,analyst}=await service()
+    const geometry={type:'Polygon' as const,coordinates:[[[bounds.west,bounds.south],[bounds.east,bounds.south],[bounds.east,bounds.north],[bounds.west,bounds.north],[bounds.west,bounds.south]]]}
+    await engine.screen(bounds,'balanced','overall',new AbortController().signal,()=>{},geometry)
+    expect((regionResolver.mock.calls[0] as unknown[])[3]).toEqual(geometry);expect(analyst).not.toHaveBeenCalled()
+  })
+})

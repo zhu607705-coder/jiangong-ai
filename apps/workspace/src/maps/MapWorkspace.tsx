@@ -1,3 +1,5 @@
+import AreaSelectionOverlay from './AreaSelectionOverlay'
+import {isTypingTarget} from '../../../../packages/maps/area-selection'
 import { useEffect, useRef, useState } from 'react'
 import { IconSearch, IconX, IconPlus, IconMinus, IconNavigation, IconLayersIntersect, IconArrowRight,
   IconCube, IconMapPin, IconSatellite, IconBuildingSkyscraper, IconFocus2, IconAdjustments, IconArrowLeft, IconExternalLink } from '@tabler/icons-react'
@@ -10,7 +12,7 @@ import ScreeningControls from './ScreeningControls'
 import DataSourcesPanel from './DataSourcesPanel'
 import { scanMap } from './screening-stream'
 import { SCREEN_TIERS, classifyCells as classifySnapshotCells } from '../../../../packages/maps/screening-policy'
-import type { MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
+import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
 
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
 const classifyCells=(cells:MapScreenCell[],theme:MapScreenTheme)=>classifySnapshotCells(cells,theme,new Date().toISOString())
@@ -42,6 +44,8 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
   const screenAbort = useRef<AbortController | null>(null), screenVersion = useRef(0), screenOverlays = useRef<any[]>([])
   // Only reconcile events in the running scan; this is not an analysis cache.
   const studiesDuringScan=useRef<Map<string,MapScreenAnalysis|null>|null>(null)
+  const [drawingArea,setDrawingArea]=useState(false),[areaScope,setAreaScope]=useState<MapScreenTarget|null>(null)
+  const areaLayer=useRef<AMap.Polygon|null>(null)
   const screenView = useRef<{ longitude: number; latitude: number; zoom: number } | null>(null)
 
   function selectPlace(place: PlaceSelection, move = true) {
@@ -63,7 +67,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     const current = map.current
     if (!current) return
     const center = coordinates(current.getCenter())!, bounds = current.getBounds()
-    const sw = coordinates(bounds.getSouthWest()), ne = coordinates(bounds.getNorthEast())
+    const sw = areaScope?.bounds?[areaScope.bounds.west,areaScope.bounds.south]:coordinates(bounds.getSouthWest()), ne = areaScope?.bounds?[areaScope.bounds.east,areaScope.bounds.north]:coordinates(bounds.getNorthEast())
     if (!sw || !ne) return
     const width=ne[0]-sw[0],height=ne[1]-sw[1]
     if(width>.06||height>.06){setScreenError('请放大到街区范围后标色。');return}
@@ -82,12 +86,29 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
         if (event.type === 'start') setScreenCells(event.cells)
         if (event.type === 'cell') { setScreenCells(cells => reconcile(cells.map(c => c.id === event.cell.id ? event.cell : c))); setScreenProgress(event.completed) }
         if (event.type === 'complete') { const cells=reconcile(event.result.cells);setScreenCells(cells);setScreenResult({...event.result,cells,comparison_count:cells.filter(cell=>cell.tier!=='incomplete').length}) }
-        if (event.type === 'error') setScreenError(event.message)
-      })
+        if (event.type === 'error') setScreenError(event.message+(event.code?' ('+event.code+')':''))
+      },areaScope?.geometry||undefined)
     } catch (error) { if (version === screenVersion.current && !controller.signal.aborted) setScreenError(error instanceof Error ? error.message : '区域筛选未完成。') }
     finally { if (version === screenVersion.current) {studiesDuringScan.current=null;setScreenRunning(false);setNotice('')} }
   }
 
+  async function confirmArea(target:MapScreenTarget,signal:AbortSignal){
+    const context=await api<MapScreenContext>('/maps/screening/context',{target},signal)
+    signal.throwIfAborted();clearScreen();setAreaScope(target)
+    const cell:MapScreenCell={id:'AREA-'+context.id,label:'框选区域',bounds:target.bounds!,geometry:target.geometry!,anchor:[target.longitude,target.latitude],boundary_source:'user:rectangle',context,tier:'incomplete',rank:null,metric_value:null}
+    chooseCell(cell);setNotice('范围已确认；研判此处才会调用模型。')
+  }
+  useEffect(()=>{
+    const key=(e:KeyboardEvent)=>{if(e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!isTypingTarget(e.target)&&phase==='ready'&&!screenRunning&&!dataOpen&&!settings){e.preventDefault();setDrawingArea(true)}}
+    window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)
+  },[phase,screenRunning,dataOpen,settings])
+  useEffect(()=>{
+    const current=map.current,api=sdk.current;if(!current||!api||phase!=='ready')return
+    if(areaLayer.current){current.remove(areaLayer.current);areaLayer.current=null}
+    if(areaScope?.geometry){const layer=new api.Polygon({path:areaScope.geometry.coordinates as AMap.Vector2[][],strokeColor:'#244d7c',strokeWeight:2,strokeStyle:'dashed',fillOpacity:.03,bubble:true,zIndex:120});areaLayer.current=layer;current.add(layer)}
+    return()=>{if(areaLayer.current){current.remove(areaLayer.current);areaLayer.current=null}}
+  },[areaScope,phase])
+  useEffect(()=>{if(phase!=='ready')setDrawingArea(false)},[phase])
   useEffect(() => {
     if (!ready) return
     let alive = true
@@ -233,6 +254,9 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
   return <section className="atlas-view" aria-label="地图空间探索">
     <div className="atlas-map" ref={canvas} aria-label="高德交互地图" data-map-status={phase} />
     <div className="atlas-vignette" />
+    <div className="area-selection-controls glass-panel"><button className="map-text-button" disabled={!interactive||screenRunning} onClick={()=>setDrawingArea(true)}>框选区域 <kbd>R</kbd></button>{areaScope&&<><span>已固定框选范围</span><button className="map-text-button" onClick={()=>{setAreaScope(null);clearScreen();clearSelection()}}>清除范围</button></>}</div>
+    {drawingArea&&map.current&&sdk.current&&<AreaSelectionOverlay map={map.current} sdk={sdk.current} onConfirm={confirmArea} onClose={()=>setDrawingArea(false)}/>}
+
     <div className="atlas-search-wrap">
       <form className="atlas-search glass-panel" role="search" onSubmit={async e => {
         e.preventDefault(); if (!sdk.current || !interactive || !query.trim()) return
