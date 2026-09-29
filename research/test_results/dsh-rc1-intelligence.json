@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-29",
+  "scope": "DSH 0.2.0-rc.1 upgrade and public-intelligence model boundary, not enterprise outcome validation",
+  "base_main": "36ee5901a334a8332a3ffaf7615f7cde9de53670",
+  "dependency": {
+    "direct_dsh_packages": 16,
+    "version": "0.2.0-rc.1",
+    "npm_ls_agent_and_tools": "passed",
+    "schema_boundary": "all four intelligence stage schemas accepted by actual DSH validator after projection; full JSON Schema validated locally"
+  },
+  "automated": {
+    "command": "npm run verify",
+    "vitest_files": 20,
+    "vitest_passed": 376,
+    "python_passed": 70,
+    "http_passed": 12,
+    "production_build": "passed",
+    "synthetic_intelligence_browser_assertions": 8
+  },
+  "live_public_data": {
+    "source": "http://www.ccgp.gov.cn/cggg/zygg/gkzb/202609/t20260904_27270393.htm",
+    "manual_collection_documents_in_local_pglite": 8,
+    "real_browser_search_and_detail": "passed",
+    "local_data_committed": false
+  },
+  "isolated_real_model_check": {
+    "prefilter": "Qwen decision-model-preview PASS",
+    "structure": "DeepSeek deepseek-flash procurement; object_id ZTB-202601 grounded in exact source quote",
+    "city": "model city omitted locally because it was not in the selected quote",
+    "scores": [82, 82],
+    "analysis": "ready; score is reading priority only",
+    "receipts_completed": ["prefilter", "structure", "score-1", "score-2"],
+    "method": "DeepSeek structure was called separately on the same public input, then its captured result was reused in an isolated in-memory PGlite pipeline with real Qwen prefilter and two real DeepSeek score calls; no live project DB was modified."
+  },
+  "remaining_limits": [
+    "Historical failed root job remains visible from the pre-upgrade schema error; its ambiguous receipt was not blindly retried.",
+    "Eight public documents are an integration sample, not calibrated precision, recall, current opportunity coverage, or enterprise outcome evidence.",
+    "No weight training has started."
+  ]
+}

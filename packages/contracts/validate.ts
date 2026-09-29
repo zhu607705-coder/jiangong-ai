@@ -49,19 +49,7 @@ export function ownedModelValue<T>(type: string, value: unknown): T {
 
 /** Resolve our finite canonical definitions for DSH's object-root structured-output seam. */
 export type ModelPresentationPolicy = {omitOptionalFields?:readonly string[];evidenceIds?:readonly string[]}
-export function modelSchema(name: string, candidateIds?: readonly string[], policy:ModelPresentationPolicy = {}): Record<string, unknown> {
-  const defs = schema.definitions as Record<string, unknown>
-  function inline(value: unknown): unknown {
-    if (Array.isArray(value)) return value.map(inline)
-    if (!value || typeof value !== 'object') return value
-    const node = value as Record<string, unknown>
-    if (typeof node.$ref === 'string') {
-      const target = defs[node.$ref.replace('#/definitions/', '')]
-      if (!target) throw new Error('Unknown schema reference')
-      return inline(target)
-    }
-    return Object.fromEntries(Object.entries(node).map(([key, child]) => [key, inline(child)]))
-  }
+export function presentModelSchema(value: unknown, candidateIds?: readonly string[]): Record<string, unknown> {
   function present(value: unknown): unknown {
     if (!value || typeof value !== 'object') return value
     const node = value as Record<string, unknown>
@@ -83,9 +71,25 @@ export function modelSchema(name: string, candidateIds?: readonly string[], poli
     if(bounds.length) out.description=[node.description,...bounds].filter(Boolean).join('；')
     return out
   }
-  // DSH intentionally accepts a smaller presentation subset. The full canonical
-  // bounds still run through AJV on the returned value before it is used.
-  const result = present(inline(defs[name])) as Record<string, unknown>
+  return present(value) as Record<string, unknown>
+}
+
+export function modelSchema(name: string, candidateIds?: readonly string[], policy:ModelPresentationPolicy = {}): Record<string, unknown> {
+  const defs = schema.definitions as Record<string, unknown>
+  function inline(value: unknown): unknown {
+    if (Array.isArray(value)) return value.map(inline)
+    if (!value || typeof value !== 'object') return value
+    const node = value as Record<string, unknown>
+    if (typeof node.$ref === 'string') {
+      const target = defs[node.$ref.replace('#/definitions/', '')]
+      if (!target) throw new Error('Unknown schema reference')
+      return inline(target)
+    }
+    return Object.fromEntries(Object.entries(node).map(([key, child]) => [key, inline(child)]))
+  }
+  // DSH accepts a smaller presentation subset. Keep original constraints
+  // authoritative at validation time after the structured response returns.
+  const result = presentModelSchema(inline(defs[name]),candidateIds)
   for(const field of policy.omitOptionalFields || []) {
     if((result.required as string[] | undefined)?.includes(field)) throw new Error('CANNOT_OMIT_REQUIRED_MODEL_FIELD')
     delete (result.properties as Record<string,unknown>)[field]

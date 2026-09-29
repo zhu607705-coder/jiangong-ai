@@ -1,31 +1,33 @@
 {
-  "status": "implemented_local_pending_current_pr_ci_and_live_validation",
-  "base": "e7219a96d2f88ce3b1f7af5c767e7d5e9d105684",
-  "pr": 3,
-  "branch": "codex/aihot-intelligence-desktop",
+  "status": "pr3_merged_live_search_verified_dsh_rc1_candidate_verified",
+  "base_main": "36ee5901a334a8332a3ffaf7615f7cde9de53670",
+  "merged_pr": 3,
+  "branch": "codex/dsh-rc1-search",
   "completed": [
-    "database_version_index_and_observation_management",
-    "explicit_collection_and_persisted_processing",
-    "DSH_Qwen_scoped_judging",
-    "research_lookup_and_deposit_hooks",
-    "consistent_desktop_search_UI",
-    "desktop_rectangle_selection",
-    "partial_map_boundary_failure_isolation",
-    "selection_feedback_and_permission_aware_dataset_export"
+    "pr3_merged_and_pulled_to_local_main",
+    "eight_real_official_public_documents_collected_manually_into_local_pglite",
+    "browser_search_detail_and_source_link_readback",
+    "dsh_0_2_0_rc1_dependency_and_schema_adapter_verified",
+    "public_material_qwen_prefilter_deepseek_structure_and_two_score_calls_verified_in_isolated_pglite",
+    "source_quote_and_project_identity_guards_preserved",
+    "system_architecture_algorithms_and_http_interfaces_documented"
   ],
   "tests": {
-    "vitest": 372,
+    "vitest": 376,
     "files": 20,
-    "typescript_build": "passed",
-    "desktop_rectangle_assertions": 13,
-    "desktop_intelligence_assertions": 8,
-    "python_region_tests": "pending_ci"
+    "python": 70,
+    "http": 12,
+    "production_build": "passed",
+    "synthetic_intelligence_browser_assertions": 8,
+    "real_public_search_documents": 8,
+    "evidence": "research/test_results/dsh-rc1-intelligence.json"
   },
   "not_completed": [
-    "real_supplier_model_and_collection_validation",
+    "dsh_rc1_branch_merge_and_main_runtime_readback",
     "representative_human_holdout_quality_evaluation",
+    "enterprise_effectiveness_validation",
     "weight_training_not_started"
   ],
-  "next_task": "Review current PR CI and run authorized source/model checks before merge.",
-  "evidence": "research/test_results/aihot-core.json"
+  "next_task": "Merge verified DSH update, update local main and perform same-process live search/model readback without retrying an ambiguous prior receipt.",
+  "evidence": "research/test_results/dsh-rc1-intelligence.json"
 }
