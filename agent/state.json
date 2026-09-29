@@ -1,5 +1,5 @@
 {
-  "status": "decision_brief_ten_domains_local_verified_pending_pr_ci",
+  "status": "decision_brief_ten_domains_merged_live_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -28,9 +28,9 @@
     "external_production_database_extensions_and_multitenant_deployment_validation",
     "scanned_image_OCR_engine_optional_source_capability"
   ],
-  "next_task": "Publish and validate the decision-brief/cross-domain PR, merge and pull it locally, then read back the existing project's UI and exported report. Pro Draft PR5 stays separate.",
+  "next_task": "Build a source-grounded notice timeline and exact deadline projection, then validate project-location/date roles with human labels. Pro Draft PR5 stays separate.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-29T10:38:08+00:00",
+  "updated_at": "2026-09-29T10:47:10+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -72,7 +72,7 @@
     "research/test_results/pro-pr5-review.json",
     "research/test_results/decision-brief-cross-domain.json"
   ],
-  "current_delivery": "Merged PR3/PR4 provide public-intelligence search and DSH RC1. A locally verified change projects the frozen decision packet into source-linked, path-specific comparisons and a richer report, with ten additional official cross-domain case references; publication CI is pending. Technical architecture remains in docs/engineering.md.",
+  "current_delivery": "Merged PR3/PR4/PR6 provide public-intelligence search, DSH RC1 and source-linked path-specific comparisons with a richer report. Ten additional official cross-domain cases bring the mechanism catalog to 60. The existing real project UI and report were read back without a new model call; technical architecture remains in docs/engineering.md.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -213,7 +213,8 @@
     "decision_integration_evidence": "research/test_results/qwen-integration.json",
     "pr2_merge_commit": "644cd56a69f8d77690f73efd9d8b1cb4e9ae6848",
     "pr3_merge_commit": "36ee5901a334a8332a3ffaf7615f7cde9de53670",
-    "pr4_merge_commit": "4618f8f37d8f1e5049e6d7e7a54ba1dbbc6b7cd9"
+    "pr4_merge_commit": "4618f8f37d8f1e5049e6d7e7a54ba1dbbc6b7cd9",
+    "pr6_merge_commit": "bac4196f303c3955ad3229991cc4f159c52bf944"
   },
   "release_note": "The earlier v0.2 ZIP is a historical snapshot; current source delivery is GitHub main.",
   "pr2": {
@@ -252,5 +253,13 @@
     "evidence": "research/test_results/dsh-rc1-intelligence.json",
     "pro_draft_pr": 5,
     "pro_pr_review_evidence": "research/test_results/pro-pr5-review.json"
+  },
+  "decision_brief_cross_domain": {
+    "merged_pr": 6,
+    "casebook_size": 60,
+    "new_domains": 10,
+    "existing_real_run_read_back": "RUN-7de358da-6fef-4c14-a249-847cd2bd8489",
+    "evidence": "research/test_results/decision-brief-cross-domain.json",
+    "new_model_calls_for_projection": 0
   }
 }

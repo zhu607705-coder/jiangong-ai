@@ -16,6 +16,22 @@
     "targeted_cross_domain_casebook": 16,
     "git_diff_check": "passed"
   },
+  "mainline_verification": {
+    "merged_pr": 6,
+    "merge_commit": "bac4196f303c3955ad3229991cc4f159c52bf944",
+    "intelligence_ci": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/36557032372",
+    "map_ci": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/36557032433",
+    "both_current_head_checks": "passed",
+    "existing_run_report_characters": 11471,
+    "forbidden_visible_phrases": 0,
+    "casebook_count": 60,
+    "real_browser_implementation_paths": 2,
+    "real_browser_integrated_groups": 6,
+    "real_browser_backend_writes": 0,
+    "real_browser_page_errors": 0,
+    "local_report": "data/local/decision-brief-production.md",
+    "local_screenshot": "data/local/decision-brief-production.png"
+  },
   "read_only_existing_real_run": {
     "run_id": "RUN-7de358da-6fef-4c14-a249-847cd2bd8489",
     "model_calls_added": 0,
