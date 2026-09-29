@@ -11,15 +11,19 @@ let assertions=0
 const equal=(a,b)=>{assert.deepEqual(a,b);assertions++}
 const displayTitle='合成回归样本：旧厂房消防改造竞争性磋商公告'
 const trailer='_中国政府采购网-中华人民共和国财政部唯一指定政府采购信息网络发布媒体'
+const realDisplayTitle='浙江大学紫金港校区图书馆主馆北地块景观功能提升改造工程公开招标公告'
+const realStoredTitle=realDisplayTitle+' - 财政部唯一指定政府采购信息网络发布媒体 国家级政府采购专业网站'
+const realUrl='http://www.ccgp.gov.cn/cggg/zygg/gkzb/202609/t20260904_27270393.htm'
 const item={id:'DOC-fixture',version:'a'.repeat(64),title:displayTitle+trailer,url:'https://www.ccgp.gov.cn/cggg/zygg/jzxcs/202607/t20260714_fixture.htm',category:'procurement',city:'代理机构测试城市',status:'ready',summary:'仅用于界面测试，不代表实际项目。',score:80,published_at:'2026-07-14',event_id:'E1',story_id:'F1',dimensions:['adaptation'],can_attach:true,excerpt:'合成回归样本原文：旧厂房消防改造采购。',analysis:{status:'ready',scores:[78,82],structure:{locator_quote:'合成分类引文：采购范围为旧厂房消防改造。'}}}
-const examples=[item,...[
+const realTitleItem={...item,id:'DOC-real-title',event_id:'E-real',story_id:'F-real',title:realStoredTitle,url:realUrl,status:'unscored',summary:null,score:null,published_at:'2026-09-04',analysis:undefined}
+const examples=[item,realTitleItem,...[
  ['样例：大厅改造成交结果公告','cjgg'],['样例：景观公开招标公告','gkzb'],
  ['样例：宿舍改造更正公告','gzgg'],['样例：设备服务合同公告',''],
  ['样例：维护采购意向公开',''],['样例：中标候选人公示',''],['样例：工程终止公告',''],
 ].map(([title,code],i)=>({...item,id:'DOC-'+i,event_id:'E'+(i+2),story_id:'F'+(i+2),title:title+trailer,url:code?`https://www.ccgp.gov.cn/cggg/zygg/${code}/202607/fixture-${i}.htm`:`https://www.ccgp.gov.cn/fixture-${i}.htm`,status:'unscored',score:null,analysis:undefined}))]
 await page.exposeFunction('__api',async(path,body)=>{calls.push({path,body});
  if(path.includes('/search?'))return {items:examples.map(i=>({id:i.event_id,representative:i,items:[i],source_channels:1,momentum:{participants:1,heat:0}})),truncated:false}
- if(path.endsWith('/status'))return {database:{documents:8,versions:8,pending:7},selection_threshold:65,daily_model_budget:40,model_configured:true,decision_enabled:true,collection_enabled:false,channels:[],jobs:[]}
+ if(path.endsWith('/status'))return {database:{documents:9,versions:9,pending:8},selection_threshold:65,daily_model_budget:40,model_configured:true,decision_enabled:true,collection_enabled:false,channels:[],jobs:[]}
  if(path.endsWith('/projects'))return [{id:'P1',name:'合成测试项目',input_hash:'hash'}]
  if(path.includes('/items/')&&!path.endsWith('/attach'))return examples.find(i=>path.includes(i.id+'?'))||item
  if(path.endsWith('/reviews')||path.endsWith('/attach'))return {ok:true}
@@ -32,7 +36,11 @@ try{
  await page.evaluate(()=>{window.fetch=async(path,opts={})=>new Response(JSON.stringify(await window.__api(path,opts.body?JSON.parse(opts.body):null)),{headers:{'content-type':'application/json'}})})
  await page.addScriptTag({content:built.outputFiles.find(f=>f.path.endsWith('.js')).text})
  await page.getByRole('button',{name:displayTitle,exact:true}).waitFor()
- equal(await page.locator('.intel-result').count(),8)
+ const realButton=page.getByRole('button',{name:realDisplayTitle,exact:true})
+ await realButton.waitFor()
+ equal(await page.locator('.intel-result').count(),9)
+ equal(await realButton.locator('.intel-reading-title').innerText(),realDisplayTitle)
+ equal(await realButton.locator('.intel-reading-title').getAttribute('title'),realStoredTitle)
  equal(await page.locator('.intel-reading-title').first().innerText(),displayTitle)
  equal(await page.locator('.intel-reading-title').first().getAttribute('title'),item.title)
  const listText=await page.locator('.intel-panel').innerText()
