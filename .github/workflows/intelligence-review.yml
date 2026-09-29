@@ -1,0 +1,32 @@
+name: Intelligence integration review
+on:
+  push:
+    branches: ['codex/aihot-intelligence-desktop']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: intelligence-review-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source snapshot for scoped integration review
+        run: git archive --format=zip --output=/tmp/intelligence-source.zip HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: intelligence-source
+          path: /tmp/intelligence-source.zip
+          retention-days: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
