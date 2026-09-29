@@ -16,24 +16,39 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Source snapshot for scoped integration review
-        run: git archive --format=zip --output=/tmp/intelligence-source.zip HEAD
-      - uses: actions/upload-artifact@v4
-        with:
-          name: intelligence-source
-          path: /tmp/intelligence-source.zip
-          retention-days: 1
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
-      - run: npm ci
-      - name: Locked review dependencies
-        run: tar -czf /tmp/intelligence-node-modules.tgz node_modules
-      - uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: intelligence-node-modules
-          path: /tmp/intelligence-node-modules.tgz
-          retention-days: 1
-      - run: npm test
-      - run: npm run build
+          python-version: '3.11'
+      - name: Install runtime
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+          npm ci
+      - name: Source attribution and integration audit
+        run: node --import tsx scripts/upstream-aihot-audit.ts
+      - name: Full unit and contract tests
+        run: npm test
+      - name: Optional footprint isolation and strict selected geometry
+        run: .venv/bin/python -m pytest tests/test_map_region_intake.py -q
+      - name: Type check and production build
+        run: npm run build
+      - name: Browser setup
+        run: npx playwright install --with-deps chromium
+      - name: Desktop rectangle regression
+        run: HZZ_UI_AREA=1 node tests/browser/map-workspace.mjs
+      - name: Desktop intelligence regression
+        run: node tests/browser/intelligence.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intelligence-desktop-review
+          path: |
+            output/playwright/desktop-area-*.png
+            output/playwright/intelligence-desktop-*.png
+            output/playwright/intelligence-desktop-check.json
+          if-no-files-found: ignore
+          retention-days: 7

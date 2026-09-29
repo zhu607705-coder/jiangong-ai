@@ -1,0 +1,29 @@
+name: Apply exact tested intelligence integration
+on:
+  push:
+    branches: ['codex/aihot-intelligence-desktop']
+    paths: ['.integration/**', '.github/workflows/intelligence-apply-once.yml']
+permissions:
+  contents: write
+concurrency:
+  group: intelligence-apply-once
+  cancel-in-progress: false
+jobs:
+  apply:
+    if: github.repository == 'zhu607705-coder/jiangong-ai' && github.ref == 'refs/heads/codex/aihot-intelligence-desktop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Check exact patch preconditions and output hashes
+        run: python .integration/apply-intelligence.py
+      - name: Commit only to the requested PR branch
+        run: |
+          test "$(git ls-remote origin refs/heads/codex/aihot-intelligence-desktop | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat: connect tested intelligence database and DSH/Qwen flow; fix desktop area screening'
+          git push origin HEAD:refs/heads/codex/aihot-intelligence-desktop

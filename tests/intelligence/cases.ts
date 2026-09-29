@@ -1,0 +1,62 @@
+import assert from 'node:assert/strict'
+import {selection,momentum,getPath,renderTemplate,lexicalSimilarity,storyForDevelopment,sameOccurrence} from '../../vendor/aihot/algorithms'
+import {channelOf,safeUrl,dateOrNull,emptyStructure,structureOf,finishAnalysis,unscored,rankEntries,pairCompatible,isCurrent,hash,mappedJson,type Entry} from '../../packages/intelligence/domain'
+import {analyzeMaterial,type Judge} from '../../packages/intelligence/pipeline'
+import {IntelRepository,type IntelDatabase} from '../../packages/intelligence/repository'
+import {evaluateSelection,retrievalMetrics,clusterMetrics,datasetRows} from '../../packages/intelligence/evaluation'
+
+/** All fixtures below are synthetic contract cases, never business evaluation evidence. */
+const text='杭州 ABC-1 项目发布采购公告，2026年9月1日公布。'
+const frame=()=>({...emptyStructure(),category:'procurement' as const,subject:'项目',action:'发布',object:'项目',object_id:'ABC-1',city:'杭州',occurred_at:'2026-09-01T00:00:00.000Z',locator_quote:'杭州 ABC-1 项目发布采购公告',summary:'项目发布采购公告'})
+const entry=(id='d1'):Entry=>({id,version:'a'.repeat(64),title:'杭州 ABC-1 项目采购',url:'https://example.org/'+id,text,published_at:'2026-09-01T00:00:00Z',channel_id:'c1',city:'杭州',publisher_group:'publisher',source:{hash:hash(text),data_class:'public',synthetic:false,date_status:'verified'},analysis:unscored(),event_id:id,story_id:id,relation:'UNRELATED',ingested_at:'2026-09-02T00:00:00Z'})
+function memoryRepo(pool:Entry[]=[]){let latest=unscored(),membership:unknown[]=[];const cache=new Map<string,unknown>()
+  return {repo:{analyze:async(_id:string,_v:string,a:typeof latest)=>{latest=a},entries:async()=>({entries:pool,truncated:false}),membership:async(...args:unknown[])=>{membership=args},receipt:async(stage:string,subject:string,input:unknown,model:string,run:()=>Promise<unknown>)=>{const k=JSON.stringify([stage,subject,input,model]);if(!cache.has(k))cache.set(k,await run());return cache.get(k)}} as unknown as IntelRepository,
+    result:()=>latest,link:()=>membership}
+}
+export function registerIntelligenceCases(test:(name:string,fn:()=>void|Promise<void>)=>unknown){
+  test('AIHOT two scores use the exact sum threshold',()=>{assert.deepEqual(selection([64,66],65),{selected:true,score:65,disagreement:2});assert.equal(selection([64,65],65).selected,false)})
+  test('missing and out-of-range scores are not silently defaulted',()=>{for(const s of [[65],[NaN,80],[101,50],[50.5,50]])assert.throws(()=>selection(s,65))})
+  test('same publisher counts once even with ten reports',()=>{const t=Date.parse('2026-09-29T00:00:00Z'),signals=Array.from({length:10},()=>({group:'g',at:'2026-09-29T00:00:00Z'}));assert.deepEqual(momentum(signals,t),{participants:1,heat:1})})
+  test('half life is configurable for construction events',()=>assert.equal(momentum([{group:'g',at:'2026-09-26T00:00:00Z'}],Date.parse('2026-09-29T00:00:00Z')).heat,.5))
+  test('future, undated and old imports do not manufacture momentum',()=>assert.deepEqual(momentum([{group:'a',at:null},{group:'b',at:'2030-01-01'},{group:'c',at:'2020-01-01'}],Date.parse('2026-09-29')),{participants:0,heat:0}))
+  test('window parameters reject invalid values',()=>assert.throws(()=>momentum([],Date.now(),0,72)))
+  test('JSON path port handles arrays',()=>assert.equal(getPath({items:[{title:'a'}]},'items.0.title'),'a'))
+  test('JSON paths cannot traverse prototype objects',()=>{assert.equal(getPath({},'constructor.prototype'),undefined);assert.equal(getPath({},'__proto__'),undefined)})
+  test('URL template refuses absent fields',()=>assert.equal(renderTemplate('https://example.org/{id}',{}),null))
+  test('URL template has explicit raw and escaped modes',()=>{assert.equal(renderTemplate('https://example.org/{id}',{id:'a b'}),'https://example.org/a%20b');assert.equal(renderTemplate('{raw:url}',{url:'https://example.org/a'}),'https://example.org/a')})
+  test('literal private addresses and credentials are refused',()=>{for(const u of ['http://127.0.0.1','http://0x7f000001','http://[::1]','https://user:pass@example.org','https://example.org/?api_key=x','https://a.local','file:///etc/passwd'])assert.throws(()=>safeUrl(u))})
+  test('domain suffix check cannot be fooled by suffix text',()=>{assert.equal(safeUrl('https://a.example.org/x',['example.org']),'https://a.example.org/x');assert.throws(()=>safeUrl('https://example.org.attacker.com',['example.org']))})
+  test('tracking parameters are normalized but content IDs remain',()=>assert.equal(safeUrl('https://example.org/a?id=7&utm_source=x#h'),'https://example.org/a?id=7'))
+  test('channels reject unsupported config rather than falling back',()=>assert.throws(()=>channelOf({name:'x',kind:'rss',url:'https://example.org',config:{headers:'secret'}})))
+  test('web and JSON mappings must actually be supplied',()=>{assert.throws(()=>channelOf({name:'x',kind:'web_list',url:'https://example.org'}));assert.throws(()=>channelOf({name:'x',kind:'json_list',url:'https://example.org'}))})
+  test('channels start disabled',()=>assert.equal(channelOf({name:'x',kind:'rss',url:'https://example.org'}).enabled,false))
+  test('collector intervals are bounded',()=>assert.throws(()=>channelOf({name:'x',kind:'rss',url:'https://example.org',interval_minutes:1})))
+  test('mapped JSON preserves verified rows and rejects foreign URLs',()=>{const c=channelOf({name:'x',kind:'json_list',url:'https://example.org',config:{itemsPath:'items',titlePath:'t',urlTemplate:'{raw:u}'}});assert.equal(mappedJson({items:[{t:'a',u:'https://example.org/a'},{t:'b',u:'https://evil.org/b'}]},c).length,1)})
+  test('schema changes are not treated as successful empty scans',()=>{const c=channelOf({name:'x',kind:'json_list',url:'https://example.org',config:{itemsPath:'items',titlePath:'t',urlTemplate:'{raw:u}'}});assert.throws(()=>mappedJson({other:[]},c));assert.throws(()=>mappedJson({items:[{wrong:'x'}]},c))})
+  test('unknown dates remain null',()=>{assert.equal(dateOrNull('n/a'),null);assert.equal(dateOrNull(undefined),null)})
+  test('model quotes must exist in the original',()=>assert.throws(()=>structureOf({...frame(),locator_quote:'虚构的内容'},text)))
+  test('a real quote cannot launder a fabricated object ID',()=>assert.throws(()=>structureOf({...frame(),object_id:'OTHER'},text)))
+  test('city extraction requires support in the quoted text',()=>assert.throws(()=>structureOf({...frame(),city:'上海'},text)))
+  test('verified structure retains exact object ID and dimensions',()=>assert.equal(structureOf(frame(),text).object_id,'ABC-1'))
+  test('large score disagreements stay in review',()=>{const a=finishAnalysis('PASS',frame(),[100,30],'m');assert.equal(a.status,'needs_review');assert.equal(a.selected,false)})
+  test('UNKNOWN is preserved rather than discarded',()=>assert.equal(finishAnalysis('UNKNOWN',frame(),[80,80],'m').status,'needs_review'))
+  test('different city or project IDs cannot auto-cluster',()=>{assert.equal(pairCompatible(frame(),{...frame(),city:'上海'}),false);assert.equal(pairCompatible(frame(),{...frame(),object_id:'B'}),false)})
+  test('lexical similarity is a bounded candidate measure',()=>{assert.equal(lexicalSimilarity('同一项目','同一项目'),1);assert.equal(lexicalSimilarity('','x'),0)})
+  test('developments attach only to roots',()=>{const c=[{factId:'1',storyId:'root',storyRoot:false,score:1}],v=new Map([['1',{relation:'SAME_STORY' as const,confidence:1,note:''}]]);assert.equal(storyForDevelopment(c,v),null)})
+  test('same occurrence selection uses verdict then recall',()=>{const c=[{factId:'1',storyId:'1',storyRoot:true,score:.9},{factId:'2',storyId:'2',storyRoot:true,score:.8}],v=new Map([['1',{relation:'UNRELATED' as const,confidence:1,note:''}],['2',{relation:'SAME_OCCURRENCE' as const,confidence:.9,note:''}]]);assert.equal(sameOccurrence(c,v)[0].factId,'2')})
+  test('historical evidence excludes future and expired sources',()=>{const m=entry();assert.equal(isCurrent(m,'2026-09-01'),true);assert.equal(isCurrent(m,'2026-08-30'),false);m.source.expires_at='2026-09-02';assert.equal(isCurrent(m,'2026-09-29'),false)})
+  test('search-only dates are not accepted as verified evidence',()=>{const m=entry();m.source.date_status='search_only';assert.equal(isCurrent(m,'2026-09-29'),false)})
+  test('city filters keep same-name project text from other cities out',()=>{const b={...entry('b'),city:'上海'};assert.equal(rankEntries([entry(),b],{city:'杭州',q:'采购'}).length,1)})
+  test('pipeline calls score twice without passing score 1 into score 2',async()=>{const mem=memoryRepo(),inputs:unknown[]=[],judge:Judge=async(stage,input)=>{if(stage==='score')inputs.push(input);return {model:'m',value:stage==='prefilter'?{label:'PASS'}:stage==='structure'?frame():{attentionScore:80}}};await analyzeMaterial(mem.repo,entry(),judge,new AbortController().signal,'m');assert.equal(inputs.length,2);assert.deepEqual(inputs[0],inputs[1]);assert.equal(mem.result().status,'ready')})
+  test('receipt reuse skips already completed model stages',async()=>{const mem=memoryRepo();let n=0;const judge:Judge=async(stage)=>{n++;return {model:'m',value:stage==='prefilter'?{label:'PASS'}:stage==='structure'?frame():{attentionScore:80}}};await analyzeMaterial(mem.repo,entry(),judge,new AbortController().signal,'m');await analyzeMaterial(mem.repo,entry(),judge,new AbortController().signal,'m');assert.equal(n,4)})
+  test('missing body makes no model request',async()=>{const mem=memoryRepo();await analyzeMaterial(mem.repo,{...entry(),text:''},async()=>{throw new Error('should not run')},new AbortController().signal,'m');assert.equal(mem.result().issue,'MATERIAL_NOT_READ')})
+  test('BLOCK ends before scoring',async()=>{const mem=memoryRepo();let n=0;await analyzeMaterial(mem.repo,entry(),async()=>{n++;return{model:'m',value:{label:'BLOCK'}}},new AbortController().signal,'m');assert.equal(n,1);assert.equal(mem.result().status,'irrelevant')})
+  test('already cancelled work never calls a model',async()=>{const mem=memoryRepo(),c=new AbortController();c.abort();await assert.rejects(()=>analyzeMaterial(mem.repo,entry(),async()=>{throw Error('unexpected')},c.signal,'m'))})
+  test('empty gold set produces no invented accuracy',()=>{const r=evaluateSelection([],[]);assert.equal(r.summary.precision,null);assert.equal(r.summary.recall,null)})
+  test('processing errors remain visible in benchmark coverage',()=>{const e=entry(),r={document_id:e.id,version:e.version,family_id:'f',split:'development' as const,selected:true,category:'procurement',note:'人工核对',allowed_use:'local_eval' as const,permission:'',reviewer:'user',reviewed_at:new Date().toISOString()};assert.equal(evaluateSelection([e],[r]).summary.errors,1)})
+  test('holdout reporting does not expose a threshold sweep',()=>assert.equal(evaluateSelection([],[],'holdout').sweep.length,0))
+  test('retrieval metrics deduplicate repeated results',()=>{const r=retrievalMetrics(['a','a','b'],['a','b']);assert.equal(r.recall,1);assert.equal(r.ndcg,1)})
+  test('perfect event grouping gets perfect B-cubed',()=>{const r=clusterMetrics([{id:'a',predicted:'1',gold:'x'},{id:'b',predicted:'1',gold:'x'}]);assert.equal(r.b3_precision,1);assert.equal(r.b3_recall,1)})
+  test('datasets reject cross-split source families',()=>{const a=entry('a'),b=entry('b'),common={version:a.version,family_id:'same',selected:true,category:'procurement',note:'核对',allowed_use:'local_eval' as const,permission:'',reviewer:'user',reviewed_at:new Date().toISOString()};assert.throws(()=>datasetRows([a,b],[{...common,document_id:'a',split:'development'},{...common,document_id:'b',split:'holdout'}],'local_eval'))})
+  test('SFT export requires permission and train split',()=>{const e=entry(),r={document_id:e.id,version:e.version,family_id:'f',split:'train' as const,selected:true,category:'procurement',note:'人工核对',allowed_use:'local_eval' as const,permission:'',reviewer:'user',reviewed_at:new Date().toISOString()};const result=datasetRows([e],[r],'local_sft');assert.equal(result.rows.length,0);assert.equal(result.weight_training_started,false)})
+}

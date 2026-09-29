@@ -1,0 +1,141 @@
+diff --git a/.env.example b/.env.example
+index 7f62b95ccf18469258eb377367933640cbdf4391..cf24acad06d5f915bede7275d34f34b387fad852 100644
+--- a/.env.example
++++ b/.env.example
+@@ -24,0 +25,8 @@ AMAP_SECURITY_CODE=
++
++# AIHOT-derived local intelligence: reads never invoke models.
++INTELLIGENCE_COLLECTION_ENABLED=false
++INTELLIGENCE_MODEL_ENABLED=false
++INTELLIGENCE_DAILY_MODEL_CALLS=40
++INTELLIGENCE_SELECTION_THRESHOLD=65
++# Optional distinct DSH-compatible model for ambiguous event merge review.
++INTELLIGENCE_REVIEW_MODEL=
+diff --git a/THIRD_PARTY_NOTICES.md b/THIRD_PARTY_NOTICES.md
+index 0ce0bd316f2cd5713675e2a7df15fe8168d0a3f4..8297b3fa77ce91b24a8c162c1dc18f03e2391a4b 100644
+--- a/THIRD_PARTY_NOTICES.md
++++ b/THIRD_PARTY_NOTICES.md
+@@ -29,0 +30,4 @@ OpenStreetMap boundary data is queried on demand under ODbL 1.0; attribution and
++
++## AIHOT — MIT selective source adaptation
++
++AIHOT `KKKKhazix/AIHOT@589f79eff09470b31ba8a7f1d9eb62d36ff2be6c`, copyright (c) 2026 数字生命卡兹克. Selected JSON mapping and event relation functions are in `vendor/aihot/algorithms.ts`; the intake, double-score selection, source-group decay and evaluation workflow are adapted for construction research. Full license: `licenses/AIHOT-LICENSE.txt`. Exact source blobs, target hashes and static call edges: `research/aihot.upstream.lock.json`. The source ledger distinguishes copied functions from mechanism adaptation. No AIHOT brand/logo/fonts, entire web application or independent provider runtime is imported.
+diff --git a/agent/state.json b/agent/state.json
+index 22769547a6890b1f3ef11132632318928371750e..9c159d11d30686290a0418e3823a68c9dd85f3bd 100644
+--- a/agent/state.json
++++ b/agent/state.json
+@@ -228,0 +229,5 @@
++  },
++  "intelligence_integration": {
++    "state_file": "agent/intelligence-state.json",
++    "pr": 3,
++    "note": "Implementation in independent branch; existing main audit history preserved."
+diff --git a/apps/host/map-screening.ts b/apps/host/map-screening.ts
+index 94bf9f9901bfe7dd1b9a70be54b3a82c1c780b35..8f7ac5b0cc3b83eca8d879cf73bb463bc2e17542 100644
+--- a/apps/host/map-screening.ts
++++ b/apps/host/map-screening.ts
+@@ -0,0 +1,2 @@
++import { screeningError } from '../../packages/maps/screening-errors'
++import type { MapRegionGeometry } from './generated/contracts'
+@@ -75 +77 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
+-    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','supply','operations','resources','access']) }).strict()
++    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','supply','operations','resources','access']), geometry:z.unknown().optional() }).strict()
+@@ -83,2 +85,6 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
+-    try { await service.screen(body.bounds, body.profile, body.theme, signal, emit) }
+-    catch { emit({ type: 'error', message: signal.aborted ? '本轮标色已停止。' : '本轮区域筛选未完成，可稍后重试。' }) }
++    try { await service.screen(body.bounds, body.profile, body.theme, signal, emit,body.geometry?validate<MapRegionGeometry>('MapRegionGeometry',body.geometry):undefined) }
++    catch(error) {
++      const failure=screeningError(error,signal),requestId=String(res.getHeader('X-Request-ID')||'')
++      console.warn(JSON.stringify({event:'map_scan_failed',request_id:requestId,code:failure.code}))
++      emit({type:'error',...failure,request_id:requestId})
++    }
+diff --git a/apps/host/server.ts b/apps/host/server.ts
+index 164c42c970ac4cb701a9b252c672935bf01ac5de..769d6b7d9e94f2bb47dbdea70075a7a52220106d 100644
+--- a/apps/host/server.ts
++++ b/apps/host/server.ts
+@@ -18,0 +19 @@ import { registerMapScreening } from './map-screening'
++import { registerIntelligence } from './intelligence'
+@@ -54,0 +56 @@ app.use(['/api', '/_AMapService'], (req, _res, next) => {
++const intelligence = registerIntelligence(app,store)
+@@ -231 +233 @@ const server = app.listen(config.PORT, config.HOST, () => console.log(JSON.strin
+-async function shutdown() { server.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await store.db.close(); process.exit(0) }
++async function shutdown() { server.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await intelligence.stop(); await store.db.close(); process.exit(0) }
+diff --git a/apps/workspace/src/maps/DataSourcesPanel.tsx b/apps/workspace/src/maps/DataSourcesPanel.tsx
+index 3b0cecd529cbf759cb523db87ddc822e1d304208..7631d7c08e7a57ca5ec8ec8f73f76ca35da09482 100644
+--- a/apps/workspace/src/maps/DataSourcesPanel.tsx
++++ b/apps/workspace/src/maps/DataSourcesPanel.tsx
+@@ -4,0 +5 @@ import type { MapDataCatalog } from '../../../host/generated/contracts'
++import IntelligencePanel from '../intelligence/IntelligencePanel'
+@@ -7,0 +9 @@ export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: ()
++  const [section,setSection]=useState<'projects'|'intelligence'>('projects')
+@@ -14,0 +17,2 @@ export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: ()
++    <nav className="intel-tabs" aria-label="项目数据与情报"><button className={section==='projects'?'is-active':''} onClick={()=>setSection('projects')}>项目资料</button><button className={section==='intelligence'?'is-active':''} onClick={()=>setSection('intelligence')}>资料检索</button></nav>
++    {section==='intelligence'?<IntelligencePanel onOpenProject={onOpenProject}/>:<>
+@@ -33,0 +38 @@ export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: ()
++    </>}
+diff --git a/apps/workspace/src/maps/MapWorkspace.tsx b/apps/workspace/src/maps/MapWorkspace.tsx
+index cd76a227a672143ea731b40395692096d3f445c6..dbaa72889d4161fe97e1080f8ef2c76ef14cb5b4 100644
+--- a/apps/workspace/src/maps/MapWorkspace.tsx
++++ b/apps/workspace/src/maps/MapWorkspace.tsx
+@@ -0,0 +1,2 @@
++import AreaSelectionOverlay from './AreaSelectionOverlay'
++import {isTypingTarget} from '../../../../packages/maps/area-selection'
+@@ -13 +15 @@ import { SCREEN_TIERS, classifyCells as classifySnapshotCells } from '../../../.
+-import type { MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
++import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
+@@ -44,0 +47,2 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
++  const [drawingArea,setDrawingArea]=useState(false),[areaScope,setAreaScope]=useState<MapScreenTarget|null>(null)
++  const areaLayer=useRef<AMap.Polygon|null>(null)
+@@ -66 +70 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
+-    const sw = coordinates(bounds.getSouthWest()), ne = coordinates(bounds.getNorthEast())
++    const sw = areaScope?.bounds?[areaScope.bounds.west,areaScope.bounds.south]:coordinates(bounds.getSouthWest()), ne = areaScope?.bounds?[areaScope.bounds.east,areaScope.bounds.north]:coordinates(bounds.getNorthEast())
+@@ -85,2 +89,2 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
+-        if (event.type === 'error') setScreenError(event.message)
+-      })
++        if (event.type === 'error') setScreenError(event.message+(event.code?' ('+event.code+')':''))
++      },areaScope?.geometry||undefined)
+@@ -90,0 +95,17 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
++  async function confirmArea(target:MapScreenTarget,signal:AbortSignal){
++    const context=await api<MapScreenContext>('/maps/screening/context',{target},signal)
++    signal.throwIfAborted();clearScreen();setAreaScope(target)
++    const cell:MapScreenCell={id:'AREA-'+context.id,label:'框选区域',bounds:target.bounds!,geometry:target.geometry!,anchor:[target.longitude,target.latitude],boundary_source:'user:rectangle',context,tier:'incomplete',rank:null,metric_value:null}
++    chooseCell(cell);setNotice('范围已确认；研判此处才会调用模型。')
++  }
++  useEffect(()=>{
++    const key=(e:KeyboardEvent)=>{if(e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!isTypingTarget(e.target)&&phase==='ready'&&!screenRunning&&!dataOpen&&!settings){e.preventDefault();setDrawingArea(true)}}
++    window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)
++  },[phase,screenRunning,dataOpen,settings])
++  useEffect(()=>{
++    const current=map.current,api=sdk.current;if(!current||!api||phase!=='ready')return
++    if(areaLayer.current){current.remove(areaLayer.current);areaLayer.current=null}
++    if(areaScope?.geometry){const layer=new api.Polygon({path:areaScope.geometry.coordinates as AMap.Vector2[][],strokeColor:'#244d7c',strokeWeight:2,strokeStyle:'dashed',fillOpacity:.03,bubble:true,zIndex:120});areaLayer.current=layer;current.add(layer)}
++    return()=>{if(areaLayer.current){current.remove(areaLayer.current);areaLayer.current=null}}
++  },[areaScope,phase])
++  useEffect(()=>{if(phase!=='ready')setDrawingArea(false)},[phase])
+@@ -235,0 +257,3 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
++    <div className="area-selection-controls glass-panel"><button className="map-text-button" disabled={!interactive||screenRunning} onClick={()=>setDrawingArea(true)}>框选区域 <kbd>R</kbd></button>{areaScope&&<><span>已固定框选范围</span><button className="map-text-button" onClick={()=>{setAreaScope(null);clearScreen();clearSelection()}}>清除范围</button></>}</div>
++    {drawingArea&&map.current&&sdk.current&&<AreaSelectionOverlay map={map.current} sdk={sdk.current} onConfirm={confirmArea} onClose={()=>setDrawingArea(false)}/>}
++
+diff --git a/apps/workspace/src/maps/ScreeningControls.tsx b/apps/workspace/src/maps/ScreeningControls.tsx
+index dd258c6ebeea68db046046b411f446b083687daa..8d4cc28b7ea17ffddd32db5e9209addc1c555d64 100644
+--- a/apps/workspace/src/maps/ScreeningControls.tsx
++++ b/apps/workspace/src/maps/ScreeningControls.tsx
+@@ -20 +20,2 @@ export default function ScreeningControls({ theme, onTheme, running, completed,
+-        {!cells.length && <p>暂无街区边界，可点选建筑研判。</p>}
++        {!cells.length && <p>暂无街区边界，可框选区域或点选建筑研判。</p>}
++        {result.status==='partial'&&result.notes.find(n=>/未返回|隔离/.test(n))&&<p role="status">{result.notes.find(n=>/未返回|隔离/.test(n))}</p>}
+diff --git a/apps/workspace/src/maps/screening-stream.ts b/apps/workspace/src/maps/screening-stream.ts
+index e8643c66a6ed4b0a25ab4e44354b5668bad5a68e..01f560680c3e3301a5648410f41fbdb5d0de0273 100644
+--- a/apps/workspace/src/maps/screening-stream.ts
++++ b/apps/workspace/src/maps/screening-stream.ts
+@@ -2 +2 @@ import type { ResearchEvent } from '../../../../packages/research/events'
+-import type { MapScreenBounds, MapScreenCell, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
++import type { MapRegionGeometry, MapScreenBounds, MapScreenCell, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
+@@ -4,2 +4,2 @@ import type { MapScreenBounds, MapScreenCell, MapScreenProfile, MapScreenResult,
+-export type ScreenEvent = {type:'progress';message:string} | { type: 'start'; id: string; cells: MapScreenCell[] } | { type: 'cell'; cell: MapScreenCell; completed: number; total: number } | { type: 'complete'; result: MapScreenResult } | { type: 'error'; message: string }
+-export async function scanMap(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, receive: (event: ScreenEvent) => void) {
++export type ScreenEvent = {type:'progress';message:string} | { type: 'start'; id: string; cells: MapScreenCell[] } | { type: 'cell'; cell: MapScreenCell; completed: number; total: number } | { type: 'complete'; result: MapScreenResult } | { type: 'error'; message: string; code?:string;request_id?:string }
++export async function scanMap(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, receive: (event: ScreenEvent) => void, geometry?:MapRegionGeometry) {
+@@ -7 +7 @@ export async function scanMap(bounds: MapScreenBounds, profile: MapScreenProfile
+-    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'haizhizi' }, body: JSON.stringify({ bounds, profile, theme }) })
++    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'haizhizi' }, body: JSON.stringify({ bounds, profile, theme,...(geometry?{geometry}:{}) }) })

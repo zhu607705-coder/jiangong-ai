@@ -1,0 +1,31 @@
+{
+  "status": "implemented_local_pending_current_pr_ci_and_live_validation",
+  "base": "e7219a96d2f88ce3b1f7af5c767e7d5e9d105684",
+  "pr": 3,
+  "branch": "codex/aihot-intelligence-desktop",
+  "completed": [
+    "database_version_index_and_observation_management",
+    "explicit_collection_and_persisted_processing",
+    "DSH_Qwen_scoped_judging",
+    "research_lookup_and_deposit_hooks",
+    "consistent_desktop_search_UI",
+    "desktop_rectangle_selection",
+    "partial_map_boundary_failure_isolation",
+    "selection_feedback_and_permission_aware_dataset_export"
+  ],
+  "tests": {
+    "vitest": 372,
+    "files": 20,
+    "typescript_build": "passed",
+    "desktop_rectangle_assertions": 13,
+    "desktop_intelligence_assertions": 8,
+    "python_region_tests": "pending_ci"
+  },
+  "not_completed": [
+    "real_supplier_model_and_collection_validation",
+    "representative_human_holdout_quality_evaluation",
+    "weight_training_not_started"
+  ],
+  "next_task": "Review current PR CI and run authorized source/model checks before merge.",
+  "evidence": "research/test_results/aihot-core.json"
+}
