@@ -24,6 +24,11 @@ const ccgpHost = (url: string): boolean => {
  * The persisted title and the source link remain unchanged. */
 export function readingTitle(title: string, url: string): string {
   if (!ccgpHost(url)) return title
+  const officialMediaTrailer = ' - 财政部唯一指定政府采购信息网络发布媒体 国家级政府采购专业网站'
+  if (title.endsWith(officialMediaTrailer)) {
+    const cleaned = title.slice(0, -officialMediaTrailer.length).trim()
+    return cleaned || title
+  }
   const cleaned = title.replace(/\s*[_|｜—–-]+\s*中国政府采购网(?:\s*[_|｜—–-]+\s*中华人民共和国财政部唯一指定政府采购信息网络发布媒体)?\s*$/, '').trim()
   return cleaned || title
 }
