@@ -24,7 +24,7 @@ export function decisionEndpoint(value: string): string {
   if(!['','/compatible-mode','/compatible-mode/v1','/compatible-mode/v1/systemone'].includes(path)) throw new Error('DECISION_ENDPOINT_INVALID')
   url.pathname='/compatible-mode/v1/systemone';return url.href
 }
-function choice(value:any, options:string[]):DecisionChoice {
+export function parseDecisionChoice(value:any, options:string[]):DecisionChoice {
   if(value?.type!=='choice' || !options.includes(value.choice) || !Number.isFinite(value.confidence) || value.confidence<0 || value.confidence>1
     || !value.probabilities || Array.isArray(value.probabilities) || Object.keys(value.probabilities).sort().join()!==[...options].sort().join()) throw new Error('DECISION_INVALID_RESPONSE')
   const probabilities=Object.values(value.probabilities) as number[]
@@ -36,8 +36,8 @@ export function parseDecisionResponse(raw:any):Pick<DecisionSupport,'answers'|'r
     || raw.answers?.evidence_sufficient?.type!=='noul') throw new Error('DECISION_INVALID_RESPONSE')
   const yes=raw.answers.evidence_sufficient.noul, tokens=raw.usage?.input_tokens
   if(!Number.isFinite(yes)||yes<0||yes>1||!Number.isSafeInteger(tokens)||tokens<0) throw new Error('DECISION_INVALID_RESPONSE')
-  return {request_id:raw.request_id,input_tokens:tokens,answers:{next_action:choice(raw.answers.next_action,Object.keys(actionCriteria)),
-    priority_dimension:choice(raw.answers.priority_dimension,Object.keys(dimensions)),evidence_sufficient:yes}}
+  return {request_id:raw.request_id,input_tokens:tokens,answers:{next_action:parseDecisionChoice(raw.answers.next_action,Object.keys(actionCriteria)),
+    priority_dimension:parseDecisionChoice(raw.answers.priority_dimension,Object.keys(dimensions)),evidence_sufficient:yes}}
 }
 export type DecisionSettings={apiKey:string;endpoint:string;model:string}
 export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, settings:DecisionSettings={apiKey:process.env.QWEN_DECISION_API_KEY||'',endpoint:config.QWEN_DECISION_ENDPOINT,model:config.QWEN_DECISION_MODEL}, transport:typeof fetch=fetch):Promise<DecisionSupport> {
@@ -47,17 +47,7 @@ export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, 
     answers:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:input.sourceIds,thresholds:DECISION_THRESHOLDS,error_code:null}
   if(!settings.apiKey || !settings.endpoint) return {...base,error_code:!settings.apiKey?'DECISION_KEY_MISSING':'DECISION_ENDPOINT_MISSING'}
   try {
-    if(Buffer.byteLength(JSON.stringify(body))>160000) throw new Error('DECISION_INPUT_LIMIT')
-    const url=decisionEndpoint(settings.endpoint)
-    signal.throwIfAborted()
-    if(transport===fetch) await ensureHarnessNetwork()
-    const requestSignal=AbortSignal.any([signal,AbortSignal.timeout(12000)])
-    const response=await transport(url,{method:'POST',redirect:'error',signal:requestSignal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+settings.apiKey},body:JSON.stringify(body)})
-    if(!response.ok) {await response.body?.cancel();throw new Error('DECISION_HTTP_'+response.status)}
-    const reader=response.body?.getReader();if(!reader)throw new Error('DECISION_INVALID_RESPONSE')
-    const parts:Uint8Array[]=[];let size=0
-    try {while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>100000)throw new Error('DECISION_RESPONSE_LIMIT');parts.push(value)}} finally {await reader.cancel().catch(()=>undefined)}
-    const raw=JSON.parse(Buffer.concat(parts).toString('utf8'))
+    const raw=await requestDecisionQuestions(body.state,body.questions,signal,settings,transport)
     signal.throwIfAborted()
     return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw),status:'completed',duration_ms:Date.now()-start,...(input.dashboard?{dashboard:parseDashboard(raw,input.dashboard)}:{})},input.factors))
   } catch(error) {
@@ -66,4 +56,27 @@ export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, 
     const code=/^DECISION_(ENDPOINT_INVALID|HTTP_\d{3}|INVALID_RESPONSE|RESPONSE_LIMIT|INPUT_LIMIT)$/.test(message)?message:'DECISION_REQUEST_FAILED'
     return {...base,status:'failed',duration_ms:Date.now()-start,error_code:code}
   }
+}
+
+/** Shared, bounded System One transport. Intelligence and project decisions use the same endpoint policy. */
+export async function requestDecisionQuestions(state:unknown, questions:Record<string,unknown>, signal:AbortSignal,
+  settings:DecisionSettings={apiKey:process.env.QWEN_DECISION_API_KEY||'',endpoint:config.QWEN_DECISION_ENDPOINT,model:config.QWEN_DECISION_MODEL},
+  transport:typeof fetch=fetch):Promise<any> {
+  if(!settings.apiKey||!settings.endpoint)throw new Error('DECISION_NOT_CONFIGURED')
+  if(Object.keys(questions).length<1||Object.keys(questions).length>24)throw new Error('DECISION_INPUT_LIMIT')
+  const body={model:settings.model,state,questions}
+  if(Buffer.byteLength(JSON.stringify(body))>160000) throw new Error('DECISION_INPUT_LIMIT')
+  const url=decisionEndpoint(settings.endpoint)
+  signal.throwIfAborted()
+  if(transport===fetch) await ensureHarnessNetwork()
+  const requestSignal=AbortSignal.any([signal,AbortSignal.timeout(12000)])
+  const response=await transport(url,{method:'POST',redirect:'error',signal:requestSignal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+settings.apiKey},body:JSON.stringify(body)})
+  if(!response.ok) {await response.body?.cancel();throw new Error('DECISION_HTTP_'+response.status)}
+  const reader=response.body?.getReader();if(!reader)throw new Error('DECISION_INVALID_RESPONSE')
+  const parts:Uint8Array[]=[];let size=0
+  try {while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>100000)throw new Error('DECISION_RESPONSE_LIMIT');parts.push(value)}} finally {await reader.cancel().catch(()=>undefined)}
+  const raw=JSON.parse(Buffer.concat(parts).toString('utf8'))
+  if(raw?.model!==settings.model||typeof raw.request_id!=='string'||!raw.request_id||raw.request_id.length>200||!Number.isSafeInteger(raw.usage?.input_tokens)||raw.usage.input_tokens<0)throw new Error('DECISION_INVALID_RESPONSE')
+  signal.throwIfAborted()
+  return raw
 }

@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { IconX, IconRefresh, IconArrowUpRight } from '@tabler/icons-react'
 import { api } from '../api'
 import type { MapDataCatalog } from '../../../host/generated/contracts'
+import IntelligencePanel from '../intelligence/IntelligencePanel'
 
 export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: () => void; onOpenProject: (id: string) => void}) {
   const [catalog, setCatalog] = useState<MapDataCatalog | null>(null), [error, setError] = useState(''), [retry, setRetry] = useState(0)
+  const [section,setSection]=useState<'projects'|'intelligence'>('projects')
   useEffect(() => {
     const controller = new AbortController(); setError('')
     api<MapDataCatalog>('/maps/data', undefined, controller.signal).then(setCatalog).catch(e => {if (!controller.signal.aborted) setError(e.message)})
@@ -12,6 +14,8 @@ export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: () 
   }, [retry])
   return <aside className="map-data-panel glass-panel" aria-label="项目与数据来源">
     <header><div><small>DATA / 真实资料</small><h2>项目与数据</h2></div><button className="map-icon-button" onClick={onClose} aria-label="关闭项目数据"><IconX size={18} /></button></header>
+    <nav className="intel-tabs" aria-label="项目数据与情报"><button className={section==='projects'?'is-active':''} onClick={()=>setSection('projects')}>项目资料</button><button className={section==='intelligence'?'is-active':''} onClick={()=>setSection('intelligence')}>资料检索</button></nav>
+    {section==='intelligence'?<IntelligencePanel onOpenProject={onOpenProject}/>:<>
     <p>现有项目与可取得的资料，在同一处核对覆盖、来源和缺口。</p>
     {!catalog && !error && <p role="status">正在读取当前授权项目库…</p>}
     {error && <p role="alert">{error}</p>}
@@ -31,5 +35,6 @@ export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: () 
       <details><summary>数据口径</summary>{catalog.notes.map(note => <p key={note}>{note}</p>)}</details>
     </>}
     <button className="map-text-button" onClick={() => setRetry(v => v+1)}><IconRefresh size={14} />重新读取项目数据</button>
+    </>}
   </aside>
 }

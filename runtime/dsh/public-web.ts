@@ -14,9 +14,9 @@ export function ensureHarnessNetwork(): Promise<void> {
   return installed
 }
 
-export async function mountPublicWeb(ctx: Context) {
+export async function mountPublicWeb(ctx: Context, policy: {maxRedirects?: 0 | 1 | 2} = {}) {
   await ensureHarnessNetwork()
   await ctx.plugin(WebRuntime)
-  await ctx.plugin(Http, { maxResponseBytes: 2_000_000, maxBodyChars: 80000, timeoutMs: 15000, maxRedirects: 2, userAgent: 'haizhizi-research/0.2 (local research workbench)' })
+  await ctx.plugin(Http, { maxResponseBytes: 2_000_000, maxBodyChars: 80000, timeoutMs: 15000, maxRedirects: policy.maxRedirects ?? 2, userAgent: 'haizhizi-research/0.2 (local research workbench)' })
   await ctx.plugin(Search, { apiKeyEnv: process.env.DEEPSEEK_SEARCH_API_KEY ? 'DEEPSEEK_SEARCH_API_KEY' : 'DEEPSEEK_API_KEY', model: config.DEEPSEEK_MODEL, maxUses: 2, maxTokens: 1800 })
 }

@@ -1,3 +1,5 @@
+import { screeningError } from '../../packages/maps/screening-errors'
+import type { MapRegionGeometry } from './generated/contracts'
 import type { Express, Request, Response } from 'express'
 import { join } from 'node:path'
 import { z } from 'zod'
@@ -72,7 +74,7 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
   app.post('/api/maps/screening/scan', async (req, res) => {
     if (!settings.publicConfiguration().configured) return res.status(424).json({ code: 'MAP_NOT_CONFIGURED', detail: '请先连接高德地图。' })
     if (activeScreens >= 1) return res.status(409).json({ code: 'MAP_SCAN_ACTIVE', detail: '已有区域标色正在进行，可先停止。' })
-    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','supply','operations','resources','access']) }).strict()
+    const bodySchema = z.object({ bounds: boundsSchema, profile: profileSchema, theme: z.enum(['overall','implementation','adaptation','demand','supply','operations','resources','access']), geometry:z.unknown().optional() }).strict()
     let body: z.infer<typeof bodySchema>
     try { body = bodySchema.parse(req.body); assertScreenBounds(body.bounds) }
     catch { return res.status(422).json({ code: 'MAP_SCAN_RANGE', detail: '请在街区范围内筛选，或放大地图后重试。' }) }
@@ -80,8 +82,12 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
     res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.flushHeaders()
     const emit = (event: unknown) => { if (!res.destroyed && !res.writableEnded) res.write(JSON.stringify(event) + '\n') }
     activeScreens++
-    try { await service.screen(body.bounds, body.profile, body.theme, signal, emit) }
-    catch { emit({ type: 'error', message: signal.aborted ? '本轮标色已停止。' : '本轮区域筛选未完成，可稍后重试。' }) }
+    try { await service.screen(body.bounds, body.profile, body.theme, signal, emit,body.geometry?validate<MapRegionGeometry>('MapRegionGeometry',body.geometry):undefined) }
+    catch(error) {
+      const failure=screeningError(error,signal),requestId=String(res.getHeader('X-Request-ID')||'')
+      console.warn(JSON.stringify({event:'map_scan_failed',request_id:requestId,code:failure.code}))
+      emit({type:'error',...failure,request_id:requestId})
+    }
     finally { activeScreens--; if (!res.destroyed) res.end() }
   })
 }

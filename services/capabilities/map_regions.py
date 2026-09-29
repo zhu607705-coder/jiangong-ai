@@ -38,6 +38,10 @@ class RegionRequest(BaseModel):
     east: float
     north: float
     boundaries: list[ProvidedBoundary] = Field(default_factory=list, max_length=100)
+    # Optional saved project footprints must not invalidate an unrelated scan.
+    # Explicit user input remains strict (default); the host opts into isolation.
+    partial_project_boundaries: bool = False
+    clip_geometry: dict | None = None
 
     @model_validator(mode='after')
     def bounded(self):
@@ -46,15 +50,19 @@ class RegionRequest(BaseModel):
             raise ValueError('INVALID_BOUNDS')
         if self.east-self.west > .060001 or self.north-self.south > .060001:
             raise ValueError('REGION_TOO_LARGE')
-        for b in self.boundaries:
-            if b.geometry.get('type') != 'Polygon' or len(json.dumps(b.geometry)) > 60000:
-                raise ValueError('INVALID_BOUNDARY')
-            p = shape(b.geometry)
-            if p.is_empty or not p.is_valid or any(len(r.coords) > 512 for r in [p.exterior, *p.interiors]) or len(p.interiors) > 19:
-                raise ValueError('INVALID_BOUNDARY')
-            if any(not isfinite(v) for ring in [p.exterior, *p.interiors] for xy in ring.coords for v in xy) or not box(-180,-85,180,85).covers(p):
-                raise ValueError('INVALID_BOUNDARY')
+        if self.clip_geometry is not None:
+            clip = checked_polygon(self.clip_geometry)
+            if not box(self.west,self.south,self.east,self.north).buffer(1e-7).covers(clip):
+                raise ValueError('CLIP_OUTSIDE_BOUNDS')
+        if not self.partial_project_boundaries:
+            for boundary in self.boundaries:
+                checked_project_boundary(boundary.geometry)
         return self
+
+def checked_project_boundary(raw: dict):
+    if len(json.dumps(raw)) > 60000:
+        raise ValueError('INVALID_BOUNDARY')
+    return checked_polygon(raw)
 
 def _coordinate(geom, inverse=False):
     # Reuse the published conversion library; never project GCJ-02 as WGS84.
@@ -124,18 +132,22 @@ way["building"]({bbox});way["amenity"="university"]({bbox});relation["amenity"="
 
 def segment_regions(request:RegionRequest, elements:list[dict]) -> dict:
     if len(elements)>MAX_FEATURES: raise ValueError('TOO_MANY_FEATURES')
-    gcj_box=box(request.west,request.south,request.east,request.north)
+    gcj_box=checked_polygon(request.clip_geometry) if request.clip_geometry else box(request.west,request.south,request.east,request.north)
     wgs_box=_coordinate(gcj_box,inverse=True)
     lon,lat=wgs_box.centroid.coords[0]
     metric=CRS.from_proj4(f'+proj=aeqd +lat_0={lat} +lon_0={lon} +datum=WGS84 +units=m')
     forward=Transformer.from_crs('EPSG:4326',metric,always_xy=True).transform
     reverse=Transformer.from_crs(metric,'EPSG:4326',always_xy=True).transform
     clip=transform(forward,wgs_box)
-    explicit=[]; compounds=[]; buildings=[]; roads=[]; water=[]; ref_lines=[]
+    explicit=[]; compounds=[]; buildings=[]; roads=[]; water=[]; ref_lines=[]; skipped_boundaries=0
     for b in sorted(request.boundaries,key=lambda b:b.id):
-        g=shape(b.geometry)
-        if b.coordinate_encoding=='GCJ-02':g=_coordinate(g,inverse=True)
-        explicit.append((transform(forward,g).intersection(clip),b.label,f'project:{b.id}'))
+        try:
+            g=checked_project_boundary(b.geometry)
+            if b.coordinate_encoding=='GCJ-02':g=_coordinate(g,inverse=True)
+            explicit.append((transform(forward,g).intersection(clip),b.label,f'project:{b.id}'))
+        except (ValueError,KeyError,TypeError):
+            if not request.partial_project_boundaries: raise
+            skipped_boundaries += 1
     for element in sorted(elements,key=lambda e:(str(e.get('type')),str(e.get('id')))):
         tags=element.get('tags') or {}; ref=f"osm:{element.get('type')}:{element.get('id')}"
         if element.get('type')=='relation' and (tags.get('natural')=='water' or tags.get('amenity')=='university'):
@@ -201,7 +213,7 @@ def segment_regions(request:RegionRequest, elements:list[dict]) -> dict:
             'bounds':dict(west=west,south=south,east=east,north=north),
             'geometry':mapping(output),'anchor':list(anchor.coords[0]),'boundary_source':ref,
             'area_m2':round(g.area,1),'context':None,'tier':'pending','rank':None,'metric_value':None})
-    return {'cells':cells,'total':total,'truncated':total>MAX_REGIONS,
+    return {'cells':cells,'total':total,'truncated':total>MAX_REGIONS,'skipped_project_boundaries':skipped_boundaries,
         'method':'source-polygons + road-water polygonize + building fallback',
         'attribution':'© OpenStreetMap contributors · ODbL 1.0' if elements else '项目范围',
         'source_url':'https://www.openstreetmap.org/copyright' if elements else None}

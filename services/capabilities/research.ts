@@ -6,6 +6,7 @@ import { mountPublicWeb } from '../../runtime/dsh/public-web'
 import type { ProjectInput, ResearchTrace, Source, PublicRecord, AdapterReceipt } from '../../apps/host/generated/contracts'
 import type { ProgressSink } from '../../packages/research/events'
 import { PUBLIC_SOURCES, publicSourceClass, publicSearchPlan, safePublicUrl } from '../../packages/research/public-sources'
+import { recallIntelligence, rememberIntelligence } from '../../packages/intelligence/research-bridge'
 import { adaptOfficialSource, MAX_RESEARCH_RECORDS } from './adapters/public-records'
 import { resolveScope } from './scope'
 
@@ -15,7 +16,7 @@ export function visibleText(html:string,_url:string):string {
   const article=new Readability(document as unknown as Document,{charThreshold:100}).parse()
   return (article?.textContent||document.body?.textContent||document.documentElement?.textContent||'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim().slice(0,30000)
 }
-export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;seedSources?:Source[]}
+export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;seedSources?:Source[];intelligence?:boolean}
 export type PublicResearch={sources:Source[];records:PublicRecord[];receipts:AdapterReceipt[];trace:ResearchTrace}
 type SearchHit={url:string;title?:string;snippet?:string;publishedAt?:string}
 // Transport injection keeps contract tests offline; production reuses DSH Web.
@@ -30,14 +31,31 @@ function documentDate(raw:string):string|undefined {
 export async function collectSelectedEvidence(request:ResearchRequest,signal:AbortSignal,emit:ProgressSink=()=>{},web?:ResearchWeb,plannedQueries?:string[]):Promise<PublicResearch>{
   const ctx=web?null:new Context(),sources:Source[]=[],records:PublicRecord[]=[],receipts:AdapterReceipt[]=[],warnings:string[]=[]
   const name=request.name.replace(/[\r\n<>]/g,' ').trim().slice(0,180)
-  const queries=(plannedQueries?.length?plannedQueries:publicSearchPlan(name,request.purpose)).slice(0,6)
+  let queries=(plannedQueries?.length?plannedQueries:publicSearchPlan(name,request.purpose)).slice(0,6)
   const found=new Map<string,SearchHit>(),seed=(request.seedSources||[]).filter(s=>s.visibility==='public'&&s.data_class==='public'&&!s.synthetic)
   const end=Date.parse(request.asOf.length===10?request.asOf+'T23:59:59.999Z':request.asOf)
+  let localCount=0
   try{
+    // Injected transports do not implicitly read a live global corpus in tests/replays.
+    const useIntelligence=request.intelligence??!web
+    const local=useIntelligence?await recallIntelligence(request,signal):[]
+    localCount=local.length
+    if(local.length){
+      emit({type:'progress',stage:'search',status:'running',message:'先读取已沉淀的相关原文'})
+      // Skip only a fresh, matching source-domain query. General discovery is retained.
+      queries=queries.filter(q=>{
+        const domain=q.match(/site:([\w.-]+)/)?.[1]
+        return !domain||!local.some(s=>{const host=s.url?new URL(s.url).hostname:'';return (host===domain||host.endsWith('.'+domain))&&s.untrusted_text&&s.date_status==='verified'&&Date.now()-Date.parse(s.retrieved_at||'')<6*3600000})
+      })
+    }
     if(ctx){await mountPublicWeb(ctx);web=ctx.web as unknown as ResearchWeb}
-    for(const source of seed){
-      if(source.published_at&&Date.parse(source.published_at)>end)continue
-      sources.push(structuredClone(source))
+    for(const original of [...seed,...local]){
+      if(original.published_at&&Date.parse(original.published_at)>end)continue
+      if(sources.some(s=>s.id===original.id||(s.url&&s.url===original.url)))continue
+      const source=structuredClone(original)
+      sources.push(source)
+      // Preserve structured records when a Source is handed back from the intelligence store.
+      records.push(...(source.public_records||[]).map(r=>({...r,source_id:source.id})))
     }
     emit({type:'progress',stage:'search',status:'running',message:'检索土地、工程与当前运营资料'})
     // Two concurrent native searches; not a second scheduler or a whole-city crawl.
@@ -100,6 +118,7 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       // The Source is the durable project/document handoff. Its bounded record
       // snapshot survives callers that only retain sources (including projects).
       source.public_records=kept
+      if(kept.length<candidates.length){source.records_truncated=true;warnings.push('RECORD_BUDGET_TRUNCATED:'+source.id)}
       const receipt=receipts.find(r=>r.source_id===source.id)
       if(receipt){
         const truncated=receipt.status==='truncated'||kept.length<candidates.length
@@ -109,7 +128,8 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       }
     }
     emit({type:'progress',stage:'adapters',status:finalRecords.length&&!warnings.length?'completed':'partial',message:finalRecords.length?'已提取项目、金额与统计口径':'已整理原文依据'})
-    return {sources,records:finalRecords,receipts:finalReceipts,trace:{status:usable?(warnings.length?'partial':'success'):'partial',queries,source_ids:[...ids],warnings,reused:false}}
+    if(useIntelligence)await rememberIntelligence(sources,request.city)
+    return {sources,records:finalRecords,receipts:finalReceipts,trace:{status:usable?(warnings.length?'partial':'success'):'partial',queries,source_ids:[...ids],warnings,reused:localCount>0&&queries.length===0}}
   }finally{if(ctx)await ctx.fiber.dispose()}
 }
 
@@ -119,7 +139,7 @@ export async function collectPublicEvidence(project:ProjectInput,signal:AbortSig
   try{
     await mountPublicWeb(ctx)
     const resolved=await resolveScope(ctx,project,signal)
-    const result=await collectSelectedEvidence({name:project.scope.name,city:project.scope.city,purpose:'存量利用与实施路径',asOf:project.as_of},signal,undefined,ctx.web as unknown as ResearchWeb)
+    const result=await collectSelectedEvidence({name:project.scope.name,city:project.scope.city,purpose:'存量利用与实施路径',asOf:project.as_of,intelligence:true},signal,undefined,ctx.web as unknown as ResearchWeb)
     if(resolved.source)result.sources.push(resolved.source)
     if(resolved.warning)result.trace.warnings.push(resolved.warning)
     result.trace.source_ids=result.sources.map(s=>s.id)

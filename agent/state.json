@@ -226,5 +226,10 @@
     "pending": [
       "original Pro round08 review of the exact next commit"
     ]
+  },
+  "intelligence_integration": {
+    "state_file": "agent/intelligence-state.json",
+    "pr": 3,
+    "note": "Implementation in independent branch; existing main audit history preserved."
   }
 }

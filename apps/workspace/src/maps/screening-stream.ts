@@ -1,10 +1,10 @@
 import type { ResearchEvent } from '../../../../packages/research/events'
-import type { MapScreenBounds, MapScreenCell, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
+import type { MapRegionGeometry, MapScreenBounds, MapScreenCell, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
 
-export type ScreenEvent = {type:'progress';message:string} | { type: 'start'; id: string; cells: MapScreenCell[] } | { type: 'cell'; cell: MapScreenCell; completed: number; total: number } | { type: 'complete'; result: MapScreenResult } | { type: 'error'; message: string }
-export async function scanMap(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, receive: (event: ScreenEvent) => void) {
+export type ScreenEvent = {type:'progress';message:string} | { type: 'start'; id: string; cells: MapScreenCell[] } | { type: 'cell'; cell: MapScreenCell; completed: number; total: number } | { type: 'complete'; result: MapScreenResult } | { type: 'error'; message: string; code?:string;request_id?:string }
+export async function scanMap(bounds: MapScreenBounds, profile: MapScreenProfile, theme: MapScreenTheme, signal: AbortSignal, receive: (event: ScreenEvent) => void, geometry?:MapRegionGeometry) {
   const response = await fetch('/api/maps/screening/scan', { method: 'POST', credentials: 'same-origin', signal,
-    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'haizhizi' }, body: JSON.stringify({ bounds, profile, theme }) })
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'haizhizi' }, body: JSON.stringify({ bounds, profile, theme,...(geometry?{geometry}:{}) }) })
   if (!response.ok || !response.body) {
     const error = await response.json().catch(() => ({}))
     throw new Error(error.detail || '区域筛选未启动。')

@@ -16,6 +16,7 @@ import { renderReport } from './reports'
 import { parseDocument, tableFacts, DocumentParseError } from './ingest'
 import { AmapSettings, registerAmap } from './amap'
 import { registerMapScreening } from './map-screening'
+import { registerIntelligence } from './intelligence'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -52,6 +53,7 @@ app.use(['/api', '/_AMapService'], (req, _res, next) => {
   if (req.method !== 'GET' && req.headers['x-requested-with'] !== 'haizhizi') return next(new ApiError(403, 'CSRF_GUARD', '缺少工作台请求标识'))
   next()
 })
+const intelligence = registerIntelligence(app,store)
 registerAmap(app, amapSettings)
 registerMapScreening(app, amapSettings, store)
 app.get('/api/ready', async (_req, res) => {
@@ -228,5 +230,5 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
   res.status(500).json({ code: 'INTERNAL_ERROR', detail: '服务处理失败，请查看本地运行记录' })
 })
 const server = app.listen(config.PORT, config.HOST, () => console.log(JSON.stringify({ event: 'host_ready', url: `http://${config.HOST}:${config.PORT}` })))
-async function shutdown() { server.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await store.db.close(); process.exit(0) }
+async function shutdown() { server.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await intelligence.stop(); await store.db.close(); process.exit(0) }
 process.once('SIGINT', () => void shutdown()); process.once('SIGTERM', () => void shutdown())

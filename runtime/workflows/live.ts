@@ -1,3 +1,4 @@
+import {intelligenceScopeRevision} from '../../packages/intelligence/research-bridge'
 import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../skills/investment-brief'
 import { randomUUID } from 'node:crypto'
 import { Store, type RunRecord } from '../../apps/host/store'
@@ -40,7 +41,8 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   const modelProject = permittedInternal ? structuredClone(full) : visibleSnapshot(full, 'public')
   const artifactRefs: string[] = []
   const day = new Date().toISOString().slice(0, 10)
-  const researchKey = digest({ project: full.project_id, scope: full.scope, as_of: full.as_of, day, source_ids: full.sources.filter(s => s.visibility === 'public').map(s => s.id) })
+  const intelligenceRevision=await intelligenceScopeRevision({name:full.scope.name,city:full.scope.city,purpose:'存量利用与实施路径',asOf:full.as_of})
+  const researchKey = digest({ intelligenceRevision, project: full.project_id, scope: full.scope, as_of: full.as_of, day, source_ids: full.sources.filter(s => s.visibility === 'public').map(s => s.id) })
   let research: { sources: Source[]; trace: ResearchTrace; scope?: ProjectInput['scope'] }
   const cachedResearch = (await store.db.query<{ id: string; payload: typeof research }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [full.project_id, 'research_collect', researchKey])).rows[0]
   if (cachedResearch) { research = structuredClone(cachedResearch.payload); research.trace.reused = true; artifactRefs.push(cachedResearch.id); await store.addEvent(run.id, 'research', 'reused', '公开研究资料未变化，复用已有抓取工件', cachedResearch.id) }
