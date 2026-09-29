@@ -65,7 +65,7 @@ export function assembleDecision(args: { project: ProjectInput; runId: string; r
       { id: 'FOLLOW-DEMAND', priority: 2, title: '开展使用需求与运营访谈', why: '检验功能假设，避免将区位或空置比例直接等同于需求。', impacted_paths: scenarios.map(s => s.id), status: 'suggested' },
     ], sources: structuredClone(project.sources), context_rules: structuredClone(project.context_rules), impact: args.impact,
     warnings: [...new Set([...(project.synthetic ? ['显式合成项目；仅用于工程流程验证，不代表真实片区结论。'] : []), ...(args.executionMode === 'offline' ? ['离线规则检查；未调用真实模型与联网搜索。'] : []), ...results.flatMap(r => r.warnings)])],
-    missing_fields: [...new Set(results.flatMap(r => r.missing_fields))], artifact_refs: args.artifactRefs, runtime: 'DeepSeek Harness 0.1.7-rc.2', model: args.model }
+    missing_fields: [...new Set(results.flatMap(r => r.missing_fields))], artifact_refs: args.artifactRefs, runtime: 'DeepSeek Harness 0.2.0-rc.1', model: args.model }
 }
 
 export function revisionDiff(before: DecisionPacket | null, after: DecisionPacket | null) {

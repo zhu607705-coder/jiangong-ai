@@ -1,0 +1,45 @@
+{
+  "verified_at": "2026-09-29T10:38:08Z",
+  "base_main": "1ddf29744b06b5bc8b52a1e0814ea9e9c810b0d8",
+  "scope": "Read-only aggregation of existing decisions, richer sourced report, and ten cross-domain mechanism references",
+  "root_cause": [
+    "The React overview displayed only the first three prerequisites after policy prepended identical generic conditions, hiding each model path's specific requirements.",
+    "The comparison was rendered as six dimensions times three paths; the investigation option repeated model boilerplate.",
+    "The exported report omitted all specialist findings although the frozen real packet contained twelve source-linked findings.",
+    "Searching the entire source body for case tags selected incidental community examples for the university project."
+  ],
+  "local_checks": {
+    "full_verify_before_final_context_guard": {"vitest": 383, "python": 70, "http": 12, "production_build": "passed"},
+    "final_vitest": 384,
+    "final_production_build": "passed",
+    "targeted_decision_brief": 8,
+    "targeted_cross_domain_casebook": 16,
+    "git_diff_check": "passed"
+  },
+  "read_only_existing_real_run": {
+    "run_id": "RUN-7de358da-6fef-4c14-a249-847cd2bd8489",
+    "model_calls_added": 0,
+    "stored_specialist_findings_surfaced": 12,
+    "implementation_paths": 2,
+    "integrated_comparison_groups": 6,
+    "report_characters_approx": 11600,
+    "browser_backend_writes": 0,
+    "browser_page_errors": 0,
+    "removed_visible_phrases": ["暂缓基线", "企业适配待核", "不足以支撑入口判断"],
+    "specific_conditions_read_back": ["目标楼栋采购文件与资格条件", "西区项目名称、招标人与标段信息"]
+  },
+  "casebook": {
+    "original_cases": 50,
+    "new_cross_domain_cases": 10,
+    "total": 60,
+    "domains": ["城市更新合作", "零碳工业园区", "绿色算力设施", "社区养老托育", "轨道TOD与都市工业", "低空基础设施", "排水防涝与地下管网", "历史街区与文旅活化", "公共建筑节能", "城中村改造与安置"],
+    "catalog": "runtime/skills/investment-brief/references/README.md",
+    "selection": "At most three mechanisms matched by the selected project name; the actual university scope selected none rather than incidental community examples.",
+    "source_boundary": "Officially published project, program, or demonstration records; not a current bid list, user-project facts, or training labels."
+  },
+  "limits": [
+    "The existing specialist findings are model-organized, source-linked statements; the new projection does not independently certify every numeric claim.",
+    "No real enterprise outcome or ten-domain live model effectiveness study was run.",
+    "The current saved project packet is preserved; only its UI and exported report view are recomposed."
+  ]
+}

@@ -24,6 +24,7 @@ import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
+import { buildDecisionBrief } from '../../../packages/decision/brief-view';
 import {
   api,
   type Project,
@@ -177,6 +178,8 @@ export default function App() {
     "offline",
   );
   const displayedSources = [...new Map([...(project?.input.sources || []), ...(packet?.sources || [])].map(source => [source.id, source])).values()];
+  const brief = packet ? buildDecisionBrief(packet) : null;
+  const packetSources = new Map((packet?.sources || []).map(source => [source.id, source] as const));
   const eventSource = useRef<EventSource | null>(null);
   const running = run?.status === "running";
   const stale =
@@ -348,7 +351,7 @@ export default function App() {
             <div className="kicker">研究对象</div>
             <h3>{project.name}</h3>
             <p>
-              {packet?.summary || "比较参与路径、实施对象与下一步。"}
+              {brief?.summary || "比较参与路径、实施对象与下一步。"}
             </p>
             <dl>
               <div>
@@ -638,7 +641,7 @@ export default function App() {
                   </span>
                 </div>
                 <p>
-                  {packet?.summary ||
+                  {brief?.summary ||
                     "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。"}
                 </p>
                 {packet?.decision_support && <details><summary>判断操作依据</summary><DecisionRoute value={packet.decision_support} details /></details>}
@@ -713,107 +716,76 @@ export default function App() {
                   加入企业经验 <IconArrowUpRight size={15} />
                 </button>
               </div>
-              {packet ? (
-                <div className="pathways">
-                  {packet.scenarios.map((scenario, index) => (
-                    <article
-                      className={`pathway ${scenario.status}`}
-                      key={scenario.id}
-                    >
-                      <div className="pathway-top">
-                        <span className="pathway-number">0{index + 1}</span>
-                        <span className={`badge ${scenario.status}`}>
-                          {stateLabel[scenario.status]}
-                        </span>
-                      </div>
-                      <h3>{scenario.title}</h3>
-                      <p className="pathway-description">
-                        {scenario.actions.join("，")}
-                      </p>
-                      <div className="pathway-detail">
-                        <span>需要先成立</span>
-                        <ul>
-                          {scenario.prerequisites.slice(0, 3).map((p) => (
-                            <li key={p}>{p}</li>
-                          ))}
-                        </ul>
-                        {scenario.rule_refs.length > 0 && (
-                          <p className="rule-impact">
-                            <IconLayersIntersect size={14} />
-                            {scenario.blockers[0] ||
-                              "已纳入本项目组织条件与偏好"}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        className="pathway-footer"
-                        onClick={() => setTab("evidence")}
-                      >
-                        <span>{scenario.evidence_refs.length} 个证据引用</span>
-                        <IconChevronRight size={15} />
-                      </button>
-                    </article>
-                  ))}
-                </div>
+              {brief ? (
+                <>
+                  <div className="pathways">
+                    {brief.paths.map((path, index) => (
+                      <article className={`pathway ${path.status}`} key={path.id}>
+                        <div className="pathway-top">
+                          <span className="pathway-number">0{index + 1}</span>
+                          <span className={`badge ${path.status}`}>{stateLabel[path.status]}</span>
+                        </div>
+                        <h3>{path.title}</h3>
+                        <div className="pathway-description">
+                          {path.status === 'blocked' ? <strong>现有组织条件阻断这一路径</strong> : <>
+                            <strong>可研究的操作</strong>
+                            <ol>{path.actions.map(action => <li key={action}>{action}</li>)}</ol>
+                          </>}
+                        </div>
+                        <div className="pathway-detail">
+                          <span>这一路径要先核实</span>
+                          <ul>{path.conditions.map(condition => <li key={condition}>{condition}</li>)}</ul>
+                          {packet?.scenarios.find(s => s.id === path.id)?.blockers.map(blocker =>
+                            <p className="rule-impact" key={blocker}><IconLayersIntersect size={14}/>{blocker}</p>)}
+                          {path.organizationNotes.map(note =>
+                            <p className="rule-impact" key={note}><IconLayersIntersect size={14}/>{note}</p>)}
+                        </div>
+                        <button className="pathway-footer" onClick={() => setTab("evidence")}>
+                          <span>{path.sourceRefs.length} 个来源可复核</span><IconChevronRight size={15}/>
+                        </button>
+                      </article>
+                    ))}
+                  </div>
+                  {brief.investigation && <article className="investigation-plan">
+                    <div><span className="kicker">FIRST INVESTIGATION</span><h3>{brief.investigation.title}</h3></div>
+                    <ol>{brief.investigation.actions.map(action => <li key={action}>{action}</li>)}</ol>
+                    {brief.investigation.conditions.length > 0 && <p>本轮要确认：{brief.investigation.conditions.join('；')}</p>}
+                  </article>}
+                </>
               ) : (
                 <div className="empty-inline">
                   <IconLayersIntersect size={28} />
                   <div>
                     <h3>路径将依据本次输入生成</h3>
-                    <p>点击“开始初筛”，查看条件检查、反证与调查基线。</p>
+                    <p>点击“开始初筛”，查看不同路径及各自的调查重点。</p>
                   </div>
                 </div>
               )}
-              {packet?.comparison && (
+              {brief && packet?.comparison && (
                 <section className="content-panel model-comparison">
                   <div className="kicker">EVIDENCE-BOUND COMPARISON</div>
                   <h2>依据与条件比较</h2>
-                  <div className="table-scroll">
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>维度</th>
-                          <th>路径</th>
-                          <th>判断与尚缺条件</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {packet.comparison.criteria.flatMap((c) =>
-                          c.judgments.map((j, i) => (
-                            <tr key={`${c.criterion}-${i}`}>
-                              <td>
-                                {
-                                  {
-                                    implementation: "实施前提",
-                                    building: "建筑适配",
-                                    demand: "功能需求",
-                                    organization: "实施组织",
-                                    enterprise: "企业适配",
-                                    resources: "资源风险",
-                                  }[c.criterion]
-                                }
-                              </td>
-                              <td>
-                                {
-                                  packet.scenarios.find(
-                                    (s) => s.id === j.scenario_id,
-                                  )?.title
-                                }
-                              </td>
-                              <td>
-                                {j.conclusion}
-                                {j.unknowns.length > 0 && (
-                                  <small className="unknown-line">
-                                    待核：{j.unknowns.join("；")}
-                                  </small>
-                                )}
-                              </td>
-                            </tr>
-                          )),
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <p className="comparison-intro">把实施、建筑、需求、组织、企业和资源放在同一路径下核对；来源指向本次冻结的原文。</p>
+                  <div className="synthesis-paths">{brief.paths.map(path =>
+                    <article className="synthesis-path" key={path.id}>
+                      <h3>{path.title}</h3>
+                      {path.themes.map(theme => <section className="synthesis-theme" key={theme.label}>
+                        <h4>{theme.label}</h4>
+                        {theme.judgments.map(judgment => <p key={judgment}>{judgment}</p>)}
+                        {theme.findings.map(finding => <details key={finding.id}>
+                          <summary>展开相关调查发现</summary><p>{finding.claim}</p>
+                        </details>)}
+                        {theme.unknowns.length > 0 && <p className="synthesis-gaps">决定此处判断的缺项：{theme.unknowns.join('；')}</p>}
+                        {theme.sourceRefs.length > 0 && <div className="synthesis-sources">来源：{theme.sourceRefs.slice(0, 3).map(id => {
+                          const source = packetSources.get(id);
+                          if (!source) return <span key={id}>{id}</span>;
+                          const label = <>{source.title}{source.content_status === 'metadata_only' ? '（仅索引）' : ''}</>;
+                          return source.url && /^https?:\/\//i.test(source.url)
+                            ? <a key={id} href={source.url} target="_blank" rel="noopener noreferrer" title={source.title}>{label}</a>
+                            : <span key={id}>{label}</span>;
+                        })}</div>}
+                      </section>)}
+                    </article>)}</div>
                   {!!packet.unresolved_disagreements?.length && (
                     <details className="disagreement">
                       <summary>
@@ -835,10 +807,10 @@ export default function App() {
                 </div>
                 <div>
                   <span className="kicker">NEXT BEST QUESTION</span>
-                  <h3>{packet?.followups[0]?.title || "首先，核实实施前提"}</h3>
+                  <h3>{brief?.nextActions[0]?.title || "先核对最能改变路径的项目资料"}</h3>
                   <p>
-                    {packet?.followups[0]?.why ||
-                      "范围、权属与建筑条件决定后续调查的方向。"}
+                    {brief?.nextActions[0]?.why ||
+                      "确认调查对象与原文后再选择实施动作。"}
                   </p>
                 </div>
                 <button
@@ -1200,8 +1172,8 @@ export default function App() {
                 调查清单在本地保存；加入清单不会自动对外发函、报批或安排现场工作。
               </p>
               {packet ? (
-                packet.followups.map((item) => (
-                  <article className="followup-row" key={item.id}>
+                brief?.nextActions.map((item) => (
+                  <article className="followup-row" key={item.id || item.title}>
                     <span className={`priority p${item.priority}`}>
                       P{item.priority}
                     </span>
@@ -1212,10 +1184,11 @@ export default function App() {
                     <button
                       className="secondary"
                       disabled={
-                        busy || followups.some((f) => f.title === item.title)
+                        busy || !item.id || followups.some((f) => f.title === item.title)
                       }
                       onClick={() =>
                         void action(async () => {
+                          if (!item.id) return;
                           await api(`/projects/${project.id}/followups`, {
                             run_id: packet.run_id,
                             followup_id: item.id,
