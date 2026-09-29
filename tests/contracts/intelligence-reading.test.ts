@@ -5,11 +5,21 @@ import { readingTitle,noticeKind,publicationLabel,ReadingEvidence,NoticeMeta,pub
 const url='https://www.ccgp.gov.cn/cggg/zygg/jzxcs/202607/t20260714_fixture.htm'
 const core='合成样例：浙江大学建工试验大厅改造竞争性磋商公告'
 const suffix='_中国政府采购网-中华人民共和国财政部唯一指定政府采购信息网络发布媒体'
+const realShort='浙江大学紫金港校区图书馆主馆北地块景观功能提升改造工程公开招标公告'
+const realTrailer=' - 财政部唯一指定政府采购信息网络发布媒体 国家级政府采购专业网站'
+const realTitle=realShort+realTrailer
+const realUrl='http://www.ccgp.gov.cn/cggg/zygg/gkzb/202609/t20260904_27270393.htm'
 const item={title:core+suffix,url,status:'ready',published_at:'2026-07-14T01:00:00Z',score:80,analysis:{status:'ready',scores:[78,82],structure:{locator_quote:'合成分类引文：本公告采购建筑改造服务。'}}}
 
 describe('read-only intelligence notice presentation',()=>{
   it.each(['_中国政府采购网',' - 中国政府采购网',suffix,'｜中国政府采购网'])('removes only the recognised publisher trailer %s',tail=>{
     expect(readingTitle(core+tail,url)).toBe(core)
+  })
+  it('removes the exact official media trailer from the provided ccgp title only',()=>{
+    expect(readingTitle(realTitle,realUrl)).toBe(realShort)
+    expect(readingTitle(realShort+' - 财政部唯一指定政府采购信息网络发布媒体',realUrl)).toBe(realShort+' - 财政部唯一指定政府采购信息网络发布媒体')
+    expect(readingTitle(realTitle,'https://example.org/cggg/zygg/gkzb/example.htm')).toBe(realTitle)
+    expect(realTitle).toBe(realShort+realTrailer)
   })
   it('preserves material fields, project punctuation and unknown trailers',()=>{
     const frozen=Object.freeze(structuredClone(item))
