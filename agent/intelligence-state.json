@@ -22,15 +22,18 @@
     "http": 12,
     "production_build": "passed",
     "synthetic_intelligence_browser_assertions": 8,
-    "real_public_search_documents": 8,
+    "manually_collected_official_documents": 8,
+    "local_index_at_pr5_review": {"documents": 17, "versions": 18, "zju_search_groups": 16},
     "real_public_scored_items_checked": 1,
     "evidence": "research/test_results/dsh-rc1-intelligence.json"
   },
   "not_completed": [
+    "model_city_and_date_business_role_binding",
+    "pro_draft_pr5_not_merged",
     "representative_human_holdout_quality_evaluation",
     "enterprise_effectiveness_validation",
     "weight_training_not_started"
   ],
-  "next_task": "Improve deadline/stage visibility and source-grounded project location display, then collect human development/holdout labels before calibrating selection or training.",
+  "next_task": "Review Draft PR5 on real source data; next project step is a source-grounded deadline and notice timeline with city/date role guards, then human development/holdout labels.",
   "evidence": "research/test_results/dsh-rc1-intelligence.json"
 }

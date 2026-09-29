@@ -1,0 +1,30 @@
+{
+  "reviewed_at": "2026-09-29T09:40:13Z",
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/5",
+  "state": "open_draft_not_merged",
+  "base": "765c071e1de9d1888466e41c0517fbc9ec96a32d",
+  "head": "c619bc4b3d876f62f64e24c9921cd526ef176877",
+  "current_head_checks": {
+    "intelligence_integration_review": "passed",
+    "map_workspace_quality": "passed",
+    "older_cancelled_run": "superseded_by_new_head"
+  },
+  "actual_data_browser_review": {
+    "method": "PR5 read-only React panel bundled in isolated local worktree; API responses proxied from running main host and existing local PGlite; no code merged or data written",
+    "local_index_documents": 17,
+    "local_index_versions": 18,
+    "zhejiang_university_search_groups": 16,
+    "official_title": "浙江大学紫金港校区图书馆主馆北地块景观功能提升改造工程公开招标公告 - 财政部唯一指定政府采购信息网络发布媒体 国家级政府采购专业网站",
+    "display_title": "浙江大学紫金港校区图书馆主馆北地块景观功能提升改造工程公开招标公告",
+    "notice_kind": "招标公告",
+    "published_label": "发布 2026-09-04",
+    "stored_reading_priority_score": 80,
+    "model_requests_during_browser_review": 0,
+    "page_errors": 0
+  },
+  "not_verified": [
+    "Draft PR5 has not been merged into main or deployed to the user's running workspace.",
+    "Exact submission deadline and project location roles are not projected by this read-only UI change.",
+    "Current city/date source-containment checks do not prove business roles such as project site versus procurement agency or publication versus submission deadline."
+  ]
+}
