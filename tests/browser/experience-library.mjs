@@ -8,7 +8,7 @@ const evidence = [{ document_id: 'D-A', version: 'sha256-synthetic-a', locator: 
 const card = { id: 'E-A', project_id: 'P-A', title: '合成管网改造经验', project_type: '老旧小区改造',
   development_mode: '整治提升', stage: '前期策划', fields: [field('decision_question', '先改造哪一项设施？', evidence),
     field('background'), field('key_conditions'), field('alternatives'), field('proposal'), field('actual_decision'),
-    field('implementation'), field('outcome'), field('applicability')], status: 'draft', revision: 1,
+    field('decision_basis'), field('implementation'), field('outcome'), field('applicability')], status: 'draft', revision: 1,
   review_note: null, created_at: '2026-10-02T01:00:00Z', updated_at: '2026-10-02T01:00:00Z' }
 const approved = { ...card, id: 'E-OTHER', project_id: 'P-OTHER', title: '合成跨项目经验', status: 'approved', review_note: '合成复核记录',
   fields: [...card.fields.filter(item => item.key !== 'applicability'), field('applicability', '先核实居民协商程序与地下管线资料。', evidence)] }
@@ -16,7 +16,7 @@ const built = await build({ stdin: { contents: `import React,{useState}from'reac
   import Library from './apps/workspace/src/components/ExperienceLibrary';import './apps/workspace/src/style.css';
   function Harness(){const[project,setProject]=useState('P-A'),[revision,setRevision]=useState(3);return <>
   <nav><button onClick={()=>{setProject('P-A');setRevision(3)}}>甲项目</button><button onClick={()=>{setProject('P-B');setRevision(5)}}>乙项目</button></nav>
-  <main><Library projectId={project} revision={revision} synthetic={true} onProjectUpdated={()=>setRevision(value=>value+1)}/></main></>}
+  <main><Library projectId={project} revision={revision} synthetic={true} asOf="2026-10-02" onProjectUpdated={()=>setRevision(value=>value+1)}/></main></>}
   createRoot(document.getElementById('root')).render(<Harness/>);`, loader: 'tsx', resolveDir: process.cwd() }, bundle: true,
   write: false, outfile: 'experience-library-ui.js', format: 'iife', platform: 'browser', define: { 'process.env.NODE_ENV': '"production"' } })
 const browser = await chromium.launch({ headless: true, ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}), args: ['--no-sandbox'] })
@@ -53,11 +53,12 @@ await page.exposeFunction('__request', async (path, body) => {
     const params = new URL(path, 'http://fixture').searchParams
     assert.equal(params.get('synthetic'), 'true')
     assert.equal(params.get('exclude_project'), 'P-A')
+    assert.equal(params.get('as_of'), '2026-10-02')
     assert.equal(params.get('project_type'), '老旧小区改造')
     return { items: [{ card: approved, similar_conditions: ['同为老旧小区管网更新'], important_differences: ['当前小区地下管线资料尚需获取'], reuse_premises: ['先核实居民协商程序与地下管线资料。'] }] }
   }
   if (path === '/api/projects/P-A/experiences/reuse') {
-    assert.deepEqual(body, { card_id: 'E-OTHER', expected_version: 3 })
+    assert.deepEqual(body, { card_id: 'E-OTHER', expected_version: 3, expected_card_revision: 1 })
     return { project: { id: 'P-A', context_version: 4 }, source_id: 'EXPERIENCE-OTHER', rule_ids: [], card_id: 'E-OTHER', card_revision: 1 }
   }
   throw Error(`Unexpected synthetic request ${path}`)
@@ -75,7 +76,8 @@ try {
   await region.getByRole('checkbox').check()
   await region.getByRole('button', { name: '提取经验草稿', exact: true }).click()
   await region.getByRole('button', { name: /合成管网改造经验/ }).waitFor()
-  assert.equal(await region.getByText('待补充', { exact: true }).count(), 8)
+  assert.equal(await region.getByText('待补充', { exact: true }).count(), 9)
+  assert.equal(await region.getByText('决策依据', { exact: true }).count(), 1)
   await region.getByText('合成会议纪要.txt · line:1', { exact: true }).click()
   assert.equal(await region.getByText('居民协商后先开展管网改造。', { exact: true }).count(), 1)
   await region.getByRole('button', { name: '审核通过', exact: true }).click()

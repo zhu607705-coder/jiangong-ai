@@ -4,13 +4,14 @@ import { api } from '../api'
 import WaitingScene from './WaitingScene'
 import './experience-library.css'
 
-type Props = { projectId: string; revision: number; synthetic: boolean; onProjectUpdated: () => void | Promise<void> }
+type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; onProjectUpdated: () => void | Promise<void> }
 type Document = { id: string; file_name: string; created_at?: string; parser_result?: { source_hash?: string; status?: string; segments?: { locator: string; text: string }[] } }
 type Match = { card: ExperienceCard; similar_conditions: string[]; important_differences: string[]; reuse_premises: string[] }
 const fields: { key: ExperienceField['key']; label: string }[] = [
   { key: 'decision_question', label: '决策问题' }, { key: 'background', label: '背景与目标' },
   { key: 'key_conditions', label: '关键条件' }, { key: 'alternatives', label: '备选方案' },
   { key: 'proposal', label: '提议方案' }, { key: 'actual_decision', label: '实际决策' },
+  { key: 'decision_basis', label: '决策依据' },
   { key: 'implementation', label: '实施记录' }, { key: 'outcome', label: '实际结果' },
   { key: 'applicability', label: '适用边界与借鉴前提' },
 ]
@@ -37,8 +38,8 @@ function CardContent({ card, documents }: { card: ExperienceCard; documents: Doc
   })}</dl>
 }
 
-export default function ExperienceLibrary({ projectId, revision, synthetic, onProjectUpdated }: Props) {
-  const requestKey = `${projectId}\u0000${revision}\u0000${synthetic}`
+export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, onProjectUpdated }: Props) {
+  const requestKey = `${projectId}\u0000${revision}\u0000${synthetic}\u0000${asOf}`
   const activeKey = useRef(requestKey); activeKey.current = requestKey
   const [loaded, setLoaded] = useState<{ key: string; documents: Document[]; cards: ExperienceCard[]; error: string; loading: boolean }>({ key: '', documents: [], cards: [], error: '', loading: true })
   const [mode, setMode] = useState<'project' | 'search'>('project')
@@ -136,7 +137,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, onPr
   const search = async () => {
     const key = requestKey, sequence = ++searchSequence.current
     setSearching(true); setActionError(''); setNotice('')
-    const parameters = new URLSearchParams({ q: query.trim(), project_type: projectType.trim(), development_mode: developmentMode.trim(), stage: stage.trim(), exclude_project: projectId, synthetic: String(synthetic) })
+    const parameters = new URLSearchParams({ q: query.trim(), project_type: projectType.trim(), development_mode: developmentMode.trim(), stage: stage.trim(), exclude_project: projectId, synthetic: String(synthetic), as_of: asOf })
     try {
       const result = await api<{ items: Match[] }>(`/experiences/search?${parameters}`)
       if (activeKey.current === key && searchSequence.current === sequence) { setMatches(result.items); setSearched(true) }
@@ -149,7 +150,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, onPr
     const key = requestKey
     setBusy(`reuse:${card.id}`); setActionError(''); setNotice('')
     try {
-      await api(`${base}/reuse`, { card_id: card.id, expected_version: revision })
+      await api(`${base}/reuse`, { card_id: card.id, expected_version: revision, expected_card_revision: card.revision })
       if (activeKey.current !== key) return
       setNotice('已加入当前项目的经验参考，可在后续研判时查看。')
       await onProjectUpdated()
@@ -220,7 +221,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, onPr
         <label>项目阶段<input value={stage} onChange={event => setStage(event.target.value)} placeholder="如前期策划" /></label>
         <button type="submit" className="experience-primary" disabled={searching}>{searching ? '正在检索…' : '检索经验'}</button>
       </form>
-      <p className="experience-search-note">仅检索其他项目的已审核经验。原项目的提议、实施和实际结果分别保留；加入当前项目后作为调查线索与候选方案参考。</p>
+      <p className="experience-search-note">检索截至 {asOf} 的其他项目已审核经验。原项目的提议、决策依据、实施和实际结果分别保留；加入当前项目后作为调查线索与候选方案参考。</p>
       {searching && <WaitingScene compact variant="research" title="正在匹配项目经验" detail="按项目类型、模式、阶段和条件检索已审核记录…" />}
       {searched && !searching && !matches.length && <p className="experience-empty">没有匹配的已审核经验，可调整条件后再次检索。</p>}
       {!searching && <div className="experience-card-list">{matches.map(match => <article className="experience-card" key={match.card.id}>
