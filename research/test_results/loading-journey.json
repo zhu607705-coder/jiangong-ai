@@ -2,6 +2,24 @@
   "feature": "animated loading experience",
   "date": "2026-10-02",
   "branch": "codex/loading-journey",
+  "merged_pr": 8,
+  "merge_commit": "8b069375216561c936735aefcc2406ea188a305c",
+  "github_checks": {
+    "source_commit": "0597d1a2f53e93448f7bd89755e7410ae2c69171",
+    "map_workspace_quality_run": 36985785669,
+    "intelligence_integration_review_run": 36985785644,
+    "result": "both passed"
+  },
+  "merged_main_readback": {
+    "url": "http://127.0.0.1:5173/",
+    "boot_title": "正在打开项目空间",
+    "animation": "waiting-route-travel",
+    "background_navigation_inert_during_boot": true,
+    "overlay_removed_and_navigation_released_after_project_load": true,
+    "map_status": "ready",
+    "browser_errors": 0,
+    "model_calls": 0
+  },
   "verification": [
     {
       "command": "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run verify",

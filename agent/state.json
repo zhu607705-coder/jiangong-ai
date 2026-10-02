@@ -1,5 +1,5 @@
 {
-  "status": "animated_waiting_ui_verified",
+  "status": "animated_waiting_ui_merged_live_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -33,7 +33,7 @@
   ],
   "next_task": "Build a source-grounded notice timeline and exact deadline projection, then validate project-location/date roles with human labels. Pro Draft PR5 stays separate.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-10-02T08:43:43+00:00",
+  "updated_at": "2026-10-02T09:06:56+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -77,7 +77,7 @@
     "research/test_results/import-graph.json",
     "research/test_results/loading-journey.json"
   ],
-  "current_delivery": "The loading-journey branch adds an original animated survey cursor for initial project load, map connection, project switching, research stages and imported-data reads. Full verification and browser map regressions passed; delayed-request desktop/mobile readback, reduced-motion and inert background checks passed at 127.0.0.1:5173. This is UI feedback driven by real request/event states, not inferred progress or a new model evaluation. Technical behavior is documented in docs/engineering.md.",
+  "current_delivery": "Merged PR8 adds an original animated survey cursor for initial project load, map connection, project switching, research stages and imported-data reads. Full local verification and both PR checks passed; local main and the running workbench at 127.0.0.1:5173 were read back. Boot animation appeared during a controlled request delay, then disappeared when the project and map became ready; background controls became interactive again. Technical behavior is documented in docs/engineering.md.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -221,7 +221,8 @@
     "pr3_merge_commit": "36ee5901a334a8332a3ffaf7615f7cde9de53670",
     "pr4_merge_commit": "4618f8f37d8f1e5049e6d7e7a54ba1dbbc6b7cd9",
     "pr6_merge_commit": "bac4196f303c3955ad3229991cc4f159c52bf944",
-    "pr7_merge_commit": "6451bde197a1c2c1b4244e560e73523016a61f00"
+    "pr7_merge_commit": "6451bde197a1c2c1b4244e560e73523016a61f00",
+    "pr8_merge_commit": "8b069375216561c936735aefcc2406ea188a305c"
   },
   "release_note": "The earlier v0.2 ZIP is a historical snapshot; current source delivery is GitHub main.",
   "pr2": {
@@ -298,6 +299,9 @@
     "next_runnable_task": "Continue the source-grounded notice timeline and deadline projection; run populated import readback when authorized material becomes available."
   },
   "waiting_ui": {
+    "merged_pr": 8,
+    "merged_commit": "8b069375216561c936735aefcc2406ea188a305c",
+    "live_readback_url": "http://127.0.0.1:5173/",
     "changed_files": [
       "apps/workspace/src/App.tsx",
       "apps/workspace/src/components/WorkspaceFrame.tsx",
