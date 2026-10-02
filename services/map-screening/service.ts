@@ -10,7 +10,7 @@ import { booleanValid } from '@turf/boolean-valid'
 import { decisionFactors } from '../../packages/maps/decision-factors'
 import { applyDecisionGuards } from '../../packages/decision/structured-route'
 import { DECISION_POLICY, DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
-import { DASHBOARD_POLICY } from '../../packages/decision/dashboard'
+import { dashboardPolicy } from '../../packages/decision/dashboard'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -153,7 +153,7 @@ export class MapScreeningService {
 
   async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal, emit: ResearchSink = () => {}): Promise<MapScreenAnalysis> {
     const context=await this.loadContext(id,signal,true)
-    const key = [id, profile, RESEARCH_POLICY, BRIEF_SKILL_VERSION].join(':'), cached = await this.restore(context,profile)
+    const key = [id, profile, RESEARCH_POLICY, dashboardPolicy(profile), BRIEF_SKILL_VERSION].join(':'), cached = await this.restore(context,profile)
     if (cached?.status === 'completed') { emit({type:'progress',stage:'sources',status:'completed',message:'复用本次研判'}); return structuredClone(cached) }
     if (!context.target.label && !context.address && context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return cached?.assessment?{...structuredClone(cached),status:'partial',reason:'上一轮研究正在结束，请稍后重试评分。'}:{ context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
@@ -255,10 +255,10 @@ export class MapScreeningService {
   private scopeKey(context:MapScreenContext,profile:MapScreenProfile):string{
     const t=context.target
     const groups=context.groups.map(g=>[g.key,g.status,g.reported_count,[...g.sample].sort((a,b)=>a.id.localeCompare(b.id))])
-    return fingerprint([RESEARCH_POLICY,BRIEF_SKILL_VERSION,config.DEEPSEEK_MODEL,profile,this.provider.revision(),context.project_revision,t,groups,context.created_at.slice(0,10)])
+    return fingerprint([RESEARCH_POLICY,BRIEF_SKILL_VERSION,dashboardPolicy(profile),config.DEEPSEEK_MODEL,profile,this.provider.revision(),context.project_revision,t,groups,context.created_at.slice(0,10)])
   }
 
-  private decisionSignature():string{return fingerprint([DECISION_POLICY,DASHBOARD_POLICY,DECISION_THRESHOLDS,config.QWEN_DECISION_MODEL,config.QWEN_DECISION_ENDPOINT,config.decisionEnabled])}
+  private decisionSignature(profile:MapScreenProfile):string{return fingerprint([DECISION_POLICY,dashboardPolicy(profile),DECISION_THRESHOLDS,config.QWEN_DECISION_MODEL,config.QWEN_DECISION_ENDPOINT,config.decisionEnabled])}
 
   private async checkTopology(target:MapScreenTarget,signal:AbortSignal){
     if(!target.geometry)return
@@ -273,7 +273,7 @@ export class MapScreeningService {
   private async remember(context:MapScreenContext,profile:MapScreenProfile,analysis:MapScreenAnalysis){
     await this.save('analyses',context.id+'-'+profile,analysis)
     if(analysis.assessment)await this.save('scope-analyses',this.scopeKey(context,profile),{
-      saved_at:stamp(),analysis,decision_signature:this.decisionSignature(),
+      saved_at:stamp(),analysis,decision_signature:this.decisionSignature(profile),
       groups:context.groups.map(g=>({key:g.key,source_id:g.source_id})),address:context.address,city:context.city,
     })
   }
@@ -331,7 +331,7 @@ export class MapScreeningService {
       }
       analysis.reused_from_context_id=analysis.reused_from_context_id||analysis.context_id
       analysis.context_id=context.id
-      if(!analysis.refresh_required&&saved.decision_signature!==this.decisionSignature()){
+      if(!analysis.refresh_required&&saved.decision_signature!==this.decisionSignature(profile)){
         analysis.status='partial';delete analysis.decision_support;analysis.reason='简报已恢复，判断配置已更新，可重新评分。'
       }
       await this.save('contexts',context.id,context)

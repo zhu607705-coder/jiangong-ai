@@ -1,6 +1,6 @@
 import type { Source } from '../../apps/host/generated/contracts'
 
-export const RESEARCH_POLICY = 'public-adapters-v11'
+export const RESEARCH_POLICY = 'public-adapters-v12-neighborhood'
 /** Publication age alone is not expiry; old, still-applicable archives survive. */
 export function sourceCurrentAt(source:Source,asOf:string):boolean {
   const cutoff=Date.parse(asOf),published=Date.parse(source.published_at||'')
@@ -28,6 +28,12 @@ export function safePublicUrl(value:string):string|null {
 }
 export function publicSearchPlan(place:string,purpose:string):string[] {
   const name=place.replace(/[\r\n<>]/g,' ').trim().slice(0,180)
+  if(purpose.includes('老旧小区'))return [
+    `${name} 老旧小区改造 基础类 管网 消防 鉴定 site:gov.cn`,
+    `${name} 居民 家庭 人口 公共服务 改造需求 site:gov.cn`,
+    `${name} 改造 居民协商 实施主体 资金 物业 site:gov.cn`,
+    `${name} 老旧小区改造 完善类 提升类 工程清单 成本 长效维护`,
+  ]
   return [
     `${name} 工程 改造 采购 成交 site:ccgp.gov.cn`,
     `${name} 土地 用途 供地 site:landchina.com`,
