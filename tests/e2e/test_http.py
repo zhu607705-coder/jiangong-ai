@@ -190,6 +190,13 @@ def test_real_upload_is_local_and_does_not_become_an_instruction(running_app):
     assert uploaded.status_code == 201, uploaded.text
     duplicate = app.client.post(endpoint, files={"file": ("experience.md", content.encode(), "text/markdown")})
     assert duplicate.json()["id"] == uploaded.json()["id"]
+    csv = app.client.post(endpoint, files={"file": ("buildings.csv", "building,area\nA1,120\nA2,\n".encode(), "text/csv")})
+    assert csv.status_code == 201, csv.text
+    stored = app.client.get(endpoint)
+    assert stored.status_code == 200, stored.text
+    csv_record = next(row for row in stored.json() if row["id"] == csv.json()["id"])
+    assert csv_record["parser_result"]["profile"]["tables"][0]["rowCount"] == 2
+    assert csv_record["parser_result"]["profile"]["tables"][0]["rows"][0]["values"]["building"] == "A1"
     project = app.client.get(f"/api/projects/{p['project_id']}").json()
     assert project["input"]["context_rules"] == []
     assert project["input"]["sources"][0]["visibility"] == "internal"

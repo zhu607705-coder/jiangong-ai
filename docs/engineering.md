@@ -2,11 +2,11 @@
 
 从用户提供的《海之子杯_AI原生执行包_v2.zip》实际构建，当前源码包含本地地图工作台、项目研判与公开资料检索。原 ZIP 保持不变；本文件描述**已实现的接口和约束**，运行状态以 `agent/state.json`、`agent/intelligence-state.json` 及相应测试记录为准。真实企业成效和训练效果尚无样本可验收。
 
-## 当前系统架构（2026-09-29）
+## 当前系统架构（2026-10-02）
 
 ```mermaid
 flowchart LR
-    UI[React 工作台\n高德地图 / 选中浮卡 / 资料检索] -->|同源会话 HTTP / SSE| HOST[Express 本地主机\n鉴权、项目、地图、资料任务]
+    UI[React 工作台\n高德地图 / 资料检索 / 导入数据关系图] -->|同源会话 HTTP / SSE| HOST[Express 本地主机\n鉴权、项目、地图、资料任务]
     HOST --> DB[(PGlite / 可配置 PostgreSQL\n项目、版本、来源、分析、回执)]
     HOST -->|受限任务与结构化输出| DSH[DeepSeek Harness\nLiveSession / 子会话]
     DSH --> DS[DeepSeek 模型与原生搜索]
@@ -19,6 +19,21 @@ flowchart LR
 `apps/workspace/src` 负责地图与检索交互，不保存模型密钥；`apps/host/server.ts` 是本机统一入口和数据库所有者。`packages/contracts/schema.json` 是项目输入的唯一业务契约源，生成 TypeScript/Pydantic 类型；`packages/intelligence` 负责公开资料版本、检索、模型流水线、事件归并和人工复核；`runtime/intelligence/judge.ts` 在已有 DSH 会话内执行模型阶段；`services/capabilities/app.py` 提供受令牌保护的解析、检索和空间计算。高德安全密钥与模型密钥只在本机配置，不进入浏览器或 Git。
 
 部署契约是**单操作员本地工作台**：仅接受配置的 loopback Host/Origin；`GET /api/session` 发放 `HttpOnly`、`SameSite=strict` 会话 cookie；后续 `/api` 与高德代理请求验证 cookie，写请求还验证 `X-Requested-With: haizhizi`。这不是已验收的多租户身份系统。项目、来源和上下文在数据库中按版本保存；公开正文与合成样例分别标注，未核实的地块、面积和收益不由模型补全。
+
+### 导入数据关系图与面板分析
+
+`apps/workspace/src/imports/ImportedDataExplorer.tsx` 在项目“资料与证据”页读取本项目文档列表，`graph-model.ts` 将保存的解析结果投影成只读关系图和节点分析面板。数据链为：上传文件 → 宿主调用现有 ParserPort 并将 `parser_result` 写入 `documents`，同时在项目输入中保存同 ID 的 `Source` 和来源绑定的 `table_row` 记录 → 工作台读取项目输入、`GET /api/projects/:id/documents` 与当前展示的决策包来源 → 浏览器内归一化、连线和统计。切换项目或项目 `context_version` 变化时重新读取文档列表；视图本身不写回事实，也不调用模型。
+
+图以项目为根；上传文档以文档 ID 关联同 ID 的项目来源，向下展示解析表或文本行、字段与原文定位；含表的 Word 文档仍保留正文段落节点。切换到“全部来源”时，另外展示项目输入和当前决策包中的来源；同 ID 合并时项目输入优先于已完成研判的来源快照。非 `table_row` 的 Fact 仅凭显式 `source_id` 连向匹配的文档或来源，`public_records` 也须保留相同的 `source_id`。边只表示项目归属、解析结构和明确的来源引用；同名、同值、相近地点都不产生推断关系。未找到来源的 Fact 可计入总数，但不伪造图边。旧研判快照可能落后于当前项目版本，不能因为在“全部来源”中可见就视为当前已核事实。
+
+| 面板指标 | 计算口径与解释 |
+|---|---|
+| 导入文件、关联来源、格式、待 OCR 文件 | 分别计本项目 `documents` 返回条数、按 ID 合并后的项目/研判 `Source` 条数、文件名扩展名分布，以及解析状态为 `ocr_required` 的文档数；来源数不等于上传文件数。 |
+| 解析表、文本行、解析行数、字段数、已截取预览表 | 对归一化后的 `parser_result.profile.tables` 求和；TXT/MD 的 Line/Text 结构计为“文本行”而非解析表，空白文本解析为 `empty`，不产生表或行。解析行数取各结构的 `rowCount`，字段数取 `columnCount`，截取由 `truncated` 或 `rowCount` 大于可见行数判断。这是解析器处理范围内的数字，Excel 等格式存在读取上限，不能当作原文件总量。 |
+| 可见预览行、来源绑定原始行、其他结构化事实 | 前者计各表实际保留的 `rows`，图模型每表最多读取 250 行；后两者分别计当前项目输入中 `kind=table_row` 和其余 Fact。每次上传最多保存 1000 条 `table_row`；原始行是带来源的解析记录，并非已核业务事实，Fact 数量与文件全量行数、预览行数不要求相等。 |
+| 字段完整度与常见值 | 优先显示解析器提供的 `fillRate`、`missingCount`，无字段画像时按可见预览行估算；截取表的解析器填充率按预览估计并标为 `estimated`。去重值与最多 5 个常见值来自预览，面板中的频数不是全表频数；行预览与解析器画像均缺失时显示未知。 |
+
+“总览 / 结构 / 字段”控制展开层级，“导入文件 / 全部来源”控制来源范围，搜索只筛文件或来源的名称与 ID；窄屏提供文件/来源节点的快速定位。无上传文件时自动显示已有项目来源。选中节点后，右侧面板按类型展示文件状态、解析器、指纹与问题，表格行列和字段完整度，原文定位，或来源类别、可见性与明确引用。图形收起的表和正文段落仍可从文件面板打开；原文定位支持筛选与分批展开。归一化每文档最多取 50 表、1000 个原文段，每表最多取 100 字段和 250 行预览；图最多显示 16 张来源卡片（字段模式为 8 张），每个子层再有节点上限。表格面板最多呈现前 8 行、前 5 列。顶部统计在搜索和图节点截取前计算，但已受解析器与归一化上限影响；界面没有全量原始行浏览或分页。`GET /documents` 目前返回完整的保存解析结果，单文件上限为 10 MB；多份大文本的初次传输和浏览器归一化仍有容量风险。无法提取正文的扫描 PDF 标记待 OCR，不以空文本生成字段或肯定事实。解析文本、字段类型和列统计帮助检查材料结构与质量，不能证明权属、工程安全、法规效力或投资可行性。该 GET 路由受同源本机会话和项目存在性检查保护，返回含解析文本和行预览的保存结果而非原文件字节；内部材料不能当公开数据，且此路由不构成多租户访问控制。
 
 ### 核心算法与边界
 
@@ -52,7 +67,9 @@ flowchart LR
 | `POST /api/runs/:id/cancel`；`POST /api/runs/:id/resume` | 运行 ID | 请求取消或按保存的会话/阶段恢复。 |
 | `GET /api/runs/:id/decision-packet`；`GET /api/runs/:id/report` | 已完成运行 ID | 结构化决策包或 Markdown 报告；未完成时返回冲突。 |
 | `POST /api/projects/:id/context-proposals`；`/context-updates`；`/context-revoke` | 提议、版本及变更 | 编译、版本锁更新或撤销组织上下文。 |
-| `POST /api/projects/:id/documents`；`GET /api/projects/:id/documents`；`POST/GET /api/projects/:id/followups` | 文件或调查项 | 解析入库、文档列表、后续核查任务。 |
+| `POST /api/projects/:id/documents` | 单文件表单上传；TXT/MD/CSV/PDF/DOCX/XLSX，最多 10 MB | 按项目和 SHA-256 去重；新文件解析入库后保存同 ID 来源及来源绑定原始行，项目上下文版本递增。重复文件直接返回既有记录。 |
+| `GET /api/projects/:id/documents` | 项目 ID；当前不读取分页或筛选参数 | 校验项目后按 `project_id` 返回 `{id,file_name,parser_result,created_at}[]`，供关系图读取解析表、行预览、原文定位和状态；不返回原始文件字节，也未承诺列表排序。 |
+| `POST/GET /api/projects/:id/followups` | 调查项或项目 ID | 保存或读取后续核查任务。 |
 | `GET /api/maps/data`；`GET /api/maps/screening/profiles` | 无 | 数据目录、初筛画像及主题配置。 |
 | `POST /api/maps/geometry/wgs84` | `{geometry}` | 拓扑校验并返回 WGS84 Geometry。 |
 | `POST /api/maps/screening/context` | `{target}` | 有来源的选区快照 `context_id`；需要高德配置。 |

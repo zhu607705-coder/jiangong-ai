@@ -1,0 +1,40 @@
+{
+  "feature": "source-backed imported-data graph and analysis panel",
+  "date": "2026-10-02",
+  "branch": "codex/import-graph",
+  "verification": [
+    {
+      "command": "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run verify",
+      "result": "passed",
+      "javascript": "22 files, 390 tests passed",
+      "python": "70 tests passed",
+      "http_e2e": "12 tests passed",
+      "build": "TypeScript and Vite production build passed"
+    },
+    {
+      "command": "LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/import-graph.mjs",
+      "result": "passed after the final UI change",
+      "scope": "Synthetic browser API: nodes, field inspector, hidden seventh table and Word paragraph access, zoom, search, empty state, mobile quick jump, project/revision isolation"
+    },
+    {
+      "command": "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm test -- tests/contracts/import-graph.test.ts",
+      "result": "6 passed after the final UI change",
+      "scope": "Actual local CSV parser on 300 synthetic rows, preview and source-bound facts; XLSX preview, OCR/PDF locators, mixed Word text and empty Markdown contracts"
+    },
+    {
+      "command": "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run build",
+      "result": "passed after the final UI change"
+    }
+  ],
+  "live_readback": {
+    "url": "http://127.0.0.1:5174/",
+    "project_id": "P-098374f7",
+    "uploaded_documents": 0,
+    "linked_source_nodes_shown": 11,
+    "desktop_horizontal_page_overflow": false,
+    "mobile_horizontal_page_overflow": false,
+    "browser_errors": 0,
+    "model_calls_for_visualization": 0
+  },
+  "claim_boundary": "The actual current project has no uploaded documents. Populated import visualization was verified with real local parser output from a synthetic CSV, HTTP upload/readback in an isolated test database, and a synthetic browser API harness, not with user-provided real import material. Source links are explicit only; raw table rows are not verified business facts. The current document GET is unpaged and may transfer large parser results for many uploads."
+}

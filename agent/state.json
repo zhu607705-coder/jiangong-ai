@@ -1,5 +1,5 @@
 {
-  "status": "decision_brief_ten_domains_merged_live_verified",
+  "status": "source_backed_import_graph_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -21,16 +21,18 @@
     "143_checks_and_build_on_clean_publication_source",
     "private_github_repository_created_pushed_and_read_back",
     "source_linked_decision_brief_aggregated_from_existing_packet",
-    "ten_cross_domain_public_mechanism_cases_added"
+    "ten_cross_domain_public_mechanism_cases_added",
+    "source_backed_import_graph_and_analysis_panel"
   ],
   "not_completed": [
     "real_enterprise_effectiveness_evaluation_requires_authorized_cases",
     "external_production_database_extensions_and_multitenant_deployment_validation",
-    "scanned_image_OCR_engine_optional_source_capability"
+    "scanned_image_OCR_engine_optional_source_capability",
+    "real_user_import_visual_readback_waits_for_authorized_uploaded_material"
   ],
   "next_task": "Build a source-grounded notice timeline and exact deadline projection, then validate project-location/date roles with human labels. Pro Draft PR5 stays separate.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-09-29T10:47:10+00:00",
+  "updated_at": "2026-10-02T07:23:41+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -70,9 +72,10 @@
     "research/test_results/pro-audit-round7.json",
     "research/test_results/dsh-rc1-intelligence.json",
     "research/test_results/pro-pr5-review.json",
-    "research/test_results/decision-brief-cross-domain.json"
+    "research/test_results/decision-brief-cross-domain.json",
+    "research/test_results/import-graph.json"
   ],
-  "current_delivery": "Merged PR3/PR4/PR6 provide public-intelligence search, DSH RC1 and source-linked path-specific comparisons with a richer report. Ten additional official cross-domain cases bring the mechanism catalog to 60. The existing real project UI and report were read back without a new model call; technical architecture remains in docs/engineering.md.",
+  "current_delivery": "The project evidence page now includes a source-backed imported-data graph and field analysis panel. Full verification, parser-backed synthetic CSV tests, browser interactions and actual no-upload project readback passed without a new model call. Current live projects contain no uploaded documents, so populated import behavior is validated with synthetic material. Technical architecture and API details are in docs/engineering.md.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -105,6 +108,7 @@
     "decision_brief": [
       "packages/decision/brief-view.ts",
       "apps/workspace/src/App.tsx",
+      "apps/host/ingest.ts",
       "apps/host/reports.ts",
       "tests/contracts/decision-brief.test.ts"
     ],
@@ -261,5 +265,28 @@
     "existing_real_run_read_back": "RUN-7de358da-6fef-4c14-a249-847cd2bd8489",
     "evidence": "research/test_results/decision-brief-cross-domain.json",
     "new_model_calls_for_projection": 0
+  },
+  "import_graph": {
+    "changed_files": [
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/imports/graph-model.ts",
+      "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "apps/workspace/src/imports/import-graph.css",
+      "apps/workspace/src/maps/map.css",
+      "docs/engineering.md",
+      "tests/contracts/import-graph.test.ts",
+      "tests/e2e/test_http.py",
+      "tests/browser/import-graph.mjs",
+      "research/test_results/import-graph.json",
+      "agent/state.json"
+    ],
+    "tests": "npm run verify: 390 JS, 70 Python, 12 HTTP E2E and production build passed; parser-backed contract and Chromium browser flow passed",
+    "artifact": "research/test_results/import-graph.json",
+    "live_uploaded_documents": 0,
+    "unresolved": [
+      "A real user-uploaded project document was unavailable for populated live readback; source-backed synthetic parser, isolated HTTP and browser flows passed.",
+      "The unpaged documents endpoint can transfer large parser results when many large files are uploaded."
+    ],
+    "next_runnable_task": "Continue the source-grounded notice timeline and deadline projection; run populated import readback when authorized material becomes available."
   }
 }
