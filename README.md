@@ -40,6 +40,17 @@ bash scripts/start.sh
 
 已通过 DSH 接入 `decision-model-preview`，用于选择补证、核查阻点、比较路径或复核；生成模型负责简短说明。Qwen 不覆盖既有来源事实和组织约束。配置、已验证专用网关、阈值与真实测试说明见 [Qwen 接入文档](docs/Qwen决策模型接入.md)。
 
+## 文档多维评估 CLI
+
+使用现有 Qwen `decision-model-preview` 评估明确指定的文件；默认老旧小区六维衡量材料支撑程度，可用 JSON 量表替换。支持 TXT、Markdown、CSV、PDF、Word、Excel，输出 JSON 与 Markdown。
+
+```bash
+npm run documents:evaluate -- --dry-run --out data/local/doc-review 材料.md
+npm run documents:evaluate -- --rubric examples/document-evaluation/source-quality-rubric.json --out data/local/doc-review-live 材料.md
+```
+
+`--dry-run` 不联网；正式命令会向配置的 Qwen 发送指定文件的提取内容。缺项保留为空，覆盖率与已评维均值分别显示；不改写项目事实或审批结论。命令与算法见[文档多维评估 CLI](docs/文档多维评估CLI.md)，项目内 Skill 见 [.agents/skills/qwen-document-evaluation/SKILL.md](.agents/skills/qwen-document-evaluation/SKILL.md)。
+
 ## 已接入的能力
 
 - **CRE 工作台与 ParserPort**：选择性复用界面结构、通用文本/CSV 解析、PDF/Excel 提取与表格来源定位、报告表格逻辑；没有运行原收购控制器或固定 verdict 演示。

@@ -1,0 +1,148 @@
+{
+  "verified_at": "2026-10-02",
+  "scope": "Supplied-document CLI and browser navigation loop; no enterprise efficacy or calibrated scoring claims.",
+  "skill": ".agents/skills/qwen-document-evaluation/SKILL.md",
+  "upstream_skill": {
+    "repository": "typesafe-ai/skills",
+    "ref": "65a39f393687675ce170e6094757de20370365b9",
+    "license": "MIT"
+  },
+  "contract_checks": {
+    "existing_js": 426,
+    "new_cli_js": 17,
+    "python": 70,
+    "build": "passed",
+    "browser": {
+      "integrated_neighborhood_workflow": 9,
+      "map_core": 36,
+      "experience_library": "passed"
+    }
+  },
+  "test_log_files": [
+    "research/baseline_logs/browser-workflow-unit.log",
+    "research/baseline_logs/browser-workflow-python.log",
+    "research/baseline_logs/document-cli-tests.log",
+    "research/baseline_logs/document-cli-build.log",
+    "research/baseline_logs/neighborhood-workflow-browser.log",
+    "research/baseline_logs/experience-navigation-browser.log",
+    "research/baseline_logs/browser-workflow-map.log"
+  ],
+  "live_endpoint_checks": {
+    "status": "passed",
+    "calls": 2,
+    "documents": "public historical source excerpts prepared from data/public_cases/hangzhou-neighborhood.json",
+    "results": [
+      {
+        "profile": "live",
+        "model": "decision-model-preview",
+        "request_id": "c37da756-b2f2-44a8-a40e-6dceeee8fcf6",
+        "input_tokens": 3343,
+        "duration_ms": 373,
+        "result_status": "partial",
+        "source_hash": "b2d4d27d143c6b0201e5f1be11efde17b50ead3488765a4b8bdbf20c2de1a542",
+        "rubric_hash": "cd62d61533157c8732a786046a9ee3f2659886e4627469200e4501d42819f3ba",
+        "request_bytes": 14158,
+        "dimensions": [
+          {
+            "name": "居民需求",
+            "status": "missing_evidence",
+            "score": null
+          },
+          {
+            "name": "公共服务",
+            "status": "uncertain_evidence",
+            "score": null
+          },
+          {
+            "name": "居住工程",
+            "status": "uncertain_evidence",
+            "score": null
+          },
+          {
+            "name": "实施协同",
+            "status": "missing_evidence",
+            "score": null
+          },
+          {
+            "name": "长效维护",
+            "status": "missing_evidence",
+            "score": null
+          },
+          {
+            "name": "资金交付",
+            "status": "missing_evidence",
+            "score": null
+          }
+        ],
+        "summary": {
+          "assessed_dimensions": 0,
+          "total_dimensions": 6,
+          "weighted_coverage": 0,
+          "assessed_weighted_mean": null
+        },
+        "artifact": "data/local/document-evaluation-validation/live/results.json"
+      },
+      {
+        "profile": "live-custom",
+        "model": "decision-model-preview",
+        "request_id": "2699384f-2c00-4d7c-958c-718c85369079",
+        "input_tokens": 2111,
+        "duration_ms": 264,
+        "result_status": "completed",
+        "source_hash": "b2d4d27d143c6b0201e5f1be11efde17b50ead3488765a4b8bdbf20c2de1a542",
+        "rubric_hash": "a4d20cba2aaae9c8b999d07558cad04bed8786de71acfc1dcbeb8f20d09a28c4",
+        "request_bytes": 7939,
+        "dimensions": [
+          {
+            "name": "来源字段完整性",
+            "status": "assessed",
+            "score": 3.38
+          },
+          {
+            "name": "适用边界说明",
+            "status": "assessed",
+            "score": 2.85
+          }
+        ],
+        "summary": {
+          "assessed_dimensions": 2,
+          "total_dimensions": 2,
+          "weighted_coverage": 1,
+          "assessed_weighted_mean": 3.115
+        },
+        "artifact": "data/local/document-evaluation-validation/live-custom/results.json"
+      }
+    ]
+  },
+  "decision_quality_evaluation": {
+    "status": "not_evaluated",
+    "reason": "No authorized labelled document set or professionally confirmed rubric; endpoint success and synthetic checks do not establish judgment accuracy."
+  },
+  "browser_loop": {
+    "before": "Tab remount lost all scheme fields except default reserve and removed result.",
+    "after": "Project-scoped session draft survives tabs, map close/reopen, and project switch; frozen cited sources focus and expand; empty experience page opens material upload.",
+    "actual_local_readback": {
+      "input_assumptions": [
+        100,
+        20,
+        0,
+        10,
+        90,
+        10
+      ],
+      "result": [
+        132,
+        42,
+        13.2
+      ],
+      "tab_and_map_return": "preserved",
+      "model_calls": 0
+    },
+    "native_internal_browser": {
+      "status": "blocked_external",
+      "error": "codex/sandbox-state-meta: sandboxCwd is not a local file URI: file:///mnt/d/...",
+      "fallback": "Separate local Playwright browser used; no current GPT Pro review claimed."
+    }
+  },
+  "pending_preferences": "Document kinds and evaluation dimensions questions sent; current six-dimensional support rubric is configurable."
+}

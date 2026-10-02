@@ -492,6 +492,51 @@
         "data/public_cases/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T20",
+      "depends_on": [
+        "T19"
+      ],
+      "goal": "浏览器连续体验回归：方案草稿、引用定位与经验上传入口",
+      "status": "completed_local_browser_verified",
+      "expected_artifacts": [
+        "tests/browser/neighborhood-workflow.mjs",
+        "research/test_results/document-evaluation-cli.json"
+      ],
+      "definition_of_done": "实际本地切页和地图往返保留草稿，集成回归验证项目隔离与冻结原文定位；不宣称原生桥接或Pro审阅成功。",
+      "write_scope": [
+        "apps/workspace/",
+        "tests/browser/",
+        "docs/",
+        "agent/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T21",
+      "depends_on": [
+        "T19"
+      ],
+      "goal": "TypeSafe Skill适配现有Qwen并实现用户指定文档多维评估CLI",
+      "status": "completed_contract_and_live_endpoint_verified",
+      "expected_artifacts": [
+        ".agents/skills/qwen-document-evaluation/SKILL.md",
+        "scripts/evaluate-documents.ts",
+        "docs/文档多维评估CLI.md",
+        "research/test_results/document-evaluation-cli.json"
+      ],
+      "definition_of_done": "问题已向用户提出，默认量表可替换，复用DSH/Qwen/ParserPort，缺项不作零分，契约与真实调用分列，报告含材料定位和指纹。",
+      "write_scope": [
+        ".agents/skills/",
+        "packages/document-evaluation/",
+        "scripts/",
+        "tests/",
+        "examples/",
+        "docs/",
+        "agent/"
+      ],
+      "upstream_verification_required": true
     }
   ]
 }

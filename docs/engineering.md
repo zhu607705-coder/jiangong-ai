@@ -20,6 +20,10 @@ flowchart LR
 
 部署契约是**单操作员本地工作台**：仅接受配置的 loopback Host/Origin；`GET /api/session` 发放 `HttpOnly`、`SameSite=strict` 会话 cookie；后续 `/api` 与高德代理请求验证 cookie，写请求还验证 `X-Requested-With: haizhizi`。这不是已验收的多租户身份系统。项目、来源和上下文在数据库中按版本保存；公开正文与合成样例分别标注，未核实的地块、面积和收益不由模型补全。
 
+### 文档多维评估 CLI
+
+`scripts/evaluate-documents.ts` 通过既有 ParserPort、DSH 与 Qwen System One 能力批量评估用户指定材料。每份材料的多维内容存在判断与量表评分合并请求，代码校验概率和期望分、保留缺项，并分列加权覆盖率与已评维均值。量表、文件指纹、材料级定位与请求记录可复核；结果不写回项目事实、经验卡审核或行动门。命令、核心公式、输出接口与限制见[文档多维评估 CLI](文档多维评估CLI.md)。
+
 ### 导入数据关系图与面板分析
 
 `apps/workspace/src/imports/ImportedDataExplorer.tsx` 在项目“资料与证据”页读取本项目文档列表，`graph-model.ts` 将保存的解析结果投影成只读关系图和节点分析面板。数据链为：上传文件 → 宿主调用现有 ParserPort 并将 `parser_result` 写入 `documents`，同时在项目输入中保存同 ID 的 `Source` 和来源绑定的 `table_row` 记录 → 工作台读取项目输入、`GET /api/projects/:id/documents` 与当前展示的决策包来源 → 浏览器内归一化、连线和统计。切换项目或项目 `context_version` 变化时重新读取文档列表；视图本身不写回事实，也不调用模型。
