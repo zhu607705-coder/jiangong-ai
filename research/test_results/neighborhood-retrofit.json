@@ -7,7 +7,8 @@
     "targeted": "36 contract tests passed after review fixes",
     "browser": "full map regression, experience library (10 fields/version/as_of), intelligence regression passed",
     "live": "local HTTP, real AMap point, public intake, upload/parser/experience draft and offline run read back",
-    "post_adjustment": "39 final targeted decision tests and production build passed"
+    "post_adjustment": "39 final targeted decision tests and production build passed",
+    "experience_ui_final": "Browser regression and TypeScript passed after adding explicit model-extraction opt-in; default remains local and backend permission gate remains authoritative."
   },
   "public_pilot": {
     "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",

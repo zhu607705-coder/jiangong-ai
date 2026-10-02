@@ -44,6 +44,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   const [loaded, setLoaded] = useState<{ key: string; documents: Document[]; cards: ExperienceCard[]; error: string; loading: boolean }>({ key: '', documents: [], cards: [], error: '', loading: true })
   const [mode, setMode] = useState<'project' | 'search'>('project')
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([])
+  const [useModel,setUseModel]=useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [editing, setEditing] = useState<{ card: ExperienceCard; draft: ExperienceDraft } | null>(null)
   const [reviewNote, setReviewNote] = useState('')
@@ -64,7 +65,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   useEffect(() => {
     const controller = new AbortController()
     setLoaded({ key: requestKey, documents: [], cards: [], error: '', loading: true })
-    setSelectedDocuments([]); setExpanded(null); setEditing(null); setReviewNote(''); setBusy('')
+    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setEditing(null); setReviewNote(''); setBusy('')
     setActionError(''); setNotice(''); setWarnings([]); setMatches([]); setSearched(false); setSearching(false)
     searchSequence.current += 1
     void Promise.all([
@@ -90,7 +91,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
     const key = requestKey
     setBusy('extract'); setActionError(''); setNotice(''); setWarnings([])
     try {
-      const result = await api<{ cards: ExperienceCard[]; warnings: string[]; model_calls: number }>(`${base}/extract`, { document_ids: selectedDocuments, use_model: false })
+      const result = await api<{ cards: ExperienceCard[]; warnings: string[]; model_calls: number }>(`${base}/extract`, { document_ids: selectedDocuments, use_model: useModel })
       if (activeKey.current !== key) return
       refreshCards(result.cards); setWarnings(result.warnings || []); setSelectedDocuments([])
       setExpanded(result.cards[0]?.id || null)
@@ -173,8 +174,9 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
         {documents.length ? <><fieldset disabled={!!busy}><legend>选择历史材料</legend><div className="experience-document-list">{documents.map(document => <label key={document.id}>
           <input type="checkbox" checked={selectedDocuments.includes(document.id)} onChange={event => setSelectedDocuments(current => event.target.checked ? [...current, document.id] : current.filter(id => id !== document.id))} />
           <span>{document.file_name}<small>{document.parser_result?.status === 'ocr_required' ? '待 OCR，暂缺可提取正文' : '已保存材料'}</small></span></label>)}</div></fieldset>
-          <button type="button" className="experience-primary" disabled={!selectedDocuments.length || !!busy} onClick={() => void extract()}>{busy === 'extract' ? '正在提取…' : '提取经验草稿'}</button><small className="experience-extract-note">使用已保存的解析内容进行本地提取。</small></>
-          : <p className="experience-empty">先在上方上传历史项目材料，再提取经验卡。</p>}
+          <label className="experience-extract-note"><input type="checkbox" aria-label="使用结构化模型提取" checked={useModel} disabled={!!busy} onChange={e=>setUseModel(e.target.checked)}/> 使用结构化模型提取（需原文调用许可；候选仍须人工复核）</label>
+          <button type="button" className="experience-primary" disabled={!selectedDocuments.length || !!busy} onClick={() => void extract()}>{busy === 'extract' ? '正在提取…' : '提取经验草稿'}</button><small className="experience-extract-note">默认仅在本地提取明确字段；选择模型后由宿主检查凭据与内部资料权限。</small></>
+          : <p className="experience-empty">先到“资料与证据”页上传历史项目材料，再提取经验卡。</p>}
         {!!warnings.length && <ul className="experience-warnings">{warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>}
       </div>
       {!cards.length && <p className="experience-empty">尚无经验卡。提取后的草稿会在这里逐项展示决策、实施和结果。</p>}

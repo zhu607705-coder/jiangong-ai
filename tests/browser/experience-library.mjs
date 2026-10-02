@@ -31,7 +31,7 @@ await page.exposeFunction('__request', async (path, body) => {
   if (path === '/api/projects/P-A/experiences' && !body) return { cards: currentCard ? [currentCard] : [] }
   if (path === '/api/projects/P-B/experiences' && !body) return { cards: [] }
   if (path === '/api/projects/P-A/experiences/extract') {
-    assert.deepEqual(body, { document_ids: ['D-A'], use_model: false })
+    assert.deepEqual(body, { document_ids: ['D-A'], use_model: delayedExtract })
     if (delayedExtract) await new Promise(resolve => setTimeout(resolve, 350))
     currentCard = structuredClone(card)
     return { cards: [currentCard], warnings: [], model_calls: 0 }
@@ -73,7 +73,7 @@ try {
   await page.addScriptTag({ content: built.outputFiles.find(file => file.path.endsWith('.js')).text })
   const region = page.getByRole('region', { name: '项目经验沉淀' })
   await region.getByText('尚无经验卡。', { exact: false }).waitFor()
-  await region.getByRole('checkbox').check()
+  await region.locator('.experience-document-list input[type=checkbox]').check()
   await region.getByRole('button', { name: '提取经验草稿', exact: true }).click()
   await region.getByRole('button', { name: /合成管网改造经验/ }).waitFor()
   assert.equal(await region.getByText('待补充', { exact: true }).count(), 9)
@@ -114,10 +114,11 @@ try {
 
   // A late extraction response from A must not populate the newly selected project B.
   delayedExtract = true
-  await region.getByRole('checkbox').check()
+  await region.getByLabel('使用结构化模型提取').check()
+  await region.locator('.experience-document-list input[type=checkbox]').check()
   await region.getByRole('button', { name: '提取经验草稿', exact: true }).click()
   await page.getByRole('button', { name: '乙项目', exact: true }).click()
-  await region.getByText('先在上方上传历史项目材料', { exact: false }).waitFor()
+  await region.getByText('先到“资料与证据”页上传历史项目材料', { exact: false }).waitFor()
   await page.waitForTimeout(450)
   assert.equal(await region.getByRole('button', { name: /合成管网改造经验/ }).count(), 0)
   assert.equal(await region.getByText('尚无经验卡。', { exact: false }).count(), 1)
