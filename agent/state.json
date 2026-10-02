@@ -80,7 +80,7 @@
     "research/test_results/neighborhood-retrofit.json",
     "research/test_results/document-evaluation-cli.json"
   ],
-  "current_delivery": "Local code includes Qwen document-evaluation CLI and project Skill adaptation, six supported document formats, configurable rubrics, explicit unknowns, JSON/Markdown provenance reports, and fixed neighborhood draft/source/material navigation. 426 existing JS + 17 new CLI checks, 70 Python, browser regressions, production build and two real Qwen public-excerpt requests passed. No calibrated decision-quality or enterprise effectiveness claim. GitHub publication recorded after submission.",
+  "current_delivery": "Local code includes Qwen document-evaluation CLI and project Skill adaptation, six supported document formats, configurable rubrics, explicit unknowns, JSON/Markdown provenance reports, and fixed neighborhood draft/source/material navigation. 426 existing JS + 17 new CLI checks, 70 Python, browser regressions, production build and two real Qwen public-excerpt requests passed. No calibrated decision-quality or enterprise effectiveness claim. Published PR10 for review, currently open; implementation remains available locally on codex/browser-workflow-loop.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -220,7 +220,7 @@
     "push": "verified",
     "evidence": "research/test_results/github.json",
     "initial_publication_commit": "997cd834f8159b6e1e854c39549020ad6f1aabd3",
-    "current_source_branch": "main",
+    "current_source_branch": "codex/browser-workflow-loop",
     "pr1_merge_commit": "1408fee8537ebd47a6ec86c05c4091e4e5275436",
     "decision_integration_evidence": "research/test_results/qwen-integration.json",
     "pr2_merge_commit": "644cd56a69f8d77690f73efd9d8b1cb4e9ae6848",
@@ -373,7 +373,14 @@
     "live_calls": 2,
     "live_input": "Public excerpts only; no enterprise material sent.",
     "decision_quality": "not_evaluated",
-    "next_runnable_task": "Evaluate user-specified files with the chosen rubric; no training or calibrated domain efficacy claim."
+    "next_runnable_task": "Evaluate user-specified files with the chosen rubric; no training or calibrated domain efficacy claim.",
+    "publication": {
+      "pull_request": 10,
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/10",
+      "state": "open",
+      "implementation_commit": "9ee864924dfb012bba7a974fefdbde4cf5e26b9b",
+      "ci": "pending"
+    }
   },
   "browser_workflow_loop": {
     "status": "completed_with_local_browser_fallback",
