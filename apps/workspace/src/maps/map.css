@@ -568,3 +568,4 @@
 .atlas-view--loading .atlas-navigation,
 .atlas-view--loading .atlas-bottom-hint {display:none}
 .map-shell:has(.atlas-view--loading) .atlas-wordmark strong {color:#d7e7e4}
+.screening-profile-row{margin-bottom:8px;font-size:12px;color:#58776b}.screening-profile-row label{display:flex;align-items:center;gap:8px}.screening-profile-row select{font-size:12px;padding:5px;flex:1;min-width:0}

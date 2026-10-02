@@ -353,6 +353,16 @@
             "maxLength": 200
           },
           "maxItems": 100
+        },
+        "epistemic_status": {
+          "type": "string",
+          "enum": [
+            "fact",
+            "estimate",
+            "assumption",
+            "missing"
+          ],
+          "description": "事实、估算、方案假设或缺失；未标注不自动视为已核实。"
         }
       },
       "required": [
@@ -957,6 +967,9 @@
         },
         "decision_support": {
           "$ref": "#/definitions/DecisionSupport"
+        },
+        "neighborhood_action": {
+          "$ref": "#/definitions/NeighborhoodActionAdvice"
         }
       },
       "required": [
@@ -3241,6 +3254,82 @@
         "review_note",
         "created_at",
         "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "NeighborhoodActionAdvice": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": [
+            "proceed",
+            "supplement",
+            "defer"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "rule_version": {
+          "type": "string"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "text",
+              "evidence_refs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "where": {
+                "type": "string"
+              },
+              "impact": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "label",
+              "where",
+              "impact"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "decision",
+        "label",
+        "rule_version",
+        "reasons",
+        "missing"
       ],
       "additionalProperties": false
     }

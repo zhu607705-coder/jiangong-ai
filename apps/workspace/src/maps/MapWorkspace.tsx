@@ -36,7 +36,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   const [webgl, setWebgl] = useState(true)
   const [buildingControl, setBuildingControl] = useState(false)
   const searchVersion = useRef(0), selectionVersion = useRef(0)
-  const [profile, setProfile] = useState<MapScreenProfile>('balanced')
+  const [profile, setProfile] = useState<MapScreenProfile>('neighborhood')
   const [theme, setTheme] = useState<MapScreenTheme>('overall'), [dataOpen, setDataOpen] = useState(false)
   const [screenCells, setScreenCells] = useState<MapScreenCell[]>([]), [screenResult, setScreenResult] = useState<MapScreenResult | null>(null)
   const [screenRunning, setScreenRunning] = useState(false), [screenProgress, setScreenProgress] = useState(0), [screenError, setScreenError] = useState(''), [screenStale, setScreenStale] = useState(false)
@@ -251,6 +251,14 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
     const context=previewContext?.forId===selection.id?previewContext.context:selectedCell?.context||null
     onCreateFromPlace(placeForResearch(selection,details),context)
   }
+  function changeProfile(value:MapScreenProfile) {
+          screenAbort.current?.abort();screenVersion.current++;studiesDuringScan.current=null;setScreenRunning(false)
+          setProfile(value)
+          const reset=(cells:MapScreenCell[])=>classifyCells(cells.map(c=>({...c,factors:undefined,dashboard:undefined})),theme)
+          setScreenCells(reset);setSelectedCell(c=>c?reset([c])[0]:null)
+          setScreenResult(prev=>prev?{...prev,profile:value,cells:reset(prev.cells)}:prev)
+
+  }
   const interactive = phase === 'ready'
   return <section className={`atlas-view${phase === 'loading' ? ' atlas-view--loading' : ''}`} aria-label="地图空间探索" {...(interactionBlocked ? { inert: '' } : {})} aria-hidden={interactionBlocked}>
     <div className="atlas-map" ref={canvas} aria-label="高德交互地图" data-map-status={phase} />
@@ -274,7 +282,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
         <IconMapPin size={18} /><span><strong>{place.name}</strong><small>{[place.city, place.address].filter(Boolean).join(' · ') || place.category || '高德地图地点'}</small></span><IconArrowRight size={15} />
       </button>) : <p>没有找到匹配地点，试试更完整的地名。</p>}</div>}
     </div>
-    <ScreeningControls theme={theme} onTheme={value => {
+    <ScreeningControls profile={profile} onProfile={changeProfile} theme={theme} onTheme={value => {
       setTheme(value)
       if (screenResult) { const cells = classifyCells(screenResult.cells, value); setScreenCells(cells); setScreenResult({...screenResult, theme: value, cells, status: cells.length ? 'completed' : 'partial', comparison_count: cells.filter(c => c.tier !== 'incomplete').length}); setSelectedCell(current => current ? cells.find(c => c.id === current.id) || null : null) }
     }} running={screenRunning} completed={screenProgress}
@@ -306,13 +314,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
         {expanded && <div className="atlas-selection-icon"><IconMapPin size={28} stroke={1.4} /></div>}<h2>{selection.name}</h2><p>{selection.address || ''}</p>
         <div className="atlas-selection-tags"><span>{selection.category?.split(';')[0] || (selection.kind === 'poi' ? '地图地点' : '坐标点')}</span></div>
         {expanded && <div className="atlas-coordinate"><span>位置 · GCJ-02</span><code>{selection.longitude.toFixed(6)}, {selection.latitude.toFixed(6)}</code></div>}
-        <div hidden={expanded}><PreliminaryCard selection={selection} profile={profile} theme={theme} cell={selectedCell} onProfile={value=>{
-          screenAbort.current?.abort();screenVersion.current++;studiesDuringScan.current=null;setScreenRunning(false)
-          setProfile(value)
-          const reset=(cells:MapScreenCell[])=>classifyCells(cells.map(c=>({...c,factors:undefined,dashboard:undefined})),theme)
-          setScreenCells(reset);setSelectedCell(c=>c?reset([c])[0]:null)
-          setScreenResult(prev=>prev?{...prev,profile:value,cells:reset(prev.cells)}:prev)
-        }} onOpenProject={onOpenProject}
+        <div hidden={expanded}><PreliminaryCard selection={selection} profile={profile} theme={theme} cell={selectedCell} onProfile={changeProfile} onOpenProject={onOpenProject}
           onAssessment={(id, result) => {
             studiesDuringScan.current?.set(id,result)
             const update=(c:MapScreenCell)=>c.context?.id===id?cellWithStudy(c,result):c

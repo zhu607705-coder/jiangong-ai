@@ -43,6 +43,16 @@ flowchart LR
 
 ### 核心算法与边界
 
+当前新增业务方向为老旧小区综合整治提升，面向开发建设企业投资拓展与前期策划。`MapScreenProfile=neighborhood` 与 `ProjectInput.business_profile=neighborhood` 贯通地图检索、DSH、Qwen 与项目研究；新六维口径为居民需求、公共服务、居住工程、实施协同、长效维护、资金交付，版本 `neighborhood-renovation-fit-v1`。旧 `opportunity-fit-v2` 保存结果按原标签展示。六维是业务观察，非政府评分标准；人口/服务背景和对象自身工程事实保留不同空间范围，既有证据准入门没有放宽。
+
+`packages/retrofit/planning.ts` 独立输出“建议进一步尽调／先补充关键资料再判断／当前条件下暂缓”。只读取标记为 `epistemic_status=fact`、有来源版本/定位、观察时点有效且明确绑定本项目的确认记录；估算、方案假设与缺失不进入门槛。七项前置确认包含居民需求、工程评审、服务缺口、范围与协同、资金、维护及专业规则。明确安全、权属或保护否决条件优先。该门在离线与真实模型最终发布前写入 `DecisionPacket.neighborhood_action`、建设路径和导出报告，雷达等级不能抵消否决条件。正式专业确认仍须来自企业与专业人员，模型不替代鉴定。
+
+基础／完善／提升三类工程预算、预备费、计划资金和户数的调整由程序算静态总额、假设资金缺口与户均工程投入。面板全部输入明确为方案假设；未填写保持未知，不自动成为确认事实，也不改变行动门。目前方案比较是浏览器中的本次比较，未实现正式企业成本库或持久化方案审批。
+
+历史经验使用同一 PGlite/PostgreSQL 新增 `experience_cards` 和不可覆盖的 `experience_history`，复用已有文档解析、DSH 和全文检索。十字段区分决策问题、背景、条件、备选、提议、实际决策、决策依据、实施、结果、适用边界；非空值须有当前项目原文的逐字引用、定位和文件哈希。默认本地仅提取明确标签，未识别的叙述不猜成历史事实；显式模型提取须符合既有内部资料外发许可。草稿人工复核后才进入跨项目检索，修改后重新变成草稿；类型、模式、阶段、目标资料时点、owner 与合成类别共同过滤。复用绑定经验版本和项目版本，仅生成 `heuristic/unverified` 调查线索，不能自动生成当前硬约束。当前没有获准企业历史样本或业务效果评价，公开翠苑一区资料是历史流程验证案例，详见 `老旧小区改造_产品与验证方案.md`。
+
+经验接口：`GET /api/projects/:id/experiences`、`POST /api/projects/:id/experiences/extract`、`POST /api/projects/:id/experiences`、`POST /api/projects/:id/experiences/:cardId/update`、`POST /api/projects/:id/experiences/:cardId/review`、`GET /api/experiences/search`、`POST /api/projects/:id/experiences/reuse`。提取用 `document_ids/use_model`；更新与审核用 `expected_revision`；复用用 `expected_card_revision/expected_version`。检索不能将目标项目时点向未来扩展，复用再次核验版本记录时点。所有接口沿用本机会话、CSRF 和项目权限，不另建身份系统。
+
 | 模块 | 当前做法 | 结果约束 |
 |---|---|---|
 | 地图选区与坐标 | 点选先给浮卡；拖框至少 8 像素，单次范围经纬宽高各不超过 0.06 度。高德显示坐标为 GCJ-02，选区交由 Python 空间能力转换/校验为 WGS84 Polygon。 | 用户框选是调查范围，不冒充法定宗地边界；合成位置不叠加真实片区。 |

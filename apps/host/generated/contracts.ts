@@ -120,6 +120,10 @@ export interface Fact {
    * @maxItems 100
    */
   applies_to?: string[];
+  /**
+   * 事实、估算、方案假设或缺失；未标注不自动视为已核实。
+   */
+  epistemic_status?: "fact" | "estimate" | "assumption" | "missing";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -352,6 +356,7 @@ export interface DecisionPacket {
   unresolved_disagreements?: string[];
   scope?: Scope;
   decision_support?: DecisionSupport;
+  neighborhood_action?: NeighborhoodActionAdvice;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -492,6 +497,25 @@ export interface DimensionScore {
    */
   evidence_refs: string[];
   basis: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "NeighborhoodActionAdvice".
+ */
+export interface NeighborhoodActionAdvice {
+  decision: "proceed" | "supplement" | "defer";
+  label: string;
+  rule_version: string;
+  reasons: {
+    text: string;
+    evidence_refs: string[];
+  }[];
+  missing: {
+    key: string;
+    label: string;
+    where: string;
+    impact: string;
+  }[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

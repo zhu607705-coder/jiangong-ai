@@ -199,6 +199,12 @@ def test_real_upload_is_local_and_does_not_become_an_instruction(running_app):
     assert csv_record["parser_result"]["profile"]["tables"][0]["rows"][0]["values"]["building"] == "A1"
     project = app.client.get(f"/api/projects/{p['project_id']}").json()
     assert project["input"]["context_rules"] == []
+    anchor_endpoint = f"/api/projects/{p['project_id']}/map-anchor"
+    anchor = {"provider": "amap", "coordinate_encoding": "GCJ-02", "longitude": 120.1, "latitude": 30.2, "name": "接口契约测试点"}
+    linked = app.client.post(anchor_endpoint, json={"anchor": anchor, "expected_version": project["context_version"]})
+    assert linked.status_code == 200, linked.text
+    assert linked.json()["input"]["scope"]["map_anchor"] == anchor
+    assert app.client.post(anchor_endpoint, json={"anchor": anchor, "expected_version": project["context_version"]}).status_code == 409
     assert project["input"]["sources"][0]["visibility"] == "internal"
     assert project["input"]["sources"][0]["synthetic"] is False
     assert app.client.post(endpoint, files={"file": ("invalid.pdf", b"%PDF", "application/pdf")}).status_code == 422

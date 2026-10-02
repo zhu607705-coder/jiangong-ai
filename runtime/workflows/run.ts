@@ -19,7 +19,7 @@ function canonicalJson(value: unknown): unknown {
 export const digest = (value: unknown): string => createHash('sha256').update(JSON.stringify(canonicalJson(value))).digest('hex')
 
 export function roleDependency(project: ProjectInput, role: RoleId, mode: string): string {
-  const base = { project: project.project_id, mode, as_of: project.as_of, scope: project.scope }
+  const base = { project: project.project_id, mode, business_profile:project.business_profile||'general', as_of: project.as_of, scope: project.scope }
   if (role === 'case_enterprise') return digest({ ...base, rules: project.context_rules, sources: project.sources, facts: project.facts })
   // Context-only sources must not invalidate unchanged public evidence.
   const relevantFacts = project.facts.filter(f => role === 'building_feasibility' ? ['building_inventory', 'rights_status', 'structural_assessment'].includes(f.kind) : !['building_inventory', 'rights_status', 'structural_assessment'].includes(f.kind))

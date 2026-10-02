@@ -105,6 +105,17 @@ class AppliesToItem(RootModel[str]):
     root: str = Field(..., max_length=200)
 
 
+class EpistemicStatus(StrEnum):
+    """
+    事实、估算、方案假设或缺失；未标注不自动视为已核实。
+    """
+
+    fact = 'fact'
+    estimate = 'estimate'
+    assumption = 'assumption'
+    missing = 'missing'
+
+
 class Fact(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -119,6 +130,9 @@ class Fact(BaseModel):
     locator: str | None = None
     scope_kind: ScopeKind | None = None
     applies_to: list[AppliesToItem] | None = Field(None, max_length=100)
+    epistemic_status: EpistemicStatus | None = Field(
+        None, description='事实、估算、方案假设或缺失；未标注不自动视为已核实。'
+    )
 
 
 class Kind(StrEnum):
@@ -988,6 +1002,41 @@ class ExperienceCard(BaseModel):
     updated_at: str
 
 
+class Decision(StrEnum):
+    proceed = 'proceed'
+    supplement = 'supplement'
+    defer = 'defer'
+
+
+class Reason1(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    text: str
+    evidence_refs: list[str]
+
+
+class MissingItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str
+    label: str
+    where: str
+    impact: str
+
+
+class NeighborhoodActionAdvice(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    decision: Decision
+    label: str
+    rule_version: str
+    reasons: list[Reason1]
+    missing: list[MissingItem]
+
+
 class Scope(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1197,6 +1246,7 @@ class DecisionPacket(BaseModel):
     unresolved_disagreements: list[str] | None = None
     scope: Scope | None = None
     decision_support: DecisionSupport | None = None
+    neighborhood_action: NeighborhoodActionAdvice | None = None
 
 
 class MapScreenContext(BaseModel):

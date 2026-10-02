@@ -467,6 +467,31 @@
         "agent/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T19",
+      "depends_on": [
+        "T18"
+      ],
+      "goal": "老旧小区综合整治提升模式、版本化六维、行动门、经验卡提取审核复用及杭州历史验证",
+      "status": "completed_local_public_pilot_verified",
+      "expected_artifacts": [
+        "docs/老旧小区改造_产品与验证方案.md",
+        "data/public_cases/hangzhou-neighborhood.json",
+        "research/test_results/neighborhood-retrofit.json"
+      ],
+      "definition_of_done": "新旧六维口径不混用，硬约束进入权威决策包，经验逐字段有版本定位且受目标时点限制；实际公开数据和离线流程读回，不宣称企业成效。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "services/",
+        "runtime/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "data/public_cases/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

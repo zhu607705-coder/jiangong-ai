@@ -1,16 +1,17 @@
 import { IconScan, IconX, IconChevronDown, IconDatabase } from '@tabler/icons-react'
 import { useState } from 'react'
-import { SCREEN_THEMES, SCREEN_TIERS } from '../../../../packages/maps/screening-policy'
-import type { MapScreenCell, MapScreenTheme, MapScreenResult } from '../../../host/generated/contracts'
+import { screenThemes, SCREEN_TIERS } from '../../../../packages/maps/screening-policy'
+import type { MapScreenCell, MapScreenTheme, MapScreenResult, MapScreenProfile } from '../../../host/generated/contracts'
 
-export default function ScreeningControls({ theme, onTheme, running, completed, cells, result, error, onScan, onCancel, onClear, onCell, onData, enabled, stale }: {
-  theme: MapScreenTheme; onTheme: (p: MapScreenTheme) => void; running: boolean; completed: number; cells: MapScreenCell[];
+export default function ScreeningControls({ profile, onProfile, theme, onTheme, running, completed, cells, result, error, onScan, onCancel, onClear, onCell, onData, enabled, stale }: {
+  profile:MapScreenProfile; onProfile:(profile:MapScreenProfile)=>void; theme: MapScreenTheme; onTheme: (p: MapScreenTheme) => void; running: boolean; completed: number; cells: MapScreenCell[];
   result: MapScreenResult | null; error: string; onScan: () => void; onCancel: () => void; onClear: () => void;
   onCell: (cell: MapScreenCell) => void; onData: () => void; enabled: boolean; stale: boolean;
 }) {
   const [methodOpen, setMethodOpen] = useState(false)
   return <section className="screening-controls glass-panel" aria-label="地图快速筛选">
-    <div className="screening-control-row"><select aria-label="地图标色专题" value={theme} disabled={running} onChange={e => onTheme(e.target.value as MapScreenTheme)}>{Object.entries(SCREEN_THEMES).filter(([id])=>id!=='access').map(([id,p]) => <option value={id} key={id}>{p.label}</option>)}</select>
+    <div className="screening-profile-row"><label>研究方向 <select aria-label="地图研究方向" value={profile} disabled={running} onChange={e=>onProfile(e.target.value as MapScreenProfile)}><option value="neighborhood">老旧小区改造</option><option value="balanced">片区更新</option><option value="commercial">商业配套</option><option value="enterprise">产业办公</option></select></label></div>
+    <div className="screening-control-row"><select aria-label="地图标色专题" value={theme} disabled={running} onChange={e => onTheme(e.target.value as MapScreenTheme)}>{Object.entries(screenThemes(profile)).filter(([id])=>id!=='access').map(([id,p]) => <option value={id} key={id}>{p.label}</option>)}</select>
       <button className="screening-start" disabled={!enabled || running} onClick={onScan}><IconScan size={17} />{running ? '正在读取…' : '一键标色'}</button>
       <button aria-label="项目数据" title="项目数据" onClick={onData}><IconDatabase size={18} /></button></div>
     {running && <div className="screening-progress"><progress aria-label="区块读取进度" max={cells.length || 1} value={cells.length?completed:undefined} /><button onClick={onCancel}>停止</button></div>}

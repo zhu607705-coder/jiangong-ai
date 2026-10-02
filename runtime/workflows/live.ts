@@ -1,3 +1,4 @@
+import { applyNeighborhoodGate } from '../../packages/retrofit/planning'
 import {intelligenceScopeRevision} from '../../packages/intelligence/research-bridge'
 import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../skills/investment-brief'
 import { randomUUID } from 'node:crypto'
@@ -188,6 +189,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     packet.warnings.push(...research.trace.warnings, '模型输出经引用与硬约束检查，尚不构成企业决策效用验证。')
     if (!permittedInternal && full.sources.some(s => s.visibility === 'internal')) packet.warnings.push('内部正文未发送至外部模型；企业规则仅在本地执行，模型企业分析使用公开资料。')
     packet.impact.changed_paths = [...new Set(revisionDiff(previous, packet).changes.map(change => change.path_id))]
+    applyNeighborhoodGate(full,packet)
     decisionPacket(packet)
     await store.db.transaction(async db => {
       await db.query('UPDATE runs SET status=$2,decision=$3 WHERE id=$1', [run.id, 'completed', JSON.stringify(packet)])
