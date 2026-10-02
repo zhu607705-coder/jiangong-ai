@@ -80,7 +80,7 @@
     "research/test_results/neighborhood-retrofit.json",
     "research/test_results/document-evaluation-cli.json"
   ],
-  "current_delivery": "Local code includes Qwen document-evaluation CLI and project Skill adaptation, six supported document formats, configurable rubrics, explicit unknowns, JSON/Markdown provenance reports, and fixed neighborhood draft/source/material navigation. 426 existing JS + 17 new CLI checks, 70 Python, browser regressions, production build and two real Qwen public-excerpt requests passed. No calibrated decision-quality or enterprise effectiveness claim. Published PR10 for review, currently open; implementation remains available locally on codex/browser-workflow-loop.",
+  "current_delivery": "Local code includes Qwen document-evaluation CLI and project Skill adaptation, six supported document formats, configurable rubrics, explicit unknowns, JSON/Markdown provenance reports, and fixed neighborhood draft/source/material navigation. 426 existing JS + 17 new CLI checks, 70 Python, browser regressions, production build and two real Qwen public-excerpt requests passed. No calibrated decision-quality or enterprise effectiveness claim. Published PR10 for review, both CI workflows passed; currently open; implementation remains available locally on codex/browser-workflow-loop.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -379,7 +379,22 @@
       "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/10",
       "state": "open",
       "implementation_commit": "9ee864924dfb012bba7a974fefdbde4cf5e26b9b",
-      "ci": "pending"
+      "ci": {
+        "status": "passed",
+        "verified_commit": "611a4f320fc37ed5ea6db963a912aafe85030207",
+        "workflow_runs": [
+          {
+            "name": "Map workspace quality",
+            "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/37028326358",
+            "conclusion": "success"
+          },
+          {
+            "name": "Intelligence integration review",
+            "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/37028326351",
+            "conclusion": "success"
+          }
+        ]
+      }
     }
   },
   "browser_workflow_loop": {

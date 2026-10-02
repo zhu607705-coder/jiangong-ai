@@ -144,5 +144,21 @@
       "fallback": "Separate local Playwright browser used; no current GPT Pro review claimed."
     }
   },
-  "pending_preferences": "Document kinds and evaluation dimensions questions sent; current six-dimensional support rubric is configurable."
+  "pending_preferences": "Document kinds and evaluation dimensions questions sent; current six-dimensional support rubric is configurable.",
+  "github_ci": {
+    "status": "passed",
+    "verified_commit": "611a4f320fc37ed5ea6db963a912aafe85030207",
+    "workflow_runs": [
+      {
+        "name": "Map workspace quality",
+        "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/37028326358",
+        "conclusion": "success"
+      },
+      {
+        "name": "Intelligence integration review",
+        "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/37028326351",
+        "conclusion": "success"
+      }
+    ]
+  }
 }
