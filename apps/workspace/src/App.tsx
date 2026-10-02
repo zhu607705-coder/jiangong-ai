@@ -23,6 +23,7 @@ import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
+import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import { buildDecisionBrief } from '../../../packages/decision/brief-view';
@@ -174,6 +175,7 @@ export default function App() {
     [regionName, setRegionName] = useState(""),
     [geometryText, setGeometryText] = useState("");
   const [followups, setFollowups] = useState<{ title: string }[]>([]);
+  const [loadingTarget, setLoadingTarget] = useState<string | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
     "offline",
@@ -187,13 +189,17 @@ export default function App() {
     !!packet && !!project && packet.context_version !== project.context_version;
   async function loadProject(id: string) {
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
+    const [nextDiff, nextFollowups] = await Promise.all([
+      api<Diff>(`/projects/${encodeURIComponent(id)}/revision-diff`),
+      api<{ title: string }[]>(`/projects/${encodeURIComponent(id)}/followups`),
+    ]);
     setProject(p);
     localStorage.setItem("hzz_project", id);
     const latest = p.runs?.[0] || null;
     setRun(latest);
     setPacket(p.runs?.find((r) => r.decision)?.decision || null);
-    setDiff(await api<Diff>(`/projects/${id}/revision-diff`));
-    setFollowups(await api<{ title: string }[]>(`/projects/${id}/followups`));
+    setDiff(nextDiff);
+    setFollowups(nextFollowups);
     return p;
   }
   async function refreshProjects() {
@@ -429,15 +435,18 @@ export default function App() {
       onTab={setTab}
       onProject={(id) =>
         void action(async () => {
-          await loadProject(id);
-          setTab("overview");
-          setMapFocus(v => v + 1);
-          setDetailsOpen(false);
+          setLoadingTarget(id);
+          try {
+            await loadProject(id);
+            setTab("overview");
+            setMapFocus(v => v + 1);
+            setDetailsOpen(false);
+          } finally { setLoadingTarget(null); }
         })
       }
       onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
-      mapView={<MapWorkspace ready={!loading} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
-        onOpenProject={id => { void (async () => { if (id && id !== project?.id) await loadProject(id); setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
+      mapView={<MapWorkspace ready={!loading} interactionBlocked={loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+        onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
           const clean=context?publicMapContext(context):null
           const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
@@ -447,6 +456,7 @@ export default function App() {
           setGeometryText('');setCreateOpen(true)
         }} />}
       detailsOpen={detailsOpen}
+      bootLoading={loading || !!loadingTarget}
       onMap={() => setDetailsOpen(false)}
       onSettings={() => setMapSettings(v => v + 1)}
       error={error}
@@ -487,11 +497,7 @@ export default function App() {
           </button>
         </div>
       )}
-      {loading ? (
-        <div className="loading" role="status">
-          正在打开项目空间…
-        </div>
-      ) : !project ? (
+      {loading ? null : !project ? (
         <section className="welcome">
           <div className="kicker">PRE-CONSTRUCTION INTELLIGENCE</div>
           <h1>
@@ -641,6 +647,10 @@ export default function App() {
                     {packet ? `v${packet.revision}` : "待启动"}
                   </span>
                 </div>
+                {running && <div className="summary-research-wait">
+                  <span className="summary-wait-art" aria-hidden="true"><WaitingMotif variant="research" stageKey={events.at(-1)?.stage} /></span>
+                  <div><strong>本轮研判正在进行</strong><p>{events.at(-1)?.message || "正在启动研究"}</p></div>
+                </div>}
                 <p>
                   {brief?.summary ||
                     "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。"}

@@ -1,0 +1,60 @@
+{
+  "feature": "animated loading experience",
+  "date": "2026-10-02",
+  "branch": "codex/loading-journey",
+  "verification": [
+    {
+      "command": "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run verify",
+      "result": "passed",
+      "javascript": "22 files, 390 tests passed",
+      "python": "70 tests passed",
+      "http_e2e": "12 tests passed",
+      "build": "TypeScript and Vite production build passed"
+    },
+    {
+      "commands": [
+        "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run build",
+        "HZZ_UI_SCAN_RACE=1 LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/map-workspace.mjs"
+      ],
+      "result": "passed after fixed-width research motif slots were added",
+      "scope": "Final TypeScript and production bundle, sustained research wait and late-scan interaction"
+    },
+    {
+      "command": "LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/map-workspace.mjs",
+      "result": "passed",
+      "scope": "36 core map checks plus late/cancelled scans and project handoff variants; research motif appears in a sustained fixture run and is static under reduced-motion"
+    },
+    {
+      "method": "Chromium readback at http://127.0.0.1:5173 with delayed local GET /api/session; no model call",
+      "result": "passed",
+      "checks": [
+        "status text present immediately while decorative art and full-screen reveal wait 250 ms",
+        "desktop and mobile loading pages remain within viewport",
+        "background map, navigation and research drawer are inert during boot and become interactive afterward",
+        "reduced-motion route cursor has no animation",
+        "research status stays in its reserved layout slot before and after the motif appears"
+      ]
+    },
+    {
+      "method": "Chromium readback with delayed and failed project detail/revision requests",
+      "result": "passed",
+      "checks": [
+        "explicit project switch shows loading overlay and releases it after all project reads",
+        "failed revision-diff leaves the previous project selected and displays the error"
+      ]
+    },
+    {
+      "method": "Synthetic ResearchActivity browser render with search-to-fetch stage transition",
+      "result": "passed",
+      "checks": [
+        "visible stage message follows the supplied event",
+        "one page-turn animation starts only after a real stage change"
+      ]
+    }
+  ],
+  "visual_artifacts": [
+    "output/playwright/loading-desktop.png",
+    "output/playwright/loading-mobile.png"
+  ],
+  "claim_boundary": "The loading visuals are decorative; no model-progress percentage or completion estimate is inferred. Map/research transitions were exercised with controlled browser fixtures and local HTTP delays, not a new paid live model run. SVG and CSS art were authored in this project rather than copied from another app."
+}

@@ -10,6 +10,7 @@ import MapSettings from './MapSettings'
 import PreliminaryCard from './PreliminaryCard'
 import ScreeningControls from './ScreeningControls'
 import DataSourcesPanel from './DataSourcesPanel'
+import { WaitingMotif } from '../components/WaitingScene'
 import { scanMap } from './screening-stream'
 import { SCREEN_TIERS, classifyCells as classifySnapshotCells } from '../../../../packages/maps/screening-policy'
 import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
@@ -17,8 +18,8 @@ import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
 const classifyCells=(cells:MapScreenCell[],theme:MapScreenTheme)=>classifySnapshotCells(cells,theme,new Date().toISOString())
 const cellWithStudy=(cell:MapScreenCell,result:MapScreenAnalysis|null):MapScreenCell=>({...cell,factors:result?.assessment?.factors,dashboard:result?.decision_support?.dashboard,analysis_available:!!result?.assessment})
-export default function MapWorkspace({ ready, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace }: {
-  ready: boolean; project: Project | null; focusProject: number; settingsRequest: number;
+export default function MapWorkspace({ ready, interactionBlocked, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace }: {
+  ready: boolean; interactionBlocked: boolean; project: Project | null; focusProject: number; settingsRequest: number;
   onOpenProject: (id?: string) => void; onCreateFromPlace: (place: PlaceSelection, context?: MapScreenContext | null) => void;
 }) {
   const canvas = useRef<HTMLDivElement>(null), map = useRef<AMap.Map | null>(null), sdk = useRef<AmapSdk | null>(null)
@@ -108,7 +109,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     if(areaScope?.geometry){const layer=new api.Polygon({path:areaScope.geometry.coordinates as AMap.Vector2[][],strokeColor:'#244d7c',strokeWeight:2,strokeStyle:'dashed',fillOpacity:.03,bubble:true,zIndex:120});areaLayer.current=layer;current.add(layer)}
     return()=>{if(areaLayer.current){current.remove(areaLayer.current);areaLayer.current=null}}
   },[areaScope,phase])
-  useEffect(()=>{if(phase!=='ready')setDrawingArea(false)},[phase])
+  useEffect(()=>{if(phase!=='ready'){setDrawingArea(false);setDataOpen(false);setLayerPanel(false)}},[phase])
   useEffect(() => {
     if (!ready) return
     let alive = true
@@ -251,7 +252,7 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     onCreateFromPlace(placeForResearch(selection,details),context)
   }
   const interactive = phase === 'ready'
-  return <section className="atlas-view" aria-label="地图空间探索">
+  return <section className={`atlas-view${phase === 'loading' ? ' atlas-view--loading' : ''}`} aria-label="地图空间探索" {...(interactionBlocked ? { inert: '' } : {})} aria-hidden={interactionBlocked}>
     <div className="atlas-map" ref={canvas} aria-label="高德交互地图" data-map-status={phase} />
     <div className="atlas-vignette" />
     <div className="area-selection-controls glass-panel"><button className="map-text-button" disabled={!interactive||screenRunning} onClick={()=>setDrawingArea(true)}>框选区域 <kbd>R</kbd></button>{areaScope&&<><span>已固定框选范围</span><button className="map-text-button" onClick={()=>{setAreaScope(null);clearScreen();clearSelection()}}>清除范围</button></>}</div>
@@ -282,11 +283,11 @@ export default function MapWorkspace({ ready, project, focusProject, settingsReq
     {dataOpen && <DataSourcesPanel onClose={() => setDataOpen(false)} onOpenProject={id => { setDataOpen(false); onOpenProject(id) }} />}
     <div className="atlas-status glass-panel"><i className={interactive ? 'is-live' : ''} />{interactive ? `高德地图 · ${satellite ? '卫星影像' : webgl && camera.pitch > 0 ? '3D 城市' : '2D 浏览'}` : phase === 'loading' ? '地图连接中' : '地图待连接'}</div>
 
-    {phase !== 'ready' && <div className="atlas-connection">
-      <div className="atlas-orbit" aria-hidden="true"><IconCube size={56} stroke={1} /><span /><span /></div>
+    {phase !== 'ready' && <div className="atlas-connection" role={phase === 'error' ? 'alert' : phase === 'loading' ? 'status' : undefined} aria-live={phase === 'loading' ? 'polite' : undefined} aria-hidden={!ready && phase === 'loading'}>
+      <div className="atlas-wait-art" aria-hidden="true"><WaitingMotif variant="map" active={phase === 'loading'} /></div>
       <div className="map-eyebrow">建工 AI</div>
-      <h1>{phase === 'loading' ? '正在展开城市空间' : phase === 'unconfigured' ? '从一张真实地图开始' : '地图连接暂未完成'}</h1>
-      <p>{phase === 'loading' ? '正在连接高德底图与地点服务…' : phase === 'unconfigured' ? '连接高德后，缩放街区、查看 3D 建筑，\n点选感兴趣的位置，再深入了解。' : mapError}</p>
+      <h1>{phase === 'loading' ? ready ? '正在展开城市空间' : '正在打开项目空间' : phase === 'unconfigured' ? '从一张真实地图开始' : '地图连接暂未完成'}</h1>
+      <p>{phase === 'loading' ? ready ? '正在连接高德底图与地点服务…' : '正在读取本地项目与资料…' : phase === 'unconfigured' ? '连接高德后，缩放街区、查看 3D 建筑，\n点选感兴趣的位置，再深入了解。' : mapError}</p>
       {phase !== 'loading' && <button className="map-primary" onClick={() => setSettings(true)}><IconKeyVisual />{config?.configured ? '检查地图配置' : '连接高德地图'}<IconArrowRight size={17} /></button>}
       {phase === 'error' && <button className="map-text-button" onClick={() => window.location.reload()}>重新加载地图</button>}
       {phase === 'unconfigured' && <small>请配置地图 Key</small>}

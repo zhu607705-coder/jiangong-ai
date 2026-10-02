@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Fact, Source } from '../../../host/generated/contracts'
 import { api } from '../api'
+import WaitingScene from '../components/WaitingScene'
 import { buildImportGraph, layoutImportGraph, previewColumnValues, recordForNode,
   type GraphDepth, type GraphNode, type GraphScope, type ImportDocument, type ParsedColumn } from './graph-model'
 import './import-graph.css'
@@ -107,7 +108,7 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
 
   if (loading || error) return <section className="import-explorer" aria-label="导入数据关系与分析">
     <header className="import-explorer-heading"><div><small>DATA ARCHITECTURE / 只读结构</small><h3>导入数据关系图</h3></div></header>
-    {loading ? <p role="status" className="import-graph-note">正在读取本项目的解析结果…</p>
+    {loading ? <WaitingScene variant="research" compact title="正在读取导入资料" detail="正在整理文件、表、字段与来源的结构…" />
       : <p role="alert" className="import-graph-error">导入数据暂不可读：{error}。下方仍可查看项目来源列表。</p>}
   </section>
 
