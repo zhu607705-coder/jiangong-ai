@@ -23,6 +23,7 @@ import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
+import ImportedDataExplorer from './imports/ImportedDataExplorer';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import { buildDecisionBrief } from '../../../packages/decision/brief-view';
 import {
@@ -1000,6 +1001,14 @@ export default function App() {
                 TXT、Markdown、CSV、PDF、Word、Excel（≤ 10
                 MB）。真实材料使用独立真实项目。
               </p>
+              <ImportedDataExplorer
+                projectId={project.id}
+                projectName={project.name}
+                revision={project.context_version}
+                sources={project.input.sources}
+                researchSources={packet?.sources || []}
+                facts={project.input.facts}
+              />
               <div className="source-list">
                 {displayedSources.map((source) => (
                   <article className="source-row" key={source.id}>

@@ -36,8 +36,10 @@ export function parseMaterial(input: ParserInput) {
   const raw = readFileSync(input.filePath, 'utf8')
   const isCsv = extname(input.fileName).toLowerCase() === '.csv'
   const rows = isCsv ? parseCsvRows(raw) : []
-  return { status: 'extracted', parser: 'CRE generic text/table parser', source_hash: fileHash(input.filePath),
+  const empty = !raw.trim()
+  return { status: empty ? 'empty' : 'extracted', parser: 'CRE generic text/table parser', source_hash: fileHash(input.filePath),
     text: isCsv ? rows.slice(0, 250).map(row => row.join(' | ')).join('\n') : raw,
-    profile: isCsv ? buildUploadedDataProfile(input, '项目材料', rows[0] || [], rows.slice(1)) : buildTextUploadedDataProfile(input, raw, '项目材料'),
+    profile: empty ? { tableCount: 0, rowCount: 0, columnCount: 0, tables: [], issues: [] }
+      : isCsv ? buildUploadedDataProfile(input, '项目材料', rows[0] || [], rows.slice(1)) : buildTextUploadedDataProfile(input, raw, '项目材料'),
     notes: ['仅完成可追溯内容解析；没有将材料自动升级为法规、组织约束或已核实事实。'] }
 }

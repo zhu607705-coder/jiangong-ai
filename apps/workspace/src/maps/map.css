@@ -451,7 +451,8 @@
  .map-shell .atlas-inspector h2 {font-size:20px}
  .map-shell .atlas-navigation {right:10px;bottom:100px}
  .map-shell .atlas-layer-control {left:70px;bottom:60px}
- .ai-disclaimer {left:64px;max-width:calc(100vw - 74px);font-size:12px;bottom:8px}
+ .map-shell .area-selection-controls {z-index:30}
+ .ai-disclaimer {left:64px;max-width:calc(100vw - 74px);font-size:12px;bottom:8px;z-index:30}
 }
 
 .map-boundary-credit {display:block;font-size:12px;color:#526775;margin-top:10px;}
