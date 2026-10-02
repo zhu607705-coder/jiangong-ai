@@ -31,11 +31,12 @@
     "public_index_intakes": 10,
     "query_cuiyuan_results": 4,
     "automatic_collection": false,
-    "run_id": "RUN-6c26635e-4ba4-47a6-9f21-29f027ab5021",
+    "run_id": "RUN-39a88715-f82e-45e2-af1e-77d199c48f8f",
     "execution_mode": "offline",
     "decision": "先补充关键资料再判断",
     "missing_prerequisites": 7,
-    "model_calls": 0
+    "model_calls": 0,
+    "initial_run_id": "RUN-6c26635e-4ba4-47a6-9f21-29f027ab5021"
   },
   "ui_checks": {
     "new_dimensions": [
@@ -81,5 +82,23 @@
     "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run verify",
     "LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/map-workspace.mjs",
     "LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/experience-library.mjs"
-  ]
+  ],
+  "merged_pr": 9,
+  "merge_commit": "cf73668780fb65b6b26ad661d6e77d430c5af7e7",
+  "github_checks": {
+    "source_commit": "0e37dc9ba4f40d023fb150aaa35236ae8e2d9d2d",
+    "map_workspace_quality_run": 37018966568,
+    "intelligence_integration_review_run": 37018966426,
+    "result": "both passed"
+  },
+  "merged_main_readback": {
+    "run_status": "completed",
+    "experience_card_status": "draft",
+    "experience_field_count": 10,
+    "report_contains_saved_action": true,
+    "decision": "先补充关键资料再判断",
+    "missing_prerequisites": 7,
+    "model_calls": 0,
+    "url": "http://127.0.0.1:5173/"
+  }
 }
