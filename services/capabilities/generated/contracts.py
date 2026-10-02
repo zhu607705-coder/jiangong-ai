@@ -340,6 +340,11 @@ class Role(StrEnum):
     executive = 'executive'
 
 
+class BusinessProfile(StrEnum):
+    general = 'general'
+    neighborhood = 'neighborhood'
+
+
 class Kind1(StrEnum):
     retain = 'retain'
     partial_demolition = 'partial_demolition'
@@ -494,6 +499,7 @@ class MapScreenProfile(StrEnum):
     balanced = 'balanced'
     commercial = 'commercial'
     enterprise = 'enterprise'
+    neighborhood = 'neighborhood'
 
 
 class MapScreenBounds(BaseModel):
@@ -915,6 +921,72 @@ class DimensionEvidence(BaseModel):
     record_id: str | None = Field(None, max_length=120)
 
 
+class ExperienceEvidence(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    document_id: str = Field(..., min_length=1)
+    version: str = Field(..., min_length=1)
+    locator: str = Field(..., min_length=1)
+    quote: str = Field(..., max_length=3000, min_length=1)
+
+
+class Key2(StrEnum):
+    decision_question = 'decision_question'
+    background = 'background'
+    key_conditions = 'key_conditions'
+    alternatives = 'alternatives'
+    proposal = 'proposal'
+    actual_decision = 'actual_decision'
+    implementation = 'implementation'
+    outcome = 'outcome'
+    applicability = 'applicability'
+
+
+class ExperienceField(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: Key2
+    value: str | None = Field(..., max_length=3000)
+    evidence: list[ExperienceEvidence] = Field(..., max_length=5)
+
+
+class ExperienceDraft(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=9)
+
+
+class Status15(StrEnum):
+    draft = 'draft'
+    approved = 'approved'
+    rejected = 'rejected'
+
+
+class ExperienceCard(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=9)
+    id: str
+    project_id: str
+    status: Status15
+    revision: int = Field(..., ge=1)
+    review_note: str | None = Field(..., max_length=2000)
+    created_at: str
+    updated_at: str
+
+
 class Scope(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1004,6 +1076,7 @@ class ProjectInput(BaseModel):
     context_rules: list[ExperienceRule] = Field(..., max_length=1000)
     candidate_ids: list[CandidateId] = Field(..., max_length=3, min_length=1)
     events: list[InputEvent]
+    business_profile: BusinessProfile | None = None
 
 
 class ScenarioProposal(BaseModel):

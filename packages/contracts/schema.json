@@ -1170,6 +1170,13 @@
           "items": {
             "$ref": "#/definitions/InputEvent"
           }
+        },
+        "business_profile": {
+          "type": "string",
+          "enum": [
+            "general",
+            "neighborhood"
+          ]
         }
       },
       "required": [
@@ -1594,7 +1601,8 @@
       "enum": [
         "balanced",
         "commercial",
-        "enterprise"
+        "enterprise",
+        "neighborhood"
       ]
     },
     "MapScreenBounds": {
@@ -3054,6 +3062,186 @@
         "quote",
         "basis"
       ]
+    },
+    "ExperienceEvidence": {
+      "type": "object",
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        }
+      },
+      "required": [
+        "document_id",
+        "version",
+        "locator",
+        "quote"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceField": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "decision_question",
+            "background",
+            "key_conditions",
+            "alternatives",
+            "proposal",
+            "actual_decision",
+            "implementation",
+            "outcome",
+            "applicability"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3000
+        },
+        "evidence": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          }
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceDraft": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "project_type": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "development_mode": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "fields": {
+          "type": "array",
+          "maxItems": 9,
+          "items": {
+            "$ref": "#/definitions/ExperienceField"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "project_type",
+        "development_mode",
+        "stage",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceCard": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "project_type": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "development_mode": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "fields": {
+          "type": "array",
+          "maxItems": 9,
+          "items": {
+            "$ref": "#/definitions/ExperienceField"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "review_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "project_type",
+        "development_mode",
+        "stage",
+        "fields",
+        "id",
+        "project_id",
+        "status",
+        "revision",
+        "review_note",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
     }
   }
 }

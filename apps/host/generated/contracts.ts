@@ -14,7 +14,7 @@ export type ResearchDimension = "demand" | "supply" | "adaptation" | "implementa
  * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenProfile".
  */
-export type MapScreenProfile = "balanced" | "commercial" | "enterprise";
+export type MapScreenProfile = "balanced" | "commercial" | "enterprise" | "neighborhood";
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenTheme".
@@ -49,6 +49,7 @@ export interface ProjectInput {
    */
   candidate_ids: CandidateId[];
   events: InputEvent[];
+  business_profile?: "general" | "neighborhood";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -884,4 +885,70 @@ export interface MapDataCatalog {
   synthetic_project_count: number;
   unlocated_project_count: number;
   notes: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceEvidence".
+ */
+export interface ExperienceEvidence {
+  document_id: string;
+  version: string;
+  locator: string;
+  quote: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceField".
+ */
+export interface ExperienceField {
+  key:
+    | "decision_question"
+    | "background"
+    | "key_conditions"
+    | "alternatives"
+    | "proposal"
+    | "actual_decision"
+    | "implementation"
+    | "outcome"
+    | "applicability";
+  value: string | null;
+  /**
+   * @maxItems 5
+   */
+  evidence: ExperienceEvidence[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceDraft".
+ */
+export interface ExperienceDraft {
+  title: string;
+  project_type: string;
+  development_mode: string;
+  stage: string;
+  /**
+   * @maxItems 9
+   */
+  fields: ExperienceField[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceCard".
+ */
+export interface ExperienceCard {
+  title: string;
+  project_type: string;
+  development_mode: string;
+  stage: string;
+  /**
+   * @maxItems 9
+   */
+  fields: ExperienceField[];
+  id: string;
+  project_id: string;
+  status: "draft" | "approved" | "rejected";
+  revision: number;
+  review_note: string | null;
+  created_at: string;
+  updated_at: string;
 }
