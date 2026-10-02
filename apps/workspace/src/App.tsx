@@ -25,7 +25,7 @@ import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
-import NeighborhoodPanel from './components/NeighborhoodPanel';
+import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import ExperienceLibrary from './components/ExperienceLibrary';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import { buildDecisionBrief } from '../../../packages/decision/brief-view';
@@ -179,17 +179,37 @@ export default function App() {
   const [followups, setFollowups] = useState<{ title: string }[]>([]);
   const [businessProfile, setBusinessProfile] = useState<'neighborhood'|'general'>('neighborhood');
   const [loadingTarget, setLoadingTarget] = useState<string | null>(null);
+  const [neighborhoodDrafts, setNeighborhoodDrafts] = useState<Record<string, NeighborhoodDraft>>({});
+  const [sourceFocus, setSourceFocus] = useState<{ projectId: string; refs: string[] } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
     "offline",
   );
   const displayedSources = [...new Map([...(project?.input.sources || []), ...(packet?.sources || [])].map(source => [source.id, source])).values()];
+  const requestedRefs = sourceFocus?.projectId === project?.id ? sourceFocus?.refs || [] : [];
+  const focusedSourceIds = displayedSources.filter(source => requestedRefs.some(ref => ref === source.id || ref === `${project?.id}:${source.id}`)).map(source => source.id);
+  const focusedSourceKey = focusedSourceIds.join('\u0000');
   const brief = packet ? buildDecisionBrief(packet) : null;
   const packetSources = new Map((packet?.sources || []).map(source => [source.id, source] as const));
   const eventSource = useRef<EventSource | null>(null);
   const running = run?.status === "running";
   const stale =
     !!packet && !!project && packet.context_version !== project.context_version;
+  function openEvidence(refs: string[] = []) {
+    if (project) setSourceFocus({ projectId: project.id, refs: [...new Set(refs)] });
+    setTab('evidence');
+  }
+  useEffect(() => {
+    if (tab !== 'evidence' || !focusedSourceIds.length) return;
+    const frame = requestAnimationFrame(() => {
+      const target = document.getElementById(`project-source-${encodeURIComponent(focusedSourceIds[0])}`);
+      const original = target?.querySelector('details');
+      if (original) original.open = true;
+      target?.scrollIntoView({ block: 'center' });
+      target?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [tab, project?.id, focusedSourceKey]);
   async function loadProject(id: string) {
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
     const [nextDiff, nextFollowups] = await Promise.all([
@@ -633,7 +653,10 @@ export default function App() {
                     : "离线工程检查（无模型推理）"}
                 </div>
               )}
-              {project.input.business_profile === 'neighborhood' && <NeighborhoodPanel key={project.id} project={project.input} dashboard={packet?.decision_support?.dashboard} onEvidence={() => setTab('evidence')} />}
+              {project.input.business_profile === 'neighborhood' && <NeighborhoodPanel key={project.id} project={project.input} dashboard={packet?.decision_support?.dashboard}
+                draft={neighborhoodDrafts[project.id] || createNeighborhoodDraft()}
+                onDraftChange={update => setNeighborhoodDrafts(current => ({ ...current, [project.id]: update(current[project.id] || createNeighborhoodDraft()) }))}
+                onEvidence={openEvidence} />}
               <section className="summary-panel">
                 <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} details /></details>
                 <div className="summary-heading">
@@ -755,7 +778,7 @@ export default function App() {
                           {path.organizationNotes.map(note =>
                             <p className="rule-impact" key={note}><IconLayersIntersect size={14}/>{note}</p>)}
                         </div>
-                        <button className="pathway-footer" onClick={() => setTab("evidence")}>
+                        <button className="pathway-footer" onClick={() => openEvidence(path.sourceRefs)}>
                           <span>{path.sourceRefs.length} 个来源可复核</span><IconChevronRight size={15}/>
                         </button>
                       </article>
@@ -857,7 +880,7 @@ export default function App() {
               <p className="intro">
                 记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。
               </p>
-              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} onProjectUpdated={() => loadProject(project.id).then(()=>{})} />
+              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()} />
               <label className="field-label" htmlFor="experience">
                 本项目意见（不作为历史实施结果）
               </label>
@@ -1025,8 +1048,12 @@ export default function App() {
                 facts={project.input.facts}
               />
               <div className="source-list">
+                {!!requestedRefs.length && <div className="source-focus-note" role="status">
+                  <span>{focusedSourceIds.length ? `已定位 ${focusedSourceIds.length} 份相关依据，首份原文已展开。` : '当前版本没有找到所引来源，请核对研判版本与资料记录。'}</span>
+                  <button className="secondary" onClick={() => setSourceFocus(null)}>取消定位</button>
+                </div>}
                 {displayedSources.map((source) => (
-                  <article className="source-row" key={source.id}>
+                  <article className={`source-row${focusedSourceIds.includes(source.id) ? ' is-focused' : ''}`} id={`project-source-${encodeURIComponent(source.id)}`} tabIndex={-1} key={source.id}>
                     <span className="file-icon">
                       <IconFileText size={22} />
                     </span>

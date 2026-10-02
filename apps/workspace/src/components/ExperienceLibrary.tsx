@@ -4,7 +4,7 @@ import { api } from '../api'
 import WaitingScene from './WaitingScene'
 import './experience-library.css'
 
-type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; onProjectUpdated: () => void | Promise<void> }
+type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void }
 type Document = { id: string; file_name: string; created_at?: string; parser_result?: { source_hash?: string; status?: string; segments?: { locator: string; text: string }[] } }
 type Match = { card: ExperienceCard; similar_conditions: string[]; important_differences: string[]; reuse_premises: string[] }
 const fields: { key: ExperienceField['key']; label: string }[] = [
@@ -38,7 +38,7 @@ function CardContent({ card, documents }: { card: ExperienceCard; documents: Doc
   })}</dl>
 }
 
-export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, onProjectUpdated }: Props) {
+export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, onProjectUpdated, onOpenMaterials }: Props) {
   const requestKey = `${projectId}\u0000${revision}\u0000${synthetic}\u0000${asOf}`
   const activeKey = useRef(requestKey); activeKey.current = requestKey
   const [loaded, setLoaded] = useState<{ key: string; documents: Document[]; cards: ExperienceCard[]; error: string; loading: boolean }>({ key: '', documents: [], cards: [], error: '', loading: true })
@@ -176,7 +176,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
           <span>{document.file_name}<small>{document.parser_result?.status === 'ocr_required' ? '待 OCR，暂缺可提取正文' : '已保存材料'}</small></span></label>)}</div></fieldset>
           <label className="experience-extract-note"><input type="checkbox" aria-label="使用结构化模型提取" checked={useModel} disabled={!!busy} onChange={e=>setUseModel(e.target.checked)}/> 使用结构化模型提取（需原文调用许可；候选仍须人工复核）</label>
           <button type="button" className="experience-primary" disabled={!selectedDocuments.length || !!busy} onClick={() => void extract()}>{busy === 'extract' ? '正在提取…' : '提取经验草稿'}</button><small className="experience-extract-note">默认仅在本地提取明确字段；选择模型后由宿主检查凭据与内部资料权限。</small></>
-          : <p className="experience-empty">先到“资料与证据”页上传历史项目材料，再提取经验卡。</p>}
+          : <div className="experience-empty"><p>上传历史项目材料后，可以提取经验卡。</p>{onOpenMaterials && <button type="button" className="experience-primary" onClick={onOpenMaterials}>上传历史材料</button>}</div>}
         {!!warnings.length && <ul className="experience-warnings">{warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>}
       </div>
       {!cards.length && <p className="experience-empty">尚无经验卡。提取后的草稿会在这里逐项展示决策、实施和结果。</p>}
