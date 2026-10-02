@@ -82,8 +82,13 @@ export class ExperienceService {
     })
   }
   async search(filter: SearchFilter): Promise<{ items: { card: ExperienceCard; similar_conditions: string[]; important_differences: string[]; reuse_premises: string[] }[] }> {
-    const cards = await this.repository.search(config.ownerId, filter)
     const target = filter.exclude_project ? await this.store.project(filter.exclude_project, config.ownerId) : undefined
+    if (filter.exclude_project && !target) throw new ExperienceError(404, 'PROJECT_NOT_FOUND', '项目不存在或无权访问。')
+    if (target && filter.as_of && filter.as_of > target.input.as_of) {
+      throw new ExperienceError(422, 'EXPERIENCE_AS_OF_OUT_OF_SCOPE', `经验检索时点不能晚于当前项目资料截止日${target.input.as_of}。`)
+    }
+    if (target && filter.synthetic !== undefined && filter.synthetic !== target.input.synthetic) throw new ExperienceError(422, 'SYNTHETIC_SCOPE', '检索资料类别必须与当前项目一致。')
+    const cards = await this.repository.search(config.ownerId, { ...filter, as_of: filter.as_of || target?.input.as_of, synthetic: filter.synthetic ?? target?.input.synthetic })
     return { items: cards.map(card => ({
       card,
       similar_conditions: [filter.project_type && `项目类型：${card.project_type}`, filter.development_mode && `开发模式：${card.development_mode}`, filter.stage && `项目阶段：${card.stage}`].filter(Boolean) as string[],
@@ -104,6 +109,8 @@ export class ExperienceService {
       validateEvidence(card, await this.repository.documents(card.project_id, db), card.project_id)
       const current = (await db.query<ProjectRecord>('SELECT * FROM projects WHERE id=$1 AND owner_id=$2 FOR UPDATE', [project.id, project.owner_id])).rows[0]
       if (!current || current.context_version !== expectedVersion) throw new ExperienceError(409, 'PROJECT_VERSION_CONFLICT', '项目资料已变化，请刷新后重新加入经验。')
+      const history = (await db.query<{ available: boolean }>('SELECT recorded_at <= $3::timestamptz AS available FROM experience_history WHERE card_id=$1 AND revision=$2', [card.id, card.revision, `${current.input.as_of}T23:59:59.999Z`])).rows[0]
+      if (!history?.available) throw new ExperienceError(409, 'FUTURE_EXPERIENCE_NOT_AVAILABLE', `该经验版本在项目资料截止日${current.input.as_of}之后才记录，不能作为本次研判依据。`)
       const sourceId = `S-EXP-${card.id}-R${card.revision}`
       const existing = current.input.sources.find(source => source.id === sourceId)
       if (existing) return { project: current, source_id: sourceId, rule_ids: current.input.context_rules.filter(rule => rule.source_id === sourceId).map(rule => rule.id), card_id: card.id, card_revision: card.revision }

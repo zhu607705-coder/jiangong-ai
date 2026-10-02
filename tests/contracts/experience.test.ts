@@ -117,7 +117,7 @@ async function setup() {
   const input = JSON.parse(await readFile('fixtures/inputs/01_auto.json', 'utf8')) as ProjectInput
   const putProject = async (id: string, synthetic = false, owner = config.ownerId) => {
     const next = structuredClone(input)
-    Object.assign(next, { project_id: id, synthetic, sources: [], facts: [], context_rules: [], events: [] })
+    Object.assign(next, { project_id: id, synthetic, as_of: new Date().toISOString().slice(0, 10), sources: [], facts: [], context_rules: [], events: [] })
     await store.db.query('INSERT INTO projects(id,owner_id,name,input) VALUES($1,$2,$3,$4)', [id, owner, `${id}合成接口夹具`, JSON.stringify(next)])
     return (await store.project(id, owner))!
   }
@@ -253,6 +253,30 @@ test('reuse binds the selected historical card revision and cannot silently impo
     const response = await fixture.request(`/projects/${fixture.target.id}/experiences/reuse`, { card_id: historical.id, expected_card_revision: historical.revision, expected_version: 0 })
     expect(response.status).toBe(409); expect(response.data.code).toBe('EXPERIENCE_VERSION_CONFLICT')
     expect((await fixture.store.project(fixture.target.id, config.ownerId))!.context_version).toBe(0)
+  } finally { await fixture.close() }
+}, 15000)
+
+test('target-project search defaults to its cutoff, cannot expand it, and reuse rejects future knowledge', async () => {
+  const fixture = await setup()
+  try {
+    const card = await fixture.service.create(fixture.project, draft(fixture.doc))
+    await fixture.service.review(fixture.project, card.id, 1, 'approved', '历史资料逐字复核。')
+    await fixture.store.db.query("UPDATE experience_history SET recorded_at=CASE revision WHEN 1 THEN '2026-09-01'::timestamptz ELSE '2026-09-05'::timestamptz END WHERE card_id=$1", [card.id])
+    const targetInput = structuredClone(fixture.target.input); targetInput.as_of = '2026-09-03'
+    await fixture.store.db.query('UPDATE projects SET input=$1 WHERE id=$2', [JSON.stringify(targetInput), fixture.target.id])
+    const defaultSearch = await fixture.request('/experiences/search?exclude_project=' + fixture.target.id)
+    expect(defaultSearch.status).toBe(200); expect(defaultSearch.data.items).toEqual([])
+    const expanded = await fixture.request('/experiences/search?exclude_project=' + fixture.target.id + '&as_of=2026-09-06')
+    expect(expanded.status).toBe(422); expect(expanded.data.code).toBe('EXPERIENCE_AS_OF_OUT_OF_SCOPE')
+    expect((await fixture.request('/experiences/search?exclude_project=' + fixture.target.id + '&as_of=2026-09-02')).status).toBe(200)
+    const reused = await fixture.request(`/projects/${fixture.target.id}/experiences/reuse`, { card_id: card.id, expected_card_revision: 2, expected_version: 0 })
+    expect(reused.status).toBe(409); expect(reused.data.code).toBe('FUTURE_EXPERIENCE_NOT_AVAILABLE')
+    expect((await fixture.store.project(fixture.target.id, config.ownerId))!.context_version).toBe(0)
+    expect((await fixture.store.project(fixture.target.id, config.ownerId))!.input.sources).toEqual([])
+    // Knowledge recorded by the end of the target date remains eligible.
+    await fixture.store.db.query("UPDATE experience_history SET recorded_at='2026-09-03T23:59:59.999Z'::timestamptz WHERE card_id=$1 AND revision=2", [card.id])
+    expect((await fixture.request('/experiences/search?exclude_project=' + fixture.target.id)).data.items).toHaveLength(1)
+    expect((await fixture.request(`/projects/${fixture.target.id}/experiences/reuse`, { card_id: card.id, expected_card_revision: 2, expected_version: 0 })).status).toBe(200)
   } finally { await fixture.close() }
 }, 15000)
 
