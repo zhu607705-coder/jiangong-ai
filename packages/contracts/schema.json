@@ -3104,6 +3104,7 @@
             "alternatives",
             "proposal",
             "actual_decision",
+            "decision_basis",
             "implementation",
             "outcome",
             "applicability"
@@ -3153,7 +3154,7 @@
         },
         "fields": {
           "type": "array",
-          "maxItems": 9,
+          "maxItems": 10,
           "items": {
             "$ref": "#/definitions/ExperienceField"
           }
@@ -3190,7 +3191,7 @@
         },
         "fields": {
           "type": "array",
-          "maxItems": 9,
+          "maxItems": 10,
           "items": {
             "$ref": "#/definitions/ExperienceField"
           }

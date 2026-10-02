@@ -908,6 +908,7 @@ export interface ExperienceField {
     | "alternatives"
     | "proposal"
     | "actual_decision"
+    | "decision_basis"
     | "implementation"
     | "outcome"
     | "applicability";
@@ -927,7 +928,7 @@ export interface ExperienceDraft {
   development_mode: string;
   stage: string;
   /**
-   * @maxItems 9
+   * @maxItems 10
    */
   fields: ExperienceField[];
 }
@@ -941,7 +942,7 @@ export interface ExperienceCard {
   development_mode: string;
   stage: string;
   /**
-   * @maxItems 9
+   * @maxItems 10
    */
   fields: ExperienceField[];
   id: string;

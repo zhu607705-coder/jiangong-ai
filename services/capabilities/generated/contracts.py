@@ -938,6 +938,7 @@ class Key2(StrEnum):
     alternatives = 'alternatives'
     proposal = 'proposal'
     actual_decision = 'actual_decision'
+    decision_basis = 'decision_basis'
     implementation = 'implementation'
     outcome = 'outcome'
     applicability = 'applicability'
@@ -960,7 +961,7 @@ class ExperienceDraft(BaseModel):
     project_type: str = Field(..., max_length=80)
     development_mode: str = Field(..., max_length=80)
     stage: str = Field(..., max_length=80)
-    fields: list[ExperienceField] = Field(..., max_length=9)
+    fields: list[ExperienceField] = Field(..., max_length=10)
 
 
 class Status15(StrEnum):
@@ -977,7 +978,7 @@ class ExperienceCard(BaseModel):
     project_type: str = Field(..., max_length=80)
     development_mode: str = Field(..., max_length=80)
     stage: str = Field(..., max_length=80)
-    fields: list[ExperienceField] = Field(..., max_length=9)
+    fields: list[ExperienceField] = Field(..., max_length=10)
     id: str
     project_id: str
     status: Status15
