@@ -2,6 +2,14 @@
   "feature": "source-backed imported-data graph and analysis panel",
   "date": "2026-10-02",
   "branch": "codex/import-graph",
+  "merged_pr": 7,
+  "merge_commit": "6451bde197a1c2c1b4244e560e73523016a61f00",
+  "github_checks": {
+    "map_workspace_quality_run": 36978628796,
+    "intelligence_integration_review_run": 36978628820,
+    "result": "both passed for source commit 8763de793dd2e0aa5937639f1a56415e42cc6d0e",
+    "import_graph_browser_test_in_ci": false
+  },
   "verification": [
     {
       "command": "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run verify",
@@ -27,7 +35,7 @@
     }
   ],
   "live_readback": {
-    "url": "http://127.0.0.1:5174/",
+    "url": "http://127.0.0.1:5173/",
     "project_id": "P-098374f7",
     "uploaded_documents": 0,
     "linked_source_nodes_shown": 11,
@@ -36,5 +44,5 @@
     "browser_errors": 0,
     "model_calls_for_visualization": 0
   },
-  "claim_boundary": "The actual current project has no uploaded documents. Populated import visualization was verified with real local parser output from a synthetic CSV, HTTP upload/readback in an isolated test database, and a synthetic browser API harness, not with user-provided real import material. Source links are explicit only; raw table rows are not verified business facts. The current document GET is unpaged and may transfer large parser results for many uploads."
+  "claim_boundary": "The actual current project has no uploaded documents. Populated import visualization was verified with real local parser output from a synthetic CSV, HTTP upload/readback in an isolated test database, and a synthetic browser API harness, not with user-provided real import material. Source links are explicit only; raw table rows are not verified business facts. The current document GET is unpaged and may transfer large parser results for many uploads. The new browser test passed locally but could not be wired into CI because the current GitHub OAuth credential lacks workflow scope."
 }
