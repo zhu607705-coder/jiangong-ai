@@ -135,6 +135,7 @@ try{
  await page.screenshot({path:'output/playwright/minimal-map-selected.png'})
  await page.getByRole('button',{name:'研判此处',exact:true}).click()
  await page.getByText('检索官方采购与工程记录',{exact:true}).first().waitFor()
+ await page.locator('.research-wait-row .waiting-motif').waitFor()
  await page.screenshot({path:'output/playwright/minimal-map-progress.png'})
  await page.locator('.decision-dashboard').waitFor()
  await page.getByText('从楼宇机电更新切入，按单栋分期交付。',{exact:true}).first().waitFor()
@@ -169,6 +170,7 @@ try{
  await page.getByRole('button',{name:'研判此处',exact:true}).click()
  await page.getByText('检索官方采购与工程记录',{exact:true}).first().waitFor()
  assert.equal(await page.locator('.research-current>i').evaluate(el=>getComputedStyle(el).animationName),'none')
+ assert.equal(await page.locator('.research-wait-row .waiting-route-cursor').evaluate(el=>getComputedStyle(el).animationName),'none')
  await page.getByRole('button',{name:'停止',exact:true}).click()
  await page.waitForTimeout(1100)
  assert.equal(await page.locator('.decision-dashboard').count(),0)
@@ -225,8 +227,8 @@ try{
  assert.equal(publicSource.public_records[0].source_hash,publicSource.raw_hash)
  assert.ok(!createdInput.input.sources.some(s=>s.id==='PUBLIC-FIXTURE'))
  assert.deepEqual(errors,[])
- await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained','profile cache revalidated by server','expired dashboard removed','expired parent color removed','historical partial explicitly labelled','refresh uses a distinct action','historical data never auto launches a model','successful refresh replaces the historical state','public record cutoff handed to project','record raw hash retained','synthetic source excluded from project']},null,2))
- console.log('PASS map UI: 34 checks including historical refresh, polygon and structured evidence handoff; synthetic provider fixtures')
+ await writeFile('output/playwright/minimal-map-check.json',JSON.stringify({passed:true,modelCalls,scanCalls,contextCalls,fixture:true,checks:['no eager calls','polygon selection','collapsed evidence','explicit analysis','theme cache reuse','source expansion','mobile overflow','mobile title visible','map markers below inspector','no page errors','actual viewport','real progress frames','research motif during long wait','six dimension dashboard','missing dimension stays blank','adapter fields with units','profile isolation','reduced motion','reduced motion for research motif','cancel without late result','profile cache restores parent map','brief survives scoring cancellation','scoring retry stays available','polygon handed off as WGS84','project retains converted geometry','boundary provenance retained','profile cache revalidated by server','expired dashboard removed','expired parent color removed','historical partial explicitly labelled','refresh uses a distinct action','historical data never auto launches a model','successful refresh replaces the historical state','public record cutoff handed to project','record raw hash retained','synthetic source excluded from project']},null,2))
+ console.log('PASS map UI: 36 checks including research waiting motion, historical refresh, polygon and structured evidence handoff; synthetic provider fixtures')
  }
 }
  }

@@ -40,9 +40,9 @@
 .atlas-status span { color: #8297a7; border-left: 1px solid #afc9d324; padding-left: 9px; margin-left: 3px; }
 .atlas-connection { position: absolute; z-index: 2; left: calc(50% + 30px); top: 48%; transform: translate(-50%, -50%); width: min(560px, calc(100% - 120px)); text-align: center; white-space: pre-line; }
 .atlas-connection::before { content: ''; position: absolute; inset: -160px -200px; pointer-events: none; z-index: -1; opacity: .12; background-image: linear-gradient(#7ea5c042 1px, transparent 1px), linear-gradient(90deg, #7ea5c042 1px, transparent 1px); background-size: 42px 42px; transform: perspective(520px) rotateX(55deg); mask-image: radial-gradient(ellipse, #000, transparent 67%); }
-.atlas-orbit { position: relative; margin: 0 auto 34px; display: grid; place-items: center; width: 132px; height: 132px; border: 1px solid #81bdcd29; border-radius: 50%; color: #83c9c0; background: radial-gradient(circle, #4b9fa319, transparent 70%); }
-.atlas-orbit span { position: absolute; inset: -16px; border: 1px solid #93c6d512; border-radius: 50%; }
-.atlas-orbit span:last-child { inset: -32px; border-style: dashed; border-color: #93c6d518; }
+.atlas-connection > .atlas-wait-art { width: 212px; height: 133px; margin: 0 auto 26px; }
+.atlas-wait-art > .waiting-motif { width: 100%; height: 100%; }
+.atlas-connection .waiting-orbit { width: 90px; height: 90px; }
 .map-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 9px; color: #81acae; letter-spacing: 1.6px; font-weight: 500; }
 .atlas-connection h1 { font-size: 29px; font-weight: 400; letter-spacing: 2px; margin: 13px 0; color: #e6eef4; }
 .atlas-connection p { color: #8fa5b5; font-size: 13px; line-height: 1.9; }
@@ -256,8 +256,8 @@
   .atlas-status { top: 143px; left: 79px; right: auto; height: 29px; font-size: 9px; padding: 0 10px; gap: 7px; }
   .atlas-status span { display: none; }
   .atlas-connection { width: calc(100% - 102px); left: calc(50% + 27px); top: 51%; }
-  .atlas-orbit { width: 87px; height: 87px; margin-bottom: 38px; }
-  .atlas-orbit > svg { width: 43px; }
+  .atlas-connection > .atlas-wait-art { width: 168px; height: 105px; margin-bottom: 25px; }
+  .atlas-connection .waiting-orbit { width: 76px; height: 76px; }
   .atlas-connection .map-eyebrow { font-size: 7px; letter-spacing: .7px; }
   .atlas-connection h1 { font-size: 21px; letter-spacing: .5px; }
   .atlas-connection p { font-size: 11px; }
@@ -483,6 +483,13 @@
 .initial-assessment .action-condition {color:#53696e}
 .research-activity {padding:10px 0;border-bottom:1px solid #e3eae7;margin-bottom:14px}
 .research-current {display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.65;color:#4e6865}
+.research-wait-row {display:flex;align-items:center;gap:10px;min-height:58px}
+.research-wait-art {display:block;flex:0 0 76px;width:76px;height:48px}
+.research-wait-art > .waiting-motif {width:100%;height:100%}
+.research-wait-row .waiting-orbit {width:38px;height:38px}
+.research-wait-row .waiting-sheet-stack {transform:scale(.58)}
+.research-wait-row .research-current {flex:1;min-width:0}
+.research-wait-row .research-current>i {display:none}
 .research-current>i {width:7px;height:7px;margin-top:8px;border-radius:50%;background:#6f8f84;flex-shrink:0}
 .research-activity.is-running .research-current>i {animation:research-pulse 1.4s ease-in-out infinite}
 .research-activity summary,.dashboard-method summary {cursor:pointer;color:#61756d;font-size:14px;line-height:1.7;margin-top:8px}
@@ -550,3 +557,14 @@
 .map-shell .atlas-map {isolation:isolate;z-index:0}
 .map-shell .atlas-inspector {overflow-anchor:none}
 .map-shell .atlas-inspector {background:#fff}
+.workspace-boot-overlay {position:fixed;inset:0;z-index:85}
+.workspace-boot-overlay .waiting-scene--boot {height:100%;min-height:100dvh}
+
+/* Until the map is interactive, keep its disabled controls off the loading stage. */
+.atlas-view--loading .area-selection-controls,
+.atlas-view--loading .atlas-search-wrap,
+.atlas-view--loading .screening-controls,
+.atlas-view--loading .atlas-layer-control,
+.atlas-view--loading .atlas-navigation,
+.atlas-view--loading .atlas-bottom-hint {display:none}
+.map-shell:has(.atlas-view--loading) .atlas-wordmark strong {color:#d7e7e4}

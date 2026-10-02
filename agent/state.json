@@ -1,5 +1,5 @@
 {
-  "status": "source_backed_import_graph_merged_live_verified",
+  "status": "animated_waiting_ui_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -22,7 +22,8 @@
     "private_github_repository_created_pushed_and_read_back",
     "source_linked_decision_brief_aggregated_from_existing_packet",
     "ten_cross_domain_public_mechanism_cases_added",
-    "source_backed_import_graph_and_analysis_panel"
+    "source_backed_import_graph_and_analysis_panel",
+    "animated_waiting_ui_and_live_stage_feedback"
   ],
   "not_completed": [
     "real_enterprise_effectiveness_evaluation_requires_authorized_cases",
@@ -32,7 +33,7 @@
   ],
   "next_task": "Build a source-grounded notice timeline and exact deadline projection, then validate project-location/date roles with human labels. Pro Draft PR5 stays separate.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-10-02T07:35:43+00:00",
+  "updated_at": "2026-10-02T08:43:43+00:00",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -73,9 +74,10 @@
     "research/test_results/dsh-rc1-intelligence.json",
     "research/test_results/pro-pr5-review.json",
     "research/test_results/decision-brief-cross-domain.json",
-    "research/test_results/import-graph.json"
+    "research/test_results/import-graph.json",
+    "research/test_results/loading-journey.json"
   ],
-  "current_delivery": "Merged PR7 adds a source-backed imported-data graph and field analysis panel. Full verification and both PR checks passed; local main and the running workbench at 127.0.0.1:5173 were read back without a model call. The existing real project has no uploaded documents, so populated import behavior is validated with synthetic parser, isolated HTTP and browser flows. Technical architecture and API details are in docs/engineering.md.",
+  "current_delivery": "The loading-journey branch adds an original animated survey cursor for initial project load, map connection, project switching, research stages and imported-data reads. Full verification and browser map regressions passed; delayed-request desktop/mobile readback, reduced-motion and inert background checks passed at 127.0.0.1:5173. This is UI feedback driven by real request/event states, not inferred progress or a new model evaluation. Technical behavior is documented in docs/engineering.md.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -294,5 +296,30 @@
       "The unpaged documents endpoint can transfer large parser results when many large files are uploaded."
     ],
     "next_runnable_task": "Continue the source-grounded notice timeline and deadline projection; run populated import readback when authorized material becomes available."
+  },
+  "waiting_ui": {
+    "changed_files": [
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/WorkspaceFrame.tsx",
+      "apps/workspace/src/components/ResearchActivity.tsx",
+      "apps/workspace/src/components/WaitingScene.tsx",
+      "apps/workspace/src/components/WaitingScene.css",
+      "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "apps/workspace/src/maps/MapWorkspace.tsx",
+      "apps/workspace/src/maps/map.css",
+      "apps/workspace/src/style.css",
+      "tests/browser/map-workspace.mjs",
+      "docs/engineering.md",
+      "research/test_results/loading-journey.json",
+      "output/playwright/loading-desktop.png",
+      "output/playwright/loading-mobile.png",
+      "agent/state.json"
+    ],
+    "tests": "npm run verify: 390 JS, 70 Python, 12 HTTP E2E and production build passed; full map browser regression passed with 36 core checks and handoff variants; post-layout build and focused map browser flow passed; delayed-request desktop/mobile and reduced-motion readback passed",
+    "artifact": "research/test_results/loading-journey.json",
+    "unresolved": [
+      "No new paid long-running model analysis was started just to observe animation; real stage transitions were verified with controlled NDJSON fixtures."
+    ],
+    "next_runnable_task": "Continue the source-grounded notice timeline and deadline projection; retain the animated wait behavior for any future long-running workflow."
   }
 }
