@@ -1,3 +1,4 @@
+import { retrofitAdvice, applyNeighborhoodGate } from '../retrofit/planning'
 import type { CapabilityResult, DecisionPacket, ExperienceRule, ProjectInput, Scenario, Review, Impact } from '../../apps/host/generated/contracts'
 
 const definitions = {
@@ -19,14 +20,21 @@ export function evaluateScenarios(project: ProjectInput): Scenario[] {
   return [...project.candidate_ids].sort((a, b) => displayOrder.indexOf(a) - displayOrder.indexOf(b)).map(id => {
     const definition = definitions[id]
     const defer = id === 'defer_and_investigate'
-    const blocked = definition.demolition_scope === 'whole_site' && noDemolition.length > 0
+    const neighborhoodVeto=project.business_profile==='neighborhood'&&retrofitAdvice(project).decision==='defer'
+    const blocked = !defer && neighborhoodVeto || definition.demolition_scope === 'whole_site' && noDemolition.length > 0
     const scenario: Scenario = { id, title: definition.title, status: blocked ? 'blocked' : defer ? 'investigate' : 'conditional',
       actions: [...definition.actions], demolition_scope: definition.demolition_scope,
       prerequisites: defer ? ['调查活动需取得相应现场和资料访问授权'] : ['核实地块和建筑权属、现有租约及实施权限', '取得结构检测、消防和用途适配意见', '补齐真实功能需求与运营依据'],
-      blockers: blocked ? ['本项目已生效的组织约束禁止整体拆除'] : [],
+      blockers: neighborhoodVeto&&!defer?retrofitAdvice(project).reasons.map(r=>r.text):blocked ? ['本项目已生效的组织约束禁止整体拆除'] : [],
       evidence_refs: project.facts.filter(f => ['building_inventory', 'structural_assessment', 'rights_status'].includes(f.kind)).map(f => f.source_id).filter((id, i, all) => all.indexOf(id) === i),
       rule_refs: [], counterevidence: defer ? ['暂缓可能延后利用机会；需用调查结果检验是否继续等待'] : ['空置不等于可立即投入改造', '缺失结构资料不能证明安全可改', '当前材料不足以证明运营需求成立'],
       enterprise_fit: '待核：未取得可核验的能力与资源材料', resource_status: '未知：不据缺失数据填算成本或工期', preference_notes: [] }
+    if(project.business_profile==='neighborhood'){
+      scenario.title=defer?'补充改造关键资料 · 专项核查':id==='retain_and_reuse'?'基础、完善与提升改造 · 分项实施':definition.title
+      scenario.prerequisites=retrofitAdvice(project).missing.map(check=>check.label+'：'+check.where)
+      scenario.counterevidence=['地图设施数量不能代表居民真实需求或服务容量','资金申请或承诺不能当作已批准拨付','历史改造成果不能证明本方案当前工程条件']
+      scenario.enterprise_fit='核对本方案工程队伍、扰民协调与交付经验记录'
+    }
     if (!defer && noDemolition.length) {
       scenario.rule_refs.push(...noDemolition.map(r => r.id))
       scenario.prerequisites.push('遵守本项目不整体拆除的组织边界；局部拆改仍需单独核实')
@@ -42,7 +50,7 @@ export function evaluateScenarios(project: ProjectInput): Scenario[] {
 }
 
 export function review(project: ProjectInput, scenarios: Scenario[], results: CapabilityResult[]): Review[] {
-  const reviews: Review[] = [
+  const reviews: Review[] = project.business_profile==='neighborhood'?[]:[
     { id: 'REV-SAFETY', severity: 'high', issue: '结构适配仍未知，不能把更新路径写成确定可实施。', target_refs: scenarios.filter(s => s.status === 'conditional').map(s => s.id), evidence_refs: project.facts.filter(f => f.kind === 'structural_assessment').map(f => f.source_id), recommendation: '由有资质的专业人员补充结构检测及消防适配意见。' },
     { id: 'REV-SCOPE', severity: 'high', issue: '研究范围与开发权利不能等同。', target_refs: ['scope'], evidence_refs: [], recommendation: '核实法定地块边界、权属及实施授权。' },
   ]
@@ -54,7 +62,7 @@ export function review(project: ProjectInput, scenarios: Scenario[], results: Ca
 export function assembleDecision(args: { project: ProjectInput; runId: string; revision: number; contextVersion: number; snapshotHash: string; executionMode: 'offline' | 'live'; results: CapabilityResult[]; artifactRefs: string[]; impact: Impact; model: string | null }): DecisionPacket {
   const { project, results } = args
   const scenarios = evaluateScenarios(project)
-  return { schema_version: '2.0', project_id: project.project_id, run_id: args.runId, revision: args.revision, context_version: args.contextVersion, snapshot_hash: args.snapshotHash,
+  return applyNeighborhoodGate(project,{ schema_version: '2.0', project_id: project.project_id, run_id: args.runId, revision: args.revision, context_version: args.contextVersion, snapshot_hash: args.snapshotHash,
     mode: project.mode, execution_mode: args.executionMode, synthetic: project.synthetic, status: project.facts.length ? 'partial' : 'empty', as_of: project.as_of, created_at: new Date().toISOString(), scope: project.scope,
     summary: project.facts.length ? '已按当前证据列出有条件的实施路径。实施前提仍需补齐，暂不形成建设可行或投资批准结论。' : '当前资料不足以判断是否进入专项尽调。仅列出待核路径和缺项，暂不确定建设方式。',
     findings: results.flatMap(r => r.findings), metrics: results.flatMap(r => r.metrics), scenarios,
@@ -65,7 +73,7 @@ export function assembleDecision(args: { project: ProjectInput; runId: string; r
       { id: 'FOLLOW-DEMAND', priority: 2, title: '开展使用需求与运营访谈', why: '检验功能假设，避免将区位或空置比例直接等同于需求。', impacted_paths: scenarios.map(s => s.id), status: 'suggested' },
     ], sources: structuredClone(project.sources), context_rules: structuredClone(project.context_rules), impact: args.impact,
     warnings: [...new Set([...(project.synthetic ? ['显式合成项目；仅用于工程流程验证，不代表真实片区结论。'] : []), ...(args.executionMode === 'offline' ? ['离线规则检查；未调用真实模型与联网搜索。'] : []), ...results.flatMap(r => r.warnings)])],
-    missing_fields: [...new Set(results.flatMap(r => r.missing_fields))], artifact_refs: args.artifactRefs, runtime: 'DeepSeek Harness 0.2.0-rc.1', model: args.model }
+    missing_fields: [...new Set(results.flatMap(r => r.missing_fields))], artifact_refs: args.artifactRefs, runtime: 'DeepSeek Harness 0.2.0-rc.1', model: args.model })
 }
 
 export function revisionDiff(before: DecisionPacket | null, after: DecisionPacket | null) {

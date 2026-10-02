@@ -105,6 +105,17 @@ class AppliesToItem(RootModel[str]):
     root: str = Field(..., max_length=200)
 
 
+class EpistemicStatus(StrEnum):
+    """
+    事实、估算、方案假设或缺失；未标注不自动视为已核实。
+    """
+
+    fact = 'fact'
+    estimate = 'estimate'
+    assumption = 'assumption'
+    missing = 'missing'
+
+
 class Fact(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -119,6 +130,9 @@ class Fact(BaseModel):
     locator: str | None = None
     scope_kind: ScopeKind | None = None
     applies_to: list[AppliesToItem] | None = Field(None, max_length=100)
+    epistemic_status: EpistemicStatus | None = Field(
+        None, description='事实、估算、方案假设或缺失；未标注不自动视为已核实。'
+    )
 
 
 class Kind(StrEnum):
@@ -340,6 +354,11 @@ class Role(StrEnum):
     executive = 'executive'
 
 
+class BusinessProfile(StrEnum):
+    general = 'general'
+    neighborhood = 'neighborhood'
+
+
 class Kind1(StrEnum):
     retain = 'retain'
     partial_demolition = 'partial_demolition'
@@ -494,6 +513,7 @@ class MapScreenProfile(StrEnum):
     balanced = 'balanced'
     commercial = 'commercial'
     enterprise = 'enterprise'
+    neighborhood = 'neighborhood'
 
 
 class MapScreenBounds(BaseModel):
@@ -915,6 +935,108 @@ class DimensionEvidence(BaseModel):
     record_id: str | None = Field(None, max_length=120)
 
 
+class ExperienceEvidence(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    document_id: str = Field(..., min_length=1)
+    version: str = Field(..., min_length=1)
+    locator: str = Field(..., min_length=1)
+    quote: str = Field(..., max_length=3000, min_length=1)
+
+
+class Key2(StrEnum):
+    decision_question = 'decision_question'
+    background = 'background'
+    key_conditions = 'key_conditions'
+    alternatives = 'alternatives'
+    proposal = 'proposal'
+    actual_decision = 'actual_decision'
+    decision_basis = 'decision_basis'
+    implementation = 'implementation'
+    outcome = 'outcome'
+    applicability = 'applicability'
+
+
+class ExperienceField(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: Key2
+    value: str | None = Field(..., max_length=3000)
+    evidence: list[ExperienceEvidence] = Field(..., max_length=5)
+
+
+class ExperienceDraft(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=10)
+
+
+class Status15(StrEnum):
+    draft = 'draft'
+    approved = 'approved'
+    rejected = 'rejected'
+
+
+class ExperienceCard(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=10)
+    id: str
+    project_id: str
+    status: Status15
+    revision: int = Field(..., ge=1)
+    review_note: str | None = Field(..., max_length=2000)
+    created_at: str
+    updated_at: str
+
+
+class Decision(StrEnum):
+    proceed = 'proceed'
+    supplement = 'supplement'
+    defer = 'defer'
+
+
+class Reason1(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    text: str
+    evidence_refs: list[str]
+
+
+class MissingItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str
+    label: str
+    where: str
+    impact: str
+
+
+class NeighborhoodActionAdvice(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    decision: Decision
+    label: str
+    rule_version: str
+    reasons: list[Reason1]
+    missing: list[MissingItem]
+
+
 class Scope(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1004,6 +1126,7 @@ class ProjectInput(BaseModel):
     context_rules: list[ExperienceRule] = Field(..., max_length=1000)
     candidate_ids: list[CandidateId] = Field(..., max_length=3, min_length=1)
     events: list[InputEvent]
+    business_profile: BusinessProfile | None = None
 
 
 class ScenarioProposal(BaseModel):
@@ -1123,6 +1246,7 @@ class DecisionPacket(BaseModel):
     unresolved_disagreements: list[str] | None = None
     scope: Scope | None = None
     decision_support: DecisionSupport | None = None
+    neighborhood_action: NeighborhoodActionAdvice | None = None
 
 
 class MapScreenContext(BaseModel):

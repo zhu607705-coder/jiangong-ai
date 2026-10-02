@@ -17,6 +17,7 @@ import { parseDocument, tableFacts, DocumentParseError } from './ingest'
 import { AmapSettings, registerAmap } from './amap'
 import { registerMapScreening } from './map-screening'
 import { registerIntelligence } from './intelligence'
+import { registerExperience } from './experience'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -54,6 +55,7 @@ app.use(['/api', '/_AMapService'], (req, _res, next) => {
   next()
 })
 const intelligence = registerIntelligence(app,store)
+await registerExperience(app,store,requireProject)
 registerAmap(app, amapSettings)
 registerMapScreening(app, amapSettings, store)
 app.get('/api/ready', async (_req, res) => {
@@ -91,6 +93,16 @@ app.post('/api/projects', async (req, res) => {
   res.status(201).json(await requireProject(input.project_id))
 })
 app.get('/api/projects/:id', async (req, res) => { res.json({ ...await requireProject(req.params.id), runs: (await store.runs(req.params.id)).map(({ snapshot, ...run }) => run) }) })
+app.post('/api/projects/:id/map-anchor', async(req,res)=>{
+  const project=await requireProject(String(req.params.id))
+  const body=z.object({anchor:z.unknown(),expected_version:z.number().int().min(0)}).strict().parse(req.body)
+  if(project.input.synthetic)throw new ApiError(422,'SYNTHETIC_MAP','合成项目不关联真实地图位置')
+  const input=structuredClone(project.input);input.scope.map_anchor=body.anchor as ProjectRecord['input']['scope']['map_anchor']
+  projectInput(input)
+  const update=await store.db.query('UPDATE projects SET input=$1,context_version=context_version+1,updated_at=NOW() WHERE id=$2 AND context_version=$3 RETURNING id',[JSON.stringify(input),project.id,body.expected_version])
+  if(!update.rows.length)throw new ApiError(409,'CONTEXT_VERSION_CONFLICT','项目资料已变化，请刷新后重新关联')
+  res.json(await requireProject(project.id))
+})
 
 const runBody = z.object({ mode: z.enum(['automatic', 'enterprise']).default('automatic'), execution_mode: z.enum(['offline', 'live']).default('offline'), idempotency_key: z.string().min(8).max(100) }).strict()
 app.post('/api/projects/:id/runs', async (req, res) => {

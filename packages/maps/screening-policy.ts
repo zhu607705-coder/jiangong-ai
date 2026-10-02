@@ -1,5 +1,6 @@
 import type { MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme, MapScreenEvidence } from '../../apps/host/generated/contracts'
 import { decisionFactors, factorTier, decisionSignals } from './decision-factors'
+import { dashboardDimensions, dashboardPolicy } from '../decision/dashboard'
 export { decisionSignals }
 export const EVIDENCE_GROUPS = [
   { key:'transit', label:'交通节点', types:'150500|150700|150200', note:'站点、出入口及位置' },
@@ -13,6 +14,11 @@ export const SCREEN_PROFILES: Record<MapScreenProfile,{label:string;premise:stri
   balanced:{label:'片区更新',premise:'比较存量利用、实施条件和分期路径。'},
   commercial:{label:'商业配套',premise:'识别使用人群、竞争供给和运营入口。'},
   enterprise:{label:'产业办公',premise:'识别产业需求、建筑适配和企业参与方式。'},
+  neighborhood:{label:'老旧小区改造',premise:'围绕居民家庭需求，比较基础、完善、提升改造与实施资金和维护条件。'},
+}
+export function screenThemes(profile?:MapScreenProfile):typeof SCREEN_THEMES {
+  if(profile!=='neighborhood')return SCREEN_THEMES
+  return {...SCREEN_THEMES,...Object.fromEntries(dashboardDimensions(dashboardPolicy(profile)).map(d=>[d.key,{label:d.label}]))}
 }
 export const SCREEN_THEMES: Record<MapScreenTheme,{label:string}> = {
   overall:{label:'综合研判'},implementation:{label:'实施入口'},adaptation:{label:'空间工程'},

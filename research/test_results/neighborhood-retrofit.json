@@ -1,0 +1,85 @@
+{
+  "feature": "old-neighborhood retrofit research and reviewed experience workflow",
+  "date": "2026-10-02",
+  "branch": "codex/neighborhood-retrofit",
+  "verification": {
+    "full_verify": "npm run verify: 25 files,426 JS,70 Python,12 HTTP E2E and production build passed",
+    "targeted": "36 contract tests passed after review fixes",
+    "browser": "full map regression, experience library (10 fields/version/as_of), intelligence regression passed",
+    "live": "local HTTP, real AMap point, public intake, upload/parser/experience draft and offline run read back",
+    "post_adjustment": "39 final targeted decision tests and production build passed",
+    "experience_ui_final": "Browser regression and TypeScript passed after adding explicit model-extraction opt-in; default remains local and backend permission gate remains authoritative."
+  },
+  "public_pilot": {
+    "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "name": "翠苑一区 · 老旧小区改造历史验证",
+    "public_sources": 10,
+    "local_public_excerpt_documents": 1,
+    "experience_cards": 1,
+    "experience_status": "draft",
+    "known_experience_fields": [
+      "implementation"
+    ],
+    "missing_fields": "unrecorded historical decisions, grounds and outcomes remain null",
+    "amap_name": "翠苑新村一区",
+    "coordinates": [
+      120.127747,
+      30.285369
+    ],
+    "coordinate_encoding": "GCJ-02",
+    "legal_boundary_confirmed": false,
+    "public_index_intakes": 10,
+    "query_cuiyuan_results": 4,
+    "automatic_collection": false,
+    "run_id": "RUN-6c26635e-4ba4-47a6-9f21-29f027ab5021",
+    "execution_mode": "offline",
+    "decision": "先补充关键资料再判断",
+    "missing_prerequisites": 7,
+    "model_calls": 0
+  },
+  "ui_checks": {
+    "new_dimensions": [
+      "居民需求",
+      "公共服务",
+      "居住工程",
+      "实施协同",
+      "长效维护",
+      "资金交付"
+    ],
+    "all_pilot_values": null,
+    "assumption_calculation": {
+      "basic": 100,
+      "improvement": 20,
+      "enhancement": 0,
+      "reserve_percent": 10,
+      "planned_funding": 90,
+      "households": 10,
+      "calculated_total": 132,
+      "hypothetical_funding_gap": 42,
+      "scope": "isolated browser user inputs; not case facts and not persisted"
+    },
+    "mobile_overflow": false,
+    "browser_errors": 0
+  },
+  "review_fixes": [
+    "card revision and decision basis round-trip",
+    "target as_of default and upper bound, reuse history timestamp",
+    "authoritative packet/scenario/report veto",
+    "business_profile cache isolation"
+  ],
+  "artifacts": [
+    "output/playwright/neighborhood-desktop.png",
+    "output/playwright/neighborhood-experience-mobile.png"
+  ],
+  "limits": [
+    "No authorized enterprise historical materials or enterprise-effectiveness evaluation",
+    "No new paid live model judgment for this neighborhood mode",
+    "Professional rules and current engineering/resident/funding records remain missing",
+    "Scheme calculator comparison is local assumptions, not an approved project financial model"
+  ],
+  "commands": [
+    "PATH=/mnt/d/建工ai/.tools/node/bin:$PATH npm run verify",
+    "LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/map-workspace.mjs",
+    "LD_LIBRARY_PATH=/mnt/d/建工ai/.tools/browser-libs/usr/lib/x86_64-linux-gnu PATH=/mnt/d/建工ai/.tools/node/bin:$PATH node tests/browser/experience-library.mjs"
+  ]
+}

@@ -2,13 +2,14 @@ import type { DecisionPacket } from './generated/contracts'
 import { table } from '../../vendor/cre/scripts/lib/report-table'
 import { buildDecisionBrief } from '../../packages/decision/brief-view'
 
-const statusNames = { conditional: '有条件待核', blocked: '组织条件阻断', investigate: '本轮调查' }
+const statusNames = { conditional: '有条件待核', blocked: '条件阻断', investigate: '本轮调查' }
 const dimensionNames = { implementation: '实施与采购', building: '建筑条件', demand: '使用需求', organization: '组织方式', enterprise: '承接能力', resources: '投入与资源' }
 export function renderReport(packet: DecisionPacket): string {
   const brief = buildDecisionBrief(packet)
   const lines = ['# 建造前片区研判', '', `项目：${packet.project_id} · 版本：${packet.revision} · 资料时点：${packet.as_of}`, '',
     `数据：${packet.synthetic ? '显式合成' : '用户资料与公开来源'}；执行：${packet.execution_mode === 'offline' ? '离线工程验证（未调用模型与联网搜索）' : `真实模型研判（${packet.model || '模型标识未返回'}；业务效用未经验证）`}`, '', brief.summary, '',
     '## 调查发现', '']
+  if(packet.neighborhood_action){ const a=packet.neighborhood_action;lines.push('## 老旧小区改造行动建议','',a.label,'',...a.reasons.map(r=>'- '+r.text+'；来源：'+r.evidence_refs.join('、')), '',...a.missing.map(c=>'- '+c.label+'：'+c.where+'；补齐后检查：'+c.impact),'', '规则版本：'+a.rule_version,'') }
   if (!brief.findings.length) lines.push('本轮尚无带来源的具体发现。', '')
   for (const finding of brief.findings) {
     lines.push(`### ${dimensionNames[finding.dimension]} · ${finding.status === 'supported' ? '有来源记录' : finding.status === 'conflict' ? '来源有冲突' : '有条件线索'}`, '',
@@ -19,7 +20,7 @@ export function renderReport(packet: DecisionPacket): string {
   lines.push('## 实施路径', '')
   for (const path of brief.paths) {
     lines.push(`### ${path.title} · ${statusNames[path.status]}`, '')
-    if (path.status === 'blocked') lines.push('现有组织条件阻断该路径。', '')
+    if (path.status === 'blocked') lines.push('当前已确认条件阻断该路径。', '')
     else lines.push('可研究的操作：', ...path.actions.map((action, i) => `${i + 1}. ${action}`), '')
     if (path.conditions.length) lines.push('这一路径需先落实：', ...path.conditions.map(condition => `- ${condition}`), '')
     if (path.organizationNotes.length) lines.push('本项目组织条件与偏好：', ...path.organizationNotes.map(note => `- ${note}`), '')

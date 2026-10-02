@@ -78,7 +78,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const sources=[...sourceMap.values()]
   const cite=(refs:string[])=>refs.map(ref=>context?.groups.find(g=>g.source_id===ref)?.label||sourceMap.get(ref)?.title||'来源').join(' · ')
   function showEvidence(refs:string[]){setSourcesOpen(true);requestAnimationFrame(()=>document.getElementById('evidence-'+encodeURIComponent(refs[0]))?.scrollIntoView({block:'nearest',behavior:'auto'}))}
-  const signals=context?decisionSignals(context):[]
+  const signals=context?decisionSignals(context,profile):[]
   return <section ref={card} className="initial-assessment" aria-label="区域初步分析">
     {stage==='context'&&<p role="status">正在读取所选位置…</p>}
     {context&&<>

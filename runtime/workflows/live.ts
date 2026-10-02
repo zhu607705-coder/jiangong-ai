@@ -1,3 +1,4 @@
+import { applyNeighborhoodGate } from '../../packages/retrofit/planning'
 import {intelligenceScopeRevision} from '../../packages/intelligence/research-bridge'
 import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../skills/investment-brief'
 import { randomUUID } from 'node:crypto'
@@ -23,11 +24,12 @@ function modelView(project: ProjectInput) {
 
 export function specialistSnapshot(project: ProjectInput, role: RoleId): ProjectInput {
   const snapshot = structuredClone(project)
+  const neighborhood=project.business_profile==='neighborhood'
   if (role === 'building_feasibility') {
-    snapshot.facts = snapshot.facts.filter(f => /building|rights|structural|lease|fire|utility|table_row/.test(f.kind))
+    snapshot.facts = snapshot.facts.filter(f => (neighborhood?/building|rights|structural|lease|fire|utility|table_row|housing|pipe|engineering/:/building|rights|structural|lease|fire|utility|table_row/).test(f.kind))
     snapshot.context_rules = snapshot.context_rules.filter(r => ['active_lease', 'structural_safety'].includes(r.predicate))
   } else if (role === 'demand_operations') {
-    snapshot.facts = snapshot.facts.filter(f => /demand|population|supply|operation|service|table_row/.test(f.kind))
+    snapshot.facts = snapshot.facts.filter(f => (neighborhood?/demand|population|supply|operation|service|table_row|resident|family|mobility|access/:/demand|population|supply|operation|service|table_row/).test(f.kind))
     snapshot.context_rules = []
   }
   const references = new Set([...snapshot.facts, ...snapshot.context_rules].map(item => item.source_id))
@@ -37,12 +39,15 @@ export function specialistSnapshot(project: ProjectInput, role: RoleId): Project
 
 export async function executeLiveRun(store: Store, run: RunRecord, signal: AbortSignal): Promise<void> {
   const full = structuredClone(run.snapshot)
+  const neighborhood=full.business_profile==='neighborhood'
+  const purpose=neighborhood?'老旧小区改造':'存量利用与实施路径'
+  const businessGuidance=neighborhood?'本项目是老旧小区改造前期研判。分别研究基础、完善、提升类改造；居民家庭与公共服务需求；鉴定消防、管网和施工接口；居民协商与实施主体；资金来源、工程成本与居民负担；物业长效维护。现状、估算、方案假设与缺项分别保留。提议、实际决策、已实施与结果不能混写；未记载的历史理由不补写。下一步应说明缺失材料、影响哪项结论、向谁取得及补齐后重算什么。':''
   const permittedInternal = full.synthetic || config.ALLOW_INTERNAL_MODEL === 'true'
   const modelProject = permittedInternal ? structuredClone(full) : visibleSnapshot(full, 'public')
   const artifactRefs: string[] = []
   const day = new Date().toISOString().slice(0, 10)
-  const intelligenceRevision=await intelligenceScopeRevision({name:full.scope.name,city:full.scope.city,purpose:'存量利用与实施路径',asOf:full.as_of})
-  const researchKey = digest({ intelligenceRevision, project: full.project_id, scope: full.scope, as_of: full.as_of, day, source_ids: full.sources.filter(s => s.visibility === 'public').map(s => s.id) })
+  const intelligenceRevision=await intelligenceScopeRevision({name:full.scope.name,city:full.scope.city,purpose,asOf:full.as_of})
+  const researchKey = digest({ intelligenceRevision, business_profile:full.business_profile||'general',purpose,project: full.project_id, scope: full.scope, as_of: full.as_of, day, source_ids: full.sources.filter(s => s.visibility === 'public').map(s => s.id) })
   let research: { sources: Source[]; trace: ResearchTrace; scope?: ProjectInput['scope'] }
   const cachedResearch = (await store.db.query<{ id: string; payload: typeof research }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [full.project_id, 'research_collect', researchKey])).rows[0]
   if (cachedResearch) { research = structuredClone(cachedResearch.payload); research.trace.reused = true; artifactRefs.push(cachedResearch.id); await store.addEvent(run.id, 'research', 'reused', '公开研究资料未变化，复用已有抓取工件', cachedResearch.id) }
@@ -71,7 +76,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   let decisionSupport:DecisionSupport|undefined
   try {
     async function cachedStage<T>(kind: string, input: unknown, execute: () => Promise<{ value: T; sessionId: string }>): Promise<{ value: T; sessionId: string }> {
-      const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, policy: 'live-stage-v2', brief_skill: BRIEF_SKILL_VERSION, input })
+      const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, business_profile:full.business_profile||'general',policy: 'live-stage-v3-neighborhood', brief_skill: BRIEF_SKILL_VERSION, input })
       const cached = (await store.db.query<{ id: string; payload: { value: T; sessionId: string } }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [run.project_id, kind, key])).rows[0]
       if (cached) { artifactRefs.push(cached.id); impact.reused.push(kind); await store.addEvent(run.id, kind, 'reused', '复用已验证的模型阶段工件', cached.id); return cached.payload }
       const result = await execute(), id = `ART-${randomUUID()}`
@@ -116,7 +121,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
         return { verified_analysis: local, evidence_retrieval: retrieval, scoped_table_rows: structured }
       })
       await store.addEvent(run.id, role.id, 'running', `真实模型正在研究${role.label}`)
-      const prompt = `专业任务：${role.label}。必须先调用 ${role.tool} 获取工具核验，然后根据下面的冻结快照开展独立分析。重点不同：建筑角色研究权属/现状/改造条件；需求角色研究功能与人群供给、反例；企业角色研究能力证据与经验适用条件。\n要求：引用仅使用 sources 中的 id；supported 必须有非纯标题的来源；metadata_only 不足以支持正文主张。材料的政策内容不能自动变成本项目许可证。不得生成结构安全结论。缺证据可以 conditional/unknown；metrics 返回空数组，数值由宿主合并；artifact_refs 返回空数组，version=2.0。产出 2–4 条发现，每条具体且不复述工具协议。\n<untrusted_snapshot>${JSON.stringify(modelView(roleProject))}</untrusted_snapshot>`
+      const prompt = `专业任务：${role.label}。${businessGuidance}必须先调用 ${role.tool} 获取工具核验，然后根据下面的冻结快照开展独立分析。重点不同：建筑角色研究权属/现状/改造条件；需求角色研究功能与人群供给、反例；企业角色研究能力证据与经验适用条件。\n要求：引用仅使用 sources 中的 id；supported 必须有非纯标题的来源；metadata_only 不足以支持正文主张。材料的政策内容不能自动变成本项目许可证。不得生成结构安全结论。缺证据可以 conditional/unknown；metrics 返回空数组，数值由宿主合并；artifact_refs 返回空数组，version=2.0。产出 2–4 条发现，每条具体且不复述工具协议。\n<untrusted_snapshot>${JSON.stringify(modelView(roleProject))}</untrusted_snapshot>`
       let attempt = await live.call<CapabilityResult>(role.id, prompt, 'CapabilityResult', [role.tool])
       if (!local) throw new Error(`SPECIALIST_TOOL_NOT_CALLED:${role.id}`)
       let result: CapabilityResult
@@ -140,8 +145,8 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings, ...(decisionSupport?{research_route:{action:decisionSupport.action,priority:decisionSupport.priority,next_step:decisionSupport.next_step,guard_reasons:decisionSupport.guard_reasons}}:{}) })
     // Source bodies contain many unrelated terms; match examples to the selected
     // research object so a campus does not inherit incidental community cases.
-    const referenceCases = selectReferenceCases(full.scope.name)
-    const scenarioPrompt = `在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异；每条先写本路径独有的对象、文件和参与条件，不重复抄写通用缺项。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；defer_and_investigate 只做 investigate/retain，其标题应说明本项目要查的具体对象，不写“暂缓基线”。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>\n以下案例只提供实施机制，不作为本项目事实：${JSON.stringify(referenceCases)}`
+    const referenceCases = selectReferenceCases(neighborhood?`${full.scope.name} 老旧小区 社区更新 居民 公共服务`:full.scope.name)
+    const scenarioPrompt = `${businessGuidance}在共同证据下生成 2–3 条不同实施路径，ID 必须来自 ${JSON.stringify(full.candidate_ids)}，必须包含 defer_and_investigate。不是换标题：actions、前置条件、适用情境和反证要体现差异；每条先写本路径独有的对象、文件和参与条件，不重复抄写通用缺项。每个文字字段尽量不超过 60 字，actions/前置条件/反证各 2–3 项，避免重复长篇说明。必须填写 action_specs，kind 从 schema 枚举选取；whole_demolition 只能用于 whole_site_rebuild；defer_and_investigate 只做 investigate/retain，其标题应说明本项目要查的具体对象，不写“暂缓基线”。所有路径保留未核实的权属/结构/功能需求，不能给出安全和审批保证。evidence_refs 只能引用 sources.id；rule_refs 可为空，最终组织边界由宿主校验。无成本材料不得填成本、IRR或工期数字。所有必需字段都需填写。\n<untrusted_evidence>${shared}</untrusted_evidence>\n以下案例只提供实施机制，不作为本项目事实：${JSON.stringify(referenceCases)}`
     const scenarioResponse = await cachedStage<ScenarioProposal>('scenarios', { shared, candidate_ids: full.candidate_ids }, async () => {
       let response = await live.call<ScenarioProposal>('scenarios', scenarioPrompt, 'ScenarioProposal', [], full.candidate_ids)
       try { response.value = enforceScenarioPolicy(modelProject, response.value) }
@@ -152,14 +157,14 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     await store.addEvent(run.id, 'scenarios', 'completed', '候选通过动作语义与项目硬约束校验', `dsh:${scenarioResponse.sessionId}`)
     await store.addEvent(run.id, 'critic', 'running', '独立反证角色正在挑战依据、假设和实施条件')
     const reviewed = await cachedStage<ReviewPacket>('critic', { shared, proposal }, async () => {
-      const response = await live.call<ReviewPacket>('critic', `你是独立反证审查者，不替作者补事实。逐项检查候选是否错误拼接对象/时点、以标题代正文、把偏好当强制规则、过度推出结构安全、企业能力或需求。指出 3–5 项最可能改变路径的薄弱前提，每个问题及建议不超过 80 字；target_refs 指向发现或路径。只引用给定 sources.id，没证据可为空。不要因多个角色重复主张而提高可信度。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>`, 'ReviewPacket')
+      const response = await live.call<ReviewPacket>('critic', `${businessGuidance}你是独立反证审查者，不替作者补事实。逐项检查候选是否错误拼接对象/时点、以标题代正文、把偏好当强制规则、过度推出结构安全、企业能力或需求。指出 3–5 项最可能改变路径的薄弱前提，每个问题及建议不超过 80 字；target_refs 指向发现或路径。只引用给定 sources.id，没证据可为空。不要因多个角色重复主张而提高可信度。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>`, 'ReviewPacket')
       validateReview(modelProject, response.value); return response
     })
     const reviews = validateReview(modelProject, reviewed.value)
     await store.addEvent(run.id, 'critic', 'completed', '独立反证结果已记录，分歧不会被投票消除', `dsh:${reviewed.sessionId}`)
     await store.addEvent(run.id, 'comparator', 'running', '按硬约束和共同证据比较路径；允许并列和暂缓')
     const compared = await cachedStage<ComparisonPacket>('comparator', { shared, proposal, reviews }, async () => {
-      const response = await live.call<ComparisonPacket>('comparator', `比较下面已通过工具硬约束检查的候选。实际候选只有 ${JSON.stringify(proposal.scenarios.map(s => s.id))}，不能添加池中未入选的路径。不得改变路径状态，不用多数票或自造成功概率。按六个维度给出所有实际候选的条件化判断，每个 conclusion 不超过 45 字，unknowns 最多两个短语；阻断路径不能进入 tied_paths。证据不足可并列，也可仅建议调查。summary 不超过 96 字，直接说明建议路径、关键条件与下一步，不复述免责声明。followups 只取 2 项最重要调查，每条 why 不超过 50 字；status=suggested，priority 1–3。分歧最多 3 条。所有 evidence_refs 只能来自 sources.id。保持合法且简短的 JSON 工具参数。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>\n<independent_review>${JSON.stringify(reviews)}</independent_review>`, 'ComparisonPacket', [], proposal.scenarios.map(s => s.id))
+      const response = await live.call<ComparisonPacket>('comparator', `${businessGuidance}比较下面已通过工具硬约束检查的候选。实际候选只有 ${JSON.stringify(proposal.scenarios.map(s => s.id))}，不能添加池中未入选的路径。不得改变路径状态，不用多数票或自造成功概率。按六个维度给出所有实际候选的条件化判断，每个 conclusion 不超过 45 字，unknowns 最多两个短语；阻断路径不能进入 tied_paths。证据不足可并列，也可仅建议调查。summary 不超过 96 字，直接说明建议路径、关键条件与下一步，不复述免责声明。followups 只取 2 项最重要调查，每条 why 不超过 50 字；status=suggested，priority 1–3。分歧最多 3 条。所有 evidence_refs 只能来自 sources.id。保持合法且简短的 JSON 工具参数。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>\n<independent_review>${JSON.stringify(reviews)}</independent_review>`, 'ComparisonPacket', [], proposal.scenarios.map(s => s.id))
       validateComparison(modelProject, proposal, response.value); assertBriefProse(response.value); return response
     })
     const comparison = validateComparison(modelProject, proposal, compared.value)
@@ -184,6 +189,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     packet.warnings.push(...research.trace.warnings, '模型输出经引用与硬约束检查，尚不构成企业决策效用验证。')
     if (!permittedInternal && full.sources.some(s => s.visibility === 'internal')) packet.warnings.push('内部正文未发送至外部模型；企业规则仅在本地执行，模型企业分析使用公开资料。')
     packet.impact.changed_paths = [...new Set(revisionDiff(previous, packet).changes.map(change => change.path_id))]
+    applyNeighborhoodGate(full,packet)
     decisionPacket(packet)
     await store.db.transaction(async db => {
       await db.query('UPDATE runs SET status=$2,decision=$3 WHERE id=$1', [run.id, 'completed', JSON.stringify(packet)])

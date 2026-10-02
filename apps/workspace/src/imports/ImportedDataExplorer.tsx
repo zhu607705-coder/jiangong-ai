@@ -232,6 +232,7 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
           {source.untrusted_text && <details><summary>原文摘录</summary><p>{previewText(source.untrusted_text, 800)}</p></details>}
         </>}
         {selected.kind === 'fact' && fact && <><p>记录类型：{fact.kind}</p><p>明确来源：{fact.source_id}</p>
+          <p>资料语义：{fact.epistemic_status?({fact:'事实记录',estimate:'估算',assumption:'方案假设',missing:'缺失'})[fact.epistemic_status]:'未分类原始记录'}</p>
           <p>原文定位：{fact.locator || fact.object_ref || '未标注'}</p><blockquote>{previewText(fact.value)}</blockquote>
           {fact.kind === 'table_row' && <p className="import-quality-note">这是解析出的原始行，不自动等同于已核业务事实。</p>}</>}
         {selected.kind === 'record' && record && <><p>对象：{record.subject}</p><p>来源：{record.source_id} · {record.adapter}</p><p>记录时点：{record.period}</p>

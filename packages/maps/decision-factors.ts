@@ -1,4 +1,4 @@
-import type { MapDecisionFactor, MapScreenContext, MapScreenTheme } from '../../apps/host/generated/contracts'
+import type { MapDecisionFactor, MapScreenContext, MapScreenTheme, MapScreenProfile } from '../../apps/host/generated/contracts'
 import { factAppliesToTarget } from './object-identity'
 
 export const FACTOR_LABELS = {
@@ -34,6 +34,7 @@ export function decisionFactors(context: MapScreenContext, evaluatedAt=context.c
       const expired=source?.expires_at!==undefined&&(!Number.isFinite(Date.parse(source.expires_at))||Date.parse(source.expires_at)<=asOf)
       const invalidPublication=source?.published_at!==undefined&&(!Number.isFinite(Date.parse(source.published_at))||Date.parse(source.published_at)>asOf)
       if (!f.kind.startsWith('screening.') || !FACTOR_FIELDS[key].includes(field) || typeof f.value !== 'boolean'
+          || f.epistemic_status !== undefined && f.epistemic_status !== 'fact'
           || !factAppliesToTarget(f,p,context.target)
           || !f.locator || !f.object_ref || !source || source.synthetic || source.content_status === 'metadata_only'
           || expired || invalidPublication || source.date_status==='conflict'
@@ -65,9 +66,13 @@ export function factorTier(factors: MapDecisionFactor[], theme: MapScreenTheme) 
 
 export type DecisionSignal = { title:string; observation:string; implication:string; next:string }
 /** Small deterministic previews, created only for the selected context; no LLM call. */
-export function decisionSignals(context: MapScreenContext): DecisionSignal[] {
+export function decisionSignals(context: MapScreenContext, profile?:MapScreenProfile): DecisionSignal[] {
   const result: DecisionSignal[] = []
   const samples = (key:string) => context.groups.find(g => g.key === key)?.sample || []
+  if(profile==='neighborhood') return [
+    {title:'居民与改造对象',observation:context.target.label||context.address||'所选研究范围',implication:'先确认小区建成年代、楼栋范围与居民的具体改善诉求。',next:'取得分楼栋住户调查、需求及异议台账；地图场所不代表人口户数。'},
+    {title:'公共服务与管护',observation:samples('civic').slice(0,2).map(p=>p.name).join('、')||'周边设施尚需核查',implication:'结合开放时间、容量和步行路线，比较养老托育、无障碍及日常服务缺口。',next:'核验设施可用性、接收维护主体、预算及改造后的责任安排。'},
+  ]
   const campus=samples('civic').filter(p=>/大学|校区/.test(p.name))
   if(/大学|校区/.test(context.target?.label||'')||campus.length)return [{title:'校园服务',observation:context.target?.label||campus.slice(0,2).map(p=>p.name).join('、'),implication:'先查修缮采购和后勤服务，再比较校外配套。',next:'查采购计划、建设项目和教学运行安排。'}]
   const office = samples('work_live').filter(p => /商务|写字楼|办公|产业园/.test(p.category))

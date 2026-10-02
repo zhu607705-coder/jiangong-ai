@@ -14,7 +14,7 @@ export type ResearchDimension = "demand" | "supply" | "adaptation" | "implementa
  * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenProfile".
  */
-export type MapScreenProfile = "balanced" | "commercial" | "enterprise";
+export type MapScreenProfile = "balanced" | "commercial" | "enterprise" | "neighborhood";
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "MapScreenTheme".
@@ -49,6 +49,7 @@ export interface ProjectInput {
    */
   candidate_ids: CandidateId[];
   events: InputEvent[];
+  business_profile?: "general" | "neighborhood";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -119,6 +120,10 @@ export interface Fact {
    * @maxItems 100
    */
   applies_to?: string[];
+  /**
+   * 事实、估算、方案假设或缺失；未标注不自动视为已核实。
+   */
+  epistemic_status?: "fact" | "estimate" | "assumption" | "missing";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -351,6 +356,7 @@ export interface DecisionPacket {
   unresolved_disagreements?: string[];
   scope?: Scope;
   decision_support?: DecisionSupport;
+  neighborhood_action?: NeighborhoodActionAdvice;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -491,6 +497,25 @@ export interface DimensionScore {
    */
   evidence_refs: string[];
   basis: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "NeighborhoodActionAdvice".
+ */
+export interface NeighborhoodActionAdvice {
+  decision: "proceed" | "supplement" | "defer";
+  label: string;
+  rule_version: string;
+  reasons: {
+    text: string;
+    evidence_refs: string[];
+  }[];
+  missing: {
+    key: string;
+    label: string;
+    where: string;
+    impact: string;
+  }[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -884,4 +909,71 @@ export interface MapDataCatalog {
   synthetic_project_count: number;
   unlocated_project_count: number;
   notes: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceEvidence".
+ */
+export interface ExperienceEvidence {
+  document_id: string;
+  version: string;
+  locator: string;
+  quote: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceField".
+ */
+export interface ExperienceField {
+  key:
+    | "decision_question"
+    | "background"
+    | "key_conditions"
+    | "alternatives"
+    | "proposal"
+    | "actual_decision"
+    | "decision_basis"
+    | "implementation"
+    | "outcome"
+    | "applicability";
+  value: string | null;
+  /**
+   * @maxItems 5
+   */
+  evidence: ExperienceEvidence[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceDraft".
+ */
+export interface ExperienceDraft {
+  title: string;
+  project_type: string;
+  development_mode: string;
+  stage: string;
+  /**
+   * @maxItems 10
+   */
+  fields: ExperienceField[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceCard".
+ */
+export interface ExperienceCard {
+  title: string;
+  project_type: string;
+  development_mode: string;
+  stage: string;
+  /**
+   * @maxItems 10
+   */
+  fields: ExperienceField[];
+  id: string;
+  project_id: string;
+  status: "draft" | "approved" | "rejected";
+  revision: number;
+  review_note: string | null;
+  created_at: string;
+  updated_at: string;
 }

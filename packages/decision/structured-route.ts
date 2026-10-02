@@ -37,7 +37,7 @@ export function projectDecisionInput(input: ProjectInput): DecisionInput {
   const asOf=/^\d{4}-\d{2}-\d{2}$/.test(input.as_of) ? input.as_of+'T23:59:59.999Z' : input.as_of
   const context={created_at:asOf,local_projects:[{project_id:input.project_id,relation:'within_scope',sources,facts}]} as MapScreenContext
   const factors=decisionFactors(context)
-  return {state:{scope:input.scope,as_of:input.as_of,synthetic:input.synthetic,verified_conditions:factors,facts,
+  return {state:{scope:input.scope,as_of:input.as_of,synthetic:input.synthetic,business_profile:input.business_profile||'general',purpose:input.business_profile==='neighborhood'?'老旧小区改造前期研判：居民需求、公共服务、居住工程、实施协同、长效维护、资金交付':'片区投资前期研判',verified_conditions:factors,facts,
     sources:sources.filter(s=>s.content_status!=='metadata_only').map(s=>({id:s.id,title:s.title,text:s.untrusted_text?.slice(0,2400),published_at:s.published_at||null}))},
     factors,sourceIds:sources.filter(s=>s.content_status!=='metadata_only').map(s=>s.id)}
 }

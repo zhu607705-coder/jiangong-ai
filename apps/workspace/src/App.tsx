@@ -25,6 +25,8 @@ import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
+import NeighborhoodPanel from './components/NeighborhoodPanel';
+import ExperienceLibrary from './components/ExperienceLibrary';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import { buildDecisionBrief } from '../../../packages/decision/brief-view';
 import {
@@ -175,6 +177,7 @@ export default function App() {
     [regionName, setRegionName] = useState(""),
     [geometryText, setGeometryText] = useState("");
   const [followups, setFollowups] = useState<{ title: string }[]>([]);
+  const [businessProfile, setBusinessProfile] = useState<'neighborhood'|'general'>('neighborhood');
   const [loadingTarget, setLoadingTarget] = useState<string | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
@@ -316,7 +319,7 @@ export default function App() {
     },
     {
       id: "context",
-      label: "企业经验",
+      label: "项目经验",
       detail: `经验版本 v${project?.context_version || 0}`,
       done: !!project?.context_version,
     },
@@ -555,7 +558,7 @@ export default function App() {
               <h1>{project.name}</h1>
               <p>
                 投资拓展与前期策划 <span>·</span>{" "}
-                以建筑、实施和企业条件为研判主线
+                {project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
               </p>
             </div>
             <button className="secondary" onClick={() => setCreateOpen(true)}>
@@ -630,6 +633,7 @@ export default function App() {
                     : "离线工程检查（无模型推理）"}
                 </div>
               )}
+              {project.input.business_profile === 'neighborhood' && <NeighborhoodPanel key={project.id} project={project.input} dashboard={packet?.decision_support?.dashboard} onEvidence={() => setTab('evidence')} />}
               <section className="summary-panel">
                 <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} details /></details>
                 <div className="summary-heading">
@@ -849,12 +853,13 @@ export default function App() {
           {tab === "context" && (
             <section className="content-panel">
               <div className="kicker">ENTERPRISE CONTEXT</div>
-              <h2>让内部经验作用于具体判断</h2>
+              <h2>项目经验与本项目意见</h2>
               <p className="intro">
                 记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。
               </p>
+              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} onProjectUpdated={() => loadProject(project.id).then(()=>{})} />
               <label className="field-label" htmlFor="experience">
-                项目意见与经验
+                本项目意见（不作为历史实施结果）
               </label>
               <textarea
                 id="experience"
@@ -1271,6 +1276,7 @@ export default function App() {
                     project_id: `P-${crypto.randomUUID()}`,
                     synthetic: false,
                     purpose: "preconstruction_research",
+                    business_profile: businessProfile,
                     mode: "automatic",
                     role: "investment_manager",
                     as_of: new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Shanghai" }).format(new Date()),
@@ -1288,7 +1294,7 @@ export default function App() {
                       url: `https://uri.amap.com/marker?position=${mapAnchor.longitude},${mapAnchor.latitude}&coordinate=gaode`,
                       untrusted_text: JSON.stringify({target:mapEvidence.target,address:mapEvidence.address,groups:mapEvidence.groups}) }, ...handoffPublicSources(mapEvidence)] : [],
                     context_rules: [],
-                    candidate_ids: [
+                    candidate_ids: businessProfile==='neighborhood'?['retain_and_reuse','defer_and_investigate']:[
                       "retain_and_reuse",
                       "selective_rebuild",
                       "defer_and_investigate",
@@ -1318,11 +1324,11 @@ export default function App() {
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 maxLength={120}
-                placeholder="例如：某区存量厂房更新研究"
+                placeholder="例如：杭州某老旧小区综合整治提升"
               />
-              <label className="field-label" htmlFor="region-name">
-                研究区域名称
-              </label>
+              <label className="field-label" htmlFor="business-profile">业务方向</label>
+              <select id="business-profile" value={businessProfile} onChange={e=>setBusinessProfile(e.target.value as typeof businessProfile)}><option value="neighborhood">老旧小区综合整治提升</option><option value="general">其他存量空间研究</option></select>
+              <label className="field-label" htmlFor="region-name">研究小区或片区名称</label>
               <input
                 id="region-name"
                 required

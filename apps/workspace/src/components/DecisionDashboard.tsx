@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import type { DecisionDashboard as Dashboard, ResearchDimension } from '../../../host/generated/contracts'
-import { DASHBOARD_DIMENSIONS } from '../../../../packages/decision/dashboard'
+import { dashboardDimensions, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../packages/decision/dashboard'
 
 /** Missing dimensions are never drawn as zero; individual known marks remain visible. */
 export default function DecisionDashboard({value,onEvidence}:{value:Dashboard;onEvidence:(refs:string[])=>void}){
   const [selected,setSelected]=useState<ResearchDimension|null>(null)
-  const rows=DASHBOARD_DIMENSIONS.map(d=>({...d,result:value.dimensions.find(x=>x.key===d.key)}))
+  const rows=dashboardDimensions(value.policy_version).map(d=>({...d,result:value.dimensions.find(x=>x.key===d.key)}))
   const known=rows.filter(d=>d.result?.value!=null)
   const xy=(i:number,r:number)=>[84+Math.cos(-Math.PI/2+i*Math.PI/3)*r,84+Math.sin(-Math.PI/2+i*Math.PI/3)*r]
   const polygon=(r:number)=>rows.map((_,i)=>xy(i,r).join(',')).join(' ')
   const selectedRow=rows.find(d=>d.key===selected)
   return <section className="decision-dashboard" aria-label="六维方案研判">
-    <header><h3>方案研判</h3><span>适配度 · 1–5级</span></header>
+    <header><h3>{value.policy_version===NEIGHBORHOOD_DASHBOARD_POLICY?'老旧小区六维观察':'方案研判'}</h3><span>适配度 · 1–5级</span></header>
     <div className="dashboard-visual">
       <svg viewBox="0 0 168 168" role="img" aria-label={`六维方案适配，${known.length}个维度已评估`}>
         {[20,40,60].map(r=><polygon key={r} points={polygon(r)} className="radar-grid"/>)}

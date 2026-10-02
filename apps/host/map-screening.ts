@@ -14,7 +14,7 @@ import { resolveMapRegions } from '../../services/map-screening/regions'
 import { assertScreenBounds, SCREEN_PROFILES } from '../../packages/maps/screening-policy'
 import { validate } from '../../packages/contracts/validate'
 
-const profileSchema = z.enum(['balanced', 'commercial', 'enterprise'])
+const profileSchema = z.enum(['balanced', 'commercial', 'enterprise', 'neighborhood'])
 const boundsSchema = z.object({ west: z.number().finite(), south: z.number().finite(), east: z.number().finite(), north: z.number().finite() }).strict()
 function requestSignal(req: Request, res: Response, timeout: number) {
   const controller = new AbortController()

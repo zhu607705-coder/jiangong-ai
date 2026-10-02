@@ -139,7 +139,7 @@ export async function collectPublicEvidence(project:ProjectInput,signal:AbortSig
   try{
     await mountPublicWeb(ctx)
     const resolved=await resolveScope(ctx,project,signal)
-    const result=await collectSelectedEvidence({name:project.scope.name,city:project.scope.city,purpose:'存量利用与实施路径',asOf:project.as_of,intelligence:true},signal,undefined,ctx.web as unknown as ResearchWeb)
+    const result=await collectSelectedEvidence({name:project.scope.name,city:project.scope.city,purpose:project.business_profile==='neighborhood'?'老旧小区改造':'存量利用与实施路径',asOf:project.as_of,intelligence:true},signal,undefined,ctx.web as unknown as ResearchWeb)
     if(resolved.source)result.sources.push(resolved.source)
     if(resolved.warning)result.trace.warnings.push(resolved.warning)
     result.trace.source_ids=result.sources.map(s=>s.id)
