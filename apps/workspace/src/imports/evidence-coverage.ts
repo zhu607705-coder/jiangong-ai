@@ -1,7 +1,8 @@
 import type { Fact, MapScreenProfile, ResearchDimension, Source } from '../../../host/generated/contracts'
-import { dashboardDimensions, dashboardPolicy } from '../../../../packages/decision/dashboard'
+import { dashboardDimensions, dashboardPolicy, NEIGHBORHOOD_EVIDENCE_KINDS } from '../../../../packages/decision/dashboard'
 import { FACTOR_FIELDS, NEIGHBORHOOD_FACTOR_FIELDS } from '../../../../packages/maps/decision-factors'
 import type { ImportGraph, ParsedDocument } from './graph-model'
+import { documentSlices } from '../../../../packages/experience/document-slices'
 
 export type CoverageEvidence = {
   id: string; kind: 'fact' | 'record'; sourceId: string; locator: string | null;
@@ -24,6 +25,10 @@ const validDate = (value?: string) => !!value && Number.isFinite(Date.parse(valu
 /** A coverage dimension is an explicit registered fact/field key, never a
  * keyword extracted from a filename, table value, object name or body. */
 function factDimension(kind: string, profile?: MapScreenProfile): ResearchDimension | null {
+  if (profile === 'neighborhood') {
+    const registered = Object.entries(NEIGHBORHOOD_EVIDENCE_KINDS).find(([, kinds]) => kinds.includes(kind))?.[0]
+    if (registered) return registered as ResearchDimension
+  }
   const prefix = profile === 'neighborhood' ? 'retrofit.' : 'screening.'
   if (!kind.startsWith(prefix)) return null
   const fields = profile === 'neighborhood' ? NEIGHBORHOOD_FACTOR_FIELDS : FACTOR_FIELDS
@@ -49,6 +54,10 @@ function quality(source: Source | undefined, doc: ParsedDocument | undefined, lo
   if (!locator) return '原文定位未提供'
   if (value === null || value === undefined || value === '') return '值尚未提供'
   if (!source.untrusted_text?.trim() && !doc?.segments.some(segment => segment.text.trim()) && !doc?.tables.some(table => table.previewRows.length)) return '尚未取得可读原文'
+  const slices = documentSlices({ file_name: doc?.fileName || 'source.txt', parser_result: doc
+    ? { segments: doc.segments, profile: { tables: doc.tables.map(table => ({ rows: table.previewRows })) } }
+    : { text: source.untrusted_text } })
+  if (!slices.some(slice => slice.locator === locator) && !(source.untrusted_text?.trim() && source.locator === locator)) return '原文定位尚未匹配保存内容'
   if (!source.raw_hash && !source.hash && !doc?.hash) return '来源版本未提供'
   if (source.content_status === 'metadata_only' || source.parse_status === 'ocr_required' || doc?.status === 'ocr_required') return '尚未取得可读原文'
   if (source.body_truncated || source.records_truncated) return '来源或记录已截取'
@@ -56,7 +65,7 @@ function quality(source: Source | undefined, doc: ParsedDocument | undefined, lo
   if (doc?.hash && (source.raw_hash || source.hash) && doc.hash !== (source.raw_hash || source.hash)) return '文档与来源版本不一致'
   if (!validDate(observedAt)) return '观察或统计时点未提供'
   if (asOf) {
-    const cutoff = Date.parse(asOf.length === 10 ? asOf + 'T23:59:59+08:00' : asOf)
+    const cutoff = Date.parse(asOf.length === 10 ? asOf + 'T23:59:59Z' : asOf)
     if (!Number.isFinite(cutoff)) return '研究截止时点未提供'
     if (Date.parse(observedAt!) > cutoff || source.published_at && (!validDate(source.published_at) || Date.parse(source.published_at) > cutoff)) return '晚于研究截止时点'
     if (source.expires_at && (!validDate(source.expires_at) || Date.parse(source.expires_at) <= cutoff)) return '资料已超过有效期'

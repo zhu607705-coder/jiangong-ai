@@ -11,7 +11,7 @@ export const DECISION_POLICY = 'structured-research-route-v1'
 export const NEIGHBORHOOD_DECISION_POLICY='structured-neighborhood-route-v2'
 export const decisionPolicy=(profile?:MapScreenProfile)=>profile==='neighborhood'?NEIGHBORHOOD_DECISION_POLICY:DECISION_POLICY
 export const DECISION_THRESHOLDS = {min_confidence: 0.8, min_choice_probability: 0.65, min_sufficiency: 0.75}
-export const DECISION_ACTIONS = {investigate:'先补证据', resolve_blocker:'先核查阻点', compare:'进入路径比较', review:'复核判断'} as const
+export { DECISION_ACTIONS } from './route-labels'
 export const INVESTIGATION_STEPS = {
   implementation:'核查用途、权利取得与腾退条件。', adaptation:'取得结构、消防与设备条件资料。',
   demand:'调查实际使用者、到岗情况与同类空置。', operations:'核查运营主体、付费者与收入路径。',

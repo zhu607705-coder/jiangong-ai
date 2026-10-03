@@ -1,0 +1,105 @@
+
+[Recorded command output: javascript.log]
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  30 passed (30)
+      Tests  511 passed (511)
+   Start at  22:46:23
+   Duration  110.44s (transform 2.53s, setup 0ms, import 50.73s, tests 40.41s, environment 1ms)
+
+
+[Recorded command output: integration-tests-final.log]
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/preliminary-research.test.ts tests/contracts/evidence-coverage.test.ts tests/contracts/neighborhood-alignment.test.ts tests/contracts/decision-model.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  4 passed (4)
+      Tests  69 passed (69)
+   Start at  22:59:26
+   Duration  8.68s (transform 818ms, setup 0ms, import 5.45s, tests 146ms, environment 0ms)
+
+
+[Recorded command output: python.log]
+
+> haizhizi-decision-workspace@0.2.0 test:python
+> tsx scripts/check-python.ts
+
+......................................................................   [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /mnt/d/建工ai/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+70 passed, 1 warning in 5.47s
+
+[Recorded command output: http.log]
+
+> haizhizi-decision-workspace@0.2.0 test:e2e
+> tsx scripts/check-python.ts --e2e
+
+..............                                                           [100%]
+14 passed in 25.31s
+
+[Recorded command output: preliminary-browser-final.log]
+{"status":"passed","checks":14,"model_calls":0,"calls":[{"path":"/api/projects/P1/documents","method":"GET"},{"path":"/api/maps/screening/context","method":"POST"},{"path":"/api/maps/screening/analysis/CTX-1?profile=neighborhood","method":"GET"}],"viewport":[1440,390]}
+
+[Recorded command output: map-browser.log]
+PASS map UI: 36 checks including research waiting motion, historical refresh, polygon and structured evidence handoff; synthetic provider fixtures
+PASS late scan cannot overwrite the newer study: 4 checks
+PASS cancelled scan cannot overwrite the newer study: 4 checks
+PASS project geometry handoff: normal-pending (6 assertions)
+PASS project geometry handoff: normal-ready (6 assertions)
+PASS project geometry handoff: normal-failed (6 assertions)
+PASS project geometry handoff: expanded-pending (6 assertions)
+PASS project geometry handoff: expanded-ready (6 assertions)
+PASS project geometry handoff: expanded-failed (6 assertions)
+PASS project geometry handoff: expanded-switch (6 assertions)
+PASS project geometry handoff: point-ready (6 assertions)
+
+[Recorded command output: neighborhood-browser-repair.log]
+PASS neighborhood App workflow: 9 flow checks; synthetic API, minimal map stub, zero mutation/model/network calls
+
+[Recorded command output: dashboard-compatibility.log]
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/research-dashboard.test.ts tests/contracts/neighborhood-alignment.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  2 passed (2)
+      Tests  59 passed (59)
+   Start at  23:11:37
+   Duration  10.93s (transform 1.13s, setup 0ms, import 9.32s, tests 116ms, environment 0ms)
+
+
+[Recorded command output: build-final.log]
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6299 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:   0.38 kB
+dist/assets/index-WFHFANn6.css  102.56 kB │ gzip:  22.09 kB
+dist/assets/index-CjX3W-jQ.js     5.29 kB │ gzip:   1.79 kB
+dist/assets/index-NMaKJUN5.js   375.74 kB │ gzip: 121.19 kB
+✓ built in 42.26s
+
+[Recorded command output: qwen-public-check.log]
+{"tested_at":"2026-10-03T14:40:43.594Z","project_id":"P-HZ-CUIYUAN-HISTORY-20261002","project_version":3,"scope":"One existing public historical pilot; typed API and route behavior only, no enterprise effectiveness evaluation","public_sources":["HZN-P01","HZN-P02","HZN-P03","HZN-P04","HZN-C02","HZN-C03"],"profile":"neighborhood","status":"completed","model":"decision-model-preview","request_id":"3a9a15cb-5e07-4acb-9979-cdfd4540322f","policy_version":"structured-neighborhood-route-v2","action":"investigate","priority":"demand","priority_options":["demand","supply","adaptation","implementation","operations","resources"],"error_code":null,"dashboard_policy":"neighborhood-renovation-fit-v2","dimensions":[{"key":"demand","value":null},{"key":"supply","value":null},{"key":"adaptation","value":null},{"key":"implementation","value":null},{"key":"operations","value":null},{"key":"resources","value":null}],"scored_evidence_count":0,"duration_ms":404,"model_calls":1}

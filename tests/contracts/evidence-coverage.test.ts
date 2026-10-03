@@ -2,12 +2,19 @@ import { describe, expect, it } from 'vitest'
 import { buildImportGraph } from '../../apps/workspace/src/imports/graph-model'
 import { buildEvidenceCoverage } from '../../apps/workspace/src/imports/evidence-coverage'
 import type { Fact, Source } from '../../apps/host/generated/contracts'
-const source = (id = 'S1', extras: Partial<Source> = {}): Source => ({ id, title: id, data_class: 'public', visibility: 'public', synthetic: false, content_status: 'excerpt', hash: 'v1', untrusted_text: '显式测试原文', published_at: '2026-01-01', ...extras })
+const source = (id = 'S1', extras: Partial<Source> = {}): Source => ({ id, title: id, data_class: 'public', visibility: 'public', synthetic: false, content_status: 'excerpt', hash: 'v1', untrusted_text: '显式测试原文', locator: 'page:1', published_at: '2026-01-01', ...extras })
 const fact = (id: string, extras: Partial<Fact> = {}): Fact => ({ id, kind: 'retrofit.resident_needs_confirmed', value: true, unit: null, source_id: 'S1', locator: 'page:1', observed_at: '2026-09-01', object_ref: 'project:P1', scope_kind: 'project', epistemic_status: 'fact', ...extras })
 function coverage(facts: Fact[], sources: Source[] = [source()], documents: Parameters<typeof buildImportGraph>[0]['documents'] = []) {
   return buildEvidenceCoverage({ ...buildImportGraph({ projectId: 'P1', projectName: '项目', projectSources: sources, facts, documents, depth: 'read', scope: 'all' }), projectId: 'P1', projectName: '项目', profile: 'neighborhood', asOf: '2026-10-03' })
 }
 describe('explicit object and dimension evidence coverage', () => {
+  it('shares registered research fact semantics and rejects unresolved original locators', () => {
+    const result = coverage([fact('SURVEY', { kind: 'resident_survey', value: '显式测试原文', observed_at: '2026-10-03T20:00:00Z' }),
+      fact('WRONG', { kind: 'public_service_capacity', value: '显式测试原文', locator: 'page:999' })])
+    expect(result.cells.find(cell => cell.dimension === 'demand')?.state).toBe('locatable')
+    expect(result.cells.find(cell => cell.dimension === 'supply')?.state).toBe('clue')
+    expect(result.cells.find(cell => cell.dimension === 'supply')?.evidence[0].reason).toBe('原文定位尚未匹配保存内容')
+  })
   it('does not turn table rows or unbound documents into confirmed building coverage', () => {
     const result = coverage([fact('RAW', { kind: 'table_row', value: '{"楼栋":"B1","居民需求":"已确认"}', object_ref: undefined })])
     expect(result.rawRows[0]).toMatchObject({ sourceId: 'S1', count: 1 })

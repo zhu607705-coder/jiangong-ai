@@ -1,4 +1,4 @@
-import type { Fact, MapScreenContext, PublicRecord, Source } from '../../apps/host/generated/contracts'
+import type { Fact, MapScreenContext, MapProjectEvidence, ProjectInput, PublicRecord, Source } from '../../apps/host/generated/contracts'
 import { factAppliesToTarget } from './object-identity'
 import { currentWindow, recordFamily, retainRecordWindows } from '../research/record-window'
 
@@ -28,7 +28,12 @@ const kind = (value: string) => value.replace(/^(retrofit|research)\./, '')
 
 /** Read explicit object-linked records only. This preview never asks a model,
  * interprets prose, infers a building identity, or changes an action gate. */
-export function buildPreliminaryResearch(context: MapScreenContext, extras: { sources?: Source[]; records?: PublicRecord[] } = {}): PreliminaryResearch {
+type ResearchContext = {
+  created_at: string;
+  target: Pick<MapScreenContext['target'], 'object_ref'|'boundary_source'|'label'>;
+  local_projects: Pick<MapProjectEvidence, 'project_id'|'relation'|'scope_label'|'as_of'|'sources'|'facts'>[];
+}
+export function buildPreliminaryResearch(context: ResearchContext, extras: { sources?: Source[]; records?: PublicRecord[] } = {}): PreliminaryResearch {
   const observations: PreliminaryObservation[] = [], stageRows: PreliminaryObservation[] = [], windowRows: PreliminaryObservation[] = []
   const cutoff = Date.parse(context.created_at)
   function readable(source: Source | undefined, at = cutoff): source is Source {
@@ -65,7 +70,7 @@ export function buildPreliminaryResearch(context: MapScreenContext, extras: { so
     }
   }
   for (const project of context.local_projects.filter(row => row.relation === 'within_scope')) {
-    const evaluatedAt = project.as_of && date(project.as_of) ? project.as_of.length === 10 ? project.as_of + 'T23:59:59+08:00' : project.as_of : context.created_at
+    const evaluatedAt = project.as_of && date(project.as_of) ? project.as_of.length === 10 ? project.as_of + 'T23:59:59Z' : project.as_of : context.created_at
     const at = Date.parse(evaluatedAt)
     const own = new Map(project.sources.map(source => [source.id, source]))
     for (const fact of project.facts) {
@@ -87,14 +92,27 @@ export function buildPreliminaryResearch(context: MapScreenContext, extras: { so
   }
   for (const source of (extras.sources || []).filter(source => readable(source))) recordRows(source, extras.records || source.public_records || [], context.target.object_ref || '')
   const quantities = observations.filter(row => Object.values(QUANTITIES).includes(row.label))
-  const stages = uniq(stageRows.map(row => row.value)), quantityText = quantities.slice(0, 3).map(row => `${row.label} ${row.value}（${row.scope}；${row.observedAt?.slice(0, 10) || '统计时点未提供'}）`)
+  const quantityGroups = new Map<string, { values: string[]; row: PreliminaryObservation }>()
+  for (const row of quantities.slice(0, 3)) {
+    const key = JSON.stringify([row.scope, row.observedAt, row.publishedAt, row.sourceRefs])
+    const group = quantityGroups.get(key) || { values: [], row }
+    group.values.push(`${row.label} ${row.value}`); quantityGroups.set(key, group)
+  }
+  const stages = uniq(stageRows.map(row => row.value)), quantityText = [...quantityGroups.values()].map(({ values, row }) => `${values.join('，')}（${row.scope}；${row.observedAt?.slice(0, 10) || '统计时点未提供'}）`)
   const ranges = uniq(context.local_projects.filter(row => row.relation === 'within_scope' && context.target.object_ref === `project:${row.project_id}`).map(row => row.scope_label))
   const missing = [!stages.length ? '对象阶段' : '', !quantities.length ? '工程范围与数量口径' : '', !windowRows.length ? '当前参与窗口' : ''].filter(Boolean)
   return {
     lines: [
       { text: `${stages.length ? stages.join(' / ') : '阶段未提供'} · ${ranges.join(' / ') || context.target.label || '所选研究范围'}`, sourceRefs: uniq(stageRows.flatMap(row => row.sourceRefs)) },
       { text: quantityText.length ? quantityText.join('；') + (quantities.length > 3 ? '；更多口径见依据' : '') : '工程范围、楼栋及户数：未提供可定位的对象记录', sourceRefs: uniq(quantities.flatMap(row => row.sourceRefs)) },
-      { text: `参与窗口：${uniq(windowRows.map(row => row.value)).join(' / ') || '未提供，不能据场所分布认定当前项目'}`, sourceRefs: uniq(windowRows.flatMap(row => row.sourceRefs)) },
+      { text: `参与窗口：${uniq(windowRows.map(row => row.value)).join(' / ') || '未提供'}`, sourceRefs: uniq(windowRows.flatMap(row => row.sourceRefs)) },
     ], observations, sourceRefs: uniq(observations.flatMap(row => row.sourceRefs)), missing,
   }
+}
+
+/** The saved project's first card reuses the same projection without a map or model request. */
+export function projectPreliminaryResearch(project: ProjectInput): PreliminaryResearch {
+  return buildPreliminaryResearch({ created_at: project.as_of + 'T23:59:59Z', target: { object_ref: `project:${project.project_id}`, label: project.scope.name },
+    local_projects: [{ project_id: project.project_id, relation: 'within_scope', scope_label: project.scope.name,
+      as_of: project.as_of, sources: project.sources, facts: project.facts }] })
 }

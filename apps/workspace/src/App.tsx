@@ -469,6 +469,7 @@ export default function App() {
       }
       onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
       mapView={<MapWorkspace ready={!loading} interactionBlocked={loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+        onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
         onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
           const clean=context?publicMapContext(context):null
@@ -598,7 +599,7 @@ export default function App() {
             <div className="feedback notice">
               <IconRefresh size={17} />
               <span>
-                企业资料已变化，当前展示 v{packet?.revision}{" "}
+                项目资料已变化，当前展示 v{packet?.revision}{" "}
                 的历史结果。重新研判后生成新版本。
               </span>
             </div>

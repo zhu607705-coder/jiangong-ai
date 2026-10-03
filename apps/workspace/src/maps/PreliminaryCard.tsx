@@ -4,7 +4,7 @@ import { api } from '../api'
 import type { PlaceSelection } from '../../../../packages/maps/types'
 import type { MapScreenAnalysis, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme, Source } from '../../../host/generated/contracts'
 import type { ResearchProgress } from '../../../../packages/research/events'
-import { SCREEN_PROFILES, SCREEN_TIERS } from '../../../../packages/maps/screening-policy'
+import { SCREEN_PROFILES, screenTiers } from '../../../../packages/maps/screening-policy'
 import { decisionSignals, factorLabels } from '../../../../packages/maps/decision-factors'
 import { DecisionRoute } from '../components/DecisionRoute'
 import DecisionDashboard from '../components/DecisionDashboard'
@@ -87,7 +87,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   return <section ref={card} className="initial-assessment" aria-label="区域初步分析">
     {stage==='context'&&<p role="status">正在读取所选位置…</p>}
     {context&&<>
-      {cell&&<div className="screening-tier" style={{'--tier-color':SCREEN_TIERS[cell.tier].color} as React.CSSProperties}><i/>{SCREEN_TIERS[cell.tier].label}</div>}
+      {cell&&<div className="screening-tier" style={{'--tier-color':screenTiers(profile)[cell.tier].color} as React.CSSProperties}><i/>{screenTiers(profile)[cell.tier].label}</div>}
       {preview&&<div className="preliminary-research" aria-label="对象初步调研">
         <h4>初步调研</h4>
         {preview.lines.map((line,index)=><p key={index}>{line.text}{!!line.sourceRefs.length&&<button className="claim-source" onClick={()=>showEvidence(line.sourceRefs)} title={cite(line.sourceRefs)}>依据</button>}</p>)}

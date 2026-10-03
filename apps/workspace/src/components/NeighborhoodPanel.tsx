@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ProjectInput, DecisionDashboard as Dashboard } from '../../../host/generated/contracts'
 import { calculateRetrofitPlan, retrofitAdvice, type RetrofitPlan } from '../../../../packages/retrofit/planning'
-import { dashboardDimensions, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../packages/decision/dashboard'
+import { dashboardDimensions, isNeighborhoodDashboard, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../packages/decision/dashboard'
 import DecisionDashboard from './DecisionDashboard'
 import './neighborhood.css'
 
@@ -37,7 +37,7 @@ export default function NeighborhoodPanel({ project, dashboard, draft, onDraftCh
   onEvidence: (refs: string[]) => void
 }) {
   const advice = retrofitAdvice(project)
-  const radar:Dashboard = dashboard?.policy_version===NEIGHBORHOOD_DASHBOARD_POLICY?dashboard:{policy_version:NEIGHBORHOOD_DASHBOARD_POLICY,purpose:'老旧小区综合整治提升',model:'尚未评估',request_id:'not-evaluated',status:'partial',dimensions:dashboardDimensions(NEIGHBORHOOD_DASHBOARD_POLICY).map(d=>({key:d.key,value:null,confidence:null,basis:d.question,evidence_refs:[]}))}
+  const radar:Dashboard = dashboard && isNeighborhoodDashboard(dashboard.policy_version)?dashboard:{policy_version:NEIGHBORHOOD_DASHBOARD_POLICY,purpose:'老旧小区综合整治提升',model:'尚未评估',request_id:'not-evaluated',status:'partial',dimensions:dashboardDimensions(NEIGHBORHOOD_DASHBOARD_POLICY).map(d=>({key:d.key,value:null,confidence:null,basis:d.question,evidence_refs:[]}))}
   const { inputs, comparison } = draft
   const [error,setError] = useState('')
   const labels:Record<keyof typeof inputs,string>={basic:'基础类工程（万元）',improvement:'完善类工程（万元）',enhancement:'提升类工程（万元）',reserve_percent:'预备费比例（%）',planned_funding:'计划资金（万元）',households:'涉及户数（户）'}

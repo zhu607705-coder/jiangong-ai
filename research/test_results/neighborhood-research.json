@@ -1,0 +1,245 @@
+{
+  "tested_at": "2026-10-03T15:05:22.757710+00:00",
+  "scope": "Old-neighborhood map/project/Qwen alignment, scheme template and preliminary research coverage; not enterprise decision-quality evaluation",
+  "changed_files": [
+    "README.md",
+    "agent/state.json",
+    "agent/tasks.json",
+    "apps/host/generated/contracts.ts",
+    "apps/workspace/src/App.tsx",
+    "apps/workspace/src/components/DecisionRoute.tsx",
+    "apps/workspace/src/components/NeighborhoodPanel.tsx",
+    "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+    "apps/workspace/src/imports/evidence-coverage.ts",
+    "apps/workspace/src/imports/import-graph.css",
+    "apps/workspace/src/maps/MapWorkspace.tsx",
+    "apps/workspace/src/maps/PreliminaryCard.tsx",
+    "apps/workspace/src/maps/ScreeningControls.tsx",
+    "apps/workspace/src/maps/map.css",
+    "data/templates/retrofit-plan-items.csv",
+    "data/templates/retrofit-plan-template.json",
+    "docs/engineering.md",
+    "docs/改造方案比较模板.md",
+    "packages/contracts/schema.json",
+    "packages/decision/dashboard.ts",
+    "packages/decision/project-dashboard.ts",
+    "packages/decision/route-labels.ts",
+    "packages/decision/structured-route.ts",
+    "packages/maps/decision-factors.ts",
+    "packages/maps/object-identity.ts",
+    "packages/maps/preliminary-research.ts",
+    "packages/maps/public-context.ts",
+    "packages/maps/screening-policy.ts",
+    "packages/retrofit/planning.ts",
+    "research/baseline_logs/neighborhood-research.log",
+    "research/test_results/neighborhood-alignment.log",
+    "research/test_results/neighborhood-research.json",
+    "runtime/workflows/live.ts",
+    "scripts/qwen-live-check.ts",
+    "services/capabilities/decision-model.ts",
+    "services/capabilities/generated/contracts.py",
+    "services/map-screening/analyst.ts",
+    "services/map-screening/project-evidence.ts",
+    "services/map-screening/service.ts",
+    "tests/browser/preliminary-research.mjs",
+    "tests/contracts/evidence-coverage.test.ts",
+    "tests/contracts/neighborhood-alignment.test.ts",
+    "tests/contracts/preliminary-research.test.ts"
+  ],
+  "contracts": {
+    "generation": "passed; canonical schema -> TypeScript and Pydantic",
+    "compatibility": "new MapProjectEvidence fields optional; saved v1 dashboard semantics retained"
+  },
+  "verification": {
+    "javascript": {
+      "status": "passed",
+      "tests": 511,
+      "files": 30,
+      "command": "npm test",
+      "log": "research/baseline_logs/neighborhood-research.log"
+    },
+    "final_targeted_integration": {
+      "status": "passed",
+      "tests": 69,
+      "command": "npm test -- tests/contracts/preliminary-research.test.ts tests/contracts/evidence-coverage.test.ts tests/contracts/neighborhood-alignment.test.ts tests/contracts/decision-model.test.ts"
+    },
+    "python": {
+      "status": "passed",
+      "tests": 70,
+      "command": "npm run test:python"
+    },
+    "http": {
+      "status": "passed",
+      "tests": 14,
+      "command": "npm run test:e2e",
+      "data": "isolated synthetic DB and ports"
+    },
+    "browser": {
+      "status": "passed",
+      "preliminary_checks": 14,
+      "map_core_checks": 36,
+      "late_and_cancelled_scan_checks": 8,
+      "handoff_variants": 8,
+      "assertions_per_handoff_variant": 6,
+      "commands": [
+        "node tests/browser/preliminary-research.mjs",
+        "node tests/browser/map-workspace.mjs",
+        "node tests/browser/import-graph.mjs",
+        "node tests/browser/neighborhood-workflow.mjs"
+      ],
+      "scope": "synthetic browser contracts; no provider/model requests in fixtures",
+      "neighborhood_workflow_checks": 9
+    },
+    "build": {
+      "status": "passed",
+      "command": "npm run build",
+      "main_js_kb": 375.74,
+      "note": "Final production build passed after compatibility repair; UI excludes server-side geographic registry."
+    },
+    "dashboard_compatibility": {
+      "status": "passed",
+      "tests": 59,
+      "command": "npm test -- tests/contracts/research-dashboard.test.ts tests/contracts/neighborhood-alignment.test.ts"
+    },
+    "scheme_template": {
+      "status": "passed",
+      "json_duplicate_keys": false,
+      "csv_utf8_bom": true,
+      "csv_columns": 35,
+      "csv_rows": 2,
+      "action_advice_changed_default": null
+    }
+  },
+  "live_endpoint": {
+    "tested_at": "2026-10-03T14:40:43.594Z",
+    "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "project_version": 3,
+    "scope": "One existing public historical pilot; typed API and route behavior only, no enterprise effectiveness evaluation",
+    "public_sources": [
+      "HZN-P01",
+      "HZN-P02",
+      "HZN-P03",
+      "HZN-P04",
+      "HZN-C02",
+      "HZN-C03"
+    ],
+    "profile": "neighborhood",
+    "status": "completed",
+    "model": "decision-model-preview",
+    "request_id": "3a9a15cb-5e07-4acb-9979-cdfd4540322f",
+    "policy_version": "structured-neighborhood-route-v2",
+    "action": "investigate",
+    "priority": "demand",
+    "priority_options": [
+      "demand",
+      "supply",
+      "adaptation",
+      "implementation",
+      "operations",
+      "resources"
+    ],
+    "error_code": null,
+    "dashboard_policy": "neighborhood-renovation-fit-v2",
+    "dimensions": [
+      {
+        "key": "demand",
+        "value": null
+      },
+      {
+        "key": "supply",
+        "value": null
+      },
+      {
+        "key": "adaptation",
+        "value": null
+      },
+      {
+        "key": "implementation",
+        "value": null
+      },
+      {
+        "key": "operations",
+        "value": null
+      },
+      {
+        "key": "resources",
+        "value": null
+      }
+    ],
+    "scored_evidence_count": 0,
+    "duration_ms": 404,
+    "model_calls": 1
+  },
+  "local_public_pilot": {
+    "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "version": 3,
+    "records_registered": 2,
+    "quantity_clues": 3,
+    "facts_and_rules_unchanged": true,
+    "model_calls_for_registration": 0,
+    "values": [
+      {
+        "source": "HZN-C02",
+        "scope": "2022 reported renovation engineering scope",
+        "residential_buildings": 54,
+        "public_buildings": 8,
+        "statistical_as_of": null
+      },
+      {
+        "source": "HZN-C03",
+        "scope": "2024 reported completed elevator units",
+        "completed_elevator_units": 32,
+        "statistical_as_of": null
+      }
+    ],
+    "raw_receipt_local": "data/local/neighborhood-review-20261003/public-record-receipt.json"
+  },
+  "real_browser": {
+    "tool": "Playwright CLI separate local Chromium",
+    "in_app_browser_used": false,
+    "provider": "actual AMap; software renderer accurately disclosed 2D fallback",
+    "model_calls": 0,
+    "viewports": [
+      1440,
+      390
+    ],
+    "observed": [
+      "stored-project first card displays sourced historical quantities",
+      "first-card evidence opens exact original excerpt",
+      "coverage has three engineering clues and keeps five dimensions empty",
+      "11 table rows remain unmatched",
+      "390px document width is390; source versions and missing statistical dates visible",
+      "console errors0"
+    ],
+    "artifacts_local": "data/local/neighborhood-review-20261003/",
+    "screenshots": [
+      "data/local/neighborhood-review-20261003/screenshots/neighborhood-real-preliminary-desktop.png",
+      "data/local/neighborhood-review-20261003/screenshots/neighborhood-real-preliminary-mobile.png",
+      "data/local/neighborhood-review-20261003/screenshots/neighborhood-real-coverage-desktop.png"
+    ]
+  },
+  "scheme_template": {
+    "status": "design_only",
+    "files": [
+      "docs/改造方案比较模板.md",
+      "data/templates/retrofit-plan-template.json",
+      "data/templates/retrofit-plan-items.csv"
+    ],
+    "save_api_implemented": false,
+    "automatic_versioned_calculation_implemented": false
+  },
+  "semantic_claim_correction": {
+    "local_extractor": "synthetic labeled proposal stays proposal; implementation null",
+    "automated_stage_confusion_demonstrated": false,
+    "contrived_contract_test": "deliberate manual field misassignment plus explicit scripted approval; not an observed automatic error",
+    "review_workflow_changed": false,
+    "local_evidence": "data/local/semantic-claim-20261003/"
+  },
+  "remaining_business_evaluation": "authorized enterprise cases and professional labels not available; no accuracy or effectiveness claim",
+  "regression_repair": {
+    "trigger": "neighborhood-workflow existing v1 frozen-report citation test failed after policy version increment",
+    "cause": "NeighborhoodPanel required exact current policy, discarding saved v1 data",
+    "repair": "isNeighborhoodDashboard recognizes stored v1 and current v2; preserve old dimension values and source references",
+    "verification": "9 existing App flow checks and59 scoped dashboard/align tests passed; original failure retained locally"
+  }
+}

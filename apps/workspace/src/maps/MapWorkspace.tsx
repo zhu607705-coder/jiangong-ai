@@ -1,6 +1,6 @@
 import AreaSelectionOverlay from './AreaSelectionOverlay'
 import {isTypingTarget} from '../../../../packages/maps/area-selection'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { IconSearch, IconX, IconPlus, IconMinus, IconNavigation, IconLayersIntersect, IconArrowRight,
   IconCube, IconMapPin, IconSatellite, IconBuildingSkyscraper, IconFocus2, IconAdjustments, IconArrowLeft, IconExternalLink } from '@tabler/icons-react'
 import { api, type Project } from '../api'
@@ -13,14 +13,16 @@ import DataSourcesPanel from './DataSourcesPanel'
 import { WaitingMotif } from '../components/WaitingScene'
 import { scanMap } from './screening-stream'
 import { screenTiers, classifyCells as classifySnapshotCells } from '../../../../packages/maps/screening-policy'
+import { projectPreliminaryResearch } from '../../../../packages/maps/preliminary-research'
 import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
 
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
 const classifyCells=(cells:MapScreenCell[],theme:MapScreenTheme,profile:MapScreenProfile)=>classifySnapshotCells(cells,theme,new Date().toISOString(),profile)
 const cellWithStudy=(cell:MapScreenCell,result:MapScreenAnalysis|null):MapScreenCell=>({...cell,factors:result?.assessment?.factors,dashboard:result?.decision_support?.dashboard,analysis_available:!!result?.assessment})
-export default function MapWorkspace({ ready, interactionBlocked, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace }: {
+export default function MapWorkspace({ ready, interactionBlocked, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace, onEvidence }: {
   ready: boolean; interactionBlocked: boolean; project: Project | null; focusProject: number; settingsRequest: number;
   onOpenProject: (id?: string) => void; onCreateFromPlace: (place: PlaceSelection, context?: MapScreenContext | null) => void;
+  onEvidence?: (refs: string[]) => void;
 }) {
   const canvas = useRef<HTMLDivElement>(null), map = useRef<AMap.Map | null>(null), sdk = useRef<AmapSdk | null>(null)
   const marker = useRef<AMap.Marker | null>(null), projectOverlays = useRef<any[]>([])
@@ -37,6 +39,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   const [buildingControl, setBuildingControl] = useState(false)
   const searchVersion = useRef(0), selectionVersion = useRef(0)
   const [profile, setProfile] = useState<MapScreenProfile>('neighborhood')
+  const projectResearch = useMemo(() => project?.input.business_profile === 'neighborhood' ? projectPreliminaryResearch(project.input) : null, [project?.input])
   const [theme, setTheme] = useState<MapScreenTheme>('overall'), [dataOpen, setDataOpen] = useState(false)
   const [screenCells, setScreenCells] = useState<MapScreenCell[]>([]), [screenResult, setScreenResult] = useState<MapScreenResult | null>(null)
   const [screenRunning, setScreenRunning] = useState(false), [screenProgress, setScreenProgress] = useState(0), [screenError, setScreenError] = useState(''), [screenStale, setScreenStale] = useState(false)
@@ -306,6 +309,9 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       {projectPreview && project ? <>
         <div className="atlas-selection-icon"><IconBuildingSkyscraper size={27} stroke={1.4} /></div><h2>{project.name}</h2><p>{project.input.scope.name}</p>
         <div className="atlas-selection-tags"><span>{project.input.synthetic ? '合成项目' : '研究项目'}</span><span>经验 v{project.context_version}</span></div>
+        {projectResearch && <div className="preliminary-research" aria-label="对象初步调研"><h4>初步调研 · 截止 {project.input.as_of}</h4>
+          {projectResearch.lines.map((line, index) => <p key={index}>{line.text}{!!line.sourceRefs.length && onEvidence && <button className="claim-source" onClick={() => onEvidence(line.sourceRefs.map(ref => ref.startsWith(`${project.id}:`) ? ref.slice(project.id.length + 1) : ref))}>依据</button>}</p>)}
+        </div>}
         <div className="atlas-facts"><div><span>已有来源</span><strong>{new Set([...project.input.sources, ...(project.runs?.find(r => r.decision)?.decision?.sources || [])].map(s => s.id)).size}<small> 份</small></strong></div><div><span>研究边界</span><strong>{project.input.scope.geometry && !project.input.synthetic ? '已提供' : '待补充'}</strong></div></div>
         <p className="atlas-evidence-note">打开研判后可查看项目资料、实施路径与调查清单。</p>
         {project.runs?.find(r => r.decision)?.decision && <p className="project-last-summary">上次研判：{project.runs.find(r => r.decision)!.decision!.summary}</p>}

@@ -1,5 +1,5 @@
 import type { DecisionSupport, MapScreenProfile } from '../../../host/generated/contracts'
-import { DECISION_ACTIONS } from '../../../../packages/decision/structured-route'
+import { DECISION_ACTIONS } from '../../../../packages/decision/route-labels'
 import { factorLabels } from '../../../../packages/maps/decision-factors'
 
 export function DecisionRoute({value, details=false, profile}: {value?:DecisionSupport;details?:boolean;profile?:MapScreenProfile}) {

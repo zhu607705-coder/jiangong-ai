@@ -30,8 +30,11 @@ const NEIGHBORHOOD_DIMENSIONS:typeof DASHBOARD_DIMENSIONS=[
 export function dashboardPolicy(profile?:MapScreenProfile):string {
   return profile==='neighborhood'?NEIGHBORHOOD_DASHBOARD_POLICY:DASHBOARD_POLICY
 }
+export function isNeighborhoodDashboard(policy_version?:string):boolean {
+  return [NEIGHBORHOOD_DASHBOARD_POLICY,SAVED_NEIGHBORHOOD_POLICY].includes(policy_version||'')
+}
 export function dashboardDimensions(policy_version?:string):typeof DASHBOARD_DIMENSIONS {
-  return [NEIGHBORHOOD_DASHBOARD_POLICY,SAVED_NEIGHBORHOOD_POLICY].includes(policy_version||'')?NEIGHBORHOOD_DIMENSIONS:DASHBOARD_DIMENSIONS
+  return isNeighborhoodDashboard(policy_version)?NEIGHBORHOOD_DIMENSIONS:DASHBOARD_DIMENSIONS
 }
 export type DashboardInput={purpose:string;evidence:DimensionEvidence[];profile?:MapScreenProfile}
 export function dashboardQuestions(input:DashboardInput):Record<string,unknown>{
