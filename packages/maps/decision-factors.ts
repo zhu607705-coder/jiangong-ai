@@ -1,7 +1,7 @@
 import type { MapDecisionFactor, MapScreenContext, MapScreenTheme, MapScreenProfile } from '../../apps/host/generated/contracts'
 import { factAppliesToTarget } from './object-identity'
 import { dashboardDimensions, dashboardPolicy } from '../decision/dashboard'
-import { retrofitAdvice, retrofitFactUsable, RETROFIT_RULE_VERSION } from '../retrofit/planning'
+import { retrofitFactUsable, RETROFIT_RULE_VERSION } from '../retrofit/planning'
 import type { MapProjectEvidence, NeighborhoodActionAdvice } from '../../apps/host/generated/contracts'
 
 export const FACTOR_LABELS = {
@@ -96,7 +96,11 @@ function neighborhoodFactors(context:MapScreenContext):MapDecisionFactor[] {
     const positive=rows.filter(r=>r.fact.value===true),negative=rows.filter(r=>r.fact.value===false)
     const covered=projects.length>0&&projects.every(p=>fields.every(field=>p.facts.some(f=>f.kind==='retrofit.'+field&&f.value===true&&retrofitFactUsable(retrofitEvidence(p),f))))
     // Confirmed unmet prerequisites need investigation; only an explicit veto blocks the formal action.
-    const vetoRows=projects.flatMap(p=>retrofitAdvice(retrofitEvidence(p)).decision==='defer'?p.facts.filter(f=>vetoKeys.some(v=>f.kind==='retrofit.'+v)&&f.value===true&&retrofitFactUsable(retrofitEvidence(p),f)).map(f=>({fact:f,ref:`${p.project_id}:${f.source_id}`})):[])
+    const vetoRows=projects.flatMap(p=>vetoKeys.flatMap(v=>{
+      const claims=p.facts.filter(f=>f.kind==='retrofit.'+v&&retrofitFactUsable(retrofitEvidence(p),f))
+      // An independent veto does not resolve contradictory claims for this veto.
+      return claims.some(f=>f.value===false)?[]:claims.filter(f=>f.value===true).map(f=>({fact:f,ref:`${p.project_id}:${f.source_id}`}))
+    }))
     const veto=vetoRows.length>0
     const state=veto?'blocked':conflict?'conditional':covered?'supported':rows.length?'conditional':'unknown'
     return {key,state,summary:veto?`${labels[key as FactorKey]}存在已确认否决条件`:conflict?`${labels[key as FactorKey]}资料存在分歧`:negative.length?`${labels[key as FactorKey]}条件尚未成立`:positive.length?`${labels[key as FactorKey]}已有确认依据`:`${labels[key as FactorKey]}待核查`,evidence_refs:[...new Set([...rows,...vetoRows].map(r=>r.ref))].slice(0,4),quote:'',conflict} as MapDecisionFactor

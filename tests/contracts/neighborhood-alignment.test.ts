@@ -127,6 +127,12 @@ describe('source-bound project scoring and research route',()=>{
     expect(out.dashboard?.dimensions.find(d=>d.key==='demand')?.value).toBeNull()
     expect(out.dashboard?.status).toBe('partial')
   })
+  it.each(['page:999','table:9/row:999','arbitrary-locator'])('rejects unsupported locator %s even when the string occurs in the source',locator=>{
+    const p=project();Object.assign(p.facts[0],{kind:'resident_needs',value:p.sources[0].untrusted_text,locator})
+    expect(projectDecisionInput(p).dashboard?.evidence.some(e=>e.key==='demand')).toBe(false)
+    p.facts[0].locator='line:1'
+    expect(projectDecisionInput(p).dashboard?.evidence.some(e=>e.key==='demand')).toBe(true)
+  })
   it('does not treat a document title as scoring evidence',()=>{
     const p=project();p.sources[0].untrusted_text=p.sources[0].title
     expect(projectDecisionInput(p).dashboard?.evidence.some(e=>e.key==='demand')).toBe(false)
@@ -149,6 +155,15 @@ describe('source-bound project scoring and research route',()=>{
     expect(retrofitAdvice(p).decision).toBe('supplement')
     const engineer=decisionFactors(context(p),undefined,'neighborhood').find(f=>f.key==='adaptation')!
     expect(engineer.state).toBe('conditional');expect(engineer.conflict).toBe(true)
+  })
+  it('does not let an independent rights veto turn conflicting safety claims into a safety veto',async()=>{
+    const p=project();p.facts.push(fact('safety_veto','engineering_review_passed'),{...fact('safety_veto','engineering_review_passed'),id:'conflict',value:false},fact('rights_veto','scope_and_consent_confirmed'))
+    const advice=retrofitAdvice(p),factors=decisionFactors(context(p),undefined,'neighborhood')
+    expect(advice.decision).toBe('defer');expect(advice.reasons[0].text).toContain('权属')
+    expect(factors.find(f=>f.key==='adaptation')).toMatchObject({state:'conditional',conflict:true})
+    expect(factors.find(f=>f.key==='implementation')).toMatchObject({state:'blocked'})
+    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,async()=>new Response(JSON.stringify(response())))
+    expect(out.action).toBe('resolve_blocker');expect(out.priority).toBe('implementation')
   })
   it('cannot use fit to waive the independent professional rule confirmation',async()=>{
     const p=project();p.facts=p.facts.filter(f=>f.kind!=='retrofit.rule_set_confirmed')

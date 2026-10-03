@@ -26,7 +26,9 @@ export function projectDashboardInput(project:ProjectInput):DashboardInput|undef
       if(/^line:\d+$/.test(fact.locator)){
         const slice=documentSlices({file_name:'source.txt',parser_result:{text:source.untrusted_text}}).find(s=>s.locator===fact.locator)
         quote=slice?.text.trim()||''
-      }else if(typeof fact.value==='string'&&source.untrusted_text.includes(fact.value))quote=fact.value.trim()
+      }
+      // Source exposes parsed text only. Other ParserPort locators require their
+      // original segment/table snapshot; an arbitrary match elsewhere is not a located quote.
       if(quote.length<8||quote.length>180||quote===source.title.trim())continue
       const item={key,source_id:source.id,quote,basis:`${fact.kind}；原文定位 ${fact.locator}`.slice(0,120)}
       if(!eligibleDimension(source,context,project.scope.name,item,[],purpose))continue
