@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Fact, Source } from '../../../host/generated/contracts'
+import type { Fact, MapScreenProfile, Source } from '../../../host/generated/contracts'
 import { api } from '../api'
 import WaitingScene from '../components/WaitingScene'
 import { buildImportGraph, layoutImportGraph, previewColumnValues, recordForNode,
   type GraphDepth, type GraphNode, type GraphScope, type ImportDocument, type ParsedColumn } from './graph-model'
+import { buildEvidenceCoverage, type CoverageEvidence } from './evidence-coverage'
 import './import-graph.css'
 
 type Props = {
@@ -13,6 +14,9 @@ type Props = {
   sources: Source[]
   researchSources: Source[]
   facts: Fact[]
+  profile?: MapScreenProfile
+  asOf?: string
+  onEvidence?: (refs: string[]) => void
 }
 
 const labels: Record<GraphNode['kind'], string> = {
@@ -29,9 +33,12 @@ const previewText = (value: unknown, max = 700) => {
   return raw.length > max ? `${raw.slice(0, max)}…` : raw
 }
 
-export default function ImportedDataExplorer({ projectId, projectName, revision, sources, researchSources, facts }: Props) {
+export default function ImportedDataExplorer({ projectId, projectName, revision, sources, researchSources, facts, profile, asOf, onEvidence }: Props) {
   const requestKey = `${projectId}\u0000${revision}`
   const [documentLoad, setDocumentLoad] = useState<{ key: string; rows: ImportDocument[]; error: string; loading: boolean }>({ key: '', rows: [], error: '', loading: true })
+  const [view, setView] = useState<'structure' | 'coverage'>('structure')
+  const [coverageSelection, setCoverageSelection] = useState<{ objectRef: string; dimension: string } | null>(null)
+  const [objectLimit, setObjectLimit] = useState(20)
   const [depth, setDepth] = useState<GraphDepth>('read')
   const [scope, setScope] = useState<GraphScope>('imports')
   const [query, setQuery] = useState('')
@@ -42,12 +49,13 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
   const [segmentLimit, setSegmentLimit] = useState(20)
   const [zoom, setZoom] = useState(1)
   const canvasRef = useRef<HTMLDivElement>(null)
+  const inspectorRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const controller = new AbortController()
     setDocumentLoad({ key: requestKey, rows: [], error: '', loading: true })
     setManualNode(null); setFocusedColumn(null); setSelectedId(`project:${projectId}`)
-    setSegmentQuery(''); setSegmentLimit(20)
+    setSegmentQuery(''); setSegmentLimit(20); setCoverageSelection(null); setObjectLimit(20)
     void api<ImportDocument[]>(`/projects/${encodeURIComponent(projectId)}/documents`, undefined, controller.signal)
       .then(rows => { if (!controller.signal.aborted) setDocumentLoad({ key: requestKey, rows: Array.isArray(rows) ? rows : [], error: '', loading: false }) })
       .catch(reason => { if (!controller.signal.aborted) setDocumentLoad({ key: requestKey, rows: [], error: reason instanceof Error ? reason.message : '导入数据暂不可读', loading: false }) })
@@ -61,6 +69,21 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
   const graph = useMemo(() => buildImportGraph({ projectId, projectName, projectSources: sources, researchSources,
     facts, documents, depth, scope: effectiveScope, query }), [projectId, projectName, sources, researchSources, facts, documents, depth, effectiveScope, query])
   const layout = useMemo(() => layoutImportGraph(graph), [graph])
+  const coverage = useMemo(() => buildEvidenceCoverage({ ...graph, projectId, projectName, profile, asOf }), [graph, projectId, projectName, profile, asOf])
+  const coverageCell = coverage.cells.find(cell => cell.objectRef === coverageSelection?.objectRef && cell.dimension === coverageSelection?.dimension)
+  const coverageLabel = coverage.dimensions.find(dimension => dimension.key === coverageCell?.dimension)?.label
+  const coverageStates = { locatable: '有可定位依据', clue: '待核线索', empty: '尚无依据' }
+  const openCoverageSource = (sourceId: string, item?: CoverageEvidence) => {
+    const parentId = `project:${projectId}`, isDocument = graph.documents.some(document => document.id === sourceId)
+    setView('structure'); setScope('all'); setQuery(''); setFocusedColumn(null)
+    setManualNode(item?.factId ? { id: `coverage-fact:${item.factId}`, kind: 'fact', label: graph.facts.find(fact => fact.id === item.factId)?.kind || '来源记录',
+      subtitle: item.locator || '原文定位未提供', parentId, level: 2, relation: '显式来源引用', sourceId, factId: item.factId }
+      : item?.recordId ? { id: `coverage-record:${sourceId}:${item.recordId}`, kind: 'record', label: graph.sources.find(source => source.id === sourceId)?.public_records?.find(record => record.id === item.recordId)?.subject || '公开记录',
+        subtitle: item.locator || '原文定位未提供', parentId, level: 2, relation: '结构化原文记录', sourceId, recordId: item.recordId }
+      : { id: `coverage-source:${sourceId}`, kind: isDocument ? 'document' : 'source', label: graph.documents.find(document => document.id === sourceId)?.fileName || graph.sources.find(source => source.id === sourceId)?.title || sourceId,
+        subtitle: '调研资料', parentId, level: 1, relation: '显式来源引用', sourceId, ...(isDocument ? { documentId: sourceId } : {}) })
+    requestAnimationFrame(() => { inspectorRef.current?.scrollIntoView({ block: 'nearest', behavior: 'auto' }); inspectorRef.current?.focus({ preventScroll: true }) })
+  }
   const selected = manualNode && graph.nodes.some(node => node.id === manualNode.parentId)
     ? manualNode : graph.nodes.find(node => node.id === selectedId) || graph.nodes[0]
   const byId = new Map(layout.nodes.map(node => [node.id, node]))
@@ -114,10 +137,37 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
 
   return <section className="import-explorer" aria-label="导入数据关系与分析">
     <header className="import-explorer-heading">
-      <div><small>DATA ARCHITECTURE / 只读结构</small><h3>导入数据关系图</h3>
-        <p>项目、来源、解析表与字段按已保存的引用连线；选中节点查看结构和数据质量。</p></div>
+      <div><small>DATA ARCHITECTURE / 只读结构</small><h3>{view === 'coverage' ? '初步调研资料覆盖' : '导入数据关系图'}</h3>
+        <p>{view === 'coverage' ? '按明确对象和登记维度查看依据、待核线索与未匹配资料；覆盖状态不表示判断通过。' : '项目、来源、解析表与字段按已保存的引用连线；选中节点查看结构和数据质量。'}</p></div>
       <span className="import-explorer-count">{graph.stats.importedFiles} 份导入文件</span>
     </header>
+    <div className="import-graph-toolbar"><div className="import-graph-switch" aria-label="资料视图"><button type="button" aria-pressed={view === 'structure'} onClick={() => setView('structure')}>结构关系</button><button type="button" aria-pressed={view === 'coverage'} onClick={() => setView('coverage')}>调研覆盖</button></div></div>
+    {view === 'coverage' ? <div className="research-coverage" aria-label="对象与六维资料覆盖">
+      <p className="import-graph-note">{asOf ? `研究截止 ${asOf} · ` : ''}项目层资料只留在项目范围；未明确绑定的原始行不下放到楼栋。</p>
+      <div className="coverage-legend"><span>有可定位依据</span><span>待核线索</span><span>尚无依据</span></div>
+      <div className="coverage-body"><div className="coverage-matrix-scroll"><table className="coverage-matrix"><thead><tr><th>研究对象</th>{coverage.dimensions.map(dimension => <th key={dimension.key}>{dimension.label}</th>)}</tr></thead><tbody>
+        {coverage.objects.slice(0, objectLimit).map(object => <tr key={object.ref}><th scope="row">{object.label}</th>{coverage.dimensions.map(dimension => {
+          const cell = coverage.cells.find(item => item.objectRef === object.ref && item.dimension === dimension.key)!
+          return <td key={dimension.key}><button type="button" className={`coverage-cell state-${cell.state}`} aria-label={`${object.label} · ${dimension.label} · ${coverageStates[cell.state]}`} aria-pressed={coverageSelection?.objectRef === object.ref && coverageSelection?.dimension === dimension.key} onClick={() => setCoverageSelection({ objectRef: object.ref, dimension: dimension.key })}><span className="coverage-cell-label">{dimension.label}</span>{coverageStates[cell.state]}{cell.evidence.length ? ` ${cell.evidence.length}` : ''}</button></td>
+        })}</tr>)}
+      </tbody></table>{coverage.objects.length > objectLimit && <button type="button" className="import-more-button" onClick={() => setObjectLimit(value => value + 20)}>再显示 20 个对象</button>}</div>
+      <aside className="coverage-inspector" aria-label="调研依据">{coverageCell ? <>
+        <h4>{coverage.objects.find(object => object.ref === coverageCell.objectRef)?.label} · {coverageLabel}</h4>
+        <p>{coverageStates[coverageCell.state]}。这是资料定位状态，不是方案适配分或完成确认。</p>
+        {coverageCell.evidence.map(item => <article key={item.id}><strong>{coverage.sources.find(source => source.id === item.sourceId)?.title || item.sourceId}</strong><p>{previewText(item.value, 200)}{item.unit ? ` ${item.unit}` : ''}</p>
+          <p>对象：{item.objectRefs.join(' / ')} · 单位：{typeof item.value === 'boolean' ? '不适用' : item.unit || '未提供'}</p><p>{item.reason} · 原文 {item.locator || '未提供'}</p><p>观察 / 统计：{item.observedAt || '未提供'}；发布日期：{item.publishedAt?.slice(0, 10) || '未提供'}</p><p className="coverage-version">来源版本：{item.version || '未提供'}</p>
+          <button type="button" onClick={() => openCoverageSource(item.sourceId, item)}>原文与资料</button>{onEvidence && <button type="button" onClick={() => onEvidence([item.sourceId])}>定位证据卡</button>}
+        </article>)}
+        {!coverageCell.evidence.length && <p>该对象在此维度没有已登记的资料绑定；可先查看下方项目资料，再核对对象与口径。</p>}
+      </> : <p>选择一个对象与维度，查看资料来源、口径、时点及原文定位。</p>}</aside></div>
+      <details className="coverage-unmatched" open><summary>未匹配对象或口径：{coverage.rawRows.reduce((sum, row) => sum + row.count, 0)} 条来源绑定原始行 · {coverage.unmatched.length} 条其他记录</summary>
+        {coverage.rawRows.map(row => <p key={row.sourceId}>{coverage.sources.find(source => source.id === row.sourceId)?.title || row.sourceId} · {row.count} 条已保存原始行（不等于全文件行数） <button type="button" onClick={() => openCoverageSource(row.sourceId)}>查看文件与原始行</button></p>)}
+        {coverage.unmatched.slice(0, 20).map(item => <p key={item.id}>{item.reason} · {item.locator || '定位未提供'} {coverage.sources.some(source => source.id === item.sourceId) && <button type="button" onClick={() => openCoverageSource(item.sourceId, item)}>查看记录</button>}</p>)}
+        {coverage.unmatched.length > 20 && <p>另有 {coverage.unmatched.length - 20} 条未匹配记录，可在结构关系中按文件查看。</p>}
+        {!coverage.rawRows.length && !coverage.unmatched.length && <p>当前没有未匹配的已保存记录。</p>}
+      </details>
+      <details className="coverage-project-sources" open><summary>项目层可用资料 · {coverage.sources.length} 份</summary><div className="import-document-items">{coverage.sources.map(source => <button type="button" key={source.id} onClick={() => openCoverageSource(source.id)}>{source.title} · {source.content_status || '内容状态未提供'} · {source.published_at?.slice(0, 10) || '发布日期未提供'}</button>)}</div></details>
+    </div> : <>
     <div className="import-metrics" aria-label="导入数据概况">
       <div><strong>{graph.stats.importedFiles}</strong><span>导入文件</span></div>
       <div><strong>{graph.stats.tables}</strong><span>解析表</span></div>
@@ -174,7 +224,7 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
           </g>)}
         </svg>
       </div>
-      <aside className="import-inspector" aria-label="节点分析">
+      <aside ref={inspectorRef} tabIndex={-1} className="import-inspector" aria-label="节点分析">
         <div className="import-inspector-breadcrumb">{breadcrumbs.map((item, index) => <span key={item.id}>{index > 0 ? ' / ' : ''}{labels[item.kind]}</span>)}</div>
         {manualNode && selected.id === manualNode.id && <button type="button" className="import-back-button" onClick={() => setManualNode(null)}>返回文件</button>}
         <h4>{selected.label}</h4><p className="import-inspector-subtitle">{selected.subtitle}</p>
@@ -240,6 +290,7 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
       </aside>
     </div>
     {(graph.hiddenSources > 0 || graph.hiddenDetails > 0) && <p className="import-graph-note">图形为避免拥挤收起了 {graph.hiddenSources} 个来源、{graph.hiddenDetails} 个结构、字段或定位；可筛选文件，并在文件面板打开收起的内容。</p>}
+    </>}
     <p className="import-graph-footnote">关系线只表示“项目归属、解析结果、字段结构或显式来源引用”。同名对象不会被自动合并；描述统计也不会自动触发模型研判。</p>
   </section>
 }

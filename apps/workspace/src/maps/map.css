@@ -569,3 +569,16 @@
 .atlas-view--loading .atlas-bottom-hint {display:none}
 .map-shell:has(.atlas-view--loading) .atlas-wordmark strong {color:#d7e7e4}
 .screening-profile-row{margin-bottom:8px;font-size:12px;color:#58776b}.screening-profile-row label{display:flex;align-items:center;gap:8px}.screening-profile-row select{font-size:12px;padding:5px;flex:1;min-width:0}
+
+.preliminary-research { margin: 10px 0 14px; padding: 11px 0; border-top: 1px solid #e5ece8; border-bottom: 1px solid #e5ece8; overflow-wrap: anywhere; }
+.preliminary-research h4 { margin: 0 0 7px; color: #3b7161; font-size: 11px; font-weight: 600; }
+.preliminary-research > p { margin: 7px 0; font-size: 12px; line-height: 1.6; }
+.preliminary-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.preliminary-actions button, .preliminary-tasks button { color: #267960; background: none; border: 0; font-size: 11px; padding: 4px 0; text-align: left; }
+.preliminary-tasks { margin-top: 7px; padding: 7px 9px; background: #f4f8f5; border-radius: 5px; }
+.preliminary-tasks p { margin: 5px 0; font-size: 11px; line-height: 1.65; }
+.preliminary-tasks button { display: flex; align-items: center; gap: 6px; max-width: 100%; overflow-wrap: anywhere; }
+.preliminary-observation { padding: 7px 9px; margin: 8px 0; background: #f5f8f6; font-size: 11px; line-height: 1.5; }
+.preliminary-observation div { display: grid; grid-template-columns: 92px minmax(0,1fr); gap: 7px; margin: 4px 0; }
+.preliminary-observation dt { color: #738a7d; }
+.preliminary-observation dd { margin: 0; overflow-wrap: anywhere; }
