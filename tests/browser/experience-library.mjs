@@ -27,7 +27,7 @@ let currentCard = null, delayedExtract = false
 page.on('pageerror', error => errors.push(String(error)))
 await page.exposeFunction('__request', async (path, body) => {
   calls.push({ path, body })
-  if (path === '/api/projects/P-A/documents') return [{ id: 'D-A', file_name: '合成会议纪要.txt', parser_result: { source_hash: 'sha256-synthetic-a', status: 'extracted' } }]
+  if (path === '/api/projects/P-A/documents') return [{ id: 'D-A', file_name: '合成会议纪要.txt', parser_result: { source_hash: 'sha256-synthetic-a', status: 'extracted', text: '居民协商后先开展管网改造。' } }]
   if (path === '/api/projects/P-B/documents') return []
   if (path === '/api/projects/P-A/experiences' && !body) return { cards: currentCard ? [currentCard] : [] }
   if (path === '/api/projects/P-B/experiences' && !body) return { cards: [] }
@@ -85,7 +85,7 @@ try {
   assert.match(await region.getByRole('alert').innerText(), /请填写复核备注/)
   assert.equal(calls.filter(call => call.path.endsWith('/review')).length, 0)
   await region.getByRole('button', { name: '编辑草稿与原文引用' }).click()
-  await region.getByLabel('背景与目标内容').fill('核实居民共同决策程序。')
+  await region.getByLabel('背景与目标内容').fill('居民协商后先开展管网改造。')
   await region.getByRole('button', { name: '保存草稿', exact: true }).click()
   assert.match(await region.getByRole('alert').innerText(), /背景与目标.*选择来源文档/)
   assert.equal(calls.filter(call => call.path.endsWith('/update')).length, 0)
