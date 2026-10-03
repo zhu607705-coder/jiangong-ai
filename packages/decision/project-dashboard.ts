@@ -2,13 +2,7 @@ import type { DimensionEvidence, ProjectInput, ResearchDimension } from '../../a
 import { eligibleDimension } from '../research/evidence'
 import { documentSlices } from '../experience/document-slices'
 import { NEIGHBORHOOD_FACTOR_FIELDS } from '../maps/decision-factors'
-import type { DashboardInput } from './dashboard'
-
-const FACT_KINDS:Record<ResearchDimension,readonly string[]>={
-  demand:['resident_needs','resident_household','resident_survey'],supply:['service_gap','public_service','public_service_capacity'],
-  adaptation:['engineering_review','engineering_condition','building_inventory'],implementation:['resident_consent','implementation_scope','implementation_arrangement'],
-  operations:['maintenance_arrangement','maintenance_cost'],resources:['funding_arrangement','project_budget','engineering_cost'],
-}
+import { NEIGHBORHOOD_EVIDENCE_KINDS as FACT_KINDS, type DashboardInput } from './dashboard'
 /** Select already located project facts; do not create evidence from POI counts or from a document's mere existence. */
 export function projectDashboardInput(project:ProjectInput):DashboardInput|undefined {
   if(project.business_profile!=='neighborhood')return undefined

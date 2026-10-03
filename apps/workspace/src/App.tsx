@@ -658,7 +658,7 @@ export default function App() {
                 onDraftChange={update => setNeighborhoodDrafts(current => ({ ...current, [project.id]: update(current[project.id] || createNeighborhoodDraft()) }))}
                 onEvidence={openEvidence} />}
               <section className="summary-panel">
-                <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} details /></details>
+                <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'} details /></details>
                 <div className="summary-heading">
                   <div>
                     <div className="kicker">DECISION BRIEF</div>
@@ -680,9 +680,11 @@ export default function App() {
                 </div>}
                 <p>
                   {brief?.summary ||
-                    "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。"}
+                    (project.input.business_profile === 'neighborhood'
+                      ? "围绕居民需求、公共服务、居住工程、实施协同、长效维护和资金交付，整理本小区的依据与调查任务。"
+                      : "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。")}
                 </p>
-                {packet?.decision_support && <details><summary>判断操作依据</summary><DecisionRoute value={packet.decision_support} details /></details>}
+                {packet?.decision_support && <details><summary>判断操作依据</summary><DecisionRoute value={packet.decision_support} profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'} details /></details>}
                 <div className="summary-bottom">
                   <span>
                     <span className="status-dot" />
@@ -1048,6 +1050,9 @@ export default function App() {
                 sources={project.input.sources}
                 researchSources={packet?.sources || []}
                 facts={project.input.facts}
+                profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'}
+                asOf={project.input.as_of}
+                onEvidence={openEvidence}
               />
               <div className="source-list">
                 {!!requestedRefs.length && <div className="source-focus-note" role="status">
