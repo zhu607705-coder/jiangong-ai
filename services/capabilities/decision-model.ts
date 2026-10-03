@@ -2,8 +2,8 @@ import { dashboardQuestions, parseDashboard } from '../../packages/decision/dash
 import { validProbabilityMass } from '../../packages/decision/probabilities'
 import { createHash } from 'node:crypto'
 import { config } from '../../apps/host/config'
-import type { DecisionChoice, DecisionSupport } from '../../apps/host/generated/contracts'
-import { DECISION_POLICY, DECISION_THRESHOLDS, applyDecisionGuards, type DecisionInput } from '../../packages/decision/structured-route'
+import type { DecisionChoice, DecisionSupport, MapScreenProfile } from '../../apps/host/generated/contracts'
+import { decisionPolicy, DECISION_THRESHOLDS, applyDecisionGuards, type DecisionInput } from '../../packages/decision/structured-route'
 import { ensureHarnessNetwork } from '../../runtime/dsh/public-web'
 import { validate } from '../../packages/contracts/validate'
 
@@ -14,6 +14,11 @@ export const DECISION_QUESTIONS={
   next_action:{type:'choice',instructions:boundary+'这一步应先采取哪种研究操作？',criteria:actionCriteria},
   priority_dimension:{type:'choice',instructions:boundary+'哪一项最值得优先核查？',criteria:dimensions},
   evidence_sufficient:{type:'noul',instructions:boundary+'核心条件是否已具备足以比较具体路径的证据？',criteria:{true:'核心条件有对象和时间对应的可靠来源。',false:'存在缺项、分歧或只有周边线索。'}},
+}
+const neighborhoodDimensions={demand:'居民家庭的具体居住改善需求与居民负担。',supply:'养老托育、公共活动与日常服务的容量、开放条件和可达性。',adaptation:'本方案鉴定、消防、管网及工程接口。',implementation:'居民协商、实施范围、责任主体与专业规则。',operations:'设施接收、长效维护责任及年度费用。',resources:'工程量预算、出资确认、分摊与拨付和交付范围。'}
+export function decisionQuestions(profile?:MapScreenProfile):Record<string,{type:string;instructions:string;criteria:Record<string,string>}> {
+  if(profile!=='neighborhood')return DECISION_QUESTIONS
+  return {next_action:{type:'choice',instructions:boundary+'本小区方案下一步应采取哪种研究操作？雷达适配不能替代专业条件与正式行动门。',criteria:{...actionCriteria,compare:'居民需求、公共服务、居住工程、实施协同、长效维护和资金交付均有可靠依据，可比较具体改造方案。'}},priority_dimension:{type:'choice',instructions:boundary+'本小区方案哪项最值得优先核查？',criteria:neighborhoodDimensions},evidence_sufficient:{type:'noul',instructions:boundary+'当前小区方案的六维条件和专业规则是否足以比较具体改造内容？',criteria:{true:'核心条件与方案有同一对象、时点和可靠原文依据。',false:'存在缺项、分歧或只有周边场所及历史线索。'}}}
 }
 export function decisionEndpoint(value: string): string {
   let url:URL
@@ -31,25 +36,26 @@ export function parseDecisionChoice(value:any, options:string[]):DecisionChoice 
   if(!validProbabilityMass(probabilities)) throw new Error('DECISION_INVALID_RESPONSE')
   return {choice:value.choice,confidence:value.confidence,probabilities:value.probabilities}
 }
-export function parseDecisionResponse(raw:any):Pick<DecisionSupport,'answers'|'request_id'|'input_tokens'> {
+export function parseDecisionResponse(raw:any,profile?:MapScreenProfile):Pick<DecisionSupport,'answers'|'request_id'|'input_tokens'> {
   if(raw?.model!=='decision-model-preview' || typeof raw.request_id!=='string' || raw.request_id.length>200 || !raw.request_id
     || raw.answers?.evidence_sufficient?.type!=='noul') throw new Error('DECISION_INVALID_RESPONSE')
   const yes=raw.answers.evidence_sufficient.noul, tokens=raw.usage?.input_tokens
   if(!Number.isFinite(yes)||yes<0||yes>1||!Number.isSafeInteger(tokens)||tokens<0) throw new Error('DECISION_INVALID_RESPONSE')
   return {request_id:raw.request_id,input_tokens:tokens,answers:{next_action:parseDecisionChoice(raw.answers.next_action,Object.keys(actionCriteria)),
-    priority_dimension:parseDecisionChoice(raw.answers.priority_dimension,Object.keys(dimensions)),evidence_sufficient:yes}}
+    priority_dimension:parseDecisionChoice(raw.answers.priority_dimension,Object.keys(profile==='neighborhood'?neighborhoodDimensions:dimensions)),evidence_sufficient:yes}}
 }
 export type DecisionSettings={apiKey:string;endpoint:string;model:string}
 export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, settings:DecisionSettings={apiKey:process.env.QWEN_DECISION_API_KEY||'',endpoint:config.QWEN_DECISION_ENDPOINT,model:config.QWEN_DECISION_MODEL}, transport:typeof fetch=fetch):Promise<DecisionSupport> {
-  const start=Date.now(), body={model:settings.model,state:input.dashboard?{evidence:input.state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:input.state,questions:{...DECISION_QUESTIONS,...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
-  const base:DecisionSupport={status:'unavailable',provider:'qwen_systemone',model:settings.model,policy_version:DECISION_POLICY,
+  const profile=input.profile||input.dashboard?.profile
+  const start=Date.now(), body={model:settings.model,state:input.dashboard?{evidence:input.state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:input.state,questions:{...decisionQuestions(profile),...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
+  const base:DecisionSupport={status:'unavailable',provider:'qwen_systemone',model:settings.model,policy_version:decisionPolicy(profile),
     input_hash:createHash('sha256').update(JSON.stringify(body)).digest('hex'),created_at:new Date().toISOString(),request_id:null,duration_ms:0,input_tokens:null,
     answers:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:input.sourceIds,thresholds:DECISION_THRESHOLDS,error_code:null}
   if(!settings.apiKey || !settings.endpoint) return {...base,error_code:!settings.apiKey?'DECISION_KEY_MISSING':'DECISION_ENDPOINT_MISSING'}
   try {
     const raw=await requestDecisionQuestions(body.state,body.questions,signal,settings,transport)
     signal.throwIfAborted()
-    return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw),status:'completed',duration_ms:Date.now()-start,...(input.dashboard?{dashboard:parseDashboard(raw,input.dashboard)}:{})},input.factors))
+    return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw,profile),status:'completed',duration_ms:Date.now()-start,...(input.dashboard?{dashboard:parseDashboard(raw,input.dashboard)}:{})},input.factors,profile,input.neighborhoodAction))
   } catch(error) {
     signal.throwIfAborted()
     const message=error instanceof Error ? error.message : ''

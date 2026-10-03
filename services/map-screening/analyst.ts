@@ -22,7 +22,7 @@ import { evaluateDecision } from '../capabilities/decision-model'
 import { mapDecisionInput, DECISION_ACTIONS } from '../../packages/decision/structured-route'
 import { dashboardDimensions, dashboardPolicy } from '../../packages/decision/dashboard'
 
-export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: MapScreenContext, external: Source[] = [], records:PublicRecord[]=snapshot.research_records||[], asOf=snapshot.created_at): MapPreliminaryAssessment {
+export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: MapScreenContext, external: Source[] = [], records:PublicRecord[]=snapshot.research_records||[], asOf=snapshot.created_at,profile?:MapScreenProfile): MapPreliminaryAssessment {
   const context={...snapshot,created_at:asOf}
   assertBriefProse(value)
   const result = structuredClone(value)
@@ -45,7 +45,7 @@ export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: M
   if (hasUnqualifiedAssurance(prose) || /稳赚|必然升值|保证收益|保本保收益|投资回报率.{0,8}\d/i.test(prose)) throw new Error('MAP_ASSESSMENT_UNSUPPORTED_ASSURANCE')
   if (/地块为|待拆增量地|文件.{0,8}自述/.test(prose)) throw new Error('MAP_ASSESSMENT_UNSUPPORTED_PARCEL_CLAIM')
   result.unknowns = [...new Set(result.unknowns)].slice(0,1)
-  const deterministic = decisionFactors(publicMapContext(context))
+  const deterministic = decisionFactors(publicMapContext(context),asOf,profile)
   const seen = new Set<string>()
   for (const factor of result.factors || []) {
     if (seen.has(factor.key)) throw new Error('DUPLICATE_MAP_FACTOR')
@@ -106,7 +106,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     if(reuse){
       research={sources:previous!.research_sources||[],records:previous!.research_records||[],receipts:previous!.adapter_receipts||[],trace:{...(previous!.research||research.trace),reused:true}}
       try{
-        assessment=groundMapAssessment(previous!.assessment!,context,research.sources,research.records,new Date().toISOString())
+        assessment=groundMapAssessment(previous!.assessment!,context,research.sources,research.records,new Date().toISOString(),profile)
         emit({type:'progress',stage:'sources',status:'completed',message:'复用已完成的简报与依据'})
       }catch{
         budget.throwIfAborted()
@@ -150,7 +150,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     for(let attempt=0;!reuse&&attempt<2;attempt++){
       try{
         const {value}=await live.call<MapPreliminaryAssessment>('map_initial_screen'+(attempt?'_repair':''),prompt+repairNote,'MapPreliminaryAssessment',[],undefined,{omitOptionalFields:['factors'],evidenceIds})
-        const grounded=groundMapAssessment(value,context,external,research.records,new Date().toISOString())
+        const grounded=groundMapAssessment(value,context,external,research.records,new Date().toISOString(),profile)
         assessment=grounded
         if(!attempt&&(value.dimension_evidence?.length||0)>(grounded.dimension_evidence?.length||0)){
           const accepted=new Set(grounded.dimension_evidence?.map(e=>e.key))
@@ -170,10 +170,10 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     if(config.decisionEnabled){
       await emit({type:'progress',stage:'decision',status:'running',message:'评估六维方案适配'})
       const asOf=new Date().toISOString()
-      assessment=groundMapAssessment(assessment!,context,external,research.records,asOf)
-      const input=mapDecisionInput({...context,created_at:asOf},SCREEN_PROFILES[profile].label)
+      assessment=groundMapAssessment(assessment!,context,external,research.records,asOf,profile)
+      const input=mapDecisionInput({...context,created_at:asOf},SCREEN_PROFILES[profile].label,profile)
       const scoringIds=new Set(assessment!.dimension_evidence?.map(e=>e.source_id)||[])
-      input.state={target:publicContext.target,as_of:asOf,verified_conditions:input.factors,proposal:assessment!.summary,
+      input.state={business_profile:neighborhood?'neighborhood':'general',...(input.neighborhoodAction?{neighborhood_action:input.neighborhoodAction}:{}),target:publicContext.target,as_of:(input.state as {as_of:string}).as_of,verified_conditions:input.factors,proposal:assessment!.summary,
         public_sources:allSources.filter(s=>scoringIds.has(s.id)).map(s=>({id:s.id,title:s.title,published_at:s.published_at})),
         records:allRecords.slice(0,8).map(r=>({...r,fields:r.fields.slice(0,20).map(f=>({key:f.key,value:typeof f.value==='string'?f.value.slice(0,200):f.value,unit:f.unit,locator:f.locator}))}))}
 

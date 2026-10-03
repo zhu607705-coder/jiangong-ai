@@ -1,0 +1,13 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/neighborhood-alignment.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai-unified-policy
+
+
+ Test Files  1 passed (1)
+      Tests  33 passed (33)
+   Start at  22:30:31
+   Duration  2.53s (transform 499ms, setup 0ms, import 1.80s, tests 72ms, environment 0ms)
+

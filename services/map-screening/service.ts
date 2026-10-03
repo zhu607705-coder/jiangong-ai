@@ -7,9 +7,9 @@ import { dimensionCurrentAt } from '../../packages/research/evidence'
 import { researchSubject } from '../../packages/maps/public-context'
 import { groundMapAssessment } from './analyst'
 import { booleanValid } from '@turf/boolean-valid'
-import { decisionFactors } from '../../packages/maps/decision-factors'
+import { decisionFactors, neighborhoodMapAdvice } from '../../packages/maps/decision-factors'
 import { applyDecisionGuards } from '../../packages/decision/structured-route'
-import { DECISION_POLICY, DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
+import { decisionPolicy, DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
 import { dashboardPolicy } from '../../packages/decision/dashboard'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -169,7 +169,7 @@ export class MapScreeningService {
           if((await this.loadEvidence()).revision!==context.project_revision)throw new Error('CONTEXT_EXPIRED')
           if(event.type==='brief'){
             const result=validate<MapScreenAnalysis>('MapScreenAnalysis',event.result)
-            this.refreshConditions(context,result)
+            this.refreshConditions(context,result,profile)
             await this.remember(context,profile,result)
           }
           signal.throwIfAborted();await emit(event)
@@ -180,7 +180,7 @@ export class MapScreeningService {
       signal.throwIfAborted()
       if ((await this.loadEvidence()).revision !== context.project_revision) throw new Error('CONTEXT_EXPIRED')
       signal.throwIfAborted()
-      this.refreshConditions(context,analysis)
+      this.refreshConditions(context,analysis,profile)
       if(analysis.status==='completed'&&analysis.decision_support&&analysis.decision_support.status!=='completed'){
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }
@@ -225,7 +225,7 @@ export class MapScreeningService {
       if(this.contexts.size>=120)this.contexts.delete(this.contexts.keys().next().value!)
       this.contexts.set(fingerprint([this.provider.revision(),target]),context)
       cell.context=context
-      cell.factors=decisionFactors(context,stamp())
+      cell.factors=decisionFactors(context,stamp(),profile)
       // Full results stay behind a selected-object read, not duplicated into every
       // scan polygon. The same snapshot supplies both the color and detail view.
       const restored=await this.restore(context,profile)
@@ -234,7 +234,7 @@ export class MapScreeningService {
         cell.dashboard=restored.decision_support?.dashboard
         cell.factors=restored.assessment?.factors||cell.factors
       }
-      const classified=classifyCells([cell],theme)[0]
+      const classified=classifyCells([cell],theme,stamp(),profile)[0]
       cells[i]=classified
       emit({type:'cell',cell:classified,completed:i+1,total:cells.length})
       } catch(error) {
@@ -258,7 +258,7 @@ export class MapScreeningService {
     return fingerprint([RESEARCH_POLICY,BRIEF_SKILL_VERSION,dashboardPolicy(profile),config.DEEPSEEK_MODEL,profile,this.provider.revision(),context.project_revision,t,groups,context.created_at.slice(0,10)])
   }
 
-  private decisionSignature(profile:MapScreenProfile):string{return fingerprint([DECISION_POLICY,dashboardPolicy(profile),DECISION_THRESHOLDS,config.QWEN_DECISION_MODEL,config.QWEN_DECISION_ENDPOINT,config.decisionEnabled])}
+  private decisionSignature(profile:MapScreenProfile):string{return fingerprint([decisionPolicy(profile),dashboardPolicy(profile),DECISION_THRESHOLDS,config.QWEN_DECISION_MODEL,config.QWEN_DECISION_ENDPOINT,config.decisionEnabled])}
 
   private async checkTopology(target:MapScreenTarget,signal:AbortSignal){
     if(!target.geometry)return
@@ -287,14 +287,14 @@ export class MapScreeningService {
     })))
   }
 
-  private refreshConditions(context:MapScreenContext,analysis:MapScreenAnalysis):void {
-    const factors=decisionFactors(context,stamp()),previous=analysis.assessment?.factors||[]
+  private refreshConditions(context:MapScreenContext,analysis:MapScreenAnalysis,profile:MapScreenProfile):void {
+    const factors=decisionFactors(context,stamp(),profile),previous=analysis.assessment?.factors||[]
     const invalidated=previous.some(old=>old.state!=='unknown'&&factors.some(current=>current.key===old.key&&(current.state!==old.state||old.evidence_refs.some(ref=>!current.evidence_refs.includes(ref)))))
     // Canonical conditions are derived again, never filled from a cached verdict.
     // The brief and provider answers remain historical artifacts; local guards
     // apply the current conditions to the route without another model request.
     if(analysis.assessment)analysis.assessment.factors=factors
-    if(analysis.decision_support)analysis.decision_support=applyDecisionGuards(analysis.decision_support,factors)
+    if(analysis.decision_support)analysis.decision_support=applyDecisionGuards(analysis.decision_support,factors,profile,profile==='neighborhood'?neighborhoodMapAdvice(context):undefined)
     if(invalidated&&!analysis.reason)analysis.reason='原简报已保留，条件已按当前资料时效重新核对。'
   }
 
@@ -315,11 +315,11 @@ export class MapScreeningService {
         context.address=saved.address;context.city=saved.city||context.city
       }
       let refreshRequired=!this.currentScores(context,analysis)
-      this.refreshConditions(context,analysis)
+      this.refreshConditions(context,analysis,profile)
       const aliases=new Map<string,string>((saved.groups||[]).flatMap((g:{key:string;source_id:string})=>{const now=context.groups.find(n=>n.key===g.key);return now?[[g.source_id,now.source_id]]:[]}))
       for(const claim of [...analysis.assessment.opportunities,...analysis.assessment.cautions,...(analysis.assessment.factors||[])])claim.evidence_refs=claim.evidence_refs.map(id=>aliases.get(id)||id)
       try{
-        groundMapAssessment({...analysis.assessment,factors:undefined},context,analysis.research_sources||[],analysis.research_records||[],stamp())
+        groundMapAssessment({...analysis.assessment,factors:undefined},context,analysis.research_sources||[],analysis.research_records||[],stamp(),profile)
       }catch{
         refreshRequired=true
       }

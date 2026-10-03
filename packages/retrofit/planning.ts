@@ -12,7 +12,8 @@ export const RETROFIT_CHECKS = [
 ] as const
 const VETOES = { safety_veto: '已确认的方案安全否决条件', rights_veto: '已确认的权属或实施权限否决条件', protection_veto: '已确认的保护要求与方案冲突' } as const
 export type RetrofitAdvice = { decision: 'proceed'|'supplement'|'defer'; label: string; rule_version: string; reasons: { text: string; evidence_refs: string[] }[]; missing: { key: string; label: string; where: string; impact: string }[] }
-function usable(project: ProjectInput, fact: Fact): boolean {
+export type RetrofitEvidence = Pick<ProjectInput, 'project_id'|'as_of'|'synthetic'|'sources'|'facts'>
+export function retrofitFactUsable(project: RetrofitEvidence, fact: Fact): boolean {
   const source = project.sources.find(s => s.id === fact.source_id), date = Date.parse(fact.observed_at || ''), asOf = Date.parse(project.as_of + 'T23:59:59Z')
   return !!source && !!(source.hash || source.raw_hash) && source.synthetic === project.synthetic && source.content_status !== 'metadata_only'
     && fact.epistemic_status === 'fact' && typeof fact.value === 'boolean' && fact.object_ref === `project:${project.project_id}` && !!fact.locator
@@ -21,8 +22,8 @@ function usable(project: ProjectInput, fact: Fact): boolean {
     && (!source.expires_at || Number.isFinite(Date.parse(source.expires_at)) && Date.parse(source.expires_at) > asOf)
 }
 /** A business gate over explicit project-bound facts; fit scores never enter it. */
-export function retrofitAdvice(project: ProjectInput): RetrofitAdvice {
-  const facts = project.facts.filter(f => f.kind.startsWith('retrofit.') && usable(project, f))
+export function retrofitAdvice(project: RetrofitEvidence): RetrofitAdvice {
+  const facts = project.facts.filter(f => f.kind.startsWith('retrofit.') && retrofitFactUsable(project, f))
   const rows = (key: string) => facts.filter(f => f.kind === 'retrofit.' + key)
   const conflict = (key: string) => rows(key).some(f => f.value === true) && rows(key).some(f => f.value === false)
   const veto = Object.entries(VETOES).find(([key]) => !conflict(key) && rows(key).some(f => f.value === true))
