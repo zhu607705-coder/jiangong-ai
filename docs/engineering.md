@@ -55,6 +55,10 @@ flowchart LR
 
 历史经验使用同一 PGlite/PostgreSQL 新增 `experience_cards` 和不可覆盖的 `experience_history`，复用已有文档解析、DSH 和全文检索。十字段区分决策问题、背景、条件、备选、提议、实际决策、决策依据、实施、结果、适用边界；非空值须有当前项目原文的逐字引用、定位和文件哈希。默认本地仅提取明确标签，未识别的叙述不猜成历史事实；显式模型提取须符合既有内部资料外发许可。草稿人工复核后才进入跨项目检索，修改后重新变成草稿；类型、模式、阶段、目标资料时点、owner 与合成类别共同过滤。复用绑定经验版本和项目版本，仅生成 `heuristic/unverified` 调查线索，不能自动生成当前硬约束。当前没有获准企业历史样本或业务效果评价，公开翠苑一区资料是历史流程验证案例，详见 `老旧小区改造_产品与验证方案.md`。
 
+项目经验页提供“手动整理经验”，有可引用材料时无需先提取或已有卡。新建与更新共用十字段编辑器：选文档后选原文片段，自动带入文档哈希、定位与逐字引文，空字段同时带入片段内容，用户可缩为原文中的连续摘录。原文未记载的字段保留 `null`；新建至少有一个带引用的非空字段才可提交。保存只写待复核草稿，不调用模型、审核或局部重评；后台继续核验项目归属、版本、定位与引文。长段先展示并带入前 3000 字，明确提示截取范围；扫描件无正文时引导补 OCR 或上传文字。保存请求用视图 generation 隔离项目 A→B→A 的迟到响应，并以同步锁防止重复创建。
+
+`packages/experience/document-slices.ts` 是前后端共用的轻量原文定位函数，继续复用 ParserPort 保存的行、段、页与表行，不读取原文件，也不解析第二份文档。`domain.ts` 重导出同一函数和错误类，后端引用保持兼容，浏览器无需加载 AJV 与整份业务契约。首次直接导入领域模块时主包约 519.64 KB；抽取后约 346.34 KB，输出逻辑不变。
+
 经验接口：`GET /api/projects/:id/experiences`、`POST /api/projects/:id/experiences/extract`、`POST /api/projects/:id/experiences`、`POST /api/projects/:id/experiences/:cardId/update`、`POST /api/projects/:id/experiences/:cardId/review`、`GET /api/experiences/search`、`POST /api/projects/:id/experiences/reuse`。提取用 `document_ids/use_model`；更新与审核用 `expected_revision`；复用用 `expected_card_revision/expected_version`。检索不能将目标项目时点向未来扩展，复用再次核验版本记录时点。所有接口沿用本机会话、CSRF 和项目权限，不另建身份系统。
 
 | 模块 | 当前做法 | 结果约束 |
@@ -87,7 +91,7 @@ flowchart LR
 | `POST /api/runs/:id/cancel`；`POST /api/runs/:id/resume` | 运行 ID | 请求取消或按保存的会话/阶段恢复。 |
 | `GET /api/runs/:id/decision-packet`；`GET /api/runs/:id/report` | 已完成运行 ID | 结构化决策包或 Markdown 报告；未完成时返回冲突。 |
 | `POST /api/projects/:id/context-proposals`；`/context-updates`；`/context-revoke` | 提议、版本及变更 | 编译、版本锁更新或撤销组织上下文。 |
-| `POST /api/projects/:id/documents` | 单文件表单上传；TXT/MD/CSV/PDF/DOCX/XLSX，最多 10 MB | 按项目和 SHA-256 去重；新文件解析入库后保存同 ID 来源及来源绑定原始行，项目上下文版本递增。重复文件直接返回既有记录。 |
+| `POST /api/projects/:id/documents` | 单文件表单上传；TXT/MD/CSV/PDF/DOCX/XLSX，最多 10 MB；可选 UTF-8 文本字段 `original_file_name` | 按项目和 SHA-256 去重；新文件解析入库后保存同 ID 来源及来源绑定原始行，项目上下文版本递增。重复文件直接返回既有记录。 |
 | `GET /api/projects/:id/documents` | 项目 ID；当前不读取分页或筛选参数 | 校验项目后按 `project_id` 返回 `{id,file_name,parser_result,created_at}[]`，供关系图读取解析表、行预览、原文定位和状态；不返回原始文件字节，也未承诺列表排序。 |
 | `POST/GET /api/projects/:id/followups` | 调查项或项目 ID | 保存或读取后续核查任务。 |
 | `GET /api/maps/data`；`GET /api/maps/screening/profiles` | 无 | 数据目录、初筛画像及主题配置。 |
@@ -201,3 +205,7 @@ Windows 挂载盘上的 Vite 开启有界文件轮询，避免 Windows 编辑后
 新增五个单指标标色专题、固定图例、九格进度和取消、范围变更提示及数据目录。接口、来源精度、缓存、完整性阈值、交互参考和实测时间见 `docs/地图初筛与数据关联.md`。当前校验入口是 `research/test_results/screening.json`，旧版地图记录只代表其对应版本。
 
 GitHub 新建为私有 `zhu607705-coder/jiangong-ai`；项目数据库、内部材料、密钥、DSH 会话与原始浏览器日志留在本机。源码保留用于复现的公开快照和显式合成回归工件。HTTP 回归使用当前 Node 进程路径，干净克隆不要求包含本机 `.tools` 目录。
+
+### 新上传文件名的 UTF-8 契约（2026-10-03）
+
+浏览器上传额外携带 `original_file_name=file.name`。普通 multipart 字段按 UTF-8 解码，可避开文件名 header 的字符集差异；宿主采用经校验的字段写入解析器参数、来源标题、文档记录和响应。新字段必须是非空字符串、长度不超过 250，不能含路径或控制字符，扩展名须与上传文件 header 一致且为受支持格式。无新字段的旧客户端仍使用原 header 文件名；不做猜测性转码。存储路径仍由 UUID 生成，文件原始字节与 SHA-256 保留。重复内容仍返回首次记录，不借复传改写旧名称或冻结来源；本修复针对新上传，未迁移存量乱码记录。

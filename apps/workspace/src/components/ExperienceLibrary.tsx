@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField } from '../../../host/generated/contracts'
-import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/domain'
+import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/document-slices'
 import { api } from '../api'
 import WaitingScene from './WaitingScene'
 import './experience-library.css'
@@ -138,11 +138,10 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
     if (!document.parser_result?.source_hash || document.parser_result.status === 'ocr_required') return []
     try {
       // The shared resolver needs only file_name/parser_result; no uploaded bytes are reread.
-      const slices = documentSlices({ ...document, project_id: projectId, sha256: document.parser_result.source_hash,
-        created_at: document.created_at || '', parser_result: document.parser_result })
+      const slices = documentSlices({ file_name: document.file_name, parser_result: document.parser_result })
       return slices.length ? [{ ...document, slices }] : []
     } catch { return [] }
-  }), [documents, projectId])
+  }), [documents])
   const isLoading = !ready || loaded.loading
   const refreshCards = (next: ExperienceCard[]) => setLoaded(current => current.key === requestKey
     ? { ...current, cards: [...next, ...current.cards.filter(card => !next.some(item => item.id === card.id))] } : current)

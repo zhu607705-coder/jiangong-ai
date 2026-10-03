@@ -537,6 +537,31 @@
         "agent/"
       ],
       "upstream_verification_required": true
+    },
+    {
+      "id": "T22",
+      "depends_on": [
+        "T20",
+        "T21"
+      ],
+      "goal": "优先内置浏览器的连续体验：材料导入到首张经验草稿；内置可用后集中询问GPT Pro",
+      "status": "application_loop_verified_native_browser_blocked_external",
+      "expected_artifacts": [
+        "tests/browser/experience-manual-create.mjs",
+        "tests/contracts/upload-file-name.test.ts",
+        "research/test_results/browser-experience-loop.json"
+      ],
+      "definition_of_done": "实际普通材料0提取后可从原文整理待复核卡，中文新文件名正确保存，版本与引用校验保留；内置和Pro未完成部分如实报告，不以独立浏览器代称内置浏览器。",
+      "write_scope": [
+        "apps/host/",
+        "apps/workspace/",
+        "packages/experience/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

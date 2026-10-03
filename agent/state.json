@@ -34,7 +34,7 @@
   ],
   "next_task": "Obtain authorized resident/engineering/funding and historical enterprise records for field review and project-isolated decision-quality evaluation.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-10-02",
+  "updated_at": "2026-10-03",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -78,9 +78,10 @@
     "research/test_results/import-graph.json",
     "research/test_results/loading-journey.json",
     "research/test_results/neighborhood-retrofit.json",
-    "research/test_results/document-evaluation-cli.json"
+    "research/test_results/document-evaluation-cli.json",
+    "research/test_results/browser-experience-loop.json"
   ],
-  "current_delivery": "Local code includes Qwen document-evaluation CLI and project Skill adaptation, six supported document formats, configurable rubrics, explicit unknowns, JSON/Markdown provenance reports, and fixed neighborhood draft/source/material navigation. 426 existing JS + 17 new CLI checks, 70 Python, browser regressions, production build and two real Qwen public-excerpt requests passed. No calibrated decision-quality or enterprise effectiveness claim. Published PR10 for review, both CI workflows passed; currently open; implementation remains available locally on codex/browser-workflow-loop.",
+  "current_delivery": "PR10 branch adds Qwen document CLI plus concrete material-to-experience workflow fixes: manual first card with source locators, UTF-8 upload names, and lightweight shared resolver. Actual public excerpt uploaded via separate local browser and saved as one pending draft with ten fields/nine null, then HTTP/PGlite readback verified hash and exact quote; zero new model/approval calls. 461 JS,14 HTTP,production build and browser regressions passed. Built-in browser bootstrap still fails for WSL cwd, so six-topic Pro request is prepared but not sent; no Pro reply or native browser success claimed.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -102,7 +103,8 @@
     "T17": "completed",
     "T19": "completed_local_public_pilot_verified",
     "T20": "completed_local_browser_verified",
-    "T21": "completed_contract_and_live_endpoint_verified"
+    "T21": "completed_contract_and_live_endpoint_verified",
+    "T22": "application_loop_verified_native_browser_blocked_external"
   },
   "preview_url": "http://127.0.0.1:5173",
   "source_archive": {
@@ -380,32 +382,35 @@
       "state": "open",
       "implementation_commit": "9ee864924dfb012bba7a974fefdbde4cf5e26b9b",
       "ci": {
-        "status": "passed",
-        "verified_commit": "611a4f320fc37ed5ea6db963a912aafe85030207",
-        "workflow_runs": [
-          {
-            "name": "Map workspace quality",
-            "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/37028326358",
-            "conclusion": "success"
-          },
-          {
-            "name": "Intelligence integration review",
-            "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/37028326351",
-            "conclusion": "success"
-          }
-        ]
+        "status": "see_current_GitHub_checks",
+        "note": "CLI base and latest application loop validated locally; live workflow conclusions are recorded separately to avoid a ledger-only commit retrigger cycle.",
+        "latest_status_local": "data/local/browser-loop-20261003/pr10-ci.json"
       }
     }
   },
   "browser_workflow_loop": {
-    "status": "completed_with_local_browser_fallback",
-    "changes": [
-      "Project-scoped session draft",
-      "Cited source focus and frozen original text",
-      "Experience material upload navigation"
+    "status": "application_loop_verified_native_browser_blocked_external",
+    "evidence": "research/test_results/browser-experience-loop.json",
+    "changed_files": [
+      "apps/workspace/src/components/ExperienceLibrary.tsx",
+      "apps/workspace/src/components/experience-library.css",
+      "apps/workspace/src/App.tsx",
+      "apps/host/server.ts",
+      "apps/host/ingest.ts",
+      "packages/experience/document-slices.ts",
+      "packages/experience/errors.ts",
+      "packages/experience/domain.ts"
     ],
-    "evidence": "research/test_results/document-evaluation-cli.json",
-    "native_browser": "blocked_external WSL sandbox URI; fallback separate browser",
-    "current_pro_review": "not_performed"
+    "native_browser": "blocked_external: WSL sandboxCwd rejected before JavaScript execution",
+    "current_pro_review": {
+      "status": "prepared_not_sent",
+      "packet_local": "data/local/pro-audit/round-09/request-draft.txt",
+      "reply_received": false
+    },
+    "live_project_id": "P-ab37431e-6ea8-4b08-96e2-9b2e4543322d",
+    "live_card_id": "EXP-0864b90e-bc32-48d3-bfd9-686c3e3c25aa",
+    "model_calls": 0,
+    "tests": "461 JS,14 HTTP,production build,new and existing experience browser,9 neighborhood flows and36 core map checks passed",
+    "next_runnable_task": "Retry native browser only after the desktop bridge can recognize the current execution workspace; send the six-topic review packet and wait for an actual Pro reply. Existing material-to-experience flow is locally verified."
   }
 }
