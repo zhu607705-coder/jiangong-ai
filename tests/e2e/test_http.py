@@ -3,6 +3,7 @@
 Uses an isolated data directory and ports; it never touches the user's projects.
 """
 import json
+import hashlib
 import os
 import signal
 import shutil
@@ -209,6 +210,77 @@ def test_real_upload_is_local_and_does_not_become_an_instruction(running_app):
     assert project["input"]["sources"][0]["synthetic"] is False
     assert app.client.post(endpoint, files={"file": ("invalid.pdf", b"%PDF", "application/pdf")}).status_code == 422
     assert app.client.post(endpoint, files={"file": ("program.exe", b"binary", "application/octet-stream")}).status_code == 415
+
+
+def test_explicit_unicode_upload_filename_preserves_source_content_and_dedup(running_app):
+    app = running_app
+    p = json.loads((ROOT / "fixtures/inputs/01_auto.json").read_text())
+    p.update(project_id="UNICODE-UPLOAD-TEST", synthetic=False, purpose="uploaded_materials", facts=[], sources=[])
+    p["scope"]["geometry"] = None
+    created = app.client.post("/api/projects", json={"input": p})
+    assert created.status_code == 201, created.text
+    endpoint = f"/api/projects/{p['project_id']}/documents"
+    name = "翠苑一区 朱航成 🏠 历史报道.txt"
+    content = "公开材料回归样本。姓名：朱航成；居民需求待现场核实。\n".encode("utf-8")
+    parts = [("original_file_name", (None, name)), ("file", (name, content, "text/plain"))]
+    uploaded = app.client.post(endpoint, files=parts)
+    assert uploaded.status_code == 201, uploaded.text
+    document = uploaded.json()
+    assert document["file_name"] == name
+    assert document["parser_result"]["text"] == content.decode("utf-8")
+    assert document["parser_result"]["source_hash"] == hashlib.sha256(content).hexdigest()
+    project = app.client.get(f"/api/projects/{p['project_id']}").json()
+    source = project["input"]["sources"][0]
+    assert source["title"] == name and source["id"] == document["id"]
+    assert source["hash"] == document["parser_result"]["source_hash"]
+    assert source["untrusted_text"] == content.decode("utf-8")
+    assert source["data_class"] == "internal" and source["visibility"] == "internal" and source["synthetic"] is False
+    blobs = list((app.directory / "data/blobs" / p["project_id"]).iterdir())
+    assert len(blobs) == 1 and blobs[0].name == f"{document['id']}.txt"
+    assert blobs[0].read_bytes() == content
+    assert app.client.get(endpoint).json()[0]["file_name"] == name
+
+    # Content identity wins on retransmission; do not rename an existing/frozen source.
+    duplicate = app.client.post(endpoint, files=[("original_file_name", (None, "另一个文件名.txt")), ("file", ("wire.txt", content, "text/plain"))])
+    assert duplicate.status_code == 200 and duplicate.json()["id"] == document["id"]
+    assert duplicate.json()["file_name"] == name
+    reloaded = app.client.get(f"/api/projects/{p['project_id']}").json()
+    assert reloaded["context_version"] == project["context_version"]
+    assert reloaded["input"]["sources"] == project["input"]["sources"]
+    assert len(list(blobs[0].parent.iterdir())) == 1
+
+    legacy = app.client.post(endpoint, files={"file": ("experience.md", "ASCII legacy 中文正文".encode("utf-8"), "text/markdown")})
+    assert legacy.status_code == 201 and legacy.json()["file_name"] == "experience.md"
+
+
+def test_invalid_upload_filename_metadata_never_writes_blob_or_changes_project(running_app):
+    app = running_app
+    p = json.loads((ROOT / "fixtures/inputs/01_auto.json").read_text())
+    p.update(project_id="INVALID-UPLOAD-NAME-TEST", synthetic=False, purpose="uploaded_materials", facts=[], sources=[])
+    p["scope"]["geometry"] = None
+    created = app.client.post("/api/projects", json={"input": p})
+    assert created.status_code == 201, created.text
+    endpoint = f"/api/projects/{p['project_id']}/documents"
+    before = app.client.get(f"/api/projects/{p['project_id']}").json()
+    invalid_parts = [
+        [("original_file_name", (None, name))]
+        for name in ["", "a" * 247 + ".txt", "../escape.txt", "dir/file.txt", "dir\\file.txt", "C:file.txt", "line\nbreak.txt", "nul\0byte.txt", "报告.pdf"]
+    ]
+    invalid_parts.extend([
+        [("original_file_name", (None, "file.txt")), ("original_file_name", (None, "file.txt"))],
+        [("original_file_name[name]", (None, "file.txt"))],
+    ])
+    for fields in invalid_parts:
+        result = app.client.post(endpoint, files=fields + [("file", ("wire.txt", b"invalid metadata regression", "text/plain"))])
+        assert result.status_code == 422, result.text
+        assert result.json()["code"] == "VALIDATION_ERROR"
+    unsupported = app.client.post(endpoint, files=[("original_file_name", (None, "程序.exe")), ("file", ("program.exe", b"binary", "application/octet-stream"))])
+    assert unsupported.status_code == 415 and unsupported.json()["code"] == "UNSUPPORTED_FORMAT"
+    assert app.client.get(endpoint).json() == []
+    after = app.client.get(f"/api/projects/{p['project_id']}").json()
+    assert after["context_version"] == before["context_version"]
+    assert after["input"] == before["input"]
+    assert not (app.directory / "data/blobs" / p["project_id"]).exists()
 
 
 def test_restart_restores_exact_decision_without_recomputing(running_app):

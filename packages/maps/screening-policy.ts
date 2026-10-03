@@ -1,5 +1,5 @@
 import type { MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme, MapScreenEvidence } from '../../apps/host/generated/contracts'
-import { decisionFactors, factorTier, decisionSignals } from './decision-factors'
+import { decisionFactors, factorTier, decisionSignals, neighborhoodMapAdvice } from './decision-factors'
 import { dashboardDimensions, dashboardPolicy } from '../decision/dashboard'
 export { decisionSignals }
 export const EVIDENCE_GROUPS = [
@@ -29,17 +29,30 @@ export const SCREEN_TIERS = {
   moderate:{label:'按项推进',color:'#648899'},sparse:{label:'调整路径',color:'#b18b59'},
   empty:{label:'待研判',color:'#a3acb7'},incomplete:{label:'待研判',color:'#a3acb7'},
 } as const
+export function screenTiers(profile?:MapScreenProfile):Record<keyof typeof SCREEN_TIERS,{label:string;color:string}> {
+  return profile==='neighborhood'?{...SCREEN_TIERS,
+    strong:{label:'进一步尽调',color:'#418577'},
+    moderate:{label:'补充资料',color:'#b69551'},
+    sparse:{label:'当前暂缓',color:'#a75d53'},
+    incomplete:{label:'对象资料未关联',color:'#a3acb7'},
+  }:SCREEN_TIERS
+}
 export const INVESTIGATION_GAPS: string[] = []
 export const SCREEN_METHOD = 'object-boundaries_six-dimension-v2'
 export function assertScreenBounds(b:MapScreenBounds):void {
   if (![b.west,b.east,b.south,b.north].every(Number.isFinite) || b.west < -180 || b.east > 180 || b.south < -90 || b.north > 90 || b.east <= b.west || b.north <= b.south || b.east-b.west>.060001 || b.north-b.south>.060001) throw new Error('请放大到街区范围。')
 }
-export function contextComparable(context:MapScreenContext|null):boolean {
-  return !!context && decisionFactors(context).some(f => f.state !== 'unknown')
+export function contextComparable(context:MapScreenContext|null,profile?:MapScreenProfile):boolean {
+  return !!context && decisionFactors(context,context.created_at,profile).some(f => f.state !== 'unknown')
 }
-export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme,evaluatedAt?:string):MapScreenCell[] {
+export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme,evaluatedAt?:string,profile?:MapScreenProfile):MapScreenCell[] {
   return input.map(c => {
-    const factors = c.factors || (c.context ? decisionFactors(c.context,evaluatedAt) : [])
+    const factors = profile==='neighborhood'?(c.context?decisionFactors(c.context,evaluatedAt,profile):[]):c.factors || (c.context ? decisionFactors(c.context,evaluatedAt,profile) : [])
+    if(profile==='neighborhood'){
+      const action=c.context?neighborhoodMapAdvice(c.context):undefined
+      const tier=!c.context?'pending':action?.decision==='proceed'?'strong':action?.decision==='defer'?'sparse':action?.decision==='supplement'?'moderate':'incomplete'
+      return {...c,factors,tier,rank:null,metric_value:null} as MapScreenCell
+    }
     const existing=factorTier(factors,theme)
     // Explicit object-bound blockers take precedence over model fit levels.
     let tier:MapScreenCell['tier']=c.context ? existing : 'pending'

@@ -1059,6 +1059,8 @@ textarea::placeholder {
   min-width: 0;
   flex: 1;
 }
+.source-row.is-focused { border-color: #588a77; box-shadow: 0 0 0 2px #588a771c; }
+.source-focus-note { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; color: #386655; }
 .source-row h3 {
   font-size: 12px;
   word-break: break-all;

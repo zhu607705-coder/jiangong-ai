@@ -492,6 +492,106 @@
         "data/public_cases/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T20",
+      "depends_on": [
+        "T19"
+      ],
+      "goal": "浏览器连续体验回归：方案草稿、引用定位与经验上传入口",
+      "status": "completed_local_browser_verified",
+      "expected_artifacts": [
+        "tests/browser/neighborhood-workflow.mjs",
+        "research/test_results/document-evaluation-cli.json"
+      ],
+      "definition_of_done": "实际本地切页和地图往返保留草稿，集成回归验证项目隔离与冻结原文定位；不宣称原生桥接或Pro审阅成功。",
+      "write_scope": [
+        "apps/workspace/",
+        "tests/browser/",
+        "docs/",
+        "agent/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T21",
+      "depends_on": [
+        "T19"
+      ],
+      "goal": "TypeSafe Skill适配现有Qwen并实现用户指定文档多维评估CLI",
+      "status": "completed_contract_and_live_endpoint_verified",
+      "expected_artifacts": [
+        ".agents/skills/qwen-document-evaluation/SKILL.md",
+        "scripts/evaluate-documents.ts",
+        "docs/文档多维评估CLI.md",
+        "research/test_results/document-evaluation-cli.json"
+      ],
+      "definition_of_done": "问题已向用户提出，默认量表可替换，复用DSH/Qwen/ParserPort，缺项不作零分，契约与真实调用分列，报告含材料定位和指纹。",
+      "write_scope": [
+        ".agents/skills/",
+        "packages/document-evaluation/",
+        "scripts/",
+        "tests/",
+        "examples/",
+        "docs/",
+        "agent/"
+      ],
+      "upstream_verification_required": true
+    },
+    {
+      "id": "T22",
+      "depends_on": [
+        "T20",
+        "T21"
+      ],
+      "goal": "优先内置浏览器的连续体验：材料导入到首张经验草稿；内置可用后集中询问GPT Pro",
+      "status": "application_loop_verified_native_browser_blocked_external",
+      "expected_artifacts": [
+        "tests/browser/experience-manual-create.mjs",
+        "tests/contracts/upload-file-name.test.ts",
+        "research/test_results/browser-experience-loop.json"
+      ],
+      "definition_of_done": "实际普通材料0提取后可从原文整理待复核卡，中文新文件名正确保存，版本与引用校验保留；内置和Pro未完成部分如实报告，不以独立浏览器代称内置浏览器。",
+      "write_scope": [
+        "apps/host/",
+        "apps/workspace/",
+        "packages/experience/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T23",
+      "depends_on": [
+        "T19",
+        "T20",
+        "T22"
+      ],
+      "goal": "统一老旧小区内部口径、设计有版本的方案比较模板、用首卡和覆盖矩阵支持初步调研并核验用户驳回的旧判断",
+      "status": "completed_local_and_public_endpoint_verified",
+      "expected_artifacts": [
+        "docs/改造方案比较模板.md",
+        "packages/decision/project-dashboard.ts",
+        "packages/maps/preliminary-research.ts",
+        "apps/workspace/src/imports/evidence-coverage.ts",
+        "research/test_results/neighborhood-research.json"
+      ],
+      "definition_of_done": "同对象同项目时点共用行动门；未知不按零分，高分不能抵消否决，近邻不继承项目确认；模板与已实现API分列；资料只读覆盖可回原文，现有公开资料实际读回，旧语义风险说法依实测更正；契约、真端点及业务质量评价分别记录。",
+      "write_scope": [
+        "packages/",
+        "services/",
+        "runtime/workflows/",
+        "apps/workspace/",
+        "tests/",
+        "data/templates/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

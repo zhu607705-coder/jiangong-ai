@@ -443,7 +443,7 @@ export interface DecisionSupport {
     evidence_sufficient: number;
   } | null;
   action: ("investigate" | "resolve_blocker" | "compare" | "review") | null;
-  priority: ("implementation" | "adaptation" | "demand" | "operations" | "resources" | "access") | null;
+  priority: ("implementation" | "adaptation" | "demand" | "operations" | "resources" | "access" | "supply") | null;
   next_step: string;
   /**
    * @maxItems 12
@@ -717,6 +717,9 @@ export interface MapProjectEvidence {
   sources: Source[];
   facts: Fact[];
   rules: ExperienceRule[];
+  business_profile?: "general" | "neighborhood";
+  as_of?: string;
+  neighborhood_action?: NeighborhoodActionAdvice;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -766,7 +769,7 @@ export interface MapPreliminaryAssessment {
  * via the `definition` "MapDecisionFactor".
  */
 export interface MapDecisionFactor {
-  key: "implementation" | "adaptation" | "demand" | "operations" | "resources" | "access";
+  key: "implementation" | "adaptation" | "demand" | "operations" | "resources" | "access" | "supply";
   state: "supported" | "conditional" | "blocked" | "unknown";
   summary: string;
   /**

@@ -2,7 +2,14 @@ import type { DecisionDashboard, DimensionEvidence, MapScreenProfile, ResearchDi
 import { validProbabilityMass, compatibleExpectedScore } from './probabilities'
 
 export const DASHBOARD_POLICY='opportunity-fit-v2'
-export const NEIGHBORHOOD_DASHBOARD_POLICY='neighborhood-renovation-fit-v1'
+export const NEIGHBORHOOD_DASHBOARD_POLICY='neighborhood-renovation-fit-v2'
+const SAVED_NEIGHBORHOOD_POLICY='neighborhood-renovation-fit-v1'
+/** Explicit registered fact semantics shared by scoring and research coverage. */
+export const NEIGHBORHOOD_EVIDENCE_KINDS:Record<ResearchDimension,readonly string[]>={
+  demand:['resident_needs','resident_household','resident_survey'],supply:['service_gap','public_service','public_service_capacity'],
+  adaptation:['engineering_review','engineering_condition','building_inventory'],implementation:['resident_consent','implementation_scope','implementation_arrangement'],
+  operations:['maintenance_arrangement','maintenance_cost'],resources:['funding_arrangement','project_budget','engineering_cost'],
+}
 export const DASHBOARD_DIMENSIONS:{key:ResearchDimension;label:string;question:string;levels:string[]}[]=[
   {key:'demand',label:'需求客群',question:'谁会持续使用，需求出现在哪里？',levels:['需求与方案明显冲突','仅有明确需求线索','已有使用或采购需求','明确需求与方案匹配','有持续使用和需求验证']},
   {key:'supply',label:'供给竞争',question:'现有供给能否满足需求，差异化在哪里？',levels:['同类供给明显过剩','已有同类竞争且差异弱','有可说明的差异化空间','具体供给缺口有依据','供给缺口与替代方案均经验证']},
@@ -23,8 +30,11 @@ const NEIGHBORHOOD_DIMENSIONS:typeof DASHBOARD_DIMENSIONS=[
 export function dashboardPolicy(profile?:MapScreenProfile):string {
   return profile==='neighborhood'?NEIGHBORHOOD_DASHBOARD_POLICY:DASHBOARD_POLICY
 }
+export function isNeighborhoodDashboard(policy_version?:string):boolean {
+  return [NEIGHBORHOOD_DASHBOARD_POLICY,SAVED_NEIGHBORHOOD_POLICY].includes(policy_version||'')
+}
 export function dashboardDimensions(policy_version?:string):typeof DASHBOARD_DIMENSIONS {
-  return policy_version===NEIGHBORHOOD_DASHBOARD_POLICY?NEIGHBORHOOD_DIMENSIONS:DASHBOARD_DIMENSIONS
+  return isNeighborhoodDashboard(policy_version)?NEIGHBORHOOD_DIMENSIONS:DASHBOARD_DIMENSIONS
 }
 export type DashboardInput={purpose:string;evidence:DimensionEvidence[];profile?:MapScreenProfile}
 export function dashboardQuestions(input:DashboardInput):Record<string,unknown>{

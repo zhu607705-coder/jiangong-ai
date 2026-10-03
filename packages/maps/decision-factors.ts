@@ -1,14 +1,18 @@
 import type { MapDecisionFactor, MapScreenContext, MapScreenTheme, MapScreenProfile } from '../../apps/host/generated/contracts'
 import { factAppliesToTarget } from './object-identity'
+import { dashboardDimensions, dashboardPolicy } from '../decision/dashboard'
+import { retrofitFactUsable, RETROFIT_RULE_VERSION } from '../retrofit/planning'
+import type { MapProjectEvidence, NeighborhoodActionAdvice } from '../../apps/host/generated/contracts'
 
 export const FACTOR_LABELS = {
   implementation: '实施条件', adaptation: '空间适配', demand: '使用需求',
   operations: '运营组织', resources: '资源安排', access: '交通衔接',
 } as const
-export type FactorKey = keyof typeof FACTOR_LABELS
+export type FactorKey = keyof typeof FACTOR_LABELS | 'supply'
 // An explicit, versioned research rubric, not a statistical success score.
 export const FACTOR_POLICY = 'source-factors-v1'
-export const FACTOR_FIELDS: Record<FactorKey, readonly string[]> = {
+export const NEIGHBORHOOD_FACTOR_POLICY='retrofit-source-factors-v1'
+export const FACTOR_FIELDS: Record<keyof typeof FACTOR_LABELS, readonly string[]> = {
   implementation: ['use_permitted', 'rights_secured', 'relocation_resolved'],
   adaptation: ['structural_fit_verified', 'fire_strategy_verified'],
   demand: ['user_need_verified', 'competing_supply_absorbable'],
@@ -24,9 +28,10 @@ const FIELD_LABELS: Record<string, string> = {
 }
 /** Only current, object-bound boolean source facts enter the screening rubric.
  * Raw POI counts, publication counts, model prose and city background never enter it. */
-export function decisionFactors(context: MapScreenContext, evaluatedAt=context.created_at): MapDecisionFactor[] {
+export function decisionFactors(context: MapScreenContext, evaluatedAt=context.created_at, profile?:MapScreenProfile): MapDecisionFactor[] {
+  if(profile==='neighborhood')return neighborhoodFactors(context)
   const asOf = Date.parse(evaluatedAt)
-  return (Object.keys(FACTOR_LABELS) as FactorKey[]).map(key => {
+  return (Object.keys(FACTOR_LABELS) as (keyof typeof FACTOR_LABELS)[]).map(key => {
     const rows = context.local_projects.filter(p => p.relation === 'within_scope').flatMap(p => p.facts.flatMap(f => {
       const field = f.kind.replace(/^screening\./, '')
       const source = p.sources.find(s => s.id === f.source_id)
@@ -54,14 +59,60 @@ export function decisionFactors(context: MapScreenContext, evaluatedAt=context.c
       evidence_refs:[...new Set(rows.map(r => r.ref))].slice(0,4), quote:'', conflict } as MapDecisionFactor
   })
 }
-export function factorTier(factors: MapDecisionFactor[], theme: MapScreenTheme) {
-  const rows = theme === 'overall' ? factors : factors.filter(f => f.key === (theme==='supply'?'demand':theme))
+export function factorTier(factors: MapDecisionFactor[], theme: MapScreenTheme, profile?:MapScreenProfile) {
+  const rows = theme === 'overall' ? factors : factors.filter(f => f.key === (theme==='supply'&&profile!=='neighborhood'?'demand':theme))
   if (rows.some(f => f.state === 'blocked')) return 'sparse' as const
   if (rows.some(f => f.conflict)) return 'moderate' as const
   if (theme !== 'overall') return rows.some(f => f.state === 'supported') ? 'strong' as const : rows.some(f => f.state === 'conditional') ? 'moderate' as const : 'incomplete' as const
-  const essential = ['implementation','adaptation','demand','operations','resources']
+  const essential = profile==='neighborhood'?Object.keys(NEIGHBORHOOD_FACTOR_FIELDS):['implementation','adaptation','demand','operations','resources']
   if (essential.every(k => rows.some(f => f.key === k && f.state === 'supported'))) return 'strong' as const
   return rows.some(f => f.state === 'supported' || f.state === 'conditional') ? 'moderate' as const : 'incomplete' as const
+}
+
+
+export const NEIGHBORHOOD_FACTOR_FIELDS = {
+  demand:['resident_needs_confirmed'], supply:['service_gap_confirmed'], adaptation:['engineering_review_passed'],
+  implementation:['scope_and_consent_confirmed'], operations:['maintenance_confirmed'], resources:['funding_confirmed'],
+} as const
+export function factorLabels(profile?:MapScreenProfile):Record<FactorKey,string> {
+  return profile==='neighborhood'?Object.fromEntries(dashboardDimensions(dashboardPolicy(profile)).map(d=>[d.key,d.label])) as Record<FactorKey,string>:{...FACTOR_LABELS,supply:'使用需求'}
+}
+/** An enclosing viewport or nearby project anchor is not the project object. */
+export function projectBoundToTarget(project:Pick<MapProjectEvidence,'project_id'|'relation'>,target?:MapScreenContext['target']):boolean {
+  if(target?.object_ref?.startsWith('project:')&&target.boundary_source?.startsWith('project:')&&target.object_ref!==target.boundary_source)return false
+  return project.relation==='within_scope' && (!target || target.object_ref===`project:${project.project_id}` || target.boundary_source===`project:${project.project_id}`)
+}
+function retrofitEvidence(project:MapProjectEvidence) {
+  return {project_id:project.project_id,as_of:project.as_of||'',synthetic:false,sources:project.sources,facts:project.facts}
+}
+function neighborhoodFactors(context:MapScreenContext):MapDecisionFactor[] {
+  const labels=factorLabels('neighborhood')
+  const projects=context.local_projects.filter(p=>p.business_profile==='neighborhood'&&projectBoundToTarget(p,context.target))
+  return Object.entries(NEIGHBORHOOD_FACTOR_FIELDS).map(([key,fields])=>{
+    const vetoKeys=key==='adaptation'?['safety_veto','protection_veto']:key==='implementation'?['rights_veto']:[]
+    const rows=projects.flatMap(p=>p.facts.filter(f=>fields.some(field=>f.kind==='retrofit.'+field)&&retrofitFactUsable(retrofitEvidence(p),f)).map(f=>({fact:f,ref:`${p.project_id}:${f.source_id}`})))
+    const vetoFacts=projects.flatMap(p=>p.facts.filter(f=>vetoKeys.some(v=>f.kind==='retrofit.'+v)&&retrofitFactUsable(retrofitEvidence(p),f)))
+    const conflict=rows.some(a=>rows.some(b=>a.fact.kind===b.fact.kind&&a.fact.value!==b.fact.value))||vetoFacts.some(a=>vetoFacts.some(b=>a.kind===b.kind&&a.value!==b.value))
+    const positive=rows.filter(r=>r.fact.value===true),negative=rows.filter(r=>r.fact.value===false)
+    const covered=projects.length>0&&projects.every(p=>fields.every(field=>p.facts.some(f=>f.kind==='retrofit.'+field&&f.value===true&&retrofitFactUsable(retrofitEvidence(p),f))))
+    // Confirmed unmet prerequisites need investigation; only an explicit veto blocks the formal action.
+    const vetoRows=projects.flatMap(p=>vetoKeys.flatMap(v=>{
+      const claims=p.facts.filter(f=>f.kind==='retrofit.'+v&&retrofitFactUsable(retrofitEvidence(p),f))
+      // An independent veto does not resolve contradictory claims for this veto.
+      return claims.some(f=>f.value===false)?[]:claims.filter(f=>f.value===true).map(f=>({fact:f,ref:`${p.project_id}:${f.source_id}`}))
+    }))
+    const veto=vetoRows.length>0
+    const state=veto?'blocked':conflict?'conditional':covered?'supported':rows.length?'conditional':'unknown'
+    return {key,state,summary:veto?`${labels[key as FactorKey]}存在已确认否决条件`:conflict?`${labels[key as FactorKey]}资料存在分歧`:negative.length?`${labels[key as FactorKey]}条件尚未成立`:positive.length?`${labels[key as FactorKey]}已有确认依据`:`${labels[key as FactorKey]}待核查`,evidence_refs:[...new Set([...rows,...vetoRows].map(r=>r.ref))].slice(0,4),quote:'',conflict} as MapDecisionFactor
+  })
+}
+/** Authenticated map projection of the original project gate, never a model grade. */
+export function neighborhoodMapAdvice(context:MapScreenContext):NeighborhoodActionAdvice|undefined {
+  const projects=context.local_projects.filter(p=>p.business_profile==='neighborhood'&&projectBoundToTarget(p,context.target))
+  if(projects.length!==1)return undefined
+  const project=projects[0],advice=project.neighborhood_action
+  if(!project.as_of||!/^\d{4}-\d{2}-\d{2}$/.test(project.as_of)||!Number.isFinite(Date.parse(project.as_of))||advice?.rule_version!==RETROFIT_RULE_VERSION)return undefined
+  return advice
 }
 
 export type DecisionSignal = { title:string; observation:string; implication:string; next:string }

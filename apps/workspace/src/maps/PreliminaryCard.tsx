@@ -4,12 +4,13 @@ import { api } from '../api'
 import type { PlaceSelection } from '../../../../packages/maps/types'
 import type { MapScreenAnalysis, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme, Source } from '../../../host/generated/contracts'
 import type { ResearchProgress } from '../../../../packages/research/events'
-import { SCREEN_PROFILES, SCREEN_TIERS } from '../../../../packages/maps/screening-policy'
-import { decisionSignals, FACTOR_LABELS } from '../../../../packages/maps/decision-factors'
+import { SCREEN_PROFILES, screenTiers } from '../../../../packages/maps/screening-policy'
+import { decisionSignals, factorLabels } from '../../../../packages/maps/decision-factors'
 import { DecisionRoute } from '../components/DecisionRoute'
 import DecisionDashboard from '../components/DecisionDashboard'
 import ResearchActivity from '../components/ResearchActivity'
 import { analyzeSelection } from './screening-stream'
+import { buildPreliminaryResearch } from '../../../../packages/maps/preliminary-research'
 
 export default function PreliminaryCard({ selection, profile, cell, onContext, onProfile, onOpenProject, onAssessment }: {
   selection: PlaceSelection; profile: MapScreenProfile; theme: MapScreenTheme; cell: MapScreenCell | null;
@@ -18,6 +19,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const [context,setContext]=useState<MapScreenContext|null>(null),[analysis,setAnalysis]=useState<MapScreenAnalysis|null>(null)
   const [stage,setStage]=useState<'context'|'analysis'|'done'>('context'),[error,setError]=useState(''),[retry,setRetry]=useState(0)
   const [sourcesOpen,setSourcesOpen]=useState(false),[progress,setProgress]=useState<ResearchProgress[]>([])
+  const [tasksOpen,setTasksOpen]=useState(false)
   const analysisAbort=useRef<AbortController|null>(null)
   const callbacks=useRef({onContext,onAssessment});callbacks.current={onContext,onAssessment}
   const restoreAbort=useRef<AbortController|null>(null),viewIdentity=useRef('')
@@ -26,7 +28,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   useEffect(()=>{if(!sourcesOpen)card.current?.closest('aside')?.scrollTo({top:0,behavior:'auto'})},[selection.id,profile,sourcesOpen])
   useEffect(()=>{
     const controller=new AbortController();analysisAbort.current?.abort()
-    setContext(null);setAnalysis(null);setStage('context');setError('');setSourcesOpen(false);setProgress([])
+    setContext(null);setAnalysis(null);setStage('context');setError('');setSourcesOpen(false);setTasksOpen(false);setProgress([])
     const timer=window.setTimeout(async()=>{
       try{
         const target=cell?.context?.target||{kind:'point',longitude:selection.longitude,latitude:selection.latitude,radius_m:800,bounds:null,label:selection.name,
@@ -79,16 +81,30 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const cite=(refs:string[])=>refs.map(ref=>context?.groups.find(g=>g.source_id===ref)?.label||sourceMap.get(ref)?.title||'来源').join(' · ')
   function showEvidence(refs:string[]){setSourcesOpen(true);requestAnimationFrame(()=>document.getElementById('evidence-'+encodeURIComponent(refs[0]))?.scrollIntoView({block:'nearest',behavior:'auto'}))}
   const signals=context?decisionSignals(context,profile):[]
+  const preview=context&&profile==='neighborhood'?buildPreliminaryResearch(context,{sources:analysis?.research_sources,records:analysis?.research_records}):null
+  const projectAdvice=profile==='neighborhood'?local.filter(p=>p.business_profile==='neighborhood'&&(context?.target.object_ref===`project:${p.project_id}`||context?.target.boundary_source===`project:${p.project_id}`)).map(p=>p.neighborhood_action).filter(Boolean):[]
+  const labels=factorLabels(profile)
   return <section ref={card} className="initial-assessment" aria-label="区域初步分析">
     {stage==='context'&&<p role="status">正在读取所选位置…</p>}
     {context&&<>
-      {cell&&<div className="screening-tier" style={{'--tier-color':SCREEN_TIERS[cell.tier].color} as React.CSSProperties}><i/>{SCREEN_TIERS[cell.tier].label}</div>}
+      {cell&&<div className="screening-tier" style={{'--tier-color':screenTiers(profile)[cell.tier].color} as React.CSSProperties}><i/>{screenTiers(profile)[cell.tier].label}</div>}
+      {preview&&<div className="preliminary-research" aria-label="对象初步调研">
+        <h4>初步调研</h4>
+        {preview.lines.map((line,index)=><p key={index}>{line.text}{!!line.sourceRefs.length&&<button className="claim-source" onClick={()=>showEvidence(line.sourceRefs)} title={cite(line.sourceRefs)}>依据</button>}</p>)}
+        <div className="preliminary-actions"><button onClick={()=>setSourcesOpen(true)}>查看调研资料</button><button aria-expanded={tasksOpen} onClick={()=>setTasksOpen(v=>!v)}>调研清单</button></div>
+        {tasksOpen&&<div className="preliminary-tasks" aria-label="初步调研清单">
+          {!!preview.missing.length&&<p>先取得：{preview.missing.join('、')}。</p>}
+          {projectAdvice.flatMap(advice=>advice?.missing||[]).slice(0,3).map(task=><p key={task.key}><strong>{task.label}</strong> · {task.where}</p>)}
+          {!preview.missing.length&&!projectAdvice.some(advice=>advice?.missing.length)&&<p>回读对象范围、材料时点与当前采购或委托条件，再安排下一项调查。</p>}
+          {local.map(p=><button key={p.project_id} onClick={()=>onOpenProject(p.project_id)}>进入项目调研 · {p.name}<IconArrowUpRight size={14}/></button>)}
+        </div>}
+      </div>}
       {model?<div className="assessment-narrative">
         {analysis?.refresh_required&&<p className="action-condition">此前简报 · 依据已变化</p>}
         <p className="assessment-headline">{model.summary}</p>
         {model.cautions.slice(0,1).map((c,i)=><p className="action-condition" key={i}>{c.text}<button className="claim-source" onClick={()=>showEvidence(c.evidence_refs)} title={cite(c.evidence_refs)}>依据</button></p>)}
         {model.next_steps.slice(0,1).map((step,i)=><p className="next-action" key={i}><strong>下一步</strong>{step}</p>)}
-      </div>:stage!=='analysis'&&<div className="selection-signals">{signals.length?signals.map(s=><article key={s.title}><h4>{s.title}</h4><p className="signal-observation">{s.observation}</p><p>{s.implication}</p></article>):<p>研究这处空间的具体参与路径。</p>}</div>}
+      </div>:stage!=='analysis'&&!preview&&<div className="selection-signals">{signals.length?signals.map(s=><article key={s.title}><h4>{s.title}</h4><p className="signal-observation">{s.observation}</p><p>{s.implication}</p></article>):<p>研究这处空间的具体参与路径。</p>}</div>}
       <div className="assessment-ai-action"><select aria-label="初判研究方向" value={profile} disabled={stage==='analysis'} onChange={e=>onProfile(e.target.value as MapScreenProfile)}>{Object.entries(SCREEN_PROFILES).map(([id,p])=><option key={id} value={id}>{p.label}</option>)}</select>
         {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setStage('done');setError(model?'简报已保留，评分已停止。':'已停止，已取得的过程保留。')}}>停止</button>:<button onClick={()=>void analyze()} disabled={!!model&&analysis?.status==='completed'&&!analysis.refresh_required}><IconSparkles size={15}/>{analysis?.refresh_required?'重新取证':model?(analysis?.status==='completed'?'已研判':'重试评分'):'研判此处'}</button>}</div>
       <ResearchActivity events={progress} running={stage==='analysis'}/>
@@ -98,12 +114,13 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
         {model?.opportunities.map((c,i)=><p key={i}>{c.text}<button className="claim-source" onClick={()=>showEvidence(c.evidence_refs)} title={cite(c.evidence_refs)}>依据</button></p>)}
         <p>{cell?cell.boundary_source:'位置周边 800 米'} · {new Date(analysis?.created_at||context.created_at).toLocaleString('zh-CN')}</p>
         {sources.map(s=><div key={s.ref} id={'evidence-'+encodeURIComponent(s.ref)}><strong>{s.title}</strong><p>{s.synthetic?'测试样本':s.scope} · {s.published_at?.slice(0,10)||'发布日期待补'}</p>
+          {preview?.observations.filter(row=>row.sourceRefs.includes(s.ref)).map((row,i)=><dl className="preliminary-observation" key={`${row.factId||row.recordId}:${row.locator}:${i}`}><div><dt>{row.label}</dt><dd>{row.value}</dd></div><div><dt>对象范围</dt><dd>{row.scope}</dd></div><div><dt>统计 / 观察时点</dt><dd>{row.observedAt?.slice(0,10)||'未提供'}</dd></div><div><dt>来源发布日期</dt><dd>{row.publishedAt?.slice(0,10)||'未提供'}</dd></div><div><dt>原文定位</dt><dd>{row.locator}</dd></div></dl>)}
           {s.body_truncated&&<p>原文未完整取得，当前实施入口待核。</p>}
           {(analysis?.research_records||[]).filter(r=>r.source_id===s.id).map(r=><dl className="record-fields" key={r.id}>{r.fields.filter(f=>f.value!==null).map(f=><div key={f.key}><dt>{f.label}</dt><dd>{String(f.value)}{f.unit?' '+f.unit:''}</dd></div>)}</dl>)}
           {s.untrusted_text&&<details><summary>原文摘录</summary><p className="evidence-excerpt">{s.untrusted_text}</p></details>}{s.url&&/^https?:\/\//.test(s.url)&&<a href={s.url} target="_blank" rel="noreferrer">原始来源 ↗</a>}</div>)}
         <details><summary>地图线索</summary>{context.groups.map(g=><div key={g.key} id={'evidence-'+encodeURIComponent(g.source_id)}><strong>{g.label}</strong><p>{g.sample.map(p=>p.name).join('、')||g.issue||'暂无样本'}</p></div>)}{signals.map(s=><p key={s.title}>{s.next}</p>)}</details>
         {local.map(p=><button key={p.project_id} onClick={()=>onOpenProject(p.project_id)}>{p.name}<IconArrowUpRight size={14}/></button>)}
-        {!!cell?.factors?.some(f=>f.state!=='unknown')&&<details><summary>已有项目条件</summary>{cell.factors.filter(f=>f.state!=='unknown').map(f=><div key={f.key}><strong>{FACTOR_LABELS[f.key]}</strong><p>{f.summary}</p>{!!f.evidence_refs.length&&<button onClick={()=>showEvidence(f.evidence_refs)}>查看来源</button>}</div>)}</details>}
+        {!!cell?.factors?.some(f=>f.state!=='unknown')&&<details><summary>已有项目条件</summary>{cell.factors.filter(f=>f.state!=='unknown').map(f=><div key={f.key}><strong>{labels[f.key]}</strong><p>{f.summary}</p>{!!f.evidence_refs.length&&<button onClick={()=>showEvidence(f.evidence_refs)}>查看来源</button>}</div>)}</details>}
         <details><summary>模型与研究记录</summary><DecisionRoute value={analysis?.decision_support} details/>{analysis?.research?.queries.map(q=><p key={q}>{q}</p>)}</details>
       </div>}
     </>}

@@ -25,7 +25,7 @@ import type { MapScreenContext } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
-import NeighborhoodPanel from './components/NeighborhoodPanel';
+import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import ExperienceLibrary from './components/ExperienceLibrary';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import { buildDecisionBrief } from '../../../packages/decision/brief-view';
@@ -179,17 +179,37 @@ export default function App() {
   const [followups, setFollowups] = useState<{ title: string }[]>([]);
   const [businessProfile, setBusinessProfile] = useState<'neighborhood'|'general'>('neighborhood');
   const [loadingTarget, setLoadingTarget] = useState<string | null>(null);
+  const [neighborhoodDrafts, setNeighborhoodDrafts] = useState<Record<string, NeighborhoodDraft>>({});
+  const [sourceFocus, setSourceFocus] = useState<{ projectId: string; refs: string[] } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
     "offline",
   );
   const displayedSources = [...new Map([...(project?.input.sources || []), ...(packet?.sources || [])].map(source => [source.id, source])).values()];
+  const requestedRefs = sourceFocus?.projectId === project?.id ? sourceFocus?.refs || [] : [];
+  const focusedSourceIds = displayedSources.filter(source => requestedRefs.some(ref => ref === source.id || ref === `${project?.id}:${source.id}`)).map(source => source.id);
+  const focusedSourceKey = focusedSourceIds.join('\u0000');
   const brief = packet ? buildDecisionBrief(packet) : null;
   const packetSources = new Map((packet?.sources || []).map(source => [source.id, source] as const));
   const eventSource = useRef<EventSource | null>(null);
   const running = run?.status === "running";
   const stale =
     !!packet && !!project && packet.context_version !== project.context_version;
+  function openEvidence(refs: string[] = []) {
+    if (project) setSourceFocus({ projectId: project.id, refs: [...new Set(refs)] });
+    setTab('evidence');
+  }
+  useEffect(() => {
+    if (tab !== 'evidence' || !focusedSourceIds.length) return;
+    const frame = requestAnimationFrame(() => {
+      const target = document.getElementById(`project-source-${encodeURIComponent(focusedSourceIds[0])}`);
+      const original = target?.querySelector('details');
+      if (original) original.open = true;
+      target?.scrollIntoView({ block: 'center' });
+      target?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [tab, project?.id, focusedSourceKey]);
   async function loadProject(id: string) {
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
     const [nextDiff, nextFollowups] = await Promise.all([
@@ -449,6 +469,7 @@ export default function App() {
       }
       onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
       mapView={<MapWorkspace ready={!loading} interactionBlocked={loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+        onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
         onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
           const clean=context?publicMapContext(context):null
@@ -578,7 +599,7 @@ export default function App() {
             <div className="feedback notice">
               <IconRefresh size={17} />
               <span>
-                企业资料已变化，当前展示 v{packet?.revision}{" "}
+                项目资料已变化，当前展示 v{packet?.revision}{" "}
                 的历史结果。重新研判后生成新版本。
               </span>
             </div>
@@ -633,9 +654,12 @@ export default function App() {
                     : "离线工程检查（无模型推理）"}
                 </div>
               )}
-              {project.input.business_profile === 'neighborhood' && <NeighborhoodPanel key={project.id} project={project.input} dashboard={packet?.decision_support?.dashboard} onEvidence={() => setTab('evidence')} />}
+              {project.input.business_profile === 'neighborhood' && <NeighborhoodPanel key={project.id} project={project.input} dashboard={packet?.decision_support?.dashboard}
+                draft={neighborhoodDrafts[project.id] || createNeighborhoodDraft()}
+                onDraftChange={update => setNeighborhoodDrafts(current => ({ ...current, [project.id]: update(current[project.id] || createNeighborhoodDraft()) }))}
+                onEvidence={openEvidence} />}
               <section className="summary-panel">
-                <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} details /></details>
+                <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'} details /></details>
                 <div className="summary-heading">
                   <div>
                     <div className="kicker">DECISION BRIEF</div>
@@ -657,9 +681,11 @@ export default function App() {
                 </div>}
                 <p>
                   {brief?.summary ||
-                    "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。"}
+                    (project.input.business_profile === 'neighborhood'
+                      ? "围绕居民需求、公共服务、居住工程、实施协同、长效维护和资金交付，整理本小区的依据与调查任务。"
+                      : "使用当前资料检查建筑存量、实施前提与企业条件。形成可比较的实施路径。")}
                 </p>
-                {packet?.decision_support && <details><summary>判断操作依据</summary><DecisionRoute value={packet.decision_support} details /></details>}
+                {packet?.decision_support && <details><summary>判断操作依据</summary><DecisionRoute value={packet.decision_support} profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'} details /></details>}
                 <div className="summary-bottom">
                   <span>
                     <span className="status-dot" />
@@ -755,7 +781,7 @@ export default function App() {
                           {path.organizationNotes.map(note =>
                             <p className="rule-impact" key={note}><IconLayersIntersect size={14}/>{note}</p>)}
                         </div>
-                        <button className="pathway-footer" onClick={() => setTab("evidence")}>
+                        <button className="pathway-footer" onClick={() => openEvidence(path.sourceRefs)}>
                           <span>{path.sourceRefs.length} 个来源可复核</span><IconChevronRight size={15}/>
                         </button>
                       </article>
@@ -857,7 +883,7 @@ export default function App() {
               <p className="intro">
                 记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。
               </p>
-              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} onProjectUpdated={() => loadProject(project.id).then(()=>{})} />
+              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()} />
               <label className="field-label" htmlFor="experience">
                 本项目意见（不作为历史实施结果）
               </label>
@@ -988,6 +1014,8 @@ export default function App() {
                       if (!file) return;
                       void action(async () => {
                         const form = new FormData();
+                        // Multipart filename headers may use a different charset than UTF-8 fields.
+                        form.append("original_file_name", file.name);
                         form.append("file", file);
                         const response = await fetch(
                           `/api/projects/${project.id}/documents`,
@@ -1023,10 +1051,17 @@ export default function App() {
                 sources={project.input.sources}
                 researchSources={packet?.sources || []}
                 facts={project.input.facts}
+                profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'}
+                asOf={project.input.as_of}
+                onEvidence={openEvidence}
               />
               <div className="source-list">
+                {!!requestedRefs.length && <div className="source-focus-note" role="status">
+                  <span>{focusedSourceIds.length ? `已定位 ${focusedSourceIds.length} 份相关依据，首份原文已展开。` : '当前版本没有找到所引来源，请核对研判版本与资料记录。'}</span>
+                  <button className="secondary" onClick={() => setSourceFocus(null)}>取消定位</button>
+                </div>}
                 {displayedSources.map((source) => (
-                  <article className="source-row" key={source.id}>
+                  <article className={`source-row${focusedSourceIds.includes(source.id) ? ' is-focused' : ''}`} id={`project-source-${encodeURIComponent(source.id)}`} tabIndex={-1} key={source.id}>
                     <span className="file-icon">
                       <IconFileText size={22} />
                     </span>

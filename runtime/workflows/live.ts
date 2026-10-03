@@ -14,7 +14,7 @@ import { LiveSession } from '../dsh/live-session'
 import { roles, type RoleId } from '../roles'
 import { digest, roleDependency } from './run'
 import { evaluateDecision } from '../../services/capabilities/decision-model'
-import { projectDecisionInput, DECISION_POLICY, DECISION_THRESHOLDS, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
+import { projectDecisionInput, decisionPolicy, DECISION_THRESHOLDS, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
 
 /** Truncate text, never source identity/scope; the untruncated local artifact remains stored. */
 function modelView(project: ProjectInput) {
@@ -86,7 +86,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     if(config.decisionEnabled) {
       const input=projectDecisionInput(full)
       await store.addEvent(run.id,'decision_route','running','Qwen 正在判断证据是否充分与优先调查方向')
-      const result=await cachedStage<DecisionSupport>('decision_route',{input,policy:DECISION_POLICY,thresholds:DECISION_THRESHOLDS,model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT},async()=>{
+      const result=await cachedStage<DecisionSupport>('decision_route',{input,policy:decisionPolicy,thresholds:DECISION_THRESHOLDS,model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT},async()=>{
         const value=await live.runReadCapability('qwen_research_route',toolSignal=>evaluateDecision(input,toolSignal))
         if(value.status!=='completed') {
           await store.addEvent(run.id,'decision_route','failed','Qwen 决策请求未完成，已保留资料工件')

@@ -5,7 +5,7 @@ export const normalizedName=(text:string)=>text.normalize('NFKC').replace(/[\s\p
 export const genericMapLabel=(label:string)=>/^(道路|水系|建筑轮廓|街区|片区|建筑群|园区|建筑|校园|校区|选中的地图位置)[\s\d]*$/.test(label.trim())
 
 /** A project's presence nearby is not a mapping from every fact to this object. */
-export function factAppliesToTarget(fact:Fact,project:Pick<MapProjectEvidence,'project_id'>,target?:MapScreenTarget):boolean {
+export function factAppliesToTarget(fact:Fact,project:Pick<MapProjectEvidence,'project_id'>,target?:Pick<MapScreenTarget,'object_ref'|'boundary_source'>):boolean {
   // The project workflow explicitly requests the whole project. Map requests
   // always have a target and must carry a resolved object reference.
   if(!target)return true

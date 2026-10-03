@@ -14,9 +14,10 @@ const approved = { ...card, id: 'E-OTHER', project_id: 'P-OTHER', title: '合成
   fields: [...card.fields.filter(item => item.key !== 'applicability'), field('applicability', '先核实居民协商程序与地下管线资料。', evidence)] }
 const built = await build({ stdin: { contents: `import React,{useState}from'react';import{createRoot}from'react-dom/client';
   import Library from './apps/workspace/src/components/ExperienceLibrary';import './apps/workspace/src/style.css';
-  function Harness(){const[project,setProject]=useState('P-A'),[revision,setRevision]=useState(3);return <>
+  function Harness(){const[project,setProject]=useState('P-A'),[revision,setRevision]=useState(3),[materialsOpened,setMaterialsOpened]=useState(0);return <>
   <nav><button onClick={()=>{setProject('P-A');setRevision(3)}}>甲项目</button><button onClick={()=>{setProject('P-B');setRevision(5)}}>乙项目</button></nav>
-  <main><Library projectId={project} revision={revision} synthetic={true} asOf="2026-10-02" onProjectUpdated={()=>setRevision(value=>value+1)}/></main></>}
+  <output aria-label="资料导航次数">{materialsOpened}</output>
+  <main><Library projectId={project} revision={revision} synthetic={true} asOf="2026-10-02" onProjectUpdated={()=>setRevision(value=>value+1)} onOpenMaterials={()=>setMaterialsOpened(value=>value+1)}/></main></>}
   createRoot(document.getElementById('root')).render(<Harness/>);`, loader: 'tsx', resolveDir: process.cwd() }, bundle: true,
   write: false, outfile: 'experience-library-ui.js', format: 'iife', platform: 'browser', define: { 'process.env.NODE_ENV': '"production"' } })
 const browser = await chromium.launch({ headless: true, ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}), args: ['--no-sandbox'] })
@@ -26,7 +27,7 @@ let currentCard = null, delayedExtract = false
 page.on('pageerror', error => errors.push(String(error)))
 await page.exposeFunction('__request', async (path, body) => {
   calls.push({ path, body })
-  if (path === '/api/projects/P-A/documents') return [{ id: 'D-A', file_name: '合成会议纪要.txt', parser_result: { source_hash: 'sha256-synthetic-a', status: 'extracted' } }]
+  if (path === '/api/projects/P-A/documents') return [{ id: 'D-A', file_name: '合成会议纪要.txt', parser_result: { source_hash: 'sha256-synthetic-a', status: 'extracted', text: '居民协商后先开展管网改造。' } }]
   if (path === '/api/projects/P-B/documents') return []
   if (path === '/api/projects/P-A/experiences' && !body) return { cards: currentCard ? [currentCard] : [] }
   if (path === '/api/projects/P-B/experiences' && !body) return { cards: [] }
@@ -84,7 +85,7 @@ try {
   assert.match(await region.getByRole('alert').innerText(), /请填写复核备注/)
   assert.equal(calls.filter(call => call.path.endsWith('/review')).length, 0)
   await region.getByRole('button', { name: '编辑草稿与原文引用' }).click()
-  await region.getByLabel('背景与目标内容').fill('核实居民共同决策程序。')
+  await region.getByLabel('背景与目标内容').fill('居民协商后先开展管网改造。')
   await region.getByRole('button', { name: '保存草稿', exact: true }).click()
   assert.match(await region.getByRole('alert').innerText(), /背景与目标.*选择来源文档/)
   assert.equal(calls.filter(call => call.path.endsWith('/update')).length, 0)
@@ -118,10 +119,14 @@ try {
   await region.locator('.experience-document-list input[type=checkbox]').check()
   await region.getByRole('button', { name: '提取经验草稿', exact: true }).click()
   await page.getByRole('button', { name: '乙项目', exact: true }).click()
-  await region.getByText('先到“资料与证据”页上传历史项目材料', { exact: false }).waitFor()
+  await region.getByText('上传历史项目材料后，可以提取经验卡。', { exact: true }).waitFor()
+  const requestsBeforeMaterials = calls.length
+  await region.getByRole('button', { name: '上传历史材料', exact: true }).click()
+  assert.equal(await page.getByLabel('资料导航次数').innerText(), '1')
+  assert.equal(calls.length, requestsBeforeMaterials)
   await page.waitForTimeout(450)
   assert.equal(await region.getByRole('button', { name: /合成管网改造经验/ }).count(), 0)
   assert.equal(await region.getByText('尚无经验卡。', { exact: false }).count(), 1)
   assert.deepEqual(errors, [])
-  console.log('PASS experience library: local extraction, distinct missing fields and citations, edit validation, versioned review, filtered retrieval, reuse and stale-project isolation, mobile layout')
+  console.log('PASS experience library: local extraction, distinct missing fields and citations, edit validation, versioned review, filtered retrieval, reuse, stale-project isolation, material navigation without request, mobile layout')
 } finally { await browser.close() }

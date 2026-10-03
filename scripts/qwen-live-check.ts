@@ -3,9 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { mkdir,writeFile } from 'node:fs/promises'
 import { LiveSession } from '../runtime/dsh/live-session'
 import { evaluateDecision } from '../services/capabilities/decision-model'
-import { FACTOR_LABELS } from '../packages/maps/decision-factors'
+import { FACTOR_LABELS, factorLabels } from '../packages/maps/decision-factors'
 import type { MapDecisionFactor } from '../apps/host/generated/contracts'
-const base=(state:MapDecisionFactor['state'])=>(Object.keys(FACTOR_LABELS) as MapDecisionFactor['key'][]).map(key=>({key,state,summary:FACTOR_LABELS[key]+(state==='supported'?'已有对象和时间对应的核验资料':'缺少对应资料'),evidence_refs:['SYNTHETIC-PROTOCOL-SOURCE'],quote:''}))
+const labels = factorLabels()
+const base=(state:MapDecisionFactor['state'])=>(Object.keys(FACTOR_LABELS) as MapDecisionFactor['key'][]).map(key=>({key,state,summary:labels[key]+(state==='supported'?'已有对象和时间对应的核验资料':'缺少对应资料'),evidence_refs:['SYNTHETIC-PROTOCOL-SOURCE'],quote:''}))
 const scenarios=[{name:'missing',factors:base('unknown')},{name:'blocked',factors:base('supported').map(f=>f.key==='implementation'?{...f,state:'blocked' as const,summary:'用途条件明确不满足'}:f)},{name:'supported',factors:base('supported')},{name:'conflict',factors:base('supported').map(f=>f.key==='resources'?{...f,state:'conditional' as const,summary:'同一建筑、同一时点的两个资金资料相互矛盾'}:f)}]
 const live=await LiveSession.open('QWEN-VERIFY-'+randomUUID(),AbortSignal.timeout(80000)),results=[]
 try {

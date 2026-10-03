@@ -1,0 +1,218 @@
+{
+  "template_version": "1.0",
+  "kind": "planning_template",
+  "status": "draft",
+  "metadata": {
+    "project_id": null,
+    "object_refs": [],
+    "scope_description": null,
+    "plan_id": null,
+    "plan_version": null,
+    "parent_version": null,
+    "plan_name": null,
+    "development_mode": "comprehensive_renovation",
+    "enterprise_role": null,
+    "baseline_snapshot_ref": null,
+    "baseline_snapshot_hash": null,
+    "as_of": null,
+    "budget_period": { "from": null, "to": null },
+    "price_basis_date": null,
+    "currency": "CNY",
+    "amount_unit": "元",
+    "rule_version": null,
+    "prepared_by": null,
+    "prepared_at": null
+  },
+  "household_denominator": {
+    "value": null,
+    "unit": "户",
+    "object_refs": [],
+    "observed_at": null,
+    "epistemic_status": "missing",
+    "evidence_refs": []
+  },
+  "items": [
+    {
+      "measure_id": "MEASURE-001",
+      "category": null,
+      "name": null,
+      "object_refs": [],
+      "location_description": null,
+      "included": null,
+      "inclusion_reason": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "price_per_unit": null,
+      "tax_basis": null,
+      "tax_rate_percent": null,
+      "quoted_at": null,
+      "price_valid_until": null,
+      "beneficiary_group_refs": [],
+      "beneficiary_scope_description": null,
+      "beneficiary_households": null,
+      "beneficiary_persons": null,
+      "construction_phase": null,
+      "value_basis": {
+        "included": "missing",
+        "quantity": "missing",
+        "unit_price": "missing",
+        "tax_rate_percent": "missing",
+        "beneficiary_households": "missing",
+        "beneficiary_persons": "missing"
+      },
+      "field_evidence": [],
+      "affected_dimensions": [],
+      "prerequisite_task_ids": [],
+      "excluded_costs": [],
+      "notes": null
+    }
+  ],
+  "other_costs": [
+    {
+      "cost_id": "COST-001",
+      "name": null,
+      "included": null,
+      "amount": null,
+      "tax_basis": null,
+      "epistemic_status": "missing",
+      "field_evidence": [],
+      "notes": null
+    }
+  ],
+  "reserve": {
+    "percent": null,
+    "base": null,
+    "epistemic_status": "missing",
+    "evidence_refs": [],
+    "notes": null
+  },
+  "funding": [
+    {
+      "funding_id": "FUND-001",
+      "payer_id": null,
+      "payer_name": null,
+      "payer_type": null,
+      "funding_stage": "unknown",
+      "covers_measure_ids": [],
+      "planned_amount": null,
+      "applied_amount": null,
+      "approved_amount": null,
+      "committed_amount": null,
+      "disbursed_amount": null,
+      "spent_amount": null,
+      "as_of": null,
+      "expected_payment_date": null,
+      "conditions": [],
+      "availability_for_this_plan": {
+        "amount": null,
+        "status": "unknown",
+        "rule_version": null,
+        "reviewer": null,
+        "reviewed_at": null,
+        "evidence_refs": [],
+        "reason": null
+      },
+      "value_basis": {
+        "planned_amount": "missing",
+        "applied_amount": "missing",
+        "approved_amount": "missing",
+        "committed_amount": "missing",
+        "disbursed_amount": "missing",
+        "spent_amount": "missing"
+      },
+      "field_evidence": [],
+      "notes": null
+    }
+  ],
+  "maintenance": [
+    {
+      "maintenance_id": "MAINT-001",
+      "measure_ids": [],
+      "object_refs": [],
+      "handover_party_id": null,
+      "operator_party_id": null,
+      "responsibility": null,
+      "service_standard": null,
+      "period": { "from": null, "to": null },
+      "cost_amount": null,
+      "cost_period": null,
+      "payment_party_ids": [],
+      "revenue_amount": null,
+      "revenue_period": null,
+      "revenue_rights_basis": null,
+      "responsibility_status": "unknown",
+      "value_basis": {
+        "responsibility": "missing",
+        "cost_amount": "missing",
+        "revenue_amount": "missing"
+      },
+      "field_evidence": [],
+      "notes": null
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "EVID-001",
+      "source_id": null,
+      "document_id": null,
+      "version": null,
+      "locator": null,
+      "quote": null,
+      "hash": null,
+      "raw_hash": null,
+      "observed_at": null,
+      "review_status": "unreviewed"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "measure_ids": [],
+      "object_refs": [],
+      "missing_fields": [],
+      "question": null,
+      "responsible_party": null,
+      "expected_material": null,
+      "affected_dimensions": [],
+      "recompute_outputs": [],
+      "evidence_refs": [],
+      "status": "suggested"
+    }
+  ],
+  "calculations": {
+    "status": "not_computed",
+    "formula_version": null,
+    "input_plan_version": null,
+    "missing_fields": [],
+    "category_totals": { "basic": null, "improvement": null, "enhancement": null },
+    "other_costs_total": null,
+    "subtotal": null,
+    "reserve_amount": null,
+    "total_investment": null,
+    "planned_funding_total": null,
+    "plan_assumption_gap": null,
+    "reviewed_available_funding_total": null,
+    "unsecured_funding_gap": null,
+    "per_household_investment": null,
+    "maintenance_cost_total": null,
+    "maintenance_revenue_total": null,
+    "maintenance_balance": null,
+    "excluded_costs": []
+  },
+  "comparison": {
+    "reference_plan_id": null,
+    "reference_plan_version": null,
+    "same_baseline_snapshot": null,
+    "comparable": null,
+    "non_comparable_reasons": [],
+    "measure_changes": [],
+    "total_investment_delta": null,
+    "beneficiary_changes": [],
+    "maintenance_changes": [],
+    "affected_task_ids": [],
+    "reason_for_change": null,
+    "action_advice_changed": null,
+    "action_advice_basis_refs": []
+  }
+}

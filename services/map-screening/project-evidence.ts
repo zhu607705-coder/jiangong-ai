@@ -3,6 +3,8 @@ import type { MapDataCatalog, MapProjectEvidence, MapScreenTarget, Source } from
 import { fingerprint } from './provider'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import { createHash } from 'node:crypto'
+import { projectBoundToTarget } from '../../packages/maps/decision-factors'
+import { retrofitAdvice } from '../../packages/retrofit/planning'
 
 export type EvidenceProject = { project: ProjectRecord; sources: Source[]; documentCount: number }
 export type ProjectEvidenceSnapshot = { revision: string; projects: EvidenceProject[]; syntheticCount: number }
@@ -22,7 +24,7 @@ export async function loadProjectEvidence(store: Store, owner: string): Promise<
     return { project, sources: mergeProjectSources(project, runs), documentCount: Number(documents.rows[0].count) }
   }))
   return { projects, syntheticCount: all.filter(p => p.input.synthetic).length,
-    revision: fingerprint(projects.map(p => [p.project.id, p.project.context_version, p.project.updated_at, p.project.input.scope, p.project.input.facts, p.sources, p.documentCount])) }
+    revision: fingerprint(projects.map(p => [p.project.id, p.project.context_version, p.project.updated_at, p.project.input.scope, p.project.input.business_profile, p.project.input.as_of, p.project.input.facts, p.sources, p.documentCount])) }
 }
 const cityKey = (city: string | null | undefined) => city?.trim().replace(/市$/, '') || ''
 export function targetContains(target: MapScreenTarget, longitude: number, latitude: number): boolean {
@@ -41,7 +43,7 @@ function sourcePreview(source: Source): Source {
   // snapshot does not duplicate it into public-source handoffs or model prompts.
   const { untrusted_text, hash, public_records, ...metadata } = source
   const excerpt = source.visibility === 'public' && source.data_class === 'public' && source.content_status !== 'metadata_only' ? untrusted_text?.slice(0, 2400) : undefined
-  return { ...metadata, ...(excerpt ? {untrusted_text: excerpt, hash: createHash('sha256').update(excerpt).digest('hex'), content_status: 'excerpt' as const, ...(public_records?{public_records}: {})} : {}) }
+  return { ...metadata, ...(excerpt ? {untrusted_text: excerpt, ...((hash||source.raw_hash)?{hash:createHash('sha256').update(excerpt).digest('hex')}:{}), content_status: 'excerpt' as const, ...(public_records?{public_records}: {})} : hash?{hash}: {}) }
 }
 export function evidenceAt(snapshot: ProjectEvidenceSnapshot, target: MapScreenTarget, city: string | null, boundaryProjectId?: string): MapProjectEvidence[] {
   const result: MapProjectEvidence[] = []
@@ -57,7 +59,11 @@ export function evidenceAt(snapshot: ProjectEvidenceSnapshot, target: MapScreenT
     if (!inside && !permitted.length) continue
     const ids = new Set(permitted.map(s => s.id))
     const facts = inside ? project.input.facts.filter(f => ids.has(f.source_id)) : []
+    const exactProject=inside&&projectBoundToTarget({project_id:project.id,relation:'within_scope'},target)
+    const neighborhood=project.input.business_profile==='neighborhood'
     result.push({project_id: project.id, name: project.name, relation: inside ? 'within_scope' : 'city_background', scope_label: scope.name,
+      business_profile:project.input.business_profile||'general',as_of:project.input.as_of,
+      ...(neighborhood&&exactProject?{neighborhood_action:retrofitAdvice(project.input)}:{}),
       context_version: project.context_version, updated_at: new Date(project.updated_at).toISOString(), source_count: permitted.length,
       fact_count: facts.length, document_count: inside ? documentCount : 0, sources: permitted.map(sourcePreview), facts,
       rules: inside ? project.input.context_rules.filter(r => r.active !== false && r.scope === 'project' && (!r.project_id || r.project_id === project.id) && ids.has(r.source_id)) : []})

@@ -40,6 +40,17 @@ bash scripts/start.sh
 
 已通过 DSH 接入 `decision-model-preview`，用于选择补证、核查阻点、比较路径或复核；生成模型负责简短说明。Qwen 不覆盖既有来源事实和组织约束。配置、已验证专用网关、阈值与真实测试说明见 [Qwen 接入文档](docs/Qwen决策模型接入.md)。
 
+## 文档多维评估 CLI
+
+使用现有 Qwen `decision-model-preview` 评估明确指定的文件；默认老旧小区六维衡量材料支撑程度，可用 JSON 量表替换。支持 TXT、Markdown、CSV、PDF、Word、Excel，输出 JSON 与 Markdown。
+
+```bash
+npm run documents:evaluate -- --dry-run --out data/local/doc-review 材料.md
+npm run documents:evaluate -- --rubric examples/document-evaluation/source-quality-rubric.json --out data/local/doc-review-live 材料.md
+```
+
+`--dry-run` 不联网；正式命令会向配置的 Qwen 发送指定文件的提取内容。缺项保留为空，覆盖率与已评维均值分别显示；不改写项目事实或审批结论。命令与算法见[文档多维评估 CLI](docs/文档多维评估CLI.md)，项目内 Skill 见 [.agents/skills/qwen-document-evaluation/SKILL.md](.agents/skills/qwen-document-evaluation/SKILL.md)。
+
 ## 已接入的能力
 
 - **CRE 工作台与 ParserPort**：选择性复用界面结构、通用文本/CSV 解析、PDF/Excel 提取与表格来源定位、报告表格逻辑；没有运行原收购控制器或固定 verdict 演示。
@@ -121,5 +132,7 @@ npm run test:live                      # 显式执行四个真实联调场景，
 运行数据在 `data/local`，包括数据库、原文件和 DSH 会话。退出服务后备份整个目录可保留项目。最终投资、勘察、检测、许可和真实企业效用评测仍需要相应的现实资料与专业判断。
 
 ## PR2：公开数据与六维研判
+
+老旧小区改造方案可先使用[方案比较模板](docs/改造方案比较模板.md)，配套提供 JSON 与措施 CSV。模板保留工程量、资金阶段、维护责任和版本差异；当前尚未接入方案保存或自动重算。
 
 [实现与验收](docs/PR2_公开数据与六维研判.md) · [浙大七校区参与机会](docs/浙大七校区参与机会_PR2.md)

@@ -137,6 +137,17 @@
       "target": "packages/research/evidence.ts",
       "scope": "Administrative-name lexical recognition only, not current geocoding or positive object-identity proof.",
       "tests": "tests/contracts/evidence-location.test.ts"
+    },
+    {
+      "repo": "typesafe-ai/skills",
+      "ref": "65a39f393687675ce170e6094757de20370365b9",
+      "file": "skills/typesafe-ai/SKILL.md",
+      "reuse": "documented_skill_adaptation",
+      "license": "MIT; .agents/skills/qwen-document-evaluation/LICENSE.txt",
+      "target": ".agents/skills/qwen-document-evaluation/SKILL.md",
+      "completed": true,
+      "scope": "Typed judgment decomposition and code composition; Qwen decision-model-preview uses the existing requestDecisionQuestions and ParserPort. No TypeSafe vendor SDK or API integration.",
+      "patch_history": ".agents/skills/qwen-document-evaluation/references/upstream.json"
     }
   ],
   "implementation_record": "research/upstream.lock.json"

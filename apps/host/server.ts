@@ -13,7 +13,7 @@ import { compileModelContext } from '../../packages/context/model-compiler'
 import { revisionDiff } from '../../packages/decision/evaluate'
 import { executeRun, digest } from '../../runtime/workflows/run'
 import { renderReport } from './reports'
-import { parseDocument, tableFacts, DocumentParseError } from './ingest'
+import { parseDocument, tableFacts, uploadFileName, DocumentParseError } from './ingest'
 import { AmapSettings, registerAmap } from './amap'
 import { registerMapScreening } from './map-screening'
 import { registerIntelligence } from './intelligence'
@@ -190,7 +190,8 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 
 app.post('/api/projects/:id/documents', upload.single('file'), async (req, res) => {
   const project = await requireProject(String(req.params.id)), file = req.file
   if (!file) throw new ApiError(422, 'FILE_REQUIRED', '请选择材料')
-  const extension = extname(file.originalname).toLowerCase()
+  const fileName = uploadFileName(file.originalname, req.body.original_file_name)
+  const extension = extname(fileName).toLowerCase()
   if (!['.md', '.txt', '.csv', '.pdf', '.docx', '.xlsx'].includes(extension)) throw new ApiError(415, 'UNSUPPORTED_FORMAT', '支持 TXT、Markdown、CSV、PDF、DOCX、XLSX')
   const hash = createHash('sha256').update(file.buffer).digest('hex')
   const existing = (await store.db.query('SELECT id,file_name,parser_result FROM documents WHERE project_id=$1 AND sha256=$2', [project.id, hash])).rows[0]
@@ -199,9 +200,9 @@ app.post('/api/projects/:id/documents', upload.single('file'), async (req, res) 
   const id = `DOC-${randomUUID()}`, blob = `${id}${extension}`, path = join(directory, blob)
   await writeFile(path, file.buffer, { flag: 'wx' })
   try {
-    const parsed = await parseDocument({ documentId: id, fileName: file.originalname, filePath: path, projectRoot: process.cwd(), allowedBasePath: directory, mime: file.mimetype, type: 'workspace_material' })
+    const parsed = await parseDocument({ documentId: id, fileName, filePath: path, projectRoot: process.cwd(), allowedBasePath: directory, mime: file.mimetype, type: 'workspace_material' })
     const isSynthetic = req.body.synthetic === 'true'
-    const source = { id, title: file.originalname, data_class: isSynthetic ? 'synthetic' as const : 'internal' as const, visibility: 'internal' as const, synthetic: isSynthetic, untrusted_text: parsed.text.slice(0, 100000), hash, locator: `document:${id}`, content_status: 'uploaded' as const, parse_status: parsed.status as 'extracted' | 'empty' | 'ocr_required' }
+    const source = { id, title: fileName, data_class: isSynthetic ? 'synthetic' as const : 'internal' as const, visibility: 'internal' as const, synthetic: isSynthetic, untrusted_text: parsed.text.slice(0, 100000), hash, locator: `document:${id}`, content_status: 'uploaded' as const, parse_status: parsed.status as 'extracted' | 'empty' | 'ocr_required' }
     const updatedInput = structuredClone(project.input)
     if (updatedInput.synthetic !== isSynthetic) {
       // Uploading real material must not silently relabel the synthetic facts as real.
@@ -213,9 +214,9 @@ app.post('/api/projects/:id/documents', upload.single('file'), async (req, res) 
     await store.db.transaction(async db => {
       const update = await db.query('UPDATE projects SET input=$1,context_version=context_version+1,updated_at=NOW() WHERE id=$2 AND context_version=$3 RETURNING id', [JSON.stringify(updatedInput), project.id, project.context_version])
       if (!update.rows.length) throw new ApiError(409, 'CONTEXT_VERSION_CONFLICT', '项目资料已变化，请刷新并重试')
-      await db.query('INSERT INTO documents(id,project_id,file_name,blob_name,sha256,parser_result) VALUES($1,$2,$3,$4,$5,$6)', [id, project.id, file.originalname, blob, hash, JSON.stringify(parsed)])
+      await db.query('INSERT INTO documents(id,project_id,file_name,blob_name,sha256,parser_result) VALUES($1,$2,$3,$4,$5,$6)', [id, project.id, fileName, blob, hash, JSON.stringify(parsed)])
     })
-    res.status(201).json({ id, file_name: file.originalname, parser_result: parsed })
+    res.status(201).json({ id, file_name: fileName, parser_result: parsed })
   } catch (error) { await unlink(path); throw error }
 })
 app.get('/api/projects/:id/documents', async (req, res) => { await requireProject(req.params.id); res.json((await store.db.query('SELECT id,file_name,parser_result,created_at FROM documents WHERE project_id=$1', [req.params.id])).rows) })
