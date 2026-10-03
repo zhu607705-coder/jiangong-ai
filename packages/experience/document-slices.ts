@@ -34,4 +34,3 @@ export function documentSlices(document: Pick<ParsedDocument, 'file_name' | 'par
   }
   return [...result.values()]
 }
-
