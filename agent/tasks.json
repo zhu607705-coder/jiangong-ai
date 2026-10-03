@@ -613,6 +613,28 @@
         "research/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T25",
+      "depends_on": [
+        "T24"
+      ],
+      "goal": "参照CUDA算子思路测量并优化现有计算热点，控制额度",
+      "status": "completed_local_verified",
+      "expected_artifacts": [
+        "scripts/benchmark-coverage.ts",
+        "research/test_results/coverage-kernel.json"
+      ],
+      "definition_of_done": "批量分组减少重复扫描、保留顺序与来源规则；多布局基准前后输出一致；相关契约/浏览器/构建通过；CPU与GPU执行明确区分，不新增模型调用。",
+      "write_scope": [
+        "apps/workspace/src/imports/",
+        "scripts/benchmark-coverage.ts",
+        "tests/contracts/",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }
