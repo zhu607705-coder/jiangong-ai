@@ -51,7 +51,10 @@ export function buildPreliminaryResearch(context: ResearchContext, extras: { sou
       const add = (label: string, value: string, locator: string, list = observations) => {
         if (!locator) return
         const statisticalAt = record.fields.find(field => field.key === 'statistical_as_of')?.value
-        const row = { label, value, scope, observedAt: Object.values(QUANTITIES).includes(label) ? date(typeof statisticalAt === 'string' ? statisticalAt : undefined) : date(record.period), publishedAt: date(source.published_at), sourceRefs: [source.id], locator, recordId: record.id }
+        const quantity = Object.values(QUANTITIES).includes(label)
+        const observedAt = quantity ? date(typeof statisticalAt === 'string' ? statisticalAt : undefined) : date(record.period)
+        if (quantity && observedAt && Date.parse(observedAt) > at) return
+        const row = { label, value, scope, observedAt, publishedAt: date(source.published_at), sourceRefs: [source.id], locator, recordId: record.id }
         list.push(row); if (list !== observations) observations.push(row)
       }
       for (const field of record.fields.filter(field => scalar(field.value))) {

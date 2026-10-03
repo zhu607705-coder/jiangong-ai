@@ -592,6 +592,27 @@
         "research/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T24",
+      "depends_on": [
+        "T23"
+      ],
+      "goal": "合并PR10并同步本地；控制额度完成一轮有证据的优化",
+      "status": "completed_local_verified",
+      "expected_artifacts": [
+        "research/test_results/efficient-evidence-review.json"
+      ],
+      "definition_of_done": "PR实际合并并读回、本地主线零落后；两项优化有复現/性能或正确性证据；不新增模型API调用；相关检查通过后停止。",
+      "write_scope": [
+        "apps/workspace/src/imports/evidence-coverage.ts",
+        "packages/maps/preliminary-research.ts",
+        "tests/contracts/",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

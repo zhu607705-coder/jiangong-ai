@@ -12,6 +12,17 @@ const context = (facts: Fact[] = [], sources: Source[] = [source()], extras: Par
 })
 
 describe('source-bound preliminary research', () => {
+  it('excludes future statistical quantities while retaining separately declared stage and unknown dates', () => {
+    const row = record('FUTURE-STATS', [field('project_stage', 'annual_plan'), field('residential_buildings', 54, '栋'), field('statistical_as_of', '2099-01-01')], { period: '2026-09-01' })
+    const ctx = context([], [source({ public_records: [row] })])
+    ctx.local_projects[0].as_of = '2026-09-30'
+    const preview = buildPreliminaryResearch(ctx)
+    expect(preview.lines[0].text).toContain('年度计划')
+    expect(preview.observations.some(row => row.label === '住宅楼')).toBe(false)
+    expect(preview.lines[1].text).not.toContain('54')
+    row.fields.find(field => field.key === 'statistical_as_of')!.value = null
+    expect(buildPreliminaryResearch(ctx).observations.find(row => row.label === '住宅楼')).toMatchObject({ value: '54 栋', observedAt: null })
+  })
   it('shows missing data without guessing a stage from names, prose or POI counts', () => {
     const ctx = context([], [source({ untrusted_text: '已完成改造、可立即投标，69幢3146户' })])
     const preview = buildPreliminaryResearch(ctx)

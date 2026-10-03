@@ -1,0 +1,52 @@
+{
+  "tested_at": "2026-10-03T15:45:23.342876+00:00",
+  "base_merge_commit": "04d498645ef0fe67c8b3981bae4e30b79f079dc3",
+  "merged_pr": 10,
+  "local_main_behind_at_sync": 0,
+  "scope": "One bounded two-item optimization pass; no enterprise/model effectiveness claim",
+  "external_model_calls": 0,
+  "benchmark": {
+    "before": {
+      "scope": "Synthetic local CPU benchmark; no model/network/database",
+      "facts": 1000,
+      "tables": 10,
+      "rows": 2500,
+      "runs_ms": [
+        847.52483,
+        809.522477,
+        829.2333780000001
+      ],
+      "median_ms": 829.2333780000001,
+      "output_sha256": "e950f7aa1c1a1cfb40227cd8f1a371f9f05a9c5b42d2b347f7138a2106ae8cff"
+    },
+    "after": {
+      "scope": "Synthetic local CPU benchmark; no model/network/database",
+      "facts": 1000,
+      "tables": 10,
+      "rows": 2500,
+      "runs_ms": [
+        6.365175000000022,
+        4.080806000000024,
+        3.245441999999997
+      ],
+      "median_ms": 4.080806000000024,
+      "output_sha256": "e950f7aa1c1a1cfb40227cd8f1a371f9f05a9c5b42d2b347f7138a2106ae8cff"
+    },
+    "output_identical": true,
+    "limitations": "Synthetic local CPU benchmark; excludes page rendering, provider latency and real enterprise materials"
+  },
+  "correctness": "Future statistical quantities excluded at the project cutoff; separately declared stages and unknown statistical dates retained",
+  "checks": {
+    "regression_before": "Two added tests reproduced the defects before changes",
+    "related_tests": 58,
+    "browser_checks": 14,
+    "build": "passed",
+    "commands": [
+      "npm test -- tests/contracts/preliminary-research.test.ts tests/contracts/evidence-coverage.test.ts tests/contracts/import-graph.test.ts tests/contracts/neighborhood-alignment.test.ts",
+      "node tests/browser/preliminary-research.mjs",
+      "npm run build"
+    ]
+  },
+  "raw_logs_local": "data/local/efficient-evidence-review/",
+  "stop_rule": "No further broad scanning or additional model calls in this pass."
+}

@@ -49,15 +49,20 @@ function factObjects(fact: Fact, projectId: string): string[] {
   if (fact.scope_kind === 'shared') return unique(fact.applies_to || []).filter(ref => !ref.startsWith('project:') || ref === `project:${projectId}`)
   return fact.object_ref && (!fact.object_ref.startsWith('project:') || fact.object_ref === `project:${projectId}`) ? [fact.object_ref] : []
 }
-function quality(source: Source | undefined, doc: ParsedDocument | undefined, locator: string | undefined, observedAt: string | undefined, value: unknown, asOf?: string): string | null {
+function quality(source: Source | undefined, doc: ParsedDocument | undefined, locator: string | undefined, observedAt: string | undefined, value: unknown, originalLocations: Map<string, Set<string>>, asOf?: string): string | null {
   if (!source) return '来源未关联当前项目'
   if (!locator) return '原文定位未提供'
   if (value === null || value === undefined || value === '') return '值尚未提供'
   if (!source.untrusted_text?.trim() && !doc?.segments.some(segment => segment.text.trim()) && !doc?.tables.some(table => table.previewRows.length)) return '尚未取得可读原文'
-  const slices = documentSlices({ file_name: doc?.fileName || 'source.txt', parser_result: doc
-    ? { segments: doc.segments, profile: { tables: doc.tables.map(table => ({ rows: table.previewRows })) } }
-    : { text: source.untrusted_text } })
-  if (!slices.some(slice => slice.locator === locator) && !(source.untrusted_text?.trim() && source.locator === locator)) return '原文定位尚未匹配保存内容'
+  let locations = originalLocations.get(source.id)
+  if (!locations) {
+    locations = new Set(documentSlices({ file_name: doc?.fileName || 'source.txt', parser_result: doc
+      ? { segments: doc.segments, profile: { tables: doc.tables.map(table => ({ rows: table.previewRows })) } }
+      : { text: source.untrusted_text } }).map(slice => slice.locator))
+    if (source.untrusted_text?.trim() && source.locator) locations.add(source.locator)
+    originalLocations.set(source.id, locations)
+  }
+  if (!locations.has(locator)) return '原文定位尚未匹配保存内容'
   if (!source.raw_hash && !source.hash && !doc?.hash) return '来源版本未提供'
   if (source.content_status === 'metadata_only' || source.parse_status === 'ocr_required' || doc?.status === 'ocr_required') return '尚未取得可读原文'
   if (source.body_truncated || source.records_truncated) return '来源或记录已截取'
@@ -80,6 +85,8 @@ export function buildEvidenceCoverage(input: Pick<ImportGraph, 'sources' | 'docu
 }): EvidenceCoverage {
   const dimensions = dashboardDimensions(dashboardPolicy(input.profile)).map(({ key, label }) => ({ key, label }))
   const sources = new Map(input.sources.map(source => [source.id, source])), documents = new Map(input.documents.map(doc => [doc.id, doc]))
+  // One bounded index per source in this snapshot; never shared across versions or projects.
+  const originalLocations = new Map<string, Set<string>>()
   const evidence: CoverageEvidence[] = [], rawRows = new Map<string, { sourceId: string; count: number; locators: string[] }>()
   for (const fact of input.facts) {
     if (fact.kind === 'table_row') {
@@ -87,7 +94,7 @@ export function buildEvidenceCoverage(input: Pick<ImportGraph, 'sources' | 'docu
       row.count++; if (fact.locator) row.locators.push(fact.locator); rawRows.set(fact.source_id, row); continue
     }
     const source = sources.get(fact.source_id), objectRefs = factObjects(fact, input.projectId), dimension = factDimension(fact.kind, input.profile)
-    const missing = quality(source, documents.get(fact.source_id), fact.locator, fact.observed_at, fact.value, input.asOf)
+    const missing = quality(source, documents.get(fact.source_id), fact.locator, fact.observed_at, fact.value, originalLocations, input.asOf)
     const unmatched = !objectRefs.length || !dimension || !source
     const reason = unmatched ? !source ? '来源未关联当前项目' : !objectRefs.length ? '没有明确匹配对象' : '没有登记维度口径'
       : missing || (fact.epistemic_status !== 'fact' ? '待核线索或方案假设' : '有可定位依据')
@@ -106,7 +113,7 @@ export function buildEvidenceCoverage(input: Pick<ImportGraph, 'sources' | 'docu
       const mismatched = record.source_id !== source.id || !!record.source_hash && record.source_hash !== (source.raw_hash || source.hash)
       const statisticalAt = record.fields.find(item => item.key === 'statistical_as_of')?.value
       const observedAt = QUANTITY_FIELDS.includes(field.key) ? typeof statisticalAt === 'string' ? statisticalAt : undefined : record.period
-      const missing = quality(source, documents.get(source.id), field.locator, observedAt, field.value, input.asOf)
+      const missing = quality(source, documents.get(source.id), field.locator, observedAt, field.value, originalLocations, input.asOf)
       const unmatched = mismatched || !objectRefs.length || !dimension
       evidence.push({ id: `record:${source.id}:${record.id}:${field.key}`, kind: 'record', sourceId: source.id,
         locator: field.locator || null, objectRefs: mismatched ? [] : objectRefs, dimension, value: field.value, unit: field.unit || null,
