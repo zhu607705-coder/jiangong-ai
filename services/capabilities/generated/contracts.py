@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 from enum import StrEnum
 from typing import Literal
 
@@ -727,6 +728,7 @@ class Key1(StrEnum):
     operations = 'operations'
     resources = 'resources'
     access = 'access'
+    supply = 'supply'
 
 
 class State(StrEnum):
@@ -802,6 +804,7 @@ class Priority(StrEnum):
     operations = 'operations'
     resources = 'resources'
     access = 'access'
+    supply = 'supply'
 
 
 class GuardReason(RootModel[str]):
@@ -1183,6 +1186,9 @@ class MapProjectEvidence(BaseModel):
     sources: list[Source]
     facts: list[Fact]
     rules: list[ExperienceRule]
+    business_profile: BusinessProfile | None = None
+    as_of: date | None = None
+    neighborhood_action: NeighborhoodActionAdvice | None = None
 
 
 class DecisionSupport(BaseModel):

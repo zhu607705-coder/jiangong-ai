@@ -2366,6 +2366,20 @@
           "items": {
             "$ref": "#/definitions/ExperienceRule"
           }
+        },
+        "business_profile": {
+          "type": "string",
+          "enum": [
+            "general",
+            "neighborhood"
+          ]
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date"
+        },
+        "neighborhood_action": {
+          "$ref": "#/definitions/NeighborhoodActionAdvice"
         }
       },
       "required": [
@@ -2532,7 +2546,8 @@
             "demand",
             "operations",
             "resources",
-            "access"
+            "access",
+            "supply"
           ]
         },
         "state": {
@@ -2714,7 +2729,8 @@
                 "demand",
                 "operations",
                 "resources",
-                "access"
+                "access",
+                "supply"
               ]
             },
             {
