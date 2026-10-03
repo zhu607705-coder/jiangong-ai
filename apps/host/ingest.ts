@@ -1,10 +1,20 @@
 import { readFileSync } from 'node:fs'
 import { extname } from 'node:path'
+import { z } from 'zod'
 import { fileHash, parseCsvRows, buildUploadedDataProfile, buildTextUploadedDataProfile, type ParserInput } from '../../vendor/cre/dashboard/server/parser-service'
 import { config } from './config'
 import type { Fact } from './generated/contracts'
 
 export class DocumentParseError extends Error {}
+
+/** A UTF-8 form field preserves browser filenames without guessing the header's encoding. */
+export function uploadFileName(originalName: string, suppliedName: unknown): string {
+  if (suppliedName === undefined) return originalName
+  return z.string().min(1).max(250)
+    .refine(name => name.trim().length > 0 && !/[\p{Cc}\p{Cs}/\\:]/u.test(name), '文件名不能包含路径或控制字符')
+    .refine(name => extname(name).toLowerCase() === extname(originalName).toLowerCase(), '文件名扩展名必须与上传文件一致')
+    .parse(suppliedName)
+}
 
 /** Preserve table rows as source-bound records, without inventing project-wide aggregates. */
 export function tableFacts(profile: unknown, documentId: string): Fact[] {

@@ -1011,6 +1011,8 @@ export default function App() {
                       if (!file) return;
                       void action(async () => {
                         const form = new FormData();
+                        // Multipart filename headers may use a different charset than UTF-8 fields.
+                        form.append("original_file_name", file.name);
                         form.append("file", file);
                         const response = await fetch(
                           `/api/projects/${project.id}/documents`,
