@@ -635,6 +635,27 @@
         "research/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T26",
+      "depends_on": [
+        "T25"
+      ],
+      "goal": "按用户纠正优化真实页面加载与调研首次可读体验，区分接口等待",
+      "status": "completed_real_local_readback_verified",
+      "expected_artifacts": [
+        "research/test_results/real-loading.json"
+      ],
+      "definition_of_done": "以现有真实项目请求和页面可操作状态验证；缩减重复读取、辅助资料不阻塞项目、校验后的简报早于修复评分展示；不以合成计算基准声称整页或API加速。",
+      "write_scope": [
+        "apps/workspace/src/",
+        "services/map-screening/analyst.ts",
+        "tests/",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

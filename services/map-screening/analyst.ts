@@ -148,6 +148,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
 <untrusted_evidence>${JSON.stringify(payload)}</untrusted_evidence>`
     let repairNote=''
     for(let attempt=0;!reuse&&attempt<2;attempt++){
+      let publishing=false
       try{
         const {value}=await live.call<MapPreliminaryAssessment>('map_initial_screen'+(attempt?'_repair':''),prompt+repairNote,'MapPreliminaryAssessment',[],undefined,{omitOptionalFields:['factors'],evidenceIds})
         const grounded=groundMapAssessment(value,context,external,research.records,new Date().toISOString(),profile)
@@ -156,11 +157,15 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
           const accepted=new Set(grounded.dimension_evidence?.map(e=>e.key))
           const rejected=value.dimension_evidence?.filter(e=>!accepted.has(e.key)).map(e=>e.key)
           repairNote=`\n以下维度的来源、对象或逐字引用未通过校验：${JSON.stringify(rejected)}。只尝试纠正一次：source_id 必须完整复制给定 ID，quote 必须是同一来源内连续的原文，不加省略号、不拼接、不改空格。只采用对应选中对象自身主张的原文；相邻或比较对象只能明确标为背景线索。作为他楼项目的开标场地仅可支持明确会务方案的场地使用需求，不能推成自身维保需求、采购资格或资金。不能核实就删除该维度。保留已成立的简报，不为补齐图表虚构依据。`
+          publishing=true
+          await emit({type:'brief',result:{...partial(),reason:'建议已取得，正在复核维度依据。'}})
+          await emit({type:'progress',stage:'brief',status:'partial',message:'建议已展示，正在核对维度引用'})
           continue
         }
         break
       }catch(error){
         budget.throwIfAborted()
+        if(publishing)throw error // A revoked context or disconnected viewer is not a model repair request.
         if(attempt){if(!assessment)throw error;break}
         repairNote='\n修正格式或来源：删除泛化条件，给出面向当前对象的业务动作；引用精确、连续的原文。'
       }

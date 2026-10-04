@@ -1,0 +1,191 @@
+
+[Recorded output: baseline-navigation.json]
+{
+  "requests": [
+    {
+      "path": "/api/session",
+      "start": 171.39999999850988,
+      "end": 176.70000000298023,
+      "ms": 5.300000004470348,
+      "bytes": 277
+    },
+    {
+      "path": "/api/session",
+      "start": 171.60000000149012,
+      "end": 179.89999999850988,
+      "ms": 8.299999997019768,
+      "bytes": 277
+    },
+    {
+      "path": "/api/projects",
+      "start": 184,
+      "end": 194.60000000149012,
+      "ms": 10.600000001490116,
+      "bytes": 87651
+    },
+    {
+      "path": "/api/projects",
+      "start": 184.10000000149012,
+      "end": 200.20000000298023,
+      "ms": 16.100000001490116,
+      "bytes": 87651
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+      "start": 201.39999999850988,
+      "end": 208.70000000298023,
+      "ms": 7.300000004470348,
+      "bytes": 42840
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+      "start": 212.10000000149012,
+      "end": 218.60000000149012,
+      "ms": 6.5,
+      "bytes": 197
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+      "start": 212.20000000298023,
+      "end": 221.70000000298023,
+      "ms": 9.5,
+      "bytes": 2
+    },
+    {
+      "path": "/api/maps/config",
+      "start": 227,
+      "end": 230.5,
+      "ms": 3.5,
+      "bytes": 162
+    },
+    {
+      "path": "/api/runs/RUN-39a88715-f82e-45e2-af1e-77d199c48f8f/events",
+      "start": 229.5,
+      "end": 238.10000000149012,
+      "ms": 8.600000001490116,
+      "bytes": 2866
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+      "start": 238.79999999701977,
+      "end": 245.39999999850988,
+      "ms": 6.600000001490116,
+      "bytes": 42840
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+      "start": 246.20000000298023,
+      "end": 251.79999999701977,
+      "ms": 5.5999999940395355,
+      "bytes": 197
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+      "start": 246.29999999701977,
+      "end": 255,
+      "ms": 8.700000002980232,
+      "bytes": 2
+    }
+  ],
+  "overlay": false
+}
+
+[Recorded output: after-navigation.json]
+{
+  "requests": [
+    {
+      "path": "/api/session",
+      "start": 171.5,
+      "end": 175.39999999850988,
+      "ms": 3.899999998509884,
+      "bytes": 277
+    },
+    {
+      "path": "/api/projects",
+      "start": 185,
+      "end": 192.79999999701977,
+      "ms": 7.799999997019768,
+      "bytes": 87651
+    },
+    {
+      "path": "/api/maps/config",
+      "start": 187.79999999701977,
+      "end": 192.60000000149012,
+      "ms": 4.800000004470348,
+      "bytes": 162
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+      "start": 195.60000000149012,
+      "end": 201.60000000149012,
+      "ms": 6,
+      "bytes": 42840
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+      "start": 202.89999999850988,
+      "end": 209.60000000149012,
+      "ms": 6.700000002980232,
+      "bytes": 197
+    },
+    {
+      "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+      "start": 202.89999999850988,
+      "end": 213,
+      "ms": 10.100000001490116,
+      "bytes": 2
+    },
+    {
+      "path": "/api/runs/RUN-39a88715-f82e-45e2-af1e-77d199c48f8f/events",
+      "start": 212.70000000298023,
+      "end": 223.89999999850988,
+      "ms": 11.199999995529652,
+      "bytes": 2866
+    }
+  ],
+  "overlay": false
+}
+
+[Recorded output: real-project-boundary.json]
+{
+  "realProject": "P-HZ-CUIYUAN-HISTORY-20261002",
+  "heldAuxiliaryResponses": 2,
+  "projectVisibleBeforeAuxiliaryComplete": true,
+  "versionPendingVisible": true,
+  "bootOverlay": 0,
+  "modelCalls": 0
+}
+
+[Recorded output: tests-final.log]
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/workspace-api.test.ts tests/contracts/map-analyst.test.ts tests/contracts/map-screening.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  3 passed (3)
+      Tests  55 passed (55)
+   Start at  09:49:35
+   Duration  10.21s (transform 1.16s, setup 0ms, import 6.11s, tests 1.97s, environment 0ms)
+
+
+[Recorded output: workflow.log]
+PASS neighborhood App workflow: 9 flow checks; synthetic API, minimal map stub, zero mutation/model/network calls
+
+[Recorded output: build.log]
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6299 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:   0.38 kB
+dist/assets/index-WFHFANn6.css  102.56 kB │ gzip:  22.09 kB
+dist/assets/index--gf65it4.js     5.29 kB │ gzip:   1.79 kB
+dist/assets/index-DYYhRUMb.js   377.67 kB │ gzip: 121.86 kB
+✓ built in 42.53s

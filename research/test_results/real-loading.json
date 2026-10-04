@@ -1,0 +1,181 @@
+{
+  "tested_at": "2026-10-04T02:00:27.342288+00:00",
+  "source": "Actual localhost5173 page and existing PGlite project P-HZ-CUIYUAN-HISTORY-20261002; no invented performance dataset",
+  "navigation": {
+    "before": {
+      "requests": [
+        {
+          "path": "/api/session",
+          "start": 171.39999999850988,
+          "end": 176.70000000298023,
+          "ms": 5.300000004470348,
+          "bytes": 277
+        },
+        {
+          "path": "/api/session",
+          "start": 171.60000000149012,
+          "end": 179.89999999850988,
+          "ms": 8.299999997019768,
+          "bytes": 277
+        },
+        {
+          "path": "/api/projects",
+          "start": 184,
+          "end": 194.60000000149012,
+          "ms": 10.600000001490116,
+          "bytes": 87651
+        },
+        {
+          "path": "/api/projects",
+          "start": 184.10000000149012,
+          "end": 200.20000000298023,
+          "ms": 16.100000001490116,
+          "bytes": 87651
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+          "start": 201.39999999850988,
+          "end": 208.70000000298023,
+          "ms": 7.300000004470348,
+          "bytes": 42840
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+          "start": 212.10000000149012,
+          "end": 218.60000000149012,
+          "ms": 6.5,
+          "bytes": 197
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+          "start": 212.20000000298023,
+          "end": 221.70000000298023,
+          "ms": 9.5,
+          "bytes": 2
+        },
+        {
+          "path": "/api/maps/config",
+          "start": 227,
+          "end": 230.5,
+          "ms": 3.5,
+          "bytes": 162
+        },
+        {
+          "path": "/api/runs/RUN-39a88715-f82e-45e2-af1e-77d199c48f8f/events",
+          "start": 229.5,
+          "end": 238.10000000149012,
+          "ms": 8.600000001490116,
+          "bytes": 2866
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+          "start": 238.79999999701977,
+          "end": 245.39999999850988,
+          "ms": 6.600000001490116,
+          "bytes": 42840
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+          "start": 246.20000000298023,
+          "end": 251.79999999701977,
+          "ms": 5.5999999940395355,
+          "bytes": 197
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+          "start": 246.29999999701977,
+          "end": 255,
+          "ms": 8.700000002980232,
+          "bytes": 2
+        }
+      ],
+      "overlay": false
+    },
+    "after": {
+      "requests": [
+        {
+          "path": "/api/session",
+          "start": 171.5,
+          "end": 175.39999999850988,
+          "ms": 3.899999998509884,
+          "bytes": 277
+        },
+        {
+          "path": "/api/projects",
+          "start": 185,
+          "end": 192.79999999701977,
+          "ms": 7.799999997019768,
+          "bytes": 87651
+        },
+        {
+          "path": "/api/maps/config",
+          "start": 187.79999999701977,
+          "end": 192.60000000149012,
+          "ms": 4.800000004470348,
+          "bytes": 162
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+          "start": 195.60000000149012,
+          "end": 201.60000000149012,
+          "ms": 6,
+          "bytes": 42840
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+          "start": 202.89999999850988,
+          "end": 209.60000000149012,
+          "ms": 6.700000002980232,
+          "bytes": 197
+        },
+        {
+          "path": "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+          "start": 202.89999999850988,
+          "end": 213,
+          "ms": 10.100000001490116,
+          "bytes": 2
+        },
+        {
+          "path": "/api/runs/RUN-39a88715-f82e-45e2-af1e-77d199c48f8f/events",
+          "start": 212.70000000298023,
+          "end": 223.89999999850988,
+          "ms": 11.199999995529652,
+          "bytes": 2866
+        }
+      ],
+      "overlay": false
+    },
+    "before_read_requests": 12,
+    "after_read_requests": 7,
+    "before_decoded_bytes": 264962,
+    "after_decoded_bytes": 133995,
+    "limits": "One before/after warm reload in this development environment; not an end-to-end model latency or population-speed estimate."
+  },
+  "real_project_wait_boundary": {
+    "realProject": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "heldAuxiliaryResponses": 2,
+    "projectVisibleBeforeAuxiliaryComplete": true,
+    "versionPendingVisible": true,
+    "bootOverlay": 0,
+    "modelCalls": 0
+  },
+  "boundary_method": "Actual auxiliary HTTP responses were paused after route.fetch; actual project data stayed unchanged. This proves nonblocking behavior, not a measured production delay.",
+  "research_change": "Publish the first existing-source-validated brief before citation repair; formal scoring, source validity and cache checks unchanged. No new live model request performed, so no quantified full-research speed claim.",
+  "checks": {
+    "related_tests": 55,
+    "existing_project_browser_flows": 9,
+    "production_build": "passed",
+    "commands": [
+      "npm test -- tests/contracts/workspace-api.test.ts tests/contracts/map-analyst.test.ts tests/contracts/map-screening.test.ts",
+      "node tests/browser/neighborhood-workflow.mjs",
+      "npm run build"
+    ]
+  },
+  "model_calls_added": 0,
+  "files": [
+    "apps/workspace/src/api.ts",
+    "apps/workspace/src/App.tsx",
+    "services/map-screening/analyst.ts"
+  ],
+  "raw_browser_logs": "ignored local directory only"
+}

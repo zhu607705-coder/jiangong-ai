@@ -193,15 +193,17 @@ describe('map analyst external-data boundary',()=>{
     const trace={status:'success',queries:[],source_ids:['DOC'],warnings:[],reused:false}
     ports.collect.mockResolvedValue({sources:[{id:'DOC',title:'测试园区设备维护采购',url:'https://www.ccgp.gov.cn/test',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',published_at:'2026-09-20',untrusted_text:quote}],records:[],receipts:[],trace})
     ports.decision.mockResolvedValue({status:'completed',dashboard:{status:'partial',dimensions:[]}})
-    const stages:string[]=[]
+    const stages:string[]=[],events:string[]=[]
     ports.open.mockResolvedValue({calls:[],close:async()=>{},call:async(stage:string)=>{
       stages.push(stage)
+      events.push(stage)
       return {value:stage==='research_plan'?trace:{summary:'调查测试园区设备维护服务。',opportunities:[],cautions:[],unknowns:[],next_steps:[],
         dimension_evidence:[{key:'demand',source_id:'DOC',quote:stage.endsWith('_repair')?quote:'测试园区计划采购……覆盖既有公共设施。',basis:'设备维护采购构成需求线索。'}]}}
     },runReadCapability:async(_name:string,fn:(signal:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
     const ctx={id:'TEST',created_at:'2026-09-28T08:00:00Z',target:{label_origin:'public',label:'测试园区'},city:'杭州',address:'测试地址',groups:[],local_projects:[]} as unknown as MapScreenContext
-    const result=await analyzeMapContext(ctx,'balanced',new AbortController().signal)
+    const result=await analyzeMapContext(ctx,'balanced',new AbortController().signal,event=>{if(event.type==='brief')events.push('readable-brief')})
     expect(stages.filter(s=>s.startsWith('map_'))).toEqual(['map_initial_screen','map_initial_screen_repair'])
+    expect(events.indexOf('readable-brief')).toBeLessThan(events.indexOf('map_initial_screen_repair'))
     expect(result.assessment?.dimension_evidence?.[0].quote).toBe(quote)
     expect(ports.decision.mock.calls[0][0].dashboard.evidence).toEqual(result.assessment?.dimension_evidence)
   })

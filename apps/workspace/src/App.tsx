@@ -177,6 +177,7 @@ export default function App() {
     [regionName, setRegionName] = useState(""),
     [geometryText, setGeometryText] = useState("");
   const [followups, setFollowups] = useState<{ title: string }[]>([]);
+  const [projectExtras, setProjectExtras] = useState({ loading: false, diffError: false, followupsError: false });
   const [businessProfile, setBusinessProfile] = useState<'neighborhood'|'general'>('neighborhood');
   const [loadingTarget, setLoadingTarget] = useState<string | null>(null);
   const [neighborhoodDrafts, setNeighborhoodDrafts] = useState<Record<string, NeighborhoodDraft>>({});
@@ -192,6 +193,7 @@ export default function App() {
   const brief = packet ? buildDecisionBrief(packet) : null;
   const packetSources = new Map((packet?.sources || []).map(source => [source.id, source] as const));
   const eventSource = useRef<EventSource | null>(null);
+  const projectLoadVersion = useRef(0);
   const running = run?.status === "running";
   const stale =
     !!packet && !!project && packet.context_version !== project.context_version;
@@ -211,18 +213,27 @@ export default function App() {
     return () => cancelAnimationFrame(frame);
   }, [tab, project?.id, focusedSourceKey]);
   async function loadProject(id: string) {
+    const version = ++projectLoadVersion.current;
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
-    const [nextDiff, nextFollowups] = await Promise.all([
-      api<Diff>(`/projects/${encodeURIComponent(id)}/revision-diff`),
-      api<{ title: string }[]>(`/projects/${encodeURIComponent(id)}/followups`),
-    ]);
+    if (version !== projectLoadVersion.current) return p;
     setProject(p);
     localStorage.setItem("hzz_project", id);
     const latest = p.runs?.[0] || null;
     setRun(latest);
     setPacket(p.runs?.find((r) => r.decision)?.decision || null);
-    setDiff(nextDiff);
-    setFollowups(nextFollowups);
+    setDiff(null);
+    setFollowups([]);
+    setProjectExtras({ loading: true, diffError: false, followupsError: false });
+    void Promise.allSettled([
+      api<Diff>(`/projects/${encodeURIComponent(id)}/revision-diff`),
+      api<{ title: string }[]>(`/projects/${encodeURIComponent(id)}/followups`),
+    ]).then(([nextDiff, nextFollowups]) => {
+      if (version !== projectLoadVersion.current) return;
+      if (nextDiff.status === 'fulfilled') setDiff(nextDiff.value);
+      if (nextFollowups.status === 'fulfilled') setFollowups(nextFollowups.value);
+      setProjectExtras({ loading: false, diffError: nextDiff.status === 'rejected', followupsError: nextFollowups.status === 'rejected' });
+      if (nextDiff.status === 'rejected' || nextFollowups.status === 'rejected') setError('项目已打开，部分版本资料或调查清单暂不可读。');
+    });
     return p;
   }
   async function refreshProjects() {
@@ -235,8 +246,10 @@ export default function App() {
     async function start() {
       try {
         const session = await api<{ model_configured: boolean }>("/session");
+        if (!alive) return;
         setModelAvailable(session.model_configured);
         setExecutionMode(session.model_configured ? "live" : "offline");
+        setLoading(false);
         const list = await refreshProjects();
         if (!alive) return;
         const selected =
@@ -252,6 +265,7 @@ export default function App() {
     void start();
     return () => {
       alive = false;
+      projectLoadVersion.current++;
     };
   }, []);
   useEffect(() => {
@@ -261,27 +275,30 @@ export default function App() {
       return;
     }
     setEvents([]);
+    let alive = true;
     const source = new EventSource(`/api/runs/${run.id}/events`);
     eventSource.current = source;
     source.addEventListener("progress", (e) => {
+      if (!alive) return;
       const event = JSON.parse((e as MessageEvent).data) as RuntimeEvent;
       setEvents((prev) =>
         prev.some((v) => v.id === event.id) ? prev : [...prev, event],
       );
     });
     source.addEventListener("terminal", (e) => {
+      if (!alive) return;
       source.close();
       const result = JSON.parse((e as MessageEvent).data);
-      if (result.status === "failed")
+      if (run.status === 'running' && result.status === "failed")
         setError("本次研判未完成。快照已保留，可重新执行；详情见运行记录。");
-      if (project)
+      if (project && run.status === 'running')
         void loadProject(project.id).catch((e) => setError(e.message));
     });
     source.onerror = () => {
-      if (source.readyState === EventSource.CLOSED) return;
+      if (!alive || source.readyState === EventSource.CLOSED) return;
       setNotice("进度连接暂时中断，正在自动重连。");
     };
-    return () => source.close();
+    return () => { alive = false; source.close(); };
   }, [run?.id, run?.status === "running"]);
   async function action(task: () => Promise<void>) {
     setError("");
@@ -1163,7 +1180,7 @@ export default function App() {
               <p className="intro">
                 比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。
               </p>
-              {diff?.available ? (
+              {projectExtras.loading ? <p role="status">正在读取版本变化…</p> : projectExtras.diffError ? <p role="status">版本变化暂不可读。<button className="secondary" onClick={() => void action(async () => { await loadProject(project.id); })}>重试</button></p> : diff?.available ? (
                 <>
                   <div className="revision-summary">
                     <span>
@@ -1230,6 +1247,8 @@ export default function App() {
               <p className="intro">
                 调查清单在本地保存；加入清单不会自动对外发函、报批或安排现场工作。
               </p>
+              {projectExtras.loading && <p role="status">正在读取已保存的调查清单…</p>}
+              {projectExtras.followupsError && <p role="status">调查清单暂不可读。<button className="secondary" onClick={() => void action(async () => { await loadProject(project.id); })}>重试</button></p>}
               {packet ? (
                 brief?.nextActions.map((item) => (
                   <article className="followup-row" key={item.id || item.title}>
@@ -1243,7 +1262,7 @@ export default function App() {
                     <button
                       className="secondary"
                       disabled={
-                        busy || !item.id || followups.some((f) => f.title === item.title)
+                        busy || projectExtras.loading || projectExtras.followupsError || !item.id || followups.some((f) => f.title === item.title)
                       }
                       onClick={() =>
                         void action(async () => {
