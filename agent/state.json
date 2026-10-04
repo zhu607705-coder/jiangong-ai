@@ -1,5 +1,5 @@
 {
-  "status": "real_loading_flow_verified",
+  "status": "decision_integration_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -32,7 +32,7 @@
     "scanned_image_OCR_engine_optional_source_capability",
     "real_user_import_visual_readback_waits_for_authorized_uploaded_material"
   ],
-  "next_task": "Continue only from actual user-observed loading bottlenecks; API response duration itself is not claimed improved.",
+  "next_task": "Use actual error/request records to select later integration work; stop this pass.",
   "rule": "Do not infer app completion from local fixture tests.",
   "updated_at": "2026-10-04",
   "workspace": "/mnt/d/建工ai",
@@ -83,9 +83,10 @@
     "research/test_results/neighborhood-research.json",
     "research/test_results/efficient-evidence-review.json",
     "research/test_results/coverage-kernel.json",
-    "research/test_results/real-loading.json"
+    "research/test_results/real-loading.json",
+    "research/test_results/decision-integration.json"
   ],
-  "current_delivery": "PR11 now improves actual map/project startup and first readable research brief: real existing-project reload has12→7 internal reads and unchanged project data. Project auxiliary requests no longer block opening; no completed-run refetch loop. Calculated synthetic microbenchmarks remain engineering-only evidence.",
+  "current_delivery": "PR11 includes robust System One cancellation/deadline/errors and corrected Qwen cache dependencies.68 related checks and production build passed; one existing public project call completed via DSH, no full research rerun or latency/quality claim.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -112,7 +113,8 @@
     "T23": "completed_local_and_public_endpoint_verified",
     "T24": "completed_local_verified",
     "T25": "completed_local_verified",
-    "T26": "completed_real_local_readback_verified"
+    "T26": "completed_real_local_readback_verified",
+    "T27": "completed_local_and_live_endpoint_verified"
   },
   "preview_url": "http://127.0.0.1:5173",
   "source_archive": {
@@ -508,5 +510,14 @@
     "scope": "Actual existing project/page; source-validated brief streamed before citation repair",
     "model_calls_added": 0,
     "next_runnable_task": "Continue only from actual user-observed loading bottlenecks; API response duration itself is not claimed improved."
+  },
+  "decision_integration": {
+    "status": "completed_local_and_live_endpoint_verified",
+    "evidence": "research/test_results/decision-integration.json",
+    "model_calls_added": 1,
+    "unresolved": [
+      "No enterprise decision-quality or endpoint speed comparison performed."
+    ],
+    "next_runnable_task": "Use actual error/request records to select later integration work; stop this pass."
   }
 }

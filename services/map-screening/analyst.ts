@@ -19,6 +19,7 @@ import { decisionFactors } from '../../packages/maps/decision-factors'
 import { publicMapContext, researchSubject } from '../../packages/maps/public-context'
 export { researchSubject } from '../../packages/maps/public-context'
 import { evaluateDecision } from '../capabilities/decision-model'
+import { decisionErrorMessage } from '../../packages/decision/route-labels'
 import { mapDecisionInput, DECISION_ACTIONS } from '../../packages/decision/structured-route'
 import { dashboardDimensions, dashboardPolicy } from '../../packages/decision/dashboard'
 
@@ -190,8 +191,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
       // Keep the actual object-specific action. A generic router checklist must not overwrite it.
     }
     const completed=!decisionSupport||decisionSupport.status==='completed'
-    const configurationError=decisionSupport?.error_code&&/KEY_MISSING|ENDPOINT_MISSING|ENDPOINT_INVALID|HTTP_401|HTTP_403/.test(decisionSupport.error_code)
-    return {...base,status:completed?'completed':'failed',assessment:assessment!,model_calls:calls(),reason:completed?null:configurationError?'简报已保留，请检查决策模型配置后重试评分。':'简报已保留，结构化判断暂未完成，可重试评分。',...(decisionSupport?{decision_support:decisionSupport}:{}),research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace}
+    return {...base,status:completed?'completed':'failed',assessment:assessment!,model_calls:calls(),reason:completed?null:decisionErrorMessage(decisionSupport?.error_code),...(decisionSupport?{decision_support:decisionSupport}:{}),research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace}
   }catch{
     signal.throwIfAborted()
     return {...base,status:'failed',assessment:assessment||null,model_calls:calls(),reason:assessment?'简报已保留，后续判断未完成，可重试评分。':budget.aborted?'本轮研究已停止。':'本轮研判未完成，请重试。',research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace,...(decisionSupport?{decision_support:decisionSupport}:{})}

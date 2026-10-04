@@ -13,8 +13,9 @@ import { collectPublicEvidence } from '../../services/capabilities/research'
 import { LiveSession } from '../dsh/live-session'
 import { roles, type RoleId } from '../roles'
 import { digest, roleDependency } from './run'
-import { evaluateDecision } from '../../services/capabilities/decision-model'
-import { projectDecisionInput, decisionPolicy, DECISION_THRESHOLDS, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
+import { evaluateDecision, decisionCacheDescriptor } from '../../services/capabilities/decision-model'
+import { decisionErrorMessage } from '../../packages/decision/route-labels'
+import { projectDecisionInput, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
 
 /** Truncate text, never source identity/scope; the untruncated local artifact remains stored. */
 function modelView(project: ProjectInput) {
@@ -76,7 +77,8 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   let decisionSupport:DecisionSupport|undefined
   try {
     async function cachedStage<T>(kind: string, input: unknown, execute: () => Promise<{ value: T; sessionId: string }>): Promise<{ value: T; sessionId: string }> {
-      const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, business_profile:full.business_profile||'general',policy: 'live-stage-v3-neighborhood', brief_skill: BRIEF_SKILL_VERSION, input })
+      const decisionStage=kind==='decision_route'
+      const key = digest({ project: run.project_id, kind, model: decisionStage?config.QWEN_DECISION_MODEL:config.DEEPSEEK_MODEL, business_profile:full.business_profile||'general',policy:decisionStage?'qwen-route-cache-v2':'live-stage-v3-neighborhood', ...(decisionStage?{}:{brief_skill:BRIEF_SKILL_VERSION}), input })
       const cached = (await store.db.query<{ id: string; payload: { value: T; sessionId: string } }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [run.project_id, kind, key])).rows[0]
       if (cached) { artifactRefs.push(cached.id); impact.reused.push(kind); await store.addEvent(run.id, kind, 'reused', '复用已验证的模型阶段工件', cached.id); return cached.payload }
       const result = await execute(), id = `ART-${randomUUID()}`
@@ -86,10 +88,10 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     if(config.decisionEnabled) {
       const input=projectDecisionInput(full)
       await store.addEvent(run.id,'decision_route','running','Qwen 正在判断证据是否充分与优先调查方向')
-      const result=await cachedStage<DecisionSupport>('decision_route',{input,policy:decisionPolicy,thresholds:DECISION_THRESHOLDS,model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT},async()=>{
+      const result=await cachedStage<DecisionSupport>('decision_route',decisionCacheDescriptor(input,{model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT}),async()=>{
         const value=await live.runReadCapability('qwen_research_route',toolSignal=>evaluateDecision(input,toolSignal))
         if(value.status!=='completed') {
-          await store.addEvent(run.id,'decision_route','failed','Qwen 决策请求未完成，已保留资料工件')
+          await store.addEvent(run.id,'decision_route','failed',decisionErrorMessage(value.error_code))
           throw new Error(value.error_code || 'DECISION_REQUEST_FAILED')
         }
         return {value,sessionId:run.id}

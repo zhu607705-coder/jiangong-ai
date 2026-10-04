@@ -656,6 +656,32 @@
         "research/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T27",
+      "depends_on": [
+        "T26"
+      ],
+      "goal": "优化decision模型接入的等待、取消、失败反馈及缓存复用",
+      "status": "completed_local_and_live_endpoint_verified",
+      "expected_artifacts": [
+        "research/test_results/decision-integration.json"
+      ],
+      "definition_of_done": "复用System One/DSH；问题批量请求、取消清理和安全错误码有效；缓存依赖实际问题与Qwen模型；现有公开材料一次连接验收；不把接入测试写成判断质量或整体加速。",
+      "write_scope": [
+        "services/capabilities/decision-model.ts",
+        "services/map-screening/analyst.ts",
+        "runtime/workflows/live.ts",
+        "apps/host/config.ts",
+        "apps/workspace/src/components/DecisionRoute.tsx",
+        "packages/decision/route-labels.ts",
+        "tests/contracts/",
+        ".env.example",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": true
     }
   ]
 }

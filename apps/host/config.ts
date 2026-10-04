@@ -13,6 +13,7 @@ const env = z.object({
   QWEN_DECISION_ENABLED: z.enum(['true', 'false']).default('false'),
   QWEN_DECISION_MODEL: z.literal('decision-model-preview').default('decision-model-preview'),
   QWEN_DECISION_ENDPOINT: z.string().default(''),
+  QWEN_DECISION_TIMEOUT_MS: z.coerce.number().int().min(1000).max(60000).default(12000),
   ALLOW_INTERNAL_MODEL: z.enum(['true', 'false']).default('false'),
 }).parse(process.env)
 

@@ -44,10 +44,17 @@ export function parseDecisionResponse(raw:any,profile?:MapScreenProfile):Pick<De
   return {request_id:raw.request_id,input_tokens:tokens,answers:{next_action:parseDecisionChoice(raw.answers.next_action,Object.keys(actionCriteria)),
     priority_dimension:parseDecisionChoice(raw.answers.priority_dimension,Object.keys(profile==='neighborhood'?neighborhoodDimensions:dimensions)),evidence_sufficient:yes}}
 }
-export type DecisionSettings={apiKey:string;endpoint:string;model:string}
+export type DecisionSettings={apiKey:string;endpoint:string;model:string;timeoutMs?:number}
+export function decisionRequestBody(input:DecisionInput, model='decision-model-preview') {
+  const profile=input.profile||input.dashboard?.profile
+  return {model,state:input.dashboard?{evidence:input.state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:input.state,questions:{...decisionQuestions(profile),...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
+}
+export function decisionCacheDescriptor(input:DecisionInput, settings:Pick<DecisionSettings,'model'|'endpoint'>) {
+  return {request:decisionRequestBody(input,settings.model),model:settings.model,endpoint:settings.endpoint,policy:decisionPolicy(input.profile||input.dashboard?.profile),thresholds:DECISION_THRESHOLDS,source_ids:input.sourceIds,factors:input.factors,neighborhood_action:input.neighborhoodAction}
+}
 export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, settings:DecisionSettings={apiKey:process.env.QWEN_DECISION_API_KEY||'',endpoint:config.QWEN_DECISION_ENDPOINT,model:config.QWEN_DECISION_MODEL}, transport:typeof fetch=fetch):Promise<DecisionSupport> {
   const profile=input.profile||input.dashboard?.profile
-  const start=Date.now(), body={model:settings.model,state:input.dashboard?{evidence:input.state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:input.state,questions:{...decisionQuestions(profile),...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
+  const start=Date.now(), body=decisionRequestBody(input,settings.model)
   const base:DecisionSupport={status:'unavailable',provider:'qwen_systemone',model:settings.model,policy_version:decisionPolicy(profile),
     input_hash:createHash('sha256').update(JSON.stringify(body)).digest('hex'),created_at:new Date().toISOString(),request_id:null,duration_ms:0,input_tokens:null,
     answers:null,action:null,priority:null,next_step:'',guard_reasons:[],input_source_ids:input.sourceIds,thresholds:DECISION_THRESHOLDS,error_code:null}
@@ -59,7 +66,7 @@ export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, 
   } catch(error) {
     signal.throwIfAborted()
     const message=error instanceof Error ? error.message : ''
-    const code=/^DECISION_(ENDPOINT_INVALID|HTTP_\d{3}|INVALID_RESPONSE|RESPONSE_LIMIT|INPUT_LIMIT)$/.test(message)?message:'DECISION_REQUEST_FAILED'
+    const code=/^DECISION_(ENDPOINT_INVALID|MODEL_INVALID|TIMEOUT_INVALID|TIMEOUT|HTTP_\d{3}|INVALID_RESPONSE|RESPONSE_LIMIT|INPUT_LIMIT)$/.test(message)?message:'DECISION_REQUEST_FAILED'
     return {...base,status:'failed',duration_ms:Date.now()-start,error_code:code}
   }
 }
@@ -69,20 +76,38 @@ export async function requestDecisionQuestions(state:unknown, questions:Record<s
   settings:DecisionSettings={apiKey:process.env.QWEN_DECISION_API_KEY||'',endpoint:config.QWEN_DECISION_ENDPOINT,model:config.QWEN_DECISION_MODEL},
   transport:typeof fetch=fetch):Promise<any> {
   if(!settings.apiKey||!settings.endpoint)throw new Error('DECISION_NOT_CONFIGURED')
+  if(settings.model!=='decision-model-preview')throw new Error('DECISION_MODEL_INVALID')
   if(Object.keys(questions).length<1||Object.keys(questions).length>24)throw new Error('DECISION_INPUT_LIMIT')
   const body={model:settings.model,state,questions}
-  if(Buffer.byteLength(JSON.stringify(body))>160000) throw new Error('DECISION_INPUT_LIMIT')
+  const serialized=JSON.stringify(body)
+  if(Buffer.byteLength(serialized)>160000) throw new Error('DECISION_INPUT_LIMIT')
+  const timeoutMs=settings.timeoutMs??config.QWEN_DECISION_TIMEOUT_MS
+  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)throw new Error('DECISION_TIMEOUT_INVALID')
   const url=decisionEndpoint(settings.endpoint)
   signal.throwIfAborted()
   if(transport===fetch) await ensureHarnessNetwork()
-  const requestSignal=AbortSignal.any([signal,AbortSignal.timeout(12000)])
-  const response=await transport(url,{method:'POST',redirect:'error',signal:requestSignal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+settings.apiKey},body:JSON.stringify(body)})
-  if(!response.ok) {await response.body?.cancel();throw new Error('DECISION_HTTP_'+response.status)}
-  const reader=response.body?.getReader();if(!reader)throw new Error('DECISION_INVALID_RESPONSE')
-  const parts:Uint8Array[]=[];let size=0
-  try {while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>100000)throw new Error('DECISION_RESPONSE_LIMIT');parts.push(value)}} finally {await reader.cancel().catch(()=>undefined)}
-  const raw=JSON.parse(Buffer.concat(parts).toString('utf8'))
-  if(raw?.model!==settings.model||typeof raw.request_id!=='string'||!raw.request_id||raw.request_id.length>200||!Number.isSafeInteger(raw.usage?.input_tokens)||raw.usage.input_tokens<0)throw new Error('DECISION_INVALID_RESPONSE')
-  signal.throwIfAborted()
-  return raw
+  const deadline=new AbortController(),timer=setTimeout(()=>deadline.abort(),timeoutMs)
+  const requestSignal=AbortSignal.any([signal,deadline.signal])
+  let response:Response|undefined
+  let reader:ReadableStreamDefaultReader<Uint8Array>|undefined
+  const cancel=()=>{void (reader?reader.cancel():response?.body?.cancel())?.catch(()=>undefined)}
+  requestSignal.addEventListener('abort',cancel,{once:true})
+  const check=()=>{signal.throwIfAborted();if(deadline.signal.aborted)throw new Error('DECISION_TIMEOUT')}
+  try {
+    response=await transport(url,{method:'POST',redirect:'error',signal:requestSignal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+settings.apiKey},body:serialized})
+    check()
+    if(!response.ok)throw new Error('DECISION_HTTP_'+response.status)
+    reader=response.body?.getReader();if(!reader)throw new Error('DECISION_INVALID_RESPONSE')
+    const parts:Uint8Array[]=[];let size=0
+    while(true){const {done,value}=await reader.read();check();if(done)break;size+=value.length;if(size>100000)throw new Error('DECISION_RESPONSE_LIMIT');parts.push(value)}
+    const raw=JSON.parse(Buffer.concat(parts).toString('utf8'))
+    if(raw?.model!==settings.model||typeof raw.request_id!=='string'||!raw.request_id||raw.request_id.length>200||!Number.isSafeInteger(raw.usage?.input_tokens)||raw.usage.input_tokens<0)throw new Error('DECISION_INVALID_RESPONSE')
+    check();return raw
+  } catch(error){
+    check()
+    if(error instanceof SyntaxError)throw new Error('DECISION_INVALID_RESPONSE')
+    throw error
+  } finally {
+    clearTimeout(timer);requestSignal.removeEventListener('abort',cancel);cancel()
+  }
 }
