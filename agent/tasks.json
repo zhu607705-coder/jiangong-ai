@@ -682,6 +682,30 @@
         "research/"
       ],
       "upstream_verification_required": true
+    },
+    {
+      "id": "T28",
+      "depends_on": [
+        "T27"
+      ],
+      "goal": "根据用户介绍PDF与当前本地工作台双向核对，改进介绍与经验条件对照",
+      "status": "completed_pdf_and_real_local_workbench_verified",
+      "expected_artifacts": [
+        "docs/项目介绍.md",
+        "docs/介绍与工作台对齐.md",
+        "output/pdf/建工AI_项目介绍.pdf",
+        "research/test_results/introduction-alignment.json"
+      ],
+      "definition_of_done": "介绍保留业务目标且区分已实现/待研发/待验证；PDF文字与版面检查；产品条件对照复用现有事实门与引文且只读；实际本机卡与手机读回，无额外模型调用。",
+      "write_scope": [
+        "docs/",
+        "output/pdf/",
+        "scripts/build-introduction.py",
+        "apps/workspace/src/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
     }
   ]
 }

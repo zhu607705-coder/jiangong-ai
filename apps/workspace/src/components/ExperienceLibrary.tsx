@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField } from '../../../host/generated/contracts'
+import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField, ProjectInput } from '../../../host/generated/contracts'
 import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/document-slices'
 import { api } from '../api'
 import WaitingScene from './WaitingScene'
+import { retrofitAdvice } from '../../../../packages/retrofit/planning'
 import './experience-library.css'
 
-type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void }
+type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; currentProject?: ProjectInput; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void }
 type Document = { id: string; file_name: string; created_at?: string; parser_result?: ParsedDocument['parser_result'] }
 type CitableDocument = Document & { slices: DocumentSlice[] }
 type Match = { card: ExperienceCard; similar_conditions: string[]; important_differences: string[]; reuse_premises: string[] }
@@ -79,6 +80,13 @@ function Evidence({ evidence, documents }: { evidence: ExperienceEvidence[]; doc
   </details>)}</div>
 }
 
+function ConditionComparison({card,advice,documents,onOpenMaterials}: {card:ExperienceCard;advice:ReturnType<typeof retrofitAdvice>|null;documents:Document[];onOpenMaterials?:()=>void}) {
+  const historical=card.fields.find(field=>field.key==='key_conditions')
+  return <section className="experience-condition-comparison" aria-label="历史条件与本次待核条件">
+    <div><strong>历史关键条件</strong><p>{historical?.value || '原文未记载，需补历史材料。'}</p>{historical?.evidence?.length ? <Evidence evidence={historical.evidence} documents={documents}/> : null}</div>
+    <div><strong>本次待核条件</strong>{advice?.decision==='defer'&&<p><b>{advice.label}</b> · {advice.reasons.map(item=>item.text).join('；')}</p>}{advice?.missing.length ? <ul>{advice.missing.map(item=><li key={item.key}><b>{item.label}</b><span>{item.where}</span><small>补齐后检查：{item.impact}</small></li>)}</ul> : <p>{advice ? '本方案前置核查已有确认依据，仍需逐项比较历史经验的适用边界。' : '从当前项目资料中核对对象、阶段、关键条件与适用边界。'}</p>}{onOpenMaterials&&<button type="button" onClick={onOpenMaterials}>查看本次项目资料</button>}</div>
+  </section>
+}
 function CardContent({ card, documents }: { card: ExperienceCard; documents: Document[] }) {
   return <dl className="experience-fields">{fields.map(({ key, label }) => {
     const field = card.fields.find(item => item.key === key)
@@ -87,7 +95,8 @@ function CardContent({ card, documents }: { card: ExperienceCard; documents: Doc
   })}</dl>
 }
 
-export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, onProjectUpdated, onOpenMaterials }: Props) {
+export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, currentProject, onProjectUpdated, onOpenMaterials }: Props) {
+  const currentAdvice=useMemo(()=>currentProject?.project_id===projectId&&currentProject.business_profile==='neighborhood'?retrofitAdvice(currentProject):null,[currentProject,projectId])
   const requestKey = `${projectId}\u0000${revision}\u0000${synthetic}\u0000${asOf}`
   const activeKey = useRef(requestKey)
   const viewGeneration = useRef(0)
@@ -261,7 +270,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
           <span className={`experience-status is-${card.status}`}>{statusLabel[card.status]} · v{card.revision}</span></button>
         {expanded === card.id && <div className="experience-card-body">
           {editing?.card?.id === card.id ? <DraftEditor draft={editing.draft} documents={documents} citableDocuments={citableDocuments} busy={busy} creating={false}
-            onChange={changeDraft} onSave={() => void save()} onCancel={cancelEdit} /> : <><CardContent card={card} documents={documents} />
+            onChange={changeDraft} onSave={() => void save()} onCancel={cancelEdit} /> : <><ConditionComparison card={card} advice={currentAdvice} documents={documents} onOpenMaterials={onOpenMaterials}/><CardContent card={card} documents={documents} />
             {card.review_note && <p className="experience-review-record">审核记录：{card.review_note}</p>}
             {card.status === 'draft' && <div className="experience-review"><button type="button" disabled={!!busy} onClick={() => { setEditing({ card, draft: asDraft(card) }); setActionError('') }}>编辑草稿与原文引用</button>
               <label>复核备注<textarea value={reviewNote} disabled={!!busy} placeholder="说明已核对的材料、适用边界或未通过原因" onChange={event => setReviewNote(event.target.value)} /></label>
@@ -285,8 +294,9 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
         <header className="experience-match-heading"><div><h4>{match.card.title}</h4><p>{[match.card.project_type, match.card.development_mode, match.card.stage].filter(Boolean).join(' · ')}</p><small>来源项目 {match.card.project_id} · v{match.card.revision}</small></div>
           <button type="button" className="experience-primary" disabled={!!busy} onClick={() => void reuse(match.card)}>{busy === `reuse:${match.card.id}` ? '正在加入…' : '加入当前项目参考'}</button></header>
         <div className="experience-comparison">{([
-          ['相似条件', match.similar_conditions], ['重要差异', match.important_differences], ['借鉴前提', match.reuse_premises],
+          ['分类匹配', match.similar_conditions], ['待比较差异', match.important_differences], ['借鉴前提', match.reuse_premises],
         ] as const).map(([label, values]) => <div key={label}><strong>{label}</strong>{values.length ? <ul>{values.map((value, index) => <li key={index}>{value}</li>)}</ul> : <p>未记录</p>}</div>)}</div>
+        <ConditionComparison card={match.card} advice={currentAdvice} documents={[]} onOpenMaterials={onOpenMaterials}/>
         <details className="experience-match-details"><summary>查看完整经验与原文依据</summary><CardContent card={match.card} documents={[]} />{match.card.review_note && <p className="experience-review-record">审核记录：{match.card.review_note}</p>}</details>
       </article>)}</div>}
     </>}

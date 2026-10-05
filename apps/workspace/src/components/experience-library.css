@@ -74,6 +74,13 @@
 .experience-match-heading p { margin: 0 0 8px; color: #7a8a79; font-size: 11px; }
 .experience-match-heading small { color: #9da896; font-size: 10px; overflow-wrap: anywhere; }
 .experience-match-heading button { flex-shrink: 0; }
+.experience-condition-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0 17px 17px; padding: 15px; border: 1px solid #dbe5de; border-radius: 8px; background: #f7faf8; overflow-wrap: anywhere; }
+.experience-condition-comparison strong { color: #2c6558; font-size: 12px; }
+.experience-condition-comparison p, .experience-condition-comparison ul { font-size: 12px; line-height: 1.7; }
+.experience-condition-comparison ul { margin: 10px 0; padding-left: 16px; }
+.experience-condition-comparison li { margin-bottom: 10px; }
+.experience-condition-comparison li span, .experience-condition-comparison li small { display: block; color: #65746b; }
+.experience-condition-comparison button { font-size: 12px; }
 .experience-comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 0 17px 17px; }
 .experience-comparison > div { border-radius: 8px; background: #f6f9f2; padding: 12px; }
 .experience-comparison strong { font-size: 11px; color: #658060; }
@@ -86,7 +93,7 @@
   .experience-heading { gap: 10px; }
   .experience-heading p { font-size: 12px; }
   .experience-mode-badge { font-size: 10px; padding: 5px 8px; }
-  .experience-document-list, .experience-meta-editor, .experience-reference-editor, .experience-search, .experience-comparison { grid-template-columns: 1fr; }
+  .experience-document-list, .experience-meta-editor, .experience-reference-editor, .experience-search, .experience-comparison, .experience-condition-comparison { grid-template-columns: 1fr; }
   .experience-extract { padding: 14px; }
   .experience-extract-note { display: block; margin: 10px 0 0; }
   .experience-card-heading { flex-wrap: wrap; }

@@ -900,7 +900,7 @@ export default function App() {
               <p className="intro">
                 记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。
               </p>
-              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()} />
+              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} currentProject={project.input} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()} />
               <label className="field-label" htmlFor="experience">
                 本项目意见（不作为历史实施结果）
               </label>
