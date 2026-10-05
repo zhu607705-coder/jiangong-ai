@@ -727,6 +727,29 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/preliminary-algorithm.json"
+    },
+    {
+      "id": "T30",
+      "depends_on": [
+        "T29"
+      ],
+      "goal": "检索旧改官方数据，借鉴AIHOT方式开始真实原文沉淀",
+      "status": "completed_official_original_and_live_ui_verified",
+      "expected_artifacts": [
+        "data/corpus/official-retrofit-source-catalog.json",
+        "docs/老旧小区官方数据与沉淀.md",
+        "research/test_results/official-retrofit-intake.json"
+      ],
+      "definition_of_done": "实际官方接口/原文读取及哈希；已有intake/import入库与重复观察校验；计划PDF定位核对；真实工作台可检索/回读；不用新闻或合成材料冒充旧改事实，不自动开展付费筛选或定时采集。",
+      "write_scope": [
+        "data/corpus/",
+        "data/local/official-retrofit-20261005/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/official-retrofit-intake.json",
+      "upstream_verification_required": false
     }
   ]
 }

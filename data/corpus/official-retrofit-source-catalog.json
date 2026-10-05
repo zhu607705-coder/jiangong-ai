@@ -1,0 +1,204 @@
+{
+  "schema_version": "1.0",
+  "researched_at": "2026-10-05",
+  "focus": "old_neighborhood_renovation",
+  "sink": "existing_intelligence_and_corpus",
+  "collection_mode": "bounded_manual_intake",
+  "channels": [
+    {
+      "id": "official-zj-ggzy-retrofit",
+      "name": "浙江公共资源交易·杭州老旧小区工程",
+      "kind": "external",
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/list.html",
+      "domains": [
+        "ggzy.zj.gov.cn"
+      ],
+      "publisher_group": "zhejiang-ggzy",
+      "city": "杭州",
+      "config": {},
+      "enabled": false,
+      "interval_minutes": 1440,
+      "participation": "research",
+      "first_party": true
+    },
+    {
+      "id": "official-gongshu-retrofit-plan",
+      "name": "拱墅区政府·老旧小区年度投资计划",
+      "kind": "external",
+      "url": "https://www.gongshu.gov.cn/art/2025/1/22/art_1229138302_1849146.html",
+      "domains": [
+        "gongshu.gov.cn",
+        "zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn"
+      ],
+      "publisher_group": "gongshu-government",
+      "city": "杭州",
+      "config": {},
+      "enabled": false,
+      "interval_minutes": 1440,
+      "participation": "research",
+      "first_party": true
+    },
+    {
+      "id": "official-hangzhou-retrofit-funding",
+      "name": "杭州市政府·住宅老旧电梯补助",
+      "kind": "external",
+      "url": "https://www.hangzhou.gov.cn/art/2025/6/23/art_1229063415_4364996.html",
+      "domains": [
+        "hangzhou.gov.cn"
+      ],
+      "publisher_group": "hangzhou-government",
+      "city": "杭州",
+      "config": {},
+      "enabled": false,
+      "interval_minutes": 1440,
+      "participation": "research",
+      "first_party": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "OFFICIAL-d3c83e5274ad24371c67",
+      "title": "杭州市住房保障和房产管理局 杭州市财政局关于预下达2025年住宅老旧电梯更新市级补助资金的通知",
+      "url": "https://www.hangzhou.gov.cn/art/2025/6/23/art_1229063415_4364996.html",
+      "published_at": "2025-06-23T02:16:00.000Z",
+      "retrieved_at": "2026-10-05T13:04:40.008142+00:00",
+      "content_status": "full_text",
+      "text_sha256": "f56ae16665662215d8a5ac4af63aa3863831e99827d10e62af1eb0e90bbd857e",
+      "raw_sha256": "3456c4fa5d3670c78981401de94864073182012535c3978ac98d25c7b6cedf55",
+      "locator": "HTML original body"
+    },
+    {
+      "id": "OFFICIAL-70a84f74327638ed92ae",
+      "title": "元成东盛家园老旧小区改造提升工程中标候选人公示[A3300000090006219001001]",
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001004/20260930/e028f84c-0896-45e9-9377-57d1174eebc9.html",
+      "published_at": "2026-09-30T01:56:00.000Z",
+      "retrieved_at": "2026-10-05T13:06:07.134989+00:00",
+      "content_status": "full_text",
+      "text_sha256": "409aa4a2d7d74e82a70cba3d87eb7ae99d5465f77f048346df48101c31a1a7f5",
+      "raw_sha256": "245db23338a4952f9bba1beefaf163640060d35177059a2d924e66ebda6bcc00",
+      "locator": "HTML .article-info"
+    },
+    {
+      "id": "OFFICIAL-c2219c1b06182f42c60e",
+      "title": "东方水岚佳苑老旧小区改造提升工程中标候选人公示[A3300000090006226001001]",
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001004/20261001/fab68b58-3f9d-4dd4-b20b-2d75b5ed7ea0.html",
+      "published_at": "2026-10-01T02:38:43.000Z",
+      "retrieved_at": "2026-10-05T13:06:07.150586+00:00",
+      "content_status": "full_text",
+      "text_sha256": "77304ef6bdbaa8d5ad103f1fd3837344b43954f06b2d1f3cce41617a11fc5903",
+      "raw_sha256": "b13e67f0c0832dd89b5b9a88f21c3ef70dc7d8d9dc352a9a09497eb529051c0e",
+      "locator": "HTML .article-info"
+    },
+    {
+      "id": "OFFICIAL-a33db23a99936d5d9fa7",
+      "title": "2026年桐庐县老旧小区综合改造提升工程-分水镇区域评分公示[A3300000090003000007001]",
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001014/20260930/d31ddea3-ec0f-49d7-ab2a-18df076d5055pfgs.html",
+      "published_at": "2026-09-30T01:35:06.000Z",
+      "retrieved_at": "2026-10-05T13:06:07.162982+00:00",
+      "content_status": "full_text",
+      "text_sha256": "cfa20018adb77a33fd66dbaeb9fbf736f626f16c116de05fd70b7f1f61266d0f",
+      "raw_sha256": "621af619291aa807c5066d5acc5eb915ac1c9099797d9847633cf417043408b8",
+      "locator": "HTML .article-info"
+    },
+    {
+      "id": "OFFICIAL-147c1d41c85afbd8ece4",
+      "title": "杭州市拱墅区人民政府办公室关于印发拱墅区2025年政府投资项目计划的通知",
+      "url": "https://www.gongshu.gov.cn/art/2025/1/22/art_1229138302_1849146.html",
+      "published_at": "2025-01-22T07:11:00.000Z",
+      "retrieved_at": "2026-10-05T13:04:40.002076+00:00",
+      "content_status": "full_text",
+      "text_sha256": "13d8277c13d08995c8e929ef0faa057b88de962a65b6341937b8da9ff85758d7",
+      "raw_sha256": "623c3ef10ec7bfb5bd78564d4791f1b2fd5f44290353502d4863d4892192187c",
+      "locator": "HTML original body"
+    },
+    {
+      "id": "OFFICIAL-38961183f98cfd23e384",
+      "title": "拱墅区2025年政府投资项目计划（PDF第1、9、10页摘录）",
+      "url": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web2096/site/attach/0/c702b42ba6294bf18327e879be96cebd.pdf",
+      "published_at": "2025-01-22T07:11:00.000Z",
+      "retrieved_at": "2026-10-05T13:04:40.188653+00:00",
+      "content_status": "excerpt",
+      "text_sha256": "ac656b13f77c7cf4eaf780c2e9221d35a6c484f8b4fa2b409a07aa91a7247c3e",
+      "raw_sha256": "21b0d12d5f4c1084e9e1a187d989f3d0b181fd38840a4c152fa9bbcff20f7f50",
+      "locator": "PDF pp.1,9,10; original p.10 rows4–6"
+    }
+  ],
+  "retrieval_notes": {
+    "provincial_search": {
+      "url": "https://ggzy.zj.gov.cn/inteligentsearch/rest/esinteligentsearch/getFullTextDataNew",
+      "method": "POST",
+      "verified": "200, JSON, 3 original announcement links",
+      "query": {
+        "title": "老旧小区",
+        "region_prefix": "3301",
+        "category_prefix": "002001",
+        "page_size": 3
+      },
+      "contract": "Official website internal search endpoint; no promised public API SLA or delta cursor"
+    },
+    "conditional_fetch": {
+      "url": "https://www.gongshu.gov.cn/art/2025/1/22/art_1229138302_1849146.html",
+      "conditional_status": 304,
+      "etag_saved": true,
+      "full_body_downloaded": false
+    },
+    "aihot_patterns": [
+      "separate publication/discovery time",
+      "stable original URL and document version",
+      "deduplicate repeated observation",
+      "source families",
+      "unscored intake before curated selection"
+    ],
+    "unconfirmed": [
+      "complete public old-neighborhood condition/engineering inspection database API",
+      "resident-level demand and ownership data",
+      "actual capital disbursement and acceptance records for selected plan rows"
+    ]
+  },
+  "reviewed_plan_rows": [
+    {
+      "project_name": "重机巷36号-38号老旧小区综合改造提升工程",
+      "implementer": "东新街道",
+      "building_area_m2": 6500,
+      "total_investment_plan_wan": 260,
+      "annual_2025_investment_plan_wan": 208,
+      "planned_start": "2025-05",
+      "planned_completion": "2025-12",
+      "pdf_page": 10,
+      "row_number": 4
+    },
+    {
+      "project_name": "新华苑小区老旧小区综合改造提升工程",
+      "implementer": "祥符街道",
+      "building_area_m2": 10200,
+      "total_investment_plan_wan": 408,
+      "annual_2025_investment_plan_wan": 326.4,
+      "planned_start": "2025-03",
+      "planned_completion": "2025-12",
+      "pdf_page": 10,
+      "row_number": 5
+    },
+    {
+      "project_name": "物资城配套房老旧小区综合改造提升工程",
+      "implementer": "文晖街道",
+      "building_area_m2": 2000,
+      "total_investment_plan_wan": 78,
+      "annual_2025_investment_plan_wan": 62.4,
+      "planned_start": "2025-03",
+      "planned_completion": "2025-12",
+      "pdf_page": 10,
+      "row_number": 6
+    }
+  ],
+  "plan_row_semantics": {
+    "source_url": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web2096/site/attach/0/c702b42ba6294bf18327e879be96cebd.pdf",
+    "original_group": "二、计划开工项目（129个）",
+    "total_investment_basis": "可研批复总投资或计划预估，无法仅由该表逐条区分",
+    "annual_investment_basis": "2025年计划投资，按财务发生口径",
+    "funding_confirmed": null,
+    "actual_completion": null,
+    "map_geometry": null,
+    "review_kind": "engineering source/page readback, not enterprise professional approval"
+  },
+  "raw_materials_location": "data/local/official-retrofit-20261005/"
+}

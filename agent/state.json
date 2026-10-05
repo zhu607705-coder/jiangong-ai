@@ -1,5 +1,5 @@
 {
-  "status": "preliminary_algorithm_optimization_verified",
+  "status": "official_retrofit_intake_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -32,7 +32,7 @@
     "scanned_image_OCR_engine_optional_source_capability",
     "real_user_import_visual_readback_waits_for_authorized_uploaded_material"
   ],
-  "next_task": "Use actual user-observed algorithm issues to choose a later bounded change; this pass is complete.",
+  "next_task": "Continue from actual named projects with official contracts/acceptance or authorized local condition data; initial intake complete.",
   "rule": "Do not infer app completion from local fixture tests.",
   "updated_at": "2026-10-05",
   "workspace": "/mnt/d/建工ai",
@@ -86,9 +86,10 @@
     "research/test_results/real-loading.json",
     "research/test_results/decision-integration.json",
     "research/test_results/introduction-alignment.json",
-    "research/test_results/preliminary-algorithm.json"
+    "research/test_results/preliminary-algorithm.json",
+    "research/test_results/official-retrofit-intake.json"
   ],
-  "current_delivery": "Source-grouped preliminary research rejects future/stale/foreign-object corrections and awards, including precomputed deadlines. 115 contract checks, 14 UI contract checks, actual Cuiyuan first-card/mobile readback and build passed; no added model calls or business-threshold changes.",
+  "current_delivery": "6 official retrofit originals captured and ingested into existing intelligence/corpus, 3 plan rows checked against PDF; re-observation creates no content version, one 304 verified; actual search/detail/mobile readback passed. No model calls, automated periodic collection or project-fact changes.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -118,7 +119,8 @@
     "T26": "completed_real_local_readback_verified",
     "T27": "completed_local_and_live_endpoint_verified",
     "T28": "completed_pdf_and_real_local_workbench_verified",
-    "T29": "completed_local_and_real_readback_verified"
+    "T29": "completed_local_and_real_readback_verified",
+    "T30": "completed_official_original_and_live_ui_verified"
   },
   "preview_url": "http://127.0.0.1:5173",
   "source_archive": {
@@ -236,7 +238,7 @@
     "push": "verified",
     "evidence": "research/test_results/github.json",
     "initial_publication_commit": "997cd834f8159b6e1e854c39549020ad6f1aabd3",
-    "current_source_branch": "codex/preliminary-record-isolation",
+    "current_source_branch": "codex/official-retrofit-intake",
     "pr1_merge_commit": "1408fee8537ebd47a6ec86c05c4091e4e5275436",
     "decision_integration_evidence": "research/test_results/qwen-integration.json",
     "pr2_merge_commit": "644cd56a69f8d77690f73efd9d8b1cb4e9ae6848",
@@ -540,5 +542,13 @@
     "evidence": "research/test_results/preliminary-algorithm.json",
     "model_calls_added": 0,
     "next_runnable_task": "Use actual user-observed algorithm issues to choose a later bounded change; this pass is complete."
+  },
+  "official_retrofit_intake": {
+    "status": "completed_official_original_and_live_ui_verified",
+    "source_catalog": "data/corpus/official-retrofit-source-catalog.json",
+    "evidence": "research/test_results/official-retrofit-intake.json",
+    "sources": 6,
+    "model_calls_added": 0,
+    "next_runnable_task": "Continue from actual named projects with official contracts/acceptance or authorized local condition data; initial intake complete."
   }
 }
