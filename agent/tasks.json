@@ -706,6 +706,27 @@
         "research/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T29",
+      "depends_on": [
+        "T28"
+      ],
+      "goal": "优化初步调研首卡记录处理，隔离未来更正与陈旧版本并按来源分组",
+      "status": "completed_local_and_real_readback_verified",
+      "expected_artifacts": [
+        "research/test_results/preliminary-algorithm.json"
+      ],
+      "definition_of_done": "有失败复现与边界回归；复用既有采购家族算法；共享记录一次分桶；实际本机项目输出读回及构建通过；不新增模型调用，不以回归构造声明全页速度。",
+      "write_scope": [
+        "packages/maps/preliminary-research.ts",
+        "tests/contracts/preliminary-research.test.ts",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/preliminary-algorithm.json"
     }
   ]
 }

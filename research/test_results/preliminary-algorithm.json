@@ -1,0 +1,73 @@
+{
+  "tested_at": "2026-10-05T11:38:38.349887+00:00",
+  "base_commit": "9ecbcea4324aa71560ff0eb4b5922811b94a0e24",
+  "scope": "Preliminary record admission and source dispatch only",
+  "changes": [
+    "Filter source, object scope, research cutoff, current content hash and explicit foreign object before procurement-family resolution",
+    "Recompute deadline_resolved from admitted original fields, preserving unmarked same-id corrections and truncated-source restrictions",
+    "Group shared external records by source_id once, preserving source/record order and explicit empty-array override"
+  ],
+  "complexity": {
+    "source_dispatch_before": "O(S*R)",
+    "source_dispatch_after": "O(R+S)",
+    "scope": "Shared-record dispatch only; family resolver unchanged",
+    "measured_page_speedup": null
+  },
+  "regression": {
+    "before": {
+      "tests": 17,
+      "passed": 10,
+      "failed": 7,
+      "purpose": "Constructed correctness regression cases, not business evaluation"
+    },
+    "after": {
+      "tests": 18,
+      "passed": 18
+    },
+    "integration": {
+      "files": [
+        "tests/contracts/procurement-claims.test.ts",
+        "tests/contracts/map-screening.test.ts"
+      ],
+      "tests": 97,
+      "passed": 97
+    },
+    "browser_contract": {
+      "checks": 14,
+      "passed": 14,
+      "viewports": [
+        1440,
+        390
+      ]
+    },
+    "production_build": "passed",
+    "diff_check": "passed"
+  },
+  "real_existing_project": {
+    "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "read_only": true,
+    "before_after_identical": true,
+    "observations": 3,
+    "lines": [
+      "阶段未提供 · 杭州翠苑一区（历史改造流程验证）",
+      "住宅楼 54 栋，公建 8 幢（2022年报道的改造工程范围；统计时点未提供）；加梯完成单元 32 单元（2024年报道的加梯完成单元口径；统计时点未提供）",
+      "参与窗口：未提供"
+    ],
+    "desktop_dom_readback": "passed",
+    "mobile": {
+      "viewport": 390,
+      "width": 390
+    },
+    "model_calls": 0,
+    "mutations": 0
+  },
+  "model_calls_added": 0,
+  "business_thresholds_changed": false,
+  "logs": [
+    "research/baseline_logs/preliminary-algorithm.log"
+  ],
+  "limits": [
+    "No provider-latency comparison or enterprise decision-quality evaluation performed"
+  ],
+  "next_task": "No required follow-on work for this bounded change."
+}
