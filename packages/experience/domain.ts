@@ -40,12 +40,18 @@ export function normalizeDraft(value: unknown): ExperienceDraft {
 /** Project ownership, immutable byte hash, locator and exact quote all have to match. */
 export function validateEvidence(draft: ExperienceDraft, documents: ParsedDocument[], projectId: string): void {
   const byId = new Map(documents.map(document => [document.id, document]))
+  const locatorsByDocument = new Map<string, Map<string, DocumentSlice>>()
   for (const field of draft.fields) {
     for (const evidence of field.evidence) {
       const document = byId.get(evidence.document_id)
       if (!document || document.project_id !== projectId) throw new ExperienceError(422, 'DOCUMENT_SCOPE', '引用必须来自该项目已导入的原始材料。')
       if (evidence.version !== document.sha256 || document.parser_result.source_hash !== document.sha256) throw new ExperienceError(409, 'DOCUMENT_VERSION_CONFLICT', '原文版本已变化，请重新提取并复核。')
-      const slice = documentSlices(document).find(item => item.locator === evidence.locator)
+      let locators = locatorsByDocument.get(document.id)
+      if (!locators) {
+        locators = new Map(documentSlices(document).map(slice => [slice.locator, slice]))
+        locatorsByDocument.set(document.id, locators)
+      }
+      const slice = locators.get(evidence.locator)
       if (!slice) throw new ExperienceError(422, 'LOCATOR_NOT_FOUND', '引用定位不存在。')
       if (!evidence.quote.trim() || !slice.text.includes(evidence.quote)) throw new ExperienceError(422, 'QUOTE_NOT_FOUND', '引文必须逐字存在于指定原文位置。')
     }

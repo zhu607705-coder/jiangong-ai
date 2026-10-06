@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import type { MapScreenContext } from '../../apps/host/generated/contracts'
+import type { MapScreenContext, MapScreenProfile } from '../../apps/host/generated/contracts'
 
 const ports=vi.hoisted(()=>({open:vi.fn(),collect:vi.fn(),decision:vi.fn()}))
 vi.mock('../../runtime/dsh/live-session',()=>({LiveSession:{open:ports.open}}))
@@ -14,14 +14,33 @@ import { analyzeMapContext, groundMapAssessment } from '../../services/map-scree
 import { MapScreeningService } from '../../services/map-screening/service'
 import { projectInput } from '../../packages/contracts/validate'
 import { config } from '../../apps/host/config'
-import { RESEARCH_POLICY } from '../../packages/research/public-sources'
+import { RESEARCH_POLICY, publicSearchPlan } from '../../packages/research/public-sources'
 import { DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
+import { SCREEN_PROFILES } from '../../packages/maps/screening-policy'
 
 const original={dataDir:config.dataDir,modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
 const directories:string[]=[]
 afterEach(async()=>{vi.useRealTimers();Object.assign(config,original);vi.resetAllMocks();for(const dir of directories.splice(0))await rm(dir,{recursive:true,force:true})})
 
 describe('map analyst external-data boundary',()=>{
+  it.each(['balanced','neighborhood'] as MapScreenProfile[])('uses the registered search plan without a planning model on cold and warm %s research',async profile=>{
+    const dir=await mkdtemp(join(tmpdir(),'map-code-first-'));directories.push(dir)
+    Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:false})
+    const source={id:'DOC',title:'甲小区公开维护资料',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:'甲小区居民设施维护安排已有公开资料。'}
+    ports.collect.mockResolvedValue({sources:[source],records:[],receipts:[],trace:{status:'success',queries:[],source_ids:['DOC'],warnings:[],reused:false}})
+    const call=vi.fn(async(stage:string)=>({value:stage==='research_plan'?{queries:[]}:{summary:'研究甲小区设施维护。',opportunities:[],cautions:[],unknowns:[],next_steps:[]}}))
+    ports.open.mockResolvedValue({calls:[],close:async()=>{},call,runReadCapability:async(_name:string,fn:(signal:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
+    const ctx={id:'CODE-FIRST',created_at:'2026-10-06T00:00:00Z',target:{label_origin:'public',label:'甲小区'},groups:[],local_projects:[]} as unknown as MapScreenContext
+    const cold=await analyzeMapContext(ctx,profile,new AbortController().signal)
+    expect(cold.status).toBe('completed')
+    expect(ports.collect).toHaveBeenCalledTimes(1)
+    expect(ports.collect.mock.calls[0][4]).toEqual(publicSearchPlan('甲小区',SCREEN_PROFILES[profile].label))
+    expect(call.mock.calls.map(([stage])=>stage)).toEqual(['map_initial_screen'])
+    const warm=await analyzeMapContext(ctx,profile,new AbortController().signal)
+    expect(warm.status).toBe('completed');expect(warm.research?.reused).toBe(true)
+    expect(ports.collect).toHaveBeenCalledTimes(1)
+    expect(call.mock.calls.map(([stage])=>stage)).toEqual(['map_initial_screen','map_initial_screen'])
+  })
   it.each([false,true].flatMap(scored=>[false,true].flatMap(restartBeforeRefresh=>[false,true].map(omitFreshMoney=>({scored,restartBeforeRefresh,omitFreshMoney})))))(
     'refreshes known expiry across both file caches: %j',async({scored,restartBeforeRefresh,omitFreshMoney})=>{
     vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
@@ -54,7 +73,7 @@ describe('map analyst external-data boundary',()=>{
     const service=new MapScreeningService(provider,dir,analyst,snapshot),signal=new AbortController().signal
     const target:any={kind:'point',longitude:120.16,latitude:30.28,radius_m:800,bounds:null,label:'甲办公楼',label_origin:'public',object_ref:'amap:A'}
     const ctx=await service.context(target,signal),first=await service.analyze(ctx.id,'balanced',signal)
-    const cacheKey=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name:'甲办公楼',target:ctx.target,profile:'balanced',day:ctx.created_at.slice(0,10)})).digest('hex')
+    const cacheKey=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name:'甲办公楼',target:ctx.target,profile:'balanced',day:ctx.created_at.slice(0,10),queries:publicSearchPlan('甲办公楼',SCREEN_PROFILES.balanced.label)})).digest('hex')
     const cacheDir=join(dir,'map-screening','public-research');await mkdir(cacheDir,{recursive:true})
     await writeFile(join(cacheDir,cacheKey+'.json'),JSON.stringify({saved_at:new Date().toISOString(),result:initialResearch}))
     vi.setSystemTime(new Date('2026-09-28T08:00:59Z'))
@@ -106,7 +125,7 @@ describe('map analyst external-data boundary',()=>{
     const previous:any={context_id:'TEST',profile:'balanced',status:'partial',created_at:ctx.created_at,model_calls:[],assessment:{summary:old.untrusted_text,opportunities:[],cautions:[],unknowns:[],next_steps:[]},research_sources:[old]}
     const fresh={...old,id:'NEW',url:'https://example.gov.cn/new',expires_at:undefined,untrusted_text:'科技大楼空调更新预算为180万元。'}
     const trace={status:'success',queries:[],source_ids:['NEW'],warnings:[],reused:false}
-    const cacheKey=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name:'科技大楼',target:ctx.target,profile:'balanced',day:ctx.created_at.slice(0,10)})).digest('hex')
+    const cacheKey=createHash('sha256').update(JSON.stringify({policy:RESEARCH_POLICY,name:'科技大楼',target:ctx.target,profile:'balanced',day:ctx.created_at.slice(0,10),queries:publicSearchPlan('科技大楼',SCREEN_PROFILES.balanced.label)})).digest('hex')
     const cacheDir=join(dir,'map-screening','public-research');await mkdir(cacheDir,{recursive:true})
     await writeFile(join(cacheDir,cacheKey+'.json'),JSON.stringify({saved_at:new Date().toISOString(),result:{sources:[old],records:[],receipts:[],trace}}))
     ports.collect.mockResolvedValue({sources:[fresh],records:[],receipts:[],trace})

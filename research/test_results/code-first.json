@@ -1,0 +1,140 @@
+{
+  "tested_at": "2026-10-06T04:41:14.738267+00:00",
+  "base_commit": "70d9ddbd1330c43f12ed0447914ffbc66b44318c",
+  "scan": {
+    "files": 120,
+    "lines": 13107,
+    "method": "All tracked first-party TS/TSX/Python inventory and model-boundary symbol scan; semantic main-path reviews delegated by module",
+    "model_boundary_files": [
+      "packages/context/model-compiler.ts",
+      "packages/document-evaluation/cli.ts",
+      "packages/document-evaluation/evaluate.ts",
+      "packages/experience/service.ts",
+      "packages/intelligence/pipeline.ts",
+      "packages/intelligence/service.ts",
+      "runtime/intelligence/judge.ts",
+      "runtime/workflows/live.ts",
+      "scripts/qwen-live-check.ts",
+      "services/capabilities/decision-model.ts",
+      "services/capabilities/intelligence-decision.ts",
+      "services/map-screening/analyst.ts"
+    ],
+    "manifest": "research/test_results/code-first-scan.json"
+  },
+  "implemented": [
+    "Registered map queries replace unconditional model research_plan and enter cache dependencies",
+    "Known official template extraction and local metadata organization with no scores or invented scope/occurrence",
+    "UNKNOWN and publication-stage conflicts stop scoring and auto-merge; PASS keeps independent double scoring",
+    "Per-document lazy locator indexing in evidence validation",
+    "Atomic metadata writes preserve scored/model analysis; stale UI request busy state released",
+    "Original Source handoff carries extracted records with alias scope and truncation flag"
+  ],
+  "verification": {
+    "related_regression_files": 11,
+    "related_regressions_passed": 180,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "real_organized_originals": 3,
+    "published_stage_conflicts_retained": 1,
+    "quote_parse_count": "One parse per cited document per validation; source/quote errors still reject",
+    "real_ui": {
+      "status": "passed",
+      "ordinary_template_fields_visible": true,
+      "local_button_roundtrip": true,
+      "conflicting_stage_retained": true,
+      "mobile": {
+        "viewport": 390,
+        "width": 390
+      },
+      "model_requests": 0,
+      "posts": [
+        {
+          "path": "/api/intelligence/items/ID-c2219c1b06182f42c60e0497/organize",
+          "method": "POST"
+        }
+      ]
+    },
+    "stale_response_regression": {
+      "status": "passed",
+      "checks": [
+        "refresh releases local-organization busy state",
+        "return/reopen releases busy state"
+      ],
+      "fixture_kind": "controlled delayed/aborted transport, actual official source",
+      "model_calls": 0
+    }
+  },
+  "real_readback": {
+    "status": "passed",
+    "rows": [
+      {
+        "id": "ID-70a84f74327638ed92aeb934",
+        "version": "57152b7373becc5c7303d306510ed8cafa5b78656fa5124678da773605a8482c",
+        "title": "元成东盛家园老旧小区改造提升工程中标候选人公示[A3300000090006219001001]",
+        "request": {
+          "status": "organized",
+          "issue": "CODE_STRUCTURED"
+        },
+        "status": "unscored",
+        "issue": "CODE_STRUCTURED",
+        "category": "procurement",
+        "object_id": "2604-330114-89-01-616645",
+        "action": "中标候选人公示",
+        "model": null,
+        "score": null
+      },
+      {
+        "id": "ID-c2219c1b06182f42c60e0497",
+        "version": "c52bfadf1cdb11fa0314d15f4a6d36eeaeaa09152acf05eacb17d0d2be45270c",
+        "title": "东方水岚佳苑老旧小区改造提升工程中标候选人公示[A3300000090006226001001]",
+        "request": {
+          "status": "organized",
+          "issue": "CODE_STRUCTURED"
+        },
+        "status": "unscored",
+        "issue": "CODE_STRUCTURED",
+        "category": "procurement",
+        "object_id": "2604-330114-89-01-189929",
+        "action": "中标候选人公示",
+        "model": null,
+        "score": null
+      },
+      {
+        "id": "ID-a33db23a99936d5d9fa7a021",
+        "version": "4aeece0c5ecdee7da996b70a7c16b4da9d79bc7225f9edf6c238be7f722cb691",
+        "title": "2026年桐庐县老旧小区综合改造提升工程-分水镇区域评分公示[A3300000090003000007001]",
+        "request": {
+          "status": "organized",
+          "issue": "PUBLICATION_STAGE_CONFLICT"
+        },
+        "status": "needs_review",
+        "issue": "PUBLICATION_STAGE_CONFLICT",
+        "category": "procurement",
+        "object_id": "2606-330122-04-01-957976",
+        "action": null,
+        "model": null,
+        "score": null
+      }
+    ],
+    "model_calls_added": 0,
+    "database_before": {
+      "documents": 37,
+      "versions": 38,
+      "pending": 0
+    },
+    "database_after": {
+      "documents": 37,
+      "versions": 38,
+      "pending": 0
+    },
+    "project_input_hashes_unchanged": true
+  },
+  "model_calls_added": 0,
+  "business_thresholds_changed": false,
+  "unimplemented_or_retained": [
+    "Free narrative context, scenario/critic/model comparison retain semantic model work",
+    "No enterprise effectiveness or whole-page speed comparison",
+    "Map fact-index and stream-projection CPU hotspots recorded without expanding this pass"
+  ],
+  "log": "research/baseline_logs/code-first.log"
+}

@@ -15,6 +15,7 @@ import { installIntelligenceHooks } from './research-bridge'
 import { datasetRows,evaluateSelection } from './evaluation'
 import { momentum } from '../../vendor/aihot/algorithms'
 import { PUBLIC_SOURCES } from '../research/public-sources'
+import {localOfficialStructure,localAnalysis} from './local-structure'
 
 export class IntelligenceService {
   readonly repo:IntelRepository
@@ -84,7 +85,18 @@ export class IntelligenceService {
       source_channels:new Set(items.map(e=>e.publisher_group)).size}))
     return {items:events.slice(offset,offset+limit),total_in_window:events.length,truncated:loaded.truncated,scope:q,mode:'postgres_fts_event_grouped',generated_at:new Date().toISOString()}
   }
-  async ingest(value:unknown,channelId?:string){await this.ready;const c=channelId?await this.repo.channel(channelId):undefined;if(channelId&&!c)throw new Error('CHANNEL_NOT_FOUND');const m=materialFromSource(value,c);return {id:m.id,version:m.version,created:await this.repo.put(m)}}
+  async ingest(value:unknown,channelId?:string){await this.ready;const c=channelId?await this.repo.channel(channelId):undefined;if(channelId&&!c)throw new Error('CHANNEL_NOT_FOUND');const m=materialFromSource(value,c),created=await this.repo.put(m)
+    if(created){const local=localOfficialStructure(m);if(local)await this.repo.saveLocalAnalysis(m.id,m.version,localAnalysis(local))}
+    return {id:m.id,version:m.version,created}
+  }
+  async organize(id:string,version:string){await this.ready
+    const entry=await this.repo.get(id,version);if(!entry)throw new Error('DOCUMENT_VERSION_NOT_FOUND')
+    if(entry.analysis.model||entry.analysis.selected||entry.analysis.score!==null||entry.analysis.scores.length||!['unscored','needs_review'].includes(entry.analysis.status))return {status:'already_analyzed'}
+    const local=localOfficialStructure(entry);if(!local)return {status:'not_supported'}
+    const analysis=localAnalysis(local)
+    if(canonical(entry.analysis)===canonical(analysis)||await this.repo.saveLocalAnalysis(id,version,analysis))return {status:'organized',issue:analysis.issue}
+    return {status:'already_analyzed'}
+  }
   async cancel(id:string){await this.ready;if(this.active?.id===id)this.active.controller.abort();await this.repo.cancel(id)}
   async attach(id:string,version:string,projectId:string,expected:string){await this.ready
     const entry=await this.repo.get(id,version);if(!entry)throw new Error('DOCUMENT_NOT_FOUND')

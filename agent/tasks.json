@@ -750,6 +750,31 @@
       ],
       "evidence_log": "research/test_results/official-retrofit-intake.json",
       "upstream_verification_required": false
+    },
+    {
+      "id": "T31",
+      "depends_on": [
+        "T30"
+      ],
+      "goal": "全量项目源码扫描并将明确任务落实为程序算法",
+      "status": "completed_source_scan_and_real_code_paths_verified",
+      "expected_artifacts": [
+        "docs/程序与模型分工扫描.md",
+        "research/test_results/code-first-scan.json",
+        "research/test_results/code-first.json"
+      ],
+      "definition_of_done": "自有源码清单和模型边界扫描；复用既有解析/检索/版本；定式结构与UNKNOWN路径有行为回归；原文和真实UI验收；不造得分/硬规则/训练标签；无新增模型调用，必要集成和构建通过。",
+      "write_scope": [
+        "packages/",
+        "services/",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/code-first.json",
+      "upstream_verification_required": false
     }
   ]
 }

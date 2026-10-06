@@ -1,0 +1,1027 @@
+{
+  "base_commit": "70d9ddbd1330c43f12ed0447914ffbc66b44318c",
+  "method": "All tracked first-party TS/TSX/Python inventory and model-boundary symbol scan; semantic main-path reviews delegated by module",
+  "files": [
+    {
+      "path": "apps/host/amap.ts",
+      "sha256": "50cf54357ff90cc1715c2fa123e95a2dbeaf3c34c8e658764a7ae1184a66581b",
+      "lines": 98,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/config.ts",
+      "sha256": "d760ab75aca8fa49fe142d53dfc4beef77ca0426f4882f4e897ef495f84a243e",
+      "lines": 28,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/experience.ts",
+      "sha256": "1e64f2a247373521778fbf3ef7a4b23ea0691c2371aa8a2ab95b0a4aec6bb015",
+      "lines": 68,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/generated/contracts.ts",
+      "sha256": "57a05d2ab0c5dc03c4bf2b150c03b42f193e82448819fb263aaf65ebda52a683",
+      "lines": 982,
+      "generated": true,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/ingest.ts",
+      "sha256": "ee3fcfd5c941f18a580b2adf72b998eddc9066d7fb67f66e840d610f709f4b83",
+      "lines": 55,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/intelligence.ts",
+      "sha256": "ed3607a862f6c10e675e747fc2fb2782cce888b66a239700e1f35dae0ab71a42",
+      "lines": 56,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/map-screening.ts",
+      "sha256": "5b1947c442f8b6ed4eed5efa2339dbc6a89ed3429f7b0d3695a73cf36fbeec9e",
+      "lines": 93,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/reports.ts",
+      "sha256": "8d52d1d4a48a253f9a8343a1fccaed88e871613e17ab356a34e424cd5b850949",
+      "lines": 55,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/server.ts",
+      "sha256": "0b0fd6561c9fec410439344c2281d4c5e27378ce03a22d1db81d7a3e4125bfeb",
+      "lines": 247,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/host/store.ts",
+      "sha256": "d53f33e0b50db3a49296adf3eb2ad071ce693257018022d4661c9973bd469bf5",
+      "lines": 49,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/App.tsx",
+      "sha256": "735ad4da1dd1909d544acdb06c84338103bfd60989522626189a6d291f6c870a",
+      "lines": 1437,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/api.ts",
+      "sha256": "e7e4b6080270639dab2912bf1670deec3343ef9b7dc51b5cbcb0793cc3c46da2",
+      "lines": 24,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/DecisionDashboard.tsx",
+      "sha256": "13ce83d8669aed2fdc2ca20eca5dfb8dd288b1689e6ab70291c2f8034511ad49",
+      "lines": 31,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/DecisionRoute.tsx",
+      "sha256": "d167af8e06c2c8106c56537ba81d4d62fa701e6cb9b7dac5b7d8e4890c73fd24",
+      "lines": 17,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/ExperienceLibrary.tsx",
+      "sha256": "33f5dceb2410edc1248bed0b4eb2f6853b513ab5b6913f00d8aeeb30e8079441",
+      "lines": 304,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/LifecycleSpine.tsx",
+      "sha256": "5b319b849f6ebb6588b73ca9e7e84b1c2e7b502c1d2ae01a46da8421e72d4537",
+      "lines": 12,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/NeighborhoodPanel.tsx",
+      "sha256": "c071a123d1280c136fdf82911cd4d7b5d367f378efb6242b89c1ef1ed88432af",
+      "lines": 67,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/ResearchActivity.tsx",
+      "sha256": "0c607b5ea680d1d8ef10f79817b4e6e55c33ea173d3e5affd18e57583f7acb57",
+      "lines": 15,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/WaitingScene.tsx",
+      "sha256": "9653fc77caf1b524291c2920dd1aff060a4ffb3e1a5824fc0e147c9b059a3164",
+      "lines": 76,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/components/WorkspaceFrame.tsx",
+      "sha256": "9918e5d3be05ff0b932841636c96c19ad216f67eb0117296305bcfc0b41901fb",
+      "lines": 48,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "sha256": "7017152378d90762c1e6544ee899fdd611f8de515ca33ba9ee884108c2906723",
+      "lines": 296,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/imports/evidence-coverage.ts",
+      "sha256": "7ac2096b6c1ae8994e8fd828c6b8f9b7fbd3ca88f1d4f6f447a898fb7ec1683a",
+      "lines": 154,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/imports/graph-model.ts",
+      "sha256": "257b52870cba2b99486da309d32296e82ae4ee99736767bb916f73ae1fcf53dd",
+      "lines": 297,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/intelligence/IntelligencePanel.tsx",
+      "sha256": "286dc19a76da582f8c566815e1e8f00056220d589b8ec7f1a0404ef304dfa764",
+      "lines": 61,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/main.tsx",
+      "sha256": "436264a0367677c6d238422b411dc258bdaa64d68d4a33990e6a8a1ccae9a708",
+      "lines": 7,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/AreaSelectionOverlay.tsx",
+      "sha256": "c5d2cf3f40e48cb69a1840250ebba5a502b7baec2c50d9f3960d7a368a21bdc4",
+      "lines": 33,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/DataSourcesPanel.tsx",
+      "sha256": "ed6a7b3f0da9dc523b0f98a43276db116a36655e466e166dcaa5875297899723",
+      "lines": 40,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/MapSettings.tsx",
+      "sha256": "5d4753ed6acb7b75b2b138f0efa992f7dc3274eeba783899899314f0a9bd29d1",
+      "lines": 30,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/MapWorkspace.tsx",
+      "sha256": "af6112db3f31dade66e9d21e9d18031d17e95ad3510a377b53e7f188e6e5d957",
+      "lines": 376,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "sha256": "4f83e857637413d7827b93507bd46a91d888136dce01a7646a2e4740e6b9f67f",
+      "lines": 129,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/ScreeningControls.tsx",
+      "sha256": "5f064453f428f3c210171f1b0a8c88c9ae31583f962a1c0328f518f48f70cdac",
+      "lines": 32,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/amap-client.ts",
+      "sha256": "9bfe4e0d912a3b392a8f6ef80e463bf6c287741f6b72fba6720f03b5266c1dfc",
+      "lines": 129,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/src/maps/screening-stream.ts",
+      "sha256": "b8ba9b016d906e103affb8cb216c927d9496ad89767cd25db2b8792b183203cc",
+      "lines": 31,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "apps/workspace/vite.config.ts",
+      "sha256": "ee49a45e258068b3b0f6943b8017ce5f94e796862a009c635b9d23a871eb646b",
+      "lines": 13,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/context/compiler.ts",
+      "sha256": "a91a7351ca787b10dd2a0f65cb7b1e0872b587c920ec50b6b6f895377c262f38",
+      "lines": 70,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/context/model-compiler.ts",
+      "sha256": "87a47b7e167dbfe5c6c0259feceeedeccb8006ef87447c108c75922c3d706876",
+      "lines": 37,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 9,
+          "symbols": [
+            "live.call"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "packages/contracts/validate.ts",
+      "sha256": "be7474012a1336b155d06f5f0af5e2dd5229cb9ac3a3fb9893a0de1587335469",
+      "lines": 129,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/corpus/corpus.ts",
+      "sha256": "7ee1b67609d5e930ce5f2adafb2bf506944d38ca254b078823fe3d3c6bfdf104",
+      "lines": 357,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/corpus/schema.ts",
+      "sha256": "d912c4c4b43f45a7de70f6e40ec13792eb953c35019db585537abe03f9ae5225",
+      "lines": 44,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/brief-view.ts",
+      "sha256": "8f7b2fd44615dd8522b9e675581e1626dc5794388e363dd36c329ee05cf731e7",
+      "lines": 116,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/dashboard.ts",
+      "sha256": "1b7a13b96efa6f93e95ab5ab6b0be772870b4c700119d78ab5fa61d3ed395e3a",
+      "lines": 59,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/evaluate.ts",
+      "sha256": "33f59527fbd1511855c55842b92b0a5be82f9bbe6e92652f96f2c81baf5228c5",
+      "lines": 87,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/model-policy.ts",
+      "sha256": "51b94a332e710f17b2e3a1c97ebf85045902d0a35e117867e0bb2d7bd6cbb6b3",
+      "lines": 76,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/probabilities.ts",
+      "sha256": "0bf25c05bf87459706d50f36adb21eff135c4d3279755889f7eb40a8cc817f58",
+      "lines": 29,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/project-dashboard.ts",
+      "sha256": "60992faf72d82b48b79f2dbf92e03f6842f67300679c476a0275176f9fe95706",
+      "lines": 33,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/route-labels.ts",
+      "sha256": "fa0fd42dd7552ab702405155320051808a8bcd68d4285a22f6d9fa8a5601c8b0",
+      "lines": 20,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/decision/structured-route.ts",
+      "sha256": "2bf4418eee598f9768bc03e1ec634f0db07c894f3edbc4d18dac9b632c5468ac",
+      "lines": 93,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/document-evaluation/cli.ts",
+      "sha256": "750b878b74eb29de4c4b1041569228e3ed3dece763678c9e473975bee1e40242",
+      "lines": 155,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 132,
+          "symbols": [
+            "runReadCapability"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "packages/document-evaluation/evaluate.ts",
+      "sha256": "c3bab6cebce2ce487d46b23c44e4cbb1e1bc23091656f9fb0569afcfb986cdb3",
+      "lines": 65,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 57,
+          "symbols": [
+            "requestDecisionQuestions"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "packages/document-evaluation/input.ts",
+      "sha256": "0b19ec2e4426f2e58814d3bfd5634fcd44616211df2d737bcd20e471c501f72a",
+      "lines": 68,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/document-evaluation/rubric.ts",
+      "sha256": "de25d0d75e5ef9732f9d579246571a87dde68497c8669c4f60c8367f8cfac0ce",
+      "lines": 48,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/experience/document-slices.ts",
+      "sha256": "785a6f13ffca5f0a1bb24b845574afc1125e9cabec0f420be64b256e0dedb588",
+      "lines": 36,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/experience/domain.ts",
+      "sha256": "b08024d7da310830292b692f5a9d173a9d809f6ac8b35a0b76425a5f46093980",
+      "lines": 116,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/experience/errors.ts",
+      "sha256": "852129241d6a54bac867c16c4381248f07ba6429b9581eecc27388b361db3e25",
+      "lines": 3,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/experience/repository.ts",
+      "sha256": "accae9f7f79ab7b7ff916bd39853efe93512590d0c32e4ce00e8ce9a8d7980c9",
+      "lines": 82,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/experience/service.ts",
+      "sha256": "6ab5fa61ffc04247d6084183200b091d018139efb3bada1b29b6ff70fb9e3955",
+      "lines": 130,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 40,
+          "symbols": [
+            "live.call"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "packages/intelligence/collectors.ts",
+      "sha256": "97dbc7b3bfcc8eff94f55cbcc9c8d23e3c225b3cf49c6689695b3d8b065c56c5",
+      "lines": 73,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/domain.ts",
+      "sha256": "0ad7409d68555db43b0bf9846420ddb2f739859339cd033aa7a5bff5eafaed68",
+      "lines": 147,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/evaluation.ts",
+      "sha256": "3096b5676c35952ecd9be1626a559771345ce030d26cc8af8ba6f704a7ee729a",
+      "lines": 64,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/material.ts",
+      "sha256": "556a4a07aea3173c0e0e6c94b49ddd9ded4ed4a6c23125521b61375f7a04a83b",
+      "lines": 31,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/pipeline.ts",
+      "sha256": "b9e945ebd71ddfbf1b0aa91aba8402f64ec3013be305c05d57a2cf4454a0f511",
+      "lines": 60,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 6,
+          "symbols": [
+            "analyzeMaterial"
+          ]
+        },
+        {
+          "line": 10,
+          "symbols": [
+            ".receipt"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "packages/intelligence/prompts.ts",
+      "sha256": "2fafb7c43f945e8643e71650facbf76ff267841e2401aef3a5269a5424d0847d",
+      "lines": 22,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/repository.ts",
+      "sha256": "17187b1f4bb9f3c0f6d5ef3abcdae50c079aabeb08d12f6772a423d7b929e7ad",
+      "lines": 130,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/research-bridge.ts",
+      "sha256": "80452a0e8a8a2bb5845e72e247762f768c39a69c72fed88d10826cb2502801fc",
+      "lines": 23,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/intelligence/service.ts",
+      "sha256": "0e0f9be8cfe85f9af07596097db4d2f76173327d5b9645a18bd016080a22526f",
+      "lines": 136,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 58,
+          "symbols": [
+            "analyzeMaterial"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "packages/maps/area-selection.ts",
+      "sha256": "db71e944c174ca2ffdd04f3eb5c1f454047305b4bdb7a1fef5c3c2a6a9db50bb",
+      "lines": 18,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/decision-factors.ts",
+      "sha256": "810a2b58cee7bb48e006e28499cc20fe8abb71f67b78400bf1e72f44abac3d45",
+      "lines": 138,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/object-identity.ts",
+      "sha256": "aaccc58e26271ccb3466736c4b71a8f949d74515ff1cb0a2b40009289d092f3b",
+      "lines": 16,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/preliminary-research.ts",
+      "sha256": "8c30d42e5ceb0d37b0ac02ea07b8f7c86fbab14eb8e354f62a30b3d81e1d0547",
+      "lines": 135,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/public-context.ts",
+      "sha256": "13243f592d7dd6fdcf8434eb1e4746f7ed27eda3b6cede50626c83ec380dfbb2",
+      "lines": 39,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/screening-errors.ts",
+      "sha256": "156bf6774075a0294f1eab951086d4567ef6b8820a6b4c285d5047287e1729a4",
+      "lines": 15,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/screening-policy.ts",
+      "sha256": "6b59535ecf2b036fd011f0c6bc5a4d8b7f7f455b9a54a6c577296e0788dd2158",
+      "lines": 72,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/maps/types.ts",
+      "sha256": "d10c0cc63e03a9bdc640d44b54733cc03e7edbd22e84e4b0e9a158b67bc22129",
+      "lines": 13,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/amounts.ts",
+      "sha256": "5486556d9f5561818fb4d3ac2023c5673ebcd5ebeec47e96dd71fbe49d3cc40c",
+      "lines": 69,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/claim-object.ts",
+      "sha256": "4b8993bda7cf56e2474dd37e8c3462c2f3beff4671e0876af0163c14fa019703",
+      "lines": 62,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/events.ts",
+      "sha256": "a107f88a76566732370b842a97e87a969980e8e1ec1fc50c28ae980a43fa6eb4",
+      "lines": 9,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/evidence.ts",
+      "sha256": "3f476f2ed2bc7644a755fe615a02310b6a767395efca3544d57ebc12da4b8c57",
+      "lines": 105,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/public-sources.ts",
+      "sha256": "a89cdaf6ef5d550a1fc96479a1929ea1b6ff945655c6d4e792c4b3e9706d0e9d",
+      "lines": 43,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/record-window.ts",
+      "sha256": "f0d2a6248f6d833c8097a5823b069d63eb51f9bd3d46ee8a9e4837bc2ec593bb",
+      "lines": 84,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/research/source-records.ts",
+      "sha256": "79470d1a4088f2c4d9bbeff3e81e84c52ad8f5a964ac685f8c513412ab8616a0",
+      "lines": 15,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "packages/retrofit/planning.ts",
+      "sha256": "9f6a76e06b7897368ec1c5679bf70ccae78e1c3867ed488fb6a9df5222c8091f",
+      "lines": 66,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "ported/retqa_slots.py",
+      "sha256": "b2ce9718fb71106ef56f01e4bceb3c2257fb6ff697a3515e4264a8aeb6682e29",
+      "lines": 65,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/dsh/bridge.ts",
+      "sha256": "d58f532464afeb086489a22fabf85b6fe1f2a3da5d5b6192f031849ba80cdaa6",
+      "lines": 87,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/dsh/live-session.ts",
+      "sha256": "e83d2f403ab3c0a7ed09ec61bf354254aa2c3dfbdecee1f6aa1f250acdc46b01",
+      "lines": 121,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/dsh/offline-adapter.ts",
+      "sha256": "6c182cb6cb3be0d575c9bbf8ccfb470e122b67f088e0d9d86622c8b9ec6f0e45",
+      "lines": 22,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/dsh/public-web.ts",
+      "sha256": "fe1aac8a7ebb407b2357961cefdd2d99a57170f1714abb47880bf7b39dbc8702",
+      "lines": 22,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/intelligence/judge.ts",
+      "sha256": "a7bc9a077947479956004005cc81a8cdd86a0b3a8c06f32360426f4d464d34e0",
+      "lines": 35,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 22,
+          "symbols": [
+            "judgeIntelligenceDecision",
+            "runReadCapability"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "runtime/roles/index.ts",
+      "sha256": "105a5a4d5477e682880c7025ce922ab0245203b909a675d8044b8a8a093f5fff",
+      "lines": 8,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/skills/investment-brief/index.ts",
+      "sha256": "5cc3301c128365a90b3e0d5c9f6718eb077b2c82a2906cb45136430205f8328f",
+      "lines": 19,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "runtime/workflows/live.ts",
+      "sha256": "630884fa8d507d02376f2d4277ff01b5a881150dcbee2d2e2fc9a817de9dca5c",
+      "lines": 205,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 92,
+          "symbols": [
+            "evaluateDecision",
+            "runReadCapability"
+          ]
+        },
+        {
+          "line": 127,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 133,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 153,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 155,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 162,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 169,
+          "symbols": [
+            "live.call"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "runtime/workflows/run.ts",
+      "sha256": "7d981321471e90039e46cf58892306d5cecfbadeac465d1ed7537a26d3462edb",
+      "lines": 88,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/benchmark-coverage.ts",
+      "sha256": "52308528b321d5af9ec0a3f02be88217b1b670d8866e5c61024ccd51151fc4be",
+      "lines": 19,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/build-introduction.py",
+      "sha256": "7e8c4884f96c10e33110c285220d1d8b0d6e621715d5feff47db0224bf9d9023",
+      "lines": 97,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/check-python.ts",
+      "sha256": "b35ef06820c93e0f1202761755aedd353cec5af6f8d19ce74d52173ad1641f96",
+      "lines": 5,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/corpus-search.py",
+      "sha256": "5f17ec566329ee8b0d43ae9d4686bca4390b870bc2883975ff316519df87c2e4",
+      "lines": 23,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/corpus.ts",
+      "sha256": "a566b7ea95aec2330812945d13b3b56e979cbae1577992df4e90211d20f63ac3",
+      "lines": 71,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/dev.ts",
+      "sha256": "8f30695a27a77f0e2dcd3efb6bf208f2071bfec32d33a8c5ef6cf6d9467123fd",
+      "lines": 26,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/evaluate-documents.ts",
+      "sha256": "77555384a3135d12c2c124e858e3a11a5fea781be3bc0c672cadac68b4487d3b",
+      "lines": 6,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/generate-contracts.ts",
+      "sha256": "12f18fb5031c60229129b7af0a044a2b75a83d2b6a0cf81cb2931d22a1e0a28a",
+      "lines": 18,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/intelligence.ts",
+      "sha256": "426e9042d6fb8747bdb9463d649768d989fb6df0230c80e16175d1051716520d",
+      "lines": 21,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/live-check.py",
+      "sha256": "1e2aa72a6216f291d5e5ccbb34ede54b1bdafbc083275eff17608df26f6d1c77",
+      "lines": 91,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/live-smoke.ts",
+      "sha256": "a3f52edda5da2347a38faaea3126db42a19e424ec23fd5d12788d020cb879321",
+      "lines": 38,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/package-source.py",
+      "sha256": "1d3084b3b5b33f286fcb63ff707bfe453d54420f6619c1108272272a90e004c9",
+      "lines": 47,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "scripts/qwen-live-check.ts",
+      "sha256": "05be9423e9f14b7e544c47b50fb464885a847930e69f6dff8b239d09d31dee53",
+      "lines": 20,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 14,
+          "symbols": [
+            "evaluateDecision",
+            "runReadCapability"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/upstream-aihot-audit.ts",
+      "sha256": "07ad9a0eaab204890333de7d0a7dc2952202bdeea902f6e7fcd48666d862bd43",
+      "lines": 18,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/adapters/public-records.ts",
+      "sha256": "c6ed9743c82b31c844f03cf27dc1570ea479333395ac7084d7ba7d79a23bbf94",
+      "lines": 172,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/analysis.py",
+      "sha256": "a2d222bd3cb01e5ebaa15c15428b65181edd44a2f4706511cf6d041d802472f6",
+      "lines": 176,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/app.py",
+      "sha256": "70e89b5f0934d6cbc68b33330fa7c1ecb8ff26959d191953ee84d4a34cc3198e",
+      "lines": 103,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/decision-model.ts",
+      "sha256": "7687828b5b14f75ffaa7306d2a0db0cb714a2c26017985a3d7ad0d6bbd7eb814",
+      "lines": 113,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 55,
+          "symbols": [
+            "evaluateDecision"
+          ]
+        },
+        {
+          "line": 63,
+          "symbols": [
+            "requestDecisionQuestions"
+          ]
+        },
+        {
+          "line": 75,
+          "symbols": [
+            "requestDecisionQuestions"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/capabilities/generated/contracts.py",
+      "sha256": "0bda9f995e2a0f2445f4011d35f69fdc2145d1d82a2ef879834a9f75a2ce17df",
+      "lines": 1333,
+      "generated": true,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/intelligence-decision.ts",
+      "sha256": "47c970e65248cebae9f78382b776cddf6a31514ccbed44be79b1d1a07fdd466a",
+      "lines": 17,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 10,
+          "symbols": [
+            "judgeIntelligenceDecision"
+          ]
+        },
+        {
+          "line": 11,
+          "symbols": [
+            "requestDecisionQuestions"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/capabilities/map_regions.py",
+      "sha256": "d58483f18f7c0d30a5d800d50a344034422e4ebd0488db293d91ce48c10ab0cc",
+      "lines": 230,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/parsers.py",
+      "sha256": "093b0ea587c99b0644d0f12bbbe996d6461f969b07d56916fc51c144bcf5c82d",
+      "lines": 61,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/research.ts",
+      "sha256": "51f1dc95a3848e0671e0c7a160d680b7278ad07a1d8f11f14aaa66fb7f2f318e",
+      "lines": 148,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/capabilities/scope.ts",
+      "sha256": "466214afd8e942201599466010cb786968a575f7f9c5ebe90c0153a639baacd6",
+      "lines": 33,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/map-screening/analyst.ts",
+      "sha256": "31c531c36cc2fa60b0249a8bb3d789b78d6ddd3df56cb70fec1346c8fbdb8033",
+      "lines": 199,
+      "generated": false,
+      "model_boundary_refs": [
+        {
+          "line": 128,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 132,
+          "symbols": [
+            "runReadCapability"
+          ]
+        },
+        {
+          "line": 154,
+          "symbols": [
+            "live.call"
+          ]
+        },
+        {
+          "line": 188,
+          "symbols": [
+            "evaluateDecision",
+            "runReadCapability"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/map-screening/project-evidence.ts",
+      "sha256": "2a81932ff3aec285f333d68aa4367b7c3d88e2a470a70220eae75e632e54abdc",
+      "lines": 82,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/map-screening/provider.ts",
+      "sha256": "158649b8741359f033393b91bed4c51a457427d71d0f6b3b08dd94bd9895f1c8",
+      "lines": 46,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/map-screening/regions.ts",
+      "sha256": "f1fef84a55a2a8c06cbe5012fae6d8f1d9700abd83850a467d60e97e09967877",
+      "lines": 34,
+      "generated": false,
+      "model_boundary_refs": []
+    },
+    {
+      "path": "services/map-screening/service.ts",
+      "sha256": "5838c9b588227bfb1646c971713d922da9bab195a0abeaa904611319d8c2908f",
+      "lines": 360,
+      "generated": false,
+      "model_boundary_refs": []
+    }
+  ],
+  "count": 120,
+  "model_boundary_files": [
+    "packages/context/model-compiler.ts",
+    "packages/document-evaluation/cli.ts",
+    "packages/document-evaluation/evaluate.ts",
+    "packages/experience/service.ts",
+    "packages/intelligence/pipeline.ts",
+    "packages/intelligence/service.ts",
+    "runtime/intelligence/judge.ts",
+    "runtime/workflows/live.ts",
+    "scripts/qwen-live-check.ts",
+    "services/capabilities/decision-model.ts",
+    "services/capabilities/intelligence-decision.ts",
+    "services/map-screening/analyst.ts"
+  ]
+}
