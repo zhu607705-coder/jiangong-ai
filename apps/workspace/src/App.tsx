@@ -823,7 +823,7 @@ export default function App() {
                 <section className="content-panel model-comparison">
                   <div className="kicker">EVIDENCE-BOUND COMPARISON</div>
                   <h2>依据与条件比较</h2>
-                  <p className="comparison-intro">把实施、建筑、需求、组织、企业和资源放在同一路径下核对；来源指向本次冻结的原文。</p>
+                  <p className="comparison-intro">{brief.comparisonScope}</p>
                   <div className="synthesis-paths">{brief.paths.map(path =>
                     <article className="synthesis-path" key={path.id}>
                       <h3>{path.title}</h3>

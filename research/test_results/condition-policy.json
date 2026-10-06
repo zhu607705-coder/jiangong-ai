@@ -1,0 +1,100 @@
+{
+  "tested_at": "2026-10-06T05:56:46.699129+00:00",
+  "focus": "Business condition gates and dimension settings",
+  "policy_file": "packages/retrofit/policy.ts",
+  "action_policy": "neighborhood-action-v2",
+  "comparison_policy": "neighborhood-comparison-v1",
+  "dimensions": [
+    "demand",
+    "supply",
+    "adaptation",
+    "implementation",
+    "operations",
+    "resources"
+  ],
+  "changes": [
+    "One registry for dimension names/questions/evidence/confirmation/veto/investigation",
+    "Pure condition evaluation separates confirmed/unmet/missing/conflict/veto and professional-rule confirmation",
+    "Reject shared foreign targets, explicit area/background sources and mismatched source object_refs",
+    "Current comparison has six dimensions and covers every candidate; legacy without policy remains legacy",
+    "Existing model engineering thresholds separated without numeric changes",
+    "Current policy versions enter map signatures and live artifacts"
+  ],
+  "verification": {
+    "javascript_regressions": 185,
+    "python_regressions": 70,
+    "production_build": "passed",
+    "final_types": "passed",
+    "browser_contract_flows": 9,
+    "real_ui": {
+      "status": "passed",
+      "project": "P-HZ-CUIYUAN-HISTORY-20261002",
+      "evaluated_as_of": "2026-10-02",
+      "six_dimension_cards": 6,
+      "independent_rule_visible": true,
+      "no_missing_zero": true,
+      "mobile": {
+        "viewport": 390,
+        "width": 390
+      },
+      "model_calls": 0,
+      "posts": []
+    },
+    "real_project": {
+      "project": "P-HZ-CUIYUAN-HISTORY-20261002",
+      "as_of": "2026-10-02",
+      "rule_version": "neighborhood-action-v2",
+      "dimensions": [
+        {
+          "key": "demand",
+          "label": "居民需求",
+          "state": "missing"
+        },
+        {
+          "key": "supply",
+          "label": "公共服务",
+          "state": "missing"
+        },
+        {
+          "key": "adaptation",
+          "label": "居住工程",
+          "state": "missing"
+        },
+        {
+          "key": "implementation",
+          "label": "实施协同",
+          "state": "missing"
+        },
+        {
+          "key": "operations",
+          "label": "长效维护",
+          "state": "missing"
+        },
+        {
+          "key": "resources",
+          "label": "资金交付",
+          "state": "missing"
+        }
+      ],
+      "professional_rule": "missing",
+      "decision": "supplement",
+      "missing": [
+        "resident_needs_confirmed",
+        "engineering_review_passed",
+        "service_gap_confirmed",
+        "scope_and_consent_confirmed",
+        "funding_confirmed",
+        "maintenance_confirmed",
+        "rule_set_confirmed"
+      ],
+      "admission_notes": [],
+      "model_calls": 0
+    },
+    "contract_generation": "passed"
+  },
+  "model_calls_added": 0,
+  "new_professional_numeric_cutoffs": false,
+  "legacy_comparisons_relabelled": false,
+  "professional_review_claimed": false,
+  "log": "research/baseline_logs/condition-policy.log"
+}

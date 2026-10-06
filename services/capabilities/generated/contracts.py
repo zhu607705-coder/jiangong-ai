@@ -405,6 +405,9 @@ class Criterion(StrEnum):
     organization = 'organization'
     enterprise = 'enterprise'
     resources = 'resources'
+    supply = 'supply'
+    adaptation = 'adaptation'
+    operations = 'operations'
 
 
 class ComparisonCriterion(BaseModel):
@@ -418,6 +421,12 @@ class ComparisonCriterion(BaseModel):
 class ComparisonPacket(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
+    )
+    policy_version: str | None = Field(
+        None,
+        description='比较维度的语义版本；历史结果未提供时保留旧六维，不按当前项目方向重新标注。',
+        max_length=120,
+        min_length=1,
     )
     summary: str = Field(..., max_length=96)
     criteria: list[ComparisonCriterion] = Field(..., max_length=6, min_length=3)

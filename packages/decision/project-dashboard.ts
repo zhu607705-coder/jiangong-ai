@@ -1,4 +1,6 @@
 import type { DimensionEvidence, ProjectInput, ResearchDimension } from '../../apps/host/generated/contracts'
+import {retrofitFactUsable} from '../retrofit/planning'
+import {factAppliesToTarget} from '../maps/object-identity'
 import { eligibleDimension } from '../research/evidence'
 import { documentSlices } from '../experience/document-slices'
 import { NEIGHBORHOOD_FACTOR_FIELDS } from '../maps/decision-factors'
@@ -13,6 +15,7 @@ export function projectDashboardInput(project:ProjectInput):DashboardInput|undef
   for(const key of Object.keys(FACT_KINDS) as ResearchDimension[]){
     for(const fact of project.facts){
       if(!FACT_KINDS[key].includes(fact.kind)&&!NEIGHBORHOOD_FACTOR_FIELDS[key].some(field=>fact.kind==='retrofit.'+field))continue
+      if(!factAppliesToTarget(fact,project,context.target)||fact.kind.startsWith('retrofit.')&&!retrofitFactUsable(project,fact))continue
       if(fact.epistemic_status!=='fact'||fact.object_ref!==object||!fact.locator||!Number.isFinite(Date.parse(fact.observed_at||''))||Date.parse(fact.observed_at!)>cutoff)continue
       const source=project.sources.find(s=>s.id===fact.source_id)
       if(!source||source.visibility!=='public'||source.data_class!=='public'||source.synthetic||!source.untrusted_text||!(source.hash||source.raw_hash))continue

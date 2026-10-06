@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { ProjectInput, DecisionDashboard as Dashboard } from '../../../host/generated/contracts'
-import { calculateRetrofitPlan, retrofitAdvice, type RetrofitPlan } from '../../../../packages/retrofit/planning'
+import { calculateRetrofitPlan, evaluateRetrofitConditions, retrofitAdviceFromConditions, type RetrofitPlan } from '../../../../packages/retrofit/planning'
 import { dashboardDimensions, isNeighborhoodDashboard, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../packages/decision/dashboard'
 import DecisionDashboard from './DecisionDashboard'
 import './neighborhood.css'
@@ -36,7 +36,9 @@ export default function NeighborhoodPanel({ project, dashboard, draft, onDraftCh
   onDraftChange: (update: (current: NeighborhoodDraft) => NeighborhoodDraft) => void
   onEvidence: (refs: string[]) => void
 }) {
-  const advice = retrofitAdvice(project)
+  const conditions=useMemo(()=>evaluateRetrofitConditions(project),[project])
+  const advice = retrofitAdviceFromConditions(conditions)
+  const conditionLabels={confirmed:'已满足',unmet:'条件未成立',missing:'缺少依据',conflict:'资料有分歧',veto:'存在否决条件'}
   const radar:Dashboard = dashboard && isNeighborhoodDashboard(dashboard.policy_version)?dashboard:{policy_version:NEIGHBORHOOD_DASHBOARD_POLICY,purpose:'老旧小区综合整治提升',model:'尚未评估',request_id:'not-evaluated',status:'partial',dimensions:dashboardDimensions(NEIGHBORHOOD_DASHBOARD_POLICY).map(d=>({key:d.key,value:null,confidence:null,basis:d.question,evidence_refs:[]}))}
   const { inputs, comparison } = draft
   const [error,setError] = useState('')
@@ -55,6 +57,18 @@ export default function NeighborhoodPanel({ project, dashboard, draft, onDraftCh
   return <section className="neighborhood-panel" aria-label="老旧小区改造工作台">
     <header><small>老旧小区综合整治提升</small><h3>{advice.label}</h3><p>先比较本方案的居民需求、工程与实施前置条件，再安排尽调资源。</p></header>
     <div className="retrofit-reasons">{advice.reasons.map(reason=><div key={reason.text}><p>{reason.text}</p>{reason.evidence_refs.length>0&&<button onClick={()=>onEvidence(reason.evidence_refs)}>查看触发依据（{reason.evidence_refs.length}）</button>}</div>)}</div>
+    <details className="retrofit-condition-panel" aria-label="六维条件与行动门槛">
+      <summary>条件与行动门槛 · 截止 {conditions.evaluated_as_of}</summary>
+      <p>每维按本项目确认事实核对。独立否决优先；条件未成立、资料缺失或冲突时先补查；六维条件与专业规则确认均满足才进入进一步尽调。</p>
+      <div className="retrofit-condition-grid">{conditions.dimensions.map(d=><article key={d.key}>
+        <header><strong>{d.label}</strong><span>{conditionLabels[d.state]}</span></header>
+        {d.checks.map(check=><p key={check.key}>{check.label}：{conditionLabels[check.state]}</p>)}
+        {d.evidence_refs.length>0&&<button onClick={()=>onEvidence(d.evidence_refs)}>核对来源（{d.evidence_refs.length}）</button>}
+      </article>)}</div>
+      <p><strong>本方案专业规则复核：</strong>{conditionLabels[conditions.rule_confirmation.state]}。独立于六维适配等级。</p>
+      {conditions.rule_confirmation.evidence_refs.length>0&&<button onClick={()=>onEvidence(conditions.rule_confirmation.evidence_refs)}>核对专业规则依据</button>}
+      {conditions.admission_notes.length>0&&<details><summary>未参与条件判断的资料（{conditions.admission_notes.length}）</summary>{conditions.admission_notes.map((note,i)=><p key={i}>{note.reason} · 来源 {note.source_id}{note.locator?' · '+note.locator:''}</p>)}</details>}
+    </details>
     <DecisionDashboard value={radar} onEvidence={onEvidence}/>
     {advice.missing.length>0&&<><p>本轮优先：{advice.missing.slice(0,2).map(check=>check.label).join('、')}。</p><details><summary>核查材料与交付物（{advice.missing.length}）</summary><div className="retrofit-checks">{advice.missing.map(check=><article key={check.key}><strong>{check.label}</strong><p>{check.where}</p><small>补齐后检查：{check.impact}</small></article>)}</div></details></>}
     <p className="retrofit-method">六维图用于逐项观察；行动建议按项目范围内的确认事实与规则判定。明确否决条件优先，缺失资料保持待补充。规则：{advice.rule_version}</p>

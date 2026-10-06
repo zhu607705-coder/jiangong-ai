@@ -1,37 +1,105 @@
-import type { Fact, ProjectInput, DecisionPacket } from '../../apps/host/generated/contracts'
+import type { Fact, ProjectInput, DecisionPacket, ResearchDimension, Source } from '../../apps/host/generated/contracts'
+import { factAppliesToTarget } from '../maps/object-identity'
+import { NEIGHBORHOOD_DIMENSION_POLICY, RETROFIT_CHECKS, RETROFIT_VETOES, RETROFIT_RULE_VERSION, type RetrofitCheckKey, type RetrofitVetoKey } from './policy'
+export { RETROFIT_CHECKS, RETROFIT_VETOES, RETROFIT_RULE_VERSION } from './policy'
 
-export const RETROFIT_RULE_VERSION = 'neighborhood-action-v1'
-export const RETROFIT_CHECKS = [
-  { key: 'resident_needs_confirmed', label: '居民需求与异议', where: '分楼栋问卷、社区走访及异议台账', impact: '改造内容、优先顺序与居民负担' },
-  { key: 'engineering_review_passed', label: '方案相关工程评审', where: '原图纸、专业检测及消防/管网核查', impact: '工程范围、安全前置条件与施工组织' },
-  { key: 'service_gap_confirmed', label: '公共服务缺口', where: '设施名录、容量和开放时间、实测步行路线', impact: '养老托育、无障碍和配套设施配置' },
-  { key: 'scope_and_consent_confirmed', label: '实施范围与居民协同', where: '年度计划、权属资料、方案公示及居民协商记录', impact: '实施主体、项目边界与扰民安排' },
-  { key: 'funding_confirmed', label: '预算与资金落实', where: '工程量预算、资金批准/分摊确认及拨付安排', impact: '资金缺口、分期与交付范围' },
-  { key: 'maintenance_confirmed', label: '长效维护安排', where: '设施接收、物业合同、管护预算及收费协商', impact: '改造后的责任、年度支出和持续使用' },
-  { key: 'rule_set_confirmed', label: '本方案专业规则复核', where: '企业人员与专业人员确认的规则版本及适用范围', impact: '是否允许推进尽调的业务门槛' },
-] as const
-const VETOES = { safety_veto: '已确认的方案安全否决条件', rights_veto: '已确认的权属或实施权限否决条件', protection_veto: '已确认的保护要求与方案冲突' } as const
 export type RetrofitAdvice = { decision: 'proceed'|'supplement'|'defer'; label: string; rule_version: string; reasons: { text: string; evidence_refs: string[] }[]; missing: { key: string; label: string; where: string; impact: string }[] }
 export type RetrofitEvidence = Pick<ProjectInput, 'project_id'|'as_of'|'synthetic'|'sources'|'facts'>
-export function retrofitFactUsable(project: RetrofitEvidence, fact: Fact): boolean {
-  const source = project.sources.find(s => s.id === fact.source_id), date = Date.parse(fact.observed_at || ''), asOf = Date.parse(project.as_of + 'T23:59:59Z')
-  return !!source && !!(source.hash || source.raw_hash) && source.synthetic === project.synthetic && source.content_status !== 'metadata_only'
-    && fact.epistemic_status === 'fact' && typeof fact.value === 'boolean' && fact.object_ref === `project:${project.project_id}` && !!fact.locator
-    && Number.isFinite(date) && date <= asOf && source.date_status !== 'conflict'
-    && (!source.published_at || Number.isFinite(Date.parse(source.published_at)) && Date.parse(source.published_at) <= asOf)
-    && (!source.expires_at || Number.isFinite(Date.parse(source.expires_at)) && Date.parse(source.expires_at) > asOf)
+export type RetrofitConditionState = 'confirmed'|'unmet'|'missing'|'conflict'
+export type RetrofitConditionCheck = { key: RetrofitCheckKey; label: string; where: string; impact: string; state: RetrofitConditionState; fact_refs: string[]; evidence_refs: string[] }
+export type RetrofitVetoCondition = { key: RetrofitVetoKey; label: string; state: 'veto'|'clear'|'missing'|'conflict'; fact_refs: string[]; evidence_refs: string[] }
+export type RetrofitDimensionCondition = { key: ResearchDimension; label: string; state: RetrofitConditionState|'veto'; checks: RetrofitConditionCheck[]; evidence_refs: string[] }
+export type RetrofitAdmissionNote = { fact_id: string; source_id: string; locator: string|null; reason: string }
+export type RetrofitConditions = {
+  evaluated_as_of: string; rule_version: string; dimensions: RetrofitDimensionCondition[];
+  rule_confirmation: RetrofitConditionCheck; checks: RetrofitConditionCheck[]; vetoes: RetrofitVetoCondition[];
+  evidence_refs: string[]; unusable_fact_refs: string[]; admission_notes: RetrofitAdmissionNote[];
 }
-/** A business gate over explicit project-bound facts; fit scores never enter it. */
+const unique = (refs: string[]) => [...new Set(refs)]
+function cutoff(asOf: string): number {
+  const at = Date.parse(asOf + 'T23:59:59Z')
+  return /^\d{4}-\d{2}-\d{2}$/.test(asOf) && Number.isFinite(at) && new Date(at).toISOString().slice(0, 10) === asOf ? at : NaN
+}
+function admissionReason(project: RetrofitEvidence, fact: Fact, source: Source|undefined, asOf: number): string|null {
+  const objectRef = `project:${project.project_id}`
+  if (!Number.isFinite(asOf)) return '项目研究截止时点无效'
+  if (!source) return '来源未关联当前项目'
+  if (!(source.hash || source.raw_hash)?.trim()) return '来源版本未提供'
+  if (source.synthetic !== project.synthetic) return '来源与项目的合成数据标记不一致'
+  if (source.content_status === 'metadata_only' || source.parse_status === 'ocr_required') return '来源尚无可读正文证据'
+  if (source.evidence_scope === 'area' || source.evidence_scope === 'background') return '区域或背景来源不能确认本项目条件'
+  if (source.object_refs !== undefined && !source.object_refs.includes(objectRef)) return '来源明确对象不包含当前项目'
+  if (fact.epistemic_status !== 'fact' || typeof fact.value !== 'boolean') return '未形成明确的布尔确认事实'
+  if (fact.object_ref !== objectRef) return '事实未精确绑定当前项目'
+  if (fact.scope_kind !== undefined && !['object', 'project', 'shared'].includes(fact.scope_kind)) return '事实作用域未登记'
+  if (!factAppliesToTarget(fact, project, { object_ref: objectRef, boundary_source: objectRef })) return '共享事实不适用于当前项目'
+  if (!fact.locator?.trim()) return '原文定位未提供'
+  const observed = Date.parse(fact.observed_at || '')
+  if (!Number.isFinite(observed) || observed > asOf) return '观察时点缺失、无效或晚于研究截止'
+  if (source.date_status === 'conflict') return '来源日期存在分歧'
+  if (source.published_at && (!Number.isFinite(Date.parse(source.published_at)) || Date.parse(source.published_at) > asOf)) return '来源发布日期无效或晚于研究截止'
+  if (source.expires_at && (!Number.isFinite(Date.parse(source.expires_at)) || Date.parse(source.expires_at) <= asOf)) return '来源有效期无效或已届满'
+  return null
+}
+export function retrofitFactUsable(project: RetrofitEvidence, fact: Fact): boolean {
+  return admissionReason(project, fact, project.sources.find(source => source.id === fact.source_id), cutoff(project.as_of)) === null
+}
+/** Evaluate the existing explicit confirmations once. Missing/negative/conflict
+ * remain distinct; fit scores, counts and policy aspirations never become facts. */
+export function evaluateRetrofitConditions(project: RetrofitEvidence): RetrofitConditions {
+  const sources = new Map<string, Source>()
+  // Match the legacy find() ownership rule even for a malformed duplicate ID.
+  for (const source of project.sources) if (!sources.has(source.id)) sources.set(source.id, source)
+  const registered = new Set([...RETROFIT_CHECKS.map(check => 'retrofit.' + check.key), ...Object.keys(RETROFIT_VETOES).map(key => 'retrofit.' + key)])
+  const byKind = new Map<string, Fact[]>(), asOf = cutoff(project.as_of), admission_notes: RetrofitAdmissionNote[] = [], admitted: Fact[] = []
+  const dimensionByKind = new Map(NEIGHBORHOOD_DIMENSION_POLICY.flatMap(policy => [...policy.confirmationKeys, ...policy.vetoKeys].map(key => ['retrofit.' + key, policy.key] as const)))
+  const dimensionRefs = new Map<ResearchDimension, string[]>()
+  for (const fact of project.facts) {
+    if (!registered.has(fact.kind)) continue
+    const reason = admissionReason(project, fact, sources.get(fact.source_id), asOf)
+    if (reason) { admission_notes.push({ fact_id: fact.id, source_id: fact.source_id, locator: fact.locator || null, reason }); continue }
+    const rows = byKind.get(fact.kind) || []
+    rows.push(fact); byKind.set(fact.kind, rows); admitted.push(fact)
+    const dimension = dimensionByKind.get(fact.kind)
+    if (dimension) { const refs = dimensionRefs.get(dimension) || []; refs.push(fact.source_id); dimensionRefs.set(dimension, refs) }
+  }
+  function claims(key: string) {
+    const rows = byKind.get('retrofit.' + key) || []
+    let positive = false, negative = false
+    for (const row of rows) { positive ||= row.value === true; negative ||= row.value === false }
+    return { rows, positive, negative, fact_refs: unique(rows.map(row => row.id)), evidence_refs: unique(rows.map(row => row.source_id)) }
+  }
+  const checks: RetrofitConditionCheck[] = RETROFIT_CHECKS.map(check => {
+    const { positive, negative, fact_refs, evidence_refs } = claims(check.key)
+    return { ...check, state: positive && negative ? 'conflict' : positive ? 'confirmed' : negative ? 'unmet' : 'missing', fact_refs, evidence_refs }
+  })
+  const vetoes: RetrofitVetoCondition[] = (Object.keys(RETROFIT_VETOES) as RetrofitVetoKey[]).map(key => {
+    const { positive, negative, fact_refs, evidence_refs } = claims(key)
+    return { key, label: RETROFIT_VETOES[key], state: positive && negative ? 'conflict' : positive ? 'veto' : negative ? 'clear' : 'missing', fact_refs, evidence_refs }
+  })
+  const checkByKey = new Map(checks.map(check => [check.key, check])), vetoByKey = new Map(vetoes.map(veto => [veto.key, veto]))
+  const dimensions: RetrofitDimensionCondition[] = NEIGHBORHOOD_DIMENSION_POLICY.map(policy => {
+    const ownChecks = policy.confirmationKeys.map(key => checkByKey.get(key)!), ownVetoes = policy.vetoKeys.map(key => vetoByKey.get(key)!)
+    const state = ownVetoes.some(veto => veto.state === 'veto') ? 'veto'
+      : ownChecks.some(check => check.state === 'conflict') || ownVetoes.some(veto => veto.state === 'conflict') ? 'conflict'
+        : ownChecks.some(check => check.state === 'unmet') ? 'unmet'
+          : ownChecks.some(check => check.state === 'missing') ? 'missing' : 'confirmed'
+    return { key: policy.key, label: policy.label, state, checks: ownChecks, evidence_refs: unique(dimensionRefs.get(policy.key) || []) }
+  })
+  return { evaluated_as_of: project.as_of, rule_version: RETROFIT_RULE_VERSION, dimensions, rule_confirmation: checkByKey.get('rule_set_confirmed')!,
+    checks, vetoes, evidence_refs: unique(admitted.map(fact => fact.source_id)), unusable_fact_refs: unique(admission_notes.map(note => note.fact_id)), admission_notes }
+}
+/** A business gate over the same condition evaluation used by the map and UI. */
 export function retrofitAdvice(project: RetrofitEvidence): RetrofitAdvice {
-  const facts = project.facts.filter(f => f.kind.startsWith('retrofit.') && retrofitFactUsable(project, f))
-  const rows = (key: string) => facts.filter(f => f.kind === 'retrofit.' + key)
-  const conflict = (key: string) => rows(key).some(f => f.value === true) && rows(key).some(f => f.value === false)
-  const veto = Object.entries(VETOES).find(([key]) => !conflict(key) && rows(key).some(f => f.value === true))
-  const missing:RetrofitAdvice['missing'] = RETROFIT_CHECKS.filter(check => conflict(check.key) || !rows(check.key).length || rows(check.key).some(f => f.value !== true)).map(check => ({ ...check }))
-  for (const [key, label] of Object.entries(VETOES)) if (conflict(key)) missing.push({ key, label: `${label}存在冲突`, where: '回查同一对象的相反证据并由专业人员复核', impact: '当前方案是否必须暂缓' })
-  if (veto) return { decision: 'defer', label: '当前条件下暂缓', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: veto[1], evidence_refs: rows(veto[0]).filter(f => f.value === true).map(f => f.source_id) }], missing }
+  return retrofitAdviceFromConditions(evaluateRetrofitConditions(project))
+}
+export function retrofitAdviceFromConditions(evaluation:RetrofitConditions):RetrofitAdvice {
+  const veto = evaluation.vetoes.find(row => row.state === 'veto')
+  const missing: RetrofitAdvice['missing'] = evaluation.checks.filter(check => check.state !== 'confirmed').map(({ key, label, where, impact }) => ({ key, label, where, impact }))
+  for (const row of evaluation.vetoes) if (row.state === 'conflict') missing.push({ key: row.key, label: `${row.label}存在冲突`, where: '回查同一对象的相反证据并由专业人员复核', impact: '当前方案是否必须暂缓' })
+  if (veto) return { decision: 'defer', label: '当前条件下暂缓', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: veto.label, evidence_refs: veto.evidence_refs }], missing }
   if (missing.length) return { decision: 'supplement', label: '先补充关键资料再判断', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '以下资料或规则会改变当前改造方案的范围与实施安排。', evidence_refs: [] }], missing }
-  return { decision: 'proceed', label: '建议进一步尽调', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '当前方案的七项前置核查均有项目范围内的确认依据。', evidence_refs: [...new Set(facts.map(f => f.source_id))] }], missing: [] }
+  return { decision: 'proceed', label: '建议进一步尽调', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '当前方案的七项前置核查均有项目范围内的确认依据。', evidence_refs: evaluation.evidence_refs }], missing: [] }
 }
 export type RetrofitPlan = { basic: number|null; improvement: number|null; enhancement: number|null; reserve_percent: number; planned_funding: number|null; households: number|null }
 /** User-entered scheme assumptions only; this result never alters the fact gate. */

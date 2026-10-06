@@ -363,6 +363,10 @@ export interface DecisionPacket {
  * via the `definition` "ComparisonPacket".
  */
 export interface ComparisonPacket {
+  /**
+   * 比较维度的语义版本；历史结果未提供时保留旧六维，不按当前项目方向重新标注。
+   */
+  policy_version?: string;
   summary: string;
   /**
    * @minItems 3
@@ -382,7 +386,16 @@ export interface ComparisonPacket {
  * via the `definition` "ComparisonCriterion".
  */
 export interface ComparisonCriterion {
-  criterion: "implementation" | "building" | "demand" | "organization" | "enterprise" | "resources";
+  criterion:
+    | "implementation"
+    | "building"
+    | "demand"
+    | "organization"
+    | "enterprise"
+    | "resources"
+    | "supply"
+    | "adaptation"
+    | "operations";
   judgments: CriterionJudgment[];
 }
 /**

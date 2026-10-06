@@ -1,7 +1,8 @@
 import type { MapDecisionFactor, MapScreenContext, MapScreenTheme, MapScreenProfile } from '../../apps/host/generated/contracts'
 import { factAppliesToTarget } from './object-identity'
 import { dashboardDimensions, dashboardPolicy } from '../decision/dashboard'
-import { retrofitFactUsable, RETROFIT_RULE_VERSION } from '../retrofit/planning'
+import { evaluateRetrofitConditions, RETROFIT_RULE_VERSION } from '../retrofit/planning'
+import {NEIGHBORHOOD_DIMENSION_POLICY} from '../retrofit/policy'
 import type { MapProjectEvidence, NeighborhoodActionAdvice } from '../../apps/host/generated/contracts'
 
 export const FACTOR_LABELS = {
@@ -11,7 +12,7 @@ export const FACTOR_LABELS = {
 export type FactorKey = keyof typeof FACTOR_LABELS | 'supply'
 // An explicit, versioned research rubric, not a statistical success score.
 export const FACTOR_POLICY = 'source-factors-v1'
-export const NEIGHBORHOOD_FACTOR_POLICY='retrofit-source-factors-v1'
+export const NEIGHBORHOOD_FACTOR_POLICY='retrofit-source-factors-v2'
 export const FACTOR_FIELDS: Record<keyof typeof FACTOR_LABELS, readonly string[]> = {
   implementation: ['use_permitted', 'rights_secured', 'relocation_resolved'],
   adaptation: ['structural_fit_verified', 'fire_strategy_verified'],
@@ -70,10 +71,7 @@ export function factorTier(factors: MapDecisionFactor[], theme: MapScreenTheme, 
 }
 
 
-export const NEIGHBORHOOD_FACTOR_FIELDS = {
-  demand:['resident_needs_confirmed'], supply:['service_gap_confirmed'], adaptation:['engineering_review_passed'],
-  implementation:['scope_and_consent_confirmed'], operations:['maintenance_confirmed'], resources:['funding_confirmed'],
-} as const
+export const NEIGHBORHOOD_FACTOR_FIELDS=Object.fromEntries(NEIGHBORHOOD_DIMENSION_POLICY.map(d=>[d.key,d.confirmationKeys])) as Record<Exclude<FactorKey,'access'>,readonly string[]>
 export function factorLabels(profile?:MapScreenProfile):Record<FactorKey,string> {
   return profile==='neighborhood'?Object.fromEntries(dashboardDimensions(dashboardPolicy(profile)).map(d=>[d.key,d.label])) as Record<FactorKey,string>:{...FACTOR_LABELS,supply:'使用需求'}
 }
@@ -86,24 +84,25 @@ function retrofitEvidence(project:MapProjectEvidence) {
   return {project_id:project.project_id,as_of:project.as_of||'',synthetic:false,sources:project.sources,facts:project.facts}
 }
 function neighborhoodFactors(context:MapScreenContext):MapDecisionFactor[] {
-  const labels=factorLabels('neighborhood')
   const projects=context.local_projects.filter(p=>p.business_profile==='neighborhood'&&projectBoundToTarget(p,context.target))
-  return Object.entries(NEIGHBORHOOD_FACTOR_FIELDS).map(([key,fields])=>{
-    const vetoKeys=key==='adaptation'?['safety_veto','protection_veto']:key==='implementation'?['rights_veto']:[]
-    const rows=projects.flatMap(p=>p.facts.filter(f=>fields.some(field=>f.kind==='retrofit.'+field)&&retrofitFactUsable(retrofitEvidence(p),f)).map(f=>({fact:f,ref:`${p.project_id}:${f.source_id}`})))
-    const vetoFacts=projects.flatMap(p=>p.facts.filter(f=>vetoKeys.some(v=>f.kind==='retrofit.'+v)&&retrofitFactUsable(retrofitEvidence(p),f)))
-    const conflict=rows.some(a=>rows.some(b=>a.fact.kind===b.fact.kind&&a.fact.value!==b.fact.value))||vetoFacts.some(a=>vetoFacts.some(b=>a.kind===b.kind&&a.value!==b.value))
-    const positive=rows.filter(r=>r.fact.value===true),negative=rows.filter(r=>r.fact.value===false)
-    const covered=projects.length>0&&projects.every(p=>fields.every(field=>p.facts.some(f=>f.kind==='retrofit.'+field&&f.value===true&&retrofitFactUsable(retrofitEvidence(p),f))))
-    // Confirmed unmet prerequisites need investigation; only an explicit veto blocks the formal action.
-    const vetoRows=projects.flatMap(p=>vetoKeys.flatMap(v=>{
-      const claims=p.facts.filter(f=>f.kind==='retrofit.'+v&&retrofitFactUsable(retrofitEvidence(p),f))
-      // An independent veto does not resolve contradictory claims for this veto.
-      return claims.some(f=>f.value===false)?[]:claims.filter(f=>f.value===true).map(f=>({fact:f,ref:`${p.project_id}:${f.source_id}`}))
-    }))
-    const veto=vetoRows.length>0
-    const state=veto?'blocked':conflict?'conditional':covered?'supported':rows.length?'conditional':'unknown'
-    return {key,state,summary:veto?`${labels[key as FactorKey]}存在已确认否决条件`:conflict?`${labels[key as FactorKey]}资料存在分歧`:negative.length?`${labels[key as FactorKey]}条件尚未成立`:positive.length?`${labels[key as FactorKey]}已有确认依据`:`${labels[key as FactorKey]}待核查`,evidence_refs:[...new Set([...rows,...vetoRows].map(r=>r.ref))].slice(0,4),quote:'',conflict} as MapDecisionFactor
+  const evaluations=projects.map(project=>({project,evaluation:evaluateRetrofitConditions(retrofitEvidence(project))}))
+  return NEIGHBORHOOD_DIMENSION_POLICY.map(policy=>{
+    const rows=evaluations.map(({project,evaluation})=>({project,dimension:evaluation.dimensions.find(d=>d.key===policy.key)!}))
+    const veto=rows.some(row=>row.dimension.state==='veto')
+    const conflictingChecks=policy.confirmationKeys.some(key=>{
+      const states=evaluations.map(row=>row.evaluation.checks.find(check=>check.key===key)!.state)
+      return states.includes('confirmed')&&states.includes('unmet')
+    })
+    const conflictingVetoes=policy.vetoKeys.some(key=>{
+      const states=evaluations.map(row=>row.evaluation.vetoes.find(veto=>veto.key===key)!.state)
+      return states.includes('veto')&&states.includes('clear')
+    })
+    const conflict=rows.some(row=>row.dimension.state==='conflict')||conflictingChecks||conflictingVetoes
+    const covered=rows.length>0&&rows.every(row=>row.dimension.state==='confirmed')
+    const negative=rows.some(row=>row.dimension.state==='unmet')
+    const state=veto?'blocked':conflict?'conditional':covered?'supported':rows.some(row=>row.dimension.state!=='missing')?'conditional':'unknown'
+    return {key:policy.key,state,summary:veto?`${policy.label}存在已确认否决条件`:conflict?`${policy.label}资料存在分歧`:negative?`${policy.label}条件尚未成立`:rows.some(row=>row.dimension.checks.some(check=>check.state==='confirmed'))?`${policy.label}已有确认依据`:`${policy.label}待核查`,
+      evidence_refs:[...new Set(rows.flatMap(row=>row.dimension.evidence_refs.map(ref=>`${row.project.project_id}:${ref}`)))].slice(0,4),quote:'',conflict} as MapDecisionFactor
   })
 }
 /** Authenticated map projection of the original project gate, never a model grade. */

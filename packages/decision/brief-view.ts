@@ -1,4 +1,6 @@
 import type { CandidateId, DecisionPacket, Finding, Scenario } from '../../apps/host/generated/contracts'
+import {NEIGHBORHOOD_COMPARISON_POLICY} from './comparison-policy'
+import {NEIGHBORHOOD_DIMENSION_POLICY} from '../retrofit/policy'
 
 type Criterion = NonNullable<DecisionPacket['comparison']>['criteria'][number]['criterion']
 const themeDefinitions: { label: string; criteria: Criterion[] }[] = [
@@ -59,7 +61,9 @@ function investigationTitle(scenario: Scenario): string {
 
 function themesFor(packet: DecisionPacket, scenario: Scenario): BriefTheme[] {
   const scenarioRefs = new Set(scenario.evidence_refs)
-  return themeDefinitions.map(definition => {
+  const definitions=packet.comparison?.policy_version===NEIGHBORHOOD_COMPARISON_POLICY
+    ?NEIGHBORHOOD_DIMENSION_POLICY.map(d=>({label:d.label,criteria:[d.key] as Criterion[]})):themeDefinitions
+  return definitions.map(definition => {
     const judgments = (packet.comparison?.criteria || [])
       .filter(c => definition.criteria.includes(c.criterion))
       .flatMap(c => c.judgments.filter(j => j.scenario_id === scenario.id))
@@ -112,5 +116,8 @@ export function buildDecisionBrief(packet: DecisionPacket) {
     || paths.flatMap(p => p.themes).flatMap(t => t.judgments)[0]
   const summary = [leading && terminal(leading), nextActions[0] && terminal(`本轮优先${nextActions[0].title.replace(/[。]$/, '')}`)].filter(Boolean).join('')
     || (investigation ? terminal(investigation.title) : '尚未形成可引用的项目判断。')
-  return { summary, paths, investigation, nextActions, findings }
+  const comparisonScope=packet.comparison?.policy_version===NEIGHBORHOOD_COMPARISON_POLICY
+    ?'逐项比较居民需求、公共服务、居住工程、实施协同、长效维护和资金交付；条件依据来自本次冻结原文。'
+    :'按原结果的实施、建筑、需求、组织、企业和资源口径核对；来源指向本次冻结原文。'
+  return { summary, paths, investigation, nextActions, findings, comparisonScope }
 }

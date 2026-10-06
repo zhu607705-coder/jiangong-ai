@@ -5,21 +5,21 @@ import { publicMapContext } from '../maps/public-context'
 import { factAppliesToTarget } from '../maps/object-identity'
 import { projectDashboardInput } from './project-dashboard'
 import { retrofitAdvice, type RetrofitAdvice } from '../retrofit/planning'
+import {NEIGHBORHOOD_DIMENSION_POLICY} from '../retrofit/policy'
+import {MODEL_SIGNAL_THRESHOLDS} from './thresholds'
 import type { MapScreenProfile } from '../../apps/host/generated/contracts'
 
 export const DECISION_POLICY = 'structured-research-route-v1'
 export const NEIGHBORHOOD_DECISION_POLICY='structured-neighborhood-route-v2'
 export const decisionPolicy=(profile?:MapScreenProfile)=>profile==='neighborhood'?NEIGHBORHOOD_DECISION_POLICY:DECISION_POLICY
-export const DECISION_THRESHOLDS = {min_confidence: 0.8, min_choice_probability: 0.65, min_sufficiency: 0.75}
+export const DECISION_THRESHOLDS = MODEL_SIGNAL_THRESHOLDS.research_route
 export { DECISION_ACTIONS } from './route-labels'
 export const INVESTIGATION_STEPS = {
   implementation:'核查用途、权利取得与腾退条件。', adaptation:'取得结构、消防与设备条件资料。',
   demand:'调查实际使用者、到岗情况与同类空置。', operations:'核查运营主体、付费者与收入路径。',
   resources:'核查改造投入、分期资金和企业能力。', access:'实测站点到建筑入口的步行衔接。',
 } as const
-export const NEIGHBORHOOD_INVESTIGATION_STEPS={
-  demand:'取得分楼栋居民需求调查与异议台账，核对改造内容及居民负担。',supply:'核验公共设施容量、开放时间和居民步行路线，确认服务缺口。',adaptation:'取得本方案的鉴定、消防及管网专业核查，明确施工接口。',implementation:'核对居民协商、实施范围、责任主体和本方案专业规则。',operations:'取得设施移交、维护责任及年度管护费用安排。',resources:'核对工程量预算、出资批准、分摊确认与拨付安排。',
-} as const
+export const NEIGHBORHOOD_INVESTIGATION_STEPS=Object.fromEntries(NEIGHBORHOOD_DIMENSION_POLICY.map(d=>[d.key,d.investigation])) as Record<ResearchDimension,string>
 export type ResearchDimension = keyof typeof FACTOR_LABELS | 'supply'
 export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]; dashboard?: DashboardInput;profile?:MapScreenProfile;neighborhoodAction?:RetrofitAdvice}
 const essentials: ResearchDimension[] = ['implementation','adaptation','demand','operations','resources']

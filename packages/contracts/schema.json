@@ -1338,7 +1338,10 @@
             "demand",
             "organization",
             "enterprise",
-            "resources"
+            "resources",
+            "supply",
+            "adaptation",
+            "operations"
           ]
         },
         "judgments": {
@@ -1357,6 +1360,12 @@
     "ComparisonPacket": {
       "type": "object",
       "properties": {
+        "policy_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "比较维度的语义版本；历史结果未提供时保留旧六维，不按当前项目方向重新标注。"
+        },
         "summary": {
           "type": "string",
           "maxLength": 96

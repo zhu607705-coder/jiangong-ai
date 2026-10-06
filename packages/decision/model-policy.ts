@@ -1,5 +1,6 @@
 import type { CapabilityResult, ComparisonPacket, ProjectInput, ReviewPacket, ScenarioProposal } from '../../apps/host/generated/contracts'
 import { evaluateScenarios } from './evaluate'
+import { comparisonDimensions, comparisonPolicy, NEIGHBORHOOD_COMPARISON_POLICY } from './comparison-policy'
 export class ModelOutputError extends Error {}
 
 export function hasUnqualifiedAssurance(text: string): boolean {
@@ -63,6 +64,18 @@ export function validateReview(project: ProjectInput, packet: ReviewPacket) {
 export function validateComparison(project: ProjectInput, proposal: ScenarioProposal, packet: ComparisonPacket) {
   const allowed = new Set(proposal.scenarios.map(s => s.id))
   const blocked = new Set(proposal.scenarios.filter(s => s.status === 'blocked').map(s => s.id))
+  const policy=comparisonPolicy(project),dimensions=new Set(comparisonDimensions(project).map(d=>d.key))
+  if(packet.policy_version!==undefined&&packet.policy_version!==policy)throw new ModelOutputError('比较政策版本不适用于当前项目方向')
+  if(packet.criteria.some(row=>!dimensions.has(row.criterion)))throw new ModelOutputError('比较维度不适用于当前项目方向')
+  if(policy===NEIGHBORHOOD_COMPARISON_POLICY){
+    const keys=packet.criteria.map(row=>row.criterion)
+    if(keys.length!==dimensions.size||new Set(keys).size!==dimensions.size)throw new ModelOutputError('老旧小区比较维度必须完整且不重复')
+    for(const row of packet.criteria){
+      const ids=row.judgments.map(j=>j.scenario_id)
+      if(ids.length!==allowed.size||new Set(ids).size!==allowed.size||ids.some(id=>!allowed.has(id)))throw new ModelOutputError('每项旧改比较维度必须覆盖全部候选路径且不能重复')
+    }
+    packet.policy_version=policy
+  }
   for (const criterion of packet.criteria) {
     for (const judgment of criterion.judgments) {
       if (!allowed.has(judgment.scenario_id)) throw new ModelOutputError('比较结果引用了不存在的路径')

@@ -775,6 +775,32 @@
       ],
       "evidence_log": "research/test_results/code-first.json",
       "upstream_verification_required": false
+    },
+    {
+      "id": "T32",
+      "depends_on": [
+        "T31"
+      ],
+      "goal": "把业务判断、门槛和维度统一为有依据的程序政策",
+      "status": "completed_condition_and_comparison_policy_verified",
+      "expected_artifacts": [
+        "packages/retrofit/policy.ts",
+        "docs/旧改维度与判断门槛.md",
+        "research/test_results/condition-policy.json"
+      ],
+      "definition_of_done": "六维/确认/否决/调查共同注册；项目与地图同一条件结果；专业规则独立；修复作用域误准入；新比较完整六维，保历史版本；不新增未经复核数值；必要回归和真实UI通过。",
+      "write_scope": [
+        "packages/",
+        "runtime/",
+        "services/",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/condition-policy.json",
+      "upstream_verification_required": false
     }
   ]
 }

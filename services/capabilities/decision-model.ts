@@ -1,3 +1,4 @@
+import {NEIGHBORHOOD_DIMENSION_POLICY} from '../../packages/retrofit/policy'
 import { dashboardQuestions, parseDashboard } from '../../packages/decision/dashboard'
 import { validProbabilityMass } from '../../packages/decision/probabilities'
 import { createHash } from 'node:crypto'
@@ -15,7 +16,7 @@ export const DECISION_QUESTIONS={
   priority_dimension:{type:'choice',instructions:boundary+'哪一项最值得优先核查？',criteria:dimensions},
   evidence_sufficient:{type:'noul',instructions:boundary+'核心条件是否已具备足以比较具体路径的证据？',criteria:{true:'核心条件有对象和时间对应的可靠来源。',false:'存在缺项、分歧或只有周边线索。'}},
 }
-const neighborhoodDimensions={demand:'居民家庭的具体居住改善需求与居民负担。',supply:'养老托育、公共活动与日常服务的容量、开放条件和可达性。',adaptation:'本方案鉴定、消防、管网及工程接口。',implementation:'居民协商、实施范围、责任主体与专业规则。',operations:'设施接收、长效维护责任及年度费用。',resources:'工程量预算、出资确认、分摊与拨付和交付范围。'}
+const neighborhoodDimensions=Object.fromEntries(NEIGHBORHOOD_DIMENSION_POLICY.map(d=>[d.key,`${d.label}：${d.question}`]))
 export function decisionQuestions(profile?:MapScreenProfile):Record<string,{type:string;instructions:string;criteria:Record<string,string>}> {
   if(profile!=='neighborhood')return DECISION_QUESTIONS
   return {next_action:{type:'choice',instructions:boundary+'本小区方案下一步应采取哪种研究操作？雷达适配不能替代专业条件与正式行动门。',criteria:{...actionCriteria,compare:'居民需求、公共服务、居住工程、实施协同、长效维护和资金交付均有可靠依据，可比较具体改造方案。'}},priority_dimension:{type:'choice',instructions:boundary+'本小区方案哪项最值得优先核查？',criteria:neighborhoodDimensions},evidence_sufficient:{type:'noul',instructions:boundary+'当前小区方案的六维条件和专业规则是否足以比较具体改造内容？',criteria:{true:'核心条件与方案有同一对象、时点和可靠原文依据。',false:'存在缺项、分歧或只有周边场所及历史线索。'}}}
