@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import type { ProjectInput, DecisionDashboard as Dashboard } from '../../../host/generated/contracts'
+import type { ProjectInput, DecisionDashboard as Dashboard, NeighborhoodActionAdvice } from '../../../host/generated/contracts'
 import { calculateRetrofitPlan, evaluateRetrofitConditions, retrofitAdviceFromConditions, type RetrofitPlan } from '../../../../packages/retrofit/planning'
 import { dashboardDimensions, isNeighborhoodDashboard, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../packages/decision/dashboard'
 import DecisionDashboard from './DecisionDashboard'
@@ -29,15 +29,16 @@ export function createNeighborhoodDraft(): NeighborhoodDraft {
   }
 }
 
-export default function NeighborhoodPanel({ project, dashboard, draft, onDraftChange, onEvidence }: {
+export default function NeighborhoodPanel({ project, dashboard, draft, onDraftChange, onEvidence, assessedAdvice }: {
   project: ProjectInput
   dashboard?: Dashboard
+  assessedAdvice?: NeighborhoodActionAdvice
   draft: NeighborhoodDraft
   onDraftChange: (update: (current: NeighborhoodDraft) => NeighborhoodDraft) => void
   onEvidence: (refs: string[]) => void
 }) {
   const conditions=useMemo(()=>evaluateRetrofitConditions(project),[project])
-  const advice = retrofitAdviceFromConditions(conditions)
+  const advice = assessedAdvice || retrofitAdviceFromConditions(conditions)
   const conditionLabels={confirmed:'已满足',unmet:'条件未成立',missing:'缺少依据',conflict:'资料有分歧',veto:'存在否决条件'}
   const radar:Dashboard = dashboard && isNeighborhoodDashboard(dashboard.policy_version)?dashboard:{policy_version:NEIGHBORHOOD_DASHBOARD_POLICY,purpose:'老旧小区综合整治提升',model:'尚未评估',request_id:'not-evaluated',status:'partial',dimensions:dashboardDimensions(NEIGHBORHOOD_DASHBOARD_POLICY).map(d=>({key:d.key,value:null,confidence:null,basis:d.question,evidence_refs:[]}))}
   const { inputs, comparison } = draft

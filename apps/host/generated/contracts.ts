@@ -50,6 +50,7 @@ export interface ProjectInput {
   candidate_ids: CandidateId[];
   events: InputEvent[];
   business_profile?: "general" | "neighborhood";
+  knowledge_query?: KnowledgeQuery;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -228,6 +229,14 @@ export interface InputEvent {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeQuery".
+ */
+export interface KnowledgeQuery {
+  measure_key: string;
+  question: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "Finding".
  */
 export interface Finding {
@@ -307,6 +316,11 @@ export interface Followup {
   why: string;
   impacted_paths: CandidateId[];
   status: "suggested" | "requested";
+  /**
+   * @minItems 0
+   * @maxItems 100
+   */
+  evidence_refs?: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -357,6 +371,8 @@ export interface DecisionPacket {
   scope?: Scope;
   decision_support?: DecisionSupport;
   neighborhood_action?: NeighborhoodActionAdvice;
+  knowledge?: KnowledgeTrace;
+  knowledge_agent?: KnowledgeAgentReport;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -529,6 +545,229 @@ export interface NeighborhoodActionAdvice {
     where: string;
     impact: string;
   }[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeTrace".
+ */
+export interface KnowledgeTrace {
+  policy_version: "knowledge-routing-v1" | "knowledge-routing-v2";
+  evaluated_as_of: string;
+  query: KnowledgeQuery;
+  route: "case_hit" | "rule_hit" | "combined_hit" | "agent_fallback";
+  /**
+   * @maxItems 20
+   */
+  case_hits: KnowledgeMatch[];
+  /**
+   * @maxItems 20
+   */
+  rule_hits: KnowledgeMatch[];
+  /**
+   * @maxItems 100
+   */
+  candidates: KnowledgeMatch[];
+  /**
+   * @maxItems 30
+   */
+  reasons: string[];
+  fallback_status: "not_needed" | "pending" | "offline_only" | "blocked_external" | "executed";
+  agent_status?: "pending" | "executed" | "offline_only" | "blocked_external";
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeMatch".
+ */
+export interface KnowledgeMatch {
+  card_id: string;
+  card_revision: number;
+  title: string;
+  source_project_id: string;
+  kind: "case" | "rule";
+  origin: "project_case" | "official_policy" | "research_paper" | "practice";
+  measure_key: string;
+  measure_name: string;
+  similarity: number;
+  related: boolean;
+  transferability: "transferable" | "conditional" | "not_transferable";
+  /**
+   * @maxItems 30
+   */
+  conditions: KnowledgeConditionMatch[];
+  /**
+   * @maxItems 20
+   */
+  exclusions: KnowledgeConditionMatch[];
+  /**
+   * @maxItems 30
+   */
+  similar_conditions: string[];
+  /**
+   * @maxItems 30
+   */
+  important_differences: string[];
+  /**
+   * @maxItems 30
+   */
+  reuse_premises: string[];
+  /**
+   * @maxItems 30
+   */
+  unknowns: string[];
+  recommendation: string | null;
+  /**
+   * @maxItems 100
+   */
+  evidence_refs: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeConditionMatch".
+ */
+export interface KnowledgeConditionMatch {
+  condition: KnowledgeCondition;
+  state: "matched" | "unmatched" | "unknown" | "conflict";
+  /**
+   * @maxItems 100
+   */
+  fact_refs: string[];
+  /**
+   * @maxItems 100
+   */
+  evidence_refs: string[];
+  reason: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeCondition".
+ */
+export interface KnowledgeCondition {
+  fact_kind: string;
+  label: string;
+  operator: "eq" | "ne" | "gt" | "gte" | "lt" | "lte" | "contains";
+  value: string | number | boolean;
+  unit: string | null;
+  /**
+   * @minItems 1
+   * @maxItems 5
+   */
+  evidence: ExperienceEvidence[];
+  /**
+   * 原文条件取值或词句；value可为人工复核的归一化映射，二者分开记录，不把布尔词义映射当作原文事实。
+   */
+  source_value?: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceEvidence".
+ */
+export interface ExperienceEvidence {
+  document_id: string;
+  version: string;
+  locator: string;
+  quote: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeAgentReport".
+ */
+export interface KnowledgeAgentReport {
+  policy_version: "knowledge-agent-v1";
+  assessment: KnowledgeAgentAssessment;
+  final_action: "proceed" | "supplement" | "defer";
+  /**
+   * @minItems 0
+   * @maxItems 100
+   */
+  decision_evidence_refs: string[];
+  /**
+   * @minItems 0
+   * @maxItems 30
+   */
+  guard_reasons: string[];
+  /**
+   * @minItems 0
+   * @maxItems 40
+   */
+  assessed_card_ids: string[];
+  /**
+   * @maxItems 100
+   */
+  final_citations?: KnowledgeCitation[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeAgentAssessment".
+ */
+export interface KnowledgeAgentAssessment {
+  summary: string;
+  decision: KnowledgeAgentDecision;
+  /**
+   * @minItems 1
+   * @maxItems 8
+   */
+  recommendations: KnowledgeAgentAdvice[];
+  /**
+   * @minItems 0
+   * @maxItems 10
+   */
+  disagreements: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeAgentDecision".
+ */
+export interface KnowledgeAgentDecision {
+  action: "proceed" | "supplement" | "defer";
+  reasoning: string;
+  /**
+   * @minItems 1
+   * @maxItems 10
+   */
+  citations: KnowledgeCitation[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeCitation".
+ */
+export interface KnowledgeCitation {
+  source_id: string;
+  locator: string;
+  quote: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeAgentAdvice".
+ */
+export interface KnowledgeAgentAdvice {
+  measure_key: string;
+  advice: string;
+  reasoning: string;
+  /**
+   * @minItems 1
+   * @maxItems 10
+   */
+  matched_card_ids: string[];
+  /**
+   * @minItems 1
+   * @maxItems 20
+   */
+  matched_condition_keys: string[];
+  /**
+   * @minItems 1
+   * @maxItems 10
+   */
+  citations: KnowledgeCitation[];
+  /**
+   * @minItems 0
+   * @maxItems 10
+   */
+  unknowns: string[];
+  /**
+   * @minItems 0
+   * @maxItems 5
+   */
+  next_steps: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -928,16 +1167,6 @@ export interface MapDataCatalog {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
- * via the `definition` "ExperienceEvidence".
- */
-export interface ExperienceEvidence {
-  document_id: string;
-  version: string;
-  locator: string;
-  quote: string;
-}
-/**
- * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "ExperienceField".
  */
 export interface ExperienceField {
@@ -971,6 +1200,37 @@ export interface ExperienceDraft {
    * @maxItems 10
    */
   fields: ExperienceField[];
+  knowledge?: ExperienceKnowledge;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceKnowledge".
+ */
+export interface ExperienceKnowledge {
+  kind: "case" | "rule";
+  origin: "project_case" | "official_policy" | "research_paper" | "practice";
+  measure_key: string;
+  measure_name: string;
+  /**
+   * @maxItems 30
+   */
+  conditions: KnowledgeCondition[];
+  /**
+   * @maxItems 20
+   */
+  exclusions: KnowledgeCondition[];
+  /**
+   * @maxItems 10
+   */
+  transfer_notes: string[];
+  evidence_level:
+    | "proposal_only"
+    | "implementation_record"
+    | "observational_study"
+    | "controlled_study"
+    | "official_policy"
+    | "expert_practice"
+    | "not_reported";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -992,4 +1252,19 @@ export interface ExperienceCard {
   review_note: string | null;
   created_at: string;
   updated_at: string;
+  knowledge?: ExperienceKnowledge;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ExperienceDraftBatch".
+ */
+export interface ExperienceDraftBatch {
+  /**
+   * @maxItems 20
+   */
+  drafts: ExperienceDraft[];
+  /**
+   * @maxItems 20
+   */
+  warnings: string[];
 }

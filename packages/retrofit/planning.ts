@@ -20,7 +20,7 @@ function cutoff(asOf: string): number {
   const at = Date.parse(asOf + 'T23:59:59Z')
   return /^\d{4}-\d{2}-\d{2}$/.test(asOf) && Number.isFinite(at) && new Date(at).toISOString().slice(0, 10) === asOf ? at : NaN
 }
-function admissionReason(project: RetrofitEvidence, fact: Fact, source: Source|undefined, asOf: number): string|null {
+function admissionReason(project: RetrofitEvidence, fact: Fact, source: Source|undefined, asOf: number, scalarCondition = false): string|null {
   const objectRef = `project:${project.project_id}`
   if (!Number.isFinite(asOf)) return '项目研究截止时点无效'
   if (!source) return '来源未关联当前项目'
@@ -29,7 +29,9 @@ function admissionReason(project: RetrofitEvidence, fact: Fact, source: Source|u
   if (source.content_status === 'metadata_only' || source.parse_status === 'ocr_required') return '来源尚无可读正文证据'
   if (source.evidence_scope === 'area' || source.evidence_scope === 'background') return '区域或背景来源不能确认本项目条件'
   if (source.object_refs !== undefined && !source.object_refs.includes(objectRef)) return '来源明确对象不包含当前项目'
-  if (fact.epistemic_status !== 'fact' || typeof fact.value !== 'boolean') return '未形成明确的布尔确认事实'
+  if (fact.epistemic_status !== 'fact' || (scalarCondition
+    ? !['string', 'number', 'boolean'].includes(typeof fact.value) || typeof fact.value === 'number' && !Number.isFinite(fact.value) || typeof fact.value === 'string' && !fact.value.trim()
+    : typeof fact.value !== 'boolean')) return scalarCondition ? '未形成明确的条件事实' : '未形成明确的布尔确认事实'
   if (fact.object_ref !== objectRef) return '事实未精确绑定当前项目'
   if (fact.scope_kind !== undefined && !['object', 'project', 'shared'].includes(fact.scope_kind)) return '事实作用域未登记'
   if (!factAppliesToTarget(fact, project, { object_ref: objectRef, boundary_source: objectRef })) return '共享事实不适用于当前项目'
@@ -43,6 +45,10 @@ function admissionReason(project: RetrofitEvidence, fact: Fact, source: Source|u
 }
 export function retrofitFactUsable(project: RetrofitEvidence, fact: Fact): boolean {
   return admissionReason(project, fact, project.sources.find(source => source.id === fact.source_id), cutoff(project.as_of)) === null
+}
+/** Share provenance, object and time checks with case/rule condition matching. */
+export function projectFactUsable(project: RetrofitEvidence, fact: Fact): boolean {
+  return admissionReason(project, fact, project.sources.find(source => source.id === fact.source_id), cutoff(project.as_of), true) === null
 }
 /** Evaluate the existing explicit confirmations once. Missing/negative/conflict
  * remain distinct; fit scores, counts and policy aspirations never become facts. */

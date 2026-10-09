@@ -44,7 +44,7 @@ export type BriefPath = {
   themes: BriefTheme[]
   sourceRefs: string[]
 }
-export type BriefAction = { id: string | null; title: string; why: string; priority: number; impactedPaths: CandidateId[] }
+export type BriefAction = { id: string | null; title: string; why: string; priority: number; impactedPaths: CandidateId[]; evidence_refs?: string[] }
 
 function specificConditions(packet: DecisionPacket, scenario: Scenario): string[] {
   const own = unique(scenario.prerequisites).filter(s => !sharedPolicyConditions.has(s) && meaningful(s))
@@ -105,7 +105,7 @@ export function buildDecisionBrief(packet: DecisionPacket) {
   const nextActions: BriefAction[] = packet.followups
     .filter(f => !f.id.startsWith('decision-') && meaningful(f.title))
     .sort((a, b) => a.priority - b.priority)
-    .map(f => ({ id: f.id, title: f.title, why: meaningful(f.why) ? f.why : '', priority: f.priority, impactedPaths: f.impacted_paths }))
+    .map(f => ({ id: f.id, title: f.title, why: meaningful(f.why) ? f.why : '', priority: f.priority, impactedPaths: f.impacted_paths, ...(f.evidence_refs ? { evidence_refs: sourceIds(packet, f.evidence_refs) } : {}) }))
     .filter((f, i, all) => all.findIndex(item => item.title === f.title) === i)
     .slice(0, 3)
   if (!nextActions.length && investigation?.actions.length) {

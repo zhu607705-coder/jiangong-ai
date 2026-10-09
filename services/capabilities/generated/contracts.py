@@ -270,6 +270,10 @@ class Status3(StrEnum):
     requested = 'requested'
 
 
+class EvidenceRef(RootModel[str]):
+    root: str = Field(..., max_length=200, min_length=1)
+
+
 class Followup(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -280,6 +284,7 @@ class Followup(BaseModel):
     why: str
     impacted_paths: list[CandidateId]
     status: Status3
+    evidence_refs: list[EvidenceRef] | None = Field(None, max_length=100, min_length=0)
 
 
 class Impact(BaseModel):
@@ -611,7 +616,7 @@ class Gap(RootModel[str]):
     root: str = Field(..., max_length=180)
 
 
-class EvidenceRef(RootModel[str]):
+class EvidenceRef1(RootModel[str]):
     root: str = Field(..., max_length=100)
 
 
@@ -620,7 +625,7 @@ class MapScreenClaim(BaseModel):
         extra='forbid',
     )
     text: str = Field(..., max_length=48, min_length=1)
-    evidence_refs: list[EvidenceRef] = Field(..., max_length=4, min_length=1)
+    evidence_refs: list[EvidenceRef1] = Field(..., max_length=4, min_length=1)
 
 
 class Unknown(RootModel[str]):
@@ -747,7 +752,7 @@ class State(StrEnum):
     unknown = 'unknown'
 
 
-class EvidenceRef1(RootModel[str]):
+class EvidenceRef2(RootModel[str]):
     root: str = Field(..., max_length=200)
 
 
@@ -758,7 +763,7 @@ class MapDecisionFactor(BaseModel):
     key: Key1
     state: State
     summary: str = Field(..., max_length=60, min_length=1)
-    evidence_refs: list[EvidenceRef1] = Field(..., max_length=4)
+    evidence_refs: list[EvidenceRef2] = Field(..., max_length=4)
     quote: str = Field(..., max_length=180)
     conflict: bool | None = None
 
@@ -914,7 +919,7 @@ class DimensionScore(BaseModel):
     key: ResearchDimension
     value: float | None = Field(..., ge=1.0, le=5.0)
     confidence: float | None = Field(..., ge=0.0, le=1.0)
-    evidence_refs: list[EvidenceRef1] = Field(..., max_length=8)
+    evidence_refs: list[EvidenceRef2] = Field(..., max_length=8)
     basis: str = Field(..., max_length=180)
 
 
@@ -979,39 +984,10 @@ class ExperienceField(BaseModel):
     evidence: list[ExperienceEvidence] = Field(..., max_length=5)
 
 
-class ExperienceDraft(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    title: str = Field(..., max_length=120, min_length=1)
-    project_type: str = Field(..., max_length=80)
-    development_mode: str = Field(..., max_length=80)
-    stage: str = Field(..., max_length=80)
-    fields: list[ExperienceField] = Field(..., max_length=10)
-
-
 class Status15(StrEnum):
     draft = 'draft'
     approved = 'approved'
     rejected = 'rejected'
-
-
-class ExperienceCard(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    title: str = Field(..., max_length=120, min_length=1)
-    project_type: str = Field(..., max_length=80)
-    development_mode: str = Field(..., max_length=80)
-    stage: str = Field(..., max_length=80)
-    fields: list[ExperienceField] = Field(..., max_length=10)
-    id: str
-    project_id: str
-    status: Status15
-    revision: int = Field(..., ge=1)
-    review_note: str | None = Field(..., max_length=2000)
-    created_at: str
-    updated_at: str
 
 
 class Decision(StrEnum):
@@ -1047,6 +1023,307 @@ class NeighborhoodActionAdvice(BaseModel):
     rule_version: str
     reasons: list[Reason1]
     missing: list[MissingItem]
+
+
+class Operator(StrEnum):
+    eq = 'eq'
+    ne = 'ne'
+    gt = 'gt'
+    gte = 'gte'
+    lt = 'lt'
+    lte = 'lte'
+    contains = 'contains'
+
+
+class KnowledgeCondition(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    fact_kind: str = Field(..., max_length=100, min_length=1)
+    label: str = Field(..., max_length=300, min_length=1)
+    operator: Operator
+    value: str | float | bool
+    unit: str | None = Field(..., max_length=60)
+    evidence: list[ExperienceEvidence] = Field(..., max_length=5, min_length=1)
+    source_value: str | None = Field(
+        None,
+        description='原文条件取值或词句；value可为人工复核的归一化映射，二者分开记录，不把布尔词义映射当作原文事实。',
+        max_length=3000,
+        min_length=1,
+    )
+
+
+class Kind4(StrEnum):
+    case = 'case'
+    rule = 'rule'
+
+
+class Origin(StrEnum):
+    project_case = 'project_case'
+    official_policy = 'official_policy'
+    research_paper = 'research_paper'
+    practice = 'practice'
+
+
+class TransferNote(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class EvidenceLevel(StrEnum):
+    proposal_only = 'proposal_only'
+    implementation_record = 'implementation_record'
+    observational_study = 'observational_study'
+    controlled_study = 'controlled_study'
+    official_policy = 'official_policy'
+    expert_practice = 'expert_practice'
+    not_reported = 'not_reported'
+
+
+class ExperienceKnowledge(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    kind: Kind4
+    origin: Origin
+    measure_key: str = Field(
+        ..., max_length=80, min_length=1, pattern='^[A-Za-z0-9_.-]+$'
+    )
+    measure_name: str = Field(..., max_length=120, min_length=1)
+    conditions: list[KnowledgeCondition] = Field(..., max_length=30)
+    exclusions: list[KnowledgeCondition] = Field(..., max_length=20)
+    transfer_notes: list[TransferNote] = Field(..., max_length=10)
+    evidence_level: EvidenceLevel
+
+
+class Warning(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class KnowledgeQuery(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    measure_key: str = Field(..., max_length=80)
+    question: str = Field(..., max_length=1000)
+
+
+class State1(StrEnum):
+    matched = 'matched'
+    unmatched = 'unmatched'
+    unknown = 'unknown'
+    conflict = 'conflict'
+
+
+class FactRef(RootModel[str]):
+    root: str = Field(..., max_length=200)
+
+
+class KnowledgeConditionMatch(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    condition: KnowledgeCondition
+    state: State1
+    fact_refs: list[FactRef] = Field(..., max_length=100)
+    evidence_refs: list[EvidenceRef2] = Field(..., max_length=100)
+    reason: str = Field(..., max_length=1000)
+
+
+class Transferability(StrEnum):
+    transferable = 'transferable'
+    conditional = 'conditional'
+    not_transferable = 'not_transferable'
+
+
+class SimilarCondition(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class ImportantDifference(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class ReusePremise(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class Unknown1(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class KnowledgeMatch(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    card_id: str = Field(..., max_length=120)
+    card_revision: int = Field(..., ge=1)
+    title: str = Field(..., max_length=120)
+    source_project_id: str = Field(..., max_length=80)
+    kind: Kind4
+    origin: Origin
+    measure_key: str = Field(..., max_length=80)
+    measure_name: str = Field(..., max_length=120)
+    similarity: float = Field(..., ge=0.0, le=1.0)
+    related: bool
+    transferability: Transferability
+    conditions: list[KnowledgeConditionMatch] = Field(..., max_length=30)
+    exclusions: list[KnowledgeConditionMatch] = Field(..., max_length=20)
+    similar_conditions: list[SimilarCondition] = Field(..., max_length=30)
+    important_differences: list[ImportantDifference] = Field(..., max_length=30)
+    reuse_premises: list[ReusePremise] = Field(..., max_length=30)
+    unknowns: list[Unknown1] = Field(..., max_length=30)
+    recommendation: str | None = Field(..., max_length=3000)
+    evidence_refs: list[EvidenceRef2] = Field(..., max_length=100)
+
+
+class PolicyVersion(StrEnum):
+    knowledge_routing_v1 = 'knowledge-routing-v1'
+    knowledge_routing_v2 = 'knowledge-routing-v2'
+
+
+class Route(StrEnum):
+    case_hit = 'case_hit'
+    rule_hit = 'rule_hit'
+    combined_hit = 'combined_hit'
+    agent_fallback = 'agent_fallback'
+
+
+class Reason2(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class FallbackStatus(StrEnum):
+    not_needed = 'not_needed'
+    pending = 'pending'
+    offline_only = 'offline_only'
+    blocked_external = 'blocked_external'
+    executed = 'executed'
+
+
+class AgentStatus(StrEnum):
+    pending = 'pending'
+    executed = 'executed'
+    offline_only = 'offline_only'
+    blocked_external = 'blocked_external'
+
+
+class KnowledgeTrace(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy_version: PolicyVersion
+    evaluated_as_of: str = Field(..., max_length=10)
+    query: KnowledgeQuery
+    route: Route
+    case_hits: list[KnowledgeMatch] = Field(..., max_length=20)
+    rule_hits: list[KnowledgeMatch] = Field(..., max_length=20)
+    candidates: list[KnowledgeMatch] = Field(..., max_length=100)
+    reasons: list[Reason2] = Field(..., max_length=30)
+    fallback_status: FallbackStatus
+    agent_status: AgentStatus | None = None
+
+
+class KnowledgeCitation(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    source_id: str = Field(..., max_length=200, min_length=1)
+    locator: str = Field(..., max_length=300, min_length=1)
+    quote: str = Field(..., max_length=3000, min_length=1)
+
+
+class MatchedCardId(RootModel[str]):
+    root: str = Field(..., max_length=120, min_length=1)
+
+
+class MatchedConditionKey(RootModel[str]):
+    root: str = Field(..., max_length=100, min_length=1)
+
+
+class Unknown2(RootModel[str]):
+    root: str = Field(..., max_length=1000, min_length=1)
+
+
+class NextStep1(RootModel[str]):
+    root: str = Field(..., max_length=1000, min_length=1)
+
+
+class KnowledgeAgentAdvice(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    measure_key: str = Field(..., max_length=80, min_length=1)
+    advice: str = Field(..., max_length=1200, min_length=1)
+    reasoning: str = Field(..., max_length=1600, min_length=1)
+    matched_card_ids: list[MatchedCardId] = Field(..., max_length=10, min_length=1)
+    matched_condition_keys: list[MatchedConditionKey] = Field(
+        ..., max_length=20, min_length=1
+    )
+    citations: list[KnowledgeCitation] = Field(..., max_length=10, min_length=1)
+    unknowns: list[Unknown2] = Field(..., max_length=10, min_length=0)
+    next_steps: list[NextStep1] = Field(..., max_length=5, min_length=0)
+
+
+class Action1(StrEnum):
+    proceed = 'proceed'
+    supplement = 'supplement'
+    defer = 'defer'
+
+
+class KnowledgeAgentDecision(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    action: Action1
+    reasoning: str = Field(..., max_length=2000, min_length=1)
+    citations: list[KnowledgeCitation] = Field(..., max_length=10, min_length=1)
+
+
+class Disagreement(RootModel[str]):
+    root: str = Field(..., max_length=1000, min_length=1)
+
+
+class KnowledgeAgentAssessment(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    summary: str = Field(..., max_length=1000, min_length=1)
+    decision: KnowledgeAgentDecision
+    recommendations: list[KnowledgeAgentAdvice] = Field(..., max_length=8, min_length=1)
+    disagreements: list[Disagreement] = Field(..., max_length=10, min_length=0)
+
+
+class FinalAction(StrEnum):
+    proceed = 'proceed'
+    supplement = 'supplement'
+    defer = 'defer'
+
+
+class DecisionEvidenceRef(RootModel[str]):
+    root: str = Field(..., max_length=200, min_length=1)
+
+
+class GuardReason1(RootModel[str]):
+    root: str = Field(..., max_length=1000, min_length=1)
+
+
+class AssessedCardId(RootModel[str]):
+    root: str = Field(..., max_length=120, min_length=1)
+
+
+class KnowledgeAgentReport(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy_version: Literal['knowledge-agent-v1']
+    assessment: KnowledgeAgentAssessment
+    final_action: FinalAction
+    decision_evidence_refs: list[DecisionEvidenceRef] = Field(
+        ..., max_length=100, min_length=0
+    )
+    guard_reasons: list[GuardReason1] = Field(..., max_length=30, min_length=0)
+    assessed_card_ids: list[AssessedCardId] = Field(..., max_length=40, min_length=0)
+    final_citations: list[KnowledgeCitation] | None = Field(None, max_length=100)
 
 
 class Scope(BaseModel):
@@ -1139,6 +1416,7 @@ class ProjectInput(BaseModel):
     candidate_ids: list[CandidateId] = Field(..., max_length=3, min_length=1)
     events: list[InputEvent]
     business_profile: BusinessProfile | None = None
+    knowledge_query: KnowledgeQuery | None = None
 
 
 class ScenarioProposal(BaseModel):
@@ -1224,6 +1502,45 @@ class DecisionSupport(BaseModel):
     dashboard: DecisionDashboard | None = None
 
 
+class ExperienceDraft(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=10)
+    knowledge: ExperienceKnowledge | None = None
+
+
+class ExperienceCard(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=10)
+    id: str
+    project_id: str
+    status: Status15
+    revision: int = Field(..., ge=1)
+    review_note: str | None = Field(..., max_length=2000)
+    created_at: str
+    updated_at: str
+    knowledge: ExperienceKnowledge | None = None
+
+
+class ExperienceDraftBatch(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    drafts: list[ExperienceDraft] = Field(..., max_length=20)
+    warnings: list[Warning] = Field(..., max_length=20)
+
+
 class DecisionPacket(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1262,6 +1579,8 @@ class DecisionPacket(BaseModel):
     scope: Scope | None = None
     decision_support: DecisionSupport | None = None
     neighborhood_action: NeighborhoodActionAdvice | None = None
+    knowledge: KnowledgeTrace | None = None
+    knowledge_agent: KnowledgeAgentReport | None = None
 
 
 class MapScreenContext(BaseModel):

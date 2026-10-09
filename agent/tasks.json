@@ -801,6 +801,84 @@
       ],
       "evidence_log": "research/test_results/condition-policy.json",
       "upstream_verification_required": false
+    },
+    {
+      "id": "T33",
+      "depends_on": [
+        "T32"
+      ],
+      "goal": "选中项目直接进入全宽主调研页，保留地图与草稿并收起常驻侧栏",
+      "status": "completed_local_navigation_and_visual_readback",
+      "expected_artifacts": [
+        "research/test_results/project-research-page.json",
+        "tests/browser/neighborhood-workflow.mjs"
+      ],
+      "definition_of_done": "项目列表与地图项目入口直接进入主调研；桌面和手机全宽、支持记录可展开、地图返回与项目草稿隔离通过；构建与真实项目读回；不新增模型调用。",
+      "write_scope": [
+        "apps/workspace/src/",
+        "tests/browser/neighborhood-workflow.mjs",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/project-research-page.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T34",
+      "depends_on": [
+        "T33"
+      ],
+      "goal": "案例和论文按举措沉淀为案例/规则，条件匹配及可迁移性判断，两路无命中才启用DSH保底",
+      "status": "completed_local_case_rule_pipeline_verified",
+      "expected_artifacts": [
+        "docs/案例规则库与条件迁移.md",
+        "data/templates/case-extraction-template.json",
+        "runtime/skills/case-rule-extraction/",
+        "research/test_results/case-rule-library.json"
+      ],
+      "definition_of_done": "同库版本/引用/审批保留；单项举措提取与规则归档；条件、单位、未知和排除项分别判断；四路线且直接命中零模型；缓存恢复、权限、幂等和候选来源可追溯；真实原文草稿入库及UI验收；不宣称企业效果或自动训练。",
+      "write_scope": [
+        "packages/experience/",
+        "packages/contracts/",
+        "runtime/",
+        "apps/",
+        "tests/",
+        "scripts/seed-case-library.ts",
+        "data/templates/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/case-rule-library.json",
+      "upstream_verification_required": true
+    },
+    {
+      "id": "T35",
+      "depends_on": [
+        "T34"
+      ],
+      "goal": "任何真实命中都接入Agent研判，建议与决策逐条展示原文信源及命中点",
+      "status": "completed_agent_hit_and_per_item_citation_verified",
+      "expected_artifacts": [
+        "runtime/workflows/knowledge-agent.ts",
+        "apps/workspace/src/components/KnowledgeAgentReport.tsx",
+        "research/test_results/knowledge-agent-sources.json"
+      ],
+      "definition_of_done": "case/rule/combined live必经现有Agent和只读证据工具；每条建议/决策引用KB与现实命中条件；拒绝伪/错定位、工具外或漏引用；主路径使用Agent结果、最终行动一致且保硬约束；内部权限/取消/缓存恢复有效；相关回归、构建和浏览器通过，未以模拟样本宣称决策质量。",
+      "write_scope": [
+        "runtime/",
+        "packages/contracts/",
+        "packages/decision/",
+        "packages/experience/knowledge.ts",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/knowledge-agent-sources.json",
+      "upstream_verification_required": false
     }
   ]
 }

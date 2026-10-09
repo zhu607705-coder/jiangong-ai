@@ -1,0 +1,26 @@
+{
+  "adaptation": "Source attribution and evidence-bound extraction guidance; project-authored ExperienceDraftBatch instructions, no upstream scheduler or parser copied.",
+  "sources": [
+    {
+      "repository": "Yuan1z0825/nature-skills",
+      "commit": "d5c8baa15d6b1bd44bff07865da83961449da01a",
+      "path": "skills/nature-paper-card/SKILL.md",
+      "license": "Apache-2.0",
+      "license_file": "nature-skills-LICENSE.txt"
+    },
+    {
+      "repository": "K-Dense-AI/scientific-agent-skills",
+      "commit": "92ace75ac21efe19a620434e0ca4e356081fe807",
+      "path": "skills/literature-review/SKILL.md",
+      "license": "MIT",
+      "license_file": "scientific-agent-skills-LICENSE.txt"
+    }
+  ],
+  "patches": [
+    "one measure per card",
+    "proposal/decision/implementation/outcome retained independently",
+    "typed conditions use cited fact_kind/unit evidence",
+    "human review required before direct knowledge matching",
+    "use existing ParserPort, experience DB and DSH"
+  ]
+}

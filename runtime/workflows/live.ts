@@ -4,7 +4,7 @@ import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../
 import { randomUUID } from 'node:crypto'
 import { Store, type RunRecord } from '../../apps/host/store'
 import { config } from '../../apps/host/config'
-import type { CapabilityResult, ComparisonPacket, DecisionPacket, Impact, ProjectInput, ResearchTrace, ReviewPacket, ScenarioProposal, Source, DecisionSupport } from '../../apps/host/generated/contracts'
+import type { CapabilityResult, ComparisonPacket, DecisionPacket, Impact, ProjectInput, ResearchTrace, ReviewPacket, ScenarioProposal, Source, DecisionSupport, KnowledgeTrace } from '../../apps/host/generated/contracts'
 import { validate, decisionPacket } from '../../packages/contracts/validate'
 import { visibleSnapshot } from '../../packages/context/compiler'
 import { assembleDecision, revisionDiff } from '../../packages/decision/evaluate'
@@ -39,14 +39,15 @@ export function specialistSnapshot(project: ProjectInput, role: RoleId): Project
   return snapshot
 }
 
-export async function executeLiveRun(store: Store, run: RunRecord, signal: AbortSignal): Promise<void> {
+export async function executeLiveRun(store: Store, run: RunRecord, signal: AbortSignal, knowledge?: KnowledgeTrace, knowledgeArtifact?: string, knowledgeSources: Source[] = []): Promise<void> {
   const full = structuredClone(run.snapshot)
+  full.sources = [...new Map([...full.sources, ...knowledgeSources].map(source => [source.id, source])).values()]
   const neighborhood=full.business_profile==='neighborhood'
-  const purpose=neighborhood?'老旧小区改造':'存量利用与实施路径'
+  const purpose=[neighborhood?'老旧小区改造':'存量利用与实施路径', full.knowledge_query?.measure_key, full.knowledge_query?.question].filter(Boolean).join(' · ')
   const businessGuidance=neighborhood?'本项目是老旧小区改造前期研判。分别研究基础、完善、提升类改造；居民家庭与公共服务需求；鉴定消防、管网和施工接口；居民协商与实施主体；资金来源、工程成本与居民负担；物业长效维护。现状、估算、方案假设与缺项分别保留。提议、实际决策、已实施与结果不能混写；未记载的历史理由不补写。下一步应说明缺失材料、影响哪项结论、向谁取得及补齐后重算什么。':''
   const permittedInternal = full.synthetic || config.ALLOW_INTERNAL_MODEL === 'true'
   const modelProject = permittedInternal ? structuredClone(full) : visibleSnapshot(full, 'public')
-  const artifactRefs: string[] = []
+  const artifactRefs: string[] = knowledgeArtifact ? [knowledgeArtifact] : []
   const day = new Date().toISOString().slice(0, 10)
   const intelligenceRevision=await intelligenceScopeRevision({name:full.scope.name,city:full.scope.city,purpose,asOf:full.as_of})
   const researchKey = digest({ intelligenceRevision, business_profile:full.business_profile||'general',purpose,project: full.project_id, scope: full.scope, as_of: full.as_of, day, source_ids: full.sources.filter(s => s.visibility === 'public').map(s => s.id) })
@@ -188,6 +189,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     packet.analysis_method = 'model_assisted'
     packet.status = full.facts.length || full.sources.some(s => s.untrusted_text?.trim()) ? 'partial' : 'empty'
     packet.model_calls = live.calls
+    if (knowledge) packet.knowledge = { ...knowledge, fallback_status: 'executed', agent_status: 'executed' }
     packet.research = research.trace
     if(decisionSupport) packet.decision_support=decisionSupport
     packet.unresolved_disagreements = [...new Set([...proposal.unresolved, ...reviews.unresolved_disagreements, ...comparison.unresolved_disagreements])]

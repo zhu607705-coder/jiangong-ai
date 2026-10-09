@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   IconArrowRight,
@@ -21,7 +21,7 @@ import {
 import WorkspaceFrame from "./components/WorkspaceFrame";
 import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
-import type { MapScreenContext } from '../../host/generated/contracts';
+import type { MapScreenContext, KnowledgeQuery } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
@@ -59,6 +59,8 @@ const roleLabel: Record<string, string> = {
   comparator: "条件比较",
   report: "报告",
   snapshot: "资料快照",
+  knowledge: "案例与规则匹配",
+  knowledge_agent: "命中依据的Agent研判",
   decision: "决策包",
   error: "运行异常",
 };
@@ -66,6 +68,7 @@ const sampleExperience =
   "我们做过厂房更新，本项目不整体拆除。有一栋还在出租，最好分期推进。结构能不能改还不确定。";
 const show = (value: unknown) =>
   value == null ? "—" : Array.isArray(value) ? value.join("；") : String(value);
+const KnowledgeAgentReport = lazy(() => import('./components/KnowledgeAgentReport'));
 
 function RegionView({ project }: { project: Project }) {
   const ring = project.input.scope.geometry?.coordinates[0];
@@ -312,13 +315,14 @@ export default function App() {
       setBusy(false);
     }
   }
-  async function startRun(p: Project, mode: "automatic" | "enterprise") {
+  async function startRun(p: Project, mode: "automatic" | "enterprise", knowledgeQuery?: KnowledgeQuery) {
     const created = await api<{ id: string; revision: number; status: string }>(
       `/projects/${p.id}/runs`,
       {
         mode,
         execution_mode: executionMode,
         idempotency_key: crypto.randomUUID(),
+        ...(knowledgeQuery ? { knowledge_query: knowledgeQuery } : {}),
       },
     );
     setRun({
@@ -477,15 +481,15 @@ export default function App() {
         void action(async () => {
           setLoadingTarget(id);
           try {
-            await loadProject(id);
-            setTab("overview");
+            const selected = await loadProject(id);
+            setTab(selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
             setMapFocus(v => v + 1);
-            setDetailsOpen(false);
+            setDetailsOpen(true);
           } finally { setLoadingTarget(null); }
         })
       }
       onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
-      mapView={<MapWorkspace ready={!loading} interactionBlocked={loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+      mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
         onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
@@ -499,7 +503,7 @@ export default function App() {
       detailsOpen={detailsOpen}
       bootLoading={loading || !!loadingTarget}
       onMap={() => setDetailsOpen(false)}
-      onSettings={() => setMapSettings(v => v + 1)}
+      onSettings={() => { setDetailsOpen(false); setMapSettings(v => v + 1); }}
       error={error}
       onDismissError={() => setError('')}
       rail={rail}
@@ -589,14 +593,14 @@ export default function App() {
             <div>
               <div className="eyebrow">
                 <span className="project-type">
-                  {project.input.synthetic ? "显式合成示范" : "真实项目资料"}
+                  {project.input.purpose === 'case_library_archive' ? '案例与规则归档' : project.input.synthetic ? "显式合成示范" : "真实项目资料"}
                 </span>
                 <span>项目空间 / {project.id.slice(0, 10)}</span>
               </div>
               <h1>{project.name}</h1>
               <p>
-                投资拓展与前期策划 <span>·</span>{" "}
-                {project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
+                {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '投资拓展与前期策划'} <span>·</span>{" "}
+                {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
               </p>
             </div>
             <button className="secondary" onClick={() => setCreateOpen(true)}>
@@ -666,12 +670,24 @@ export default function App() {
               {packet && (
                 <div className="result-provenance">
                   当前结果 v{packet.revision} ·{" "}
-                  {packet.execution_mode === "live"
+                  {packet.knowledge_agent
+                    ? `命中后 Agent 研判 · ${packet.model || '模型标识未返回'} · ${packet.model_calls?.length || 0} 次调用`
+                    : packet.execution_mode === "live"
                     ? `真实模型 ${packet.model || "标识未返回"} · ${packet.model_calls?.length || 0} 次调用`
                     : "离线工程检查（无模型推理）"}
                 </div>
               )}
+              {packet?.knowledge_agent && packet.knowledge && <Suspense fallback={<p role="status">正在读取建议与信源…</p>}><KnowledgeAgentReport value={packet.knowledge_agent} trace={packet.knowledge} sources={packet.sources} onEvidence={openEvidence} /></Suspense>}
+              {packet?.knowledge && <details className="knowledge-run-trace"><summary>案例与规则命中依据 · {packet.knowledge.case_hits.length} 个案例 / {packet.knowledge.rule_hits.length} 条规则</summary>
+                <p>{packet.knowledge.route === 'agent_fallback' ? packet.knowledge.fallback_status === 'offline_only' ? '本次两库均无适用命中，已执行离线工程检查；Agent 保底未启动。' : '本次两库均无适用命中，使用 Agent 保底生成候选建议。' : packet.knowledge.agent_status === 'executed' ? '命中记录已交Agent分析迁移条件和建议；下列内容是引用依据，最终行动仍接受业务条件检查。' : '下列是命中资料和条件核查记录，尚未由Agent完成本次研判。'}</p>
+                {[...packet.knowledge.rule_hits, ...packet.knowledge.case_hits].map(hit => <article key={hit.card_id}><strong>{hit.measure_name}</strong><p>{hit.recommendation}</p>
+                  <small>{[...hit.similar_conditions, ...hit.reuse_premises, ...hit.important_differences].join('；')}</small>
+                  <button className="claim-source" onClick={() => openEvidence(hit.evidence_refs)}>查看原文与条件依据</button>
+                </article>)}
+                {packet.knowledge.reasons.map((reason, index) => <p key={index}>{reason}</p>)}
+              </details>}
               {project.input.business_profile === 'neighborhood' && <NeighborhoodPanel key={project.id} project={project.input} dashboard={packet?.decision_support?.dashboard}
+                assessedAdvice={!stale && packet?.knowledge_agent ? packet.neighborhood_action : undefined}
                 draft={neighborhoodDrafts[project.id] || createNeighborhoodDraft()}
                 onDraftChange={update => setNeighborhoodDrafts(current => ({ ...current, [project.id]: update(current[project.id] || createNeighborhoodDraft()) }))}
                 onEvidence={openEvidence} />}
@@ -896,11 +912,13 @@ export default function App() {
           {tab === "context" && (
             <section className="content-panel">
               <div className="kicker">ENTERPRISE CONTEXT</div>
-              <h2>项目经验与本项目意见</h2>
+              <h2>{project.input.purpose === 'case_library_archive' ? '案例与规则资料库' : '项目经验与本项目意见'}</h2>
               <p className="intro">
-                记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。
+                {project.input.purpose === 'case_library_archive' ? '按单项举措保存真实来源、方法、实施记录和适用边界，复核后供具体项目检索。' : '记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。'}
               </p>
-              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} currentProject={project.input} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()} />
+              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} currentProject={project.input} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()}
+                onKnowledgeRun={project.input.purpose === 'case_library_archive' ? undefined : query => { if (!busy && !running) void action(() => startRun(project, 'enterprise', query)); }} />
+              <div hidden={project.input.purpose === 'case_library_archive'}>
               <label className="field-label" htmlFor="experience">
                 本项目意见（不作为历史实施结果）
               </label>
@@ -1008,6 +1026,7 @@ export default function App() {
                   还没有项目经验。你可以直接用自然语言补充。
                 </p>
               )}
+              </div>
             </section>
           )}
           {tab === "evidence" && (
@@ -1258,6 +1277,7 @@ export default function App() {
                     <div>
                       <h3>{item.title}</h3>
                       <p>{item.why}</p>
+                      {'evidence_refs' in item && Array.isArray(item.evidence_refs) && item.evidence_refs.length > 0 && <button className="claim-source" onClick={() => openEvidence(item.evidence_refs as string[])}>查看调查建议的信源</button>}
                     </div>
                     <button
                       className="secondary"

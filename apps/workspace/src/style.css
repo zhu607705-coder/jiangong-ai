@@ -277,6 +277,10 @@ small {
   font-size: 12px;
   color: #587265;
 }
+.knowledge-run-trace { margin: 18px 0; padding: 14px 18px; border: 1px solid #dce6e2; border-radius: 10px; background: #fcfdfc; }
+.knowledge-run-trace summary { color: #286b65; cursor: pointer; }
+.knowledge-run-trace article { padding: 14px 0; border-top: 1px solid #e1e8e6; }
+.knowledge-run-trace p, .knowledge-run-trace small { line-height: 1.7; }
 .workspace-columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;

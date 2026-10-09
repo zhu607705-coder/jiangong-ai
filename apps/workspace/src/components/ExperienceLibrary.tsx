@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField, ProjectInput } from '../../../host/generated/contracts'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField, ProjectInput, KnowledgeQuery } from '../../../host/generated/contracts'
 import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/document-slices'
 import { api } from '../api'
 import WaitingScene from './WaitingScene'
 import { retrofitAdvice } from '../../../../packages/retrofit/planning'
 import './experience-library.css'
+const KnowledgeWorkbench = lazy(() => import('./KnowledgeWorkbench'))
+const KnowledgeProfileEditor = lazy(() => import('./KnowledgeWorkbench').then(module => ({ default: module.KnowledgeProfileEditor })))
 
-type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; currentProject?: ProjectInput; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void }
+type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; currentProject?: ProjectInput; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void; onKnowledgeRun?: (query: KnowledgeQuery) => void }
 type Document = { id: string; file_name: string; created_at?: string; parser_result?: ParsedDocument['parser_result'] }
 type CitableDocument = Document & { slices: DocumentSlice[] }
 type Match = { card: ExperienceCard; similar_conditions: string[]; important_differences: string[]; reuse_premises: string[] }
@@ -22,6 +24,7 @@ const statusLabel = { draft: '待复核草稿', approved: '已审核', rejected:
 const reason = (error: unknown) => error instanceof Error ? error.message : '请求暂未完成，请重试。'
 const asDraft = (card: ExperienceCard): ExperienceDraft => ({ title: card.title, project_type: card.project_type,
   development_mode: card.development_mode, stage: card.stage,
+  ...(card.knowledge ? { knowledge: structuredClone(card.knowledge) } : {}),
   fields: fields.map(({ key }) => { const field = card.fields.find(item => item.key === key); return {
     key, value: field?.value ?? null, evidence: (field?.evidence || []).map(item => ({ ...item })),
   } }) })
@@ -40,6 +43,7 @@ function DraftEditor({ draft, documents, citableDocuments, busy, creating, onCha
     <div className="experience-meta-editor">{([
       ['title', '经验卡标题'], ['project_type', '项目类型'], ['development_mode', '开发或改造模式'], ['stage', '项目阶段'],
     ] as const).map(([key, label]) => <label key={key}>{label}<input disabled={!!busy} maxLength={key === 'title' ? 120 : 80} value={draft[key]} onChange={event => onChange(current => ({ ...current, [key]: event.target.value }))} /></label>)}</div>
+    <Suspense fallback={<p role="status">正在加载举措条件编辑…</p>}><KnowledgeProfileEditor draft={draft} onChange={onChange} busy={!!busy} documents={documents} /></Suspense>
     {fields.map(({ key, label }) => { const field = draft.fields.find(item => item.key === key)!
       return <fieldset className="experience-field-editor" key={key} disabled={!!busy}><legend>{label}</legend>
         <textarea aria-label={`${label}内容`} maxLength={3000} value={field.value || ''} placeholder="原文未记载时留空" onChange={event => editField(key, { value: event.target.value || null })} />
@@ -95,7 +99,7 @@ function CardContent({ card, documents }: { card: ExperienceCard; documents: Doc
   })}</dl>
 }
 
-export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, currentProject, onProjectUpdated, onOpenMaterials }: Props) {
+export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, currentProject, onProjectUpdated, onOpenMaterials, onKnowledgeRun }: Props) {
   const currentAdvice=useMemo(()=>currentProject?.project_id===projectId&&currentProject.business_profile==='neighborhood'?retrofitAdvice(currentProject):null,[currentProject,projectId])
   const requestKey = `${projectId}\u0000${revision}\u0000${synthetic}\u0000${asOf}`
   const activeKey = useRef(requestKey)
@@ -243,6 +247,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
     {isLoading ? <WaitingScene compact variant="research" title="正在读取项目经验" detail="读取历史材料、经验草稿与审核记录…" /> : <p role="alert">项目经验暂不可读：{loaded.error}</p>}</section>
 
   return <section className="experience-library" aria-label="项目经验沉淀">{heading}
+    <Suspense fallback={<p role="status">正在加载案例与规则匹配…</p>}><KnowledgeWorkbench projectId={projectId} revision={revision} asOf={asOf} currentProject={currentProject} onRun={onKnowledgeRun} /></Suspense>
     <div className="experience-tabs" aria-label="经验查看方式"><button type="button" aria-pressed={mode === 'project'} onClick={() => setMode('project')}>本项目经验 · {cards.length}</button>
       <button type="button" aria-pressed={mode === 'search'} onClick={() => setMode('search')}>检索已审核经验</button></div>
     {actionError && <p className="experience-error" role="alert">{actionError}</p>}

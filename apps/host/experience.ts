@@ -29,11 +29,11 @@ export async function registerExperience(app: Express, store: Store, requireProj
   }
   app.get('/api/projects/:id/experiences', route(async (request, response) => {
     const project = await requireProject(String(request.params.id))
-    const query = z.object({ q: z.string().max(300).optional(), status: z.enum(['draft', 'approved', 'rejected']).optional() }).strict().parse(request.query)
-    response.json({ cards: await service.repository.list(project.id, query.q, query.status) })
+    const query = z.object({ q: z.string().max(300).optional(), status: z.enum(['draft', 'approved', 'rejected']).optional(), kind: z.enum(['case', 'rule']).optional() }).strict().parse(request.query)
+    response.json({ cards: await service.repository.list(project.id, query.q, query.status, query.kind) })
   }))
   app.get('/api/experiences/search', route(async (request, response) => {
-    const query = z.object({ q: z.string().max(300).optional(), project_type: z.string().max(80).optional(), development_mode: z.string().max(80).optional(), stage: z.string().max(80).optional(), as_of: date.optional(), exclude_project: z.string().min(1).optional(), synthetic: z.enum(['true', 'false']).optional(), limit: z.coerce.number().int().min(1).max(100).optional() }).strict().parse(request.query)
+    const query = z.object({ q: z.string().max(300).optional(), project_type: z.string().max(80).optional(), development_mode: z.string().max(80).optional(), stage: z.string().max(80).optional(), as_of: date.optional(), exclude_project: z.string().min(1).optional(), synthetic: z.enum(['true', 'false']).optional(), limit: z.coerce.number().int().min(1).max(100).optional(), kind: z.enum(['case', 'rule']).optional() }).strict().parse(request.query)
     const target = query.exclude_project ? await requireProject(query.exclude_project) : undefined
     const synthetic = query.synthetic === undefined ? target?.input.synthetic || false : query.synthetic === 'true'
     if (target && synthetic !== target.input.synthetic) throw new ExperienceError(422, 'SYNTHETIC_SCOPE', '检索资料类别必须与当前项目一致。')
@@ -48,6 +48,12 @@ export async function registerExperience(app: Express, store: Store, requireProj
     const project = await requireProject(String(request.params.id))
     const body = z.object({ draft: z.unknown() }).strict().parse(request.body)
     response.status(201).json(await service.create(project, body.draft))
+  }))
+  app.post('/api/projects/:id/experiences/knowledge-match', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ query: z.object({ measure_key: z.string().max(80).regex(/^[A-Za-z0-9_.-]*$/), question: z.string().max(1000) }).strict() }).strict().parse(request.body)
+    // This explicit owner-scoped preview includes reviewed internal knowledge without changing the project or calling a model.
+    response.json(await service.resolveKnowledge({ ...project, input: { ...project.input, mode: 'enterprise' } }, body.query))
   }))
   app.post('/api/projects/:id/experiences/:cardId/update', route(async (request, response) => {
     const project = await requireProject(String(request.params.id))

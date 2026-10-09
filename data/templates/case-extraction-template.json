@@ -1,0 +1,68 @@
+{
+  "title": "待填写的单项举措",
+  "project_type": "",
+  "development_mode": "",
+  "stage": "",
+  "fields": [
+    {
+      "key": "decision_question",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "background",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "key_conditions",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "alternatives",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "proposal",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "actual_decision",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "decision_basis",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "implementation",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "outcome",
+      "value": null,
+      "evidence": []
+    },
+    {
+      "key": "applicability",
+      "value": null,
+      "evidence": []
+    }
+  ],
+  "knowledge": {
+    "kind": "case",
+    "origin": "project_case",
+    "measure_key": "measure_to_review",
+    "measure_name": "待填写的举措",
+    "conditions": [],
+    "exclusions": [],
+    "transfer_notes": [],
+    "evidence_level": "not_reported"
+  }
+}
