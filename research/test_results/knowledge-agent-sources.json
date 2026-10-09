@@ -74,5 +74,12 @@
   "guard": "Hard veto/missing evidence can only preserve or tighten agent action; primary actions no longer repeat raw historical suggestions.",
   "real_provider_quality": "not_evaluated_pending_reviewed_real_applicable_cases",
   "model_calls_added": 0,
-  "publication": "local_working_tree_only"
+  "publication": {
+    "status": "pushed_and_pr_created",
+    "branch": "codex/knowledge-agent-sources",
+    "base": "codex/neighborhood-condition-policy",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+    "merged": false
+  }
 }

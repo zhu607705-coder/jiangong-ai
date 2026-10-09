@@ -595,7 +595,14 @@
     "tests": "10 App navigation flows, existing map regression and eight handoff cases, TypeScript and production build; real Cuiyuan desktop/mobile readback",
     "evidence": "research/test_results/project-research-page.json",
     "model_calls_added": 0,
-    "publication": "local_working_tree_only",
+    "publication": {
+      "status": "pushed_and_pr_created",
+      "branch": "codex/knowledge-agent-sources",
+      "base": "codex/neighborhood-condition-policy",
+      "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+      "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+      "merged": false
+    },
     "unresolved_questions": [],
     "next_runnable_task": "No required work remains for this navigation change; use later concrete user feedback."
   },
@@ -609,7 +616,14 @@
     "draft_cards": 7,
     "approved_cards": 0,
     "model_calls_added": 0,
-    "publication": "local_working_tree_only",
+    "publication": {
+      "status": "pushed_and_pr_created",
+      "branch": "codex/knowledge-agent-sources",
+      "base": "codex/neighborhood-condition-policy",
+      "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+      "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+      "merged": false
+    },
     "unresolved_questions": [
       "Initial real applicability conditions and semantic mappings require professional review."
     ],
@@ -623,7 +637,26 @@
     "agent_report_version": "knowledge-agent-v1",
     "model_calls_added": 0,
     "real_decision_quality": "awaits_reviewed_real_applicable_cases",
-    "publication": "local_working_tree_only",
+    "publication": {
+      "status": "pushed_and_pr_created",
+      "branch": "codex/knowledge-agent-sources",
+      "base": "codex/neighborhood-condition-policy",
+      "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+      "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+      "merged": false
+    },
     "next_runnable_task": "No required implementation remains; reviewed real cases can later qualify for a separately scoped provider/quality evaluation."
+  },
+  "github_delivery": {
+    "status": "pushed_and_pr_created",
+    "branch": "codex/knowledge-agent-sources",
+    "base": "codex/neighborhood-condition-policy",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+    "merged": false,
+    "date": "2026-10-09",
+    "verified_local_checks": "research/test_results/knowledge-agent-sources.json",
+    "ci_status_at_publication": "pending_remote_checks",
+    "next_runnable_task": "Review PR #17; base PR #16 remains open. No merge performed."
   }
 }

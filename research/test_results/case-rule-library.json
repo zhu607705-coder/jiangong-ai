@@ -91,7 +91,14 @@
     "Generated fallback proposals do not approve constraints or become training/history automatically."
   ],
   "model_calls_added": 0,
-  "publication": "local_working_tree_only",
+  "publication": {
+    "status": "pushed_and_pr_created",
+    "branch": "codex/knowledge-agent-sources",
+    "base": "codex/neighborhood-condition-policy",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+    "merged": false
+  },
   "temporary_integration_worktrees": [
     "/tmp/jiangong-case-knowledge-matcher",
     "/tmp/jiangong-case-knowledge-intake",
