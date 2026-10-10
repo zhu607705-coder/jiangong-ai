@@ -1,0 +1,11 @@
+{
+  "status_code": 500,
+  "elapsed_ms": 12438,
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+  "scope": "Actual saved public original and configured DeepSeek/DSH; no human approvals or quality labels",
+  "response": {
+    "code": "EXPERIENCE_REQUEST_FAILED",
+    "detail": "经验整理未完成，请检查本地运行记录。"
+  }
+}

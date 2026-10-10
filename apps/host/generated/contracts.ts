@@ -1511,3 +1511,75 @@ export interface DistilledSkill {
   created_at: string;
   updated_at: string;
 }
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ActionFieldSelection".
+ */
+export interface ActionFieldSelection {
+  key:
+    | "decision_question"
+    | "background"
+    | "key_conditions"
+    | "alternatives"
+    | "proposal"
+    | "actual_decision"
+    | "decision_basis"
+    | "implementation"
+    | "outcome"
+    | "applicability";
+  value: string;
+  /**
+   * @minItems 1
+   * @maxItems 30
+   */
+  chunk_ids: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ActionReviewMeasure".
+ */
+export interface ActionReviewMeasure {
+  measure_key: string;
+  measure_name: string;
+  kind: "case" | "rule";
+  origin: "project_case" | "official_policy" | "research_paper" | "practice";
+  /**
+   * @minItems 1
+   * @maxItems 30
+   */
+  action_chunk_ids: string[];
+  /**
+   * @maxItems 30
+   */
+  context_chunk_ids: string[];
+  /**
+   * @maxItems 10
+   */
+  fields: ActionFieldSelection[];
+  /**
+   * @maxItems 30
+   */
+  conditions: KnowledgeCondition[];
+  /**
+   * @maxItems 20
+   */
+  exclusions: KnowledgeCondition[];
+  /**
+   * @maxItems 10
+   */
+  transfer_notes: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ActionReviewBatch".
+ */
+export interface ActionReviewBatch {
+  /**
+   * @maxItems 3
+   */
+  measures: ActionReviewMeasure[];
+  /**
+   * @maxItems 30
+   */
+  warnings: string[];
+}

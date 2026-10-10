@@ -2,6 +2,7 @@ import type { ExperienceDraft, ExperienceEvidence, ExperienceKnowledge, Knowledg
 import { validate } from '../contracts/validate'
 import { ExperienceError } from './errors'
 import { documentSlices, type ParsedDocument, type DocumentSlice } from './document-slices'
+import { experienceEvidenceGroups, validateAdditionalKnowledge } from './pipeline-normalize'
 
 export const FIELD_LABELS = {
   decision_question: '决策问题', background: '背景目标', key_conditions: '关键条件', alternatives: '备选方案',
@@ -64,14 +65,18 @@ export function normalizeDraft(value: unknown): ExperienceDraft {
     }
   }
   draft.fields = FIELD_KEYS.map(key => draft.fields.find(field => field.key === key) || { key, value: null, evidence: [] })
+  validateAdditionalKnowledge(draft, instructionLike)
   return draft
 }
 
 /** Project ownership, immutable byte hash, locator and exact quote all have to match. */
 export function validateEvidence(draft: ExperienceDraft, documents: ParsedDocument[], projectId: string): void {
+  validateEvidenceGroups(experienceEvidenceGroups(draft), documents, projectId)
+}
+
+export function validateEvidenceGroups(references: ExperienceEvidence[][], documents: ParsedDocument[], projectId: string): void {
   const byId = new Map(documents.map(document => [document.id, document]))
   const locatorsByDocument = new Map<string, Map<string, DocumentSlice>>()
-  const references = [...draft.fields.map(field => field.evidence), ...(draft.knowledge ? [...draft.knowledge.conditions, ...draft.knowledge.exclusions].map(condition => condition.evidence) : [])]
   for (const group of references) {
     for (const evidence of group) {
       const document = byId.get(evidence.document_id)

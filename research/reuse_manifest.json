@@ -170,5 +170,37 @@
       "completed": true
     }
   ],
-  "implementation_record": "research/upstream.lock.json"
+  "implementation_record": "research/upstream.lock.json",
+  "knowledge_pipeline_extensions": [
+    {
+      "source": "apps/host/ingest.ts#parseDocument and vendor/cre/dashboard/server/parser-service.ts#buildTextUploadedDataProfile",
+      "target": "packages/experience/pipeline.ts#importPublicDocument",
+      "reuse": "existing ParserPort wrapper; preserve original UTF-8 bytes and SHA; no new parser or URL client"
+    },
+    {
+      "source": "packages/experience/document-slices.ts#documentSlices",
+      "target": "packages/experience/chunking.ts and action-review.ts",
+      "reuse": "source-bound action classification; deduplicate only CRE Line/Text mirrors, retain existing citation locators"
+    },
+    {
+      "source": "packages/experience/repository.ts#ExperienceRepository and apps/host/store.ts#Store",
+      "target": "packages/experience/knowledge-repository.ts",
+      "reuse": "same database and transaction/history pattern; additive policy/skill tables"
+    },
+    {
+      "source": "runtime/dsh/live-session.ts#LiveSession.call/registerReadTool",
+      "target": "packages/experience/service.ts and runtime/workflows/knowledge-agent.ts",
+      "reuse": "same typed model seam and read-only knowledge_evidence; compact scoped IDs, source validation, one source retry"
+    },
+    {
+      "source": "vendor/aihot/algorithms.ts#lexicalSimilarity",
+      "target": "packages/experience/knowledge.ts",
+      "reuse": "unchanged candidate relevance retrieval; clustering never overrides condition gates"
+    },
+    {
+      "target": "packages/experience/clustering.ts",
+      "implementation": "project-authored bounded weighted mixed distance and complete-linkage; policy-controlled units, scales, weights, coverage, amount basis and partitions; no upstream clustering code copied",
+      "validation": "tests/contracts/knowledge-clustering.test.ts"
+    }
+  ]
 }

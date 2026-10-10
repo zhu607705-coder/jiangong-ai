@@ -1,0 +1,2 @@
+{"event":"run_failed","run_id":"RUN-994167df-5d84-4ca1-af02-a15ad5df69c0","code":"DECISION_REQUEST_FAILED","diagnostic":"DECISION_REQUEST_FAILED"}
+{"status":"failed","error_code":"DECISION_REQUEST_FAILED","new_model_calls":0}

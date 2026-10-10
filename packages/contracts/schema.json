@@ -4888,6 +4888,165 @@
         "updated_at"
       ],
       "additionalProperties": false
+    },
+    "ActionFieldSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "decision_question",
+            "background",
+            "key_conditions",
+            "alternatives",
+            "proposal",
+            "actual_decision",
+            "decision_basis",
+            "implementation",
+            "outcome",
+            "applicability"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "chunk_ids"
+      ]
+    },
+    "ActionReviewMeasure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measure_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9_.-]+$"
+        },
+        "measure_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "case",
+            "rule"
+          ]
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "project_case",
+            "official_policy",
+            "research_paper",
+            "practice"
+          ]
+        },
+        "action_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30,
+          "minItems": 1
+        },
+        "context_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionFieldSelection"
+          },
+          "maxItems": 10
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 30
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 20
+        },
+        "transfer_notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 10
+        }
+      },
+      "required": [
+        "measure_key",
+        "measure_name",
+        "kind",
+        "origin",
+        "action_chunk_ids",
+        "context_chunk_ids",
+        "fields",
+        "conditions",
+        "exclusions",
+        "transfer_notes"
+      ]
+    },
+    "ActionReviewBatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionReviewMeasure"
+          },
+          "maxItems": 3
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        }
+      },
+      "required": [
+        "measures",
+        "warnings"
+      ]
     }
   }
 }

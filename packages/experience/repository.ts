@@ -3,6 +3,7 @@ import type { ExperienceCard, ExperienceDraft, ProjectInput, Source } from '../.
 import type { Database } from '../../apps/host/store'
 import { searchExpression, searchTokens } from '../intelligence/domain'
 import { documentSlices, ExperienceError, normalizeDraft, validateEvidence, type ParsedDocument } from './domain'
+import { experienceEvidenceGroups } from './pipeline-normalize'
 
 const migration = `
 CREATE TABLE IF NOT EXISTS experience_cards (
@@ -26,13 +27,15 @@ export type KnowledgeMaterial = { documents: ParsedDocument[]; sources: Source[]
 
 /** Source identity follows the existing ingest document identifier, never a card's claimed visibility. */
 export function originalSource(document: ParsedDocument, sources: Source[]): Source | undefined {
+  const importedPublic = sources.find(source => source.id === `PUBLIC-DOCUMENT-${document.id}` && source.locator === `document:${document.id}` && source.hash === document.sha256 && source.visibility === 'public' && source.data_class === 'public' && !source.synthetic)
+  if (importedPublic) return importedPublic
   return sources.find(source => (source.id === document.id || source.locator === `document:${document.id}`) && source.hash === document.sha256)
 }
 
 /** Public routing exports only source-backed natural-language metadata. Classification remains reviewed annotation. */
 export function publicKnowledgeCard(card: ExperienceCard, documents: ParsedDocument[]): ExperienceCard | undefined {
   if (!card.knowledge) return undefined
-  const ids = new Set([...card.fields.flatMap(field => field.evidence), ...[...card.knowledge.conditions, ...card.knowledge.exclusions].flatMap(condition => condition.evidence)].map(evidence => evidence.document_id))
+  const ids = new Set(experienceEvidenceGroups(card).flat().map(evidence => evidence.document_id))
   const texts = documents.filter(document => ids.has(document.id)).flatMap(document => documentSlices(document).map(slice => slice.text))
   const present = (value: string) => texts.some(text => text.includes(value))
   if (!present(card.knowledge.measure_name)) return undefined
@@ -42,6 +45,9 @@ export function publicKnowledgeCard(card: ExperienceCard, documents: ParsedDocum
   for (const key of ['conditions', 'exclusions'] as const) {
     result.knowledge![key] = result.knowledge![key].map(condition => ({ ...condition, label: present(condition.label) ? condition.label : key === 'conditions' ? '原文适用条件' : '原文排除条件' }))
   }
+  result.knowledge!.transfer_notes = result.knowledge!.transfer_notes.filter(present)
+  result.knowledge!.factors = result.knowledge!.factors?.map(factor => ({ ...factor, label: present(factor.label) ? factor.label : factor.key,
+    object_ref: factor.object_ref && present(factor.object_ref.replace(/^[^:]+:/, '')) ? factor.object_ref : null }))
   return result
 }
 

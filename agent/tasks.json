@@ -905,6 +905,88 @@
       ],
       "evidence_log": "research/test_results/neighborhood-focus.json",
       "upstream_verification_required": false
+    },
+    {
+      "id": "T37",
+      "depends_on": [
+        "T36"
+      ],
+      "goal": "求是村深入公开研究、举措决策、分期计划与本地证据沉淀",
+      "status": "completed_public_research_and_local_intake_live_comparison_failed",
+      "expected_artifacts": [
+        "docs/research/求是村_旧改深度调研与行动计划.md",
+        "output/pdf/求是村_旧改深度调研与行动计划.pdf",
+        "data/public_cases/qiushi-research-20261010.json",
+        "data/templates/qiushi-survey-register.csv",
+        "scripts/build-qiushi-research.py",
+        "research/test_results/qiushi-research-20261010.json"
+      ],
+      "definition_of_done": "确认为玉泉校区旁求是村；原文、时点、范围和阶段可回读；形成具体举措与三套比较、启动计划和调查表；PDF中文和页面核验、原项目导入读回；真实模型阶段与失败独立报告、不编造现场确认。",
+      "write_scope": [
+        "docs/research/",
+        "data/public_cases/qiushi-research-20261010.json",
+        "data/templates/qiushi-survey-register.csv",
+        "scripts/build-qiushi-research.py",
+        "output/pdf/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "evidence_log": "research/test_results/qiushi-research-20261010.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T38",
+      "depends_on": [
+        "T35",
+        "T36"
+      ],
+      "goal": "说明动作驱动知识沉淀、导师判准、混合因素聚类、三路命中与技能蒸馏路线",
+      "status": "completed_design_superseded_by_T39",
+      "expected_artifacts": [
+        "docs/案例规则库与条件迁移.md",
+        "research/test_results/knowledge-design-20261010.json"
+      ],
+      "definition_of_done": "现状与待实现设计分开；说明chunk、因素与投入归属、归因边界、导师分级、聚类/匹配、版本和三路Gate；Google影像路线按官方资料限定；不宣称聚类、蒸馏或重建已上线。",
+      "write_scope": [
+        "docs/案例规则库与条件迁移.md",
+        "docs/engineering.md",
+        "agent/",
+        "research/test_results/"
+      ],
+      "evidence_log": "research/test_results/knowledge-design-20261010.json",
+      "upstream_verification_required": false,
+      "implementation_note": "Original design retained in historical evidence; current authoritative technical doc now describes implemented T39 modules."
+    },
+    {
+      "id": "T39",
+      "depends_on": [
+        "T38"
+      ],
+      "goal": "实现动作chunk、措施因素映射、导师政策复核、混合聚类、技能蒸馏并接通现有Agent",
+      "status": "completed_engineering_and_public_source_verified",
+      "expected_artifacts": [
+        "packages/experience/chunking.ts",
+        "packages/experience/measure-factors.ts",
+        "packages/experience/clustering.ts",
+        "packages/experience/knowledge-repository.ts",
+        "packages/experience/pipeline.ts",
+        "apps/workspace/src/components/KnowledgePipelinePanel.tsx",
+        "research/test_results/knowledge-pipeline.json"
+      ],
+      "definition_of_done": "同一Canonical及数据库；原文/数值引用可回读；政策与技能版本审核/失效；聚类不抵消硬门；三路命中Agent及兜底可用；真实材料提取读回、HTTP和浏览器集成、构建与相关回归有证据；不伪造导师批准或实际效果。",
+      "write_scope": [
+        "packages/",
+        "apps/",
+        "runtime/",
+        "services/capabilities/generated/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/knowledge-pipeline.json",
+      "implementation_note": "Action chunks/factors, reviewed policy/grouping/compiled skills, source-scoped APIs and existing Agent guard/context integrated. 906 JS/70 Python/14 HTTP/build/browser pass. 13 actual public local drafts plus two revalidated actual model drafts; no fabricated professional reviews. Previous complete Qiushi live decision packet remains unvalidated and separately recorded."
     }
   ]
 }

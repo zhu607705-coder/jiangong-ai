@@ -7,6 +7,7 @@ import { retrofitAdvice } from '../../../../packages/retrofit/planning'
 import './experience-library.css'
 const KnowledgeWorkbench = lazy(() => import('./KnowledgeWorkbench'))
 const KnowledgeProfileEditor = lazy(() => import('./KnowledgeWorkbench').then(module => ({ default: module.KnowledgeProfileEditor })))
+const KnowledgePipelinePanel = lazy(() => import('./KnowledgePipelinePanel'))
 
 type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; currentProject?: ProjectInput; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void; onKnowledgeRun?: (query: KnowledgeQuery) => void }
 type Document = { id: string; file_name: string; created_at?: string; parser_result?: ParsedDocument['parser_result'] }
@@ -107,6 +108,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   if (activeKey.current !== requestKey) { viewGeneration.current += 1; activeKey.current = requestKey }
   const [loaded, setLoaded] = useState<{ key: string; documents: Document[]; cards: ExperienceCard[]; error: string; loading: boolean }>({ key: '', documents: [], cards: [], error: '', loading: true })
   const [mode, setMode] = useState<'project' | 'search'>('project')
+  const [pipelineOpen, setPipelineOpen] = useState(false)
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([])
   const [useModel,setUseModel]=useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -130,7 +132,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   useEffect(() => {
     const controller = new AbortController()
     setLoaded({ key: requestKey, documents: [], cards: [], error: '', loading: true })
-    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setEditing(null); setReviewNote(''); setBusy(''); savePending.current = false
+    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setEditing(null); setReviewNote(''); setBusy(''); savePending.current = false; setPipelineOpen(false)
     setActionError(''); setNotice(''); setWarnings([]); setMatches([]); setSearched(false); setSearching(false)
     searchSequence.current += 1
     void Promise.all([
@@ -247,6 +249,17 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
     {isLoading ? <WaitingScene compact variant="research" title="正在读取项目经验" detail="读取历史材料、经验草稿与审核记录…" /> : <p role="alert">项目经验暂不可读：{loaded.error}</p>}</section>
 
   return <section className="experience-library" aria-label="项目经验沉淀">{heading}
+    <div className="experience-tabs"><button type="button" aria-expanded={pipelineOpen} onClick={() => setPipelineOpen(current => !current)}>原文举措、导师因素政策与技能蒸馏</button></div>
+    {pipelineOpen && <Suspense fallback={<p role="status">正在加载知识沉淀操作…</p>}><KnowledgePipelinePanel projectId={projectId} revision={revision} onChanged={async type => {
+      const key = requestKey, generation = viewGeneration.current
+      if (type === 'documents') {
+        const documents = await api<Document[]>(`/projects/${encodeURIComponent(projectId)}/documents`)
+        if (activeKey.current === key && viewGeneration.current === generation) setLoaded(current => current.key === key ? { ...current, documents } : current)
+        return
+      }
+      const result = await api<{ cards: ExperienceCard[] }>(base)
+      if (activeKey.current === key && viewGeneration.current === generation) setLoaded(current => current.key === key ? { ...current, cards: result.cards } : current)
+    }} /></Suspense>}
     <Suspense fallback={<p role="status">正在加载案例与规则匹配…</p>}><KnowledgeWorkbench projectId={projectId} revision={revision} asOf={asOf} currentProject={currentProject} onRun={onKnowledgeRun} /></Suspense>
     <div className="experience-tabs" aria-label="经验查看方式"><button type="button" aria-pressed={mode === 'project'} onClick={() => setMode('project')}>本项目经验 · {cards.length}</button>
       <button type="button" aria-pressed={mode === 'search'} onClick={() => setMode('search')}>检索已审核经验</button></div>

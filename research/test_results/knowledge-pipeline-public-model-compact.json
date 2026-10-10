@@ -1,0 +1,11 @@
+{
+  "status_code": 422,
+  "elapsed_ms": 16896,
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+  "scope": "Actual saved public original and configured DeepSeek/DSH compact action-ID classification; no human approvals or quality labels",
+  "response": {
+    "code": "TRANSFER_NOTE_NOT_QUOTED",
+    "detail": "迁移边界须为已有原文引文的连续片段。"
+  }
+}

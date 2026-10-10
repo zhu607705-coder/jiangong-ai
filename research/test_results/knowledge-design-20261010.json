@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-10",
+  "status": "design_documented_and_current_implementation_checked",
+  "deliverable": "docs/案例规则库与条件迁移.md",
+  "document_sha256": "773d508099e85fa41cb24151cd261d166aa7f4eba35250d025ebf57b3b524b23",
+  "implementation_anchors": [
+    "packages/experience/document-slices.ts",
+    "packages/experience/service.ts",
+    "packages/experience/knowledge.ts",
+    "runtime/workflows/run.ts",
+    "runtime/workflows/knowledge-agent.ts"
+  ],
+  "existing": [
+    "located document slices",
+    "measure-level draft extraction",
+    "review and revision",
+    "lexical similarity and typed applicability checks",
+    "case/rule/combined Agent routes plus double miss fallback"
+  ],
+  "proposed_not_implemented": [
+    "hierarchical action chunks",
+    "typed factor-observation and event mapping",
+    "导师因素类别审核界面",
+    "partitioned Gower-type complete-linkage clustering",
+    "automatic reviewed skill distillation",
+    "licensed validated image reconstruction"
+  ],
+  "checks": [
+    "Markdown design scope and current/proposed boundary inspected",
+    "existing extraction input bounds and current routing verified from code",
+    "runtime Skill reference exists",
+    "Google terms and COLMAP tutorial checked on official pages"
+  ],
+  "paid_model_calls_added": 0,
+  "business_data_written": false,
+  "current_code_changed": false,
+  "google_service_called": false,
+  "external_sources": [
+    "https://doi.org/10.2307/2528823",
+    "https://cloud.google.com/maps-platform/terms",
+    "https://developers.google.com/maps/documentation/tile/policies",
+    "https://colmap.github.io/tutorial.html"
+  ]
+}

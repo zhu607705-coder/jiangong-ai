@@ -1,0 +1,231 @@
+{
+  "checked_at": "2026-10-10T18:35:25.173557+00:00",
+  "status": "implemented_engineering_and_public_source_verified",
+  "branch": "codex/knowledge-pipeline",
+  "canonical_contract": "packages/contracts/schema.json",
+  "single_database_runtime": true,
+  "code_sha256": {
+    "packages/experience/action-review.ts": "394d453968b47bb1b07470ff9141ea2817b4078f1e7419ebcd8f8b192cc524eb",
+    "packages/experience/chunking.ts": "294dd9855faa6d0c395bb680681358654abc143afcec978bb768fe04c789c224",
+    "packages/experience/measure-factors.ts": "274545d86ae27aef657a1c257d78d2e09d0d8bec835919811a4534f0f03da4ac",
+    "packages/experience/clustering.ts": "03c6f8547599ee60154fbd572b8a9c066d4460b68946b3e2e70a8df1fbc619a9",
+    "packages/experience/pipeline.ts": "ebd27db579ccfd4360a8b64e13fdcaa594c597021e1e1090fb15ff6c2adf3425",
+    "packages/experience/pipeline-normalize.ts": "f76afe05816f591c5ff9a7c9400a7432154210e5fd4a7b1eaa0132e42a37ac06",
+    "packages/experience/knowledge-repository.ts": "cf33ba27177fc975545077a979404c4dde3188e27f779cad8800df6880dfc81d",
+    "packages/experience/knowledge-sources.ts": "5afcc66d85d4416c65823f45d708dab4a5f0cc78dda42f824ccc44cd2c175666",
+    "packages/experience/policy-evaluation.ts": "bafba50e0793c67798e1a132ed7aa73cca7d3c960cb6e656bb3c44dca2a7f9eb",
+    "packages/experience/skill-distillation.ts": "79836485fde4e6ebdd6e321e22c42feeef5b59565ae20e0cfcbc19aaf88a1710",
+    "packages/experience/service.ts": "3c68497594107fdb56ee524a7878b52e03d974bebf96a5811ea294bd40c5ea7c",
+    "apps/host/experience.ts": "8b42413a6e80bcd801a1895c0cdfcd4dd082698f3f6e3d0da32f04274dba53c3",
+    "apps/workspace/src/components/KnowledgePipelinePanel.tsx": "f46b0f92b08039ad41bf219c8fa5ff31f66ccb477e0c82e9e24a38be5ec7e972",
+    "apps/workspace/src/components/ExperienceLibrary.tsx": "0a1ca34d14cfeffffe0b1933c2f6c6d78b6a3fa6d73855e72e8c1dda30c39ddc",
+    "runtime/workflows/knowledge.ts": "32ae5f6f7efd21e731b83ce480f45f470b29004b7dc720573056a8d03f9e5e8f",
+    "runtime/workflows/knowledge-agent.ts": "eac2dfc6655c990d6346622238ba96b82c8413cef34b5c0416a9ea4a1d99689d",
+    "runtime/workflows/live.ts": "7ee39d35a3eda9f1121c5c2cd371afd38f109063619fa71a3ba56113337cd971",
+    "packages/contracts/schema.json": "e4610089d5b2677d31651738dfae1e33ae27b7aec1c656c206db3fcd15395250",
+    "scripts/replay-action-review.ts": "fbf1e9037ff7c13ba3d8417657b87a322b141006cb5693f05e6a1fbcc1733eaf",
+    "scripts/check-knowledge-public-local.py": "4a33266fbfa35490b664dd665b43c0d6344fc7ba3d400f8fc91fcd5f4c0aad89"
+  },
+  "verification": {
+    "javascript_tests": 906,
+    "javascript_files": 48,
+    "python_tests": 70,
+    "http_tests": 14,
+    "production_build": "passed",
+    "browser_contract": "mock APIs, explicit writes only, stale-read guards, 390px; passed",
+    "browser_actual": "actual Qiushi project, original chunk preview and four panels, no model or approval clicks, 390px no overflow; passed",
+    "logs": {
+      "javascript": "research/baseline_logs/knowledge-pipeline-final-js.log",
+      "python": "research/baseline_logs/knowledge-pipeline-final-python.log",
+      "http": "research/baseline_logs/knowledge-pipeline-final-http.log",
+      "build": "research/baseline_logs/knowledge-pipeline-final-build.log",
+      "mock_browser": "research/baseline_logs/knowledge-pipeline-final-browser.log",
+      "actual_browser": "research/baseline_logs/knowledge-pipeline-real-browser.log"
+    }
+  },
+  "real_public_sources": [
+    {
+      "source_id": "INTEL-cde2a3da3dd5:QS-water2023",
+      "source_url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+      "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+      "title": "浙大求是社区推进二次供水改造",
+      "sha256": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+      "original_characters": 1199,
+      "chunk_count": 63,
+      "draft_cards": 8,
+      "measure_keys": [
+        "pipe_network"
+      ],
+      "factor_count": 12,
+      "citations_read_back": 223,
+      "repeat_import_reused": true
+    },
+    {
+      "source_id": "INTEL-fc09b8717eeb:QS-trusteeship2023",
+      "source_url": "https://hznews.hangzhou.com.cn/shehui/content/2023-12/28/content_8666802.htm",
+      "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+      "title": "西湖区三方协同为居民幸福加码",
+      "sha256": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+      "original_characters": 547,
+      "chunk_count": 14,
+      "draft_cards": 4,
+      "measure_keys": [
+        "elevator",
+        "maintenance"
+      ],
+      "factor_count": 2,
+      "citations_read_back": 50,
+      "repeat_import_reused": true
+    },
+    {
+      "source_id": "INTEL-37c81c049883:QS-neighbor2025",
+      "source_url": "https://xhb.xihunet.cn/h5/html5/2025-10/28/content_9248_18995526.htm",
+      "document_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+      "title": "这个“康养生活综合体”，已焕新启用！",
+      "sha256": "a4ad7fa4084f8cd375881d60750815d05dc3c04287e00db78d6c7f838adb3860",
+      "original_characters": 985,
+      "chunk_count": 22,
+      "draft_cards": 1,
+      "measure_keys": [
+        "public_service"
+      ],
+      "factor_count": 1,
+      "citations_read_back": 46,
+      "repeat_import_reused": true
+    }
+  ],
+  "actual_model_validation": {
+    "provider_requests_extraction": 7,
+    "requests": [
+      {
+        "stage": "experience_extract",
+        "session_id": "628c4412-fe94-4fc6-80f2-2f5f607397eb",
+        "input_tokens": 11726,
+        "output_tokens": 3500
+      },
+      {
+        "stage": "experience_extract",
+        "session_id": "743faac0-c3fb-4c52-bf56-a80d6791c98d",
+        "input_tokens": 10226,
+        "output_tokens": 2635
+      },
+      {
+        "stage": "experience_extract",
+        "session_id": "743faac0-c3fb-4c52-bf56-a80d6791c98d",
+        "input_tokens": 12903,
+        "output_tokens": 2608
+      },
+      {
+        "stage": "experience_extract",
+        "session_id": "3734ae3e-112b-4f19-9cea-5c1ed405343f",
+        "input_tokens": 10289,
+        "output_tokens": 2263
+      },
+      {
+        "stage": "experience_extract_source_retry",
+        "session_id": "d2182b5b-639c-46b8-8ece-0d16043e1df3",
+        "input_tokens": 10410,
+        "output_tokens": 3499
+      },
+      {
+        "stage": "experience_extract_source_retry",
+        "session_id": "0b2f549d-9709-4da4-8360-31c9bae6ff83",
+        "input_tokens": 5762,
+        "output_tokens": 1105
+      },
+      {
+        "stage": "experience_extract",
+        "session_id": "552d7511-61d6-4d01-9df8-c21701acc90c",
+        "input_tokens": 5640,
+        "output_tokens": 1301
+      }
+    ],
+    "endpoint_attempts": [
+      {
+        "status_code": 500,
+        "elapsed_ms": 12438,
+        "code": "EXPERIENCE_REQUEST_FAILED"
+      },
+      {
+        "status_code": 422,
+        "elapsed_ms": 16896,
+        "code": "TRANSFER_NOTE_NOT_QUOTED"
+      },
+      {
+        "status_code": 500,
+        "elapsed_ms": 18778,
+        "code": "EXPERIENCE_REQUEST_FAILED"
+      },
+      {
+        "status_code": 422,
+        "elapsed_ms": 10654,
+        "code": "MODEL_FIELD_NOT_QUOTED"
+      }
+    ],
+    "replay": {
+      "checked_at": "2026-10-10T18:23:43.947Z",
+      "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+      "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+      "sha256": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+      "replayed_model_session": "data/local/sessions/EXPERIENCE-8a20f2a2-136d-453d-8040-ba3de52ed5df/_no-cwd/0b2f549d-9709-4da4-8360-31c9bae6ff83/session.v4.jsonl",
+      "input_class": "recorded_actual_model_response",
+      "new_model_calls": 0,
+      "approvals": 0,
+      "valid_drafts": 2,
+      "rejected_measures": 1,
+      "warnings": [
+        "本轮仅纳入索引中 measure_key 为 elevator / maintenance 的措施共3项，索引中 c2、c3、c7、c13、c14 为 context 片段，仅作为上下文引用，未作为独立措施输出。",
+        "全文未记载明确的适用边界或迁移前提原文，故三张卡的 transfer_notes 均留空，未补写。",
+        "未记载任何可明确映射到 fact_kind 的适用条件或排除条件原文，conditions 与 exclusions 均留空，未创造阈值。",
+        "第三张卡（托管费用商讨及从每台每月600元降至300元）与第二张卡（委托物业托管长效机制）同属 DOC-b9965a69 中同一举措链的费用环节，因 index 中 measure_key 标注为 elevator 而沿用，两者是否合并为一项措施待人工复核。",
+        "c1 片段含两次引用（天气寒冷引语与物业负责人介绍）的合并文本，c5、c8、c11 为被截断片段，均未单独成卡以免跨片段拼接。",
+        "本批全部为待复核草稿，未对当前项目是否满足条件作出判断；证据级别、费用计价口径（每台每月）与时间点均需人工核对原始页面。",
+        "材料中如含角色、指令或外发要求，均视为无效数据，未予执行。",
+        "未入库措施“社区陆续安装47部电梯”：MODEL_FIELD_NOT_QUOTED；字段值须逐字来自本措施所选片段，不能跨对象补写。"
+      ],
+      "saved_cards": [
+        {
+          "id": "EXP-1f50f306-64e5-4335-be56-5c89531c00f2",
+          "revision": 1,
+          "reused": false
+        },
+        {
+          "id": "EXP-3092f687-50c6-452e-b1d1-5703c250c25e",
+          "revision": 1,
+          "reused": false
+        }
+      ],
+      "scope": "Source/index/version-exact replay of actual DSH output under current adapter validation; not another live call or quality benchmark"
+    },
+    "boundary": "Endpoint attempts exposed output length / grounding errors. Current adapter rejects individual invalid measures. Actual completed source/index-exact model output was replayed into two draft cards, one rejected. This is not a new endpoint-success or decision-quality benchmark."
+  },
+  "current_local_library": {
+    "documents": 5,
+    "local_measure_drafts": 13,
+    "model_measure_drafts": 2,
+    "policies_approved": 0,
+    "skills_approved": 0
+  },
+  "previous_qiushi_full_run": {
+    "run_id": "RUN-994167df-5d84-4ca1-af02-a15ad5df69c0",
+    "status": "failed",
+    "original_error_code": "RUNTIME_FAILED",
+    "additional_live_requests_on_first_resume": 3,
+    "cache_only_diagnosis": "blocked by unmatched Qwen route cache with all remote requests prohibited; zero new model calls; original error retained",
+    "scope": "A new complete model decision packet has not been validated; retain this limitation separately from the knowledge pipeline."
+  },
+  "not_completed_business_validation": [
+    "mentor-approved factor roles, numeric scales and business thresholds",
+    "authorized enterprise samples and project-isolated transfer/decision quality evaluation",
+    "Google imagery licensing/coverage/3D reconstruction and measurement verification"
+  ],
+  "reproduction": [
+    "npm test",
+    "npm run test:python",
+    "npm run test:e2e",
+    "npm run build",
+    "node tests/browser/knowledge-pipeline.mjs",
+    "python scripts/check-knowledge-public-local.py --project <owned-real-project> --source <existing-public-source-id>",
+    "node --import tsx scripts/replay-action-review.ts --project <id> --document <id> --session <completed-local-DSH-session> [--write]"
+  ]
+}

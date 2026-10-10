@@ -1588,6 +1588,53 @@ class DistilledSkill(BaseModel):
     updated_at: str = Field(..., max_length=100)
 
 
+class ChunkId(RootModel[str]):
+    root: str = Field(..., max_length=200, min_length=1)
+
+
+class ActionFieldSelection(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: Key2
+    value: str = Field(..., max_length=3000, min_length=1)
+    chunk_ids: list[ChunkId] = Field(..., max_length=30, min_length=1)
+
+
+class ActionChunkId(RootModel[str]):
+    root: str = Field(..., max_length=200, min_length=1)
+
+
+class ContextChunkId1(RootModel[str]):
+    root: str = Field(..., max_length=200, min_length=1)
+
+
+class ActionReviewMeasure(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    measure_key: str = Field(
+        ..., max_length=80, min_length=1, pattern='^[A-Za-z0-9_.-]+$'
+    )
+    measure_name: str = Field(..., max_length=120, min_length=1)
+    kind: Kind7
+    origin: Origin
+    action_chunk_ids: list[ActionChunkId] = Field(..., max_length=30, min_length=1)
+    context_chunk_ids: list[ContextChunkId1] = Field(..., max_length=30)
+    fields: list[ActionFieldSelection] = Field(..., max_length=10)
+    conditions: list[KnowledgeCondition] = Field(..., max_length=30)
+    exclusions: list[KnowledgeCondition] = Field(..., max_length=20)
+    transfer_notes: list[TransferNote] = Field(..., max_length=10)
+
+
+class ActionReviewBatch(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    measures: list[ActionReviewMeasure] = Field(..., max_length=3)
+    warnings: list[Warning] = Field(..., max_length=30)
+
+
 class Scope(BaseModel):
     model_config = ConfigDict(
         extra='forbid',

@@ -10,7 +10,7 @@ import { RETROFIT_ACTION_LABELS } from '../../packages/retrofit/policy'
 import { retrofitAdvice } from '../../packages/retrofit/planning'
 import { ExperienceError } from '../../packages/experience/domain'
 import { LiveSession } from '../dsh/live-session'
-import { assembleKnowledgeDecision, type KnowledgeResolution } from './knowledge'
+import { applyKnowledgePolicyGuard, assembleKnowledgeDecision, type KnowledgeResolution } from './knowledge'
 import { digest } from './run'
 
 export const KNOWLEDGE_AGENT_VERSION = 'knowledge-agent-v1' as const
@@ -21,7 +21,7 @@ function permittedProject(project: ProjectInput, resolution: KnowledgeResolution
   const allowed = full.synthetic || config.ALLOW_INTERNAL_MODEL === 'true' ? full : visibleSnapshot(full, 'public')
   const ids = new Set(allowed.sources.map(source => source.id))
   const hits = [...resolution.trace.case_hits, ...resolution.trace.rule_hits]
-  if (hits.some(hit => hit.evidence_refs.some(id => !ids.has(id)))) {
+  if (hits.some(hit => hit.evidence_refs.some(id => !ids.has(id))) || resolution.trace.factor_policy?.evidence_refs.some(id => !ids.has(id))) {
     throw new ExperienceError(403, 'KNOWLEDGE_AGENT_INTERNAL_NOT_PERMITTED', '命中依据包含未获准外发的内部原文；可继续本地查看匹配，Agent调用需要该批材料的使用许可。')
   }
   return allowed
@@ -49,6 +49,7 @@ const matches = (resolution: KnowledgeResolution) => [...resolution.trace.case_h
 const suppliedSources = (project: ProjectInput, resolution: KnowledgeResolution) => new Set([
   ...matches(resolution).flatMap(hit => hit.evidence_refs),
   ...project.facts.filter(fact => fact.kind.startsWith('retrofit.')).map(fact => fact.source_id),
+  ...(resolution.trace.factor_policy?.evidence_refs || []),
 ])
 const currentRefs = (rows: KnowledgeResolution['trace']['case_hits'][number]['conditions']) => [...new Set(rows.filter(row => row.state === 'matched').flatMap(row => row.evidence_refs).filter(id => !id.startsWith('S-KB-')))]
 
@@ -96,7 +97,10 @@ function evidenceInput(project: ProjectInput, resolution: KnowledgeResolution) {
     matches: hits.map(hit => ({ card_id: hit.card_id, card_revision: hit.card_revision, kind: hit.kind, measure_key: hit.measure_key, measure_name: hit.measure_name,
       recommendation: hit.recommendation, conditions: hit.conditions, exclusions: hit.exclusions, differences: hit.important_differences, transfer: hit.reuse_premises })),
     sources, current_facts: project.facts.filter(fact => sourceIds.has(fact.source_id)),
-    business_gate: project.business_profile === 'neighborhood' ? retrofitAdvice(project) : null }
+    business_gate: project.business_profile === 'neighborhood' ? retrofitAdvice(project) : null,
+    ...(resolution.trace.grouping ? { grouping: resolution.trace.grouping } : {}),
+    ...(resolution.trace.factor_policy ? { factor_policy: resolution.trace.factor_policy } : {}),
+    ...(resolution.skills?.length ? { skills: resolution.skills } : {}) }
   if (JSON.stringify(input).length > 60000) throw new Error('KNOWLEDGE_AGENT_CONTEXT_LIMIT')
   return input
 }
@@ -137,7 +141,7 @@ function assessedPacket(run: RunRecord, resolution: KnowledgeResolution, artifac
   if (finalAction === 'defer') for (const scenario of packet.scenarios) if (scenario.id !== 'defer_and_investigate') {
     scenario.status = 'blocked'; scenario.blockers = [...new Set([...scenario.blockers, assessment.decision.reasoning])]
   }
-  return packet
+  return applyKnowledgePolicyGuard(packet)
 }
 
 /** A matched case/rule is input to the existing Agent, never its final answer. */

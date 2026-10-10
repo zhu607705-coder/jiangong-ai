@@ -4,6 +4,7 @@ import type { ProjectRecord, Store } from './store'
 import { ContractError } from '../../packages/contracts/validate'
 import { ExperienceError } from '../../packages/experience/domain'
 import { ExperienceService } from '../../packages/experience/service'
+import { KnowledgePipelineService } from '../../packages/experience/pipeline'
 
 const revision = z.number().int().min(1)
 const version = z.number().int().min(0)
@@ -16,6 +17,8 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 export async function registerExperience(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>): Promise<ExperienceService> {
   const service = new ExperienceService(store)
   await service.initialize()
+  const pipeline = new KnowledgePipelineService(store, service)
+  await pipeline.initialize()
   const route = (operation: (request: Request, response: Response) => Promise<unknown>) => async (request: Request, response: Response) => {
     try { await operation(request, response) }
     catch (error) {
@@ -69,6 +72,57 @@ export async function registerExperience(app: Express, store: Store, requireProj
     const project = await requireProject(String(request.params.id))
     const body = z.object({ card_id: z.string().min(1), expected_card_revision: revision, expected_version: version }).strict().parse(request.body)
     response.json(await service.reuse(project, body.card_id, body.expected_version, body.expected_card_revision))
+  }))
+  app.get('/api/projects/:id/knowledge/pipeline', route(async (request, response) => {
+    response.json(await pipeline.state(await requireProject(String(request.params.id))))
+  }))
+  app.post('/api/projects/:id/knowledge/chunks', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ document_id: z.string().min(1) }).strict().parse(request.body)
+    response.json(await pipeline.chunks(project, body.document_id))
+  }))
+  app.post('/api/projects/:id/knowledge/public-document', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ source_id: z.string().min(1) }).strict().parse(request.body)
+    response.status(201).json(await pipeline.importPublicDocument(project, body.source_id))
+  }))
+  app.post('/api/projects/:id/knowledge/extract', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ document_ids: z.array(z.string().min(1)).min(1).max(10), use_model: z.boolean().default(false) }).strict().parse(request.body)
+    response.status(201).json(await pipeline.extract(project, body.document_ids, body.use_model))
+  }))
+  app.post('/api/projects/:id/knowledge/policies', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ policy: z.object({ definitions: z.array(z.unknown()).max(100), min_coverage: z.number().min(0).max(1), max_distance: z.number().min(0).max(1), note: z.string().max(2000) }).strict(), id: z.string().min(1).optional(), expected_revision: revision.optional() }).strict().parse(request.body)
+    response.status(201).json(await pipeline.savePolicy(project, body.policy as Parameters<typeof pipeline.savePolicy>[1], body.id, body.expected_revision))
+  }))
+  app.post('/api/projects/:id/knowledge/policies/:policyId/review', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ expected_revision: revision, status: z.enum(['approved', 'rejected']), note: z.string().trim().min(1).max(2000) }).strict().parse(request.body)
+    response.json(await pipeline.reviewPolicy(project, String(request.params.policyId), body.expected_revision, body.status, body.note))
+  }))
+  app.post('/api/projects/:id/knowledge/groups', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ policy_id: z.string().min(1).optional(), policy_revision: revision.optional(), query: z.object({ measure_key: z.string().max(80), question: z.string().max(1000) }).strict().optional() }).strict().parse(request.body)
+    response.json(await pipeline.groups(project, body.policy_id, body.policy_revision, body.query))
+  }))
+  app.post('/api/projects/:id/knowledge/skills/distill', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ card_ids: z.array(z.string().min(1)).min(1).max(20) }).strict().parse(request.body)
+    response.status(201).json(await pipeline.distill(project, body.card_ids))
+  }))
+  app.post('/api/projects/:id/knowledge/skills/:skillId/review', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const body = z.object({ expected_revision: revision, status: z.enum(['approved', 'rejected']), note: z.string().trim().min(1).max(2000) }).strict().parse(request.body)
+    response.json(await pipeline.reviewSkill(project, String(request.params.skillId), body.expected_revision, body.status, body.note))
+  }))
+  app.get('/api/projects/:id/knowledge/skills/:skillId/export', route(async (request, response) => {
+    response.json(await pipeline.exportSkill(await requireProject(String(request.params.id)), String(request.params.skillId)))
+  }))
+  app.get('/api/projects/:id/knowledge/:kind/:recordId/history', route(async (request, response) => {
+    const project = await requireProject(String(request.params.id))
+    const kind = z.enum(['policies', 'skills']).parse(request.params.kind)
+    response.json(await pipeline.repository.history(kind === 'policies' ? 'policy' : 'skill', project.id, String(request.params.recordId)))
   }))
   return service
 }

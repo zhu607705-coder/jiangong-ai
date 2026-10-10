@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import type { CapabilityResult, DecisionPacket, KnowledgeQuery, KnowledgeTrace, ProjectInput, Source } from '../../apps/host/generated/contracts'
+import type { CapabilityResult, DecisionPacket, DistilledSkill, KnowledgeQuery, KnowledgeTrace, ProjectInput, Source } from '../../apps/host/generated/contracts'
 import { config } from '../../apps/host/config'
 import type { RunRecord, Store } from '../../apps/host/store'
 import { visibleSnapshot } from '../../packages/context/compiler'
@@ -9,8 +9,45 @@ import { ExperienceService } from '../../packages/experience/service'
 import { KNOWLEDGE_POLICY_VERSION } from '../../packages/experience/knowledge'
 import { ExperienceError } from '../../packages/experience/domain'
 import { digest } from './run'
+import { RETROFIT_ACTION_LABELS } from '../../packages/retrofit/policy'
 
-export type KnowledgeResolution = { trace: KnowledgeTrace; sources: Source[] }
+/** A reviewed additional policy may only retain or tighten the final action. */
+export function applyKnowledgePolicyGuard(packet: DecisionPacket): DecisionPacket {
+  const evaluation = packet.knowledge?.factor_policy
+  if (!evaluation || evaluation.guard === 'none') return packet
+  const current = packet.knowledge_agent?.final_action || packet.neighborhood_action?.decision
+  const final = current === 'defer' || evaluation.guard === 'defer' ? 'defer' : 'supplement'
+  const failures = evaluation.checks.filter(check => check.state !== 'matched')
+  const refs = [...new Set(failures.flatMap(check => check.evidence_refs))]
+  const reasons = failures.map(check => ({ text: `${check.label}：${check.reason}`, evidence_refs: check.evidence_refs }))
+  if (packet.neighborhood_action) packet.neighborhood_action = { ...packet.neighborhood_action, decision: final, label: RETROFIT_ACTION_LABELS[final], reasons: [...new Map([...packet.neighborhood_action.reasons, ...reasons].map(reason => [reason.text + JSON.stringify(reason.evidence_refs), reason])).values()] }
+  if (current !== 'defer' || evaluation.guard === 'defer') packet.summary = `${RETROFIT_ACTION_LABELS[final]}：${failures[0]?.label || '复核因素条件'}。`
+  if (packet.comparison) packet.comparison.summary = packet.summary
+  if (packet.knowledge_agent) {
+    packet.knowledge_agent.final_action = final
+    packet.knowledge_agent.guard_reasons = [...new Set([...packet.knowledge_agent.guard_reasons, ...reasons.map(reason => reason.text)])]
+    packet.knowledge_agent.decision_evidence_refs = [...new Set([...packet.knowledge_agent.decision_evidence_refs, ...refs])]
+    const existing = packet.knowledge_agent.final_citations || packet.knowledge_agent.assessment.decision.citations
+    packet.knowledge_agent.final_citations = [...existing, ...refs.filter(ref => !existing.some(cite => cite.source_id === ref)).flatMap(ref => {
+      const source = packet.sources.find(source => source.id === ref)
+      if (!source?.untrusted_text?.trim()) return []
+      if (ref.startsWith('S-KB-')) {
+        try { const original = JSON.parse(source.untrusted_text).citations?.[0]; return original ? [{ source_id: ref, locator: original.locator, quote: original.quote }] : [] } catch { return [] }
+      }
+      return [{ source_id: ref, locator: 'body', quote: source.untrusted_text.slice(0, 600) }]
+    })]
+  }
+  for (const check of failures) if (!packet.followups.some(item => item.id === `FACTOR-${evaluation.policy_id}-${check.key}`)) packet.followups.push({ id: `FACTOR-${evaluation.policy_id}-${check.key}`, priority: 1,
+    title: `核查${check.label}并复核因素条件`, why: check.reason, impacted_paths: packet.scenarios.map(scenario => scenario.id), status: 'suggested', evidence_refs: check.evidence_refs })
+  if (final === 'defer') {
+    for (const scenario of packet.scenarios) if (scenario.id !== 'defer_and_investigate') { scenario.status = 'blocked'; scenario.blockers = [...new Set([...scenario.blockers, ...reasons.map(reason => reason.text)])]; scenario.evidence_refs = [...new Set([...scenario.evidence_refs, ...refs])] }
+    if (packet.comparison) packet.comparison.tied_paths = packet.comparison.tied_paths.filter(id => packet.scenarios.find(scenario => scenario.id === id)?.status !== 'blocked')
+  }
+  if (packet.comparison) packet.comparison.followups = packet.followups
+  return packet
+}
+
+export type KnowledgeResolution = { trace: KnowledgeTrace; sources: Source[]; skills?: DistilledSkill[] }
 
 export function researchSnapshot(input: ProjectInput, mode: ProjectInput['mode'], query?: KnowledgeQuery): ProjectInput {
   const snapshot = visibleSnapshot(input, mode === 'automatic' ? 'public' : 'internal')
@@ -33,7 +70,7 @@ export async function resolveRunKnowledge(store: Store, run: RunRecord, signal: 
   if (cached) {
     validate('KnowledgeTrace', cached.payload.trace)
     for (const source of cached.payload.sources) validate('Source', source)
-    const identity = (value: KnowledgeResolution) => digest({ trace: value.trace, sources: value.sources.map(source => ({ id: source.id, hash: source.hash, visibility: source.visibility, synthetic: source.synthetic })) })
+    const identity = (value: KnowledgeResolution) => digest({ trace: value.trace, sources: value.sources.map(source => ({ id: source.id, hash: source.hash, visibility: source.visibility, synthetic: source.synthetic })), skills: value.skills || [] })
     if (identity(cached.payload) !== identity(fresh)) throw new ExperienceError(409, 'KNOWLEDGE_RESOLUTION_STALE', '案例、规则或引用材料已更新，请从当前资料新建研判，不能替换原冻结版本。')
     await store.addEvent(run.id, 'knowledge', 'reused', '复用本次运行冻结的案例与规则版本', cached.id)
     return { ...cached.payload, artifact_id: cached.id }
@@ -79,5 +116,5 @@ export function assembleKnowledgeDecision(run: RunRecord, resolution: KnowledgeR
   })))
   const origin = resolution.trace.route === 'combined_hit' ? '案例与规则命中' : resolution.trace.route === 'rule_hit' ? '规则命中' : '案例命中'
   packet.summary = `${origin}：${[...new Set(hits.map(hit => hit.measure_name))].join('、')}。${packet.neighborhood_action?.label || '按条件比较具体举措'}。`
-  return decisionPacket(packet)
+  return decisionPacket(applyKnowledgePolicyGuard(packet))
 }
