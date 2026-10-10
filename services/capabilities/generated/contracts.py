@@ -1079,22 +1079,6 @@ class EvidenceLevel(StrEnum):
     not_reported = 'not_reported'
 
 
-class ExperienceKnowledge(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    kind: Kind4
-    origin: Origin
-    measure_key: str = Field(
-        ..., max_length=80, min_length=1, pattern='^[A-Za-z0-9_.-]+$'
-    )
-    measure_name: str = Field(..., max_length=120, min_length=1)
-    conditions: list[KnowledgeCondition] = Field(..., max_length=30)
-    exclusions: list[KnowledgeCondition] = Field(..., max_length=20)
-    transfer_notes: list[TransferNote] = Field(..., max_length=10)
-    evidence_level: EvidenceLevel
-
-
 class Warning(RootModel[str]):
     root: str = Field(..., max_length=1000)
 
@@ -1207,20 +1191,12 @@ class AgentStatus(StrEnum):
     blocked_external = 'blocked_external'
 
 
-class KnowledgeTrace(BaseModel):
+class SkillRef(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    policy_version: PolicyVersion
-    evaluated_as_of: str = Field(..., max_length=10)
-    query: KnowledgeQuery
-    route: Route
-    case_hits: list[KnowledgeMatch] = Field(..., max_length=20)
-    rule_hits: list[KnowledgeMatch] = Field(..., max_length=20)
-    candidates: list[KnowledgeMatch] = Field(..., max_length=100)
-    reasons: list[Reason2] = Field(..., max_length=30)
-    fallback_status: FallbackStatus
-    agent_status: AgentStatus | None = None
+    skill_id: str = Field(..., max_length=150)
+    revision: int = Field(..., ge=1)
 
 
 class KnowledgeCitation(BaseModel):
@@ -1324,6 +1300,292 @@ class KnowledgeAgentReport(BaseModel):
     guard_reasons: list[GuardReason1] = Field(..., max_length=30, min_length=0)
     assessed_card_ids: list[AssessedCardId] = Field(..., max_length=40, min_length=0)
     final_citations: list[KnowledgeCitation] | None = Field(None, max_length=100)
+
+
+class Kind6(StrEnum):
+    action = 'action'
+    context = 'context'
+
+
+class Classification(StrEnum):
+    local = 'local'
+    model = 'model'
+
+
+class ContextChunkId(RootModel[str]):
+    root: str = Field(..., max_length=150)
+
+
+class ActionChunk(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=150)
+    document_id: str = Field(..., max_length=150)
+    document_version: str = Field(..., max_length=64)
+    measure_key: str = Field(..., max_length=80)
+    object_ref: str | None
+    stage: str = Field(..., max_length=100)
+    kind: Kind6
+    classification: Classification
+    spans: list[ExperienceEvidence] = Field(..., max_length=100)
+    text: str = Field(..., max_length=30000)
+    context_chunk_ids: list[ContextChunkId] = Field(..., max_length=100)
+
+
+class Formula(StrEnum):
+    cost_per_unit = 'cost_per_unit'
+    cost_per_area = 'cost_per_area'
+    cost_per_person = 'cost_per_person'
+
+
+class MeasureCalculation(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    formula: Formula
+    numerator_key: str = Field(..., max_length=80)
+    denominator_key: str = Field(..., max_length=80)
+
+
+class Association(StrEnum):
+    direct = 'direct'
+    shared = 'shared'
+    unresolved = 'unresolved'
+    derived = 'derived'
+
+
+class AmountKind(StrEnum):
+    budget = 'budget'
+    contract = 'contract'
+    paid = 'paid'
+    committed = 'committed'
+    maintenance = 'maintenance'
+    package_total = 'package_total'
+    unknown = 'unknown'
+    not_applicable = 'not_applicable'
+
+
+class EpistemicStatus1(StrEnum):
+    fact = 'fact'
+    estimate = 'estimate'
+    scenario_assumption = 'scenario_assumption'
+    missing = 'missing'
+
+
+class MeasureFactor(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str = Field(..., max_length=80)
+    label: str = Field(..., max_length=150)
+    value: str | float | bool | None
+    unit: str | None
+    object_ref: str | None
+    stage: str = Field(..., max_length=100)
+    observed_at: str | None
+    association: Association
+    amount_kind: AmountKind
+    epistemic_status: EpistemicStatus1
+    evidence: list[ExperienceEvidence] = Field(..., max_length=30)
+    derivation: MeasureCalculation | None = None
+
+
+class ValueType(StrEnum):
+    number = 'number'
+    category = 'category'
+    boolean = 'boolean'
+    ordinal = 'ordinal'
+
+
+class Role1(StrEnum):
+    mandatory = 'mandatory'
+    key = 'key'
+    background = 'background'
+    discarded = 'discarded'
+    pending = 'pending'
+
+
+class MeasureKey(RootModel[str]):
+    root: str = Field(..., max_length=80)
+
+
+class OnUnmet(StrEnum):
+    supplement = 'supplement'
+    defer = 'defer'
+
+
+class FactorDefinition(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str = Field(..., max_length=80)
+    label: str = Field(..., max_length=150)
+    value_type: ValueType
+    role: Role1
+    weight: float = Field(..., ge=0.0, le=100.0)
+    unit: str | None
+    scale: float | None = Field(..., gt=0.0)
+    measure_keys: list[MeasureKey] = Field(..., max_length=50)
+    evidence: list[ExperienceEvidence] = Field(..., max_length=30)
+    condition: KnowledgeCondition | None = None
+    on_unmet: OnUnmet | None = None
+
+
+class FactorPolicy(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=150)
+    project_id: str = Field(..., max_length=150)
+    revision: int = Field(..., ge=1)
+    status: Status15
+    definitions: list[FactorDefinition] = Field(..., max_length=100)
+    min_coverage: float = Field(..., ge=0.0, le=1.0)
+    max_distance: float = Field(..., ge=0.0, le=1.0)
+    note: str = Field(..., max_length=2000)
+    reviewed_by: str | None
+    reviewed_at: str | None
+    created_at: str = Field(..., max_length=100)
+    updated_at: str = Field(..., max_length=100)
+
+
+class SkillCardRef(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    card_id: str = Field(..., max_length=150)
+    revision: int = Field(..., ge=1)
+
+
+class Kind7(StrEnum):
+    case = 'case'
+    rule = 'rule'
+
+
+class KnowledgeGroup(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=150)
+    measure_key: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=100)
+    kind: Kind7
+    card_refs: list[SkillCardRef] = Field(..., max_length=200)
+    diameter: float | None = Field(..., ge=0.0, le=1.0)
+    min_coverage: float | None = Field(..., ge=0.0, le=1.0)
+
+
+class PolicyStatus(StrEnum):
+    draft = 'draft'
+    approved = 'approved'
+    rejected = 'rejected'
+    none = 'none'
+
+
+class UnassignedItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    card_id: str = Field(..., max_length=150)
+    reason: str = Field(..., max_length=500)
+
+
+class KnowledgeGrouping(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy_id: str | None
+    policy_revision: int | None = Field(..., ge=1)
+    policy_status: PolicyStatus
+    groups: list[KnowledgeGroup] = Field(..., max_length=200)
+    unassigned: list[UnassignedItem] = Field(..., max_length=200)
+    candidate_count: int = Field(..., ge=0)
+    truncated: bool
+    source_fingerprint: str = Field(..., max_length=64)
+
+
+class EvidenceRef6(RootModel[str]):
+    root: str = Field(..., max_length=150)
+
+
+class PolicyFactorCheck(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str = Field(..., max_length=80)
+    label: str = Field(..., max_length=150)
+    state: State1
+    reason: str = Field(..., max_length=1000)
+    evidence_refs: list[EvidenceRef6] = Field(..., max_length=100)
+
+
+class Guard(StrEnum):
+    none = 'none'
+    supplement = 'supplement'
+    defer = 'defer'
+
+
+class KnowledgePolicyEvaluation(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy_id: str = Field(..., max_length=150)
+    revision: int = Field(..., ge=1)
+    checks: list[PolicyFactorCheck] = Field(..., max_length=100)
+    guard: Guard
+    evidence_refs: list[EvidenceRef6] = Field(..., max_length=100)
+
+
+class InputKey(RootModel[str]):
+    root: str = Field(..., max_length=80)
+
+
+class ProcedureItem(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class ValidationPoint(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class Counterexample(RootModel[str]):
+    root: str = Field(..., max_length=1000)
+
+
+class AllowedTool(StrEnum):
+    knowledge_evidence = 'knowledge_evidence'
+
+
+class Method(StrEnum):
+    compiled = 'compiled'
+    model = 'model'
+
+
+class DistilledSkill(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=150)
+    project_id: str = Field(..., max_length=150)
+    revision: int = Field(..., ge=1)
+    status: Status15
+    title: str = Field(..., max_length=300)
+    measure_key: str = Field(..., max_length=80)
+    card_refs: list[SkillCardRef] = Field(..., max_length=20)
+    input_keys: list[InputKey] = Field(..., max_length=100)
+    preconditions: list[KnowledgeCondition] = Field(..., max_length=100)
+    exclusions: list[KnowledgeCondition] = Field(..., max_length=100)
+    procedure: list[ProcedureItem] = Field(..., max_length=20)
+    validation_points: list[ValidationPoint] = Field(..., max_length=20)
+    counterexamples: list[Counterexample] = Field(..., max_length=20)
+    allowed_tools: list[AllowedTool] = Field(..., max_length=1)
+    method: Method
+    review_note: str | None
+    reviewed_by: str | None
+    reviewed_at: str | None
+    created_at: str = Field(..., max_length=100)
+    updated_at: str = Field(..., max_length=100)
 
 
 class Scope(BaseModel):
@@ -1502,43 +1764,41 @@ class DecisionSupport(BaseModel):
     dashboard: DecisionDashboard | None = None
 
 
-class ExperienceDraft(BaseModel):
+class ExperienceKnowledge(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    title: str = Field(..., max_length=120, min_length=1)
-    project_type: str = Field(..., max_length=80)
-    development_mode: str = Field(..., max_length=80)
-    stage: str = Field(..., max_length=80)
-    fields: list[ExperienceField] = Field(..., max_length=10)
-    knowledge: ExperienceKnowledge | None = None
+    kind: Kind4
+    origin: Origin
+    measure_key: str = Field(
+        ..., max_length=80, min_length=1, pattern='^[A-Za-z0-9_.-]+$'
+    )
+    measure_name: str = Field(..., max_length=120, min_length=1)
+    conditions: list[KnowledgeCondition] = Field(..., max_length=30)
+    exclusions: list[KnowledgeCondition] = Field(..., max_length=20)
+    transfer_notes: list[TransferNote] = Field(..., max_length=10)
+    evidence_level: EvidenceLevel
+    chunks: list[ActionChunk] | None = Field(None, max_length=100)
+    factors: list[MeasureFactor] | None = Field(None, max_length=100)
 
 
-class ExperienceCard(BaseModel):
+class KnowledgeTrace(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    title: str = Field(..., max_length=120, min_length=1)
-    project_type: str = Field(..., max_length=80)
-    development_mode: str = Field(..., max_length=80)
-    stage: str = Field(..., max_length=80)
-    fields: list[ExperienceField] = Field(..., max_length=10)
-    id: str
-    project_id: str
-    status: Status15
-    revision: int = Field(..., ge=1)
-    review_note: str | None = Field(..., max_length=2000)
-    created_at: str
-    updated_at: str
-    knowledge: ExperienceKnowledge | None = None
-
-
-class ExperienceDraftBatch(BaseModel):
-    model_config = ConfigDict(
-        extra='forbid',
-    )
-    drafts: list[ExperienceDraft] = Field(..., max_length=20)
-    warnings: list[Warning] = Field(..., max_length=20)
+    policy_version: PolicyVersion
+    evaluated_as_of: str = Field(..., max_length=10)
+    query: KnowledgeQuery
+    route: Route
+    case_hits: list[KnowledgeMatch] = Field(..., max_length=20)
+    rule_hits: list[KnowledgeMatch] = Field(..., max_length=20)
+    candidates: list[KnowledgeMatch] = Field(..., max_length=100)
+    reasons: list[Reason2] = Field(..., max_length=30)
+    fallback_status: FallbackStatus
+    agent_status: AgentStatus | None = None
+    grouping: KnowledgeGrouping | None = None
+    factor_policy: KnowledgePolicyEvaluation | None = None
+    skill_refs: list[SkillRef] | None = Field(None, max_length=30)
 
 
 class DecisionPacket(BaseModel):
@@ -1659,3 +1919,42 @@ class MapScreenResult(BaseModel):
     comparison_count: int = Field(..., ge=0, le=24)
     notes: list[Note] = Field(..., max_length=10)
     theme: MapScreenTheme
+
+
+class ExperienceDraft(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=10)
+    knowledge: ExperienceKnowledge | None = None
+
+
+class ExperienceCard(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=120, min_length=1)
+    project_type: str = Field(..., max_length=80)
+    development_mode: str = Field(..., max_length=80)
+    stage: str = Field(..., max_length=80)
+    fields: list[ExperienceField] = Field(..., max_length=10)
+    id: str
+    project_id: str
+    status: Status15
+    revision: int = Field(..., ge=1)
+    review_note: str | None = Field(..., max_length=2000)
+    created_at: str
+    updated_at: str
+    knowledge: ExperienceKnowledge | None = None
+
+
+class ExperienceDraftBatch(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    drafts: list[ExperienceDraft] = Field(..., max_length=20)
+    warnings: list[Warning] = Field(..., max_length=20)

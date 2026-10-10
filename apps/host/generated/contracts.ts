@@ -573,6 +573,15 @@ export interface KnowledgeTrace {
   reasons: string[];
   fallback_status: "not_needed" | "pending" | "offline_only" | "blocked_external" | "executed";
   agent_status?: "pending" | "executed" | "offline_only" | "blocked_external";
+  grouping?: KnowledgeGrouping;
+  factor_policy?: KnowledgePolicyEvaluation;
+  /**
+   * @maxItems 30
+   */
+  skill_refs?: {
+    skill_id: string;
+    revision: number;
+  }[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -666,6 +675,84 @@ export interface ExperienceEvidence {
   version: string;
   locator: string;
   quote: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeGrouping".
+ */
+export interface KnowledgeGrouping {
+  policy_id: string | null;
+  policy_revision: number | null;
+  policy_status: "draft" | "approved" | "rejected" | "none";
+  /**
+   * @maxItems 200
+   */
+  groups: KnowledgeGroup[];
+  /**
+   * @maxItems 200
+   */
+  unassigned: {
+    card_id: string;
+    reason: string;
+  }[];
+  candidate_count: number;
+  truncated: boolean;
+  source_fingerprint: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgeGroup".
+ */
+export interface KnowledgeGroup {
+  id: string;
+  measure_key: string;
+  stage: string;
+  kind: "case" | "rule";
+  /**
+   * @maxItems 200
+   */
+  card_refs: SkillCardRef[];
+  diameter: number | null;
+  min_coverage: number | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "SkillCardRef".
+ */
+export interface SkillCardRef {
+  card_id: string;
+  revision: number;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "KnowledgePolicyEvaluation".
+ */
+export interface KnowledgePolicyEvaluation {
+  policy_id: string;
+  revision: number;
+  /**
+   * @maxItems 100
+   */
+  checks: PolicyFactorCheck[];
+  guard: "none" | "supplement" | "defer";
+  /**
+   * @maxItems 100
+   */
+  evidence_refs: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "PolicyFactorCheck".
+ */
+export interface PolicyFactorCheck {
+  key: string;
+  label: string;
+  state: "matched" | "unmatched" | "unknown" | "conflict";
+  reason: string;
+  /**
+   * @maxItems 100
+   */
+  evidence_refs: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -1231,6 +1318,68 @@ export interface ExperienceKnowledge {
     | "official_policy"
     | "expert_practice"
     | "not_reported";
+  /**
+   * @maxItems 100
+   */
+  chunks?: ActionChunk[];
+  /**
+   * @maxItems 100
+   */
+  factors?: MeasureFactor[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "ActionChunk".
+ */
+export interface ActionChunk {
+  id: string;
+  document_id: string;
+  document_version: string;
+  measure_key: string;
+  object_ref: string | null;
+  stage: string;
+  kind: "action" | "context";
+  classification: "local" | "model";
+  /**
+   * @maxItems 100
+   */
+  spans: ExperienceEvidence[];
+  text: string;
+  /**
+   * @maxItems 100
+   */
+  context_chunk_ids: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "MeasureFactor".
+ */
+export interface MeasureFactor {
+  key: string;
+  label: string;
+  value: string | number | boolean | null;
+  unit: string | null;
+  object_ref: string | null;
+  stage: string;
+  observed_at: string | null;
+  association: "direct" | "shared" | "unresolved" | "derived";
+  amount_kind:
+    "budget" | "contract" | "paid" | "committed" | "maintenance" | "package_total" | "unknown" | "not_applicable";
+  epistemic_status: "fact" | "estimate" | "scenario_assumption" | "missing";
+  /**
+   * @maxItems 30
+   */
+  evidence: ExperienceEvidence[];
+  derivation?: MeasureCalculation;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "MeasureCalculation".
+ */
+export interface MeasureCalculation {
+  formula: "cost_per_unit" | "cost_per_area" | "cost_per_person";
+  numerator_key: string;
+  denominator_key: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -1267,4 +1416,98 @@ export interface ExperienceDraftBatch {
    * @maxItems 20
    */
   warnings: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "FactorDefinition".
+ */
+export interface FactorDefinition {
+  key: string;
+  label: string;
+  value_type: "number" | "category" | "boolean" | "ordinal";
+  role: "mandatory" | "key" | "background" | "discarded" | "pending";
+  weight: number;
+  unit: string | null;
+  scale: number | null;
+  /**
+   * @maxItems 50
+   */
+  measure_keys: string[];
+  /**
+   * @maxItems 30
+   */
+  evidence: ExperienceEvidence[];
+  condition?: KnowledgeCondition;
+  on_unmet?: "supplement" | "defer";
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "FactorPolicy".
+ */
+export interface FactorPolicy {
+  id: string;
+  project_id: string;
+  revision: number;
+  status: "draft" | "approved" | "rejected";
+  /**
+   * @maxItems 100
+   */
+  definitions: FactorDefinition[];
+  min_coverage: number;
+  max_distance: number;
+  note: string;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DistilledSkill".
+ */
+export interface DistilledSkill {
+  id: string;
+  project_id: string;
+  revision: number;
+  status: "draft" | "approved" | "rejected";
+  title: string;
+  measure_key: string;
+  /**
+   * @maxItems 20
+   */
+  card_refs: SkillCardRef[];
+  /**
+   * @maxItems 100
+   */
+  input_keys: string[];
+  /**
+   * @maxItems 100
+   */
+  preconditions: KnowledgeCondition[];
+  /**
+   * @maxItems 100
+   */
+  exclusions: KnowledgeCondition[];
+  /**
+   * @maxItems 20
+   */
+  procedure: string[];
+  /**
+   * @maxItems 20
+   */
+  validation_points: string[];
+  /**
+   * @maxItems 20
+   */
+  counterexamples: string[];
+  /**
+   * @maxItems 1
+   */
+  allowed_tools: "knowledge_evidence"[];
+  method: "compiled" | "model";
+  review_note: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }

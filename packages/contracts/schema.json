@@ -3510,6 +3510,20 @@
             "expert_practice",
             "not_reported"
           ]
+        },
+        "chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionChunk"
+          },
+          "maxItems": 100
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MeasureFactor"
+          },
+          "maxItems": 100
         }
       },
       "required": [
@@ -3829,6 +3843,34 @@
             "offline_only",
             "blocked_external"
           ]
+        },
+        "grouping": {
+          "$ref": "#/definitions/KnowledgeGrouping"
+        },
+        "factor_policy": {
+          "$ref": "#/definitions/KnowledgePolicyEvaluation"
+        },
+        "skill_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "skill_id": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "skill_id",
+              "revision"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 30
         }
       },
       "required": [
@@ -4082,6 +4124,768 @@
         "decision_evidence_refs",
         "guard_reasons",
         "assessed_card_ids"
+      ],
+      "additionalProperties": false
+    },
+    "ActionChunk": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "document_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "document_version": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "object_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "action",
+            "context"
+          ]
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "local",
+            "model"
+          ]
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 100
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 30000
+        },
+        "context_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "id",
+        "document_id",
+        "document_version",
+        "measure_key",
+        "object_ref",
+        "stage",
+        "kind",
+        "classification",
+        "spans",
+        "text",
+        "context_chunk_ids"
+      ],
+      "additionalProperties": false
+    },
+    "MeasureCalculation": {
+      "type": "object",
+      "properties": {
+        "formula": {
+          "type": "string",
+          "enum": [
+            "cost_per_unit",
+            "cost_per_area",
+            "cost_per_person"
+          ]
+        },
+        "numerator_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "denominator_key": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "formula",
+        "numerator_key",
+        "denominator_key"
+      ],
+      "additionalProperties": false
+    },
+    "MeasureFactor": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "object_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "observed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "association": {
+          "type": "string",
+          "enum": [
+            "direct",
+            "shared",
+            "unresolved",
+            "derived"
+          ]
+        },
+        "amount_kind": {
+          "type": "string",
+          "enum": [
+            "budget",
+            "contract",
+            "paid",
+            "committed",
+            "maintenance",
+            "package_total",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "epistemic_status": {
+          "type": "string",
+          "enum": [
+            "fact",
+            "estimate",
+            "scenario_assumption",
+            "missing"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 30
+        },
+        "derivation": {
+          "$ref": "#/definitions/MeasureCalculation"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value",
+        "unit",
+        "object_ref",
+        "stage",
+        "observed_at",
+        "association",
+        "amount_kind",
+        "epistemic_status",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "FactorDefinition": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "value_type": {
+          "type": "string",
+          "enum": [
+            "number",
+            "category",
+            "boolean",
+            "ordinal"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "mandatory",
+            "key",
+            "background",
+            "discarded",
+            "pending"
+          ]
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "measure_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "maxItems": 50
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 30
+        },
+        "condition": {
+          "$ref": "#/definitions/KnowledgeCondition"
+        },
+        "on_unmet": {
+          "type": "string",
+          "enum": [
+            "supplement",
+            "defer"
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value_type",
+        "role",
+        "weight",
+        "unit",
+        "scale",
+        "measure_keys",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "FactorPolicy": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "project_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ]
+        },
+        "definitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FactorDefinition"
+          },
+          "maxItems": 100
+        },
+        "min_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_distance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "updated_at": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "revision",
+        "status",
+        "definitions",
+        "min_coverage",
+        "max_distance",
+        "note",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "SkillCardRef": {
+      "type": "object",
+      "properties": {
+        "card_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "card_id",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "case",
+            "rule"
+          ]
+        },
+        "card_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SkillCardRef"
+          },
+          "maxItems": 200
+        },
+        "diameter": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "id",
+        "measure_key",
+        "stage",
+        "kind",
+        "card_refs",
+        "diameter",
+        "min_coverage"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeGrouping": {
+      "type": "object",
+      "properties": {
+        "policy_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "policy_revision": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "policy_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected",
+            "none"
+          ]
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeGroup"
+          },
+          "maxItems": 200
+        },
+        "unassigned": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "card_id": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "card_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 200
+        },
+        "candidate_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "source_fingerprint": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "policy_id",
+        "policy_revision",
+        "policy_status",
+        "groups",
+        "unassigned",
+        "candidate_count",
+        "truncated",
+        "source_fingerprint"
+      ],
+      "additionalProperties": false
+    },
+    "PolicyFactorCheck": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "matched",
+            "unmatched",
+            "unknown",
+            "conflict"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "state",
+        "reason",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgePolicyEvaluation": {
+      "type": "object",
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PolicyFactorCheck"
+          },
+          "maxItems": 100
+        },
+        "guard": {
+          "type": "string",
+          "enum": [
+            "none",
+            "supplement",
+            "defer"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "policy_id",
+        "revision",
+        "checks",
+        "guard",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "DistilledSkill": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "project_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "card_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SkillCardRef"
+          },
+          "maxItems": 20
+        },
+        "input_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "maxItems": 100
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 100
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 100
+        },
+        "procedure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        },
+        "validation_points": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        },
+        "counterexamples": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        },
+        "allowed_tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "knowledge_evidence"
+            ]
+          },
+          "maxItems": 1
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "compiled",
+            "model"
+          ]
+        },
+        "review_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "updated_at": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "revision",
+        "status",
+        "title",
+        "measure_key",
+        "card_refs",
+        "input_keys",
+        "preconditions",
+        "exclusions",
+        "procedure",
+        "validation_points",
+        "counterexamples",
+        "allowed_tools",
+        "method",
+        "review_note",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at"
       ],
       "additionalProperties": false
     }
