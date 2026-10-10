@@ -227,5 +227,23 @@
     "node tests/browser/knowledge-pipeline.mjs",
     "python scripts/check-knowledge-public-local.py --project <owned-real-project> --source <existing-public-source-id>",
     "node --import tsx scripts/replay-action-review.ts --project <id> --document <id> --session <completed-local-DSH-session> [--write]"
-  ]
+  ],
+  "source_attribution_review": {
+    "status": "passed",
+    "inherited_code_commit": "44bcb490e1a019b3b21154dc3d0dc0e1d7e76a53",
+    "changed_target": "packages/intelligence/pipeline.ts",
+    "scope": "Reviewed inherited official-template/UNKNOWN handling patch; upstream AIHOT algorithm and license bytes unchanged; lock target corrected without disabling audit.",
+    "regression_tests": 24,
+    "audit_log": "research/baseline_logs/knowledge-pipeline-aihot-audit.log",
+    "test_log": "research/baseline_logs/knowledge-pipeline-aihot-regression.log"
+  },
+  "publication": {
+    "pr": 18,
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/18",
+    "base_pr": 17,
+    "base_branch": "codex/knowledge-agent-sources",
+    "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
+    "status": "open_unmerged",
+    "first_ci": "Map workspace quality passed; source-attribution audit failed on stale inherited hash, now reviewed and corrected; new CI pending"
+  }
 }

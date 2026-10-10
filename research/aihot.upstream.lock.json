@@ -47,7 +47,7 @@
     },
     {
       "path": "packages/intelligence/pipeline.ts",
-      "sha256": "b9e945ebd71ddfbf1b0aa91aba8402f64ec3013be305c05d57a2cf4454a0f511"
+      "sha256": "6dd102702966b5f73f89bd8bf32acc057477468b5e1aa652435ab5bae0903f85"
     },
     {
       "path": "packages/intelligence/evaluation.ts",
@@ -103,5 +103,22 @@
     "pg_boss_second_database_worker",
     "AIHOT_brand_assets"
   ],
-  "verification": "research/test_results/aihot-core.json"
+  "verification": "research/test_results/aihot-core.json",
+  "local_patch_reviews": [
+    {
+      "reviewed_at": "2026-10-11",
+      "path": "packages/intelligence/pipeline.ts",
+      "previous_review_commit": "9d502bc54138b23d72b0e39ca6a6a9b4a262eb73",
+      "changed_commit": "44bcb490e1a019b3b21154dc3d0dc0e1d7e76a53",
+      "previous_sha256": "b9e945ebd71ddfbf1b0aa91aba8402f64ec3013be305c05d57a2cf4454a0f511",
+      "sha256": "6dd102702966b5f73f89bd8bf32acc057477468b5e1aa652435ab5bae0903f85",
+      "scope": "Reviewed inherited 11-line code-first patch: reuse localOfficialStructure for verified official templates; retain conflicts/unscored, and stop UNKNOWN before scoring/merging. No upstream algorithm or license bytes changed.",
+      "tests": [
+        "tests/contracts/intelligence-code-first.test.ts",
+        "tests/contracts/intelligence-http.test.ts",
+        "tests/contracts/intelligence-storage.test.ts"
+      ],
+      "evidence": "research/baseline_logs/knowledge-pipeline-aihot-audit.log"
+    }
+  ]
 }

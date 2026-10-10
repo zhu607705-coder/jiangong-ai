@@ -637,7 +637,16 @@
     "date": "2026-10-09",
     "verified_local_checks": "research/test_results/knowledge-agent-sources.json",
     "ci_status_at_publication": "pending_remote_checks",
-    "next_runnable_task": "Review PR #17; base PR #16 remains open. No merge performed."
+    "next_runnable_task": "Review PR #17; base PR #16 remains open. No merge performed.",
+    "knowledge_pipeline_pr": {
+      "pr": 18,
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/18",
+      "base_pr": 17,
+      "base_branch": "codex/knowledge-agent-sources",
+      "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
+      "status": "open_unmerged",
+      "first_ci": "Map workspace quality passed; source-attribution audit failed on stale inherited hash, now reviewed and corrected; new CI pending"
+    }
   },
   "neighborhood_focus": {
     "status": "completed_neighborhood_focus_verified",
@@ -799,6 +808,24 @@
       "authorized enterprise samples and project-isolated transfer/decision quality evaluation",
       "Google imagery licensing/coverage/3D reconstruction and measurement verification"
     ],
-    "next_runnable_task": "Obtain professional factor/condition annotations for the saved real draft cards; independently evaluate transfer and decision quality before approving production rules. Current implementation delivery is complete; no further paid loop started."
+    "next_runnable_task": "Obtain professional factor/condition annotations for the saved real draft cards; independently evaluate transfer and decision quality before approving production rules. Current implementation delivery is complete; no further paid loop started.",
+    "publication": {
+      "pr": 18,
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/18",
+      "base_pr": 17,
+      "base_branch": "codex/knowledge-agent-sources",
+      "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
+      "status": "open_unmerged",
+      "first_ci": "Map workspace quality passed; source-attribution audit failed on stale inherited hash, now reviewed and corrected; new CI pending"
+    },
+    "source_attribution_review": {
+      "status": "passed",
+      "inherited_code_commit": "44bcb490e1a019b3b21154dc3d0dc0e1d7e76a53",
+      "changed_target": "packages/intelligence/pipeline.ts",
+      "scope": "Reviewed inherited official-template/UNKNOWN handling patch; upstream AIHOT algorithm and license bytes unchanged; lock target corrected without disabling audit.",
+      "regression_tests": 24,
+      "audit_log": "research/baseline_logs/knowledge-pipeline-aihot-audit.log",
+      "test_log": "research/baseline_logs/knowledge-pipeline-aihot-regression.log"
+    }
   }
 }
