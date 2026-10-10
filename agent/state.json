@@ -645,7 +645,22 @@
       "base_branch": "codex/knowledge-agent-sources",
       "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
       "status": "open_unmerged",
-      "first_ci": "Map workspace quality passed; source-attribution audit failed on stale inherited hash, now reviewed and corrected; new CI pending"
+      "first_ci": "Stale inherited hash reviewed and corrected; both workflows passed. Closing edits only update evidence/screenshots.",
+      "validated_code_commit": "3cc2794ae42a86beba5967b44d7cc207b003ccd1",
+      "ci": [
+        {
+          "name": "Map workspace quality",
+          "id": 38077428377,
+          "conclusion": "success",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38077428377"
+        },
+        {
+          "name": "Intelligence integration review",
+          "id": 38077428380,
+          "conclusion": "success",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38077428380"
+        }
+      ]
     }
   },
   "neighborhood_focus": {
@@ -816,7 +831,22 @@
       "base_branch": "codex/knowledge-agent-sources",
       "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
       "status": "open_unmerged",
-      "first_ci": "Map workspace quality passed; source-attribution audit failed on stale inherited hash, now reviewed and corrected; new CI pending"
+      "first_ci": "Stale inherited hash reviewed and corrected; both workflows passed. Closing edits only update evidence/screenshots.",
+      "validated_code_commit": "3cc2794ae42a86beba5967b44d7cc207b003ccd1",
+      "ci": [
+        {
+          "name": "Map workspace quality",
+          "id": 38077428377,
+          "conclusion": "success",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38077428377"
+        },
+        {
+          "name": "Intelligence integration review",
+          "id": 38077428380,
+          "conclusion": "success",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38077428380"
+        }
+      ]
     },
     "source_attribution_review": {
       "status": "passed",
@@ -826,6 +856,7 @@
       "regression_tests": 24,
       "audit_log": "research/baseline_logs/knowledge-pipeline-aihot-audit.log",
       "test_log": "research/baseline_logs/knowledge-pipeline-aihot-regression.log"
-    }
+    },
+    "temporary_worktrees": "The three task-owned worktrees were integrated, committed and retired; earlier unrelated worktrees retained."
   }
 }
