@@ -11,7 +11,7 @@ export function DecisionRoute({value, details=false, profile}: {value?:DecisionS
     <p>原始选择：{DECISION_ACTIONS[value.answers.next_action.choice as keyof typeof DECISION_ACTIONS]} · 置信度 {(100*value.answers.next_action.confidence).toFixed(1)}%</p>
     <dl>{Object.entries(value.answers.next_action.probabilities).map(([key,p])=><div key={key}><dt>{DECISION_ACTIONS[key as keyof typeof DECISION_ACTIONS]}</dt><dd>{(100*p).toFixed(1)}%</dd></div>)}</dl>
     {value.guard_reasons.map(reason=><p key={reason}>{reason}</p>)}
-    <p>分流阈值是当前研究规则，尚未用企业结果校准；模型置信度不作为投资成功率。</p>
+    <p>分流阈值是当前研究规则，尚未用企业结果校准；模型置信度不作为改造实施成功率。</p>
     <small>请求 {value.request_id} · 输入 {value.input_tokens} tokens · {value.policy_version}</small>
   </div>
 }

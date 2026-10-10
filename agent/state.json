@@ -1,5 +1,5 @@
 {
-  "status": "knowledge_agent_sources_verified",
+  "status": "neighborhood_focus_verified",
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -38,7 +38,7 @@
   ],
   "next_task": "Obtain approved professional numeric indicators before activating additional business cutoffs; current implementation pass complete.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-10-09",
+  "updated_at": "2026-10-10",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -97,7 +97,8 @@
     "research/test_results/condition-policy.json",
     "research/test_results/project-research-page.json",
     "research/test_results/case-rule-library.json",
-    "research/test_results/knowledge-agent-sources.json"
+    "research/test_results/knowledge-agent-sources.json",
+    "research/test_results/neighborhood-focus.json"
   ],
   "current_delivery": "Unified six-dimensional business registry/condition evaluator and independent professional-rule gate. Shared-scope admission fixed; new comparisons cover six dimensions and candidates with historical semantics retained.185 JS/70 Python checks, build, real project/UI/mobile passed; no new model calls or professional numeric thresholds.",
   "node_status": {
@@ -135,7 +136,8 @@
     "T32": "completed_condition_and_comparison_policy_verified",
     "T33": "completed_local_navigation_and_visual_readback",
     "T34": "completed_local_case_rule_pipeline_verified",
-    "T35": "completed_agent_hit_and_per_item_citation_verified"
+    "T35": "completed_agent_hit_and_per_item_citation_verified",
+    "T36": "completed_neighborhood_focus_verified"
   },
   "preview_url": "http://127.0.0.1:5173",
   "source_archive": {
@@ -658,5 +660,44 @@
     "verified_local_checks": "research/test_results/knowledge-agent-sources.json",
     "ci_status_at_publication": "pending_remote_checks",
     "next_runnable_task": "Review PR #17; base PR #16 remains open. No merge performed."
+  },
+  "neighborhood_focus": {
+    "status": "completed_neighborhood_focus_verified",
+    "changed_files": [
+      "README.md",
+      "agent/mission.md",
+      "apps/workspace/index.html",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/DecisionRoute.tsx",
+      "apps/workspace/src/components/KnowledgeAgentReport.tsx",
+      "apps/workspace/src/components/NeighborhoodPanel.tsx",
+      "apps/workspace/src/maps/DataSourcesPanel.tsx",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/maps/ScreeningControls.tsx",
+      "docs/engineering.md",
+      "docs/工程架构与AI执行计划_v2.md",
+      "docs/老旧小区改造_产品与验证方案.md",
+      "output/playwright/knowledge-agent-report-desktop.png",
+      "output/playwright/knowledge-agent-report-mobile.png",
+      "packages/decision/structured-route.ts",
+      "packages/maps/screening-policy.ts",
+      "packages/retrofit/planning.ts",
+      "packages/retrofit/policy.ts",
+      "runtime/roles/index.ts",
+      "runtime/skills/investment-brief/SKILL.md",
+      "runtime/workflows/knowledge-agent.ts",
+      "runtime/workflows/live.ts",
+      "tests/browser/knowledge-agent-report.mjs"
+    ],
+    "tests": "134 relevant JS tests, 10 navigation flows, source report desktop/mobile, production build, final type check and skill validation passed",
+    "evidence": "research/test_results/neighborhood-focus.json",
+    "model_calls_added": 0,
+    "publication_target": {
+      "branch": "codex/knowledge-agent-sources",
+      "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+      "merged": false
+    },
+    "unresolved_questions": [],
+    "next_runnable_task": "No required implementation remains for this scope. Real decision quality requires reviewed applicable projects."
   }
 }

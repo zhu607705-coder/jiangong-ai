@@ -31,7 +31,7 @@ export default function DataSourcesPanel({onClose, onOpenProject}: {onClose: () 
       </article>) : <p>尚无真实项目。可从地图选点建立研究，并导入项目材料。</p>}
       <h3>当前能够获取的数据</h3>
       <ul className="data-availability"><li><strong>高德地图与场所</strong><span>位置、类别、周边记录、3D 楼块；按选区抓取并缓存。</span></li><li><strong>公开政府资料</strong><span>复用已完成研究的原文、来源和时间；新项目研究可定向检索。</span></li><li><strong>企业与项目文件</strong><span>已接 TXT、MD、CSV、PDF、DOCX、XLSX 导入；内部原文保留在项目中。</span></li></ul>
-      <div className="data-gap"><strong>仍需接入</strong><p>交易与租赁样本、获取和改造成本、产权、建筑条件、运营需求。当前没有这些数据时不展示地价趋势、IRR 或综合投资评分。</p></div>
+      <div className="data-gap"><strong>仍需接入</strong><p>分楼栋居民需求、房屋与设施检测、改造工程清单及造价、资金落实、居民协商记录和设施维护责任。缺项按对象列入调查清单，补齐后更新方案与行动建议。</p></div>
       <details><summary>数据口径</summary>{catalog.notes.map(note => <p key={note}>{note}</p>)}</details>
     </>}
     <button className="map-text-button" onClick={() => setRetry(v => v+1)}><IconRefresh size={14} />重新读取项目数据</button>

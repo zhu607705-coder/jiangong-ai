@@ -1,6 +1,6 @@
 import type { Fact, ProjectInput, DecisionPacket, ResearchDimension, Source } from '../../apps/host/generated/contracts'
 import { factAppliesToTarget } from '../maps/object-identity'
-import { NEIGHBORHOOD_DIMENSION_POLICY, RETROFIT_CHECKS, RETROFIT_VETOES, RETROFIT_RULE_VERSION, type RetrofitCheckKey, type RetrofitVetoKey } from './policy'
+import { NEIGHBORHOOD_DIMENSION_POLICY, RETROFIT_ACTION_LABELS, RETROFIT_CHECKS, RETROFIT_VETOES, RETROFIT_RULE_VERSION, type RetrofitCheckKey, type RetrofitVetoKey } from './policy'
 export { RETROFIT_CHECKS, RETROFIT_VETOES, RETROFIT_RULE_VERSION } from './policy'
 
 export type RetrofitAdvice = { decision: 'proceed'|'supplement'|'defer'; label: string; rule_version: string; reasons: { text: string; evidence_refs: string[] }[]; missing: { key: string; label: string; where: string; impact: string }[] }
@@ -103,9 +103,9 @@ export function retrofitAdviceFromConditions(evaluation:RetrofitConditions):Retr
   const veto = evaluation.vetoes.find(row => row.state === 'veto')
   const missing: RetrofitAdvice['missing'] = evaluation.checks.filter(check => check.state !== 'confirmed').map(({ key, label, where, impact }) => ({ key, label, where, impact }))
   for (const row of evaluation.vetoes) if (row.state === 'conflict') missing.push({ key: row.key, label: `${row.label}存在冲突`, where: '回查同一对象的相反证据并由专业人员复核', impact: '当前方案是否必须暂缓' })
-  if (veto) return { decision: 'defer', label: '当前条件下暂缓', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: veto.label, evidence_refs: veto.evidence_refs }], missing }
-  if (missing.length) return { decision: 'supplement', label: '先补充关键资料再判断', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '以下资料或规则会改变当前改造方案的范围与实施安排。', evidence_refs: [] }], missing }
-  return { decision: 'proceed', label: '建议进一步尽调', rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '当前方案的七项前置核查均有项目范围内的确认依据。', evidence_refs: evaluation.evidence_refs }], missing: [] }
+  if (veto) return { decision: 'defer', label: RETROFIT_ACTION_LABELS.defer, rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: veto.label, evidence_refs: veto.evidence_refs }], missing }
+  if (missing.length) return { decision: 'supplement', label: RETROFIT_ACTION_LABELS.supplement, rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '以下资料或规则会改变当前改造方案的范围与实施安排。', evidence_refs: [] }], missing }
+  return { decision: 'proceed', label: RETROFIT_ACTION_LABELS.proceed, rule_version: RETROFIT_RULE_VERSION, reasons: [{ text: '当前方案的七项前置核查均有项目范围内的确认依据。', evidence_refs: evaluation.evidence_refs }], missing: [] }
 }
 export type RetrofitPlan = { basic: number|null; improvement: number|null; enhancement: number|null; reserve_percent: number; planned_funding: number|null; households: number|null }
 /** User-entered scheme assumptions only; this result never alters the fact gate. */
@@ -124,7 +124,7 @@ export function applyNeighborhoodGate(project:ProjectInput, packet:DecisionPacke
   if(project.business_profile!=='neighborhood')return packet
   const advice=retrofitAdvice(project)
   packet.neighborhood_action=advice
-  packet.summary=[advice.label,advice.decision==='defer'?advice.reasons[0].text:advice.missing[0]?.label||'进入方案专项尽调'].join('：')
+  packet.summary=[advice.label,advice.decision==='defer'?advice.reasons[0].text:advice.missing[0]?.label||'开展改造方案专项调查'].join('：')
   if(advice.decision==='defer')for(const scenario of packet.scenarios)if(scenario.id!=='defer_and_investigate'){
     scenario.status='blocked';scenario.blockers=[...new Set([...scenario.blockers,...advice.reasons.map(r=>r.text)])]
     scenario.evidence_refs=[...new Set([...scenario.evidence_refs,...advice.reasons.flatMap(r=>r.evidence_refs)])]

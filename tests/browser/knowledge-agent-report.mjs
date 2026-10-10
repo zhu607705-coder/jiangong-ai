@@ -44,7 +44,7 @@ try {
   await report.waitFor()
   assert.equal(await report.getByRole('article').count(), 4)
   const decision = report.getByRole('article', { name: '决策与行动依据' })
-  assert.match(await decision.innerText(), /Agent 初判[\s\S]*建议进一步尽调[\s\S]*最终行动[\s\S]*先补充关键资料再判断/)
+  assert.match(await decision.innerText(), /Agent 初判[\s\S]*建议开展专项调查[\s\S]*最终行动[\s\S]*先补充关键资料再判断/)
   assert.match(await decision.innerText(), /程序约束调整了最终行动/)
   assert.match(await decision.innerText(), /出资书面承诺尚未核实/)
   const initial = decision.getByRole('group', { name: 'Agent 初判依据' }), final = decision.getByRole('group', { name: '最终行动依据' })

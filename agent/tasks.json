@@ -879,6 +879,32 @@
       ],
       "evidence_log": "research/test_results/knowledge-agent-sources.json",
       "upstream_verification_required": false
+    },
+    {
+      "id": "T36",
+      "depends_on": [
+        "T35"
+      ],
+      "goal": "削减投资导向，统一旧改策划、工程实施、社区协同与专项调查主线",
+      "status": "completed_neighborhood_focus_verified",
+      "expected_artifacts": [
+        "research/test_results/neighborhood-focus.json"
+      ],
+      "definition_of_done": "界面、新建岗位、模型Skill和现行文档采用旧改口径；保留措施资金与维护计算、来源与硬约束；相关回归与构建通过；不新增付费调用。",
+      "write_scope": [
+        "apps/workspace/",
+        "packages/retrofit/",
+        "packages/maps/screening-policy.ts",
+        "packages/decision/structured-route.ts",
+        "runtime/",
+        "docs/",
+        "README.md",
+        "agent/",
+        "research/",
+        "tests/browser/knowledge-agent-report.mjs"
+      ],
+      "evidence_log": "research/test_results/neighborhood-focus.json",
+      "upstream_verification_required": false
     }
   ]
 }

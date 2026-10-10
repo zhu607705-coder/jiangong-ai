@@ -32,7 +32,7 @@ export const SCREEN_TIERS = {
 } as const
 export function screenTiers(profile?:MapScreenProfile):Record<keyof typeof SCREEN_TIERS,{label:string;color:string}> {
   return profile==='neighborhood'?{...SCREEN_TIERS,
-    strong:{label:'进一步尽调',color:'#418577'},
+    strong:{label:'专项调查',color:'#418577'},
     moderate:{label:'补充资料',color:'#b69551'},
     sparse:{label:'当前暂缓',color:'#a75d53'},
     incomplete:{label:'对象资料未关联',color:'#a3acb7'},

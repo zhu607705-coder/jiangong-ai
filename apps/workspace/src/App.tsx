@@ -599,7 +599,7 @@ export default function App() {
               </div>
               <h1>{project.name}</h1>
               <p>
-                {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '投资拓展与前期策划'} <span>·</span>{" "}
+                {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '改造需求与前期策划'} <span>·</span>{" "}
                 {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
               </p>
             </div>
@@ -1352,7 +1352,7 @@ export default function App() {
                     purpose: "preconstruction_research",
                     business_profile: businessProfile,
                     mode: "automatic",
-                    role: "investment_manager",
+                    role: "planner",
                     as_of: new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Shanghai" }).format(new Date()),
                     scope: {
                       name: regionName.trim(),

@@ -51,7 +51,7 @@ export function projectDecisionInput(input: ProjectInput): DecisionInput {
   const context={created_at:asOf,target:{object_ref:`project:${input.project_id}`},local_projects:[{project_id:input.project_id,relation:'within_scope',business_profile:input.business_profile,as_of:input.as_of,sources,facts}]} as unknown as MapScreenContext
   const factors=decisionFactors(context,asOf,profile)
   const dashboard=projectDashboardInput(publicInput)
-  return {profile,...(profile?{neighborhoodAction:retrofitAdvice(publicInput)}:{}),...(dashboard?{dashboard}:{}),state:{scope:input.scope,as_of:input.as_of,synthetic:input.synthetic,business_profile:input.business_profile||'general',purpose:input.business_profile==='neighborhood'?'老旧小区改造前期研判：居民需求、公共服务、居住工程、实施协同、长效维护、资金交付':'片区投资前期研判',verified_conditions:factors,facts,...(profile?{neighborhood_action:retrofitAdvice(publicInput)}:{}),
+  return {profile,...(profile?{neighborhoodAction:retrofitAdvice(publicInput)}:{}),...(dashboard?{dashboard}:{}),state:{scope:input.scope,as_of:input.as_of,synthetic:input.synthetic,business_profile:input.business_profile||'general',purpose:input.business_profile==='neighborhood'?'老旧小区改造前期研判：居民需求、公共服务、居住工程、实施协同、长效维护、资金交付':'存量空间前期研判',verified_conditions:factors,facts,...(profile?{neighborhood_action:retrofitAdvice(publicInput)}:{}),
     sources:sources.filter(s=>s.content_status!=='metadata_only').map(s=>({id:s.id,title:s.title,text:s.untrusted_text?.slice(0,2400),published_at:s.published_at||null}))},
     factors,sourceIds:sources.filter(s=>s.content_status!=='metadata_only').map(s=>s.id)}
 }

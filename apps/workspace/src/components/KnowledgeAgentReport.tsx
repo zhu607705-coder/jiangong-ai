@@ -1,10 +1,11 @@
 import { useId, useState } from 'react'
 import type { KnowledgeAgentReport as ReportValue, KnowledgeCitation, KnowledgeConditionMatch, KnowledgeMatch, KnowledgeTrace, Source } from '../../../host/generated/contracts'
+import { RETROFIT_ACTION_LABELS } from '../../../../packages/retrofit/policy'
 import './knowledge-agent-report.css'
 
 type Props = { value: ReportValue; trace: KnowledgeTrace; sources: Source[]; onEvidence: (refs: string[]) => void }
 type OriginalCitation = { document_id: string; version: string; locator: string; quote: string; original_source?: { id: string; url?: string; visibility?: string; hash?: string; title?: string } | null }
-const actions = { proceed: '建议进一步尽调', supplement: '先补充关键资料再判断', defer: '当前条件下暂缓' }
+const actions = RETROFIT_ACTION_LABELS
 const states = { matched: '命中', unmatched: '未命中', unknown: '未知', conflict: '冲突' }
 const operators = { eq: '=', ne: '≠', gt: '>', gte: '≥', lt: '<', lte: '≤', contains: '包含' }
 const sourceUrl = (value?: string): string | undefined => { try { const url = new URL(value || ''); return ['http:', 'https:'].includes(url.protocol) ? url.href : undefined } catch { return undefined } }

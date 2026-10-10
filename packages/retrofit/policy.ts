@@ -1,5 +1,7 @@
 import type { ResearchDimension } from '../../apps/host/generated/contracts'
 
+export const RETROFIT_ACTION_LABELS = { proceed: '建议开展专项调查', supplement: '先补充关键资料再判断', defer: '当前条件下暂缓' } as const
+
 export const RETROFIT_RULE_VERSION = 'neighborhood-action-v2'
 export const RETROFIT_CHECKS = [
   { key: 'resident_needs_confirmed', label: '居民需求与异议', where: '分楼栋问卷、社区走访及异议台账', impact: '改造内容、优先顺序与居民负担' },
@@ -8,7 +10,7 @@ export const RETROFIT_CHECKS = [
   { key: 'scope_and_consent_confirmed', label: '实施范围与居民协同', where: '年度计划、权属资料、方案公示及居民协商记录', impact: '实施主体、项目边界与扰民安排' },
   { key: 'funding_confirmed', label: '预算与资金落实', where: '工程量预算、资金批准/分摊确认及拨付安排', impact: '资金缺口、分期与交付范围' },
   { key: 'maintenance_confirmed', label: '长效维护安排', where: '设施接收、物业合同、管护预算及收费协商', impact: '改造后的责任、年度支出和持续使用' },
-  { key: 'rule_set_confirmed', label: '本方案专业规则复核', where: '企业人员与专业人员确认的规则版本及适用范围', impact: '是否允许推进尽调的业务门槛' },
+  { key: 'rule_set_confirmed', label: '本方案专业规则复核', where: '企业人员与专业人员确认的规则版本及适用范围', impact: '是否开展专项调查的业务门槛' },
 ] as const
 export const RETROFIT_VETOES = {
   safety_veto: '已确认的方案安全否决条件',

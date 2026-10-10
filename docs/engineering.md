@@ -99,11 +99,11 @@ DecisionPacket.knowledge_agent保存AgentAssessment、最终行动、精确final
 
 ### 核心算法与边界
 
-当前新增业务方向为老旧小区综合整治提升，面向开发建设企业投资拓展与前期策划。`MapScreenProfile=neighborhood` 与 `ProjectInput.business_profile=neighborhood` 贯通地图检索、DSH、Qwen 与项目研究；统一六维为 `demand` 居民需求、`supply` 公共服务、`adaptation` 居住工程、`implementation` 实施协同、`operations` 长效维护、`resources` 资金交付，新评分版本 `neighborhood-renovation-fit-v2`。保存的 `neighborhood-renovation-fit-v1` 和 `opportunity-fit-v2` 继续按各自版本展示。六维是业务观察，非政府评分标准；人口/服务背景和对象自身工程事实保留不同空间范围，既有证据准入门没有放宽。
+当前新增业务方向为老旧小区综合整治提升，面向老旧小区改造的前期策划、工程实施与社区协同。`MapScreenProfile=neighborhood` 与 `ProjectInput.business_profile=neighborhood` 贯通地图检索、DSH、Qwen 与项目研究；统一六维为 `demand` 居民需求、`supply` 公共服务、`adaptation` 居住工程、`implementation` 实施协同、`operations` 长效维护、`resources` 资金交付，新评分版本 `neighborhood-renovation-fit-v2`。保存的 `neighborhood-renovation-fit-v1` 和 `opportunity-fit-v2` 继续按各自版本展示。六维是业务观察，非政府评分标准；人口/服务背景和对象自身工程事实保留不同空间范围，既有证据准入门没有放宽。
 
-`packages/retrofit/planning.ts` 独立输出“建议进一步尽调／先补充关键资料再判断／当前条件下暂缓”。只读取标记为 `epistemic_status=fact`、有来源版本/定位、观察时点有效且明确绑定本项目的确认记录；估算、方案假设与缺失不进入门槛。七项前置确认包含居民需求、工程评审、服务缺口、范围与协同、资金、维护及专业规则。明确安全、权属或保护否决条件优先。该门在离线与真实模型最终发布前写入 `DecisionPacket.neighborhood_action`、建设路径和导出报告，雷达等级不能抵消否决条件。正式专业确认仍须来自企业与专业人员，模型不替代鉴定。
+`packages/retrofit/planning.ts` 独立输出“建议开展专项调查／先补充关键资料再判断／当前条件下暂缓”。只读取标记为 `epistemic_status=fact`、有来源版本/定位、观察时点有效且明确绑定本项目的确认记录；估算、方案假设与缺失不进入门槛。七项前置确认包含居民需求、工程评审、服务缺口、范围与协同、资金、维护及专业规则。明确安全、权属或保护否决条件优先。该门在离线与真实模型最终发布前写入 `DecisionPacket.neighborhood_action`、建设路径和导出报告，雷达等级不能抵消否决条件。正式专业确认仍须来自企业与专业人员，模型不替代鉴定。
 
-地图的老旧小区模式复用同一门及其事实准入，读取 `retrofit.*`；一般存量模式继续使用 `screening.*`。`MapProjectEvidence` 可带 `business_profile`、项目 `as_of` 和正式 `neighborhood_action`。只有精确关联的项目对象或项目边界才取得该项目行动；附近楼栋和视口不会继承整小区确认。同一方案按项目研判时点计算，地图读取时间不替代该时点。老旧小区标色表示研究行动：绿色为进一步尽调，黄色为补充资料，红色为暂缓，没有精确对象资料时为灰色；专题和适配图不能将否决或未知改为绿色。
+地图的老旧小区模式复用同一门及其事实准入，读取 `retrofit.*`；一般存量模式继续使用 `screening.*`。`MapProjectEvidence` 可带 `business_profile`、项目 `as_of` 和正式 `neighborhood_action`。只有精确关联的项目对象或项目边界才取得该项目行动；附近楼栋和视口不会继承整小区确认。同一方案按项目研判时点计算，地图读取时间不替代该时点。老旧小区标色表示研究行动：绿色为专项调查，黄色为补充资料，红色为暂缓，没有精确对象资料时为灰色；专题和适配图不能将否决或未知改为绿色。
 
 项目重新研判通过 `projectDashboardInput` 构建六维评分资料，要求来源、对象、观察时点、正文版本与可回读定位相对应。只有存在合格原文的维度才发送 Score 问题，其他维度保持空值。上传的原始行或资料数量不会自动形成已确认事实。Qwen 的老旧小区路由使用 `structured-neighborhood-route-v2`、相同六维问题和调查方向；缓存按业务方向、规则版本、项目资料版本与时点失效。Qwen 仍只接收既有许可范围内的公开资料：`publicMapContext` 删除含内部依据的派生行动，再从公开输入组织分流；完整项目行动与公开模型分流分别标明依据范围。
 
@@ -273,3 +273,7 @@ GitHub 新建为私有 `zhu607705-coder/jiangong-ai`；项目数据库、内部�
 ### 新上传文件名的 UTF-8 契约（2026-10-03）
 
 浏览器上传额外携带 `original_file_name=file.name`。普通 multipart 字段按 UTF-8 解码，可避开文件名 header 的字符集差异；宿主采用经校验的字段写入解析器参数、来源标题、文档记录和响应。新字段必须是非空字符串、长度不超过 250，不能含路径或控制字符，扩展名须与上传文件 header 一致且为受支持格式。无新字段的旧客户端仍使用原 header 文件名；不做猜测性转码。存储路径仍由 UUID 生成，文件原始字节与 SHA-256 保留。重复内容仍返回首次记录，不借复传改写旧名称或冻结来源；本修复针对新上传，未迁移存量乱码记录。
+
+### 2026-10-10：旧改主线收拢
+
+工作台标题、新建项目默认岗位与模型简报聚焦老旧小区改造的策划、实施和社区协同。新增项目使用已有 `planner` 岗位，旧项目岗位与历史报告保留原记录。当前三类行动使用“建议开展专项调查／先补充关键资料再判断／当前条件下暂缓”，`proceed/supplement/defer` 和证据准入、否决规则保持一致。资金模块核查措施成本、落实状态、居民负担与维护支出，不以资产升值、租售回报或IRR排序改造措施。投资简报目录与既有字段保留兼容，运行指令以旧改为主，通用模式仅用于明确选择的其他方向及历史回读。

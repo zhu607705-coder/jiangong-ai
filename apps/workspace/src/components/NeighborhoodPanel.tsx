@@ -56,11 +56,11 @@ export default function NeighborhoodPanel({ project, dashboard, draft, onDraftCh
   }
   const show=(value:number|null)=>value===null?'待补充':value.toLocaleString('zh-CN',{maximumFractionDigits:2})
   return <section className="neighborhood-panel" aria-label="老旧小区改造工作台">
-    <header><small>老旧小区综合整治提升</small><h3>{advice.label}</h3><p>先比较本方案的居民需求、工程与实施前置条件，再安排尽调资源。</p></header>
+    <header><small>老旧小区综合整治提升</small><h3>{advice.label}</h3><p>先比较本方案的居民需求、工程与实施前置条件，再安排专项调查。</p></header>
     <div className="retrofit-reasons">{advice.reasons.map(reason=><div key={reason.text}><p>{reason.text}</p>{reason.evidence_refs.length>0&&<button onClick={()=>onEvidence(reason.evidence_refs)}>查看触发依据（{reason.evidence_refs.length}）</button>}</div>)}</div>
     <details className="retrofit-condition-panel" aria-label="六维条件与行动门槛">
       <summary>条件与行动门槛 · 截止 {conditions.evaluated_as_of}</summary>
-      <p>每维按本项目确认事实核对。独立否决优先；条件未成立、资料缺失或冲突时先补查；六维条件与专业规则确认均满足才进入进一步尽调。</p>
+      <p>每维按本项目确认事实核对。独立否决优先；条件未成立、资料缺失或冲突时先补查；六维条件与专业规则确认均满足才开展专项调查。</p>
       <div className="retrofit-condition-grid">{conditions.dimensions.map(d=><article key={d.key}>
         <header><strong>{d.label}</strong><span>{conditionLabels[d.state]}</span></header>
         {d.checks.map(check=><p key={check.key}>{check.label}：{conditionLabels[check.state]}</p>)}

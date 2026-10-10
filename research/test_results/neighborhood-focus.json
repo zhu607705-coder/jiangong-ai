@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-10",
+  "status": "verified_neighborhood_focus",
+  "changed_files": [
+    "README.md",
+    "agent/mission.md",
+    "apps/workspace/index.html",
+    "apps/workspace/src/App.tsx",
+    "apps/workspace/src/components/DecisionRoute.tsx",
+    "apps/workspace/src/components/KnowledgeAgentReport.tsx",
+    "apps/workspace/src/components/NeighborhoodPanel.tsx",
+    "apps/workspace/src/maps/DataSourcesPanel.tsx",
+    "apps/workspace/src/maps/PreliminaryCard.tsx",
+    "apps/workspace/src/maps/ScreeningControls.tsx",
+    "docs/engineering.md",
+    "docs/工程架构与AI执行计划_v2.md",
+    "docs/老旧小区改造_产品与验证方案.md",
+    "output/playwright/knowledge-agent-report-desktop.png",
+    "output/playwright/knowledge-agent-report-mobile.png",
+    "packages/decision/structured-route.ts",
+    "packages/maps/screening-policy.ts",
+    "packages/retrofit/planning.ts",
+    "packages/retrofit/policy.ts",
+    "runtime/roles/index.ts",
+    "runtime/skills/investment-brief/SKILL.md",
+    "runtime/workflows/knowledge-agent.ts",
+    "runtime/workflows/live.ts",
+    "tests/browser/knowledge-agent-report.mjs"
+  ],
+  "scope": [
+    "default positioning: neighborhood renovation planning, engineering and community coordination",
+    "new project role uses existing planner enum",
+    "asset appreciation/rent/IRR removed from primary objectives; retain cost/funding/resident burden/maintenance",
+    "shared action labels across gate/Agent/UI; action enums and hard evidence rules unchanged",
+    "secondary generic directions remain explicit; historical records preserved"
+  ],
+  "verification": {
+    "js": {
+      "passed": 134,
+      "files": 8,
+      "logs": [
+        "research/baseline_logs/neighborhood-focus-js.log",
+        "research/baseline_logs/neighborhood-focus-policy.log"
+      ]
+    },
+    "navigation": {
+      "flows": 10,
+      "passed": true,
+      "synthetic": true,
+      "log": "research/baseline_logs/neighborhood-focus-navigation.log"
+    },
+    "source_report": {
+      "passed": true,
+      "synthetic": true,
+      "viewports": [
+        "desktop",
+        "390px"
+      ],
+      "mobile_visual_inspected": true,
+      "log": "research/baseline_logs/neighborhood-focus-browser.log"
+    },
+    "build": {
+      "passed": true,
+      "log": "research/baseline_logs/neighborhood-focus-build.log"
+    },
+    "final_type_check": {
+      "passed": true,
+      "log": "research/baseline_logs/neighborhood-focus-types.log"
+    },
+    "skill_frontmatter": "quick_validate passed"
+  },
+  "real_provider_decision_quality": "not_evaluated_this_change",
+  "model_calls_added": 0,
+  "publication_target": {
+    "branch": "codex/knowledge-agent-sources",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "merged": false
+  }
+}

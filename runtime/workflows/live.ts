@@ -44,7 +44,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   full.sources = [...new Map([...full.sources, ...knowledgeSources].map(source => [source.id, source])).values()]
   const neighborhood=full.business_profile==='neighborhood'
   const purpose=[neighborhood?'老旧小区改造':'存量利用与实施路径', full.knowledge_query?.measure_key, full.knowledge_query?.question].filter(Boolean).join(' · ')
-  const businessGuidance=neighborhood?'本项目是老旧小区改造前期研判。分别研究基础、完善、提升类改造；居民家庭与公共服务需求；鉴定消防、管网和施工接口；居民协商与实施主体；资金来源、工程成本与居民负担；物业长效维护。现状、估算、方案假设与缺项分别保留。提议、实际决策、已实施与结果不能混写；未记载的历史理由不补写。下一步应说明缺失材料、影响哪项结论、向谁取得及补齐后重算什么。':''
+  const businessGuidance=neighborhood?'本项目是老旧小区改造前期研判，以居民生活改善和工程实施为目标。优先回答改什么、为什么、影响哪些居民、先查什么及如何维护；不以资产升值、租售收益或IRR作为主判断。分别研究基础、完善、提升类改造；居民家庭与公共服务需求；鉴定消防、管网和施工接口；居民协商与实施主体；资金来源、工程成本与居民负担；物业长效维护。现状、估算、方案假设与缺项分别保留。提议、实际决策、已实施与结果不能混写；未记载的历史理由不补写。下一步应说明缺失材料、影响哪项结论、向谁取得及补齐后重算什么。':''
   const permittedInternal = full.synthetic || config.ALLOW_INTERNAL_MODEL === 'true'
   const modelProject = permittedInternal ? structuredClone(full) : visibleSnapshot(full, 'public')
   const artifactRefs: string[] = knowledgeArtifact ? [knowledgeArtifact] : []
