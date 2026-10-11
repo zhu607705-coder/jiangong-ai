@@ -1,0 +1,143 @@
+{
+  "tested_at": "2026-10-05T13:21:57.059016+00:00",
+  "request_scope": "Official old-neighborhood renovation data; borrow AIHOT accumulation approach",
+  "catalog": "data/corpus/official-retrofit-source-catalog.json",
+  "sources": 6,
+  "source_channels": 3,
+  "text_characters_added": 40070,
+  "official_search": {
+    "http_status": 200,
+    "returned_records": 3,
+    "scope": "Hangzhou old-neighborhood construction announcements",
+    "contract": "Website search endpoint, not a promised standalone public API"
+  },
+  "captures": [
+    {
+      "url": "https://www.hangzhou.gov.cn/art/2025/6/23/art_1229063415_4364996.html",
+      "content_status": "full_text",
+      "raw_sha256": "3456c4fa5d3670c78981401de94864073182012535c3978ac98d25c7b6cedf55",
+      "text_sha256": "f56ae16665662215d8a5ac4af63aa3863831e99827d10e62af1eb0e90bbd857e"
+    },
+    {
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001004/20260930/e028f84c-0896-45e9-9377-57d1174eebc9.html",
+      "content_status": "full_text",
+      "raw_sha256": "245db23338a4952f9bba1beefaf163640060d35177059a2d924e66ebda6bcc00",
+      "text_sha256": "409aa4a2d7d74e82a70cba3d87eb7ae99d5465f77f048346df48101c31a1a7f5"
+    },
+    {
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001004/20261001/fab68b58-3f9d-4dd4-b20b-2d75b5ed7ea0.html",
+      "content_status": "full_text",
+      "raw_sha256": "b13e67f0c0832dd89b5b9a88f21c3ef70dc7d8d9dc352a9a09497eb529051c0e",
+      "text_sha256": "77304ef6bdbaa8d5ad103f1fd3837344b43954f06b2d1f3cce41617a11fc5903"
+    },
+    {
+      "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001014/20260930/d31ddea3-ec0f-49d7-ab2a-18df076d5055pfgs.html",
+      "content_status": "full_text",
+      "raw_sha256": "621af619291aa807c5066d5acc5eb915ac1c9099797d9847633cf417043408b8",
+      "text_sha256": "cfa20018adb77a33fd66dbaeb9fbf736f626f16c116de05fd70b7f1f61266d0f"
+    },
+    {
+      "url": "https://www.gongshu.gov.cn/art/2025/1/22/art_1229138302_1849146.html",
+      "content_status": "full_text",
+      "raw_sha256": "623c3ef10ec7bfb5bd78564d4791f1b2fd5f44290353502d4863d4892192187c",
+      "text_sha256": "13d8277c13d08995c8e929ef0faa057b88de962a65b6341937b8da9ff85758d7"
+    },
+    {
+      "url": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web2096/site/attach/0/c702b42ba6294bf18327e879be96cebd.pdf",
+      "content_status": "excerpt",
+      "raw_sha256": "21b0d12d5f4c1084e9e1a187d989f3d0b181fd38840a4c152fa9bbcff20f7f50",
+      "text_sha256": "ac656b13f77c7cf4eaf780c2e9221d35a6c484f8b4fa2b409a07aa91a7247c3e"
+    }
+  ],
+  "pdf_readback": {
+    "pages_read": [
+      1,
+      9,
+      10
+    ],
+    "pages_rendered": [
+      10
+    ],
+    "reviewed_planned_rows": 3,
+    "semantics": "Plan/anticipated progress; actual funding and completion unknown"
+  },
+  "intelligence_ingestion": {
+    "new_documents": 6,
+    "repeat_created": 0,
+    "timestamp_refresh_keeps_versions": true,
+    "before": {
+      "documents": 31,
+      "versions": 32,
+      "pending": 0
+    },
+    "after": {
+      "documents": 37,
+      "versions": 38,
+      "pending": 0
+    },
+    "classification": "unscored",
+    "selected": false,
+    "readback_verified": true
+  },
+  "conditional_fetch": {
+    "url": "https://www.gongshu.gov.cn/art/2025/1/22/art_1229138302_1849146.html",
+    "conditional_status": 304,
+    "etag_saved": true,
+    "full_body_downloaded": false
+  },
+  "corpus": {
+    "family_bundles": 5,
+    "build_id": "79d83c6405959acf0c062f67306177f8c44cfd862464ce62ce6f1c70d00f0376",
+    "counts": {
+      "admitted_records": 17,
+      "documents": 12,
+      "with_text": 11,
+      "metadata_only": 1,
+      "text_characters": 51761,
+      "chunks": 75,
+      "unlabeled_candidates": 75,
+      "source_groups": 7,
+      "exact_duplicates": 5,
+      "near_duplicate_links": 0,
+      "excluded_private_or_synthetic": 0,
+      "regression_fixtures": 10,
+      "archived_model_records": 8,
+      "failed_model_runs": 1,
+      "missing_published_at": 6,
+      "missing_retrieved_at": 0,
+      "locked_audit_examples": 0
+    },
+    "checks": {
+      "source_hashes": "passed",
+      "split_isolation": "passed",
+      "credential_screen": "passed",
+      "chunk_readback": "passed",
+      "regression_gold_read_by_pipeline": false,
+      "external_calls": 0,
+      "training_permissions": "checked_separately_during_export"
+    },
+    "new_records": "6 official originals, no new synthetic sources or human labels"
+  },
+  "live_ui": {
+    "status": "passed",
+    "official_project": "东方水岚佳苑",
+    "project_code_visible": true,
+    "source_stage": "中标候选人公示",
+    "curation_status": "未分类",
+    "mobile": {
+      "viewport": 390,
+      "width": 390
+    },
+    "model_calls": 0,
+    "mutations": 0
+  },
+  "model_calls_added": 0,
+  "recurring_collection_enabled": false,
+  "project_facts_modified": false,
+  "training_started": false,
+  "logs": "research/baseline_logs/official-retrofit-intake.log",
+  "remaining": [
+    "Exact maps/building condition/resident demand and ownership data still require sources",
+    "Contracts/acceptance/disbursement documents for chosen objects not yet collected"
+  ]
+}

@@ -42,8 +42,16 @@ export function buildPreliminaryResearch(context: ResearchContext, extras: { sou
   }
   function recordRows(source: Source, records: PublicRecord[], objectRef: string, projectId?: string, evaluatedAt = context.created_at) {
     const at = Date.parse(evaluatedAt)
-    records = retainRecordWindows(records, records, !source.body_truncated && !source.records_truncated)
-    for (const record of records.filter(row => row.source_id === source.id && row.scope === 'object' && (!date(row.period) || Date.parse(row.period) <= at) && (!row.source_hash || row.source_hash === (source.raw_hash || source.hash)))) {
+    const eligible = records.filter(row => row.source_id === source.id && row.scope === 'object'
+      && (!date(row.period) || Date.parse(row.period) <= at) && (!row.source_hash || row.source_hash === (source.raw_hash || source.hash))
+      // Same-id corrections may omit object_ref; an explicit other object must
+      // never participate in the selected object's deadline or award family.
+      && !row.fields.some(field => field.key === 'object_ref' && field.value !== null && field.value !== objectRef))
+      .map(row => row.adapter === 'procurement' ? { ...row, fields: row.fields.filter(field => field.key !== 'deadline_resolved') } : row)
+    // A previously derived deadline may contain a later correction. Re-resolve
+    // only admitted original fields, without modifying the saved input records.
+    records = retainRecordWindows(eligible, eligible, !source.body_truncated && !source.records_truncated)
+    for (const record of records) {
       const explicit = record.fields.some(field => field.key === 'object_ref' && field.value === objectRef
         || !!projectId && field.key === 'project_id' && field.value === projectId && objectRef === `project:${projectId}`)
       if (!explicit) continue
@@ -51,7 +59,10 @@ export function buildPreliminaryResearch(context: ResearchContext, extras: { sou
       const add = (label: string, value: string, locator: string, list = observations) => {
         if (!locator) return
         const statisticalAt = record.fields.find(field => field.key === 'statistical_as_of')?.value
-        const row = { label, value, scope, observedAt: Object.values(QUANTITIES).includes(label) ? date(typeof statisticalAt === 'string' ? statisticalAt : undefined) : date(record.period), publishedAt: date(source.published_at), sourceRefs: [source.id], locator, recordId: record.id }
+        const quantity = Object.values(QUANTITIES).includes(label)
+        const observedAt = quantity ? date(typeof statisticalAt === 'string' ? statisticalAt : undefined) : date(record.period)
+        if (quantity && observedAt && Date.parse(observedAt) > at) return
+        const row = { label, value, scope, observedAt, publishedAt: date(source.published_at), sourceRefs: [source.id], locator, recordId: record.id }
         list.push(row); if (list !== observations) observations.push(row)
       }
       for (const field of record.fields.filter(field => scalar(field.value))) {
@@ -90,7 +101,13 @@ export function buildPreliminaryResearch(context: ResearchContext, extras: { sou
       recordRows({ ...source, id: `${project.project_id}:${source.id}` }, (source.public_records || []).map(record => ({ ...record, source_id: `${project.project_id}:${record.source_id}` })), context.target.object_ref || '', project.project_id, evaluatedAt)
     }
   }
-  for (const source of (extras.sources || []).filter(source => readable(source))) recordRows(source, extras.records || source.public_records || [], context.target.object_ref || '')
+  const externalRecords = extras.records ? new Map<string, PublicRecord[]>() : null
+  if (externalRecords) for (const row of extras.records!) {
+    const rows = externalRecords.get(row.source_id) || []
+    rows.push(row); externalRecords.set(row.source_id, rows)
+  }
+  for (const source of (extras.sources || []).filter(source => readable(source))) recordRows(source,
+    externalRecords ? externalRecords.get(source.id) || [] : source.public_records || [], context.target.object_ref || '')
   const quantities = observations.filter(row => Object.values(QUANTITIES).includes(row.label))
   const quantityGroups = new Map<string, { values: string[]; row: PreliminaryObservation }>()
   for (const row of quantities.slice(0, 3)) {

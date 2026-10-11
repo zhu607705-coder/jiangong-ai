@@ -757,6 +757,16 @@
             "suggested",
             "requested"
           ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "minItems": 0,
+          "maxItems": 100
         }
       },
       "required": [
@@ -970,6 +980,12 @@
         },
         "neighborhood_action": {
           "$ref": "#/definitions/NeighborhoodActionAdvice"
+        },
+        "knowledge": {
+          "$ref": "#/definitions/KnowledgeTrace"
+        },
+        "knowledge_agent": {
+          "$ref": "#/definitions/KnowledgeAgentReport"
         }
       },
       "required": [
@@ -1190,6 +1206,9 @@
             "general",
             "neighborhood"
           ]
+        },
+        "knowledge_query": {
+          "$ref": "#/definitions/KnowledgeQuery"
         }
       },
       "required": [
@@ -1338,7 +1357,10 @@
             "demand",
             "organization",
             "enterprise",
-            "resources"
+            "resources",
+            "supply",
+            "adaptation",
+            "operations"
           ]
         },
         "judgments": {
@@ -1357,6 +1379,12 @@
     "ComparisonPacket": {
       "type": "object",
       "properties": {
+        "policy_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "比较维度的语义版本；历史结果未提供时保留旧六维，不按当前项目方向重新标注。"
+        },
         "summary": {
           "type": "string",
           "maxLength": 96
@@ -3187,6 +3215,9 @@
           "items": {
             "$ref": "#/definitions/ExperienceField"
           }
+        },
+        "knowledge": {
+          "$ref": "#/definitions/ExperienceKnowledge"
         }
       },
       "required": [
@@ -3255,6 +3286,9 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "knowledge": {
+          "$ref": "#/definitions/ExperienceKnowledge"
         }
       },
       "required": [
@@ -3348,6 +3382,1671 @@
         "missing"
       ],
       "additionalProperties": false
+    },
+    "KnowledgeCondition": {
+      "type": "object",
+      "properties": {
+        "fact_kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "contains"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 60
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 5,
+          "minItems": 1
+        },
+        "source_value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000,
+          "description": "原文条件取值或词句；value可为人工复核的归一化映射，二者分开记录，不把布尔词义映射当作原文事实。"
+        }
+      },
+      "required": [
+        "fact_kind",
+        "label",
+        "operator",
+        "value",
+        "unit",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceKnowledge": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "case",
+            "rule"
+          ]
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "project_case",
+            "official_policy",
+            "research_paper",
+            "practice"
+          ]
+        },
+        "measure_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9_.-]+$"
+        },
+        "measure_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 30
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 20
+        },
+        "transfer_notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 10
+        },
+        "evidence_level": {
+          "type": "string",
+          "enum": [
+            "proposal_only",
+            "implementation_record",
+            "observational_study",
+            "controlled_study",
+            "official_policy",
+            "expert_practice",
+            "not_reported"
+          ]
+        },
+        "chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionChunk"
+          },
+          "maxItems": 100
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MeasureFactor"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "kind",
+        "origin",
+        "measure_key",
+        "measure_name",
+        "conditions",
+        "exclusions",
+        "transfer_notes",
+        "evidence_level"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceDraftBatch": {
+      "type": "object",
+      "properties": {
+        "drafts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceDraft"
+          },
+          "maxItems": 20
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "drafts",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeQuery": {
+      "type": "object",
+      "properties": {
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "question": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "measure_key",
+        "question"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeConditionMatch": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "$ref": "#/definitions/KnowledgeCondition"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "matched",
+            "unmatched",
+            "unknown",
+            "conflict"
+          ]
+        },
+        "fact_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 100
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 100
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "condition",
+        "state",
+        "fact_refs",
+        "evidence_refs",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeMatch": {
+      "type": "object",
+      "properties": {
+        "card_id": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "card_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "source_project_id": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "case",
+            "rule"
+          ]
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "project_case",
+            "official_policy",
+            "research_paper",
+            "practice"
+          ]
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "measure_name": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "similarity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "related": {
+          "type": "boolean"
+        },
+        "transferability": {
+          "type": "string",
+          "enum": [
+            "transferable",
+            "conditional",
+            "not_transferable"
+          ]
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeConditionMatch"
+          },
+          "maxItems": 30
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeConditionMatch"
+          },
+          "maxItems": 20
+        },
+        "similar_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        },
+        "important_differences": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        },
+        "reuse_premises": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        },
+        "recommendation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3000
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "card_id",
+        "card_revision",
+        "title",
+        "source_project_id",
+        "kind",
+        "origin",
+        "measure_key",
+        "measure_name",
+        "similarity",
+        "related",
+        "transferability",
+        "conditions",
+        "exclusions",
+        "similar_conditions",
+        "important_differences",
+        "reuse_premises",
+        "unknowns",
+        "recommendation",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeTrace": {
+      "type": "object",
+      "properties": {
+        "policy_version": {
+          "type": "string",
+          "enum": [
+            "knowledge-routing-v1",
+            "knowledge-routing-v2"
+          ]
+        },
+        "evaluated_as_of": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "query": {
+          "$ref": "#/definitions/KnowledgeQuery"
+        },
+        "route": {
+          "type": "string",
+          "enum": [
+            "case_hit",
+            "rule_hit",
+            "combined_hit",
+            "agent_fallback"
+          ]
+        },
+        "case_hits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeMatch"
+          },
+          "maxItems": 20
+        },
+        "rule_hits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeMatch"
+          },
+          "maxItems": 20
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeMatch"
+          },
+          "maxItems": 100
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        },
+        "fallback_status": {
+          "type": "string",
+          "enum": [
+            "not_needed",
+            "pending",
+            "offline_only",
+            "blocked_external",
+            "executed"
+          ]
+        },
+        "agent_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "executed",
+            "offline_only",
+            "blocked_external"
+          ]
+        },
+        "grouping": {
+          "$ref": "#/definitions/KnowledgeGrouping"
+        },
+        "factor_policy": {
+          "$ref": "#/definitions/KnowledgePolicyEvaluation"
+        },
+        "skill_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "skill_id": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "skill_id",
+              "revision"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 30
+        }
+      },
+      "required": [
+        "policy_version",
+        "evaluated_as_of",
+        "query",
+        "route",
+        "case_hits",
+        "rule_hits",
+        "candidates",
+        "reasons",
+        "fallback_status"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeCitation": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        }
+      },
+      "required": [
+        "source_id",
+        "locator",
+        "quote"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeAgentAdvice": {
+      "type": "object",
+      "properties": {
+        "measure_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "advice": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1600
+        },
+        "matched_card_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "matched_condition_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCitation"
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "minItems": 0,
+          "maxItems": 10
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "minItems": 0,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "measure_key",
+        "advice",
+        "reasoning",
+        "matched_card_ids",
+        "matched_condition_keys",
+        "citations",
+        "unknowns",
+        "next_steps"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeAgentDecision": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "proceed",
+            "supplement",
+            "defer"
+          ]
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCitation"
+          },
+          "minItems": 1,
+          "maxItems": 10
+        }
+      },
+      "required": [
+        "action",
+        "reasoning",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeAgentAssessment": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "decision": {
+          "$ref": "#/definitions/KnowledgeAgentDecision"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeAgentAdvice"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "disagreements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "minItems": 0,
+          "maxItems": 10
+        }
+      },
+      "required": [
+        "summary",
+        "decision",
+        "recommendations",
+        "disagreements"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeAgentReport": {
+      "type": "object",
+      "properties": {
+        "policy_version": {
+          "type": "string",
+          "const": "knowledge-agent-v1"
+        },
+        "assessment": {
+          "$ref": "#/definitions/KnowledgeAgentAssessment"
+        },
+        "final_action": {
+          "type": "string",
+          "enum": [
+            "proceed",
+            "supplement",
+            "defer"
+          ]
+        },
+        "decision_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "guard_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "minItems": 0,
+          "maxItems": 30
+        },
+        "assessed_card_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "minItems": 0,
+          "maxItems": 40
+        },
+        "final_citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCitation"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "policy_version",
+        "assessment",
+        "final_action",
+        "decision_evidence_refs",
+        "guard_reasons",
+        "assessed_card_ids"
+      ],
+      "additionalProperties": false
+    },
+    "ActionChunk": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "document_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "document_version": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "object_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "action",
+            "context"
+          ]
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "local",
+            "model"
+          ]
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 100
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 30000
+        },
+        "context_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "id",
+        "document_id",
+        "document_version",
+        "measure_key",
+        "object_ref",
+        "stage",
+        "kind",
+        "classification",
+        "spans",
+        "text",
+        "context_chunk_ids"
+      ],
+      "additionalProperties": false
+    },
+    "MeasureCalculation": {
+      "type": "object",
+      "properties": {
+        "formula": {
+          "type": "string",
+          "enum": [
+            "cost_per_unit",
+            "cost_per_area",
+            "cost_per_person"
+          ]
+        },
+        "numerator_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "denominator_key": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "formula",
+        "numerator_key",
+        "denominator_key"
+      ],
+      "additionalProperties": false
+    },
+    "MeasureFactor": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "object_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "observed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "association": {
+          "type": "string",
+          "enum": [
+            "direct",
+            "shared",
+            "unresolved",
+            "derived"
+          ]
+        },
+        "amount_kind": {
+          "type": "string",
+          "enum": [
+            "budget",
+            "contract",
+            "paid",
+            "committed",
+            "maintenance",
+            "package_total",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "epistemic_status": {
+          "type": "string",
+          "enum": [
+            "fact",
+            "estimate",
+            "scenario_assumption",
+            "missing"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 30
+        },
+        "derivation": {
+          "$ref": "#/definitions/MeasureCalculation"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value",
+        "unit",
+        "object_ref",
+        "stage",
+        "observed_at",
+        "association",
+        "amount_kind",
+        "epistemic_status",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "FactorDefinition": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "value_type": {
+          "type": "string",
+          "enum": [
+            "number",
+            "category",
+            "boolean",
+            "ordinal"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "mandatory",
+            "key",
+            "background",
+            "discarded",
+            "pending"
+          ]
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "measure_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "maxItems": 50
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExperienceEvidence"
+          },
+          "maxItems": 30
+        },
+        "condition": {
+          "$ref": "#/definitions/KnowledgeCondition"
+        },
+        "on_unmet": {
+          "type": "string",
+          "enum": [
+            "supplement",
+            "defer"
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value_type",
+        "role",
+        "weight",
+        "unit",
+        "scale",
+        "measure_keys",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "FactorPolicy": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "project_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ]
+        },
+        "definitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FactorDefinition"
+          },
+          "maxItems": 100
+        },
+        "min_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_distance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "updated_at": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "revision",
+        "status",
+        "definitions",
+        "min_coverage",
+        "max_distance",
+        "note",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "SkillCardRef": {
+      "type": "object",
+      "properties": {
+        "card_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "card_id",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "stage": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "case",
+            "rule"
+          ]
+        },
+        "card_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SkillCardRef"
+          },
+          "maxItems": 200
+        },
+        "diameter": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "id",
+        "measure_key",
+        "stage",
+        "kind",
+        "card_refs",
+        "diameter",
+        "min_coverage"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgeGrouping": {
+      "type": "object",
+      "properties": {
+        "policy_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "policy_revision": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "policy_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected",
+            "none"
+          ]
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeGroup"
+          },
+          "maxItems": 200
+        },
+        "unassigned": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "card_id": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "card_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 200
+        },
+        "candidate_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "source_fingerprint": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "policy_id",
+        "policy_revision",
+        "policy_status",
+        "groups",
+        "unassigned",
+        "candidate_count",
+        "truncated",
+        "source_fingerprint"
+      ],
+      "additionalProperties": false
+    },
+    "PolicyFactorCheck": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "matched",
+            "unmatched",
+            "unknown",
+            "conflict"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "state",
+        "reason",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "KnowledgePolicyEvaluation": {
+      "type": "object",
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PolicyFactorCheck"
+          },
+          "maxItems": 100
+        },
+        "guard": {
+          "type": "string",
+          "enum": [
+            "none",
+            "supplement",
+            "defer"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "policy_id",
+        "revision",
+        "checks",
+        "guard",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "DistilledSkill": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "project_id": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "measure_key": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "card_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SkillCardRef"
+          },
+          "maxItems": 20
+        },
+        "input_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "maxItems": 100
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 100
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 100
+        },
+        "procedure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        },
+        "validation_points": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        },
+        "counterexamples": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 20
+        },
+        "allowed_tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "knowledge_evidence"
+            ]
+          },
+          "maxItems": 1
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "compiled",
+            "model"
+          ]
+        },
+        "review_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "updated_at": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "revision",
+        "status",
+        "title",
+        "measure_key",
+        "card_refs",
+        "input_keys",
+        "preconditions",
+        "exclusions",
+        "procedure",
+        "validation_points",
+        "counterexamples",
+        "allowed_tools",
+        "method",
+        "review_note",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "ActionFieldSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "decision_question",
+            "background",
+            "key_conditions",
+            "alternatives",
+            "proposal",
+            "actual_decision",
+            "decision_basis",
+            "implementation",
+            "outcome",
+            "applicability"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "chunk_ids"
+      ]
+    },
+    "ActionReviewMeasure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measure_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9_.-]+$"
+        },
+        "measure_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "case",
+            "rule"
+          ]
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "project_case",
+            "official_policy",
+            "research_paper",
+            "practice"
+          ]
+        },
+        "action_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30,
+          "minItems": 1
+        },
+        "context_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "maxItems": 30
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionFieldSelection"
+          },
+          "maxItems": 10
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 30
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KnowledgeCondition"
+          },
+          "maxItems": 20
+        },
+        "transfer_notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 10
+        }
+      },
+      "required": [
+        "measure_key",
+        "measure_name",
+        "kind",
+        "origin",
+        "action_chunk_ids",
+        "context_chunk_ids",
+        "fields",
+        "conditions",
+        "exclusions",
+        "transfer_notes"
+      ]
+    },
+    "ActionReviewBatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionReviewMeasure"
+          },
+          "maxItems": 3
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "maxItems": 30
+        }
+      },
+      "required": [
+        "measures",
+        "warnings"
+      ]
     }
   }
 }

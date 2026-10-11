@@ -1,6 +1,7 @@
 import type { Source } from '../../apps/host/generated/contracts'
 import { validate } from '../contracts/validate'
 import { hash,canonical,safeUrl,isCurrent,dateOrNull,type Channel,type Entry,type Material } from './domain'
+import {adaptOfficialSource} from '../../services/capabilities/adapters/public-records'
 export function materialFromSource(value:unknown,channel?:Channel):Material{
   const source=structuredClone(validate<Source>('Source',value))
   if(source.visibility!=='public'||source.data_class!=='public'||source.synthetic||!source.url)throw new Error('PUBLIC_ORIGINAL_REQUIRED')
@@ -20,12 +21,17 @@ export function materialFromSource(value:unknown,channel?:Channel):Material{
 export function evidenceSource(entry:Material,asOf?:string):Source|null{
   if(entry.participation==='signal_only'||!entry.text||entry.source.content_status==='metadata_only'||(asOf&&!isCurrent(entry,asOf)))return null
   const source=structuredClone(entry.source) as unknown as Source
+  // Existing originals may predate the official adapter. Carry program-extracted
+  // records with the original body, never replace it with an analysis summary.
+  const url=new URL(entry.url),derived=!source.public_records?.length&&url.hostname==='ggzy.zj.gov.cn'&&url.pathname.startsWith('/jyxxgk/002001/')
+    ?adaptOfficialSource(source):null
   // Keep the original source-id suffix so structured record aliases remain resolvable.
   source.id=`INTEL-${entry.version.slice(0,12)}:${source.id}`
+  if(derived){source.public_records=derived.records.map(record=>({...record,source_id:source.id}));if(derived.receipt.status==='truncated')source.records_truncated=true}
   return validate<Source>('Source',source)
 }
 export function summaryOf(e:Entry){return {id:e.id,version:e.version,title:e.title,url:e.url,published_at:e.published_at,ingested_at:e.ingested_at,
   city:e.analysis.structure.city??e.city,category:e.analysis.structure.category,dimensions:e.analysis.structure.dimensions,
   status:e.analysis.status,selected:e.analysis.selected,event_id:e.event_id,story_id:e.story_id,relation:e.relation,
   publisher_group:e.publisher_group,channel_id:e.channel_id,date_status:e.source.date_status??'undated',content_status:e.source.content_status,
-  summary:e.analysis.status==='ready'?e.analysis.structure.summary:null,score:e.analysis.score}}
+  summary:e.analysis.status==='ready'?e.analysis.structure.summary:null,score:e.analysis.score,issue:e.analysis.issue}}

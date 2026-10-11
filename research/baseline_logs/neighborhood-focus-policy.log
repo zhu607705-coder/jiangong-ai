@@ -1,0 +1,12 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/retrofit-conditions.test.ts tests/contracts/condition-policy-integration.test.ts tests/contracts/decision-model.test.ts tests/contracts/decision-brief.test.ts tests/contracts/research-dashboard.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  5 passed (5)
+      Tests  84 passed (84)
+   Start at  13:56:15
+   Duration  11.67s (transform 917ms, setup 0ms, import 8.19s, tests 173ms, environment 0ms)

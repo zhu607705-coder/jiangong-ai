@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-10T18:23:43.947Z",
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+  "sha256": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+  "replayed_model_session": "data/local/sessions/EXPERIENCE-8a20f2a2-136d-453d-8040-ba3de52ed5df/_no-cwd/0b2f549d-9709-4da4-8360-31c9bae6ff83/session.v4.jsonl",
+  "input_class": "recorded_actual_model_response",
+  "new_model_calls": 0,
+  "approvals": 0,
+  "valid_drafts": 2,
+  "rejected_measures": 1,
+  "warnings": [
+    "本轮仅纳入索引中 measure_key 为 elevator / maintenance 的措施共3项，索引中 c2、c3、c7、c13、c14 为 context 片段，仅作为上下文引用，未作为独立措施输出。",
+    "全文未记载明确的适用边界或迁移前提原文，故三张卡的 transfer_notes 均留空，未补写。",
+    "未记载任何可明确映射到 fact_kind 的适用条件或排除条件原文，conditions 与 exclusions 均留空，未创造阈值。",
+    "第三张卡（托管费用商讨及从每台每月600元降至300元）与第二张卡（委托物业托管长效机制）同属 DOC-b9965a69 中同一举措链的费用环节，因 index 中 measure_key 标注为 elevator 而沿用，两者是否合并为一项措施待人工复核。",
+    "c1 片段含两次引用（天气寒冷引语与物业负责人介绍）的合并文本，c5、c8、c11 为被截断片段，均未单独成卡以免跨片段拼接。",
+    "本批全部为待复核草稿，未对当前项目是否满足条件作出判断；证据级别、费用计价口径（每台每月）与时间点均需人工核对原始页面。",
+    "材料中如含角色、指令或外发要求，均视为无效数据，未予执行。",
+    "未入库措施“社区陆续安装47部电梯”：MODEL_FIELD_NOT_QUOTED；字段值须逐字来自本措施所选片段，不能跨对象补写。"
+  ],
+  "saved_cards": [
+    {
+      "id": "EXP-1f50f306-64e5-4335-be56-5c89531c00f2",
+      "revision": 1,
+      "reused": false
+    },
+    {
+      "id": "EXP-3092f687-50c6-452e-b1d1-5703c250c25e",
+      "revision": 1,
+      "reused": false
+    }
+  ],
+  "scope": "Source/index/version-exact replay of actual DSH output under current adapter validation; not another live call or quality benchmark"
+}

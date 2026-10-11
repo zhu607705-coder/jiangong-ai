@@ -2,6 +2,7 @@ import { hash,canonical,structureOf,finishAnalysis,unscored,pairCompatible,type 
 import { reportText,lexicalSimilarity,sameOccurrence,storyForDevelopment,firmlyTied,RELATIONS,type Candidate,type Verdict } from '../../vendor/aihot/algorithms'
 import { PROMPTS,PROMPT_VERSION,OUTPUT_SCHEMAS } from './prompts'
 import type { IntelRepository,ReceiptResult } from './repository'
+import {localOfficialStructure,localAnalysis} from './local-structure'
 export type Judge=(stage:keyof typeof PROMPTS,input:unknown,schema:Record<string,unknown>,prompt:string,signal:AbortSignal,model?:string)=>Promise<ReceiptResult>
 export async function analyzeMaterial(repo:IntelRepository,m:Material,judge:Judge,signal:AbortSignal,model:string,reviewModel?:string,dailyLimit=40,routes:Partial<Record<keyof typeof PROMPTS,string>>={},threshold=65){
   if(!Number.isInteger(threshold)||threshold<0||threshold>100)throw new Error('INVALID_SELECTION_THRESHOLD')
@@ -14,7 +15,9 @@ export async function analyzeMaterial(repo:IntelRepository,m:Material,judge:Judg
   const pre=await call('prefilter',input)
   if(!['PASS','BLOCK','UNKNOWN'].includes(String(pre.label)))throw new Error('INVALID_PREFILTER_OUTPUT')
   if(pre.label==='BLOCK'){await repo.analyze(m.id,m.version,{...unscored(),status:'irrelevant',prefilter:'BLOCK',model,prompt_version:PROMPT_VERSION});return}
-  const extracted=await call('structure',input)
+  const local=localOfficialStructure(m)
+  if(local?.issue){signal.throwIfAborted();await repo.analyze(m.id,m.version,{...localAnalysis(local),prefilter:pre.label as 'PASS'|'UNKNOWN',model,prompt_version:PROMPT_VERSION});return}
+  const extracted=local?.structure??await call('structure',input)
   let structure:Structure
   try {
     // The model sees both fields, and the publisher's title is also source text.
@@ -24,6 +27,12 @@ export async function analyzeMaterial(repo:IntelRepository,m:Material,judge:Judg
     if(!['QUOTE_NOT_IN_SOURCE','OBJECT_ID_NOT_IN_QUOTE'].includes(issue))throw error
     // An ungrounded identity is a review item, never a scored opportunity.
     await repo.analyze(m.id,m.version,{...unscored(m.title),status:'needs_review',prefilter:pre.label as 'PASS'|'UNKNOWN',model,prompt_version:PROMPT_VERSION,issue})
+    return
+  }
+  if(pre.label==='UNKNOWN'){
+    signal.throwIfAborted()
+    await repo.analyze(m.id,m.version,{...unscored(),status:'needs_review',prefilter:'UNKNOWN',structure,
+      model,prompt_version:PROMPT_VERSION,issue:'PREFILTER_UNKNOWN'})
     return
   }
   const first=await call('score',input,'score-1'),second=await call('score',input,'score-2')

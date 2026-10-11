@@ -8,6 +8,7 @@ import { assembleDecision, revisionDiff } from '../../packages/decision/evaluate
 import { runSpecialists } from '../dsh/bridge'
 import { roles, type RoleId } from '../roles'
 import type { CapabilityResult, Impact, ProjectInput } from '../../apps/host/generated/contracts'
+import { assembleKnowledgeDecision, resolveRunKnowledge } from './knowledge'
 
 function canonicalJson(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(canonicalJson)
@@ -19,7 +20,7 @@ function canonicalJson(value: unknown): unknown {
 export const digest = (value: unknown): string => createHash('sha256').update(JSON.stringify(canonicalJson(value))).digest('hex')
 
 export function roleDependency(project: ProjectInput, role: RoleId, mode: string): string {
-  const base = { project: project.project_id, mode, business_profile:project.business_profile||'general', as_of: project.as_of, scope: project.scope }
+  const base = { project: project.project_id, mode, business_profile:project.business_profile||'general', as_of: project.as_of, scope: project.scope, knowledge_query: project.knowledge_query || null }
   if (role === 'case_enterprise') return digest({ ...base, rules: project.context_rules, sources: project.sources, facts: project.facts })
   // Context-only sources must not invalidate unchanged public evidence.
   const relevantFacts = project.facts.filter(f => role === 'building_feasibility' ? ['building_inventory', 'rights_status', 'structural_assessment'].includes(f.kind) : !['building_inventory', 'rights_status', 'structural_assessment'].includes(f.kind))
@@ -29,12 +30,31 @@ export function roleDependency(project: ProjectInput, role: RoleId, mode: string
 
 export async function executeRun(store: Store, run: RunRecord, signal: AbortSignal): Promise<void> {
   try {
+    const knowledge = await resolveRunKnowledge(store, run, signal)
+    if (run.execution_mode === 'live' && !config.modelConfigured) throw new Error('BLOCKED_EXTERNAL')
+    if (knowledge.trace.route !== 'agent_fallback') {
+      if (run.execution_mode === 'live') {
+        const { executeKnowledgeAgent } = await import('./knowledge-agent')
+        await executeKnowledgeAgent(store, run, signal, knowledge)
+        return
+      }
+      const packet = assembleKnowledgeDecision(run, knowledge, knowledge.artifact_id)
+      packet.knowledge = { ...knowledge.trace, agent_status: 'offline_only' }
+      packet.summary = '离线条件检查（未调用Agent）：' + packet.summary
+      signal.throwIfAborted()
+      await store.db.transaction(async db => {
+        await db.query('UPDATE runs SET status=$2,decision=$3 WHERE id=$1', [run.id, 'completed', JSON.stringify(packet)])
+        await db.query('INSERT INTO run_events(run_id,stage,status,message) VALUES($1,$2,$3,$4)', [run.id, 'decision', 'completed', '已按命中案例与规则生成举措建议，业务硬约束仍由程序检查'])
+      })
+      return
+    }
     if (run.execution_mode === 'live') {
       const { executeLiveRun } = await import('./live')
-      await executeLiveRun(store, run, signal)
+      await executeLiveRun(store, run, signal, knowledge.trace, knowledge.artifact_id, knowledge.sources)
       return
     }
     const snapshot = structuredClone(run.snapshot)
+    snapshot.sources = [...new Map([...snapshot.sources, ...knowledge.sources].map(source => [source.id, source])).values()]
     const collected = new Map<RoleId, CapabilityResult>()
     const refs: string[] = []
     const previous = (await store.runs(run.project_id)).find(r => r.id !== run.id && r.decision)?.decision || null
@@ -71,6 +91,8 @@ export async function executeRun(store: Store, run: RunRecord, signal: AbortSign
     await store.addEvent(run.id, 'scenarios', 'completed', '已检查动作范围、组织约束与未知前提')
     const packet = decisionPacket(assembleDecision({ project: snapshot, runId: run.id, revision: run.revision, contextVersion: run.context_version, snapshotHash: run.snapshot_hash, executionMode: run.execution_mode,
       results: roles.map(r => collected.get(r.id)!), artifactRefs: refs, impact, model: null }))
+    packet.knowledge = { ...knowledge.trace, fallback_status: 'offline_only', agent_status: 'offline_only' }
+    packet.artifact_refs.push(knowledge.artifact_id)
     const changes = revisionDiff(previous, packet).changes
     packet.impact.changed_paths = [...new Set(changes.map(c => c.path_id))]
     await store.addEvent(run.id, 'critic', 'completed', '已检查证据不足、反例、来源冲突与资料指令边界')
@@ -80,7 +102,8 @@ export async function executeRun(store: Store, run: RunRecord, signal: AbortSign
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'RUN_FAILED'
-    const safeCode = message.startsWith('LIVE_STAGE_FAILED:') ? message.split(':').slice(0, 3).join(':') : message.startsWith('CAPABILITY_') || message.startsWith('SPECIALIST_FAILED:') || /^RUN_/.test(message) || /^DECISION_[A-Z0-9_]+$/.test(message) ? message : 'RUNTIME_FAILED'
+    const reportedCode = (error as { code?: string })?.code
+    const safeCode = message === 'BLOCKED_EXTERNAL' ? message : /^KNOWLEDGE_[A-Z0-9_]+$/.test(reportedCode || '') ? reportedCode! : message.startsWith('LIVE_STAGE_FAILED:') ? message.split(':').slice(0, 3).join(':') : message.startsWith('CAPABILITY_') || message.startsWith('SPECIALIST_FAILED:') || /^RUN_/.test(message) || /^DECISION_[A-Z0-9_]+$/.test(message) ? message : 'RUNTIME_FAILED'
     await store.db.query('UPDATE runs SET status=$2,error_code=$3 WHERE id=$1', [run.id, 'failed', safeCode])
     await store.addEvent(run.id, 'error', 'failed', `执行未完成（${safeCode}），已保留快照与已有工件。`)
     console.error(JSON.stringify({ event: 'run_failed', run_id: run.id, code: safeCode, diagnostic: message.slice(0, 300) }))

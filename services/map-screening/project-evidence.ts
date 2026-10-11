@@ -4,7 +4,7 @@ import { fingerprint } from './provider'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import { createHash } from 'node:crypto'
 import { projectBoundToTarget } from '../../packages/maps/decision-factors'
-import { retrofitAdvice } from '../../packages/retrofit/planning'
+import { retrofitAdvice, RETROFIT_RULE_VERSION } from '../../packages/retrofit/planning'
 
 export type EvidenceProject = { project: ProjectRecord; sources: Source[]; documentCount: number }
 export type ProjectEvidenceSnapshot = { revision: string; projects: EvidenceProject[]; syntheticCount: number }
@@ -24,7 +24,7 @@ export async function loadProjectEvidence(store: Store, owner: string): Promise<
     return { project, sources: mergeProjectSources(project, runs), documentCount: Number(documents.rows[0].count) }
   }))
   return { projects, syntheticCount: all.filter(p => p.input.synthetic).length,
-    revision: fingerprint(projects.map(p => [p.project.id, p.project.context_version, p.project.updated_at, p.project.input.scope, p.project.input.business_profile, p.project.input.as_of, p.project.input.facts, p.sources, p.documentCount])) }
+    revision: fingerprint([RETROFIT_RULE_VERSION,projects.map(p => [p.project.id, p.project.context_version, p.project.updated_at, p.project.input.scope, p.project.input.business_profile, p.project.input.as_of, p.project.input.facts, p.sources, p.documentCount])]) }
 }
 const cityKey = (city: string | null | undefined) => city?.trim().replace(/市$/, '') || ''
 export function targetContains(target: MapScreenTarget, longitude: number, latitude: number): boolean {

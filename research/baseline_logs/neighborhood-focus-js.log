@@ -1,0 +1,12 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/retrofit-planning.test.ts tests/contracts/condition-policy.test.ts tests/contracts/knowledge-agent.test.ts tests/contracts/knowledge-routing.test.ts tests/contracts/structured-route.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  3 passed (3)
+      Tests  50 passed (50)
+   Start at  13:55:42
+   Duration  31.69s (transform 930ms, setup 0ms, import 8.93s, tests 20.48s, environment 0ms)

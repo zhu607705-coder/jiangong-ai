@@ -148,7 +148,59 @@
       "completed": true,
       "scope": "Typed judgment decomposition and code composition; Qwen decision-model-preview uses the existing requestDecisionQuestions and ParserPort. No TypeSafe vendor SDK or API integration.",
       "patch_history": ".agents/skills/qwen-document-evaluation/references/upstream.json"
+    },
+    {
+      "repo": "Yuan1z0825/nature-skills",
+      "ref": "d5c8baa15d6b1bd44bff07865da83961449da01a",
+      "reuse": "documented_skill_adaptation",
+      "license": "Apache-2.0",
+      "target": "runtime/skills/case-rule-extraction/SKILL.md",
+      "scope": "Source-position and evidence-level guidance, adapted to existing ExperienceDraftBatch/ParserPort/DSH; no duplicated parser, search or scheduler.",
+      "patch_history": "runtime/skills/case-rule-extraction/references/upstream.json",
+      "completed": true
+    },
+    {
+      "repo": "K-Dense-AI/scientific-agent-skills",
+      "ref": "92ace75ac21efe19a620434e0ca4e356081fe807",
+      "reuse": "documented_skill_adaptation",
+      "license": "MIT",
+      "target": "runtime/skills/case-rule-extraction/SKILL.md",
+      "scope": "Source-position and evidence-level guidance, adapted to existing ExperienceDraftBatch/ParserPort/DSH; no duplicated parser, search or scheduler.",
+      "patch_history": "runtime/skills/case-rule-extraction/references/upstream.json",
+      "completed": true
     }
   ],
-  "implementation_record": "research/upstream.lock.json"
+  "implementation_record": "research/upstream.lock.json",
+  "knowledge_pipeline_extensions": [
+    {
+      "source": "apps/host/ingest.ts#parseDocument and vendor/cre/dashboard/server/parser-service.ts#buildTextUploadedDataProfile",
+      "target": "packages/experience/pipeline.ts#importPublicDocument",
+      "reuse": "existing ParserPort wrapper; preserve original UTF-8 bytes and SHA; no new parser or URL client"
+    },
+    {
+      "source": "packages/experience/document-slices.ts#documentSlices",
+      "target": "packages/experience/chunking.ts and action-review.ts",
+      "reuse": "source-bound action classification; deduplicate only CRE Line/Text mirrors, retain existing citation locators"
+    },
+    {
+      "source": "packages/experience/repository.ts#ExperienceRepository and apps/host/store.ts#Store",
+      "target": "packages/experience/knowledge-repository.ts",
+      "reuse": "same database and transaction/history pattern; additive policy/skill tables"
+    },
+    {
+      "source": "runtime/dsh/live-session.ts#LiveSession.call/registerReadTool",
+      "target": "packages/experience/service.ts and runtime/workflows/knowledge-agent.ts",
+      "reuse": "same typed model seam and read-only knowledge_evidence; compact scoped IDs, source validation, one source retry"
+    },
+    {
+      "source": "vendor/aihot/algorithms.ts#lexicalSimilarity",
+      "target": "packages/experience/knowledge.ts",
+      "reuse": "unchanged candidate relevance retrieval; clustering never overrides condition gates"
+    },
+    {
+      "target": "packages/experience/clustering.ts",
+      "implementation": "project-authored bounded weighted mixed distance and complete-linkage; policy-controlled units, scales, weights, coverage, amount basis and partitions; no upstream clustering code copied",
+      "validation": "tests/contracts/knowledge-clustering.test.ts"
+    }
+  ]
 }

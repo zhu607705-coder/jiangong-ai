@@ -7,10 +7,12 @@ import type { ProjectInput, ResearchTrace, Source, PublicRecord, AdapterReceipt 
 import type { ProgressSink } from '../../packages/research/events'
 import { PUBLIC_SOURCES, publicSourceClass, publicSearchPlan, safePublicUrl } from '../../packages/research/public-sources'
 import { recallIntelligence, rememberIntelligence } from '../../packages/intelligence/research-bridge'
-import { adaptOfficialSource, MAX_RESEARCH_RECORDS } from './adapters/public-records'
+import { adaptOfficialSource, officialArticleText, MAX_RESEARCH_RECORDS } from './adapters/public-records'
 import { resolveScope } from './scope'
 
 export function visibleText(html:string,_url:string):string {
+  const official=officialArticleText(html,_url)
+  if(official!==null)return official.slice(0,30000)
   const {document}=parseHTML(html)
   document.querySelectorAll('script,style,noscript,iframe,form').forEach(n=>n.remove())
   const article=new Readability(document as unknown as Document,{charThreshold:100}).parse()

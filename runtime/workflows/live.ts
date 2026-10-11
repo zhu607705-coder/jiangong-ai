@@ -1,10 +1,10 @@
-import { applyNeighborhoodGate } from '../../packages/retrofit/planning'
+import { applyNeighborhoodGate, RETROFIT_RULE_VERSION } from '../../packages/retrofit/planning'
 import {intelligenceScopeRevision} from '../../packages/intelligence/research-bridge'
 import { BRIEF_SKILL_VERSION, selectReferenceCases, assertBriefProse } from '../skills/investment-brief'
 import { randomUUID } from 'node:crypto'
 import { Store, type RunRecord } from '../../apps/host/store'
 import { config } from '../../apps/host/config'
-import type { CapabilityResult, ComparisonPacket, DecisionPacket, Impact, ProjectInput, ResearchTrace, ReviewPacket, ScenarioProposal, Source, DecisionSupport } from '../../apps/host/generated/contracts'
+import type { CapabilityResult, ComparisonPacket, DecisionPacket, Impact, ProjectInput, ResearchTrace, ReviewPacket, ScenarioProposal, Source, DecisionSupport, KnowledgeTrace } from '../../apps/host/generated/contracts'
 import { validate, decisionPacket } from '../../packages/contracts/validate'
 import { visibleSnapshot } from '../../packages/context/compiler'
 import { assembleDecision, revisionDiff } from '../../packages/decision/evaluate'
@@ -13,8 +13,11 @@ import { collectPublicEvidence } from '../../services/capabilities/research'
 import { LiveSession } from '../dsh/live-session'
 import { roles, type RoleId } from '../roles'
 import { digest, roleDependency } from './run'
-import { evaluateDecision } from '../../services/capabilities/decision-model'
-import { projectDecisionInput, decisionPolicy, DECISION_THRESHOLDS, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
+import { evaluateDecision, decisionCacheDescriptor } from '../../services/capabilities/decision-model'
+import { decisionErrorMessage } from '../../packages/decision/route-labels'
+import { projectDecisionInput, DECISION_ACTIONS, prioritizeDecisionFollowups } from '../../packages/decision/structured-route'
+import { comparisonPolicy, comparisonDimensions } from '../../packages/decision/comparison-policy'
+import { applyKnowledgePolicyGuard } from './knowledge'
 
 /** Truncate text, never source identity/scope; the untruncated local artifact remains stored. */
 function modelView(project: ProjectInput) {
@@ -37,14 +40,15 @@ export function specialistSnapshot(project: ProjectInput, role: RoleId): Project
   return snapshot
 }
 
-export async function executeLiveRun(store: Store, run: RunRecord, signal: AbortSignal): Promise<void> {
+export async function executeLiveRun(store: Store, run: RunRecord, signal: AbortSignal, knowledge?: KnowledgeTrace, knowledgeArtifact?: string, knowledgeSources: Source[] = []): Promise<void> {
   const full = structuredClone(run.snapshot)
+  full.sources = [...new Map([...full.sources, ...knowledgeSources].map(source => [source.id, source])).values()]
   const neighborhood=full.business_profile==='neighborhood'
-  const purpose=neighborhood?'老旧小区改造':'存量利用与实施路径'
-  const businessGuidance=neighborhood?'本项目是老旧小区改造前期研判。分别研究基础、完善、提升类改造；居民家庭与公共服务需求；鉴定消防、管网和施工接口；居民协商与实施主体；资金来源、工程成本与居民负担；物业长效维护。现状、估算、方案假设与缺项分别保留。提议、实际决策、已实施与结果不能混写；未记载的历史理由不补写。下一步应说明缺失材料、影响哪项结论、向谁取得及补齐后重算什么。':''
+  const purpose=[neighborhood?'老旧小区改造':'存量利用与实施路径', full.knowledge_query?.measure_key, full.knowledge_query?.question].filter(Boolean).join(' · ')
+  const businessGuidance=neighborhood?'本项目是老旧小区改造前期研判，以居民生活改善和工程实施为目标。优先回答改什么、为什么、影响哪些居民、先查什么及如何维护；不以资产升值、租售收益或IRR作为主判断。分别研究基础、完善、提升类改造；居民家庭与公共服务需求；鉴定消防、管网和施工接口；居民协商与实施主体；资金来源、工程成本与居民负担；物业长效维护。现状、估算、方案假设与缺项分别保留。提议、实际决策、已实施与结果不能混写；未记载的历史理由不补写。下一步应说明缺失材料、影响哪项结论、向谁取得及补齐后重算什么。':''
   const permittedInternal = full.synthetic || config.ALLOW_INTERNAL_MODEL === 'true'
   const modelProject = permittedInternal ? structuredClone(full) : visibleSnapshot(full, 'public')
-  const artifactRefs: string[] = []
+  const artifactRefs: string[] = knowledgeArtifact ? [knowledgeArtifact] : []
   const day = new Date().toISOString().slice(0, 10)
   const intelligenceRevision=await intelligenceScopeRevision({name:full.scope.name,city:full.scope.city,purpose,asOf:full.as_of})
   const researchKey = digest({ intelligenceRevision, business_profile:full.business_profile||'general',purpose,project: full.project_id, scope: full.scope, as_of: full.as_of, day, source_ids: full.sources.filter(s => s.visibility === 'public').map(s => s.id) })
@@ -76,7 +80,8 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
   let decisionSupport:DecisionSupport|undefined
   try {
     async function cachedStage<T>(kind: string, input: unknown, execute: () => Promise<{ value: T; sessionId: string }>): Promise<{ value: T; sessionId: string }> {
-      const key = digest({ project: run.project_id, kind, model: config.DEEPSEEK_MODEL, business_profile:full.business_profile||'general',policy: 'live-stage-v3-neighborhood', brief_skill: BRIEF_SKILL_VERSION, input })
+      const decisionStage=kind==='decision_route'
+      const key = digest({ project: run.project_id, kind, model: decisionStage?config.QWEN_DECISION_MODEL:config.DEEPSEEK_MODEL, business_profile:full.business_profile||'general',policy:decisionStage?'qwen-route-cache-v2':'live-stage-v3-neighborhood',...(full.business_profile==='neighborhood'?{action_policy:RETROFIT_RULE_VERSION}:{}), ...(decisionStage?{}:{brief_skill:BRIEF_SKILL_VERSION}), input })
       const cached = (await store.db.query<{ id: string; payload: { value: T; sessionId: string } }>('SELECT id,payload FROM artifacts WHERE project_id=$1 AND kind=$2 AND dependency_hash=$3', [run.project_id, kind, key])).rows[0]
       if (cached) { artifactRefs.push(cached.id); impact.reused.push(kind); await store.addEvent(run.id, kind, 'reused', '复用已验证的模型阶段工件', cached.id); return cached.payload }
       const result = await execute(), id = `ART-${randomUUID()}`
@@ -86,10 +91,10 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     if(config.decisionEnabled) {
       const input=projectDecisionInput(full)
       await store.addEvent(run.id,'decision_route','running','Qwen 正在判断证据是否充分与优先调查方向')
-      const result=await cachedStage<DecisionSupport>('decision_route',{input,policy:decisionPolicy,thresholds:DECISION_THRESHOLDS,model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT},async()=>{
+      const result=await cachedStage<DecisionSupport>('decision_route',decisionCacheDescriptor(input,{model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT}),async()=>{
         const value=await live.runReadCapability('qwen_research_route',toolSignal=>evaluateDecision(input,toolSignal))
         if(value.status!=='completed') {
-          await store.addEvent(run.id,'decision_route','failed','Qwen 决策请求未完成，已保留资料工件')
+          await store.addEvent(run.id,'decision_route','failed',decisionErrorMessage(value.error_code))
           throw new Error(value.error_code || 'DECISION_REQUEST_FAILED')
         }
         return {value,sessionId:run.id}
@@ -163,8 +168,10 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     const reviews = validateReview(modelProject, reviewed.value)
     await store.addEvent(run.id, 'critic', 'completed', '独立反证结果已记录，分歧不会被投票消除', `dsh:${reviewed.sessionId}`)
     await store.addEvent(run.id, 'comparator', 'running', '按硬约束和共同证据比较路径；允许并列和暂缓')
-    const compared = await cachedStage<ComparisonPacket>('comparator', { shared, proposal, reviews }, async () => {
-      const response = await live.call<ComparisonPacket>('comparator', `${businessGuidance}比较下面已通过工具硬约束检查的候选。实际候选只有 ${JSON.stringify(proposal.scenarios.map(s => s.id))}，不能添加池中未入选的路径。不得改变路径状态，不用多数票或自造成功概率。按六个维度给出所有实际候选的条件化判断，每个 conclusion 不超过 45 字，unknowns 最多两个短语；阻断路径不能进入 tied_paths。证据不足可并列，也可仅建议调查。summary 不超过 96 字，直接说明建议路径、关键条件与下一步，不复述免责声明。followups 只取 2 项最重要调查，每条 why 不超过 50 字；status=suggested，priority 1–3。分歧最多 3 条。所有 evidence_refs 只能来自 sources.id。保持合法且简短的 JSON 工具参数。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>\n<independent_review>${JSON.stringify(reviews)}</independent_review>`, 'ComparisonPacket', [], proposal.scenarios.map(s => s.id))
+    const comparisonVersion=comparisonPolicy(full),dimensions=comparisonDimensions(full)
+    const comparisonRules=`本轮比较语义版本 ${comparisonVersion}；criterion 键及业务含义严格使用 ${JSON.stringify(dimensions)}。${neighborhood?`必须恰好包含这六维，不得漏维或重复；每维 judgments 必须恰好覆盖下列全部候选路径，不得漏项或重复。六维与改造适配雷达共用业务口径，七项专业前置确认及独立否决仍由宿主 ${RETROFIT_RULE_VERSION} 判定，只认当前快照的项目确认事实与规则，不能以等级相抵。`:'保留实施、建筑、需求、组织、企业与资源的既有比较口径，不使用旧改专属维度。'}policy_version 填写 ${comparisonVersion}。`
+    const compared = await cachedStage<ComparisonPacket>('comparator', { shared, proposal, reviews,comparison_policy:comparisonVersion,comparison_dimensions:dimensions,...(neighborhood?{action_rule_version:RETROFIT_RULE_VERSION}:{}) }, async () => {
+      const response = await live.call<ComparisonPacket>('comparator', `${businessGuidance}${comparisonRules}比较下面已通过工具硬约束检查的候选。实际候选只有 ${JSON.stringify(proposal.scenarios.map(s => s.id))}，不能添加池中未入选的路径。不得改变路径状态，不用多数票或自造成功概率。按六个维度给出所有实际候选的条件化判断，每个 conclusion 不超过 45 字，unknowns 最多两个短语；阻断路径不能进入 tied_paths。证据不足可并列，也可仅建议调查。summary 不超过 96 字，直接说明建议路径、关键条件与下一步，不复述免责声明。followups 只取 2 项最重要调查，每条 why 不超过 50 字；status=suggested，priority 1–3。分歧最多 3 条。所有 evidence_refs 只能来自 sources.id。保持合法且简短的 JSON 工具参数。\n<untrusted_evidence>${shared}</untrusted_evidence>\n<proposal>${JSON.stringify(proposal)}</proposal>\n<independent_review>${JSON.stringify(reviews)}</independent_review>`, 'ComparisonPacket', [], proposal.scenarios.map(s => s.id), { evidenceIds: modelProject.sources.map(source => source.id) })
       validateComparison(modelProject, proposal, response.value); assertBriefProse(response.value); return response
     })
     const comparison = validateComparison(modelProject, proposal, compared.value)
@@ -183,6 +190,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     packet.analysis_method = 'model_assisted'
     packet.status = full.facts.length || full.sources.some(s => s.untrusted_text?.trim()) ? 'partial' : 'empty'
     packet.model_calls = live.calls
+    if (knowledge) packet.knowledge = { ...knowledge, fallback_status: 'executed', agent_status: 'executed' }
     packet.research = research.trace
     if(decisionSupport) packet.decision_support=decisionSupport
     packet.unresolved_disagreements = [...new Set([...proposal.unresolved, ...reviews.unresolved_disagreements, ...comparison.unresolved_disagreements])]
@@ -190,6 +198,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     if (!permittedInternal && full.sources.some(s => s.visibility === 'internal')) packet.warnings.push('内部正文未发送至外部模型；企业规则仅在本地执行，模型企业分析使用公开资料。')
     packet.impact.changed_paths = [...new Set(revisionDiff(previous, packet).changes.map(change => change.path_id))]
     applyNeighborhoodGate(full,packet)
+    applyKnowledgePolicyGuard(packet)
     decisionPacket(packet)
     await store.db.transaction(async db => {
       await db.query('UPDATE runs SET status=$2,decision=$3 WHERE id=$1', [run.id, 'completed', JSON.stringify(packet)])

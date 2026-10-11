@@ -1,11 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField } from '../../../host/generated/contracts'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField, ProjectInput, KnowledgeQuery } from '../../../host/generated/contracts'
 import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/document-slices'
 import { api } from '../api'
 import WaitingScene from './WaitingScene'
+import { retrofitAdvice } from '../../../../packages/retrofit/planning'
 import './experience-library.css'
+const KnowledgeWorkbench = lazy(() => import('./KnowledgeWorkbench'))
+const KnowledgeProfileEditor = lazy(() => import('./KnowledgeWorkbench').then(module => ({ default: module.KnowledgeProfileEditor })))
+const KnowledgePipelinePanel = lazy(() => import('./KnowledgePipelinePanel'))
 
-type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void }
+type Props = { projectId: string; revision: number; synthetic: boolean; asOf: string; currentProject?: ProjectInput; onProjectUpdated: () => void | Promise<void>; onOpenMaterials?: () => void; onKnowledgeRun?: (query: KnowledgeQuery) => void }
 type Document = { id: string; file_name: string; created_at?: string; parser_result?: ParsedDocument['parser_result'] }
 type CitableDocument = Document & { slices: DocumentSlice[] }
 type Match = { card: ExperienceCard; similar_conditions: string[]; important_differences: string[]; reuse_premises: string[] }
@@ -21,6 +25,7 @@ const statusLabel = { draft: '待复核草稿', approved: '已审核', rejected:
 const reason = (error: unknown) => error instanceof Error ? error.message : '请求暂未完成，请重试。'
 const asDraft = (card: ExperienceCard): ExperienceDraft => ({ title: card.title, project_type: card.project_type,
   development_mode: card.development_mode, stage: card.stage,
+  ...(card.knowledge ? { knowledge: structuredClone(card.knowledge) } : {}),
   fields: fields.map(({ key }) => { const field = card.fields.find(item => item.key === key); return {
     key, value: field?.value ?? null, evidence: (field?.evidence || []).map(item => ({ ...item })),
   } }) })
@@ -39,6 +44,7 @@ function DraftEditor({ draft, documents, citableDocuments, busy, creating, onCha
     <div className="experience-meta-editor">{([
       ['title', '经验卡标题'], ['project_type', '项目类型'], ['development_mode', '开发或改造模式'], ['stage', '项目阶段'],
     ] as const).map(([key, label]) => <label key={key}>{label}<input disabled={!!busy} maxLength={key === 'title' ? 120 : 80} value={draft[key]} onChange={event => onChange(current => ({ ...current, [key]: event.target.value }))} /></label>)}</div>
+    <Suspense fallback={<p role="status">正在加载举措条件编辑…</p>}><KnowledgeProfileEditor draft={draft} onChange={onChange} busy={!!busy} documents={documents} /></Suspense>
     {fields.map(({ key, label }) => { const field = draft.fields.find(item => item.key === key)!
       return <fieldset className="experience-field-editor" key={key} disabled={!!busy}><legend>{label}</legend>
         <textarea aria-label={`${label}内容`} maxLength={3000} value={field.value || ''} placeholder="原文未记载时留空" onChange={event => editField(key, { value: event.target.value || null })} />
@@ -79,6 +85,13 @@ function Evidence({ evidence, documents }: { evidence: ExperienceEvidence[]; doc
   </details>)}</div>
 }
 
+function ConditionComparison({card,advice,documents,onOpenMaterials}: {card:ExperienceCard;advice:ReturnType<typeof retrofitAdvice>|null;documents:Document[];onOpenMaterials?:()=>void}) {
+  const historical=card.fields.find(field=>field.key==='key_conditions')
+  return <section className="experience-condition-comparison" aria-label="历史条件与本次待核条件">
+    <div><strong>历史关键条件</strong><p>{historical?.value || '原文未记载，需补历史材料。'}</p>{historical?.evidence?.length ? <Evidence evidence={historical.evidence} documents={documents}/> : null}</div>
+    <div><strong>本次待核条件</strong>{advice?.decision==='defer'&&<p><b>{advice.label}</b> · {advice.reasons.map(item=>item.text).join('；')}</p>}{advice?.missing.length ? <ul>{advice.missing.map(item=><li key={item.key}><b>{item.label}</b><span>{item.where}</span><small>补齐后检查：{item.impact}</small></li>)}</ul> : <p>{advice ? '本方案前置核查已有确认依据，仍需逐项比较历史经验的适用边界。' : '从当前项目资料中核对对象、阶段、关键条件与适用边界。'}</p>}{onOpenMaterials&&<button type="button" onClick={onOpenMaterials}>查看本次项目资料</button>}</div>
+  </section>
+}
 function CardContent({ card, documents }: { card: ExperienceCard; documents: Document[] }) {
   return <dl className="experience-fields">{fields.map(({ key, label }) => {
     const field = card.fields.find(item => item.key === key)
@@ -87,13 +100,15 @@ function CardContent({ card, documents }: { card: ExperienceCard; documents: Doc
   })}</dl>
 }
 
-export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, onProjectUpdated, onOpenMaterials }: Props) {
+export default function ExperienceLibrary({ projectId, revision, synthetic, asOf, currentProject, onProjectUpdated, onOpenMaterials, onKnowledgeRun }: Props) {
+  const currentAdvice=useMemo(()=>currentProject?.project_id===projectId&&currentProject.business_profile==='neighborhood'?retrofitAdvice(currentProject):null,[currentProject,projectId])
   const requestKey = `${projectId}\u0000${revision}\u0000${synthetic}\u0000${asOf}`
   const activeKey = useRef(requestKey)
   const viewGeneration = useRef(0)
   if (activeKey.current !== requestKey) { viewGeneration.current += 1; activeKey.current = requestKey }
   const [loaded, setLoaded] = useState<{ key: string; documents: Document[]; cards: ExperienceCard[]; error: string; loading: boolean }>({ key: '', documents: [], cards: [], error: '', loading: true })
   const [mode, setMode] = useState<'project' | 'search'>('project')
+  const [pipelineOpen, setPipelineOpen] = useState(false)
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([])
   const [useModel,setUseModel]=useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -117,7 +132,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   useEffect(() => {
     const controller = new AbortController()
     setLoaded({ key: requestKey, documents: [], cards: [], error: '', loading: true })
-    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setEditing(null); setReviewNote(''); setBusy(''); savePending.current = false
+    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setEditing(null); setReviewNote(''); setBusy(''); savePending.current = false; setPipelineOpen(false)
     setActionError(''); setNotice(''); setWarnings([]); setMatches([]); setSearched(false); setSearching(false)
     searchSequence.current += 1
     void Promise.all([
@@ -234,6 +249,18 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
     {isLoading ? <WaitingScene compact variant="research" title="正在读取项目经验" detail="读取历史材料、经验草稿与审核记录…" /> : <p role="alert">项目经验暂不可读：{loaded.error}</p>}</section>
 
   return <section className="experience-library" aria-label="项目经验沉淀">{heading}
+    <div className="experience-tabs"><button type="button" aria-expanded={pipelineOpen} onClick={() => setPipelineOpen(current => !current)}>原文举措、导师因素政策与技能蒸馏</button></div>
+    {pipelineOpen && <Suspense fallback={<p role="status">正在加载知识沉淀操作…</p>}><KnowledgePipelinePanel projectId={projectId} revision={revision} onChanged={async type => {
+      const key = requestKey, generation = viewGeneration.current
+      if (type === 'documents') {
+        const documents = await api<Document[]>(`/projects/${encodeURIComponent(projectId)}/documents`)
+        if (activeKey.current === key && viewGeneration.current === generation) setLoaded(current => current.key === key ? { ...current, documents } : current)
+        return
+      }
+      const result = await api<{ cards: ExperienceCard[] }>(base)
+      if (activeKey.current === key && viewGeneration.current === generation) setLoaded(current => current.key === key ? { ...current, cards: result.cards } : current)
+    }} /></Suspense>}
+    <Suspense fallback={<p role="status">正在加载案例与规则匹配…</p>}><KnowledgeWorkbench projectId={projectId} revision={revision} asOf={asOf} currentProject={currentProject} onRun={onKnowledgeRun} /></Suspense>
     <div className="experience-tabs" aria-label="经验查看方式"><button type="button" aria-pressed={mode === 'project'} onClick={() => setMode('project')}>本项目经验 · {cards.length}</button>
       <button type="button" aria-pressed={mode === 'search'} onClick={() => setMode('search')}>检索已审核经验</button></div>
     {actionError && <p className="experience-error" role="alert">{actionError}</p>}
@@ -261,7 +288,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
           <span className={`experience-status is-${card.status}`}>{statusLabel[card.status]} · v{card.revision}</span></button>
         {expanded === card.id && <div className="experience-card-body">
           {editing?.card?.id === card.id ? <DraftEditor draft={editing.draft} documents={documents} citableDocuments={citableDocuments} busy={busy} creating={false}
-            onChange={changeDraft} onSave={() => void save()} onCancel={cancelEdit} /> : <><CardContent card={card} documents={documents} />
+            onChange={changeDraft} onSave={() => void save()} onCancel={cancelEdit} /> : <><ConditionComparison card={card} advice={currentAdvice} documents={documents} onOpenMaterials={onOpenMaterials}/><CardContent card={card} documents={documents} />
             {card.review_note && <p className="experience-review-record">审核记录：{card.review_note}</p>}
             {card.status === 'draft' && <div className="experience-review"><button type="button" disabled={!!busy} onClick={() => { setEditing({ card, draft: asDraft(card) }); setActionError('') }}>编辑草稿与原文引用</button>
               <label>复核备注<textarea value={reviewNote} disabled={!!busy} placeholder="说明已核对的材料、适用边界或未通过原因" onChange={event => setReviewNote(event.target.value)} /></label>
@@ -285,8 +312,9 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
         <header className="experience-match-heading"><div><h4>{match.card.title}</h4><p>{[match.card.project_type, match.card.development_mode, match.card.stage].filter(Boolean).join(' · ')}</p><small>来源项目 {match.card.project_id} · v{match.card.revision}</small></div>
           <button type="button" className="experience-primary" disabled={!!busy} onClick={() => void reuse(match.card)}>{busy === `reuse:${match.card.id}` ? '正在加入…' : '加入当前项目参考'}</button></header>
         <div className="experience-comparison">{([
-          ['相似条件', match.similar_conditions], ['重要差异', match.important_differences], ['借鉴前提', match.reuse_premises],
+          ['分类匹配', match.similar_conditions], ['待比较差异', match.important_differences], ['借鉴前提', match.reuse_premises],
         ] as const).map(([label, values]) => <div key={label}><strong>{label}</strong>{values.length ? <ul>{values.map((value, index) => <li key={index}>{value}</li>)}</ul> : <p>未记录</p>}</div>)}</div>
+        <ConditionComparison card={match.card} advice={currentAdvice} documents={[]} onOpenMaterials={onOpenMaterials}/>
         <details className="experience-match-details"><summary>查看完整经验与原文依据</summary><CardContent card={match.card} documents={[]} />{match.card.review_note && <p className="experience-review-record">审核记录：{match.card.review_note}</p>}</details>
       </article>)}</div>}
     </>}

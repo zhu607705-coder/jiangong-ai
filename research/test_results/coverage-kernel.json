@@ -1,0 +1,133 @@
+{
+  "tested_at": "2026-10-03T16:16:13.231966+00:00",
+  "execution": "CPU TypeScript; CUDA-inspired grouped reduction; no GPU execution",
+  "hardware_probe": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "memory_mib": 12227,
+    "torch_installed": false,
+    "cupy_installed": false,
+    "numba_installed": false
+  },
+  "reference": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html",
+  "scope": "One bounded operator-style optimization of existing evidence coverage; no business rule changes",
+  "benchmark": {
+    "before": {
+      "scope": "Synthetic local CPU benchmark; not whole-page or GPU latency",
+      "results": [
+        {
+          "name": "small",
+          "facts": 24,
+          "objects": 8,
+          "cells": 54,
+          "runs_ms": [
+            0.18684899999999516,
+            0.091116999999997,
+            0.08147299999998836,
+            0.07055399999998713,
+            0.06872699999999554
+          ],
+          "median_ms": 0.08147299999998836,
+          "output_sha256": "4bb6a42835e508ca3e70822056e4261fe5ddbe0442a71b1171e24e4ff57cb7b0"
+        },
+        {
+          "name": "many_objects",
+          "facts": 1000,
+          "objects": 1000,
+          "cells": 6006,
+          "runs_ms": [
+            26.612905000000012,
+            14.040505999999993,
+            13.394466000000023,
+            13.425072999999998,
+            14.490463999999974
+          ],
+          "median_ms": 14.040505999999993,
+          "output_sha256": "e4158887334caae2d53756ebde872d559318e189a0ac909315066bbf093614da"
+        },
+        {
+          "name": "shared_scope",
+          "facts": 1000,
+          "objects": 500,
+          "shared": true,
+          "cells": 3006,
+          "runs_ms": [
+            11.741833999999983,
+            9.664502000000027,
+            9.025947999999971,
+            9.241908000000024,
+            9.278678000000014
+          ],
+          "median_ms": 9.278678000000014,
+          "output_sha256": "3befcbaa1bc89054a738096c506b4ee5ca23342ee50145d531e0c2ed5d015714"
+        }
+      ]
+    },
+    "after": {
+      "scope": "Synthetic local CPU benchmark; not whole-page or GPU latency",
+      "results": [
+        {
+          "name": "small",
+          "facts": 24,
+          "objects": 8,
+          "cells": 54,
+          "runs_ms": [
+            0.16072800000000598,
+            0.15464600000001383,
+            0.09466599999996106,
+            0.06340299999999388,
+            0.06137899999998808
+          ],
+          "median_ms": 0.09466599999996106,
+          "output_sha256": "4bb6a42835e508ca3e70822056e4261fe5ddbe0442a71b1171e24e4ff57cb7b0"
+        },
+        {
+          "name": "many_objects",
+          "facts": 1000,
+          "objects": 1000,
+          "cells": 6006,
+          "runs_ms": [
+            3.044541000000038,
+            2.752087999999958,
+            3.4341999999999757,
+            2.2471229999999878,
+            4.818155000000047
+          ],
+          "median_ms": 3.044541000000038,
+          "output_sha256": "e4158887334caae2d53756ebde872d559318e189a0ac909315066bbf093614da"
+        },
+        {
+          "name": "shared_scope",
+          "facts": 1000,
+          "objects": 500,
+          "shared": true,
+          "cells": 3006,
+          "runs_ms": [
+            2.5260639999999626,
+            1.549950000000024,
+            1.9522469999999998,
+            1.4167909999999893,
+            1.6850320000000352
+          ],
+          "median_ms": 1.6850320000000352,
+          "output_sha256": "3befcbaa1bc89054a738096c506b4ee5ca23342ee50145d531e0c2ed5d015714"
+        }
+      ]
+    },
+    "identical_outputs": true,
+    "limitations": "Five warmed synthetic local CPU runs per layout; excludes DOM/provider/model time; small layout has about0.014ms absolute overhead and is not claimed faster."
+  },
+  "verification": {
+    "related_tests": 18,
+    "browser_checks": 14,
+    "production_build": "passed",
+    "commands": [
+      "npm test -- tests/contracts/coverage-aggregation.test.ts tests/contracts/evidence-coverage.test.ts tests/contracts/preliminary-research.test.ts",
+      "node tests/browser/preliminary-research.mjs",
+      "npm run build",
+      "node --import tsx scripts/benchmark-coverage.ts"
+    ]
+  },
+  "external_model_calls": 0,
+  "dependencies_added": 0,
+  "next_gpu_work": "Only consider a real GPU kernel after measuring a sufficiently large numerical workload, including data-transfer costs."
+}

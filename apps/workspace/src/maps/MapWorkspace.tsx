@@ -103,9 +103,12 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
     chooseCell(cell);setNotice('范围已确认；研判此处才会调用模型。')
   }
   useEffect(()=>{
-    const key=(e:KeyboardEvent)=>{if(e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!isTypingTarget(e.target)&&phase==='ready'&&!screenRunning&&!dataOpen&&!settings){e.preventDefault();setDrawingArea(true)}}
+    const key=(e:KeyboardEvent)=>{if(!interactionBlocked&&e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!isTypingTarget(e.target)&&phase==='ready'&&!screenRunning&&!dataOpen&&!settings){e.preventDefault();setDrawingArea(true)}}
     window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)
-  },[phase,screenRunning,dataOpen,settings])
+  },[interactionBlocked,phase,screenRunning,dataOpen,settings])
+  useEffect(() => {
+    if (!interactionBlocked && phase === 'ready') window.dispatchEvent(new Event('resize'))
+  }, [interactionBlocked, phase])
   useEffect(()=>{
     const current=map.current,api=sdk.current;if(!current||!api||phase!=='ready')return
     if(areaLayer.current){current.remove(areaLayer.current);areaLayer.current=null}
@@ -218,7 +221,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
         ? new sdk.current.Polygon({ path: location.points, fillColor: '#5bdfc1', fillOpacity: 0.10, strokeColor: '#74ebd4', strokeWeight: 2, strokeStyle: 'dashed', bubble: false })
         : new sdk.current.Marker({ position: location.points[0], title: project.name })
       projectOverlays.current = [overlay]; map.current.add(overlay)
-      overlay.on('click', () => { clearSelection(); setProjectPreview(true) })
+      overlay.on('click', () => onOpenProject(project.id))
       if (location.polygon) map.current.setFitView([overlay], false, [160, 370, 160, 140], 18)
       else map.current.setZoomAndCenter(17, location.points[0])
     }).catch(() => { if (alive) setNotice('项目坐标转换未完成，未把原坐标直接叠加到高德底图。') })

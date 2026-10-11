@@ -12,12 +12,14 @@ import { compileContext, applyContextPatch } from '../../packages/context/compil
 import { compileModelContext } from '../../packages/context/model-compiler'
 import { revisionDiff } from '../../packages/decision/evaluate'
 import { executeRun, digest } from '../../runtime/workflows/run'
+import { researchSnapshot, resolveRunKnowledge } from '../../runtime/workflows/knowledge'
 import { renderReport } from './reports'
 import { parseDocument, tableFacts, uploadFileName, DocumentParseError } from './ingest'
 import { AmapSettings, registerAmap } from './amap'
 import { registerMapScreening } from './map-screening'
 import { registerIntelligence } from './intelligence'
 import { registerExperience } from './experience'
+import { ExperienceError } from '../../packages/experience/domain'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -55,7 +57,7 @@ app.use(['/api', '/_AMapService'], (req, _res, next) => {
   next()
 })
 const intelligence = registerIntelligence(app,store)
-await registerExperience(app,store,requireProject)
+const experience = await registerExperience(app,store,requireProject)
 registerAmap(app, amapSettings)
 registerMapScreening(app, amapSettings, store)
 app.get('/api/ready', async (_req, res) => {
@@ -104,19 +106,26 @@ app.post('/api/projects/:id/map-anchor', async(req,res)=>{
   res.json(await requireProject(project.id))
 })
 
-const runBody = z.object({ mode: z.enum(['automatic', 'enterprise']).default('automatic'), execution_mode: z.enum(['offline', 'live']).default('offline'), idempotency_key: z.string().min(8).max(100) }).strict()
+const knowledgeQuery = z.object({ measure_key: z.string().max(80), question: z.string().max(1000) }).strict()
+const runBody = z.object({ mode: z.enum(['automatic', 'enterprise']).default('automatic'), execution_mode: z.enum(['offline', 'live']).default('offline'), idempotency_key: z.string().min(8).max(100), knowledge_query: knowledgeQuery.optional() }).strict()
 app.post('/api/projects/:id/runs', async (req, res) => {
   const body = runBody.parse(req.body)
   const project = await requireProject(req.params.id)
-  if (body.execution_mode === 'live' && !config.modelConfigured) throw new ApiError(424, 'BLOCKED_EXTERNAL', '未配置 DeepSeek 模型凭据；离线模式仍可使用。')
+  const existing = (await store.db.query<RunRecord>('SELECT * FROM runs WHERE project_id=$1 AND idempotency_key=$2', [project.id, body.idempotency_key])).rows[0]
+  if (existing) {
+    launchRun(existing)
+    res.status(202).json({ id: existing.id, revision: existing.revision, status: existing.status })
+    return
+  }
+  if (project.input.purpose === 'case_library_archive') throw new ApiError(422, 'KNOWLEDGE_ARCHIVE_ONLY', '资料库用于提取和复核案例规则，请选择具体待研究项目开展研判。')
+  if (body.execution_mode === 'live' && !config.modelConfigured) throw new ApiError(424, 'BLOCKED_EXTERNAL', '真实研判需要Agent模型，案例或规则命中也需Agent分析；本地匹配和离线检查仍可使用。')
   const run = await store.db.transaction(async db => {
     await db.query('SELECT id FROM projects WHERE id=$1 FOR UPDATE', [project.id])
     const existing = (await db.query<RunRecord>('SELECT * FROM runs WHERE project_id=$1 AND idempotency_key=$2', [project.id, body.idempotency_key])).rows[0]
     if (existing) return existing
     if ((await db.query("SELECT id FROM runs WHERE project_id=$1 AND status='running'", [project.id])).rows.length) throw new ApiError(409, 'RUN_ACTIVE', '当前项目已有研判正在执行')
     const fresh = (await db.query<ProjectRecord>('SELECT * FROM projects WHERE id=$1', [project.id])).rows[0]
-    const snapshot = structuredClone(fresh.input); snapshot.mode = body.mode
-    if (body.mode === 'automatic') { snapshot.context_rules = []; snapshot.sources = snapshot.sources.filter(s => s.visibility === 'public'); const ids = new Set(snapshot.sources.map(s => s.id)); snapshot.facts = snapshot.facts.filter(f => ids.has(f.source_id)); snapshot.events = [] }
+    const snapshot = researchSnapshot(fresh.input, body.mode, body.knowledge_query)
     const revision = Number((await db.query<{ revision: number }>('SELECT COALESCE(MAX(revision),0)+1 AS revision FROM runs WHERE project_id=$1', [project.id])).rows[0].revision)
     return (await db.query<RunRecord>('INSERT INTO runs(id,project_id,revision,context_version,status,execution_mode,snapshot,snapshot_hash,idempotency_key) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *', [`RUN-${randomUUID()}`, project.id, revision, fresh.context_version, 'running', body.execution_mode, JSON.stringify(snapshot), digest(snapshot), body.idempotency_key])).rows[0]
   })
@@ -127,7 +136,8 @@ app.post('/api/runs/:id/cancel', async (req, res) => { await requireRun(req.para
 app.post('/api/runs/:id/resume', async (req, res) => {
   const original = await requireRun(req.params.id)
   if (original.status !== 'failed' || controllers.has(original.id)) throw new ApiError(409, 'RUN_NOT_RESUMABLE', '只有已经停止的未完成运行可以恢复')
-  if (original.execution_mode === 'live' && !config.modelConfigured) throw new ApiError(424, 'BLOCKED_EXTERNAL', '恢复此运行需要已配置的模型凭据')
+  const knowledge = await resolveRunKnowledge(store, original, AbortSignal.timeout(30000))
+  if (original.execution_mode === 'live' && !config.modelConfigured) throw new ApiError(424, 'BLOCKED_EXTERNAL', '恢复真实Agent研判需要已配置的模型凭据，命中路线也需Agent分析')
   const run = await store.db.transaction(async db => {
     await db.query('SELECT id FROM projects WHERE id=$1 FOR UPDATE', [original.project_id])
     if ((await db.query("SELECT id FROM runs WHERE project_id=$1 AND status='running'", [original.project_id])).rows.length) throw new ApiError(409, 'RUN_ACTIVE', '同项目已有运行正在执行')
@@ -235,7 +245,7 @@ app.use(express.static('apps/workspace/dist'))
 app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (res.headersSent) return res.end()
   if (error instanceof z.ZodError || error instanceof ContractError) return res.status(422).json({ code: 'VALIDATION_ERROR', detail: error.message })
-  if (error instanceof ApiError) return res.status(error.status).json({ code: error.code, detail: error.message })
+  if (error instanceof ApiError || error instanceof ExperienceError) return res.status(error.status).json({ code: error.code, detail: error.message })
   if (error instanceof DocumentParseError) return res.status(422).json({ code: 'PARSE_FAILED', detail: error.message })
   if (error instanceof multer.MulterError) return res.status(413).json({ code: error.code, detail: '材料超过 10 MB 限制或上传格式不正确' })
   if ((error as { code?: string })?.code === '23505') return res.status(409).json({ code: 'ALREADY_EXISTS', detail: '记录已存在，请刷新后重试' })

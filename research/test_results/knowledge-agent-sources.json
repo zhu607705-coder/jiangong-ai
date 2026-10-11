@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-09",
+  "status": "implemented_agent_required_hits_and_per_item_sources",
+  "routes": {
+    "case_hit": "existing LiveSession knowledge_agent",
+    "rule_hit": "existing LiveSession knowledge_agent",
+    "combined_hit": "existing LiveSession knowledge_agent",
+    "agent_fallback": "existing full executeLiveRun",
+    "offline": "explicit engineering verification only; never labelled Agent judgment"
+  },
+  "citation_rules": [
+    "each recommendation cites each referenced KB card",
+    "each declared matched condition cites its actual current source",
+    "decision cites KB and current matched condition evidence",
+    "only tool-supplied sources permitted",
+    "quote and original locator validated; whitespace/false page/table/line refused",
+    "final_citations retain precise original quotes; guard sources distinguished"
+  ],
+  "verification": {
+    "js": {
+      "passed": 743,
+      "files": 42,
+      "log": "research/baseline_logs/knowledge-agent-full-js.log"
+    },
+    "agent_and_routing": {
+      "agent_tests": 28,
+      "route_tests": 12,
+      "synthetic": true,
+      "real_api": false
+    },
+    "python": {
+      "passed": 70,
+      "log": "research/baseline_logs/knowledge-agent-python.log"
+    },
+    "http": {
+      "passed": 14,
+      "log": "research/baseline_logs/knowledge-agent-http.log"
+    },
+    "app_browser": {
+      "flows": 10,
+      "passed": true,
+      "log": "research/baseline_logs/knowledge-agent-app-browser.log"
+    },
+    "source_report_browser": {
+      "passed": true,
+      "synthetic": true,
+      "network_calls": 0,
+      "model_calls": 0,
+      "log": "research/baseline_logs/knowledge-agent-report-browser.log",
+      "visual_inspected": true,
+      "viewports": [
+        {
+          "width": 1280,
+          "height": 800
+        },
+        {
+          "width": 390,
+          "height": 844
+        }
+      ]
+    },
+    "build": {
+      "passed": true,
+      "log": "research/baseline_logs/knowledge-agent-build.log"
+    },
+    "screenshots": [
+      "output/playwright/knowledge-agent-report-desktop.png",
+      "output/playwright/knowledge-agent-report-mobile.png"
+    ]
+  },
+  "permissions": "Internal-hit disclosure permission checked before provider opens; no new approval, source or training grants inferred.",
+  "cache": "Only same-run Agent artifact reused after source and exact citation revalidation; new run invokes Agent.",
+  "guard": "Hard veto/missing evidence can only preserve or tighten agent action; primary actions no longer repeat raw historical suggestions.",
+  "real_provider_quality": "not_evaluated_pending_reviewed_real_applicable_cases",
+  "model_calls_added": 0,
+  "publication": {
+    "status": "pushed_and_pr_created",
+    "branch": "codex/knowledge-agent-sources",
+    "base": "codex/neighborhood-condition-policy",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+    "merged": false
+  }
+}

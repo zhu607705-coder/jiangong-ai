@@ -31,11 +31,12 @@ const specifications:Record<Exclude<Adapter,'statistics'>,Spec[]>={
     {key:'accepted_at',label:'竣工验收日期',aliases:['竣工验收日期','竣工验收备案日期']},
   ],
   procurement:[
-    {key:'project_id',label:'采购编号',aliases:['项目编号','采购项目编号']},
+    {key:'project_id',label:'采购编号',aliases:['项目编号','采购项目编号','项目代码']},
     {key:'project_name',label:'采购项目',aliases:['采购项目名称','项目名称','工程名称']},
     {key:'lot_id',label:'标段或包号',aliases:['标段编号','标段号','包号','包件号','分包编号']},
+    {key:'lot_name',label:'标段或包名称',aliases:['标段名称','包名称','包件名称']},
     {key:'location',label:'项目地址',aliases:['建设地点','建设地址','项目地址','工程地点']},
-    {key:'buyer',label:'采购单位',aliases:['采购单位','采购人名称']},
+    {key:'buyer',label:'采购单位',aliases:['采购单位','采购人名称','招标人']},
     {key:'budget',label:'预算',aliases:['预算金额'],unit:'万元'},
     {key:'ceiling',label:'最高限价',aliases:['最高限价'],unit:'万元'},
     {key:'award',label:'成交金额',aliases:['总成交金额','总中标金额','中标（成交）金额'],unit:'万元'},
@@ -48,6 +49,54 @@ const specifications:Record<Exclude<Adapter,'statistics'>,Spec[]>={
 }
 const clean=(v:unknown)=>String(v??'').replace(/\s+/g,' ').trim()
 const label=(v:unknown)=>clean(v).replace(/[：:]/g,'').replace(/[（(].*?[）)]/g,'').trim()
+const zhejiangHost=(url:string|undefined):boolean=>{try{return new URL(url||'').hostname==='ggzy.zj.gov.cn'}catch{return false}}
+const zhejiangEngineering=(url:string|undefined):boolean=>{try{return zhejiangHost(url)&&new URL(url!).pathname.startsWith('/jyxxgk/002001/')}catch{return false}}
+
+/** Only the observed official article layout; other sources retain the existing parser. */
+export function officialArticleText(html:string,url:string):string|null {
+  if(!zhejiangHost(url)||!/<(?:html|body|div)\b/i.test(html))return null
+  const {document}=parseHTML(html),article=document.querySelector('.article-info')
+  if(!article)return null
+  article.querySelectorAll('script,style,noscript,iframe,nav,header,footer,.info-sources-right').forEach(n=>n.remove())
+  // The publisher embeds a span in a nested HTML title; HTML parsers expose it as literal text.
+  article.querySelectorAll('title').forEach(n=>{n.textContent=(n.textContent||'').replace(/<[^>]*>/g,'')})
+  const blocks=new Set(['DIV','P','H1','H2','H3','H4','LI','TR','TD','TH','TABLE','SECTION','TITLE'])
+  const render=(node:Node):string=>{
+    if(node.nodeType===3)return node.textContent||''
+    if(node.nodeType!==1)return ''
+    const tag=(node as Element).tagName
+    if(tag==='BR')return '\n'
+    const text=Array.from(node.childNodes).map(render).join('')
+    return blocks.has(tag)?'\n'+text+'\n':text
+  }
+  return render(article as unknown as Node).split(/\r?\n/).map(line=>clean(line)).filter(Boolean).join('\n')
+}
+
+type PublicationStage='candidate_notice'|'award_notice'|'evaluation_notice'|'tender_notice'
+function publicationStages(text:string):PublicationStage[]{
+  const out:PublicationStage[]=[]
+  if(/中标候选人?(?:公示|公告)/.test(text))out.push('candidate_notice')
+  if(/(?:中标(?:结果)?|成交(?:结果)?|中标[（(]成交[）)](?:结果)?)(?:公示|公告)/.test(text))out.push('award_notice')
+  if(/评分公示|得分公示|定量评审(?:结果)?公示/.test(text))out.push('evaluation_notice')
+  if(/招标公告/.test(text))out.push('tender_notice')
+  return out
+}
+function publicationField(source:Source):PublicField {
+  const content=source.untrusted_text||'',headings:{text:string;locator:string}[]=[]
+  if(/<(?:html|body|table)\b/i.test(content)){
+    const {document}=parseHTML(content),scope=document.querySelector('.article-info')||document
+    scope.querySelectorAll('#litPosition,title').forEach((n,i)=>{
+      const text=clean((n.textContent||'').replace(/<[^>]*>/g,''))
+      if(/^信息公开/.test(text))headings.push({text,locator:n.id==='litPosition'?'#litPosition':`title[${i+1}]`})
+    })
+  }else for(const [i,line] of content.split(/\r?\n/).entries()){
+    const text=clean(line.replace(/<[^>]*>/g,''))
+    if(/^信息公开/.test(text))headings.push({text,locator:`line[${i+1}]`})
+  }
+  const titleStages=publicationStages(source.title),bodyStages=[...new Set(headings.flatMap(h=>publicationStages(h.text)))]
+  const value=titleStages.length===1&&bodyStages.length===1&&titleStages[0]===bodyStages[0]?titleStages[0]:null
+  return {key:'publication_stage',label:'公告阶段',value,unit:'',raw:clean(`标题：${source.title} / 栏目：${headings.map(h=>h.text).join(' / ')||'未明确记载'}${value===null?' / 阶段未能一致核对':''}`).slice(0,400),locator:['source.title',...headings.map(h=>h.locator)].join(' / ').slice(0,200)}
+}
 const field=(spec:Spec,raw:string,loc:string,originalLabel:string):PublicField=>{
   const units=originalLabel+' '+raw
   const unit=/公顷/.test(units)?'公顷':/亿元/.test(units)?'亿元':/万元/.test(units)?'万元':/万平方米/.test(units)?'万平方米':/平方米|㎡|m²|m2/i.test(units)?'㎡':/元/.test(units)&&spec.unit==='万元'?'元':''
@@ -61,9 +110,22 @@ function tables(content:string):{rows:string[][];locator:string}[]{
   const {document}=parseHTML(content)
   return Array.from(document.querySelectorAll('table')).filter(t=>!t.querySelector('table')).map((t,i)=>({locator:`table[${i+1}]`,rows:Array.from(t.querySelectorAll('tr')).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>clean(c.textContent)))}))
 }
-function textPairs(content:string):[string,string,string][]{
-  const text=/<[a-z][\s\S]*>/i.test(content)?parseHTML(content).document.documentElement.textContent||'':content
-  return text.split(/\n/).flatMap((line,i)=>{const m=line.replace(/^\s*[一二三四五六七八九十0-9]+[、.．]\s*/,'').match(/^\s*([^:：]{2,24})[:：]\s*(.{1,400})$/);return m?[[m[1],m[2],`line[${i+1}]`] as [string,string,string]]:[]})
+function textPairs(content:string,specs?:Spec[]):[string,string,string][]{
+  const text=(!specs&&/<[a-z][\s\S]*>/i.test(content))?parseHTML(content).document.documentElement.textContent||'':content
+  const lines=text.split(/\r?\n/)
+  return lines.flatMap((line,i)=>{
+    const m=line.replace(/^\s*[一二三四五六七八九十0-9]+[、.．]\s*/,'').match(/^\s*([^:：]{2,24})[:：]\s*(.{0,400})$/)
+    if(!m)return []
+    if(m[2])return [[m[1],m[2],`line[${i+1}]`] as [string,string,string]]
+    if(!specs?.some(s=>s.aliases.some(a=>label(a)===label(m[1]))))return []
+    let next=i+1
+    while(next<lines.length&&!lines[next].trim())next++
+    const value=lines[next]?.trim()||''
+    // A missing value must not consume the next field's label.
+    const nextLabel=value.match(/^([^:：]{2,24})[:：]\s*(.*)$/)
+    if(!value||value.length>400||nextLabel&&(!nextLabel[2]||specs.some(s=>s.aliases.some(a=>label(a)===label(nextLabel[1])))))return []
+    return [[m[1],value,`line[${i+1}] / line[${next+1}]`] as [string,string,string]]
+  })
 }
 function objectPairs(row:Record<string,unknown>,loc:string):[string,string,string][]{return Object.entries(row).filter(([,v])=>['number','string'].includes(typeof v)||v===null).map(([k,v])=>[k,clean(v),`${loc}.${k}`])}
 /** Strip navigation and executable padding before classifying an access page. */
@@ -78,7 +140,7 @@ export function accessRequired(content:string):boolean {
   return text.length<1200&&/请先登录|请登录后|安全验证|请输入验证码|输入验证码|人机验证|访问过于频繁/.test(text)
 }
 function parseTableSource(source:Source,kind:Exclude<Adapter,'statistics'>):PublicRecord[]{
-  const specs=specifications[kind],content=source.untrusted_text||''
+  const specs=specifications[kind],content=source.untrusted_text||'',official=kind==='procurement'&&zhejiangEngineering(source.url)
   let groups:[string,string,string][][]=[]
   if(content.trim().startsWith('{')||content.trim().startsWith('[')){
     try{const v=JSON.parse(content),rows=Array.isArray(v)?v:Array.isArray(v.records)?v.records:Array.isArray(v.data)?v.data:[v];groups=rows.filter((r:any)=>r&&typeof r==='object'&&!Array.isArray(r)).map((r:any,i:number)=>objectPairs(r,`record[${i+1}]`))}catch{return []}
@@ -98,9 +160,11 @@ function parseTableSource(source:Source,kind:Exclude<Adapter,'statistics'>):Publ
       }
       if(current.length)groups.push(current)
     }
-    for(const t of tables(content)){
+    const parsedTables=tables(content)
+    for(const t of parsedTables){
       const header=t.rows[0]||[],recognized=header.map(h=>specs.find(s=>s.aliases.some(a=>label(a)===label(h))))
-      const isHeader=recognized.filter(Boolean).length>=2 && recognized.some(s=>['parcel_id','project_id','project_name'].includes(s?.key||''))
+      const pairedRow=official&&header.some((text,c)=>recognized[c]&&/[:：]\s*$/.test(text)&&c+1<header.length&&!recognized[c+1])
+      const isHeader=!pairedRow&&recognized.filter(Boolean).length>=2 && recognized.some(s=>['parcel_id','project_id','project_name'].includes(s?.key||''))
       if(isHeader){for(let r=1;r<t.rows.length;r++){
         const row=t.rows[r]
         if(row.length!==header.length||recognized.every((spec,c)=>!spec||spec.aliases.some(a=>label(a)===label(row[c]))))continue
@@ -109,11 +173,12 @@ function parseTableSource(source:Source,kind:Exclude<Adapter,'statistics'>):Publ
       else {
         const pairs:[string,string,string][]=[]
         t.rows.forEach((row,r)=>{for(let c=0;c<row.length-1;c++)if(specs.some(s=>s.aliases.some(a=>label(a)===label(row[c]))))pairs.push([row[c],row[c+1],`${t.locator}.row[${r+1}].cell[${c+2}]`])})
-        separate(pairs)
+        if(official)groups.push(pairs);else separate(pairs)
       }
     }
     // Prose and independent tables do not implicitly inherit the first object's identity.
-    separate(textPairs(content))
+    if(!official)separate(textPairs(content))
+    else if(!parsedTables.length)groups.push(textPairs(officialArticleText(content,source.url!)??content,specs))
   }
   return groups.flatMap((pairs,index)=>{
     const fields:PublicField[]=[]
@@ -156,7 +221,8 @@ export const adaptConstruction=(s:Source)=>parseTableSource(s,'construction')
 export const adaptProcurement=(s:Source)=>retainRecordWindows(parseTableSource(s,'procurement'),undefined,!s.body_truncated)
 export function adaptOfficialSource(source:Source):{records:PublicRecord[];receipt:AdapterReceipt}{
   const host=(()=>{try{return new URL(source.url||'').hostname}catch{return ''}})(),content=source.untrusted_text||''
-  let adapter:Adapter|null=host==='landchina.com'||host.endsWith('.landchina.com')?'landchina':host==='jzsc.mohurd.gov.cn'||host.startsWith('jzsc.')&&host.endsWith('.gov.cn')?'construction':host==='data.stats.gov.cn'?'statistics':host==='ccgp.gov.cn'||host.endsWith('.ccgp.gov.cn')?'procurement':null
+  const official=zhejiangEngineering(source.url)
+  let adapter:Adapter|null=host==='landchina.com'||host.endsWith('.landchina.com')?'landchina':host==='jzsc.mohurd.gov.cn'||host.startsWith('jzsc.')&&host.endsWith('.gov.cn')?'construction':host==='data.stats.gov.cn'?'statistics':host==='ccgp.gov.cn'||host.endsWith('.ccgp.gov.cn')||official?'procurement':null
   // Local government republication of a supply record keeps its actual source URL.
   if(!adapter&&publicSourceClass(source.url||'')==='official'){
     if(/电子监管号|宗地编号/.test(content))adapter='landchina'
@@ -166,7 +232,12 @@ export function adaptOfficialSource(source:Source):{records:PublicRecord[];recei
   if(source.content_status==='metadata_only'||!content.trim())return {records:[],receipt:{...receipt,status:'empty'}}
   if(accessRequired(content))return {records:[],receipt:{...receipt,status:'access_required'}}
   if(!adapter)return {records:[],receipt}
-  const parsed=adapter==='statistics'?adaptStatistics(source):parseTableSource(source,adapter)
+  let parsed=adapter==='statistics'?adaptStatistics(source):parseTableSource(source,adapter)
+  if(official){
+    const stage=publicationField(source)
+    const names:Record<string,string>={project_id:'工程项目代码',project_name:'项目名称',buyer:'招标人'}
+    parsed=parsed.map(record=>({...record,fields:[...record.fields.map(f=>({...f,label:names[f.key]||f.label,...(f.key==='award'&&stage.value!=='award_notice'?{value:null}:{})})),stage]}))
+  }
   const records=retainRecordWindows(parsed,parsed.slice(0,MAX_SOURCE_RECORDS),!source.body_truncated).map(r=>({...r,...(source.raw_hash?{source_hash:source.raw_hash}:{})}))
   return {records,receipt:{...receipt,status:parsed.length>MAX_SOURCE_RECORDS?'truncated':records.length?'success':'schema_changed',record_ids:records.map(r=>r.id)}}
 }

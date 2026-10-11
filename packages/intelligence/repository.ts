@@ -91,6 +91,19 @@ export class IntelRepository {
     await db.query('INSERT INTO intel_analysis_history(document_id,version,payload) VALUES($1,$2,$3)',[id,version,JSON.stringify(value)])
     await db.query('INSERT INTO intel_analyses(document_id,version,payload) VALUES($1,$2,$3) ON CONFLICT(document_id,version) DO UPDATE SET payload=EXCLUDED.payload',[id,version,JSON.stringify(value)])
   })}
+  /** Do not overwrite paid/manual analysis if another request completed meanwhile. */
+  async saveLocalAnalysis(id:string,version:string,value:Analysis){return this.db.transaction(async db=>{
+    const changed=await db.query(`INSERT INTO intel_analyses(document_id,version,payload) VALUES($1,$2,$3)
+      ON CONFLICT(document_id,version) DO UPDATE SET payload=EXCLUDED.payload
+      WHERE intel_analyses.payload->>'model' IS NULL
+      AND intel_analyses.payload->>'score' IS NULL
+      AND COALESCE(jsonb_array_length(intel_analyses.payload->'scores'),0)=0
+      AND COALESCE((intel_analyses.payload->>'selected')::boolean,false)=false
+      AND intel_analyses.payload->>'status' IN ('unscored','needs_review')
+      AND intel_analyses.payload IS DISTINCT FROM EXCLUDED.payload RETURNING document_id`,[id,version,JSON.stringify(value)])
+    if(changed.rows.length)await db.query('INSERT INTO intel_analysis_history(document_id,version,payload) VALUES($1,$2,$3)',[id,version,JSON.stringify(value)])
+    return changed.rows.length>0
+  })}
   async membership(id:string,version:string,event:string,story:string,relation:Relation,manual=false){await this.db.query(`INSERT INTO intel_memberships(document_id,version,event_id,story_id,relation,manual) VALUES($1,$2,$3,$4,$5,$6)
     ON CONFLICT(document_id,version) DO UPDATE SET event_id=EXCLUDED.event_id,story_id=EXCLUDED.story_id,relation=EXCLUDED.relation,manual=EXCLUDED.manual WHERE NOT intel_memberships.manual OR EXCLUDED.manual`,[id,version,event,story,relation,manual])}
   async enqueue(kind:Job['kind'],subject:string,payload:Record<string,unknown>={}):Promise<Job>{return this.db.transaction(async db=>{

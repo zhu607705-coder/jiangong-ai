@@ -592,6 +592,401 @@
         "research/"
       ],
       "upstream_verification_required": false
+    },
+    {
+      "id": "T24",
+      "depends_on": [
+        "T23"
+      ],
+      "goal": "合并PR10并同步本地；控制额度完成一轮有证据的优化",
+      "status": "completed_local_verified",
+      "expected_artifacts": [
+        "research/test_results/efficient-evidence-review.json"
+      ],
+      "definition_of_done": "PR实际合并并读回、本地主线零落后；两项优化有复現/性能或正确性证据；不新增模型API调用；相关检查通过后停止。",
+      "write_scope": [
+        "apps/workspace/src/imports/evidence-coverage.ts",
+        "packages/maps/preliminary-research.ts",
+        "tests/contracts/",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T25",
+      "depends_on": [
+        "T24"
+      ],
+      "goal": "参照CUDA算子思路测量并优化现有计算热点，控制额度",
+      "status": "completed_local_verified",
+      "expected_artifacts": [
+        "scripts/benchmark-coverage.ts",
+        "research/test_results/coverage-kernel.json"
+      ],
+      "definition_of_done": "批量分组减少重复扫描、保留顺序与来源规则；多布局基准前后输出一致；相关契约/浏览器/构建通过；CPU与GPU执行明确区分，不新增模型调用。",
+      "write_scope": [
+        "apps/workspace/src/imports/",
+        "scripts/benchmark-coverage.ts",
+        "tests/contracts/",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T26",
+      "depends_on": [
+        "T25"
+      ],
+      "goal": "按用户纠正优化真实页面加载与调研首次可读体验，区分接口等待",
+      "status": "completed_real_local_readback_verified",
+      "expected_artifacts": [
+        "research/test_results/real-loading.json"
+      ],
+      "definition_of_done": "以现有真实项目请求和页面可操作状态验证；缩减重复读取、辅助资料不阻塞项目、校验后的简报早于修复评分展示；不以合成计算基准声称整页或API加速。",
+      "write_scope": [
+        "apps/workspace/src/",
+        "services/map-screening/analyst.ts",
+        "tests/",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T27",
+      "depends_on": [
+        "T26"
+      ],
+      "goal": "优化decision模型接入的等待、取消、失败反馈及缓存复用",
+      "status": "completed_local_and_live_endpoint_verified",
+      "expected_artifacts": [
+        "research/test_results/decision-integration.json"
+      ],
+      "definition_of_done": "复用System One/DSH；问题批量请求、取消清理和安全错误码有效；缓存依赖实际问题与Qwen模型；现有公开材料一次连接验收；不把接入测试写成判断质量或整体加速。",
+      "write_scope": [
+        "services/capabilities/decision-model.ts",
+        "services/map-screening/analyst.ts",
+        "runtime/workflows/live.ts",
+        "apps/host/config.ts",
+        "apps/workspace/src/components/DecisionRoute.tsx",
+        "packages/decision/route-labels.ts",
+        "tests/contracts/",
+        ".env.example",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": true
+    },
+    {
+      "id": "T28",
+      "depends_on": [
+        "T27"
+      ],
+      "goal": "根据用户介绍PDF与当前本地工作台双向核对，改进介绍与经验条件对照",
+      "status": "completed_pdf_and_real_local_workbench_verified",
+      "expected_artifacts": [
+        "docs/项目介绍.md",
+        "docs/介绍与工作台对齐.md",
+        "output/pdf/建工AI_项目介绍.pdf",
+        "research/test_results/introduction-alignment.json"
+      ],
+      "definition_of_done": "介绍保留业务目标且区分已实现/待研发/待验证；PDF文字与版面检查；产品条件对照复用现有事实门与引文且只读；实际本机卡与手机读回，无额外模型调用。",
+      "write_scope": [
+        "docs/",
+        "output/pdf/",
+        "scripts/build-introduction.py",
+        "apps/workspace/src/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T29",
+      "depends_on": [
+        "T28"
+      ],
+      "goal": "优化初步调研首卡记录处理，隔离未来更正与陈旧版本并按来源分组",
+      "status": "completed_local_and_real_readback_verified",
+      "expected_artifacts": [
+        "research/test_results/preliminary-algorithm.json"
+      ],
+      "definition_of_done": "有失败复现与边界回归；复用既有采购家族算法；共享记录一次分桶；实际本机项目输出读回及构建通过；不新增模型调用，不以回归构造声明全页速度。",
+      "write_scope": [
+        "packages/maps/preliminary-research.ts",
+        "tests/contracts/preliminary-research.test.ts",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/preliminary-algorithm.json"
+    },
+    {
+      "id": "T30",
+      "depends_on": [
+        "T29"
+      ],
+      "goal": "检索旧改官方数据，借鉴AIHOT方式开始真实原文沉淀",
+      "status": "completed_official_original_and_live_ui_verified",
+      "expected_artifacts": [
+        "data/corpus/official-retrofit-source-catalog.json",
+        "docs/老旧小区官方数据与沉淀.md",
+        "research/test_results/official-retrofit-intake.json"
+      ],
+      "definition_of_done": "实际官方接口/原文读取及哈希；已有intake/import入库与重复观察校验；计划PDF定位核对；真实工作台可检索/回读；不用新闻或合成材料冒充旧改事实，不自动开展付费筛选或定时采集。",
+      "write_scope": [
+        "data/corpus/",
+        "data/local/official-retrofit-20261005/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/official-retrofit-intake.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T31",
+      "depends_on": [
+        "T30"
+      ],
+      "goal": "全量项目源码扫描并将明确任务落实为程序算法",
+      "status": "completed_source_scan_and_real_code_paths_verified",
+      "expected_artifacts": [
+        "docs/程序与模型分工扫描.md",
+        "research/test_results/code-first-scan.json",
+        "research/test_results/code-first.json"
+      ],
+      "definition_of_done": "自有源码清单和模型边界扫描；复用既有解析/检索/版本；定式结构与UNKNOWN路径有行为回归；原文和真实UI验收；不造得分/硬规则/训练标签；无新增模型调用，必要集成和构建通过。",
+      "write_scope": [
+        "packages/",
+        "services/",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/code-first.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T32",
+      "depends_on": [
+        "T31"
+      ],
+      "goal": "把业务判断、门槛和维度统一为有依据的程序政策",
+      "status": "completed_condition_and_comparison_policy_verified",
+      "expected_artifacts": [
+        "packages/retrofit/policy.ts",
+        "docs/旧改维度与判断门槛.md",
+        "research/test_results/condition-policy.json"
+      ],
+      "definition_of_done": "六维/确认/否决/调查共同注册；项目与地图同一条件结果；专业规则独立；修复作用域误准入；新比较完整六维，保历史版本；不新增未经复核数值；必要回归和真实UI通过。",
+      "write_scope": [
+        "packages/",
+        "runtime/",
+        "services/",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/condition-policy.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T33",
+      "depends_on": [
+        "T32"
+      ],
+      "goal": "选中项目直接进入全宽主调研页，保留地图与草稿并收起常驻侧栏",
+      "status": "completed_local_navigation_and_visual_readback",
+      "expected_artifacts": [
+        "research/test_results/project-research-page.json",
+        "tests/browser/neighborhood-workflow.mjs"
+      ],
+      "definition_of_done": "项目列表与地图项目入口直接进入主调研；桌面和手机全宽、支持记录可展开、地图返回与项目草稿隔离通过；构建与真实项目读回；不新增模型调用。",
+      "write_scope": [
+        "apps/workspace/src/",
+        "tests/browser/neighborhood-workflow.mjs",
+        "docs/engineering.md",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/project-research-page.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T34",
+      "depends_on": [
+        "T33"
+      ],
+      "goal": "案例和论文按举措沉淀为案例/规则，条件匹配及可迁移性判断，两路无命中才启用DSH保底",
+      "status": "completed_local_case_rule_pipeline_verified",
+      "expected_artifacts": [
+        "docs/案例规则库与条件迁移.md",
+        "data/templates/case-extraction-template.json",
+        "runtime/skills/case-rule-extraction/",
+        "research/test_results/case-rule-library.json"
+      ],
+      "definition_of_done": "同库版本/引用/审批保留；单项举措提取与规则归档；条件、单位、未知和排除项分别判断；四路线且直接命中零模型；缓存恢复、权限、幂等和候选来源可追溯；真实原文草稿入库及UI验收；不宣称企业效果或自动训练。",
+      "write_scope": [
+        "packages/experience/",
+        "packages/contracts/",
+        "runtime/",
+        "apps/",
+        "tests/",
+        "scripts/seed-case-library.ts",
+        "data/templates/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/case-rule-library.json",
+      "upstream_verification_required": true
+    },
+    {
+      "id": "T35",
+      "depends_on": [
+        "T34"
+      ],
+      "goal": "任何真实命中都接入Agent研判，建议与决策逐条展示原文信源及命中点",
+      "status": "completed_agent_hit_and_per_item_citation_verified",
+      "expected_artifacts": [
+        "runtime/workflows/knowledge-agent.ts",
+        "apps/workspace/src/components/KnowledgeAgentReport.tsx",
+        "research/test_results/knowledge-agent-sources.json"
+      ],
+      "definition_of_done": "case/rule/combined live必经现有Agent和只读证据工具；每条建议/决策引用KB与现实命中条件；拒绝伪/错定位、工具外或漏引用；主路径使用Agent结果、最终行动一致且保硬约束；内部权限/取消/缓存恢复有效；相关回归、构建和浏览器通过，未以模拟样本宣称决策质量。",
+      "write_scope": [
+        "runtime/",
+        "packages/contracts/",
+        "packages/decision/",
+        "packages/experience/knowledge.ts",
+        "apps/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "evidence_log": "research/test_results/knowledge-agent-sources.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T36",
+      "depends_on": [
+        "T35"
+      ],
+      "goal": "削减投资导向，统一旧改策划、工程实施、社区协同与专项调查主线",
+      "status": "completed_neighborhood_focus_verified",
+      "expected_artifacts": [
+        "research/test_results/neighborhood-focus.json"
+      ],
+      "definition_of_done": "界面、新建岗位、模型Skill和现行文档采用旧改口径；保留措施资金与维护计算、来源与硬约束；相关回归与构建通过；不新增付费调用。",
+      "write_scope": [
+        "apps/workspace/",
+        "packages/retrofit/",
+        "packages/maps/screening-policy.ts",
+        "packages/decision/structured-route.ts",
+        "runtime/",
+        "docs/",
+        "README.md",
+        "agent/",
+        "research/",
+        "tests/browser/knowledge-agent-report.mjs"
+      ],
+      "evidence_log": "research/test_results/neighborhood-focus.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T37",
+      "depends_on": [
+        "T36"
+      ],
+      "goal": "求是村深入公开研究、举措决策、分期计划与本地证据沉淀",
+      "status": "completed_public_research_and_local_intake_live_comparison_failed",
+      "expected_artifacts": [
+        "docs/research/求是村_旧改深度调研与行动计划.md",
+        "output/pdf/求是村_旧改深度调研与行动计划.pdf",
+        "data/public_cases/qiushi-research-20261010.json",
+        "data/templates/qiushi-survey-register.csv",
+        "scripts/build-qiushi-research.py",
+        "research/test_results/qiushi-research-20261010.json"
+      ],
+      "definition_of_done": "确认为玉泉校区旁求是村；原文、时点、范围和阶段可回读；形成具体举措与三套比较、启动计划和调查表；PDF中文和页面核验、原项目导入读回；真实模型阶段与失败独立报告、不编造现场确认。",
+      "write_scope": [
+        "docs/research/",
+        "data/public_cases/qiushi-research-20261010.json",
+        "data/templates/qiushi-survey-register.csv",
+        "scripts/build-qiushi-research.py",
+        "output/pdf/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "evidence_log": "research/test_results/qiushi-research-20261010.json",
+      "upstream_verification_required": false
+    },
+    {
+      "id": "T38",
+      "depends_on": [
+        "T35",
+        "T36"
+      ],
+      "goal": "说明动作驱动知识沉淀、导师判准、混合因素聚类、三路命中与技能蒸馏路线",
+      "status": "completed_design_superseded_by_T39",
+      "expected_artifacts": [
+        "docs/案例规则库与条件迁移.md",
+        "research/test_results/knowledge-design-20261010.json"
+      ],
+      "definition_of_done": "现状与待实现设计分开；说明chunk、因素与投入归属、归因边界、导师分级、聚类/匹配、版本和三路Gate；Google影像路线按官方资料限定；不宣称聚类、蒸馏或重建已上线。",
+      "write_scope": [
+        "docs/案例规则库与条件迁移.md",
+        "docs/engineering.md",
+        "agent/",
+        "research/test_results/"
+      ],
+      "evidence_log": "research/test_results/knowledge-design-20261010.json",
+      "upstream_verification_required": false,
+      "implementation_note": "Original design retained in historical evidence; current authoritative technical doc now describes implemented T39 modules."
+    },
+    {
+      "id": "T39",
+      "depends_on": [
+        "T38"
+      ],
+      "goal": "实现动作chunk、措施因素映射、导师政策复核、混合聚类、技能蒸馏并接通现有Agent",
+      "status": "completed_engineering_and_public_source_verified",
+      "expected_artifacts": [
+        "packages/experience/chunking.ts",
+        "packages/experience/measure-factors.ts",
+        "packages/experience/clustering.ts",
+        "packages/experience/knowledge-repository.ts",
+        "packages/experience/pipeline.ts",
+        "apps/workspace/src/components/KnowledgePipelinePanel.tsx",
+        "research/test_results/knowledge-pipeline.json"
+      ],
+      "definition_of_done": "同一Canonical及数据库；原文/数值引用可回读；政策与技能版本审核/失效；聚类不抵消硬门；三路命中Agent及兜底可用；真实材料提取读回、HTTP和浏览器集成、构建与相关回归有证据；不伪造导师批准或实际效果。",
+      "write_scope": [
+        "packages/",
+        "apps/",
+        "runtime/",
+        "services/capabilities/generated/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/knowledge-pipeline.json",
+      "implementation_note": "Action chunks/factors, reviewed policy/grouping/compiled skills, source-scoped APIs and existing Agent guard/context integrated. 906 JS/70 Python/14 HTTP/build/browser pass. 13 actual public local drafts plus two revalidated actual model drafts; no fabricated professional reviews. Previous complete Qiushi live decision packet remains unvalidated and separately recorded."
     }
   ]
 }

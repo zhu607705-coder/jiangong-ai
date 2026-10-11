@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-08",
+  "status": "completed_local_case_rule_pipeline_verified",
+  "scope": "Same DB measure-level case/rule intake, source-bound typed conditions, applicability and transfer checks, direct hit before model calls, DSH fallback only on both misses.",
+  "route_interpretation": "Two conditions mean applicable case hit and applicable rule hit.",
+  "format": "data/templates/case-extraction-template.json",
+  "documentation": "docs/案例规则库与条件迁移.md",
+  "skill": "runtime/skills/case-rule-extraction/SKILL.md",
+  "verification": {
+    "full_js": {
+      "passed": 701,
+      "log": "research/baseline_logs/case-knowledge-js.log",
+      "note": "Full suite before final small integration refinements; final changed paths rerun below."
+    },
+    "final_targeted_js": {
+      "passed": 116,
+      "log": "research/baseline_logs/case-knowledge-routing.log",
+      "includes": "case/rule/combined/fallback, zero model direct routes, provenance, stale source/review/visibility, source-value mapping, hard veto, candidate citation and cache policies"
+    },
+    "python": {
+      "passed": 70,
+      "log": "research/baseline_logs/case-knowledge-python.log"
+    },
+    "http_e2e": {
+      "passed": 14,
+      "log": "research/baseline_logs/case-knowledge-http.log"
+    },
+    "build": {
+      "passed": true,
+      "log": "research/baseline_logs/case-knowledge-build.log",
+      "lazy_loaded_knowledge_module": true
+    },
+    "synthetic_ui": {
+      "passed": true,
+      "log": "research/baseline_logs/case-knowledge-browser.log",
+      "model_calls": 0
+    },
+    "app_navigation": {
+      "flows": 10,
+      "passed": true,
+      "log": "research/baseline_logs/case-knowledge-app-browser.log"
+    },
+    "real_intake": {
+      "sources": 3,
+      "cards": 7,
+      "cases": 3,
+      "rules": 4,
+      "status": "all_draft",
+      "approval_count": 0,
+      "repeat_created": 0,
+      "repeat_reused": 7,
+      "model_calls": 0,
+      "local_report": "data/local/case-library-20261008/intake.json"
+    },
+    "real_api_readback": {
+      "project_id": "P-CASE-RULE-LIBRARY-20261008",
+      "documents": 3,
+      "cards": 7,
+      "drafts": 7,
+      "rules": 4,
+      "cases": 3,
+      "preview_route": "agent_fallback",
+      "fallback_status": "pending",
+      "archive_run_status": 422,
+      "archive_run_code": "KNOWLEDGE_ARCHIVE_ONLY",
+      "model_calls": 0
+    },
+    "real_ui": {
+      "desktop": [
+        1440,
+        1000
+      ],
+      "mobile": [
+        390,
+        844
+      ],
+      "cards": 7,
+      "documents": 3,
+      "screenshots": [
+        "output/playwright/case-library-desktop.png",
+        "output/playwright/case-library-mobile.png"
+      ],
+      "visual_inspected": true
+    }
+  },
+  "limitations": [
+    "Professional applicability labels and enterprise decision-quality evaluation remain unavailable.",
+    "Initial real records have no reviewed structured applicability and cannot directly hit.",
+    "Lexical retrieval is not a semantic embedding or calibrated confidence.",
+    "Generated fallback proposals do not approve constraints or become training/history automatically."
+  ],
+  "model_calls_added": 0,
+  "publication": {
+    "status": "pushed_and_pr_created",
+    "branch": "codex/knowledge-agent-sources",
+    "base": "codex/neighborhood-condition-policy",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+    "merged": false
+  },
+  "temporary_integration_worktrees": [
+    "/tmp/jiangong-case-knowledge-matcher",
+    "/tmp/jiangong-case-knowledge-intake",
+    "/tmp/jiangong-case-knowledge-ui"
+  ],
+  "temporary_worktree_note": "Owned changes were copied and integrated; uncommitted worktrees retained as permitted recovery evidence, not alternative deployment checkouts.",
+  "historical_route_note": "The October 8 direct-program routing and its test results are historical. Superseded on October 9 by knowledge-routing-v2: every live hit requires an Agent. Current full-revision verification is knowledge-agent-sources.json.",
+  "current_verification": "research/test_results/knowledge-agent-sources.json"
+}

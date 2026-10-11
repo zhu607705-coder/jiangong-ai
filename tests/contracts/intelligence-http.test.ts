@@ -38,3 +38,31 @@ test('authorized host intake → indexed retrieval → original Source handoff �
     const status=await request('/status');expect(status.data.database.documents).toBe(1);expect(status.data.model_auto_enabled).toBe(false)
   }finally{await intel.stop();await new Promise<void>(resolve=>server.close(()=>resolve()));await store.db.close();await rm(dir,{recursive:true,force:true})}
 },15000)
+
+test('code organization has no model job and cannot overwrite an existing model analysis',async()=>{
+  const dir=await mkdtemp(join(tmpdir(),'intel-code-')),store=await Store.open(dir)
+  const app=express();app.use(express.json());const intel=registerIntelligence(app,store),server=app.listen(0,'127.0.0.1')
+  await new Promise<void>(resolve=>server.once('listening',resolve));const base='http://127.0.0.1:'+(server.address() as {port:number}).port
+  const request=async(path:string,body?:unknown)=>{const r=await fetch(base+'/api/intelligence'+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,data:await r.json() as any}}
+  try{
+    await intel.ready
+    const source={id:'CONTRACT-OFFICIAL',title:'合成老旧小区改造工程中标候选人公示',url:'https://ggzy.zj.gov.cn/jyxxgk/002001/contract-template.html',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',published_at:'2026-09-01',date_status:'verified',untrusted_text:'信息公开中标候选人公示\n项目名称：\n合成老旧小区改造工程\n项目代码：\n2604-330114-89-01-123456'}
+    const {id,version}=(await request('/intake',{source})).data
+    const first=(await request('/items/'+id)).data;expect(first).toMatchObject({issue:'CODE_STRUCTURED',score:null,category:'procurement'})
+    expect(first.analysis.structure.object_id).toBe('2604-330114-89-01-123456')
+    expect((await request('/items/'+id+'/organize',{version})).data.status).toBe('organized')
+    expect((await request('/items/'+id+'/organize',{version:'0'.repeat(64)})).status).toBe(422)
+    const entry=(await intel.repo.get(id,version))!,paid={...entry.analysis,status:'ready' as const,model:'contract-model',score:80,scores:[80,80],selected:true,issue:null}
+    await intel.repo.analyze(id,version,paid)
+    expect(await intel.repo.saveLocalAnalysis(id,version,entry.analysis)).toBe(false)
+    expect((await request('/items/'+id+'/organize',{version})).data.status).toBe('already_analyzed')
+    expect((await intel.repo.get(id,version))?.analysis).toEqual(paid)
+    const scoredWithoutModel={...paid,model:null,status:'needs_review' as const,selected:false}
+    await intel.repo.analyze(id,version,scoredWithoutModel)
+    expect(await intel.repo.saveLocalAnalysis(id,version,entry.analysis)).toBe(false)
+    expect((await request('/items/'+id+'/organize',{version})).data.status).toBe('already_analyzed')
+    expect((await intel.repo.get(id,version))?.analysis).toEqual(scoredWithoutModel)
+    expect((await request('/status')).data.database.pending).toBe(0)
+    expect((await store.db.query('SELECT * FROM intel_receipts')).rows).toEqual([])
+  }finally{await intel.stop();await new Promise<void>(resolve=>server.close(()=>resolve()));await store.db.close();await rm(dir,{recursive:true,force:true})}
+},15000)

@@ -1,0 +1,12 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/intelligence-code-first.test.ts tests/contracts/intelligence-http.test.ts tests/contracts/intelligence-storage.test.ts tests/contracts/intelligence-core.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  02:48:16
+   Duration  15.55s (transform 1.06s, setup 0ms, import 6.07s, tests 7.67s, environment 0ms)

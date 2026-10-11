@@ -1,3 +1,4 @@
+import {MODEL_SIGNAL_THRESHOLDS} from '../decision/thresholds'
 import type { MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenTheme, MapScreenEvidence } from '../../apps/host/generated/contracts'
 import { decisionFactors, factorTier, decisionSignals, neighborhoodMapAdvice } from './decision-factors'
 import { dashboardDimensions, dashboardPolicy } from '../decision/dashboard'
@@ -31,7 +32,7 @@ export const SCREEN_TIERS = {
 } as const
 export function screenTiers(profile?:MapScreenProfile):Record<keyof typeof SCREEN_TIERS,{label:string;color:string}> {
   return profile==='neighborhood'?{...SCREEN_TIERS,
-    strong:{label:'进一步尽调',color:'#418577'},
+    strong:{label:'专项调查',color:'#418577'},
     moderate:{label:'补充资料',color:'#b69551'},
     sparse:{label:'当前暂缓',color:'#a75d53'},
     incomplete:{label:'对象资料未关联',color:'#a3acb7'},
@@ -61,7 +62,7 @@ export function classifyCells(input:MapScreenCell[],theme:MapScreenTheme,evaluat
       const rows=theme==='overall'?c.dashboard.dimensions:c.dashboard.dimensions.filter(d=>d.key===theme)
       const values=rows.flatMap(d=>d.value===null?[]:[d.value])
       if(values.length){
-        tier=values.some(v=>v<=2)?'sparse':values.length===(theme==='overall'?6:1)&&values.every(v=>v>=3.5)?'strong':'moderate'
+        tier=values.some(v=>v<=MODEL_SIGNAL_THRESHOLDS.general_map_fit.low_max)?'sparse':values.length===(theme==='overall'?6:1)&&values.every(v=>v>=MODEL_SIGNAL_THRESHOLDS.general_map_fit.high_min)?'strong':'moderate'
       }
     }
     return {...c,factors,tier,rank:null,metric_value:null}

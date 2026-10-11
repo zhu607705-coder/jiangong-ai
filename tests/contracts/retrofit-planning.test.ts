@@ -15,5 +15,18 @@ describe('neighborhood business actions and scheme assumptions',()=>{
  it('keeps missing data conditional and requires all professionally confirmed inputs',()=>{const p=base();expect(retrofitAdvice(p).decision).toBe('supplement');p.facts=RETROFIT_CHECKS.map(c=>fact(p,c.key,true));expect(retrofitAdvice(p).decision).toBe('proceed');p.facts=p.facts.filter(f=>f.kind!=='retrofit.rule_set_confirmed');expect(retrofitAdvice(p).missing.map(x=>x.key)).toContain('rule_set_confirmed')})
  it('an explicit veto outranks other positives; contradictory veto remains unresolved',()=>{const p=base();p.facts=[...RETROFIT_CHECKS.map(c=>fact(p,c.key,true)),fact(p,'safety_veto',true)];expect(retrofitAdvice(p).decision).toBe('defer');p.facts.push({...fact(p,'safety_veto',false),id:'contradiction'});expect(retrofitAdvice(p).decision).toBe('supplement')})
  it('does not admit another project, future facts or raw table rows',()=>{const p=base();p.facts=RETROFIT_CHECKS.map(c=>({...fact(p,c.key,true),object_ref:'project:other'}));expect(retrofitAdvice(p).decision).toBe('supplement');p.facts=RETROFIT_CHECKS.map(c=>({...fact(p,c.key,true),observed_at:'2099-01-01'}));expect(retrofitAdvice(p).missing).toHaveLength(7)})
+ it('does not promote shared facts that apply only to another building despite an exact project reference',()=>{
+   const p=base();p.facts=RETROFIT_CHECKS.map(c=>({...fact(p,c.key,true),scope_kind:'shared' as const,applies_to:['building:B2']}))
+   expect(retrofitAdvice(p).decision).toBe('supplement');expect(retrofitAdvice(p).missing).toHaveLength(7)
+   p.facts=p.facts.map(f=>({...f,applies_to:['project:'+p.project_id]}));expect(retrofitAdvice(p).decision).toBe('proceed')
+ })
+ it.each(['area','background'] as const)('does not let a source explicitly scoped as %s confirm project conditions',evidence_scope=>{
+   const p=base();p.sources[0].evidence_scope=evidence_scope;p.facts=RETROFIT_CHECKS.map(c=>fact(p,c.key,true))
+   expect(retrofitAdvice(p).decision).toBe('supplement')
+ })
+ it('does not treat a versioned source explicitly bound to another object as current project evidence',()=>{
+   const p=base();p.sources[0].object_refs=['building:B2'];p.facts=RETROFIT_CHECKS.map(c=>fact(p,c.key,true))
+   expect(retrofitAdvice(p).decision).toBe('supplement')
+ })
  it('calculates assumption changes without turning missing inputs into zero',()=>{expect(calculateRetrofitPlan({basic:100,improvement:20,enhancement:0,reserve_percent:10,planned_funding:90,households:10})).toEqual({subtotal:120,total:132,funding_gap:42,per_household:13.2});expect(calculateRetrofitPlan({basic:null,improvement:0,enhancement:0,reserve_percent:10,planned_funding:null,households:null}).total).toBeNull();expect(()=>calculateRetrofitPlan({basic:-1,improvement:0,enhancement:0,reserve_percent:10,planned_funding:null,households:null})).toThrow()})
 })

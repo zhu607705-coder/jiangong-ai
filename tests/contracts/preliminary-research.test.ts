@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Fact, MapScreenContext, PublicField, PublicRecord, Source } from '../../apps/host/generated/contracts'
 import { buildPreliminaryResearch } from '../../packages/maps/preliminary-research'
+import { retainRecordWindows } from '../../packages/research/record-window'
 
 const source = (extras: Partial<Source> = {}): Source => ({ id: 'S1', title: '有来源的资料', data_class: 'public', visibility: 'public', synthetic: false, content_status: 'excerpt', published_at: '2026-01-01', hash: 'v1', ...extras })
 const field = (key: string, value: PublicField['value'], unit = ''): PublicField => ({ key, value, unit, label: key, raw: String(value), locator: `field:${key}` })
@@ -12,6 +13,17 @@ const context = (facts: Fact[] = [], sources: Source[] = [source()], extras: Par
 })
 
 describe('source-bound preliminary research', () => {
+  it('excludes future statistical quantities while retaining separately declared stage and unknown dates', () => {
+    const row = record('FUTURE-STATS', [field('project_stage', 'annual_plan'), field('residential_buildings', 54, '栋'), field('statistical_as_of', '2099-01-01')], { period: '2026-09-01' })
+    const ctx = context([], [source({ public_records: [row] })])
+    ctx.local_projects[0].as_of = '2026-09-30'
+    const preview = buildPreliminaryResearch(ctx)
+    expect(preview.lines[0].text).toContain('年度计划')
+    expect(preview.observations.some(row => row.label === '住宅楼')).toBe(false)
+    expect(preview.lines[1].text).not.toContain('54')
+    row.fields.find(field => field.key === 'statistical_as_of')!.value = null
+    expect(buildPreliminaryResearch(ctx).observations.find(row => row.label === '住宅楼')).toMatchObject({ value: '54 栋', observedAt: null })
+  })
   it('shows missing data without guessing a stage from names, prose or POI counts', () => {
     const ctx = context([], [source({ untrusted_text: '已完成改造、可立即投标，69幢3146户' })])
     const preview = buildPreliminaryResearch(ctx)
@@ -62,5 +74,77 @@ describe('source-bound preliminary research', () => {
     expect(buildPreliminaryResearch(future).observations).toEqual([])
     row.source_hash = 'v1'; row.fields = [field('project_name', '翠苑'), field('project_stage', 'annual_plan')]
     expect(buildPreliminaryResearch(context([], [source({ public_records: [row] })])).observations).toEqual([])
+  })
+  it.each(['future correction', 'stale correction', 'different object', 'precomputed future correction'])(
+    'keeps %s out of the historical deadline family', scenario => {
+      const original = record('ORIGINAL', [field('project_id', 'P1'), field('deadline', '2026-09-05')], { adapter: 'procurement', period: '2026-09-01' })
+      const correction = record('CORRECTION', [], { adapter: 'procurement', period: scenario.includes('future') ? '2026-09-20' : '2026-09-02',
+        source_hash: scenario === 'stale correction' ? 'v0' : 'v1',
+        fields: [field('project_id', 'P1'), ...(scenario === 'different object' ? [field('object_ref', 'building:B2')] : []),
+          field('deadline_previous', '2026-09-05'), field('deadline_corrected', '2026-10-30')] })
+      const records = scenario.startsWith('precomputed') ? retainRecordWindows([original, correction]) : [original, correction]
+      const ctx = context([], [source({ public_records: records })])
+      ctx.local_projects[0].as_of = '2026-09-10'
+      const before = JSON.stringify(ctx), preview = buildPreliminaryResearch(ctx)
+      expect(preview.lines[2].text).toContain('响应截止 2026-09-05；当前窗口未成立')
+      expect(preview.lines[2].text).not.toContain('2026-10-30')
+      expect(JSON.stringify(ctx)).toBe(before)
+    },
+  )
+  it.each(['future', 'stale', 'different object'])('does not let a %s award close the current object window', scenario => {
+    const original = record('ORIGINAL', [field('project_id', 'P1'), field('deadline', '2026-10-30')], { adapter: 'procurement', period: '2026-09-01' })
+    const award = record('AWARD', [], { adapter: 'procurement', period: scenario === 'future' ? '2026-09-20' : '2026-09-02',
+      source_hash: scenario === 'stale' ? 'v0' : 'v1', fields: [field('project_id', 'P1'),
+        ...(scenario === 'different object' ? [field('object_ref', 'building:B2')] : []), field('award', 100, '万元')] })
+    const ctx = context([], [source({ locator: 'source:1', public_records: [original, award] })])
+    ctx.local_projects[0].as_of = '2026-09-10'
+    const before = JSON.stringify(ctx), preview = buildPreliminaryResearch(ctx)
+    expect(preview.lines[2].text).toContain('响应截止 2026-10-30；资格条件仍需回读')
+    expect(preview.lines[2].text).not.toContain('已成交')
+    expect(preview.lines[0].text).not.toContain('已成交')
+    expect(JSON.stringify(ctx)).toBe(before)
+  })
+  it.each(['project:P1', 'building:B1'])('retains eligible same-id corrections without object_ref for %s and keeps truncated sources closed', objectRef => {
+    const original = record('ORIGINAL', [], { adapter: 'procurement', period: '2026-09-01',
+      fields: [field('object_ref', objectRef), field('project_id', 'P1'), field('deadline', '2026-09-05')] })
+    const correction = record('CORRECTION', [], { adapter: 'procurement', period: '2026-09-20',
+      fields: [field('project_id', 'P1'), field('deadline_previous', '2026-09-05'), field('deadline_corrected', '2026-10-30')] })
+    const records = retainRecordWindows([original, correction])
+    const ctx = context([], [source({ public_records: records })])
+    ctx.target.object_ref = objectRef
+    ctx.local_projects[0].as_of = '2026-09-30'
+    const before = JSON.stringify(ctx)
+    expect(buildPreliminaryResearch(ctx).lines[2].text).toContain('响应截止 2026-10-30；资格条件仍需回读')
+    ctx.local_projects[0].sources[0].body_truncated = true
+    expect(buildPreliminaryResearch(ctx).lines[2].text).not.toContain('资格条件仍需回读')
+    delete ctx.local_projects[0].sources[0].body_truncated
+    expect(JSON.stringify(ctx)).toBe(before)
+  })
+  it('ignores non-object corrections and awards when resolving the selected object', () => {
+    const original = record('ORIGINAL', [field('deadline', '2026-10-30')], { adapter: 'procurement' })
+    const unrelated = record('AREA', [field('deadline_previous', '2026-10-30'), field('deadline_corrected', '2026-09-01'), field('award', 100)], { adapter: 'procurement', scope: 'area' })
+    const ctx = context([], [source({ locator: 'source:1', public_records: [unrelated, original] })])
+    expect(buildPreliminaryResearch(ctx).lines[2].text).toContain('响应截止 2026-10-30；资格条件仍需回读')
+    expect(buildPreliminaryResearch(ctx).observations.every(row => row.recordId === 'ORIGINAL')).toBe(true)
+  })
+  it('isolates external source families and preserves source and record order including duplicate sources', () => {
+    const original = record('S1-OPEN', [field('project_id', 'P1'), field('deadline', '2026-12-01')], { adapter: 'procurement' })
+    const award = record('S2-AWARD', [field('project_id', 'P1'), field('award', 100)], { adapter: 'procurement', source_id: 'S2' })
+    const s1 = source({ locator: 'source:1', public_records: [record('EMBEDDED1', [field('households', 1)])] })
+    const s2 = source({ id: 'S2', locator: 'source:2', public_records: [record('EMBEDDED2', [field('households', 2)], { source_id: 'S2' })] })
+    const shared = [award, record('S2-Q1', [field('households', 20)], { source_id: 'S2' }), original,
+      record('S1-Q', [field('households', 10)]), record('S2-Q2', [field('households', 30)], { source_id: 'S2' }),
+      record('UNKNOWN', [field('households', 99)], { source_id: 'UNKNOWN' })]
+    const ctx = context([], [], { local_projects: [] }), extras = { sources: [s1, s2, s1], records: shared }
+    const before = JSON.stringify({ ctx, extras }), preview = buildPreliminaryResearch(ctx, extras)
+    expect(preview.observations.filter(row => row.label === '户数').map(row => row.value)).toEqual(['10', '20', '30', '10'])
+    expect(preview.observations.filter(row => row.label === '参与窗口' && row.sourceRefs[0] === 'S1').map(row => row.value)).toEqual([
+      '响应截止 2026-12-01；资格条件仍需回读', '响应截止 2026-12-01；资格条件仍需回读',
+    ])
+    expect(preview.sourceRefs).toEqual(['S1', 'S2'])
+    expect(buildPreliminaryResearch(ctx, { sources: extras.sources }).observations.map(row => row.value)).toEqual(['1', '2', '1'])
+    expect(buildPreliminaryResearch(ctx, { sources: extras.sources, records: undefined }).observations.map(row => row.value)).toEqual(['1', '2', '1'])
+    expect(buildPreliminaryResearch(ctx, { sources: extras.sources, records: [] }).observations).toEqual([])
+    expect(JSON.stringify({ ctx, extras })).toBe(before)
   })
 })

@@ -1,0 +1,12 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  48 passed (48)
+      Tests  906 passed (906)
+   Start at  02:24:12
+   Duration  151.39s (transform 3.49s, setup 0ms, import 62.67s, tests 59.45s, environment 3ms)

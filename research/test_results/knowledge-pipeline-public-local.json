@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "checked_at": "2026-10-10T18:24:11.447278+00:00",
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "input_class": "actual_saved_public_originals",
+  "records": [
+    {
+      "source_id": "INTEL-cde2a3da3dd5:QS-water2023",
+      "source_url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+      "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+      "title": "浙大求是社区推进二次供水改造",
+      "sha256": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+      "original_characters": 1199,
+      "chunk_count": 63,
+      "draft_cards": 8,
+      "measure_keys": [
+        "pipe_network"
+      ],
+      "factor_count": 12,
+      "citations_read_back": 223,
+      "repeat_import_reused": true
+    },
+    {
+      "source_id": "INTEL-fc09b8717eeb:QS-trusteeship2023",
+      "source_url": "https://hznews.hangzhou.com.cn/shehui/content/2023-12/28/content_8666802.htm",
+      "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+      "title": "西湖区三方协同为居民幸福加码",
+      "sha256": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+      "original_characters": 547,
+      "chunk_count": 14,
+      "draft_cards": 4,
+      "measure_keys": [
+        "elevator",
+        "maintenance"
+      ],
+      "factor_count": 2,
+      "citations_read_back": 50,
+      "repeat_import_reused": true
+    },
+    {
+      "source_id": "INTEL-37c81c049883:QS-neighbor2025",
+      "source_url": "https://xhb.xihunet.cn/h5/html5/2025-10/28/content_9248_18995526.htm",
+      "document_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+      "title": "这个“康养生活综合体”，已焕新启用！",
+      "sha256": "a4ad7fa4084f8cd375881d60750815d05dc3c04287e00db78d6c7f838adb3860",
+      "original_characters": 985,
+      "chunk_count": 22,
+      "draft_cards": 1,
+      "measure_keys": [
+        "public_service"
+      ],
+      "factor_count": 1,
+      "citations_read_back": 46,
+      "repeat_import_reused": true
+    }
+  ],
+  "external_model_calls": 0,
+  "policy_or_case_approvals": 0,
+  "scope": "Actual parser, HTTP, immutable original binding, action chunks and factor draft citation readback; not decision-quality evaluation"
+}

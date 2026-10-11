@@ -79,6 +79,35 @@ describe('source-bound experience extraction', () => {
     const doc = document(); doc.file_name = '经验.pdf'; doc.parser_result.segments = [{ locator: 'page:1', text: '甲' }, { locator: 'page:1', text: '乙' }]
     expect(() => documentSlices(doc)).toThrow('解析定位存在冲突')
   })
+  test('one validation lazily parses each cited document once and does not cache across calls', () => {
+    const first = document(), second = document(raw, 'DOC-SECOND'), value = draft(first)
+    value.fields[0].evidence.push({ ...value.fields[0].evidence[0], document_id: second.id, version: second.sha256 })
+    expect(value.fields.flatMap(field => field.evidence)).toHaveLength(10)
+    let firstReads = 0, secondReads = 0, unusedReads = 0
+    Object.defineProperty(first.parser_result, 'text', { get() { firstReads++; return raw } })
+    Object.defineProperty(second.parser_result, 'text', { get() { secondReads++; return raw } })
+    const unused = document(raw, 'DOC-UNUSED')
+    Object.defineProperty(unused.parser_result, 'text', { get() { unusedReads++; return raw } })
+    validateEvidence(value, [first, second, unused], first.project_id)
+    expect([firstReads, secondReads, unusedReads]).toEqual([1, 1, 0])
+    validateEvidence(value, [first, second, unused], first.project_id)
+    expect([firstReads, secondReads, unusedReads]).toEqual([2, 2, 0])
+  })
+  test('the final bad quote is still rejected after earlier quotes use a shared document index', () => {
+    const doc = document(), value = draft(doc)
+    value.fields.flatMap(field => field.evidence).at(-1)!.quote = '原文不存在的末条引文'
+    let textReads = 0
+    Object.defineProperty(doc.parser_result, 'text', { get() { textReads++; return raw } })
+    expect(() => validateEvidence(value, [doc], doc.project_id)).toThrow('引文必须逐字')
+    expect(textReads).toBe(1)
+  })
+  test('document indexing preserves ambiguous-locator rejection', () => {
+    const doc = document(), value = draft(doc)
+    doc.file_name = '经验.pdf'
+    doc.parser_result.segments = [{ locator: 'page:1', text: raw }, { locator: 'page:1', text: '冲突原文' }]
+    value.fields[0].evidence[0].locator = 'page:1'
+    expect(() => validateEvidence(value, [doc], doc.project_id)).toThrow('解析定位存在冲突')
+  })
   test.each([
     ['foreign project', (value: ExperienceDraft) => { value.fields[0].evidence[0].document_id = 'OTHER' }, '引用必须来自'],
     ['stale version', (value: ExperienceDraft) => { value.fields[0].evidence[0].version = 'old' }, '原文版本已变化'],

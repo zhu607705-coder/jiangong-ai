@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-08",
+  "status": "passed_local_navigation_and_visual_readback",
+  "base_commit": "e906714",
+  "scope": "Project selection opens full-width research, with the map preserved but hidden and support records collapsed.",
+  "changed_files": [
+    "apps/workspace/src/App.tsx",
+    "apps/workspace/src/components/WorkspaceFrame.tsx",
+    "apps/workspace/src/maps/MapWorkspace.tsx",
+    "apps/workspace/src/maps/map.css",
+    "tests/browser/neighborhood-workflow.mjs",
+    "docs/engineering.md",
+    "agent/tasks.json",
+    "agent/state.json"
+  ],
+  "verification": {
+    "reproduced_before_fix": "Project selection kept research hidden; updated navigation regression timed out waiting for the research panel.",
+    "app_navigation": {
+      "command": "PATH=\"$PWD/.tools/node/bin:$PATH\" CHROMIUM_PATH=/home/hy/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome LD_LIBRARY_PATH=\"$PWD/.tools/browser-libs/usr/lib/x86_64-linux-gnu\" node tests/browser/neighborhood-workflow.mjs",
+      "result": "passed",
+      "flows": 10,
+      "synthetic": true,
+      "model_calls": 0,
+      "includes": [
+        "direct selection from map and project research",
+        "desktop and mobile full available width",
+        "map remains mounted",
+        "support records can expand on mobile",
+        "scheme drafts and source focus remain project-scoped",
+        "750px tablet viewport aligns research with the narrow navigation"
+      ],
+      "generated_log": "output/playwright/neighborhood-workflow.json"
+    },
+    "map_regression": {
+      "command": "PATH=\"$PWD/.tools/node/bin:$PATH\" CHROMIUM_PATH=/home/hy/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome LD_LIBRARY_PATH=\"$PWD/.tools/browser-libs/usr/lib/x86_64-linux-gnu\" node tests/browser/map-workspace.mjs",
+      "result": "passed",
+      "scope": "36 main checks, two scan race/cancellation cases and eight geometry-handoff cases",
+      "synthetic": true,
+      "actual_provider_or_model_quality": false
+    },
+    "build": {
+      "command": "PATH=\"$PWD/.tools/node/bin:$PATH\" npm run build",
+      "result": "passed_typescript_and_production_build",
+      "correction": "The SDK type does not expose Map.resize; use the window resize event when showing the map again."
+    },
+    "real_workbench": {
+      "url": "http://127.0.0.1:5173/",
+      "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",
+      "data": "existing public historical project, read-only navigation",
+      "desktop_visual_inspected": true,
+      "mobile_visual_inspected": true,
+      "desktop_viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "mobile_readback": {
+        "project": "翠苑一区 · 老旧小区改造历史验证",
+        "research": {
+          "x": 54,
+          "y": 0,
+          "width": 336,
+          "height": 816,
+          "top": 0,
+          "right": 390,
+          "bottom": 816,
+          "left": 54
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "mapHidden": true,
+        "supportCollapsed": true,
+        "overflow": false,
+        "apiReadPaths": [
+          "/api/session",
+          "/api/projects",
+          "/api/maps/config",
+          "/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+          "/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/revision-diff",
+          "/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/followups",
+          "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002",
+          "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff",
+          "/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups",
+          "/api/runs/RUN-39a88715-f82e-45e2-af1e-77d199c48f8f/events"
+        ]
+      },
+      "shortcut_while_research_hidden_drawing_count": 0,
+      "return_to_map": {
+        "mapVisible": true,
+        "researchHidden": true,
+        "drawingsAfterReturn": 0,
+        "mapStatus": "ready"
+      },
+      "screenshots": [
+        "output/playwright/project-research-desktop.png",
+        "output/playwright/project-research-mobile.png"
+      ],
+      "provider_decision_quality": "not_run_not_needed_for_navigation_change"
+    }
+  },
+  "publication": {
+    "status": "pushed_and_pr_created",
+    "branch": "codex/knowledge-agent-sources",
+    "base": "codex/neighborhood-condition-policy",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/17",
+    "implementation_commit": "63d0380a312e5b130fc42712111c8bd15817bbf9",
+    "merged": false
+  },
+  "model_calls_added": 0,
+  "log": "research/baseline_logs/project-research-page.log"
+}

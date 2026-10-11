@@ -1,0 +1,19 @@
+
+[Recorded output: build.log]
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6299 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:   0.38 kB
+dist/assets/index-BykZuDEv.css  103.27 kB │ gzip:  22.21 kB
+dist/assets/index-qR9aWTNh.js     5.29 kB │ gzip:   1.79 kB
+dist/assets/index-DVYHgQE_.js   380.30 kB │ gzip: 122.63 kB
+✓ built in 54.25s
+
+[Recorded output: experience-browser.log]
+PASS experience library: local extraction, distinct missing fields and citations, edit validation, versioned review, filtered retrieval, reuse, stale-project isolation, material navigation without request, mobile layout

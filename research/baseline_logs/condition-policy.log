@@ -1,0 +1,315 @@
+[retrofit-scope-before.log]
+command: npm test -- tests/contracts/retrofit-planning.test.ts
+exit_code: 1
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/retrofit-planning.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+ ❯ tests/contracts/retrofit-planning.test.ts (10 tests | 4 failed) 52ms
+     × does not promote shared facts that apply only to another building despite an exact project reference 3ms
+     × does not let a source explicitly scoped as area confirm project conditions 1ms
+     × does not let a source explicitly scoped as background confirm project conditions 0ms
+     × does not treat a versioned source explicitly bound to another object as current project evidence 0ms
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 6 passed (10)
+   Start at  13:35:47
+   Duration  5.91s (transform 433ms, setup 0ms, import 4.80s, tests 52ms, environment 0ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/retrofit-planning.test.ts > neighborhood business actions and scheme assumptions > does not promote shared facts that apply only to another building despite an exact project reference
+AssertionError: expected 'proceed' to be 'supplement' // Object.is equality
+
+Expected: "supplement"
+Received: "proceed"
+
+ ❯ tests/contracts/retrofit-planning.test.ts:20:39
+     18|  it('does not promote shared facts that apply only to another building…
+     19|    const p=base();p.facts=RETROFIT_CHECKS.map(c=>({...fact(p,c.key,tru…
+     20|    expect(retrofitAdvice(p).decision).toBe('supplement');expect(retrof…
+       |                                       ^
+     21|    p.facts=p.facts.map(f=>({...f,applies_to:['project:'+p.project_id]}…
+     22|  })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/contracts/retrofit-planning.test.ts > neighborhood business actions and scheme assumptions > does not let a source explicitly scoped as area confirm project conditions
+ FAIL  tests/contracts/retrofit-planning.test.ts > neighborhood business actions and scheme assumptions > does not let a source explicitly scoped as background confirm project conditions
+AssertionError: expected 'proceed' to be 'supplement' // Object.is equality
+
+Expected: "supplement"
+Received: "proceed"
+
+ ❯ tests/contracts/retrofit-planning.test.ts:25:39
+     23|  it.each(['area','background'] as const)('does not let a source explic…
+     24|    const p=base();p.sources[0].evidence_scope=evidence_scope;p.facts=R…
+     25|    expect(retrofitAdvice(p).decision).toBe('supplement')
+       |                                       ^
+     26|  })
+     27|  it('does not treat a versioned source explicitly bound to another obj…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/contracts/retrofit-planning.test.ts > neighborhood business actions and scheme assumptions > does not treat a versioned source explicitly bound to another object as current project evidence
+AssertionError: expected 'proceed' to be 'supplement' // Object.is equality
+
+Expected: "supplement"
+Received: "proceed"
+
+ ❯ tests/contracts/retrofit-planning.test.ts:29:39
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+[retrofit-conditions-after.log]
+command: npm test -- tests/contracts/retrofit-planning.test.ts tests/contracts/retrofit-conditions.test.ts
+exit_code: 0
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/retrofit-planning.test.ts tests/contracts/retrofit-conditions.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  2 passed (2)
+      Tests  42 passed (42)
+   Start at  13:40:45
+   Duration  3.18s (transform 377ms, setup 0ms, import 1.93s, tests 62ms, environment 0ms)
+
+[comparison-red.log]
+RUN  v4.1.11 /mnt/d/建工ai
+
+ ❯ tests/contracts/neighborhood-comparison.test.ts (11 tests | 9 failed) 56ms
+     × accepts the new neighborhood matrix through the canonical contract and identifies its policy 39ms
+     × rejects a missing neighborhood dimension instead of relabeling it 3ms
+     × rejects a duplicate neighborhood dimension instead of relabeling it 2ms
+     × rejects a legacy neighborhood dimension instead of relabeling it 2ms
+     × requires each neighborhood dimension to cover all candidate paths without missing judgments 2ms
+     × requires each neighborhood dimension to cover all candidate paths without duplicate judgments 1ms
+     × rejects a conflicting explicit policy instead of silently changing its meaning 1ms
+     × does not admit new neighborhood-only criteria into a general-project comparison 2ms
+     × exposes the new criterion keys and optional policy through the existing model schema 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > accepts the new neighborhood matrix through the canonical contract and identifies its policy
+AssertionError: expected [Function] to not throw an error but 'Error: data/criteria/1/criterion must…' was thrown
+
+- Expected:
+undefined
+
++ Received:
+"Error: data/criteria/1/criterion must be equal to one of the allowed values; data/criteria/2/criterion must be equal to one of the allowed values; data/criteria/4/criterion must be equal to one of the allowed values"
+
+ ❯ tests/contracts/neighborhood-comparison.test.ts:25:57
+     23|   it('accepts the new neighborhood matrix through the canonical contra…
+     24|     const input=project(),packet=comparison(input)
+     25|     expect(()=>validate('ComparisonPacket',packet)).not.toThrow()
+       |                                                         ^
+     26|     const result=validateComparison(input,proposal(input),packet)
+     27|     expect(result).toHaveProperty('policy_version','neighborhood-compa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > rejects a missing neighborhood dimension instead of relabeling it
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > rejects a duplicate neighborhood dimension instead of relabeling it
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > rejects a legacy neighborhood dimension instead of relabeling it
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/contracts/neighborhood-comparison.test.ts:35:66
+     33|     if(variant==='duplicate')packet.criteria[1]=structuredClone(packet…
+     34|     if(variant==='legacy')packet.criteria=comparison(input,legacyKeys)…
+     35|     expect(()=>validateComparison(input,proposal(input),packet)).toThr…
+       |                                                                  ^
+     36|   })
+     37|   it.each(['missing','duplicate','unexpected'])('requires each neighbo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > requires each neighborhood dimension to cover all candidate paths without missing judgments
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > requires each neighborhood dimension to cover all candidate paths without duplicate judgments
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/contracts/neighborhood-comparison.test.ts:42:66
+     40|     if(variant==='duplicate')judgments[1]=structuredClone(judgments[0])
+     41|     if(variant==='unexpected')judgments[0].scenario_id='whole_site_reb…
+     42|     expect(()=>validateComparison(input,proposal(input),packet)).toThr…
+       |                                                                  ^
+     43|   })
+     44|   it('rejects a conflicting explicit policy instead of silently changi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > rejects a conflicting explicit policy instead of silently changing its meaning
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/contracts/neighborhood-comparison.test.ts:46:66
+     44|   it('rejects a conflicting explicit policy instead of silently changi…
+     45|     const input=project(),packet={...comparison(input),policy_version:…
+     46|     expect(()=>validateComparison(input,proposal(input),packet)).toThr…
+       |                                                                  ^
+     47|   })
+     48|   it('retains historical packets without a policy and general legacy c…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > does not admit new neighborhood-only criteria into a general-project comparison
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/contracts/neighborhood-comparison.test.ts:57:77
+     55|   it('does not admit new neighborhood-only criteria into a general-pro…
+     56|     const input=project(false)
+     57|     expect(()=>validateComparison(input,proposal(input),comparison(inp…
+       |                                                                             ^
+     58|   })
+     59|   it('exposes the new criterion keys and optional policy through the e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  tests/contracts/neighborhood-comparison.test.ts > profile-bound comparison dimensions > exposes the new criterion keys and optional policy through the existing model schema
+AssertionError: expected { …(5) } to have property "policy_version"
+ ❯ tests/contracts/neighborhood-comparison.test.ts:61:31
+     59|   it('exposes the new criterion keys and optional policy through the e…
+     60|     const schema=modelSchema('ComparisonPacket') as any
+     61|     expect(schema.properties).toHaveProperty('policy_version')
+       |                               ^
+     62|     expect(schema.required).not.toContain('policy_version')
+     63|     expect(schema.properties.criteria.items.properties.criterion.enum)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 2 passed (11)
+   Start at  13:36:21
+   Duration  1.26s (transform 109ms, setup 0ms, import 571ms, tests 56ms, environment 0ms)
+
+[comparison-green.log]
+RUN  v4.1.11 /mnt/d/建工ai
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts (37 tests | 10 failed) 83ms
+     × does not score invalid internal evidence or fill null with zero 4ms
+     × does not score invalid missing-locator evidence or fill null with zero 1ms
+     × does not score invalid wrong-object evidence or fill null with zero 1ms
+     × does not score invalid future evidence or fill null with zero 1ms
+     × does not score invalid wrong-quote evidence or fill null with zero 1ms
+     × does not score invalid background evidence or fill null with zero 1ms
+     × does not score invalid missing-hash evidence or fill null with zero 1ms
+     × does not score invalid expired evidence or fill null with zero 1ms
+     × does not score invalid missing-source evidence or fill null with zero 1ms
+     × does not score invalid other-line evidence or fill null with zero 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid internal evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid missing-locator evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid wrong-object evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid future evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid wrong-quote evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid background evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid missing-hash evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid expired evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid missing-source evidence or fill null with zero
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not score invalid other-line evidence or fill null with zero
+AssertionError: expected '现有养老、托育、医疗、停车及活动空间缺口如何补齐？' to contain '公共'
+
+Expected: "公共"
+Received: "现有养老、托育、医疗、停车及活动空间缺口如何补齐？"
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts:119:57
+    117|     expect(input.dashboard?.evidence.some(e=>e.key==='demand')).toBe(f…
+    118|     expect(input.dashboard?.evidence).toHaveLength(5)
+    119|     expect(question.priority_dimension.criteria.supply).toContain('公共')
+       |                                                         ^
+    120|   })
+    121|   it('keeps the unrequested demand score null even if the provider inc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  10 failed | 57 passed (67)
+   Start at  13:39:25
+   Duration  7.57s (transform 895ms, setup 0ms, import 4.79s, tests 229ms, environment 0ms)
+
+[integration-tests.log]
+RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  8 passed (8)
+      Tests  131 passed (131)
+   Start at  13:46:08
+   Duration  20.13s (transform 1.46s, setup 0ms, import 14.87s, tests 401ms, environment 0ms)
+
+[surrounding-tests.log]
+RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  5 passed (5)
+      Tests  54 passed (54)
+   Start at  13:49:00
+   Duration  10.20s (transform 1.31s, setup 0ms, import 6.80s, tests 270ms, environment 0ms)
+
+[python-tests.log]
+> haizhizi-decision-workspace@0.2.0 test:python
+> tsx scripts/check-python.ts
+
+......................................................................   [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /mnt/d/建工ai/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+70 passed, 1 warning in 6.57s
+
+[browser-contract.log]
+PASS neighborhood App workflow: 9 flow checks; synthetic API, minimal map stub, zero mutation/model/network calls
+
+[real-ui.log]
+{"status":"passed","project":"P-HZ-CUIYUAN-HISTORY-20261002","evaluated_as_of":"2026-10-02","six_dimension_cards":6,"independent_rule_visible":true,"no_missing_zero":true,"mobile":{"viewport":390,"width":390},"model_calls":0,"posts":[]}
+
+[build.log]
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6302 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:   0.37 kB
+dist/assets/index-DzFkA6E_.css  103.84 kB │ gzip:  22.28 kB
+dist/assets/index-Dhcmf1Jv.js     5.29 kB │ gzip:   1.79 kB
+dist/assets/index-DxkvObzt.js   387.58 kB │ gzip: 124.84 kB
+✓ built in 46.51s

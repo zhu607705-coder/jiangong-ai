@@ -1,0 +1,115 @@
+[preliminary-records-before.log]
+command: npm exec vitest run tests/contracts/preliminary-research.test.ts
+exit_code: 1
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+ ❯ tests/contracts/preliminary-research.test.ts (17 tests | 7 failed) 13ms
+     × keeps future correction out of the historical deadline family 3ms
+     × keeps stale correction out of the historical deadline family 1ms
+     × keeps different object out of the historical deadline family 0ms
+     × keeps precomputed future correction out of the historical deadline family 0ms
+     × does not let a future award close the current object window 0ms
+     × does not let a stale award close the current object window 0ms
+     × does not let a different object award close the current object window 0ms
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 10 passed (17)
+   Start at  19:33:14
+   Duration  1.23s (transform 82ms, setup 0ms, import 141ms, tests 13ms, environment 0ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > keeps future correction out of the historical deadline family
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > keeps stale correction out of the historical deadline family
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > keeps different object out of the historical deadline family
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > keeps precomputed future correction out of the historical deadline family
+AssertionError: expected '参与窗口：响应截止 2026-10-30；资格条件仍需回读' to contain '响应截止 2026-09-05；当前窗口未成立'
+
+Expected: "响应截止 2026-09-05；当前窗口未成立"
+Received: "参与窗口：响应截止 2026-10-30；资格条件仍需回读"
+
+ ❯ tests/contracts/preliminary-research.test.ts:89:37
+     87|       ctx.local_projects[0].as_of = '2026-09-10'
+     88|       const before = JSON.stringify(ctx), preview = buildPreliminaryRe…
+     89|       expect(preview.lines[2].text).toContain('响应截止 2026-09-05；当前窗口未成立…
+       |                                     ^
+     90|       expect(preview.lines[2].text).not.toContain('2026-10-30')
+     91|       expect(JSON.stringify(ctx)).toBe(before)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > does not let a future award close the current object window
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > does not let a stale award close the current object window
+ FAIL  tests/contracts/preliminary-research.test.ts > source-bound preliminary research > does not let a different object award close the current object window
+AssertionError: expected '参与窗口：已成交记录，不能作为当前响应窗口' to contain '响应截止 2026-10-30；资格条件仍需回读'
+
+Expected: "响应截止 2026-10-30；资格条件仍需回读"
+Received: "参与窗口：已成交记录，不能作为当前响应窗口"
+
+ ❯ tests/contracts/preliminary-research.test.ts:102:35
+    100|     ctx.local_projects[0].as_of = '2026-09-10'
+    101|     const before = JSON.stringify(ctx), preview = buildPreliminaryRese…
+    102|     expect(preview.lines[2].text).toContain('响应截止 2026-10-30；资格条件仍需回读')
+       |                                   ^
+    103|     expect(preview.lines[2].text).not.toContain('已成交')
+    104|     expect(preview.lines[0].text).not.toContain('已成交')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+
+
+[preliminary-records-after.log]
+command: npm test -- tests/contracts/preliminary-research.test.ts
+exit_code: 0
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/preliminary-research.test.ts
+
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+   Start at  19:35:01
+   Duration  803ms (transform 77ms, setup 0ms, import 131ms, tests 7ms, environment 0ms)
+
+
+
+[integration-tests.log]
+
+ RUN  v4.1.11 /mnt/d/建工ai
+
+
+ Test Files  2 passed (2)
+      Tests  97 passed (97)
+   Start at  19:35:57
+   Duration  10.79s (transform 1.38s, setup 0ms, import 8.84s, tests 529ms, environment 0ms)
+
+
+
+[browser.log]
+{"status":"passed","checks":14,"model_calls":0,"calls":[{"path":"/api/projects/P1/documents","method":"GET"},{"path":"/api/maps/screening/context","method":"POST"},{"path":"/api/maps/screening/analysis/CTX-1?profile=neighborhood","method":"GET"}],"viewport":[1440,390]}
+
+
+[live-ui.log]
+{"status":"passed","project":"P-HZ-CUIYUAN-HISTORY-20261002","actual_first_card":"初步调研 · 截止 2026-10-02\n\n阶段未提供 · 杭州翠苑一区（历史改造流程验证）\n\n住宅楼 54 栋，公建 8 幢（2022年报道的改造工程范围；统计时点未提供）；加梯完成单元 32 单元（2024年报道的加梯完成单元口径；统计时点未提供）依据\n\n参与窗口：未提供","desktop":true,"mobile":{"viewport":390,"width":390},"model_calls":0,"mutations":0,"api_calls":[{"path":"/api/session","method":"GET"},{"path":"/api/projects","method":"GET"},{"path":"/api/maps/config","method":"GET"},{"path":"/api/projects/P-HZ-CUIYUAN-HISTORY-20261002","method":"GET"},{"path":"/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff","method":"GET"},{"path":"/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups","method":"GET"},{"path":"/api/runs/RUN-39a88715-f82e-45e2-af1e-77d199c48f8f/events","method":"GET"},{"path":"/api/projects/P-HZ-CUIYUAN-HISTORY-20261002","method":"GET"},{"path":"/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/revision-diff","method":"GET"},{"path":"/api/projects/P-HZ-CUIYUAN-HISTORY-20261002/followups","method":"GET"}]}
+
+
+[build.log]
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6299 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:   0.38 kB
+dist/assets/index-BykZuDEv.css  103.27 kB │ gzip:  22.21 kB
+dist/assets/index-DmomorNm.js     5.29 kB │ gzip:   1.79 kB
+dist/assets/index-D42Zz6vM.js   380.60 kB │ gzip: 122.69 kB
+✓ built in 45.61s

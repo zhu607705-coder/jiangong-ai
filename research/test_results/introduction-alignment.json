@@ -1,0 +1,49 @@
+{
+  "tested_at": "2026-10-05T08:40:18.812218+00:00",
+  "request": "User clarified document and workbench should mutually align and improve",
+  "source_pdf": {
+    "name": "介绍(1).pdf",
+    "pages": 5,
+    "sha256": "9619639d4bd8afb8b4c4c22d37b12461b3048c03f86f4ed0d91ffeaa7e6ac752",
+    "original_unchanged": true
+  },
+  "introduction": {
+    "editable_source": "docs/项目介绍.md",
+    "pdf": "output/pdf/建工AI_项目介绍.pdf",
+    "pages": 5,
+    "bytes": 353014,
+    "sha256": "72107c1c3fa3a2af71362cc7a2b90e473929150d03bcb6c402ed38841a6ef83c",
+    "embedded_chinese_fonts": true,
+    "render_qa": "All five pages inspected; final first/last pages inspected after text/layout adjustment; no clipping or unreadable glyphs observed",
+    "coverage": "Original goals, user flow, maintenance/review, technology, housing feedback aim, data needs and three-arm evaluation preserved; current/target scope distinguished"
+  },
+  "product_changes": [
+    "classification match wording replaces unsupported similarity claim",
+    "historical key conditions/original quotes and current scoped prerequisite checks shown side by side",
+    "material navigation retained, read-only projection, no approval/fact/decision mutation"
+  ],
+  "real_existing_project_readback": {
+    "project": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "comparison": "历史关键条件\n\n原文未记载，需补历史材料。\n\n本次待核条件\n居民需求与异议\n分楼栋问卷、社区走访及异议台账\n补齐后检查：改造内容、优先顺序与居民负担\n方案相关工程评审\n原图纸、专业检测及消防/管网核查\n补齐后检查：工程范围、安全前置条件与施工组织\n公共服务缺口\n设施名录、容量和开放时间、实测步行路线\n补齐后检查：养老托育、无障碍和配套设施配置\n实施范围与居民协同\n年度计划、权属资料、方案公示及居民协商记录\n补齐后检查：实施主体、项目边界与扰民安排\n预算与资金落实\n工程量预算、资金批准/分摊确认及拨付安排\n补齐后检查：资金缺口、分期与交付范围\n长效维护安排\n设施接收、物业合同、管护预算及收费协商\n补齐后检查：改造后的责任、年度支出和持续使用\n本方案专业规则复核\n企业人员与专业人员确认的规则版本及适用范围\n补齐后检查：是否允许推进尽调的业务门槛\n查看本次项目资料",
+    "cards": 1,
+    "modelCalls": 0
+  },
+  "mobile_readback": {
+    "viewport": 390,
+    "pageWidth": 390,
+    "comparison": true,
+    "tasks": 7
+  },
+  "verification": {
+    "production_build": "passed",
+    "existing_experience_browser": "passed; extraction/editor/review/retrieval/reuse/isolation/mobile regression",
+    "documents": "pdftotext/page count/font and rendered QA passed"
+  },
+  "model_calls_added": 0,
+  "unimplemented_vision": [
+    "Residential positioning/area mix/unit count/payability validation",
+    "Persisted versioned plan calculation/feedback into screening",
+    "Professional data/rule publication and enterprise effectiveness evaluation"
+  ],
+  "base_pr": 11
+}

@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import * as originalSlices from '../../packages/experience/document-slices'
 import { buildImportGraph } from '../../apps/workspace/src/imports/graph-model'
 import { buildEvidenceCoverage } from '../../apps/workspace/src/imports/evidence-coverage'
 import type { Fact, Source } from '../../apps/host/generated/contracts'
@@ -8,6 +9,17 @@ function coverage(facts: Fact[], sources: Source[] = [source()], documents: Para
   return buildEvidenceCoverage({ ...buildImportGraph({ projectId: 'P1', projectName: '项目', projectSources: sources, facts, documents, depth: 'read', scope: 'all' }), projectId: 'P1', projectName: '项目', profile: 'neighborhood', asOf: '2026-10-03' })
 }
 describe('explicit object and dimension evidence coverage', () => {
+  it('resolves original locations once per source and refreshes them for each new snapshot', () => {
+    const resolver = vi.spyOn(originalSlices, 'documentSlices')
+    try {
+      const facts = [fact('A'), fact('B', { kind: 'retrofit.engineering_review_passed' }), fact('C', { kind: 'retrofit.maintenance_confirmed' })]
+      expect(coverage(facts).cells.filter(cell => cell.state === 'locatable')).toHaveLength(3)
+      expect(resolver).toHaveBeenCalledTimes(1)
+      const changed = coverage(facts, [source('S1', { hash: 'v2', locator: 'page:2', untrusted_text: '新版本原文' })])
+      expect(changed.cells.some(cell => cell.state === 'locatable')).toBe(false)
+      expect(resolver).toHaveBeenCalledTimes(2)
+    } finally { resolver.mockRestore() }
+  })
   it('shares registered research fact semantics and rejects unresolved original locators', () => {
     const result = coverage([fact('SURVEY', { kind: 'resident_survey', value: '显式测试原文', observed_at: '2026-10-03T20:00:00Z' }),
       fact('WRONG', { kind: 'public_service_capacity', value: '显式测试原文', locator: 'page:999' })])

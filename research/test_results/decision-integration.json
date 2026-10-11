@@ -1,0 +1,52 @@
+{
+  "tested_at": "2026-10-04T04:06:58.635771+00:00",
+  "scope": "Qwen System One integration reliability and cache dependencies, no new research rules or provider substitution",
+  "model": "decision-model-preview",
+  "transport": "Existing DSH ToolRuntime and shared requestDecisionQuestions",
+  "changes": [
+    "configurable12-second default deadline; abort and bounded body cleanup",
+    "safe distinct timeout/HTTP/format errors and elapsed display",
+    "cache dependencies use actual questions and Qwen model, excluding unrelated DeepSeek model and brief Skill",
+    "one serialized request body; existing multi-question request retained"
+  ],
+  "checks": {
+    "tests": 68,
+    "build": "passed",
+    "commands": [
+      "npm test -- tests/contracts/decision-transport.test.ts tests/contracts/decision-model.test.ts tests/contracts/intelligence-decision.test.ts tests/contracts/map-analyst.test.ts tests/document-evaluation.test.ts",
+      "npm run build"
+    ]
+  },
+  "actual_input_inventory": {
+    "projects": 10,
+    "real_projects": 4,
+    "public_raw_rows": 0,
+    "raw_row_compaction_applied": false
+  },
+  "live_endpoint": {
+    "tested_at": "2026-10-04T03:55:41.583Z",
+    "scope": "One existing public historical project; endpoint and typed parsing only, not decision quality or latency comparison",
+    "project_id": "P-HZ-CUIYUAN-HISTORY-20261002",
+    "source_ids": [
+      "HZN-P01",
+      "HZN-P02",
+      "HZN-P03",
+      "HZN-P04",
+      "HZN-C02",
+      "HZN-C03"
+    ],
+    "status": "completed",
+    "model": "decision-model-preview",
+    "request_id": "1f50d0c5-0ea9-4a60-9177-d9d1dcee07ad",
+    "error_code": null,
+    "duration_ms": 289,
+    "input_tokens": 1609,
+    "action": "investigate",
+    "priority": "demand",
+    "model_calls": 1
+  },
+  "model_calls_added": 1,
+  "latency_comparison_performed": false,
+  "domain_quality_evaluated": false,
+  "cache_migration": "Old route cache namespace/descriptor differs; next explicit run may rebuild once, no automatic provider call."
+}

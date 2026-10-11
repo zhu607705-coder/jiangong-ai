@@ -1,0 +1,11 @@
+{
+  "status_code": 422,
+  "elapsed_ms": 10654,
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+  "scope": "Actual saved public original and DeepSeek/DSH short-ID classification; no human approvals or quality labels",
+  "response": {
+    "code": "MODEL_FIELD_NOT_QUOTED",
+    "detail": "字段值须逐字来自本措施所选片段，不能跨对象补写。"
+  }
+}

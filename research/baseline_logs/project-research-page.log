@@ -1,0 +1,27 @@
+2026-10-08: project research navigation and layout verification
+Recorded terminal outcomes from this implementation turn; commands are reproduced in ../test_results/project-research-page.json.
+Before fix: neighborhood-workflow.mjs exited 1, switchProject waited 30000ms for a hidden research panel.
+After fix: PASS neighborhood App workflow: 10 flow checks; synthetic API, minimal map stub, zero mutation/model/network calls.
+PASS map UI: 36 checks; PASS late/cancelled scan protection; PASS eight project geometry handoff cases.
+Build first caught TS2339 for Map.resize. Replaced with the supported window resize event.
+Final npm run build: tsc --noEmit and Vite production build passed; 6302 modules transformed.
+Real existing Cuiyuan historical project: inspected desktop 1440x1000 and mobile 390x844 screenshots.
+Mobile research bounds: x=54, y=0, width=336, height=816; map hidden; support collapsed; no document overflow.
+Pressing r while researching created zero hidden map drawings. Return-to-map readback is recorded in the evidence JSON.
+git diff --check passed.
+No model evaluation, retraining, paid research or enterprise-quality claim is part of this navigation change.
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+PASS neighborhood App workflow: 10 flow checks; synthetic API, minimal map stub, zero mutation/model/network calls
+✓ 6302 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:   0.38 kB
+dist/assets/index-f2gY9zBk.css  104.47 kB │ gzip:  22.36 kB
+dist/assets/index-BffwdFOR.js     5.29 kB │ gzip:   1.79 kB
+dist/assets/index-CIeebAze.js   388.11 kB │ gzip: 124.99 kB
+✓ built in 42.16s

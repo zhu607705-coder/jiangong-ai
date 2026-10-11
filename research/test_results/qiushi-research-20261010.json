@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-10",
+  "status": "completed_public_research_report_and_local_intake_with_failed_live_comparator",
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "object": "杭州灵隐街道浙大求是社区求是村，玉泉校区旁",
+  "artifacts": {
+    "report": "docs/research/求是村_旧改深度调研与行动计划.md",
+    "pdf": "output/pdf/求是村_旧改深度调研与行动计划.pdf",
+    "structured_research": "data/public_cases/qiushi-research-20261010.json",
+    "survey_template": "data/templates/qiushi-survey-register.csv",
+    "renderer": "scripts/build-qiushi-research.py"
+  },
+  "verification": {
+    "report_sha256": "b3b38ad80c67248140a220776d22b3c0bea628c8758362e00356496302be6df0",
+    "pdf_sha256": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+    "pdf_pages": 7,
+    "pdf_bytes": 497899,
+    "original_and_middle_and_final_pdf_pages_visual_inspected": true,
+    "cjk_text_extracted_no_replacement_glyph": true,
+    "inline_source_links_verified": 22,
+    "proposed_plans": 3,
+    "survey_work_packages": 7,
+    "structured_json_readback": true,
+    "real_document_api_receipt": {
+      "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+      "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+      "file_name": "求是村_公开资料研究与改造计划_AI研究草稿_已校验版.pdf",
+      "source_hash": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+      "parse_status": "extracted",
+      "context_version": 5,
+      "source_count": 21,
+      "document_count": 2,
+      "pages": 7,
+      "previous_layout_revision_retained": true,
+      "report_is_ai_research_draft": true,
+      "source_visibility": "internal",
+      "internal_disclosure_authorization_added": false,
+      "approved_rules_added": 0
+    }
+  },
+  "live": {
+    "run_id": "RUN-994167df-5d84-4ca1-af02-a15ad5df69c0",
+    "status": "failed",
+    "error_code": "RUNTIME_FAILED",
+    "snapshot_as_of": "2026-10-08",
+    "qwen_route": "completed; source-based next step requests floor/building resident needs and objection records",
+    "dsh_real_calls": 9,
+    "dsh_input_tokens_observed": 291708,
+    "dsh_output_tokens_observed": 11014,
+    "building_demand_enterprise_scenario_critic": "completed",
+    "final_comparator": "failed due to reference outside supplied Source IDs",
+    "rejected_reference": "MAPCTX-53310559-de40-4f2c-8450-afdad26e8a22:civic",
+    "final_decision_packet_saved": false,
+    "additional_live_runs_or_retries": 0,
+    "total_qwen_http_request_count": "not asserted; separate Qwen stage succeeded"
+  },
+  "boundaries": [
+    "no现场或入户调查完成声明",
+    "no structure safety, water quality, resident consent or budget invented",
+    "community, building and single project coverage denominators kept separate",
+    "research report remains AI draft; not a historical fact or approved rule",
+    "3 original public Sources attached via existing intelligence API; generated report uploads remain internal",
+    "previous PDF layout revision retained as actual upload history; final validated attachment identified",
+    "no training permission or enterprise effectiveness inferred"
+  ],
+  "publication": "local_delivery_only"
+}
