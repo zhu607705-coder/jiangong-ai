@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-11T01:02:16.278022+00:00",
+  "status": "merged_and_local_main_verified",
+  "pr": 18,
+  "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/18",
+  "merge_commit": "9cb37f26cbcf71d58ad96a262a63924237894bf8",
+  "merged_feature_head": "792f512ccdbd729271cfa31da5b5668b3d5629c8",
+  "tested_tree": "f5cbf39502333cdd128e6cb70343ebb1396c115e",
+  "base": "main",
+  "integrated_dependency_prs": [
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "superseded_closed_prs": [
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "branches_preserved": true,
+  "local_directory": "/mnt/d/建工ai",
+  "local_branch": "main",
+  "verification": {
+    "origin_main_equal_at_integration": true,
+    "merged_tree_equals_tested_tree": true,
+    "latest_feature_ci": "both passed",
+    "local_ready_http": 200,
+    "documents": 5,
+    "draft_cards": 15,
+    "new_model_calls": 0
+  },
+  "limitations_unchanged": [
+    "mentor factor/threshold approval pending",
+    "complete Qiushi live decision output not yet validated"
+  ]
+}

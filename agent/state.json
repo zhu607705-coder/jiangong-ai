@@ -642,9 +642,9 @@
       "pr": 18,
       "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/18",
       "base_pr": 17,
-      "base_branch": "codex/knowledge-agent-sources",
+      "base_branch": "main",
       "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
-      "status": "open_unmerged",
+      "status": "merged",
       "first_ci": "Stale inherited hash reviewed and corrected; both workflows passed. Closing edits only update evidence/screenshots.",
       "validated_code_commit": "3cc2794ae42a86beba5967b44d7cc207b003ccd1",
       "ci": [
@@ -660,6 +660,25 @@
           "conclusion": "success",
           "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38077428380"
         }
+      ],
+      "merge_commit": "9cb37f26cbcf71d58ad96a262a63924237894bf8",
+      "merge_receipt": "research/test_results/pr18-merge.json",
+      "integrated_dependencies": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "superseded_closed_prs": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
       ]
     }
   },
@@ -828,9 +847,9 @@
       "pr": 18,
       "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/18",
       "base_pr": 17,
-      "base_branch": "codex/knowledge-agent-sources",
+      "base_branch": "main",
       "feature_commit": "bff8cfb77c1019cf7faefadb3d69142180f6afd0",
-      "status": "open_unmerged",
+      "status": "merged",
       "first_ci": "Stale inherited hash reviewed and corrected; both workflows passed. Closing edits only update evidence/screenshots.",
       "validated_code_commit": "3cc2794ae42a86beba5967b44d7cc207b003ccd1",
       "ci": [
@@ -846,6 +865,25 @@
           "conclusion": "success",
           "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38077428380"
         }
+      ],
+      "merge_commit": "9cb37f26cbcf71d58ad96a262a63924237894bf8",
+      "merge_receipt": "research/test_results/pr18-merge.json",
+      "integrated_dependencies": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "superseded_closed_prs": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
       ]
     },
     "source_attribution_review": {
@@ -857,6 +895,15 @@
       "audit_log": "research/baseline_logs/knowledge-pipeline-aihot-audit.log",
       "test_log": "research/baseline_logs/knowledge-pipeline-aihot-regression.log"
     },
-    "temporary_worktrees": "The three task-owned worktrees were integrated, committed and retired; earlier unrelated worktrees retained."
+    "temporary_worktrees": "The three task-owned worktrees were integrated, committed and retired; earlier unrelated worktrees retained.",
+    "merge_verification": {
+      "origin_main_equal_at_integration": true,
+      "merged_tree_equals_tested_tree": true,
+      "latest_feature_ci": "both passed",
+      "local_ready_http": 200,
+      "documents": 5,
+      "draft_cards": 15,
+      "new_model_calls": 0
+    }
   }
 }
