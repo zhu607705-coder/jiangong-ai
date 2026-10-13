@@ -27,6 +27,7 @@ import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
+import CompleteCommunityDemo from './components/CompleteCommunityDemo';
 import ConstructionCostLibrary from './components/ConstructionCostLibrary';
 import ExperienceLibrary from './components/ExperienceLibrary';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
@@ -186,6 +187,10 @@ export default function App() {
   const [businessProfile, setBusinessProfile] = useState<'neighborhood'|'general'>('neighborhood');
   const [loadingTarget, setLoadingTarget] = useState<string | null>(null);
   const [neighborhoodDrafts, setNeighborhoodDrafts] = useState<Record<string, NeighborhoodDraft>>({});
+  const [completeDemoProject, setCompleteDemoProject] = useState<string | null>(() => {
+    try { return localStorage.getItem('hzz-complete-demo-project'); } catch { return null; }
+  });
+  const completeDemoActive = !!project && project.id === completeDemoProject && tab === 'overview';
   const [sourceFocus, setSourceFocus] = useState<{ projectId: string; refs: string[] } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
@@ -513,12 +518,13 @@ export default function App() {
         <select
           className="mode-select"
           aria-label="执行方式"
-          value={executionMode}
-          disabled={busy || running}
+          value={completeDemoActive ? 'demo' : executionMode}
+          disabled={busy || running || completeDemoActive}
           onChange={(e) =>
             setExecutionMode(e.target.value as "offline" | "live")
           }
         >
+          {completeDemoActive && <option value="demo">模拟数据 · 规则与公式计算</option>}
           <option value="live" disabled={!modelAvailable}>
             真实模型研判
           </option>
@@ -595,11 +601,11 @@ export default function App() {
             <div>
               <div className="eyebrow">
                 <span className="project-type">
-                  {project.input.purpose === 'case_library_archive' ? '案例与规则归档' : project.input.synthetic ? "显式合成示范" : "真实项目资料"}
+                  {completeDemoActive ? '完整模拟演示' : project.input.purpose === 'case_library_archive' ? '案例与规则归档' : project.input.synthetic ? "显式合成示范" : "真实项目资料"}
                 </span>
                 <span>项目空间 / {project.id.slice(0, 10)}</span>
               </div>
-              <h1>{project.name}</h1>
+              <h1>{completeDemoActive ? '杭州样本社区 · 政府工作人员报表演示' : project.name}</h1>
               <p>
                 {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '改造需求与前期策划'} <span>·</span>{" "}
                 {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
@@ -627,7 +633,16 @@ export default function App() {
               </span>
             </div>
           )}
-          {tab === "overview" && (
+          {project.input.business_profile === 'neighborhood' && <div className="full-demo-mode-toolbar">
+            <p>{completeDemoActive ? '全量模拟：六维现况、改造方案、月度运营和模拟台账均有完整数值与推算依据。' : '可查看真实项目资料，或打开全量模拟数据，演示政府工作人员掌握完整资料后的报表。'}</p>
+            <button className="secondary" type="button" onClick={() => {
+              const next = completeDemoActive ? null : project.id;
+              setCompleteDemoProject(next); setTab('overview');
+              try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
+            }}>{completeDemoActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
+          </div>}
+          {tab === 'overview' && completeDemoActive && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
+          {tab === "overview" && !completeDemoActive && (
             <>
               {run?.status === "failed" && (
                 <div className="feedback notice">

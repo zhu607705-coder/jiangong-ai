@@ -242,6 +242,23 @@
         "public survey codebook and community resampling audit"
       ],
       "license": "local methods; existing upstream attribution retained"
+    },
+    "complete_community_demo_20261013": {
+      "reuse": [
+        "packages/decision/dashboard.ts:dashboardDimensions",
+        "packages/retrofit/planning.ts:calculateRetrofitPlan",
+        "apps/workspace/src/components/DecisionDashboard.tsx",
+        "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+        "services/capabilities/community_operations.py:evaluate_operations",
+        "vendor/cre/scripts/lib/report-table.ts:table"
+      ],
+      "new_logic": [
+        "explicit synthetic community and household/service registers",
+        "auditable six-dimensional condition-coverage demonstration",
+        "repeat-frequency hypothesis for simulation scenario coverage only"
+      ],
+      "isolation": "Existing preview API only; no real facts, observations or training writes",
+      "license": "local demonstration code; existing upstream attribution retained"
     }
   }
 }

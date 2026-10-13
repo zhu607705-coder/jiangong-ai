@@ -1,4 +1,47 @@
 {
+  "complete_community_data_demo": {
+    "as_of": "2026-10-13",
+    "status": "completed_simulation_and_live_ui_verified",
+    "evidence": "research/test_results/complete-community-demo-verification.json",
+    "changed_files": [
+      "packages/retrofit/complete-demo.ts",
+      "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+      "apps/workspace/src/components/DecisionDashboard.tsx",
+      "apps/workspace/src/components/NeighborhoodPanel.tsx",
+      "apps/workspace/src/App.tsx",
+      "scripts/build-complete-community-demo.ts",
+      "data/templates/complete-community-demo-v1.json",
+      "tests/contracts/complete-community-demo.test.ts",
+      "docs/generated/complete-community-demo-section.tex"
+    ],
+    "checks": {
+      "javascript": 989,
+      "python": 211,
+      "http": 16,
+      "full_log": "research/test_results/complete-community-demo-verify.log",
+      "policy_regression": 69,
+      "final_build": "research/test_results/complete-community-demo-build-final.log",
+      "three_scenarios_no_missing_metrics": true,
+      "data_export_matches_generator": true,
+      "csv_rows": 1568,
+      "household_rows": 600,
+      "distinct_ledger_residents": 286,
+      "real_project_input_unchanged": true
+    },
+    "report": {
+      "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "pages": 24,
+      "sha256": "861a9dbc03ba20096774cb5abf9c78f13cc0492c09caf0ecdec94b136dfe87e7",
+      "qa": "output/documents/renewal-review/main/qa.json",
+      "render_review": "passed"
+    },
+    "unresolved_questions": [
+      "The real project still has no structured dimensional facts and its earlier complete model run failed; the explicit simulation is not recorded as a repaired live model run.",
+      "No real operating-month prediction quality or training effect is claimed."
+    ],
+    "next_runnable_task": "Bridge real public document intake to located dimensional facts and diagnose the recorded full model run; complete simulation is already available for the competition demonstration."
+  },
   "community_operations_merge": {
     "as_of": "2026-10-13",
     "status": "merged_to_origin_main_verified",

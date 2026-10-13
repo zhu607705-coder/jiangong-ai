@@ -70,6 +70,7 @@ export default function NeighborhoodPanel({ project, dashboard, draft, onDraftCh
       {conditions.rule_confirmation.evidence_refs.length>0&&<button onClick={()=>onEvidence(conditions.rule_confirmation.evidence_refs)}>核对专业规则依据</button>}
       {conditions.admission_notes.length>0&&<details><summary>未参与条件判断的资料（{conditions.admission_notes.length}）</summary>{conditions.admission_notes.map((note,i)=><p key={i}>{note.reason} · 来源 {note.source_id}{note.locator?' · '+note.locator:''}</p>)}</details>}
     </details>
+    {!radar.dimensions.some(d => d.value !== null) && <div className="neighborhood-evaluation-status" role="status"><strong>尚未生成六维评估结果。</strong>当前有 {project.sources.length} 份资料、{project.facts.length} 条结构化事实。资料导入后还需形成可定位的逐维事实并完成评估；可通过上方“打开完整数据模拟演示”查看资料齐备时的成品报表。</div>}
     <DecisionDashboard value={radar} onEvidence={onEvidence}/>
     {advice.missing.length>0&&<><p>本轮优先：{advice.missing.slice(0,2).map(check=>check.label).join('、')}。</p><details><summary>核查材料与交付物（{advice.missing.length}）</summary><div className="retrofit-checks">{advice.missing.map(check=><article key={check.key}><strong>{check.label}</strong><p>{check.where}</p><small>补齐后检查：{check.impact}</small></article>)}</div></details></>}
     <p className="retrofit-method">六维图用于逐项观察；行动建议按项目范围内的确认事实与规则判定。明确否决条件优先，缺失资料保持待补充。规则：{advice.rule_version}</p>

@@ -1,0 +1,1308 @@
+{
+  "data_kind": "synthetic",
+  "model_version": "community-operations-1.1",
+  "scenarios": [
+    {
+      "input": {
+        "name": "全量数据模拟 · 2026年9月运营 · 保守",
+        "facility_id": "SIM-CENTER-600",
+        "facility_name": "杭州样本社区服务中心（模拟）",
+        "period": "2026-09",
+        "scope_note": "虚构杭州样本社区，600户1500人；活动室、助餐区及咨询室为三个独立资源。完整自然月模拟回放；固定现金、逐人次变动成本与政府直接支付分别列账。建设投资单列，月度不含折旧及贷款本息。",
+        "target_population": {
+          "value": 1500,
+          "unit": "person",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "完整模拟数据 v1：600户，其中300户2人、300户3人，合计1500人",
+          "as_of": "2026-10-13"
+        },
+        "unique_users": {
+          "value": 240,
+          "unit": "person",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "完整模拟数据 v1：容量核算后的1304人次÷假设月均5.433333人次/人，四舍五入并按人口、服务人次封顶；用于完整模拟，不是实测去重人数",
+          "as_of": "2026-10-13"
+        },
+        "cost_scope_complete": true,
+        "services": [
+          {
+            "id": "activity",
+            "name": "社区活动",
+            "resource_id": "SIM-ACTIVITY-ROOM",
+            "schedule_note": "独立活动室，30席，每月30场、每场1小时；场次需求可匹配排班。",
+            "capacity_per_slot": {
+              "value": 30,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：活动室核定30席（模拟设施表）",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 30,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：9月安排30场独立活动",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 576,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：300位月度参与者的活动预约合计720人次",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.5,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：收费活动与公益活动人次各半",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 10,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟公示收费10元/付费人次",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 2,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：材料2元/服务人次",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "meal",
+            "name": "社区助餐",
+            "resource_id": "SIM-MEAL-HALL",
+            "schedule_note": "独立助餐区，40份/餐，每月26餐；相同人员不在活动室同时承担服务。",
+            "capacity_per_slot": {
+              "value": 40,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：助餐区每餐40份",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 26,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每月26个助餐开放日",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 666,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每开放日32份预约×26日",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.9,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：90%为收费助餐人次，10%为公益名额",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 15,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟收费15元/付费餐",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 9,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每份餐食与耗材9元",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "consultation",
+            "name": "家庭与养老咨询",
+            "resource_id": "SIM-CONSULTATION-ROOM",
+            "schedule_note": "独立咨询室，每次接待4人，每月26场；每人次30分钟。",
+            "capacity_per_slot": {
+              "value": 4,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每场4个预约名额",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 26,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每月26场咨询",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 62,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每场平均3个预约×26场",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.5,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：收费与公益咨询各半",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 20,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟收费20元/付费咨询",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 5,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：单次记录与耗材5元",
+              "as_of": "2026-10-13"
+            }
+          }
+        ],
+        "cash_items": [
+          {
+            "economic_item_id": "SIM-STAFF-UTILITIES",
+            "kind": "fixed_cost",
+            "description": "人员20000＋能源1500＋维护1500＋保洁2000＋管理1000",
+            "amount": {
+              "value": 26000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：人员：助餐岗9000＋社区岗8000＋咨询兼职3000；再加能源1500、维护1500、保洁2000、管理1000，合计26000元/月",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-SPACE-INCOME",
+            "kind": "other_earned_income",
+            "description": "非政府场地合作收入",
+            "amount": {
+              "value": 5000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：合作时段10次×500元；与人次收费及购买服务分别登记",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-PURCHASE",
+            "kind": "government_purchase",
+            "description": "政府公益服务合同月度付款",
+            "amount": {
+              "value": 5000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示合同年60000元÷12",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-SUBSIDY",
+            "kind": "operating_subsidy",
+            "description": "财政运营支持",
+            "amount": {
+              "value": 12000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示年度运营补贴144000元÷12",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-OTHER-SUPPORT",
+            "kind": "other_support",
+            "description": "当月无其他非经营支持",
+            "amount": {
+              "value": 0,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：明确设定当月无捐赠等支持",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-DIRECT-MAINTENANCE",
+            "kind": "government_direct_cost",
+            "description": "政府直付场所基础维护，未计入运营方现金成本",
+            "amount": {
+              "value": 2000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示直付合同24000元/年÷12；与运营方日常维护分别列账",
+              "as_of": "2026-10-13"
+            }
+          }
+        ]
+      },
+      "result": {
+        "science": {
+          "method_version": "operations-science-1.0",
+          "break_even": [
+            {
+              "key": "required_subsidy",
+              "label": "按当前服务量所需运营补贴",
+              "value": 10965,
+              "unit": "yuan/month",
+              "status": "feasible",
+              "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+            },
+            {
+              "key": "minimum_fee_per_visit",
+              "label": "单服务最低收费",
+              "value": null,
+              "unit": "yuan/visit",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "minimum_paid_share",
+              "label": "单服务最低收费比例",
+              "value": null,
+              "unit": "ratio",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "break_even_visits",
+              "label": "单服务保本人次",
+              "value": null,
+              "unit": "visit/month",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "uniform_fee_multiplier",
+              "label": "各服务统一收费倍率阈值",
+              "value": 0.9171403410455528,
+              "unit": "ratio",
+              "status": "feasible",
+              "basis": "保持各服务量、收费比例、成本与其他收支不变，同倍率调整全部收费；未预测调价后的需求变化。"
+            }
+          ],
+          "sensitivity": [],
+          "joint_range": null,
+          "notes": [
+            "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+            "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+            "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+            "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+            "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+            "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+            "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+          ]
+        },
+        "model_version": "community-operations-1.1",
+        "result_kind": "scenario_prediction",
+        "status": "complete",
+        "metrics": {
+          "capacity_visits": 2044,
+          "served_visits": 1304,
+          "unmet_visits": 0,
+          "utilization": 0.6379647749510763,
+          "unique_users": 240,
+          "coverage": 0.16,
+          "fee_income": 12491,
+          "earned_income": 22491,
+          "operating_cost": 33456,
+          "government_purchase": 5000,
+          "operating_subsidy": 12000,
+          "other_support": 0,
+          "balance_before_support": -10965,
+          "balance_after_support": 1035,
+          "unfunded_gap": 0,
+          "required_subsidy": 10965,
+          "government_outlay": 19000,
+          "government_cost_per_visit": 14.57,
+          "commercial_cost_coverage": 0.5228060736489718,
+          "government_direct_cost": 2000,
+          "total_service_cost": 35456
+        },
+        "services": [
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 576,
+            "aggregation_overstatement_visits": 0,
+            "id": "activity",
+            "name": "社区活动",
+            "capacity_visits": 900,
+            "served_visits": 576,
+            "unmet_visits": 0,
+            "utilization": 0.64,
+            "fee_income": 2880,
+            "variable_cost": 1152
+          },
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 666,
+            "aggregation_overstatement_visits": 0,
+            "id": "meal",
+            "name": "社区助餐",
+            "capacity_visits": 1040,
+            "served_visits": 666,
+            "unmet_visits": 0,
+            "utilization": 0.6403846153846153,
+            "fee_income": 8991,
+            "variable_cost": 5994
+          },
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 62,
+            "aggregation_overstatement_visits": 0,
+            "id": "consultation",
+            "name": "家庭与养老咨询",
+            "capacity_visits": 104,
+            "served_visits": 62,
+            "unmet_visits": 0,
+            "utilization": 0.5961538461538461,
+            "fee_income": 620,
+            "variable_cost": 310
+          }
+        ],
+        "missing": [],
+        "warnings": [
+          "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+        ]
+      }
+    },
+    {
+      "input": {
+        "name": "全量数据模拟 · 2026年9月运营 · 基准",
+        "facility_id": "SIM-CENTER-600",
+        "facility_name": "杭州样本社区服务中心（模拟）",
+        "period": "2026-09",
+        "scope_note": "虚构杭州样本社区，600户1500人；活动室、助餐区及咨询室为三个独立资源。完整自然月模拟回放；固定现金、逐人次变动成本与政府直接支付分别列账。建设投资单列，月度不含折旧及贷款本息。",
+        "target_population": {
+          "value": 1500,
+          "unit": "person",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "完整模拟数据 v1：600户，其中300户2人、300户3人，合计1500人",
+          "as_of": "2026-10-13"
+        },
+        "unique_users": {
+          "value": 300,
+          "unit": "person",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "完整模拟数据 v1：容量核算后的1630人次÷假设月均5.433333人次/人，四舍五入并按人口、服务人次封顶；用于完整模拟，不是实测去重人数",
+          "as_of": "2026-10-13"
+        },
+        "cost_scope_complete": true,
+        "services": [
+          {
+            "id": "activity",
+            "name": "社区活动",
+            "resource_id": "SIM-ACTIVITY-ROOM",
+            "schedule_note": "独立活动室，30席，每月30场、每场1小时；场次需求可匹配排班。",
+            "capacity_per_slot": {
+              "value": 30,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：活动室核定30席（模拟设施表）",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 30,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：9月安排30场独立活动",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 720,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：300位月度参与者的活动预约合计720人次",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.5,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：收费活动与公益活动人次各半",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 10,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟公示收费10元/付费人次",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 2,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：材料2元/服务人次",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "meal",
+            "name": "社区助餐",
+            "resource_id": "SIM-MEAL-HALL",
+            "schedule_note": "独立助餐区，40份/餐，每月26餐；相同人员不在活动室同时承担服务。",
+            "capacity_per_slot": {
+              "value": 40,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：助餐区每餐40份",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 26,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每月26个助餐开放日",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 832,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每开放日32份预约×26日",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.9,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：90%为收费助餐人次，10%为公益名额",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 15,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟收费15元/付费餐",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 9,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每份餐食与耗材9元",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "consultation",
+            "name": "家庭与养老咨询",
+            "resource_id": "SIM-CONSULTATION-ROOM",
+            "schedule_note": "独立咨询室，每次接待4人，每月26场；每人次30分钟。",
+            "capacity_per_slot": {
+              "value": 4,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每场4个预约名额",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 26,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每月26场咨询",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 78,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每场平均3个预约×26场",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.5,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：收费与公益咨询各半",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 20,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟收费20元/付费咨询",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 5,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：单次记录与耗材5元",
+              "as_of": "2026-10-13"
+            }
+          }
+        ],
+        "cash_items": [
+          {
+            "economic_item_id": "SIM-STAFF-UTILITIES",
+            "kind": "fixed_cost",
+            "description": "人员20000＋能源1500＋维护1500＋保洁2000＋管理1000",
+            "amount": {
+              "value": 26000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：人员：助餐岗9000＋社区岗8000＋咨询兼职3000；再加能源1500、维护1500、保洁2000、管理1000，合计26000元/月",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-SPACE-INCOME",
+            "kind": "other_earned_income",
+            "description": "非政府场地合作收入",
+            "amount": {
+              "value": 5000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：合作时段10次×500元；与人次收费及购买服务分别登记",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-PURCHASE",
+            "kind": "government_purchase",
+            "description": "政府公益服务合同月度付款",
+            "amount": {
+              "value": 5000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示合同年60000元÷12",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-SUBSIDY",
+            "kind": "operating_subsidy",
+            "description": "财政运营支持",
+            "amount": {
+              "value": 12000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示年度运营补贴144000元÷12",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-OTHER-SUPPORT",
+            "kind": "other_support",
+            "description": "当月无其他非经营支持",
+            "amount": {
+              "value": 0,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：明确设定当月无捐赠等支持",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-DIRECT-MAINTENANCE",
+            "kind": "government_direct_cost",
+            "description": "政府直付场所基础维护，未计入运营方现金成本",
+            "amount": {
+              "value": 2000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示直付合同24000元/年÷12；与运营方日常维护分别列账",
+              "as_of": "2026-10-13"
+            }
+          }
+        ],
+        "analysis_bounds": [
+          {
+            "id": "activity-demand",
+            "target": "service_demand_multiplier",
+            "item_id": "activity",
+            "low": 0.8,
+            "high": 1.2,
+            "unit": "ratio",
+            "origin": "manual_scenario",
+            "basis": "活动预约需求设定为基准的80%至120%，保留其余项目；用于演示压力测试。",
+            "source_ref": "完整模拟预约册 v1 / 活动项目",
+            "as_of": "2026-10-13"
+          },
+          {
+            "id": "fixed-cash",
+            "target": "cash_amount",
+            "item_id": "SIM-STAFF-UTILITIES",
+            "low": 24000,
+            "high": 30000,
+            "unit": "yuan/month",
+            "origin": "manual_scenario",
+            "basis": "人员、能源及固定维护费用设定在24000至30000元/月。",
+            "source_ref": "完整模拟预算 v1 / 五项固定支出",
+            "as_of": "2026-10-13"
+          }
+        ]
+      },
+      "result": {
+        "science": {
+          "method_version": "operations-science-1.0",
+          "break_even": [
+            {
+              "key": "required_subsidy",
+              "label": "按当前服务量所需运营补贴",
+              "value": 9706,
+              "unit": "yuan/month",
+              "status": "feasible",
+              "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+            },
+            {
+              "key": "minimum_fee_per_visit",
+              "label": "单服务最低收费",
+              "value": null,
+              "unit": "yuan/visit",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "minimum_paid_share",
+              "label": "单服务最低收费比例",
+              "value": null,
+              "unit": "ratio",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "break_even_visits",
+              "label": "单服务保本人次",
+              "value": null,
+              "unit": "visit/month",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "uniform_fee_multiplier",
+              "label": "各服务统一收费倍率阈值",
+              "value": 0.853061747373815,
+              "unit": "ratio",
+              "status": "feasible",
+              "basis": "保持各服务量、收费比例、成本与其他收支不变，同倍率调整全部收费；未预测调价后的需求变化。"
+            }
+          ],
+          "sensitivity": [
+            {
+              "id": "fixed-cash",
+              "label": "人员20000＋能源1500＋维护1500＋保洁2000＋管理1000：月度现金事项",
+              "low": 24000,
+              "base": 26000,
+              "high": 30000,
+              "low_balance": 4294,
+              "base_balance": 2294,
+              "high_balance": -1706,
+              "span": 6000,
+              "basis": "情景假设，逐项变动其余输入固定；人员、能源及固定维护费用设定在24000至30000元/月。；范围类型manual_scenario，时点2026-10-13。",
+              "source_ref": "完整模拟预算 v1 / 五项固定支出"
+            },
+            {
+              "id": "activity-demand",
+              "label": "社区活动：服务需求倍率",
+              "low": 0.8,
+              "base": 1,
+              "high": 1.2,
+              "low_balance": 1862,
+              "base_balance": 2294,
+              "high_balance": 2726,
+              "span": 864,
+              "basis": "情景假设，逐项变动其余输入固定；活动预约需求设定为基准的80%至120%，保留其余项目；用于演示压力测试。；范围类型manual_scenario，时点2026-10-13。",
+              "source_ref": "完整模拟预约册 v1 / 活动项目"
+            }
+          ],
+          "joint_range": {
+            "tested_corners": 4,
+            "valid_corners": 4,
+            "min_balance": -2138,
+            "max_balance": 4726,
+            "worst_gap": 2138,
+            "min_at": [
+              {
+                "id": "activity-demand",
+                "value": 0.8
+              },
+              {
+                "id": "fixed-cash",
+                "value": 30000
+              }
+            ],
+            "max_at": [
+              {
+                "id": "activity-demand",
+                "value": 1.2
+              },
+              {
+                "id": "fixed-cash",
+                "value": 24000
+              }
+            ],
+            "label": "已测试参数组合范围"
+          },
+          "notes": [
+            "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+            "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+            "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+            "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+            "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+            "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+            "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+          ]
+        },
+        "model_version": "community-operations-1.1",
+        "result_kind": "scenario_prediction",
+        "status": "complete",
+        "metrics": {
+          "capacity_visits": 2044,
+          "served_visits": 1630,
+          "unmet_visits": 0,
+          "utilization": 0.7974559686888454,
+          "unique_users": 300,
+          "coverage": 0.2,
+          "fee_income": 15612,
+          "earned_income": 25612,
+          "operating_cost": 35318,
+          "government_purchase": 5000,
+          "operating_subsidy": 12000,
+          "other_support": 0,
+          "balance_before_support": -9706,
+          "balance_after_support": 2294,
+          "unfunded_gap": 0,
+          "required_subsidy": 9706,
+          "government_outlay": 19000,
+          "government_cost_per_visit": 11.66,
+          "commercial_cost_coverage": 0.5836117560450762,
+          "government_direct_cost": 2000,
+          "total_service_cost": 37318
+        },
+        "services": [
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 720,
+            "aggregation_overstatement_visits": 0,
+            "id": "activity",
+            "name": "社区活动",
+            "capacity_visits": 900,
+            "served_visits": 720,
+            "unmet_visits": 0,
+            "utilization": 0.8,
+            "fee_income": 3600,
+            "variable_cost": 1440
+          },
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 832,
+            "aggregation_overstatement_visits": 0,
+            "id": "meal",
+            "name": "社区助餐",
+            "capacity_visits": 1040,
+            "served_visits": 832,
+            "unmet_visits": 0,
+            "utilization": 0.8,
+            "fee_income": 11232,
+            "variable_cost": 7488
+          },
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 78,
+            "aggregation_overstatement_visits": 0,
+            "id": "consultation",
+            "name": "家庭与养老咨询",
+            "capacity_visits": 104,
+            "served_visits": 78,
+            "unmet_visits": 0,
+            "utilization": 0.75,
+            "fee_income": 780,
+            "variable_cost": 390
+          }
+        ],
+        "missing": [],
+        "warnings": [
+          "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+        ]
+      }
+    },
+    {
+      "input": {
+        "name": "全量数据模拟 · 2026年9月运营 · 积极",
+        "facility_id": "SIM-CENTER-600",
+        "facility_name": "杭州样本社区服务中心（模拟）",
+        "period": "2026-09",
+        "scope_note": "虚构杭州样本社区，600户1500人；活动室、助餐区及咨询室为三个独立资源。完整自然月模拟回放；固定现金、逐人次变动成本与政府直接支付分别列账。建设投资单列，月度不含折旧及贷款本息。",
+        "target_population": {
+          "value": 1500,
+          "unit": "person",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "完整模拟数据 v1：600户，其中300户2人、300户3人，合计1500人",
+          "as_of": "2026-10-13"
+        },
+        "unique_users": {
+          "value": 360,
+          "unit": "person",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "完整模拟数据 v1：容量核算后的1956人次÷假设月均5.433333人次/人，四舍五入并按人口、服务人次封顶；用于完整模拟，不是实测去重人数",
+          "as_of": "2026-10-13"
+        },
+        "cost_scope_complete": true,
+        "services": [
+          {
+            "id": "activity",
+            "name": "社区活动",
+            "resource_id": "SIM-ACTIVITY-ROOM",
+            "schedule_note": "独立活动室，30席，每月30场、每场1小时；场次需求可匹配排班。",
+            "capacity_per_slot": {
+              "value": 30,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：活动室核定30席（模拟设施表）",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 30,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：9月安排30场独立活动",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 864,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：300位月度参与者的活动预约合计720人次",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.5,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：收费活动与公益活动人次各半",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 10,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟公示收费10元/付费人次",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 2,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：材料2元/服务人次",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "meal",
+            "name": "社区助餐",
+            "resource_id": "SIM-MEAL-HALL",
+            "schedule_note": "独立助餐区，40份/餐，每月26餐；相同人员不在活动室同时承担服务。",
+            "capacity_per_slot": {
+              "value": 40,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：助餐区每餐40份",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 26,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每月26个助餐开放日",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 998,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每开放日32份预约×26日",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.9,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：90%为收费助餐人次，10%为公益名额",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 15,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟收费15元/付费餐",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 9,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每份餐食与耗材9元",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "consultation",
+            "name": "家庭与养老咨询",
+            "resource_id": "SIM-CONSULTATION-ROOM",
+            "schedule_note": "独立咨询室，每次接待4人，每月26场；每人次30分钟。",
+            "capacity_per_slot": {
+              "value": 4,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每场4个预约名额",
+              "as_of": "2026-10-13"
+            },
+            "available_slots": {
+              "value": 26,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每月26场咨询",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 94,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：每场平均3个预约×26场",
+              "as_of": "2026-10-13"
+            },
+            "paid_share": {
+              "value": 0.5,
+              "unit": "ratio",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：收费与公益咨询各半",
+              "as_of": "2026-10-13"
+            },
+            "fee_per_visit": {
+              "value": 20,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：模拟收费20元/付费咨询",
+              "as_of": "2026-10-13"
+            },
+            "variable_cost_per_visit": {
+              "value": 5,
+              "unit": "yuan/visit",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：单次记录与耗材5元",
+              "as_of": "2026-10-13"
+            }
+          }
+        ],
+        "cash_items": [
+          {
+            "economic_item_id": "SIM-STAFF-UTILITIES",
+            "kind": "fixed_cost",
+            "description": "人员20000＋能源1500＋维护1500＋保洁2000＋管理1000",
+            "amount": {
+              "value": 26000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：人员：助餐岗9000＋社区岗8000＋咨询兼职3000；再加能源1500、维护1500、保洁2000、管理1000，合计26000元/月",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-SPACE-INCOME",
+            "kind": "other_earned_income",
+            "description": "非政府场地合作收入",
+            "amount": {
+              "value": 5000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：合作时段10次×500元；与人次收费及购买服务分别登记",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-PURCHASE",
+            "kind": "government_purchase",
+            "description": "政府公益服务合同月度付款",
+            "amount": {
+              "value": 5000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示合同年60000元÷12",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-SUBSIDY",
+            "kind": "operating_subsidy",
+            "description": "财政运营支持",
+            "amount": {
+              "value": 12000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示年度运营补贴144000元÷12",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-OTHER-SUPPORT",
+            "kind": "other_support",
+            "description": "当月无其他非经营支持",
+            "amount": {
+              "value": 0,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：明确设定当月无捐赠等支持",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "economic_item_id": "SIM-DIRECT-MAINTENANCE",
+            "kind": "government_direct_cost",
+            "description": "政府直付场所基础维护，未计入运营方现金成本",
+            "amount": {
+              "value": 2000,
+              "unit": "yuan/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "完整模拟数据 v1：演示直付合同24000元/年÷12；与运营方日常维护分别列账",
+              "as_of": "2026-10-13"
+            }
+          }
+        ]
+      },
+      "result": {
+        "science": {
+          "method_version": "operations-science-1.0",
+          "break_even": [
+            {
+              "key": "required_subsidy",
+              "label": "按当前服务量所需运营补贴",
+              "value": 8447,
+              "unit": "yuan/month",
+              "status": "feasible",
+              "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+            },
+            {
+              "key": "minimum_fee_per_visit",
+              "label": "单服务最低收费",
+              "value": null,
+              "unit": "yuan/visit",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "minimum_paid_share",
+              "label": "单服务最低收费比例",
+              "value": null,
+              "unit": "ratio",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "break_even_visits",
+              "label": "单服务保本人次",
+              "value": null,
+              "unit": "visit/month",
+              "status": "not_identifiable",
+              "basis": "存在多个服务；未固定服务组合，无法确定一个共同的单服务阈值。"
+            },
+            {
+              "key": "uniform_fee_multiplier",
+              "label": "各服务统一收费倍率阈值",
+              "value": 0.8103347034644744,
+              "unit": "ratio",
+              "status": "feasible",
+              "basis": "保持各服务量、收费比例、成本与其他收支不变，同倍率调整全部收费；未预测调价后的需求变化。"
+            }
+          ],
+          "sensitivity": [],
+          "joint_range": null,
+          "notes": [
+            "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+            "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+            "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+            "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+            "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+            "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+            "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+          ]
+        },
+        "model_version": "community-operations-1.1",
+        "result_kind": "scenario_prediction",
+        "status": "complete",
+        "metrics": {
+          "capacity_visits": 2044,
+          "served_visits": 1956,
+          "unmet_visits": 0,
+          "utilization": 0.9569471624266145,
+          "unique_users": 360,
+          "coverage": 0.24,
+          "fee_income": 18733,
+          "earned_income": 28733,
+          "operating_cost": 37180,
+          "government_purchase": 5000,
+          "operating_subsidy": 12000,
+          "other_support": 0,
+          "balance_before_support": -8447,
+          "balance_after_support": 3553,
+          "unfunded_gap": 0,
+          "required_subsidy": 8447,
+          "government_outlay": 19000,
+          "government_cost_per_visit": 9.71,
+          "commercial_cost_coverage": 0.6383270575578268,
+          "government_direct_cost": 2000,
+          "total_service_cost": 39180
+        },
+        "services": [
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 864,
+            "aggregation_overstatement_visits": 0,
+            "id": "activity",
+            "name": "社区活动",
+            "capacity_visits": 900,
+            "served_visits": 864,
+            "unmet_visits": 0,
+            "utilization": 0.96,
+            "fee_income": 4320,
+            "variable_cost": 1728
+          },
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 998,
+            "aggregation_overstatement_visits": 0,
+            "id": "meal",
+            "name": "社区助餐",
+            "capacity_visits": 1040,
+            "served_visits": 998,
+            "unmet_visits": 0,
+            "utilization": 0.9596153846153846,
+            "fee_income": 13473,
+            "variable_cost": 8982
+          },
+          {
+            "capacity_method": "monthly_aggregate",
+            "monthly_pooled_upper_bound": 94,
+            "aggregation_overstatement_visits": 0,
+            "id": "consultation",
+            "name": "家庭与养老咨询",
+            "capacity_visits": 104,
+            "served_visits": 94,
+            "unmet_visits": 0,
+            "utilization": 0.9038461538461539,
+            "fee_income": 940,
+            "variable_cost": 470
+          }
+        ],
+        "missing": [],
+        "warnings": [
+          "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+        ]
+      }
+    }
+  ],
+  "ledger_summary": {
+    "served_visits": 1568,
+    "unique_users": 286,
+    "capacity_visits": 2044,
+    "utilization": 0.7671232876712328,
+    "coverage": 0.19066666666666668,
+    "fee_income": 15095,
+    "operating_cost": 35528,
+    "earned_income": 24895,
+    "government_purchase": 5000,
+    "operating_subsidy": 12000,
+    "government_direct_cost": 2000,
+    "government_outlay": 19000,
+    "balance_after_support": 1367,
+    "unfunded_gap": 0,
+    "government_cost_per_visit": 12.12,
+    "government_cash_income": 0
+  },
+  "root_cause": {
+    "project_sources": 24,
+    "structured_facts": 0,
+    "prior_run": "RUNTIME_FAILED",
+    "dashboard_input": "empty",
+    "change": "explicit complete-data simulation reuses existing radar and operations calculator without writing real facts or observations"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "as_of": "2026-10-13",
+  "status": "implemented_calculated_exported_and_live_ui_verified",
+  "mode": "explicit_synthetic_complete_data",
+  "root_cause": {
+    "project_sources": 24,
+    "structured_facts": 0,
+    "existing_run": "RUNTIME_FAILED",
+    "dashboard_evidence": 0
+  },
+  "checks": {
+    "javascript": 989,
+    "python": 211,
+    "http": 16,
+    "full_log": "research/test_results/complete-community-demo-verify.log",
+    "policy_regression": 69,
+    "final_build": "research/test_results/complete-community-demo-build-final.log",
+    "three_scenarios_no_missing_metrics": true,
+    "data_export_matches_generator": true,
+    "csv_rows": 1568,
+    "household_rows": 600,
+    "distinct_ledger_residents": 286,
+    "real_project_input_unchanged": true
+  },
+  "browser": {
+    "six_before": [
+      2.2,
+      3.3,
+      3,
+      3.4,
+      3,
+      3.5
+    ],
+    "six_after": [
+      4.6,
+      5,
+      4.8,
+      4.7,
+      5,
+      5
+    ],
+    "monthly": {
+      "served_visits": 1630,
+      "unique_users": 300,
+      "coverage": 0.2,
+      "utilization": 0.7974559686888454,
+      "earned_income": 25612,
+      "operating_cost": 35318,
+      "balance_after_support": 2294,
+      "government_outlay": 19000
+    },
+    "scenario_coverage": [
+      0.16,
+      0.2,
+      0.24
+    ],
+    "mobile": {
+      "viewport": 390,
+      "document_width": 390,
+      "missing_metric_displays": 0,
+      "viewport_restored": true
+    },
+    "screenshots": [
+      "output/playwright/complete-community-demo/six-dimensions.jpg",
+      "output/playwright/complete-community-demo/cash-overview.jpg",
+      "output/playwright/complete-community-demo/mobile.jpg"
+    ],
+    "exports": [
+      "D:/临时/完整社区模拟数据.json",
+      "D:/临时/模拟服务台账-202609.csv",
+      "D:/临时/完整社区模拟报表.md"
+    ]
+  },
+  "report": {
+    "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+    "pages": 24,
+    "sha256": "861a9dbc03ba20096774cb5abf9c78f13cc0492c09caf0ecdec94b136dfe87e7",
+    "qa": "output/documents/renewal-review/main/qa.json",
+    "render_review": "passed"
+  },
+  "unresolved": [
+    "The real project still has no structured dimensional facts and its earlier complete model run failed; the explicit simulation is not recorded as a repaired live model run.",
+    "No real operating-month prediction quality or training effect is claimed."
+  ]
+}

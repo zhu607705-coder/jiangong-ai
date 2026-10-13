@@ -3,9 +3,11 @@ import type { OperationsAnalysisBound, OperationsCashItem, OperationsInput, Oper
 import { api, type Project } from '../api'
 import './community-operations.css'
 import { isOperationsOriginal } from '../../../../packages/operations/sources'
+import { simulateScenarioUsers, type CompleteCommunityDemo } from '../../../../packages/retrofit/complete-demo'
 
 type ServiceField = 'capacity_per_slot' | 'available_slots' | 'demand_visits' | 'paid_share' | 'fee_per_visit' | 'variable_cost_per_visit'
-type Preview = { label: string; input: OperationsInput; result: OperationsResult | null; error: string; savedId?: string }
+export type OperationsPreview = { label: string; input: OperationsInput; result: OperationsResult | null; error: string; savedId?: string }
+type Preview = OperationsPreview
 type Feedback = { snapshotId: string; sourceId: string; locator: string; collectedAt: string; split: 'calibration' | 'holdout'; note: string; metrics: Record<keyof OperationsObservedMetrics, string> }
 
 const cashLabels: Record<OperationsCashItem['kind'], string> = {
@@ -159,7 +161,7 @@ function Metrics({ result, extra = false }: { result: OperationsResult; extra?: 
   return <dl className="ops-metrics">{(extra ? extraMetrics : mainMetrics).map(metric => <div className="ops-metric" key={metric.key}><dt>{metric.label}{metric.unit !== '%' ? <small>{metric.unit}</small> : null}</dt><dd>{show(result.metrics[metric.key], metric.unit)}</dd></div>)}</dl>
 }
 
-function ScientificResults({ result }: { result: OperationsResult }) {
+function ScientificResults({ result, complete = false }: { result: OperationsResult; complete?: boolean }) {
   const science = result.science
   if (!science) return null
   const thresholdStatus = { feasible: '在所列条件下可达', infeasible: '当前条件下不可达', not_identifiable: '当前未识别', already_balanced: '已平衡' }
@@ -167,7 +169,7 @@ function ScientificResults({ result }: { result: OperationsResult }) {
   const combination = (values: { id: string; value: number }[]) => values.map(item => `${science.sensitivity.find(entry => entry.id === item.id)?.label || item.id}：${show(item.value)}`).join('；') || '未识别有效组合'
   return <details className="ops-science"><summary>盈亏切换与参数敏感性</summary>
     <h5>盈亏切换值</h5>
-    <div className="ops-threshold-list">{science.break_even.map(threshold => <article className="ops-threshold" key={threshold.key}>
+    <div className="ops-threshold-list">{science.break_even.filter(threshold => !complete || threshold.value !== null).map(threshold => <article className="ops-threshold" key={threshold.key}>
       <div className="ops-section-heading"><strong>{threshold.label}</strong><span className="ops-badge">{thresholdStatus[threshold.status]}</span></div>
       <p className="ops-threshold-value">{threshold.value === null ? '未识别' : `${show(threshold.value)} ${unitLabels[threshold.unit] || threshold.unit}`}</p><p className="ops-muted">{threshold.basis}</p>
     </article>)}</div>
@@ -184,7 +186,7 @@ function ScientificResults({ result }: { result: OperationsResult }) {
 }
 
 function ResultDetails({ result }: { result: OperationsResult }) {
-  return <details className="ops-details"><summary>计算口径与待补项{result.missing.length ? `（${result.missing.length}项）` : ''}</summary>
+  return <details className="ops-details"><summary>{result.missing.length ? `计算口径与待补项（${result.missing.length}项）` : '计算口径与逐项依据'}</summary>
     <p>服务人次取同一核算范围内需求与容量的较小值；启用分时段后，先逐时段计算再加总。收费收入＝服务人次×付费占比×单次收费；变动支出按全部服务人次计算。</p>
     <p>经营收入＝服务收费＋其他经营收入＋政府购买服务；运营补贴和其他支持另列。市场收入覆盖率只用服务收费与其他经营收入除以运营现金支出。政府直接支付只计财政投入与合计服务支出。建设投资、折旧、贷款本息在建设经济模型中评估。</p>
     <p>每项服务须使用独立资源或事先拆分的独立排班，同一资源不能在不同服务中重复登记。分时段核算按已录入的时段计算需求与容量错配；月总量核算采用需求可匹配场次的假设。覆盖率采用目标居民去重人数。</p>
@@ -251,18 +253,19 @@ function AnalysisBoundsEditor({ input, onChange }: { input: OperationsInput; onC
   </details>
 }
 
-export default function CommunityOperationsPanel({ project }: { project: Project }) {
+export default function CommunityOperationsPanel({ project, completeDemo, onPreviews }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void }) {
   const scope = `${project.id}:${project.context_version}`
   const active = useRef({ scope, generation: 0 })
   if (active.current.scope !== scope) active.current = { scope, generation: active.current.generation + 1 }
   const controllers = useRef(new Set<AbortController>())
   const readSequence = useRef(0)
   const pending = useRef(false)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(!!completeDemo)
+  const [parametersOpen, setParametersOpen] = useState(!completeDemo)
   const [reload, setReload] = useState(0)
   const [loaded, setLoaded] = useState({ scope: '', loading: false, error: '', data: emptyWorkspace() })
-  const [draft, setDraft] = useState<OperationsInput>(blankInput)
-  const [multipliers, setMultipliers] = useState(['0.7', '1', '1.3'])
+  const [draft, setDraft] = useState<OperationsInput>(() => completeDemo ? structuredClone(completeDemo.operations) : blankInput())
+  const [multipliers, setMultipliers] = useState(completeDemo ? ['0.8', '1', '1.2'] : ['0.7', '1', '1.3'])
   const [previews, setPreviews] = useState<Preview[]>([])
   const [feedback, setFeedback] = useState<Feedback>(emptyFeedback)
   const [busy, setBusy] = useState('')
@@ -279,7 +282,7 @@ export default function CommunityOperationsPanel({ project }: { project: Project
   }, [scope])
 
   useEffect(() => {
-    if (!open) return
+    if (!open || completeDemo) return
     const controller = new AbortController(), generation = active.current.generation, sequence = ++readSequence.current
     setLoaded(previous => ({ scope, loading: true, error: '', data: previous.scope === scope ? previous.data : emptyWorkspace() }))
     void api<OperationsWorkspace>(base, undefined, controller.signal).then(data => {
@@ -337,17 +340,25 @@ export default function CommunityOperationsPanel({ project }: { project: Project
           service.demand_visits = scaled(service.demand_visits)
           service.time_blocks?.forEach(block => { block.demand_visits = scaled(block.demand_visits) })
         })
-        if (index !== 1 || multiplier !== 1) input.unique_users = { ...missingValue('person'), source: '需求情景变化后，去重人数须另行调查或建模；未由人次倍率推算' }
+        if (!completeDemo && (index !== 1 || multiplier !== 1)) input.unique_users = { ...missingValue('person'), source: '需求情景变化后，去重人数须另行调查或建模；未由人次倍率推算' }
         return { label, input, result: null, error: '' }
       })
-      const results = await Promise.allSettled(requests.map(item => api<OperationsResult>(`${base}/preview`, { input: item.input }, signal)))
+      const results = await Promise.allSettled(requests.map(async item => {
+        const result = await api<OperationsResult>(`${base}/preview`, { input: item.input }, signal)
+        if (!completeDemo) return result
+        if (result.metrics.served_visits === null) throw new Error('完整模拟服务量未计算完成')
+        item.input = simulateScenarioUsers(item.input, result.metrics.served_visits, completeDemo.visitsPerResident)
+        return api<OperationsResult>(`${base}/preview`, { input: item.input }, signal)
+      }))
       if (!current()) return
-      setPreviews(requests.map((item, index) => {
+      const next = requests.map((item, index) => {
         const result = results[index]
         return result.status === 'fulfilled' ? { ...item, result: result.value } : { ...item, error: errorMessage(result.reason) }
-      }))
+      })
+      setPreviews(next); onPreviews?.(next)
     })
   }
+  useEffect(() => { if (completeDemo) void previewAll() }, [completeDemo?.id, scope])
   async function saveSnapshot(preview: Preview, index: number) {
     await run(`save:${index}`, async (signal, current) => {
       const snapshot = await api<OperationsSnapshot>(`${base}/scenarios`, { input: preview.input, expected_context_version: project.context_version }, signal)
@@ -395,13 +406,13 @@ export default function CommunityOperationsPanel({ project }: { project: Project
   return <details className="community-operations" open={open} onToggle={event => setOpen(event.currentTarget.open)}>
     <summary className="ops-summary"><span>社区运营与公共服务</span><small>比较月度使用、现金收支与财政投入</small></summary>
     {open && <div className="ops-body">
-      <div className="ops-intro"><h3>把服务效果与运营账目放在一起看</h3><p>填写设施、服务与现金项目，比较三种需求情景；冻结当前方案后，再用真实台账核对偏差。</p></div>
+      <div className="ops-intro"><h3>{completeDemo ? "完整模拟月度报表 · 已自动填入并计算" : "把服务效果与运营账目放在一起看"}</h3><p>{completeDemo ? "三种情景使用同一核算接口；去重人数按明确的月均频次推算。参数、来源与区间已填入下方草稿。" : "填写设施、服务与现金项目，比较三种需求情景；冻结当前方案后，再用真实台账核对偏差。"}</p></div>
       {loaded.loading && <p className="ops-muted" role="status">正在读取本项目的运营记录…</p>}
       {loaded.error && <div className="ops-error" role="alert"><p>{loaded.error}</p><button type="button" className="ops-button" disabled={!!busy || loaded.loading} onClick={() => setReload(value => value + 1)}>重试读取记录</button></div>}
       {error && <p className="ops-error" role="alert">{error}</p>}
       {notice && <p className="ops-success" role="status">{notice}</p>}
-      <section className="ops-section" aria-label="运营参数草稿">
-        <div className="ops-section-heading"><div><h3>1. 建立月度运营草稿</h3><p className="ops-muted">空白表示数据待取得；确认没有的项目请明确填 0。</p></div><div className="ops-toolbar"><button type="button" className="ops-button" disabled={!!busy} onClick={() => { updateDraft(() => demoInput()); setMultipliers(['0.7', '1', '1.3']); setNotice('已载入纯演示参数。所有数值均为假设，按程序公式核算。') }}>载入演示参数</button><button type="button" className="ops-button" disabled={!!busy} onClick={() => updateDraft(() => blankInput())}>清空为新草稿</button></div></div>
+      <details className="ops-demo-parameters" open={parametersOpen} onToggle={event => setParametersOpen(event.currentTarget.open)}><summary>{completeDemo ? "已填满的月度运营草稿 · 展开查看或调整" : "月度运营参数"}</summary><section className="ops-section" aria-label="运营参数草稿">
+        <div className="ops-section-heading"><div><h3>1. 建立月度运营草稿</h3><p className="ops-muted">{completeDemo ? "设施、服务、现金与范围参数已完整构造；每个数字记录生成依据。" : "空白表示数据待取得；确认没有的项目请明确填 0。"}</p></div><div className="ops-toolbar"><button type="button" className="ops-button" disabled={!!busy} onClick={() => { updateDraft(() => completeDemo ? structuredClone(completeDemo.operations) : demoInput()); setMultipliers(completeDemo ? ['0.8', '1', '1.2'] : ['0.7', '1', '1.3']); setNotice('已载入纯演示参数。所有数值均为假设，按程序公式核算。') }}>{completeDemo ? "恢复完整模拟参数" : "载入演示参数"}</button>{!completeDemo && <button type="button" className="ops-button" disabled={!!busy} onClick={() => updateDraft(() => blankInput())}>清空为新草稿</button>}</div></div>
         <fieldset disabled={!!busy} className="ops-feedback-form"><legend className="sr-only">运营参数</legend>
           <div className="ops-form-grid">
             <label className="ops-field">设施标识<input aria-label="设施标识" maxLength={100} value={draft.facility_id} placeholder="用于匹配同一设施的后续台账" onChange={event => updateDraft(value => ({ ...value, facility_id: event.target.value }))} /></label>
@@ -457,14 +468,14 @@ export default function CommunityOperationsPanel({ project }: { project: Project
           <AnalysisBoundsEditor input={draft} onChange={updateDraft} />
         </fieldset>
       </section>
-      <section className="ops-section" aria-label="运营情景比较"><h3>2. 比较需求变化后的运营结果</h3><p className="ops-muted">倍率是手动情景设定，默认 0.7 / 1 / 1.3 仅用于演示，需求量四舍五入为整数人次。除基准 1 倍情景外，去重人数保持待补充。</p>
+      </details><section className="ops-section" aria-label="运营情景比较"><h3>2. 比较需求变化后的运营结果</h3><p className="ops-muted">{completeDemo ? "完整模拟：需求倍率0.8 / 1 / 1.2；容量核算后的服务人次÷5.433333次/人/月推算去重人数，并按1500人封顶。" : "倍率是手动情景设定，默认 0.7 / 1 / 1.3 仅用于演示，需求量四舍五入为整数人次。除基准 1 倍情景外，去重人数保持待补充。"}</p>
         <div className="ops-presets">{['保守', '基准', '积极'].map((label, index) => <label className="ops-field" key={label}>{label}需求倍率<input aria-label={`${label}需求倍率`} type="number" min="0" step="0.1" disabled={!!busy} value={multipliers[index]} onChange={event => { setMultipliers(values => values.map((value, position) => position === index ? event.target.value : value)); setPreviews([]) }} /></label>)}</div>
         <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy} onClick={() => void previewAll()}>{busy === 'preview' ? '正在计算三个情景…' : '计算三种情景'}</button></div>
         <div className="ops-preview-grid">{previews.map((preview, index) => <article className="ops-result-card" key={preview.label} aria-label={`${preview.label}情景结果`}><div className="ops-section-heading"><h4>{preview.label}</h4><span className="ops-badge">情景预测 · {preview.input.period}</span></div>
-          {preview.result ? <><Metrics result={preview.result} /><ScientificResults result={preview.result} /><ResultDetails result={preview.result} /><div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy || !!preview.savedId} onClick={() => void saveSnapshot(preview, index)}>{preview.savedId ? '已冻结保存' : busy === `save:${index}` ? '正在保存…' : `冻结保存${preview.label}情景`}</button></div></> : <><p className="ops-error" role="alert">{preview.error}</p><button type="button" className="ops-button" disabled={!!busy} onClick={() => void run(`retry:${index}`, async (signal, current) => { const result = await api<OperationsResult>(`${base}/preview`, { input: preview.input }, signal); if (current()) setPreviews(values => values.map((value, position) => position === index ? { ...value, result, error: '' } : value)) })}>重试{preview.label}情景</button></>}
+          {preview.result ? <><Metrics result={preview.result} /><ScientificResults result={preview.result} complete={!!completeDemo} /><ResultDetails result={preview.result} />{!completeDemo && <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy || !!preview.savedId} onClick={() => void saveSnapshot(preview, index)}>{preview.savedId ? '已冻结保存' : busy === `save:${index}` ? '正在保存…' : `冻结保存${preview.label}情景`}</button></div>}</> : <><p className="ops-error" role="alert">{preview.error}</p><button type="button" className="ops-button" disabled={!!busy} onClick={() => void run(`retry:${index}`, async (signal, current) => { const result = await api<OperationsResult>(`${base}/preview`, { input: preview.input }, signal); if (current()) setPreviews(values => values.map((value, position) => position === index ? { ...value, result, error: '' } : value)) })}>重试{preview.label}情景</button></>}
         </article>)}</div>
       </section>
-      <section className="ops-section" aria-label="已冻结的运营情景"><div className="ops-section-heading"><h3>3. 已冻结的运营情景</h3><button type="button" className="ops-button" disabled={!!busy || loaded.loading} onClick={() => setReload(value => value + 1)}>刷新已保存记录</button></div>
+      {!completeDemo && <><section className="ops-section" aria-label="已冻结的运营情景"><div className="ops-section-heading"><h3>3. 已冻结的运营情景</h3><button type="button" className="ops-button" disabled={!!busy || loaded.loading} onClick={() => setReload(value => value + 1)}>刷新已保存记录</button></div>
         {!workspace.scenarios.length && !loaded.loading && <p className="ops-muted">尚未保存情景。计算后选择要保留的预测，作为日后台账比较的起点。</p>}
         <div className="ops-history-list">{workspace.scenarios.map(snapshot => <article className="ops-snapshot" key={snapshot.id} aria-label={`已冻结：${snapshot.input.name}`}><div className="ops-section-heading"><div><h4>{snapshot.input.name}</h4><p>{snapshot.input.facility_name} · {snapshot.input.period}</p><small className="ops-muted">保存于 {new Date(snapshot.created_at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })} · 依据版本 {snapshot.context_version}</small></div><span className="ops-badge">已冻结</span></div>
           {snapshot.context_version !== project.context_version && <p className="ops-notice">项目依据已更新。此快照保留版本 {snapshot.context_version} 的预测，当前项目为版本 {project.context_version}。</p>}
@@ -495,7 +506,7 @@ export default function CommunityOperationsPanel({ project }: { project: Project
             {observation && <p className="ops-muted">核对记录：{observation.input.note}</p>}
           </article>
         })}
-      </section>
+      </section></>}
     </div>}
   </details>
 }
