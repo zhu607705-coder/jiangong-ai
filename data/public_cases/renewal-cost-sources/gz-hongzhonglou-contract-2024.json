@@ -1,0 +1,17 @@
+{
+  "id": "gz-hongzhonglou-contract-2024",
+  "title": "夏港街2024年鸿中楼老旧小区微改造项目合同公开信息",
+  "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+  "requested_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+  "final_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+  "province": "广东",
+  "raw_path": "data/public_cases/renewal-cost-sources/gz-hongzhonglou-contract-2024.html",
+  "text_path": "data/public_cases/renewal-cost-sources/gz-hongzhonglou-contract-2024.txt",
+  "raw_format": "html",
+  "http_status": 200,
+  "fetched_at": "2026-10-13T07:36:18.523136+00:00",
+  "raw_sha256": "cbc78523e23547dcd6b5c31a5d1d84e4821390c27cad1b16cf9460d60fb0f48a",
+  "text_sha256": "e4959ac4ccdcdbd975f236477d700da6a371aadade3a32820283e1555d256896",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "published_at": "2024-10-11"
+}

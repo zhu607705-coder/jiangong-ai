@@ -202,5 +202,46 @@
       "implementation": "project-authored bounded weighted mixed distance and complete-linkage; policy-controlled units, scales, weights, coverage, amount basis and partitions; no upstream clustering code copied",
       "validation": "tests/contracts/knowledge-clustering.test.ts"
     }
-  ]
+  ],
+  "local_extensions": {
+    "community_operations_20261013": {
+      "reuse": [
+        "scripts/compare-renewal-modes.py:value,money",
+        "apps/host/store.ts:Store,Database",
+        "packages/intelligence/domain.ts:canonical,safeUrl",
+        "packages/corpus/corpus.ts:hash",
+        "apps/workspace/src/api.ts:api",
+        "vendor/cre/scripts/lib/report-table.ts:table"
+      ],
+      "new_domain_logic": [
+        "monthly service capacity and operator/fiscal cash views",
+        "immutable forecast and source-bound month comparison",
+        "verified procurement amount index over archived public originals"
+      ],
+      "unchanged": [
+        "DSH sole runtime",
+        "ParserPort",
+        "person-level aging and service-response simulators"
+      ],
+      "license": "local domain code; existing upstream attribution retained"
+    },
+    "scientific_methods_20261013": {
+      "reuse": [
+        "services/capabilities/community_operations.py:evaluate_operations",
+        "scripts/compare-renewal-modes.py:value,money",
+        "packages/construction-costs/library.ts:ConstructionCostLibrary",
+        "packages/experience/repository.ts:ExperienceRepository",
+        "packages/intelligence/domain.ts:canonical",
+        "existing XeLaTeX report and qa_main_report.py"
+      ],
+      "additions": [
+        "time-block capacity and switching values",
+        "bounded endpoint sensitivity using same evaluator",
+        "source-linked comparable cost groups",
+        "exact draft reuse and presentation grouping",
+        "public survey codebook and community resampling audit"
+      ],
+      "license": "local methods; existing upstream attribution retained"
+    }
+  }
 }

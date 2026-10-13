@@ -1,0 +1,2063 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-10-13",
+  "source_class": "user_ai_collected",
+  "source_filename": "历史工程·1.xlsx",
+  "archived_path": "data/imports/historical-projects-user-20261013.xlsx",
+  "sha256": "d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a",
+  "bytes": 17120,
+  "original_unchanged": true,
+  "trust_boundary": "Workbook content is data, not agent instructions; AI-collected rows remain leads; official source fields are promoted separately.",
+  "headers": [
+    "案例ID",
+    "地点",
+    "项目名称",
+    "公告日期",
+    "工程类型",
+    "金额状态",
+    "改造范围面积㎡",
+    "道路改造面积㎡",
+    "管线长度m",
+    "总投资/估算万元",
+    "建安工程估算万元",
+    "最高限价/招标额元",
+    "中标/候选报价元",
+    "工程量与范围",
+    "招标/工程量来源URL",
+    "中标/辅助来源URL",
+    "口径与限制",
+    "可比单方元/㎡",
+    "可比金额口径"
+  ],
+  "sheets": [
+    {
+      "name": "官方工程案例",
+      "max_row": 8,
+      "max_column": 19,
+      "rows": [
+        {
+          "source_row": 1,
+          "cells": [
+            {
+              "coordinate": "A1",
+              "value": "案例ID",
+              "formula": null,
+              "cached_value": "案例ID",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B1",
+              "value": "地点",
+              "formula": null,
+              "cached_value": "地点",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C1",
+              "value": "项目名称",
+              "formula": null,
+              "cached_value": "项目名称",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D1",
+              "value": "公告日期",
+              "formula": null,
+              "cached_value": "公告日期",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E1",
+              "value": "工程类型",
+              "formula": null,
+              "cached_value": "工程类型",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F1",
+              "value": "金额状态",
+              "formula": null,
+              "cached_value": "金额状态",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G1",
+              "value": "改造范围面积㎡",
+              "formula": null,
+              "cached_value": "改造范围面积㎡",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "H1",
+              "value": "道路改造面积㎡",
+              "formula": null,
+              "cached_value": "道路改造面积㎡",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "I1",
+              "value": "管线长度m",
+              "formula": null,
+              "cached_value": "管线长度m",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "J1",
+              "value": "总投资/估算万元",
+              "formula": null,
+              "cached_value": "总投资/估算万元",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "K1",
+              "value": "建安工程估算万元",
+              "formula": null,
+              "cached_value": "建安工程估算万元",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "L1",
+              "value": "最高限价/招标额元",
+              "formula": null,
+              "cached_value": "最高限价/招标额元",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "M1",
+              "value": "中标/候选报价元",
+              "formula": null,
+              "cached_value": "中标/候选报价元",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "N1",
+              "value": "工程量与范围",
+              "formula": null,
+              "cached_value": "工程量与范围",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O1",
+              "value": "招标/工程量来源URL",
+              "formula": null,
+              "cached_value": "招标/工程量来源URL",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P1",
+              "value": "中标/辅助来源URL",
+              "formula": null,
+              "cached_value": "中标/辅助来源URL",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "Q1",
+              "value": "口径与限制",
+              "formula": null,
+              "cached_value": "口径与限制",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R1",
+              "value": "可比单方元/㎡",
+              "formula": null,
+              "cached_value": "可比单方元/㎡",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "S1",
+              "value": "可比金额口径",
+              "formula": null,
+              "cached_value": "可比金额口径",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 2,
+          "cells": [
+            {
+              "coordinate": "A2",
+              "value": "ZJ-001",
+              "formula": null,
+              "cached_value": "ZJ-001",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B2",
+              "value": "丽水·遂昌",
+              "formula": null,
+              "cached_value": "丽水·遂昌",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C2",
+              "value": "妙高街道城镇老旧小区改造（一期）腾龙一期区块",
+              "formula": null,
+              "cached_value": "妙高街道城镇老旧小区改造（一期）腾龙一期区块",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D2",
+              "value": "2026-08-26",
+              "formula": null,
+              "cached_value": "2026-08-26",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E2",
+              "value": "道路+排水+绿化",
+              "formula": null,
+              "cached_value": "道路+排水+绿化",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F2",
+              "value": "正式中标",
+              "formula": null,
+              "cached_value": "正式中标",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G2",
+              "value": 92815,
+              "formula": null,
+              "cached_value": 92815,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H2",
+              "value": 32545,
+              "formula": null,
+              "cached_value": 32545,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I2",
+              "value": 11006,
+              "formula": null,
+              "cached_value": 11006,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J2",
+              "value": 2762.92,
+              "formula": null,
+              "cached_value": 2762.92,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K2",
+              "value": 2065.64,
+              "formula": null,
+              "cached_value": 2065.64,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L2",
+              "value": 18997007,
+              "formula": null,
+              "cached_value": 18997007,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M2",
+              "value": 17333131,
+              "formula": null,
+              "cached_value": 17333131,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N2",
+              "value": "改造范围约92815㎡；道路32545㎡；DN315/400/500/630主管约11006m；含检查井、化粪池、绿化等",
+              "formula": null,
+              "cached_value": "改造范围约92815㎡；道路32545㎡；DN315/400/500/630主管约11006m；含检查井、化粪池、绿化等",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O2",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260729/b5062fd4-7696-406b-86ae-1ee009540d67.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260729/b5062fd4-7696-406b-86ae-1ee009540d67.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P2",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "Q2",
+              "value": "中标单方金额分母为全部改造范围面积，并非道路工程单价",
+              "formula": null,
+              "cached_value": "中标单方金额分母为全部改造范围面积，并非道路工程单价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R2",
+              "value": null,
+              "formula": "=IF(G2=\"\",\"\",IF(AND(F2=\"正式中标\",M2<>\"\"),M2/G2,IF(L2<>\"\",L2/G2,\"\")))",
+              "cached_value": 186.74924311803,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S2",
+              "value": null,
+              "formula": "=IF(R2=\"\",\"不可折算\",IF(F2=\"正式中标\",\"中标价÷改造范围\",IF(L2<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "中标价÷改造范围",
+              "data_type": "f"
+            }
+          ]
+        },
+        {
+          "source_row": 3,
+          "cells": [
+            {
+              "coordinate": "A3",
+              "value": "ZJ-002",
+              "formula": null,
+              "cached_value": "ZJ-002",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B3",
+              "value": "丽水·莲都",
+              "formula": null,
+              "cached_value": "丽水·莲都",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C3",
+              "value": "东升北区1—3栋、南区13栋及周边老旧小区改造",
+              "formula": null,
+              "cached_value": "东升北区1—3栋、南区13栋及周边老旧小区改造",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D3",
+              "value": "2025-12-30",
+              "formula": null,
+              "cached_value": "2025-12-30",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E3",
+              "value": "道路+管网+公厕+立面+风雨长廊",
+              "formula": null,
+              "cached_value": "道路+管网+公厕+立面+风雨长廊",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F3",
+              "value": "正式中标",
+              "formula": null,
+              "cached_value": "正式中标",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G3",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H3",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I3",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J3",
+              "value": 2699.25,
+              "formula": null,
+              "cached_value": 2699.25,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K3",
+              "value": 2353.59,
+              "formula": null,
+              "cached_value": 2353.59,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L3",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M3",
+              "value": 15012681,
+              "formula": null,
+              "cached_value": 15012681,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N3",
+              "value": "道路改造、地下管网、公厕、立面、车行道、风雨长廊等",
+              "formula": null,
+              "cached_value": "道路改造、地下管网、公厕、立面、车行道、风雨长廊等",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O3",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20251205/8f5c5ffb-6738-4411-bf65-c8a3696f9e1d.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20251205/8f5c5ffb-6738-4411-bf65-c8a3696f9e1d.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P3",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20251230/ae7f6484-bbd6-4db7-9b83-412b3e33d580.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20251230/ae7f6484-bbd6-4db7-9b83-412b3e33d580.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "Q3",
+              "value": "缺正式改造面积，暂不能折算单方",
+              "formula": null,
+              "cached_value": "缺正式改造面积，暂不能折算单方",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R3",
+              "value": null,
+              "formula": "=IF(G3=\"\",\"\",IF(AND(F3=\"正式中标\",M3<>\"\"),M3/G3,IF(L3<>\"\",L3/G3,\"\")))",
+              "cached_value": null,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S3",
+              "value": null,
+              "formula": "=IF(R3=\"\",\"不可折算\",IF(F3=\"正式中标\",\"中标价÷改造范围\",IF(L3<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "不可折算",
+              "data_type": "f"
+            }
+          ]
+        },
+        {
+          "source_row": 4,
+          "cells": [
+            {
+              "coordinate": "A4",
+              "value": "ZJ-003",
+              "formula": null,
+              "cached_value": "ZJ-003",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B4",
+              "value": "丽水·莲都",
+              "formula": null,
+              "cached_value": "丽水·莲都",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C4",
+              "value": "东升南区及周边老旧小区改造",
+              "formula": null,
+              "cached_value": "东升南区及周边老旧小区改造",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D4",
+              "value": "2025-09-05",
+              "formula": null,
+              "cached_value": "2025-09-05",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E4",
+              "value": "道路+雨污水+给水+泵站",
+              "formula": null,
+              "cached_value": "道路+雨污水+给水+泵站",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F4",
+              "value": "招标公告工程费",
+              "formula": null,
+              "cached_value": "招标公告工程费",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G4",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H4",
+              "value": 13477.831,
+              "formula": null,
+              "cached_value": 13477.831,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I4",
+              "value": 4138,
+              "formula": null,
+              "cached_value": 4138,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J4",
+              "value": 1200,
+              "formula": null,
+              "cached_value": 1200,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K4",
+              "value": 831.44,
+              "formula": null,
+              "cached_value": 831.44,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L4",
+              "value": 8314400,
+              "formula": null,
+              "cached_value": 8314400,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M4",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N4",
+              "value": "道路修复约13477.831㎡；各类雨污废水及给水管道合计4138m；泵站4座",
+              "formula": null,
+              "cached_value": "道路修复约13477.831㎡；各类雨污废水及给水管道合计4138m；泵站4座",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O4",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20250905/6331073c-1e49-45db-bc52-0e4ce18c18cc.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20250905/6331073c-1e49-45db-bc52-0e4ce18c18cc.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P4",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "Q4",
+              "value": "831.44万元为暂定工程费/最高限价口径，非中标价；道路面积不是整个改造范围面积",
+              "formula": null,
+              "cached_value": "831.44万元为暂定工程费/最高限价口径，非中标价；道路面积不是整个改造范围面积",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R4",
+              "value": null,
+              "formula": "=IF(G4=\"\",\"\",IF(AND(F4=\"正式中标\",M4<>\"\"),M4/G4,IF(L4<>\"\",L4/G4,\"\")))",
+              "cached_value": null,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S4",
+              "value": null,
+              "formula": "=IF(R4=\"\",\"不可折算\",IF(F4=\"正式中标\",\"中标价÷改造范围\",IF(L4<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "不可折算",
+              "data_type": "f"
+            }
+          ]
+        },
+        {
+          "source_row": 5,
+          "cells": [
+            {
+              "coordinate": "A5",
+              "value": "ZJ-004",
+              "formula": null,
+              "cached_value": "ZJ-004",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B5",
+              "value": "丽水·遂昌",
+              "formula": null,
+              "cached_value": "丽水·遂昌",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C5",
+              "value": "妙高街道城镇老旧小区改造（一期）叶坦区块",
+              "formula": null,
+              "cached_value": "妙高街道城镇老旧小区改造（一期）叶坦区块",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D5",
+              "value": "2026-06-30",
+              "formula": null,
+              "cached_value": "2026-06-30",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E5",
+              "value": "道路+排水+附属设施",
+              "formula": null,
+              "cached_value": "道路+排水+附属设施",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F5",
+              "value": "招标建安控制价",
+              "formula": null,
+              "cached_value": "招标建安控制价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G5",
+              "value": 53021,
+              "formula": null,
+              "cached_value": 53021,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H5",
+              "value": 14408,
+              "formula": null,
+              "cached_value": 14408,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I5",
+              "value": 9092,
+              "formula": null,
+              "cached_value": 9092,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J5",
+              "value": 1432.27,
+              "formula": null,
+              "cached_value": 1432.27,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K5",
+              "value": 906.8,
+              "formula": null,
+              "cached_value": 906.8,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L5",
+              "value": 7732717,
+              "formula": null,
+              "cached_value": 7732717,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M5",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N5",
+              "value": "范围53021㎡；道路改造约14408㎡（含台阶）；主管5220m、出户管及立管3872m；护栏、围墙、挡墙等",
+              "formula": null,
+              "cached_value": "范围53021㎡；道路改造约14408㎡（含台阶）；主管5220m、出户管及立管3872m；护栏、围墙、挡墙等",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O5",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P5",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "Q5",
+              "value": "建安控制价773.2717万元，并非中标价",
+              "formula": null,
+              "cached_value": "建安控制价773.2717万元，并非中标价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R5",
+              "value": null,
+              "formula": "=IF(G5=\"\",\"\",IF(AND(F5=\"正式中标\",M5<>\"\"),M5/G5,IF(L5<>\"\",L5/G5,\"\")))",
+              "cached_value": 145.842534090266,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S5",
+              "value": null,
+              "formula": "=IF(R5=\"\",\"不可折算\",IF(F5=\"正式中标\",\"中标价÷改造范围\",IF(L5<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "招标限价÷改造范围",
+              "data_type": "f"
+            }
+          ]
+        },
+        {
+          "source_row": 6,
+          "cells": [
+            {
+              "coordinate": "A6",
+              "value": "ZJ-005",
+              "formula": null,
+              "cached_value": "ZJ-005",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B6",
+              "value": "丽水·遂昌",
+              "formula": null,
+              "cached_value": "丽水·遂昌",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C6",
+              "value": "妙高街道城镇老旧小区改造（一期）渡船头区块",
+              "formula": null,
+              "cached_value": "妙高街道城镇老旧小区改造（一期）渡船头区块",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D6",
+              "value": "2025-11-26",
+              "formula": null,
+              "cached_value": "2025-11-26",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E6",
+              "value": "排水+道路+路灯+监控",
+              "formula": null,
+              "cached_value": "排水+道路+路灯+监控",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F6",
+              "value": "招标建安控制价",
+              "formula": null,
+              "cached_value": "招标建安控制价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G6",
+              "value": 63381,
+              "formula": null,
+              "cached_value": 63381,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H6",
+              "value": 19490,
+              "formula": null,
+              "cached_value": 19490,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I6",
+              "value": 6230,
+              "formula": null,
+              "cached_value": 6230,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J6",
+              "value": 1512.0832,
+              "formula": null,
+              "cached_value": 1512.0832,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K6",
+              "value": 1153.3164,
+              "formula": null,
+              "cached_value": 1153.3164,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L6",
+              "value": 9667936,
+              "formula": null,
+              "cached_value": 9667936,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M6",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N6",
+              "value": "改造范围约63381㎡；道路约19490㎡；雨污管约6230m；含路灯与监控",
+              "formula": null,
+              "cached_value": "改造范围约63381㎡；道路约19490㎡；雨污管约6230m；含路灯与监控",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O6",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P6",
+              "value": "https://www.zhuangxiuzhaobiao.cn/news-7ad9a6ab0ab301407926e4d7aa5e5c9c/",
+              "formula": null,
+              "cached_value": "https://www.zhuangxiuzhaobiao.cn/news-7ad9a6ab0ab301407926e4d7aa5e5c9c/",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "Q6",
+              "value": "招标控制价来自官方补充公告；面积工程量来自招标公告转载，仍待对应原始公告交叉核实",
+              "formula": null,
+              "cached_value": "招标控制价来自官方补充公告；面积工程量来自招标公告转载，仍待对应原始公告交叉核实",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R6",
+              "value": null,
+              "formula": "=IF(G6=\"\",\"\",IF(AND(F6=\"正式中标\",M6<>\"\"),M6/G6,IF(L6<>\"\",L6/G6,\"\")))",
+              "cached_value": 152.536817027185,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S6",
+              "value": null,
+              "formula": "=IF(R6=\"\",\"不可折算\",IF(F6=\"正式中标\",\"中标价÷改造范围\",IF(L6<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "招标限价÷改造范围",
+              "data_type": "f"
+            }
+          ]
+        },
+        {
+          "source_row": 7,
+          "cells": [
+            {
+              "coordinate": "A7",
+              "value": "ZJ-006",
+              "formula": null,
+              "cached_value": "ZJ-006",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B7",
+              "value": "丽水·莲都",
+              "formula": null,
+              "cached_value": "丽水·莲都",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C7",
+              "value": "金山新村及周边老旧小区改造",
+              "formula": null,
+              "cached_value": "金山新村及周边老旧小区改造",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D7",
+              "value": "2023-05-25",
+              "formula": null,
+              "cached_value": "2023-05-25",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E7",
+              "value": "道路+排水+给水+绿化+路灯",
+              "formula": null,
+              "cached_value": "道路+排水+给水+绿化+路灯",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F7",
+              "value": "最高投标限价",
+              "formula": null,
+              "cached_value": "最高投标限价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G7",
+              "value": 35684,
+              "formula": null,
+              "cached_value": 35684,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H7",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I7",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J7",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K7",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L7",
+              "value": 11005241,
+              "formula": null,
+              "cached_value": 11005241,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M7",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N7",
+              "value": "改造范围35684㎡，涉及18幢；道路、排水、给水、绿化等",
+              "formula": null,
+              "cached_value": "改造范围35684㎡，涉及18幢；道路、排水、给水、绿化等",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O7",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P7",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "Q7",
+              "value": "只确认最高投标限价；投标记录不可误作中标合同",
+              "formula": null,
+              "cached_value": "只确认最高投标限价；投标记录不可误作中标合同",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R7",
+              "value": null,
+              "formula": "=IF(G7=\"\",\"\",IF(AND(F7=\"正式中标\",M7<>\"\"),M7/G7,IF(L7<>\"\",L7/G7,\"\")))",
+              "cached_value": 308.40827821993,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S7",
+              "value": null,
+              "formula": "=IF(R7=\"\",\"不可折算\",IF(F7=\"正式中标\",\"中标价÷改造范围\",IF(L7<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "招标限价÷改造范围",
+              "data_type": "f"
+            }
+          ]
+        },
+        {
+          "source_row": 8,
+          "cells": [
+            {
+              "coordinate": "A8",
+              "value": "ZJ-007",
+              "formula": null,
+              "cached_value": "ZJ-007",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B8",
+              "value": "丽水·莲都",
+              "formula": null,
+              "cached_value": "丽水·莲都",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C8",
+              "value": "正达阳光城老旧小区改造",
+              "formula": null,
+              "cached_value": "正达阳光城老旧小区改造",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D8",
+              "value": "2025-09-12",
+              "formula": null,
+              "cached_value": "2025-09-12",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E8",
+              "value": "综合老旧小区改造",
+              "formula": null,
+              "cached_value": "综合老旧小区改造",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "F8",
+              "value": "中标候选人报价",
+              "formula": null,
+              "cached_value": "中标候选人报价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "G8",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "H8",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "I8",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "J8",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "K8",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "L8",
+              "value": null,
+              "formula": null,
+              "cached_value": null,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "M8",
+              "value": 14972288,
+              "formula": null,
+              "cached_value": 14972288,
+              "data_type": "n"
+            },
+            {
+              "coordinate": "N8",
+              "value": "公开候选人投标报价；拟包括道路平整、排水、交通、绿化及公共活动空间等",
+              "formula": null,
+              "cached_value": "公开候选人投标报价；拟包括道路平整、排水、交通、绿化及公共活动空间等",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "O8",
+              "value": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001007/20250912/a2634e00-a2f2-4967-bd0e-01c7305caf8e.html",
+              "formula": null,
+              "cached_value": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001007/20250912/a2634e00-a2f2-4967-bd0e-01c7305caf8e.html",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "P8",
+              "value": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web3675/site/attach/0/4119842bc4694ffe85516b05e491ad63.pdf",
+              "formula": null,
+              "cached_value": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web3675/site/attach/0/4119842bc4694ffe85516b05e491ad63.pdf",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "Q8",
+              "value": "计划表列示3000万元为实施项目投资计划，不能直接当成该标段总投资；1497.2288万元仅为预中标价。",
+              "formula": null,
+              "cached_value": "计划表列示3000万元为实施项目投资计划，不能直接当成该标段总投资；1497.2288万元仅为预中标价。",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "R8",
+              "value": null,
+              "formula": "=IF(G8=\"\",\"\",IF(AND(F8=\"正式中标\",M8<>\"\"),M8/G8,IF(L8<>\"\",L8/G8,\"\")))",
+              "cached_value": null,
+              "data_type": "f"
+            },
+            {
+              "coordinate": "S8",
+              "value": null,
+              "formula": "=IF(R8=\"\",\"不可折算\",IF(F8=\"正式中标\",\"中标价÷改造范围\",IF(L8<>\"\",\"招标限价÷改造范围\",\"不可折算\")))",
+              "cached_value": "不可折算",
+              "data_type": "f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "使用说明",
+      "max_row": 14,
+      "max_column": 2,
+      "rows": [
+        {
+          "source_row": 1,
+          "cells": [
+            {
+              "coordinate": "A1",
+              "value": "历史旧改工程造价库｜使用说明",
+              "formula": null,
+              "cached_value": "历史旧改工程造价库｜使用说明",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B1",
+              "value": "说明",
+              "formula": null,
+              "cached_value": "说明",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 2,
+          "cells": [
+            {
+              "coordinate": "A2",
+              "value": "数据截止",
+              "formula": null,
+              "cached_value": "数据截止",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B2",
+              "value": "截至2026-10-13；本表为初次公开检索样本，不代表浙江省全部项目",
+              "formula": null,
+              "cached_value": "截至2026-10-13；本表为初次公开检索样本，不代表浙江省全部项目",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 3,
+          "cells": [
+            {
+              "coordinate": "A3",
+              "value": "数据来源",
+              "formula": null,
+              "cached_value": "数据来源",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B3",
+              "value": "主要为浙江省地方公共资源交易中心原始公告；省交易平台统一门户需跳转地方原文。",
+              "formula": null,
+              "cached_value": "主要为浙江省地方公共资源交易中心原始公告；省交易平台统一门户需跳转地方原文。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 4,
+          "cells": [
+            {
+              "coordinate": "A4",
+              "value": "金额口径",
+              "formula": null,
+              "cached_value": "金额口径",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B4",
+              "value": "总投资、工程概算/建安估算、招标控制价、最终中标价、候选人报价分开。绝不能混用。",
+              "formula": null,
+              "cached_value": "总投资、工程概算/建安估算、招标控制价、最终中标价、候选人报价分开。绝不能混用。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 5,
+          "cells": [
+            {
+              "coordinate": "A5",
+              "value": "单方公式",
+              "formula": null,
+              "cached_value": "单方公式",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B5",
+              "value": "可比单方(元/㎡) = 正式中标总金额(元) ÷ 项目改造范围面积(㎡)；缺正式中标时只计算招标限价单方并标记。",
+              "formula": null,
+              "cached_value": "可比单方(元/㎡) = 正式中标总金额(元) ÷ 项目改造范围面积(㎡)；缺正式中标时只计算招标限价单方并标记。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 6,
+          "cells": [
+            {
+              "coordinate": "A6",
+              "value": "分母限制",
+              "formula": null,
+              "cached_value": "分母限制",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B6",
+              "value": "改造范围面积包含道路、绿化、排水等多项工程，不是建筑面积/屋面面积/道路实际施工面积。",
+              "formula": null,
+              "cached_value": "改造范围面积包含道路、绿化、排水等多项工程，不是建筑面积/屋面面积/道路实际施工面积。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 7,
+          "cells": [
+            {
+              "coordinate": "A7",
+              "value": "最有价值案例",
+              "formula": null,
+              "cached_value": "最有价值案例",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B7",
+              "value": "ZJ-001：腾龙一期同时具有改造范围、道路和管网等工程量，以及正式中标金额。",
+              "formula": null,
+              "cached_value": "ZJ-001：腾龙一期同时具有改造范围、道路和管网等工程量，以及正式中标金额。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 8,
+          "cells": [
+            {
+              "coordinate": "A8",
+              "value": "对C01的用途",
+              "formula": null,
+              "cached_value": "对C01的用途",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B8",
+              "value": "匹配道路、管网等工程类型，对项目总体费用做粗略合理性检验；不能当作管道或立面工程单位造价。",
+              "formula": null,
+              "cached_value": "匹配道路、管网等工程类型，对项目总体费用做粗略合理性检验；不能当作管道或立面工程单位造价。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 9,
+          "cells": [
+            {
+              "coordinate": "A9",
+              "value": "对C02的用途",
+              "formula": null,
+              "cached_value": "对C02的用途",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B9",
+              "value": "该批以道路/排水类为主，不能为加装电梯单台、无障碍点单点工程费提供直接报价；需另查专项标。",
+              "formula": null,
+              "cached_value": "该批以道路/排水类为主，不能为加装电梯单台、无障碍点单点工程费提供直接报价；需另查专项标。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 10,
+          "cells": [
+            {
+              "coordinate": "A10",
+              "value": "对C03的用途",
+              "formula": null,
+              "cached_value": "对C03的用途",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B10",
+              "value": "施工合同通常不含后续长期运维。年维保成本需另找物业/设施运维采购合同，不可由施工价直接推出。",
+              "formula": null,
+              "cached_value": "施工合同通常不含后续长期运维。年维保成本需另找物业/设施运维采购合同，不可由施工价直接推出。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 11,
+          "cells": [
+            {
+              "coordinate": "A11",
+              "value": "单方注意",
+              "formula": null,
+              "cached_value": "单方注意",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B11",
+              "value": "控制价单方和正式中标价单方不应直接混在一起求均值；需按状态筛选。",
+              "formula": null,
+              "cached_value": "控制价单方和正式中标价单方不应直接混在一起求均值；需按状态筛选。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 12,
+          "cells": [
+            {
+              "coordinate": "A12",
+              "value": "案例年份",
+              "formula": null,
+              "cached_value": "案例年份",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B12",
+              "value": "2023-2026报价跨年度，未来比较前需考虑价格时期、地区和工程范围差异。",
+              "formula": null,
+              "cached_value": "2023-2026报价跨年度，未来比较前需考虑价格时期、地区和工程范围差异。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 13,
+          "cells": [
+            {
+              "coordinate": "A13",
+              "value": "工程量清单",
+              "formula": null,
+              "cached_value": "工程量清单",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B13",
+              "value": "工程量清单附件可能需要进入地方交易平台2.0系统下载；目前没有逐项中标综合单价，不可虚构。",
+              "formula": null,
+              "cached_value": "工程量清单附件可能需要进入地方交易平台2.0系统下载；目前没有逐项中标综合单价，不可虚构。",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 14,
+          "cells": [
+            {
+              "coordinate": "A14",
+              "value": "样本重要性",
+              "formula": null,
+              "cached_value": "样本重要性",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B14",
+              "value": "所有具体项目来源URL在案例表O、P列，便于用户人工复核。",
+              "formula": null,
+              "cached_value": "所有具体项目来源URL在案例表O、P列，便于用户人工复核。",
+              "data_type": "s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "待补充清单",
+      "max_row": 7,
+      "max_column": 5,
+      "rows": [
+        {
+          "source_row": 1,
+          "cells": [
+            {
+              "coordinate": "A1",
+              "value": "后续检索方向",
+              "formula": null,
+              "cached_value": "后续检索方向",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B1",
+              "value": "希望提取的字段",
+              "formula": null,
+              "cached_value": "希望提取的字段",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C1",
+              "value": "检索关键词/线索",
+              "formula": null,
+              "cached_value": "检索关键词/线索",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D1",
+              "value": "优先级",
+              "formula": null,
+              "cached_value": "优先级",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E1",
+              "value": "完成状况",
+              "formula": null,
+              "cached_value": "完成状况",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 2,
+          "cells": [
+            {
+              "coordinate": "A2",
+              "value": "杭州：非拆建综合旧改施工中标及招标控制价",
+              "formula": null,
+              "cached_value": "杭州：非拆建综合旧改施工中标及招标控制价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B2",
+              "value": "面积、楼栋、合同额、道路管网分项",
+              "formula": null,
+              "cached_value": "面积、楼栋、合同额、道路管网分项",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C2",
+              "value": "桐庐县2026老旧小区综合改造提升；西文小区；米市巷街道",
+              "formula": null,
+              "cached_value": "桐庐县2026老旧小区综合改造提升；西文小区；米市巷街道",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D2",
+              "value": "最高",
+              "formula": null,
+              "cached_value": "最高",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E2",
+              "value": "浙江统一招投标平台第三方转载已有线索，正式公告待核",
+              "formula": null,
+              "cached_value": "浙江统一招投标平台第三方转载已有线索，正式公告待核",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 3,
+          "cells": [
+            {
+              "coordinate": "A3",
+              "value": "杭州：加装电梯专项施工",
+              "formula": null,
+              "cached_value": "杭州：加装电梯专项施工",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B3",
+              "value": "单台综合造价、台数、管线迁移、维护",
+              "formula": null,
+              "cached_value": "单台综合造价、台数、管线迁移、维护",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C3",
+              "value": "既有住宅加装电梯施工中标结果",
+              "formula": null,
+              "cached_value": "既有住宅加装电梯施工中标结果",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D3",
+              "value": "最高",
+              "formula": null,
+              "cached_value": "最高",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E3",
+              "value": "未检索到成体系的专项工程量清单",
+              "formula": null,
+              "cached_value": "未检索到成体系的专项工程量清单",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 4,
+          "cells": [
+            {
+              "coordinate": "A4",
+              "value": "浙江：雨污分流专项合同",
+              "formula": null,
+              "cached_value": "浙江：雨污分流专项合同",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B4",
+              "value": "长度、管径、施工价/清单综合单价",
+              "formula": null,
+              "cached_value": "长度、管径、施工价/清单综合单价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C4",
+              "value": "老旧小区 雨污分流 工程量清单 中标",
+              "formula": null,
+              "cached_value": "老旧小区 雨污分流 工程量清单 中标",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D4",
+              "value": "高",
+              "formula": null,
+              "cached_value": "高",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E4",
+              "value": "已有多条管网工程量，但分项价格缺",
+              "formula": null,
+              "cached_value": "已有多条管网工程量，但分项价格缺",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 5,
+          "cells": [
+            {
+              "coordinate": "A5",
+              "value": "浙江：屋面/立面修缮专项",
+              "formula": null,
+              "cached_value": "浙江：屋面/立面修缮专项",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B5",
+              "value": "屋面㎡、墙面㎡、工法、合同价",
+              "formula": null,
+              "cached_value": "屋面㎡、墙面㎡、工法、合同价",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C5",
+              "value": "老旧小区 屋面修缮 外立面改造 中标",
+              "formula": null,
+              "cached_value": "老旧小区 屋面修缮 外立面改造 中标",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D5",
+              "value": "高",
+              "formula": null,
+              "cached_value": "高",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E5",
+              "value": "缺少工程分项中标清单",
+              "formula": null,
+              "cached_value": "缺少工程分项中标清单",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 6,
+          "cells": [
+            {
+              "coordinate": "A6",
+              "value": "浙江：无障碍及公共空间专项",
+              "formula": null,
+              "cached_value": "浙江：无障碍及公共空间专项",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B6",
+              "value": "坡道、扶手、铺装、绿化数量和中标价格",
+              "formula": null,
+              "cached_value": "坡道、扶手、铺装、绿化数量和中标价格",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C6",
+              "value": "旧改 无障碍 适老化 环境提升 中标",
+              "formula": null,
+              "cached_value": "旧改 无障碍 适老化 环境提升 中标",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D6",
+              "value": "中",
+              "formula": null,
+              "cached_value": "中",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E6",
+              "value": "综合项目可作为范围级对比，不能替代工程量清单",
+              "formula": null,
+              "cached_value": "综合项目可作为范围级对比，不能替代工程量清单",
+              "data_type": "s"
+            }
+          ]
+        },
+        {
+          "source_row": 7,
+          "cells": [
+            {
+              "coordinate": "A7",
+              "value": "物业/公共设施增量运营",
+              "formula": null,
+              "cached_value": "物业/公共设施增量运营",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "B7",
+              "value": "维保费、设施服务面积、服务范围",
+              "formula": null,
+              "cached_value": "维保费、设施服务面积、服务范围",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "C7",
+              "value": "电梯维保 招标结果 养老服务场所运维",
+              "formula": null,
+              "cached_value": "电梯维保 招标结果 养老服务场所运维",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "D7",
+              "value": "高",
+              "formula": null,
+              "cached_value": "高",
+              "data_type": "s"
+            },
+            {
+              "coordinate": "E7",
+              "value": "建设交易记录通常没有10年运维费用",
+              "formula": null,
+              "cached_value": "建设交易记录通常没有10年运维费用",
+              "data_type": "s"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "lead_rows": [
+    {
+      "case_id": "ZJ-001",
+      "source_sheet": "官方工程案例",
+      "source_row": 2,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-001",
+        "B": "丽水·遂昌",
+        "C": "妙高街道城镇老旧小区改造（一期）腾龙一期区块",
+        "D": "2026-08-26",
+        "E": "道路+排水+绿化",
+        "F": "正式中标",
+        "G": 92815,
+        "H": 32545,
+        "I": 11006,
+        "J": 2762.92,
+        "K": 2065.64,
+        "L": 18997007,
+        "M": 17333131,
+        "N": "改造范围约92815㎡；道路32545㎡；DN315/400/500/630主管约11006m；含检查井、化粪池、绿化等",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260729/b5062fd4-7696-406b-86ae-1ee009540d67.html",
+        "P": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+        "Q": "中标单方金额分母为全部改造范围面积，并非道路工程单价",
+        "R": "=IF(G2=\"\",\"\",IF(AND(F2=\"正式中标\",M2<>\"\"),M2/G2,IF(L2<>\"\",L2/G2,\"\")))",
+        "S": "=IF(R2=\"\",\"不可折算\",IF(F2=\"正式中标\",\"中标价÷改造范围\",IF(L2<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": 186.74924311803048,
+        "independent_S": "中标价÷改造范围",
+        "numerator_stage_from_workbook": "winning_bid",
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    },
+    {
+      "case_id": "ZJ-002",
+      "source_sheet": "官方工程案例",
+      "source_row": 3,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-002",
+        "B": "丽水·莲都",
+        "C": "东升北区1—3栋、南区13栋及周边老旧小区改造",
+        "D": "2025-12-30",
+        "E": "道路+管网+公厕+立面+风雨长廊",
+        "F": "正式中标",
+        "G": null,
+        "H": null,
+        "I": null,
+        "J": 2699.25,
+        "K": 2353.59,
+        "L": null,
+        "M": 15012681,
+        "N": "道路改造、地下管网、公厕、立面、车行道、风雨长廊等",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20251205/8f5c5ffb-6738-4411-bf65-c8a3696f9e1d.html",
+        "P": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20251230/ae7f6484-bbd6-4db7-9b83-412b3e33d580.html",
+        "Q": "缺正式改造面积，暂不能折算单方",
+        "R": "=IF(G3=\"\",\"\",IF(AND(F3=\"正式中标\",M3<>\"\"),M3/G3,IF(L3<>\"\",L3/G3,\"\")))",
+        "S": "=IF(R3=\"\",\"不可折算\",IF(F3=\"正式中标\",\"中标价÷改造范围\",IF(L3<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": null,
+        "independent_S": "不可折算",
+        "numerator_stage_from_workbook": "winning_bid",
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    },
+    {
+      "case_id": "ZJ-003",
+      "source_sheet": "官方工程案例",
+      "source_row": 4,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-003",
+        "B": "丽水·莲都",
+        "C": "东升南区及周边老旧小区改造",
+        "D": "2025-09-05",
+        "E": "道路+雨污水+给水+泵站",
+        "F": "招标公告工程费",
+        "G": null,
+        "H": 13477.831,
+        "I": 4138,
+        "J": 1200,
+        "K": 831.44,
+        "L": 8314400,
+        "M": null,
+        "N": "道路修复约13477.831㎡；各类雨污废水及给水管道合计4138m；泵站4座",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20250905/6331073c-1e49-45db-bc52-0e4ce18c18cc.html",
+        "P": null,
+        "Q": "831.44万元为暂定工程费/最高限价口径，非中标价；道路面积不是整个改造范围面积",
+        "R": "=IF(G4=\"\",\"\",IF(AND(F4=\"正式中标\",M4<>\"\"),M4/G4,IF(L4<>\"\",L4/G4,\"\")))",
+        "S": "=IF(R4=\"\",\"不可折算\",IF(F4=\"正式中标\",\"中标价÷改造范围\",IF(L4<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": null,
+        "independent_S": "不可折算",
+        "numerator_stage_from_workbook": "tender_ceiling",
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    },
+    {
+      "case_id": "ZJ-004",
+      "source_sheet": "官方工程案例",
+      "source_row": 5,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-004",
+        "B": "丽水·遂昌",
+        "C": "妙高街道城镇老旧小区改造（一期）叶坦区块",
+        "D": "2026-06-30",
+        "E": "道路+排水+附属设施",
+        "F": "招标建安控制价",
+        "G": 53021,
+        "H": 14408,
+        "I": 9092,
+        "J": 1432.27,
+        "K": 906.8,
+        "L": 7732717,
+        "M": null,
+        "N": "范围53021㎡；道路改造约14408㎡（含台阶）；主管5220m、出户管及立管3872m；护栏、围墙、挡墙等",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+        "P": null,
+        "Q": "建安控制价773.2717万元，并非中标价",
+        "R": "=IF(G5=\"\",\"\",IF(AND(F5=\"正式中标\",M5<>\"\"),M5/G5,IF(L5<>\"\",L5/G5,\"\")))",
+        "S": "=IF(R5=\"\",\"不可折算\",IF(F5=\"正式中标\",\"中标价÷改造范围\",IF(L5<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": 145.84253409026613,
+        "independent_S": "招标限价÷改造范围",
+        "numerator_stage_from_workbook": "tender_ceiling",
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    },
+    {
+      "case_id": "ZJ-005",
+      "source_sheet": "官方工程案例",
+      "source_row": 6,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-005",
+        "B": "丽水·遂昌",
+        "C": "妙高街道城镇老旧小区改造（一期）渡船头区块",
+        "D": "2025-11-26",
+        "E": "排水+道路+路灯+监控",
+        "F": "招标建安控制价",
+        "G": 63381,
+        "H": 19490,
+        "I": 6230,
+        "J": 1512.0832,
+        "K": 1153.3164,
+        "L": 9667936,
+        "M": null,
+        "N": "改造范围约63381㎡；道路约19490㎡；雨污管约6230m；含路灯与监控",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+        "P": "https://www.zhuangxiuzhaobiao.cn/news-7ad9a6ab0ab301407926e4d7aa5e5c9c/",
+        "Q": "招标控制价来自官方补充公告；面积工程量来自招标公告转载，仍待对应原始公告交叉核实",
+        "R": "=IF(G6=\"\",\"\",IF(AND(F6=\"正式中标\",M6<>\"\"),M6/G6,IF(L6<>\"\",L6/G6,\"\")))",
+        "S": "=IF(R6=\"\",\"不可折算\",IF(F6=\"正式中标\",\"中标价÷改造范围\",IF(L6<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": 152.5368170271848,
+        "independent_S": "招标限价÷改造范围",
+        "numerator_stage_from_workbook": "tender_ceiling",
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    },
+    {
+      "case_id": "ZJ-006",
+      "source_sheet": "官方工程案例",
+      "source_row": 7,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-006",
+        "B": "丽水·莲都",
+        "C": "金山新村及周边老旧小区改造",
+        "D": "2023-05-25",
+        "E": "道路+排水+给水+绿化+路灯",
+        "F": "最高投标限价",
+        "G": 35684,
+        "H": null,
+        "I": null,
+        "J": null,
+        "K": null,
+        "L": 11005241,
+        "M": null,
+        "N": "改造范围35684㎡，涉及18幢；道路、排水、给水、绿化等",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+        "P": null,
+        "Q": "只确认最高投标限价；投标记录不可误作中标合同",
+        "R": "=IF(G7=\"\",\"\",IF(AND(F7=\"正式中标\",M7<>\"\"),M7/G7,IF(L7<>\"\",L7/G7,\"\")))",
+        "S": "=IF(R7=\"\",\"不可折算\",IF(F7=\"正式中标\",\"中标价÷改造范围\",IF(L7<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": 308.4082782199305,
+        "independent_S": "招标限价÷改造范围",
+        "numerator_stage_from_workbook": "tender_ceiling",
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    },
+    {
+      "case_id": "ZJ-007",
+      "source_sheet": "官方工程案例",
+      "source_row": 8,
+      "source_class": "user_ai_collected",
+      "status": "lead_with_separately_verified_fields",
+      "verified_observation": false,
+      "values": {
+        "A": "ZJ-007",
+        "B": "丽水·莲都",
+        "C": "正达阳光城老旧小区改造",
+        "D": "2025-09-12",
+        "E": "综合老旧小区改造",
+        "F": "中标候选人报价",
+        "G": null,
+        "H": null,
+        "I": null,
+        "J": null,
+        "K": null,
+        "L": null,
+        "M": 14972288,
+        "N": "公开候选人投标报价；拟包括道路平整、排水、交通、绿化及公共活动空间等",
+        "O": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001007/20250912/a2634e00-a2f2-4967-bd0e-01c7305caf8e.html",
+        "P": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web3675/site/attach/0/4119842bc4694ffe85516b05e491ad63.pdf",
+        "Q": "计划表列示3000万元为实施项目投资计划，不能直接当成该标段总投资；1497.2288万元仅为预中标价。",
+        "R": "=IF(G8=\"\",\"\",IF(AND(F8=\"正式中标\",M8<>\"\"),M8/G8,IF(L8<>\"\",L8/G8,\"\")))",
+        "S": "=IF(R8=\"\",\"不可折算\",IF(F8=\"正式中标\",\"中标价÷改造范围\",IF(L8<>\"\",\"招标限价÷改造范围\",\"不可折算\")))"
+      },
+      "formula_audit": {
+        "known_templates_matched": true,
+        "independent_R": null,
+        "independent_S": "不可折算",
+        "numerator_stage_from_workbook": null,
+        "denominator_field": "G:改造范围面积㎡",
+        "meaning": "综合改造范围金额强度；不是道路、管道、立面等工程分项单价",
+        "verified_observation": false,
+        "R_cached_matches": true,
+        "S_cached_matches": true
+      }
+    }
+  ],
+  "source_link_pairings": [
+    {
+      "case_id": "ZJ-001",
+      "source_ids": [
+        "zj-sheet-001-tender",
+        "zj-sheet-001-award"
+      ],
+      "same_lot_id": true,
+      "lot_id": "A3311011160018907001001",
+      "link_rule": "identical_official_project_number_and_project_name",
+      "fields_by_source": {
+        "zj-sheet-001-tender": [
+          "scope",
+          "project_code",
+          "scale_value",
+          "scale_basis",
+          "tender_construction_cost"
+        ],
+        "zj-sheet-001-award": [
+          "winning_bid",
+          "winning_bidder"
+        ]
+      },
+      "derived_scope_amount_intensity_yuan_per_sqm": 186.74924311803048,
+      "derived_not_direct_source_quote": true
+    },
+    {
+      "case_id": "ZJ-002",
+      "source_ids": [
+        "zj-sheet-002-tender",
+        "zj-sheet-002-award"
+      ],
+      "same_lot_id": true,
+      "lot_id": "A3311011160018043001001",
+      "link_rule": "identical_official_project_number_and_project_name",
+      "fields_by_source": {
+        "zj-sheet-002-tender": [
+          "scope",
+          "project_code",
+          "investment_estimate"
+        ],
+        "zj-sheet-002-award": [
+          "winning_bid",
+          "winning_bidder"
+        ]
+      },
+      "derived_scope_amount_intensity_yuan_per_sqm": null,
+      "derived_not_direct_source_quote": true
+    }
+  ],
+  "verification_manifest": "data/public_cases/methods-expansion/zhejiang-workbook-manifest.json",
+  "summary": {
+    "sheet_count": 3,
+    "case_count": 7,
+    "case_columns": 19,
+    "locations": [
+      "丽水·莲都",
+      "丽水·遂昌"
+    ],
+    "shanghai_cases": 0,
+    "guangzhou_cases": 0,
+    "formula_count": 14,
+    "known_formula_templates_matched": true,
+    "cached_results_match_independent_calculation": true,
+    "archived_official_sources": 11,
+    "verified_stage_records": 8
+  },
+  "findings": [
+    "R列4条数值均与独立计算一致，但计算正确不自动证明分母和金额适合比较。",
+    "ZJ-001中标价与面积分属两份同标段公告；联动计算186.749243元/㎡仅为综合范围金额强度。",
+    "ZJ-001、ZJ-004招标正文第9页明确最高投标限价，第3页给项目范围；叶坦范围金额强度145.842534元/㎡，与中标价分组展示。",
+    "ZJ-005原表面积63381㎡源于转载，尚未升级为官方核实面积。",
+    "ZJ-006原文总改造面积未明确占地/建筑，scale_basis=unknown。",
+    "ZJ-007五名候选人同报14972288元，按一标段候选报价保存，不当正式中标或独立样本。"
+  ],
+  "reproduce": "python scripts/intake-historical-projects-workbook.py"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-haishang-award",
+  "title": "七宝镇海上新村“美丽家园”综合修缮项目中标结果公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=edc6719e-876e-4613-9879-e03a5cc8084d",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=edc6719e-876e-4613-9879-e03a5cc8084d",
+  "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=edc6719e-876e-4613-9879-e03a5cc8084d",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:14.942832+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-haishang-award.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-haishang-award.txt",
+  "raw_sha256": "a569c8f9f0239fa1430bd90e73ff7dfed776bb05a2f850e631c03f1acff6b902",
+  "text_sha256": "9da98cea65758c970a194218c1f1ae872d46869692ef6bd2aa52de174c26e7a0",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "award",
+  "publication_date_note": "页面未单列发布日期；中标日期另记为record.award_date，不推定为发布日期。"
+}

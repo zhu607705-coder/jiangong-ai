@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-zhuguang-award",
+  "title": "青浦区朱家角镇珠光新村小区综合修缮项目中标结果公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=9a6f5e12-a37a-4ab4-b139-7c16dc9b04e8",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=9a6f5e12-a37a-4ab4-b139-7c16dc9b04e8",
+  "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=9a6f5e12-a37a-4ab4-b139-7c16dc9b04e8",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:15.535060+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-zhuguang-award.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-zhuguang-award.txt",
+  "raw_sha256": "603b4e3b0e83103e0a05cfc3b66692efd59b93f0aa89e0aa7b886afbb450232c",
+  "text_sha256": "752c4b7b91f56c1d195e14a58d0b9e7a2fb6905dc6c89e63fd32db4ec0e8bffc",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "award",
+  "publication_date_note": "页面未单列发布日期；中标日期另记为record.award_date，不推定为发布日期。"
+}

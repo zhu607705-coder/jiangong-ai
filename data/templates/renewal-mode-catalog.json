@@ -1,0 +1,223 @@
+{
+  "schema_version": "renewal-mode-catalog.v1",
+  "as_of": "2026-10-12",
+  "title": "住区更新物理方式与前置判定目录",
+  "artifact_role": "research_and_expert_review_template",
+  "production_rule_imported": false,
+  "rule_review_status": "proposed_expert_review",
+  "design": {
+    "dimensions": ["前置模式判定", "居民需求", "公共服务", "居住工程", "实施协同", "长效维护", "资金交付", "市场收益"],
+    "independent_axes": ["physical_method", "organizing_method", "funding_method", "delivery_method", "operating_method"],
+    "comparison_unit": "含工程、过渡安置、设施经营和维护安排的同范围同目标方案包",
+    "composition_unit": ["小区", "楼栋", "单元", "公共空间", "设施", "家庭"],
+    "method_families_mutually_exclusive": false,
+    "selection_sequence": ["事实与范围核对", "必要条件和保护许可筛选", "生成可组合物理方式", "经营权利与面积用途核定", "分主体经济与公共效益比较", "专家复核", "Agent引用证据形成决策与调查任务"],
+    "missing_required_action": "先补充关键资料再判断",
+    "missing_optional_revenue_action": "保留已有方案，暂不计该项收益，单列调查任务",
+    "optional_revenue_becomes_required_when": "该收益是当前方案资金平衡或维护覆盖的必要来源",
+    "unknown_value": null,
+    "unknown_is_zero": false,
+    "hard_constraints_offset_by_score": false
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "中共中央办公厅 国务院办公厅关于持续推进城市更新行动的意见",
+      "date": "2025-05-02",
+      "status": "published_policy",
+      "jurisdiction": "中国",
+      "url": "https://www.mee.gov.cn/zcwj/zyygwj/202505/t20250516_1119546.shtml",
+      "locations": ["二（一）既有建筑", "二（二）老旧小区", "二（三）完整社区", "二（八）历史文化", "三（二）用地", "三（五）可持续模式"]
+    },
+    {
+      "id": "S2",
+      "title": "国务院办公厅关于全面推进城镇老旧小区改造工作的指导意见",
+      "document_number": "国办发〔2020〕23号",
+      "date": "2020-07-10",
+      "status": "published_policy",
+      "jurisdiction": "中国",
+      "url": "https://app.www.gov.cn/govdata/gov/202007/20/460935/article.html",
+      "locations": ["二（二）内容分级", "三（四）长效管理", "四（一）居民分担", "四（四）社会力量", "五（三）存量资源"]
+    },
+    {
+      "id": "S3",
+      "title": "杭州市人民政府办公厅关于全面推进城镇老旧小区改造工作的实施意见",
+      "document_number": "杭政办函〔2022〕10号",
+      "date": "2022-02-14",
+      "effective_from": "2022-03-17",
+      "status": "published_policy",
+      "jurisdiction": "浙江省杭州市",
+      "url": "https://zfgb.hangzhou.gov.cn/10/105220253/t117220253054/518761.shtml",
+      "locations": ["二（二）改造模式", "三（一）规划", "三（四）多方参与", "三（五）存量资源", "四（三）项目推进", "四（四）长效管理"]
+    },
+    {
+      "id": "S4",
+      "title": "浙江省稳步推进城镇老旧小区自主更新试点工作的指导意见（试行）",
+      "document_number": "浙建〔2024〕2号",
+      "date": "2024",
+      "status": "published_trial_policy",
+      "jurisdiction": "浙江省公布的自主更新试点及其属地政策条件",
+      "url": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web3096/site/attach/0/3097fdb09f74421bb6486b2813af8089.pdf",
+      "locations": ["省政府公报2024年第8期印刷页16—18", "二 组织实施", "三（一）增加面积、资金与产权", "三（二）标准"]
+    },
+    {
+      "id": "S5",
+      "title": "上海市旧住房成套改造和拆除重建实施管理办法（试行）",
+      "document_number": "沪房规范〔2023〕1号",
+      "date": "2023-01-04",
+      "effective_from": "2023-02-01",
+      "effective_until": "2026-12-31",
+      "status": "published_trial_policy_extended",
+      "jurisdiction": "上海市办法第二条规定的旧住房",
+      "url": "https://fgj.sh.gov.cn/gfxwj/20230206/f7c01aac7749490e938ad9bd514edeb7.html",
+      "validity_evidence": {
+        "document_number": "沪房规范〔2024〕12号",
+        "location": "附件第7项",
+        "url": "https://fgj.sh.gov.cn/cmsres/0f/0f5bb9836d5d40b58d9cf8a01818cbde/6e179a4082efb56068078ec6589c595c.pdf"
+      },
+      "locations": ["第二条定义和保护要求", "第五条组织评估", "第七条规划", "第十三条协议", "第十四条增量用途", "第十五条审批"]
+    },
+    {
+      "id": "S6",
+      "title": "住房和城乡建设部关于在实施城市更新行动中防止大拆大建问题的通知（官方转载）",
+      "document_number": "建科〔2021〕63号",
+      "date": "2021-09-02转载",
+      "status": "published_policy_official_reprint",
+      "jurisdiction": "中国，结合项目范围、例外及当地适用政策",
+      "url": "https://zjw.sh.gov.cn/xwfb/20210902/9f51d85d354d4a31943ae07963cd44f1.html",
+      "locations": ["一（一）拆除与危房例外", "一（二）增建", "一（三）搬迁安置", "三（一）协调机制"]
+    },
+    {
+      "id": "S7",
+      "title": "未来3年攻坚改造70万平方米，安居升级，上海推动旧住房成套改造",
+      "date": "2026-09-02",
+      "status": "official_practice_report",
+      "jurisdiction": "上海实践",
+      "url": "https://ghzyj.sh.gov.cn/zfkf/20260902/d3aaa4cc7b3b4bc9833bd1eeb413eff9.html",
+      "locations": ["套内新增独用厨卫阳台", "探索形成三类改造模式"]
+    },
+    {
+      "id": "S8",
+      "title": "关于稳妥推进城镇老旧小区自主更新试点工作的试行办法（征求意见稿）",
+      "date": null,
+      "status": "consultation_draft",
+      "jurisdiction": "杭州市拟议试点",
+      "rule_activation_allowed": false,
+      "url": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web3232/site/attach/0/5e83e68e4014433684147096f66294a3.pdf",
+      "locations": ["标题：征求意见稿", "PDF第2页三（一）3更新同意率", "PDF第4—5页设计及登记"]
+    }
+  ],
+  "physical_methods": [
+    {
+      "id": "M01",
+      "name": "保留综合整治",
+      "retention": "主体保留",
+      "candidate_condition": "现有建筑具备继续使用条件，主要问题集中于管线、公共部位、环境与设施",
+      "components": ["管线更新", "屋面外墙维修", "无障碍", "停车充电", "公共空间", "维护托管"],
+      "additional_data": ["设施检测", "工程量", "覆盖对象", "施工影响", "移交责任"],
+      "economic_components": ["REV01", "REV02", "SAVE01", "FUND01", "FUND02"],
+      "source_ids": ["S1", "S2", "S3"]
+    },
+    {
+      "id": "M02",
+      "name": "结构加固与专项修缮",
+      "retention": "主体保留并加固修缮",
+      "candidate_condition": "专业鉴定和工程论证明确加固或修缮路径及价值",
+      "components": ["抗震加固", "构件修缮", "防水", "节能", "设备更新", "施工过渡"],
+      "additional_data": ["结构鉴定", "适修性", "加固设计", "施工期间居住安排", "修缮周期"],
+      "economic_components": ["SAVE01", "FUND01", "FUND02"],
+      "source_ids": ["S1", "S6"]
+    },
+    {
+      "id": "M03",
+      "name": "成套化与适度改扩建",
+      "retention": "保留建筑改建或扩建",
+      "candidate_condition": "厨卫、户型或交通功能短缺，结构、空间和规划审批允许改善",
+      "components": ["独立厨卫", "户型调整", "住宅扩面", "加装电梯", "服务空间增配"],
+      "additional_data": ["实测户型", "扩面需求", "结构承载", "日照消防", "新增面积分类", "许可路径"],
+      "economic_components": ["REV01", "AREA01", "AREA02", "FUND01"],
+      "source_ids": ["S1", "S4", "S5", "S6"]
+    },
+    {
+      "id": "M04",
+      "name": "局部拆建与保留",
+      "retention": "分栋或分区保留与拆建",
+      "candidate_condition": "安全、功能及土地条件差异集中于特定楼栋或分区，能够建立分区审批和过渡安排",
+      "components": ["逐栋处置", "保留加固", "局部新建", "分期安置", "统一管网", "共享服务"],
+      "additional_data": ["逐栋鉴定", "拆建范围", "保留楼受影响", "分期成本", "安置台账", "基础设施联动"],
+      "economic_components": ["REV01", "REV02", "AREA01", "AREA02", "FUND01", "FUND02"],
+      "source_ids": ["S3", "S4", "S6"]
+    },
+    {
+      "id": "M05",
+      "name": "整体拆除重建",
+      "retention": "选定项目范围内整体拆除重建",
+      "candidate_condition": "范围内住房质量和功能问题广泛，并明确拆建审查、规划、产权、居民协商与安置路径",
+      "components": ["拆除", "住宅重建", "回迁", "公共服务", "地下空间", "物业运维"],
+      "additional_data": ["鉴定与适修性", "建筑容量", "面积用途台账", "套数", "回迁权益", "过渡周期", "完整建设成本"],
+      "economic_components": ["REV01", "REV02", "AREA01", "AREA02", "FUND01", "FUND02"],
+      "source_ids": ["S1", "S3", "S4", "S5", "S6"]
+    },
+    {
+      "id": "M06",
+      "name": "保护性修缮与适应性利用",
+      "retention": "按保护要求保留修缮与合理利用",
+      "candidate_condition": "纳入保护名录或保护控制范围，允许的修缮与利用方案经对应程序确认",
+      "components": ["保护修缮", "设施改善", "允许的用途适配", "容量控制", "长效维护"],
+      "additional_data": ["保护名录", "保护边界", "批准用途", "修缮方案", "服务容量", "维护约束"],
+      "economic_components": ["REV01", "SAVE01", "FUND01", "FUND02"],
+      "source_ids": ["S1", "S2", "S5"]
+    },
+    {
+      "id": "M07",
+      "name": "功能置换与服务设施植入",
+      "retention": "存量空间适配或获准局部新建",
+      "candidate_condition": "存量空间权利、允许用途及服务需求可衔接，消防、服务容量和运营安排明确",
+      "components": ["闲置房改用", "邻里中心", "养老托育", "便民商业", "保障住房", "服务运营"],
+      "additional_data": ["空间权属", "用途转换", "消防", "客群", "支付能力", "合同", "出租或运营权利"],
+      "economic_components": ["REV01", "REV02", "AREA02", "FUND02"],
+      "source_ids": ["S1", "S2", "S3", "S7"]
+    }
+  ],
+  "economic_components": [
+    {"id": "REV01", "name": "合法服务空间出租及运营", "kind": "operating_cashflow", "required_data": ["经营/出租权利", "对象需求", "租金或服务价格", "使用率", "运营支出", "现金流归属"]},
+    {"id": "REV02", "name": "停车充电等设施经营", "kind": "operating_cashflow", "required_data": ["权益和定价", "容量", "需求和付费能力", "使用率", "运维支出", "收益分配"]},
+    {"id": "SAVE01", "name": "节能和统筹维护形成的支出节约", "kind": "avoided_cost", "required_data": ["改前支出台账", "使用量和计费口径", "改后技术测算", "新增维护支出", "节约归属"]},
+    {"id": "AREA01", "name": "经核定权益的新增空间处置", "kind": "approved_asset_disposition", "required_data": ["规划批准", "居民扩面/安置/保障/公服/市场用途分类", "产权与处分权", "合法交易路径", "价格或接收价", "税费"], "activation": "逐项目核定，新增总面积不自动映射为可销售面积"},
+    {"id": "AREA02", "name": "特定新增面积移交政府冲抵建设成本", "kind": "in_kind_cost_offset", "required_data": ["当地试点资格", "面积用途", "政府接收条件", "协议价格或抵成本规则", "权属处置"], "source_ids": ["S4", "S5"]},
+    {"id": "FUND01", "name": "居民成本分担", "kind": "funding_source", "required_data": ["分摊规则", "户数和面积", "支付能力", "协议", "到账状态"]},
+    {"id": "FUND02", "name": "产权单位和专营单位成本分担", "kind": "funding_source", "required_data": ["责任范围", "出资协议", "资金状态", "设施接收与维护责任"]}
+  ],
+  "organizing_methods": ["政府统筹协调", "业主委员会或自主更新委员会组织", "产权单位组织", "委托建设代理", "区级统筹连片更新"],
+  "funding_methods": ["适用财政补助", "居民出资", "专项维修资金", "产权及专营单位出资", "已落实社会投资", "合规借款", "经确认权益的运营收入", "移交抵成本"],
+  "delivery_methods": ["设计施工分别委托", "工程总承包EPC", "全过程咨询", "建设代理"],
+  "operating_methods": ["专业物业", "专营设施移交", "服务运营合同", "居民共同管理", "维护托管"],
+  "data_requirements": [
+    {"id": "DATA01", "name": "逐栋结构安全和适修性", "role": "required_for_structural_method", "source_types": ["公开排查", "获准原始鉴定", "拿不到"], "collection": "住建/产权人核验、委托专业检测", "rule_ids": ["MODE-G01"]},
+    {"id": "DATA02", "name": "保护名录、产权和用地范围", "role": "required", "source_types": ["公开", "获准产权资料", "拿不到"], "collection": "名录核查、规划和不动产档案调阅", "rule_ids": ["MODE-G02"]},
+    {"id": "DATA03", "name": "规划许可、现有与拟增面积用途", "role": "required_for_alteration_or_disposition", "source_types": ["公开", "项目批复", "访谈", "拿不到"], "collection": "测绘、控规查询、规划主管部门和设计单位访谈", "rule_ids": ["MODE-G03"]},
+    {"id": "DATA04", "name": "居民意愿、表决和过渡安置", "role": "required_by_local_stage", "source_types": ["问卷", "访谈", "正式决议与协议", "拿不到"], "collection": "权利人台账、按户调查、依法组织表决和协议核对", "rule_ids": ["MODE-G04"]},
+    {"id": "DATA05", "name": "建设过渡成本、资金与支付能力", "role": "required_for_financial_action", "source_types": ["公开", "问卷", "访谈", "报价", "拿不到"], "collection": "当地可比项目、分项询价、居民与责任单位调研", "rule_ids": ["MODE-G05"]},
+    {"id": "DATA06", "name": "市场需求、租售和服务经营价格", "role": "required_if_cashflow_relies_on_it_else_optional_benefit", "source_types": ["公开可比交易", "问卷", "访谈", "拿不到"], "collection": "同区域同用途同时间样本、目标人群支付调查、运营机构访谈", "rule_ids": ["MODE-G05", "MODE-G07"]},
+    {"id": "DATA07", "name": "运营接收主体、维护合同及年度支出", "role": "required_for_new_or_upgraded_asset", "source_types": ["公开预算", "合同", "访谈", "拿不到"], "collection": "台账抽取、接收单位和服务机构访谈", "rule_ids": ["MODE-G06"]}
+  ],
+  "proposed_rules": [
+    {"id": "MODE-G01", "name": "安全与适修性", "review_status": "proposed_expert_review", "action": "按专业鉴定、加固价值和技术路线生成保留/加固/改建/重建候选，并生成即时安全处置任务", "source_ids": ["S1", "S3", "S5", "S6"]},
+    {"id": "MODE-G02", "name": "保护与权属", "review_status": "proposed_expert_review", "action": "把保护要求、权利主体和用地边界转成允许改变的结构、用途和范围", "source_ids": ["S1", "S3", "S5"]},
+    {"id": "MODE-G03", "name": "规划与面积用途", "review_status": "proposed_expert_review", "action": "核定各类面积、用途、许可和处分权后分别计算资产处置、抵成本和运营情景", "source_ids": ["S3", "S4", "S5"]},
+    {"id": "MODE-G04", "name": "意愿与安置", "review_status": "proposed_expert_review", "action": "按本地制度和项目阶段核对初步意愿、正式决议、协议与过渡安排；不设跨地区统一阈值", "source_ids": ["S3", "S4", "S5"]},
+    {"id": "MODE-G05", "name": "收支与支付", "review_status": "proposed_expert_review", "action": "按成本分摊、支付能力、合法现金流归属和资金状态比较完整方案", "source_ids": ["S2", "S3", "S4"]},
+    {"id": "MODE-G06", "name": "长效运营", "review_status": "proposed_expert_review", "action": "明确接收主体、维护合同和年度支出，再计算经营净额与维护覆盖", "source_ids": ["S1", "S2", "S3"]},
+    {"id": "MODE-G07", "name": "缺项分流", "review_status": "proposed_expert_review", "action": "必要未知阻止受影响模式定案；选配未知不计收益；已核实障碍生成模式调整任务", "source_ids": [], "origin": "system_design_for_expert_review"}
+  ],
+  "jurisdictional_policy_records": [
+    {"id": "SH-INIT-80", "source_id": "S5", "location": "第五条", "jurisdiction": "上海", "subject_scope": "办法第二条适用旧住房", "stage": "启动旧住房更新", "condition": "更新范围内80%以上公房承租人、私有房屋产权人同意", "threshold_pct": 80, "policy_status": "published_trial_policy_extended", "runtime_activation": "requires_local_applicability_and_expert_review"},
+    {"id": "SH-CONTRACT-95", "source_id": "S5", "location": "第十三条", "jurisdiction": "上海", "subject_scope": "办法第二条适用旧住房", "stage": "协议生效", "condition": "签约比例达到95%以上", "threshold_pct": 95, "policy_status": "published_trial_policy_extended", "runtime_activation": "requires_local_applicability_and_expert_review"},
+    {"id": "HZ-CONSENT-DRAFT-100", "source_id": "S8", "location": "三（一）3", "jurisdiction": "杭州拟议试点", "stage": "正式提交更新方案", "condition": "拟议最终同意率原则上100%", "threshold_pct": 100, "policy_status": "consultation_draft", "runtime_activation": "disabled_draft"}
+  ],
+  "composition_examples": [
+    {"id": "COMBO01", "name": "分栋更新与统一配套", "methods": ["M01", "M02", "M04", "M07"], "layout": "可保留楼栋加固修缮，选定危旧楼栋局部拆建，闲置空间植入服务，管线统一更新", "stage": "illustrative_design", "source_case_bound": false},
+    {"id": "COMBO02", "name": "保留扩面与维护运营", "methods": ["M03", "M07"], "layout": "具备条件楼栋改善厨卫和交通，服务空间出租或委托运营，电梯叠加维护托管", "stage": "illustrative_design", "source_case_bound": false}
+  ],
+  "decision_output_fields": ["scheme_id", "scheme_version", "object_scope", "method_components", "action", "reasons", "policy_source_and_location", "expert_rule_and_version", "fact_source_and_time", "critical_missing_data", "collection_task", "actor_cashflow", "public_benefits", "sensitivity_cases"]
+}

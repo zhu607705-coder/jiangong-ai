@@ -1,0 +1,20 @@
+{
+  "id": "zj-sheet-001-award",
+  "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+  "province": "浙江",
+  "published_at": "2026-08-26",
+  "fetched_at": "2026-10-13T07:38:32.087140+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-001-award.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-001-award.txt",
+  "raw_sha256": "6fc5f719c78abca63bfb5dcc43ef2f6307b32cd34bbd82323d9536289e8702e6",
+  "text_sha256": "07ef8960081fe16e0d89ecb8b38be23d753bb3069ec387ec1e72836853b3e334",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "lot_id": "A3311011160018907001001"
+}

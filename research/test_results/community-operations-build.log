@@ -1,0 +1,21 @@
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6456 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    0.50 kB │ gzip:   0.38 kB
+dist/assets/KnowledgeAgentReport-BEXqNCLJ.css      5.92 kB │ gzip:   1.60 kB
+dist/assets/KnowledgePipelinePanel-CdZq3a5h.css    7.02 kB │ gzip:   1.90 kB
+dist/assets/KnowledgeWorkbench-D4D_8JCF.css        7.40 kB │ gzip:   1.96 kB
+dist/assets/index-DC1rQnMt.css                   116.49 kB │ gzip:  24.44 kB
+dist/assets/index-Dyxy-PuY.js                      5.29 kB │ gzip:   1.79 kB
+dist/assets/KnowledgeAgentReport-AngVVIIY.js      10.51 kB │ gzip:   3.58 kB
+dist/assets/KnowledgeWorkbench-ByClG42y.js        17.59 kB │ gzip:   6.82 kB
+dist/assets/KnowledgePipelinePanel-C0vysnYO.js    30.51 kB │ gzip:   9.88 kB
+dist/assets/validate-CliPRL4Y.js                 201.09 kB │ gzip:  52.60 kB
+dist/assets/index-BT5t_Dbu.js                    434.60 kB │ gzip: 138.77 kB
+✓ built in 3.16s

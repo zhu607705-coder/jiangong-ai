@@ -1,0 +1,20 @@
+{
+  "id": "zj-sheet-006-tender",
+  "title": "丽水市莲都区金山新村及周边老旧小区改造工程招标公告",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+  "province": "浙江",
+  "published_at": "2023-05-25",
+  "fetched_at": "2026-10-13T07:38:32.221609+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-006-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-006-tender.txt",
+  "raw_sha256": "3b120c4f37eb59f079d5d51be721108b5dfe8a57581915e18ec2a19699a254df",
+  "text_sha256": "58f3643bf3c67171505e8655e4114f2ead50ffa6188df15788fca32f811ca1d8",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "lot_id": "A3311011160013109001001"
+}

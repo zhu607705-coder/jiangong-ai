@@ -5,6 +5,7 @@ import secrets
 from typing import Literal
 from fastapi import FastAPI, Depends, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ValidationError
 
 from services.capabilities.generated.contracts import ProjectInput
 from services.capabilities.analysis import analyze, spatial_profile, retrieval_query, structured_query, gap_plan, get_geo_meta
@@ -23,6 +24,28 @@ def authorize(x_capability_token: str = Header(default="")):
     token = os.environ.get("CAPABILITY_TOKEN", "")
     if not token or not secrets.compare_digest(token, x_capability_token):
         raise HTTPException(403, "capability authorization required")
+
+
+# Monthly operations share this authorized capability host; no new runtime.
+from services.capabilities.community_operations import evaluate_operations, compare_observation
+
+
+@app.post('/operations/evaluate', dependencies=[Depends(authorize)])
+def operations_evaluate(document: dict):
+    try:
+        return evaluate_operations(document)
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@app.post('/operations/compare', dependencies=[Depends(authorize)])
+def operations_compare(document: dict):
+    try:
+        if set(document) != {'snapshot', 'observation'}:
+            raise ValueError('需要冻结预测与实际记录两个对象')
+        return compare_observation(document['snapshot'], document['observation'])
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(422, str(exc)) from exc
 
 
 class Request(BaseModel):

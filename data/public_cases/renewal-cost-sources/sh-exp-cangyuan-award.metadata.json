@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-cangyuan-award",
+  "title": "江川路街道沧源二村“美丽家园”综合修缮项目中标结果公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=5fcd587e-411f-4617-9112-cf75a4b99372",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=5fcd587e-411f-4617-9112-cf75a4b99372",
+  "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=5fcd587e-411f-4617-9112-cf75a4b99372",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:14.653508+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-cangyuan-award.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-cangyuan-award.txt",
+  "raw_sha256": "6f62cd8275ba2e231ccfac1d6a1247e3ea18aab0b5eaf5767ea3f59744b932ee",
+  "text_sha256": "9a14c3dd3bd3a69faf7a2941e8a4969134d6d34581ef82d864a93e3b329b1481",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "award",
+  "publication_date_note": "页面未单列发布日期；中标日期另记为record.award_date，不推定为发布日期。"
+}

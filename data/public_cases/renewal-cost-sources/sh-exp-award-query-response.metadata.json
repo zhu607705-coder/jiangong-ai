@@ -1,0 +1,13 @@
+{
+  "id": "sh-exp-award-query-response",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-bidder!show.do",
+  "method": "POST",
+  "data": {
+    "zblx": "SGZB",
+    "ggmc": "综合修缮"
+  },
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-award-query-response.html",
+  "raw_sha256": "56e90c6390d887ce3c2a16f7edb51aac21d1d46390b782d04a3deac9b14bfac5",
+  "http_status": 200,
+  "fetched_at": "2026-10-13T07:38:01.715918+00:00"
+}

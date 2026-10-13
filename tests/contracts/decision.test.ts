@@ -10,6 +10,7 @@ import { roleDependency, digest } from '../../runtime/workflows/run'
 import { parseMaterial, tableFacts } from '../../apps/host/ingest'
 import { Store } from '../../apps/host/store'
 import { writeFileSync } from 'node:fs'
+import { projectPython } from '../../scripts/python-runtime'
 
 const fixture = (name = '01_auto') => projectInput(JSON.parse(readFileSync(`fixtures/inputs/${name}.json`, 'utf8')))
 
@@ -17,7 +18,7 @@ describe('single-source contracts and fixture separation', () => {
   for (const file of readdirSync('fixtures/inputs')) it(`validates ${file}`, () => { expect(() => projectInput(JSON.parse(readFileSync(`fixtures/inputs/${file}`, 'utf8')))).not.toThrow() })
   it('preserves semantic content across TypeScript and Pydantic serialization', () => {
     const input = fixture()
-    const p = spawnSync('.venv/bin/python', ['-c', 'import sys,json;from services.capabilities.generated.contracts import ProjectInput;p=ProjectInput.model_validate(json.load(sys.stdin));print(p.model_dump_json(exclude_unset=True))'], { input: JSON.stringify(input), encoding: 'utf8' })
+    const p = spawnSync(projectPython(), ['-c', 'import sys,json;from services.capabilities.generated.contracts import ProjectInput;p=ProjectInput.model_validate(json.load(sys.stdin));print(p.model_dump_json(exclude_unset=True))'], { input: JSON.stringify(input), encoding: 'utf8', env: { ...process.env, PYTHONUTF8: '1' } })
     expect(p.status, p.stderr).toBe(0)
     expect(projectInput(JSON.parse(p.stdout))).toEqual(input)
   })

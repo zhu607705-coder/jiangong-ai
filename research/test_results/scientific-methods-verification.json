@@ -1,0 +1,44 @@
+{
+  "as_of": "2026-10-13",
+  "status": "implemented_and_verified",
+  "preexisting_ledger_issue": "agent/tasks.json already contains two distinct T14 historical entries. This task preserves them; new T42/T43/T44 IDs and dependencies are checked separately.",
+  "report": {
+    "source": "docs/老旧小区改造案例拆分与六维数据说明.tex",
+    "generated_section": "docs/generated/scientific-methods-section.tex",
+    "pdf": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+    "pages": 22,
+    "sha256": "5a310843c8171912d9d230d8327d904dc68fe3700ae49107a5206a7c77ba31d2",
+    "render_qa": "output/documents/renewal-review/main/qa.json",
+    "visual_review": "passed; all pages checked, affected numerical pages and final references inspected at full-page size",
+    "human_review": "not_requested"
+  },
+  "tests": {
+    "javascript": {"passed":985,"failed":0,"log":"research/test_results/scientific-methods-vitest-full.log"},
+    "python": {"passed":206,"failed":0,"log":"research/test_results/scientific-methods-python.log"},
+    "http": {"passed":16,"failed":0,"log":"research/test_results/scientific-methods-http.log"},
+    "build": {"status":"passed","log":"research/test_results/scientific-methods-build.log"},
+    "browser_regression_script": "syntax checked; actual browser verification used CUA"
+  },
+  "numerical_replay": "research/test_results/scientific-methods-results.json",
+  "survey_audit": "research/test_results/hangzhou-survey-methods-audit.json",
+  "historical_costs": {"records":20,"archived_originals":27,"referenced_originals":24,"comparable_groups":3,"evidence":"research/test_results/expanded-cost-library.json"},
+  "workbook": {"copy":"data/imports/historical-projects-user-20261013.xlsx","sha256":"d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a","original_unchanged":true,"audit":"data/imports/historical-projects-user-20261013.json"},
+  "browser": {
+    "url":"http://127.0.0.1:5173/",
+    "project_id":"P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+    "switching_values":{"required_subsidy":6200,"fee":11.25,"paid_share":0.45,"visits":500},
+    "joint_range":[-1440,1040],
+    "time_block_preview":{"demand":[80,20],"capacity":[50,50],"served":70,"utilization":0.7},
+    "cost_library":{"records_displayed":20,"sources_displayed":24,"groups_displayed":3},
+    "measure_presentation":{"groups":4,"evidence_records":15,"water_group_entries":1,"water_cards_preserved":8,"locations":["project experience list","factor table","skill source selection"]},
+    "mobile":{"width":390,"document_width":390,"result_grid_columns":"255.333px","visual_review":"passed"},
+    "viewport_restored":true
+  },
+  "limitations":[
+    "No real operating month ledger obtained; no prediction-accuracy or training improvement claim.",
+    "Sensitivity bounds in the report are explicit manual demonstration ranges, not measured distributions.",
+    "Survey attachment analysis uses 2236 rows/38 communities; the paper's 2202/36 filter is unresolved and was not fabricated.",
+    "Comparable costs are descriptive within scope/stage/area/year groups; no regional or temporal price-index adjustment.",
+    "Previous Qiushi complete live Agent run remains separately recorded; not rerun in this scope."
+  ]
+}

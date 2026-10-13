@@ -1,11 +1,12 @@
 import { createHash } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { access, copyFile, mkdir, mkdtemp, readFile, realpath, rm, stat } from 'node:fs/promises'
+import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, extname, join, resolve } from 'node:path'
 import { parseMaterial } from '../../apps/host/ingest'
 import { parseCsvRows } from '../../vendor/cre/dashboard/server/parser-service'
+import { projectPython } from '../../scripts/python-runtime'
 
 const execFileAsync = promisify(execFile)
 export const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024
@@ -44,12 +45,11 @@ export async function loadEvaluationDocument(file: string, options: InputOptions
     try {
       const blobs = join(directory, 'blobs'); await mkdir(blobs)
       const copied = join(blobs, id + extension); await copyFile(path, copied)
-      const localPython = join(options.projectRoot, process.platform === 'win32' ? '.venv/Scripts/python.exe' : '.venv/bin/python')
-      const python = options.pythonPath || await access(localPython).then(() => localPython, () => process.platform === 'win32' ? 'python' : 'python3')
+      const python = options.pythonPath || projectPython(options.projectRoot)
       const script = 'import json,sys\nfrom services.capabilities.parsers import parse_document\nprint(json.dumps(parse_document(sys.argv[1],sys.argv[2],sys.argv[3]),ensure_ascii=False))'
       try {
         const { stdout } = await execFileAsync(python, ['-c', script, copied, fileName, id], {
-          cwd: resolve(options.projectRoot), env: { ...process.env, DATA_DIR: directory }, timeout: 45000, maxBuffer: 12 * 1024 * 1024,
+          cwd: resolve(options.projectRoot), env: { ...process.env, PYTHONUTF8: '1', DATA_DIR: directory }, timeout: 45000, maxBuffer: 12 * 1024 * 1024,
         })
         parsed = JSON.parse(stdout)
       } catch { throw new Error('DOCUMENT_BINARY_PARSER_FAILED') }

@@ -1,0 +1,20 @@
+{
+  "id": "zj-sheet-005-amendment",
+  "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——渡船头区块工程招标公告变更公告",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+  "province": "浙江",
+  "published_at": "2025-11-26",
+  "fetched_at": "2026-10-13T07:38:32.221748+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-005-amendment.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-005-amendment.txt",
+  "raw_sha256": "9d5f98438a89470cf0f414ade5ab3d1a5bf76ce7ddcae4fd006e5f449355dfe7",
+  "text_sha256": "e2556d86e889f14db73d613f1538ec811eda0b48b9f39f0a51eb579a8c22de6f",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "lot_id": "A3311011160017973002001"
+}

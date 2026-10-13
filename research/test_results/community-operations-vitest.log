@@ -1,0 +1,38 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run
+
+
+ RUN  v4.1.11 D:/建工ai
+
+ ❯ tests/document-evaluation.test.ts (17 tests | 1 failed) 55ms
+     × reuses the Python ParserPort for DOCX/XLSX/PDF and reports bounded extraction rather than full coverage 3ms
+ ❯ tests/contracts/decision.test.ts (27 tests | 1 failed) 2462ms
+     × preserves semantic content across TypeScript and Pydantic serialization 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/document-evaluation.test.ts > existing parser adapters > reuses the Python ParserPort for DOCX/XLSX/PDF and reports bounded extraction rather than full coverage
+Error: spawn D:\建工ai\.venv\Scripts\python.exe ENOENT
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/decision.test.ts > single-source contracts and fixture separation > preserves semantic content across TypeScript and Pydantic serialization
+AssertionError: expected null to be +0 // Object.is equality
+
+- Expected:
+0
+
++ Received:
+null
+
+ ❯ tests/contracts/decision.test.ts:21:32
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 47 passed (49)
+      Tests  2 failed | 929 passed (931)
+   Start at  12:34:36
+   Duration  153.43s (transform 1.07s, setup 0ms, import 8.71s, tests 139.86s, environment 2ms)
+

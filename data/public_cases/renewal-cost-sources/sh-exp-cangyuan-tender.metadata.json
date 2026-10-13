@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-cangyuan-tender",
+  "title": "江川路街道沧源二村“美丽家园”综合修缮项目施工招标公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f7cf9c361211b&SID=2d92a3959f58d85e019f82a542765c56",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f7cf9c361211b&SID=2d92a3959f58d85e019f82a542765c56",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f7cf9c361211b&SID=2d92a3959f58d85e019f82a542765c56",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:14.843904+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-cangyuan-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-cangyuan-tender.txt",
+  "raw_sha256": "85a83fbb23bc7bb0e1eb87766a18e2be10590c2ea3424de92a817d326afb8775",
+  "text_sha256": "f229214f4b1f38face35aef0ad46ced604597b1a71a3d6516e23fe244996525f",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "scale_and_scope",
+  "publication_date_note": "页面显示招标文件获取期间，未将其起日推定为发布日期。"
+}

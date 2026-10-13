@@ -1,0 +1,19 @@
+{
+  "id": "zj-zhegong-epc-contract",
+  "title": "浙工新村城市危旧房有机更新（试点）项目设计-采购-施工（EPC）总承包合同订立信息",
+  "requested_url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20231208/f1b82e1a-5290-40cd-ac88-1bf59dfab2b6.html",
+  "final_url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20231208/f1b82e1a-5290-40cd-ac88-1bf59dfab2b6.html",
+  "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20231208/f1b82e1a-5290-40cd-ac88-1bf59dfab2b6.html",
+  "province": "浙江",
+  "published_at": "2023-12-08",
+  "fetched_at": "2026-10-13T04:29:53.729598+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-zhegong-epc-contract.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-zhegong-epc-contract.txt",
+  "raw_sha256": "fbf918c10fc32fc3d2923609301254ea66302e566032df009ba7685eed7deb4a",
+  "text_sha256": "282f622dbb6d32127d6efc7e6ecebea7e7e41c95e45866c8c4608b52c3e9ff32",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized"
+}

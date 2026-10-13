@@ -1,0 +1,19 @@
+{
+  "id": "gd-lunjiao-total-estimate",
+  "title": "佛山市顺德区伦教街道老旧小区改造项目（工程咨询）采购公告中的总投资估算",
+  "requested_url": "https://ygp.gdzwfw.gov.cn/zjfwcs/gd-zjcs-pub/purchaseNotice/view/4406067977070022604271562",
+  "final_url": "https://ygp.gdzwfw.gov.cn/zjfwcs/gd-zjcs-pub/purchaseNotice/view/4406067977070022604271562",
+  "url": "https://ygp.gdzwfw.gov.cn/zjfwcs/gd-zjcs-pub/purchaseNotice/view/4406067977070022604271562",
+  "province": "广东",
+  "published_at": "2026-04-27",
+  "fetched_at": "2026-10-13T04:29:54.315474+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/gd-lunjiao-total-estimate.html",
+  "text_path": "data/public_cases/renewal-cost-sources/gd-lunjiao-total-estimate.txt",
+  "raw_sha256": "7bfe2cffc3a818f30a1d409970f916509580dc43749b6f5b95a168217dcef3a7",
+  "text_sha256": "961baa64093532f4021aade1cd416d9547f811c9ea17b50d6aaf4c92cbc03d9d",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized"
+}

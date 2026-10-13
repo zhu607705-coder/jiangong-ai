@@ -1,0 +1,51 @@
+{
+  "pages": 22,
+  "input_workbooks": [
+    {
+      "name": "规则库和专家补充清单(1).xlsx",
+      "sha256": "7609cd2f4dbd44284bb4c71a23bd0ee26ab99176e9771a6ebffb5e2ca1d535ee",
+      "unchanged": true
+    },
+    {
+      "name": "不重要的数据_默认缺省 .xlsx",
+      "sha256": "2a9145527ef71902914c152e2c7347fe4df60eecbfe0ae740ec28b6ecdd73ffe",
+      "unchanged": true
+    },
+    {
+      "name": "核心数据表（人工复核+ai模拟）.xlsx",
+      "sha256": "fe0498437aae75ddde31de6209efac2d081911d5a76909d67ae37bceaa474719",
+      "unchanged": true
+    }
+  ],
+  "selected_rules": 27,
+  "core_fields": 46,
+  "default_missing_fields": 76,
+  "expert_pending": 15,
+  "original_case_cards": 23,
+  "decision_items": 13,
+  "historical_prototype_checks": {
+    "economics_tests": 10,
+    "aging_tests": 6,
+    "criteria_tests": 5
+  },
+  "current_validation_logs": [
+    "research/test_results/scientific-methods-python.log",
+    "research/test_results/scientific-methods-vitest.log"
+  ],
+  "latex_warnings": 0,
+  "contacts": [
+    "output/documents/renewal-review/main/render/contact-01.png",
+    "output/documents/renewal-review/main/render/contact-02.png",
+    "output/documents/renewal-review/main/render/contact-03.png",
+    "output/documents/renewal-review/main/render/contact-04.png",
+    "output/documents/renewal-review/main/render/contact-05.png",
+    "output/documents/renewal-review/main/render/contact-06.png",
+    "output/documents/renewal-review/main/render/contact-07.png",
+    "output/documents/renewal-review/main/render/contact-08.png"
+  ],
+  "visual_review": "passed",
+  "sha256": "5a310843c8171912d9d230d8327d904dc68fe3700ae49107a5206a7c77ba31d2",
+  "visual_review_scope": "All 23 original rendered pages inspected via contacts; original pages 9-13/22-23 inspected in detail. After reference-spacing correction, final pages21-22 inspected; finalPDF22pages, no orphan reference",
+  "numerical_crosscheck": "operations, survey aggregates, and cost benchmark JSON checked",
+  "human_review": "not_requested"
+}

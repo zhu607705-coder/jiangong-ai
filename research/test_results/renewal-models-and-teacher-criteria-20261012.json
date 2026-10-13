@@ -1,0 +1,30 @@
+{
+  "as_of": "2026-10-12",
+  "documents": [
+    {
+      "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "pages": 18,
+      "bytes": 324495,
+      "sha256": "88d2d216e90feb059be6d1f9c35c1bf0b5ae2b4e5061515b0e349e373fea44e7"
+    },
+    {
+      "path": "docs/research/浙工新村_模式与经济机制研究.pdf",
+      "pages": 5,
+      "bytes": 186577,
+      "sha256": "8a2fe830541afcee31daadbdf343ffd396ced38e755956a4aa6ef7aacb1b9f75"
+    },
+    {
+      "path": "docs/research/上海旧改_模式与经济机制对标.pdf",
+      "pages": 6,
+      "bytes": 199434,
+      "sha256": "940c13a8da50cb3fa2d8d18032d0497f5e37684a323df7c5d8b709ad6a9a582c"
+    }
+  ],
+  "tests": {
+    "economics": 10,
+    "aging": 6,
+    "on_demand": 5
+  },
+  "teacher_inputs_unchanged": true,
+  "model_calls": 0
+}

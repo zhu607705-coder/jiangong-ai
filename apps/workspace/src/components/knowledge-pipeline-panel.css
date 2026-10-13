@@ -27,6 +27,16 @@
 .pipeline-public-import > small { display: block; margin: 0 0 12px; color: #7a8b7e; font-size: 10px; line-height: 1.7; }
 .pipeline-documents, .pipeline-skill-sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 .pipeline-documents > div, .pipeline-skill-sources > label { padding: 12px; border: 1px solid #e0e8dd; background: #fffefa; border-radius: 8px; min-width: 0; }
+.pipeline-skill-sources { align-items: start; }
+.knowledge-pipeline .pipeline-measure { padding: 13px; border: 1px solid #dce7dc; border-radius: 9px; background: #fffefa; min-width: 0; margin: 10px 0; }
+.pipeline-skill-sources > .pipeline-measure { margin: 0; }
+.pipeline-measure > summary > strong, .pipeline-measure-heading strong { font-size: 13px; }
+.pipeline-measure > summary > small { display: block; margin-left: 15px; font-size: 11px; color: #758775; line-height: 1.8; }
+.pipeline-measure-count { margin: 12px 0; font-size: 12px; color: #456b53; }
+.pipeline-measure-records { display: grid; gap: 10px; margin-top: 12px; }
+.pipeline-measure-record { padding: 12px; border: 1px solid #e4eadf; border-radius: 7px; background: #f7faf4; min-width: 0; }
+.pipeline-measure-record p, .pipeline-original-card p { font-size: 12px; line-height: 1.8; white-space: pre-wrap; }
+.pipeline-selection-hint { margin: 10px 0 0; font-size: 11px; line-height: 1.8; color: #886e48; }
 .pipeline-documents > div > button { margin: 10px 0 0 27px; }
 .knowledge-pipeline .pipeline-model { margin: 18px 0 14px; }
 .pipeline-card { padding: 14px; margin: 12px 0; border: 1px solid #dce7dc; border-radius: 9px; background: #fffefa; min-width: 0; }

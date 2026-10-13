@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-hejiang-award",
+  "title": "2025年青浦区白鹤镇鹤江路房屋综合修缮项目中标结果公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=38813ff5-06f9-412f-98be-fc18b15b3a33",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=38813ff5-06f9-412f-98be-fc18b15b3a33",
+  "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=38813ff5-06f9-412f-98be-fc18b15b3a33",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:15.257974+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-hejiang-award.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-hejiang-award.txt",
+  "raw_sha256": "cd8f97c25b2b2dd6b80f114c51ac926b1d3d799e7906dd71bc0a20829135d527",
+  "text_sha256": "cea4e87076c4a7eede0c9067ca41f0665d9c6867043d15b2b178d7822fcf814c",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "award",
+  "publication_date_note": "页面未单列发布日期；中标日期另记为record.award_date，不推定为发布日期。"
+}

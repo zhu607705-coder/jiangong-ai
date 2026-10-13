@@ -1,0 +1,20 @@
+{
+  "id": "zj-sheet-001-tender",
+  "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块招标公告",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260729/b5062fd4-7696-406b-86ae-1ee009540d67.html",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260729/b5062fd4-7696-406b-86ae-1ee009540d67.html",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260729/b5062fd4-7696-406b-86ae-1ee009540d67.html",
+  "province": "浙江",
+  "published_at": "2026-07-29",
+  "fetched_at": "2026-10-13T07:38:32.087881+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-001-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-001-tender.txt",
+  "raw_sha256": "2329a4cbb5d7850d72a2415c3884f117a8a6e77ac3752126b09bb3a06ca98fcf",
+  "text_sha256": "9c64c11f8d33fc64cbe82599f2ac226be5067fd633ed7e79686686f20460d1d5",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "lot_id": "A3311011160018907001001"
+}

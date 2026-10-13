@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-13",
+  "base_url": "http://127.0.0.1:5173/",
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "ready": {
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "scenario_id": "OPS-1fe0c87b-1581-403c-a3e2-b7e0761f255c",
+  "saved_at": "2026-10-13T04:34:10.832Z",
+  "input_hash": "c04c16f9fcf76fc4d9f7454bf19d282e4b0cc457d88ad723ca810a2793c2c415",
+  "metrics": {
+    "coverage": 0.12,
+    "fee_income": 1600,
+    "utilization": 0.7692307692307693,
+    "unfunded_gap": 200,
+    "unique_users": 120,
+    "unmet_visits": 0,
+    "earned_income": 4600,
+    "other_support": 0,
+    "served_visits": 400,
+    "operating_cost": 10800,
+    "capacity_visits": 520,
+    "required_subsidy": 6200,
+    "government_outlay": 8000,
+    "operating_subsidy": 6000,
+    "total_service_cost": 10800,
+    "government_purchase": 2000,
+    "balance_after_support": -200,
+    "balance_before_support": -6200,
+    "government_direct_cost": 0,
+    "commercial_cost_coverage": 0.24074074074074073,
+    "government_cost_per_visit": 20
+  },
+  "observations_in_live_project": 0,
+  "scenarios_survived_host_restart": true,
+  "historical_cost_records": {
+    "total": 5,
+    "matched": 5,
+    "source_count": 5,
+    "provinces": [
+      "上海",
+      "广东",
+      "浙江"
+    ],
+    "by_amount_kind": {
+      "estimate": 2,
+      "contract_price": 3
+    },
+    "by_work_type": {
+      "other": 1,
+      "construction": 3,
+      "epc": 1
+    },
+    "issues": [],
+    "sample_notice": "浙江、上海、广东官方平台首批归档样本；按工程类型和价格阶段查阅，持续补充历史项目。合同价记录签约金额，结算价记录竣工结算金额。"
+  },
+  "browser": {
+    "desktop_width": 2560,
+    "mobile_width": 390,
+    "mobile_document_width": 390,
+    "mobile_operations_panel_bounds": [
+      71,
+      357.66668701171875
+    ],
+    "mobile_cost_panel_bounds": [
+      71,
+      357.66668701171875
+    ],
+    "restored_desktop_width": 2560,
+    "cost_filter": {
+      "province": "浙江",
+      "amount_kind": "contract_price",
+      "rows": 2
+    },
+    "cost_csv_export_readback": "construction-costs-ui-export.csv",
+    "report_ui_download_event": "passed_after_direct_download_link_fix",
+    "report_file_bytes": 4382,
+    "report_file_sha256": "ec59f2a7e0a7427c99981dd109a4386e530f417931f46ba8c0e750b9f8f10e2e",
+    "report_http_export": "200_verified_content",
+    "note": "Browser UI checked calculations, freeze/readback, host restart, source categories, 5 real cost rows, filters, CSV file download. Actual observations remain empty; HTTP engineering fixtures tested their flow separately."
+  }
+}

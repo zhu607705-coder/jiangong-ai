@@ -1,0 +1,23 @@
+{
+  "as_of": "2026-10-13",
+  "status": "implemented_and_verified",
+  "design_review": "research/test_results/community-operations-design-pro-20261013.json",
+  "tests": {
+    "vitest_full_initial": {"files":49,"passed":929,"failed":2,"reason":"legacy hardcoded Windows/WSL Python paths","log":"research/test_results/community-operations-vitest.log"},
+    "vitest_corrected_affected": {"files":3,"passed":69,"failed":0,"log":"research/test_results/community-operations-vitest-recheck.log"},
+    "cost_library": {"passed":10,"failed":0,"log":"research/test_results/construction-costs-vitest.log"},
+    "python": {"passed":142,"failed":0,"log":"research/test_results/community-operations-python.log"},
+    "http": {"passed":16,"failed":0,"log":"research/test_results/community-operations-http.log"},
+    "build": {"status":"passed","log":"research/test_results/community-operations-build.log"}
+  },
+  "live": "research/test_results/community-operations-live.json",
+  "public_data": {"manifest":"data/public_cases/renewal-cost-library-20261013.json","records":5,"official_originals":5,"contracts":3,"estimates":2,"settlements":0},
+  "boundaries": [
+    "No actual community monthly operating ledger obtained; source-bound entry and comparison are implemented.",
+    "No automatic fitting or model training.",
+    "Historical cost pilot is not exhaustive platform ingestion.",
+    "Previous Qiushi live model run remains separately recorded; this task did not rerun or claim it successful."
+  ],
+  "environment_repairs": "research/test_results/community-ops-env-20261013.txt",
+  "delivery_url": "http://127.0.0.1:5173/"
+}

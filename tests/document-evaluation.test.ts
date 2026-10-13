@@ -8,6 +8,7 @@ import { loadEvaluationDocument, type EvaluationDocument } from '../packages/doc
 import { evaluateDocument, parseDimensionAnswers } from '../packages/document-evaluation/evaluate'
 import { NEIGHBORHOOD_RUBRIC, evaluationQuestions, parseRubric, hashJson } from '../packages/document-evaluation/rubric'
 import { runEvaluationCli, safeEvaluationError } from '../packages/document-evaluation/cli'
+import { projectPython } from '../scripts/python-runtime'
 
 const execFileAsync = promisify(execFile), root = resolve(import.meta.dirname, '..')
 const settings = { apiKey: 'TEST-KEY-NOT-REAL', endpoint: 'https://trial.cn-beijing.maas.aliyuncs.com/compatible-mode/v1', model: 'decision-model-preview' }
@@ -116,7 +117,7 @@ describe('existing parser adapters', () => {
     await expect(loadEvaluationDocument(unknown, { projectRoot: root })).rejects.toThrow('DOCUMENT_FORMAT_UNSUPPORTED')
   })
   it('reuses the Python ParserPort for DOCX/XLSX/PDF and reports bounded extraction rather than full coverage', async () => {
-    const python = join(root, process.platform === 'win32' ? '.venv/Scripts/python.exe' : '.venv/bin/python')
+    const python = projectPython(root)
     const code = 'from pathlib import Path\nfrom docx import Document\nfrom openpyxl import Workbook\nfrom reportlab.pdfgen import canvas\nimport sys\np=Path(sys.argv[1])\nd=Document();d.add_paragraph("合成测试居民调查");d.save(p/"sample.docx")\nw=Workbook();s=w.active;s.title="合成材料";s.append(["建筑编号","备注"]);s.append(["B1","调查"]);w.save(p/"sample.xlsx")\nc=canvas.Canvas(str(p/"sample.pdf"));c.drawString(40,700,"SYNTHETIC document fixture");c.save()\nc=canvas.Canvas(str(p/"scan.pdf"));c.rect(50,50,100,100);c.showPage();c.save()'
     await execFileAsync(python, ['-c', code, directory], { cwd: root })
     for (const [extension, locator] of [['docx', 'paragraph:1'], ['xlsx', 'sheet:合成材料/row:2'], ['pdf', 'page:1']]) {

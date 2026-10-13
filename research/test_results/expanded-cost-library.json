@@ -1,0 +1,1223 @@
+{
+  "items": [
+    {
+      "id": "ZJ-SHEET-001-WINNING-BID",
+      "city": "丽水",
+      "lot_id": "A3311011160018907001001",
+      "province": "浙江",
+      "source_id": "zj-sheet-001-award",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "winning_bid",
+      "amount_yuan": 17333131,
+      "notice_date": "2026-08-26",
+      "scale_basis": "unknown",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块",
+      "amount_basis": "construction_award",
+      "amount_quote": "中标价： 人民币 壹仟柒佰叁拾叁万叁仟壹佰叁拾壹元整（￥ 17333131.00元）",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块",
+      "contract_date": null,
+      "amount_original": "17333131.00元",
+      "evidence_sources": [],
+      "comparability_note": "正式中标通知书。此原件未给面积；与同标段招标公告的面积联动另存 intake.source_link_pairings，不能伪装成单页原文。",
+      "supporting_source_ids": [],
+      "version": "941707798be3b1d44e1c7db83602ed8be9b0c658d47c0b484a83f01f97e9122a",
+      "source": {
+        "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20260826/bfb0b152-9abc-4f0b-a535-522a46168991.html",
+        "source_hash": "6fc5f719c78abca63bfb5dcc43ef2f6307b32cd34bbd82323d9536289e8702e6",
+        "text_hash": "07ef8960081fe16e0d89ecb8b38be23d753bb3069ec387ec1e72836853b3e334",
+        "published_at": "2026-08-26"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-SHEET-001-TENDER-CEILING",
+      "city": "丽水",
+      "lot_id": null,
+      "province": "浙江",
+      "source_id": "zj-sheet-001-tender-document",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "tender_ceiling",
+      "amount_yuan": 18997007,
+      "notice_date": "2026-07-29",
+      "scale_basis": "renovation_site_area",
+      "scale_quote": "本次 改造范围占地约92815平方米,其中区块内包含腾龙一期小区（53868㎡）、一期西侧地块（26381㎡）、 池莲路及周边地块（12566㎡）",
+      "scale_value": 92815,
+      "scope_level": "construction_lot",
+      "scope_quote": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块",
+      "amount_basis": "construction_tender_control",
+      "amount_quote": "最高投标限价：18997007元（其中暂列金额（含税）872000元，暂列金 额计入总价，但不作下浮）",
+      "field_issues": [],
+      "project_code": "2602-331123-04-01-474626",
+      "project_name": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块",
+      "contract_date": null,
+      "amount_original": "18997007元",
+      "evidence_sources": [],
+      "comparability_note": "招标正文第9页明确最高投标限价，含不下浮暂列金872000元；第3页面积为占地改造范围，只作综合范围金额强度。",
+      "supporting_source_ids": [],
+      "version": "84db4c5bea0af1e9ea9ae7bf55b1d357deaddb7b79008436f60eb92174ad02ff",
+      "source": {
+        "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——腾龙一期区块施工招标文件",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/EpointWebBuilder/pages/webbuildermis/attach/downloadztbattach?attachGuid=12efd676-c2cf-43b1-8fc0-ba48f622f773&appUrlFlag=ztb001&siteGuid=7eb5f7f1-9041-43ad-8e13-8fcb82ea831a",
+        "source_hash": "26cb6cd97fab0e3a7816df4f46259ffd2b665dbd52bcf385972d96cb1f2ac757",
+        "text_hash": "5d730a0200ab23eb98c92f07987eff8e905cb483404415f3bd8882c65c1d838e",
+        "published_at": "2026-07-29"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-SHEET-004-TENDER-CEILING",
+      "city": "丽水",
+      "lot_id": null,
+      "province": "浙江",
+      "source_id": "zj-sheet-004-tender-document",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "tender_ceiling",
+      "amount_yuan": 7732717,
+      "notice_date": "2026-06-30",
+      "scale_basis": "renovation_site_area",
+      "scale_quote": "项目范围约53021平方米，包括溪边路 北段、老叶坦区块两个部分，主要涵盖道路、排水、附属设施等分项工程，其中：",
+      "scale_value": 53021,
+      "scope_level": "construction_lot",
+      "scope_quote": "遂昌县妙高街道城镇老旧小区改造项目（一期）——叶坦区块",
+      "amount_basis": "construction_tender_control",
+      "amount_quote": "最高投标限价 7732717元（其中：含税暂列金359700元，不下浮）",
+      "field_issues": [],
+      "project_code": "2602-331123-04-01-217825",
+      "project_name": "遂昌县妙高街道城镇老旧小区改造项目（一期）——叶坦区块",
+      "contract_date": null,
+      "amount_original": "7732717元",
+      "evidence_sources": [],
+      "comparability_note": "招标正文第9页明确勾选最高投标限价，含不下浮暂列金359700元；第3页53021㎡为项目范围，非建筑面积。",
+      "supporting_source_ids": [],
+      "version": "b86ca12c2681f0b840525eb7610a6111a30fa3e5b20be49917ecff414fd16b21",
+      "source": {
+        "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——叶坦区块施工招标文件",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/EpointWebBuilder/pages/webbuildermis/attach/downloadztbattach?attachGuid=59ebdd16-9200-455b-b5d2-87c1e2bd3bcb&appUrlFlag=ztb001&siteGuid=7eb5f7f1-9041-43ad-8e13-8fcb82ea831a",
+        "source_hash": "be27dbda5732ad54759e6238b58672759000831d35158e4fad0dc77d5dcb7865",
+        "text_hash": "35ae05e2a7f975ae670143ffc85f5b4c365031f53613b2a418d89c2ff82100aa",
+        "published_at": "2026-06-30"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "GD-LUNJIAO-TOTAL-ESTIMATE-2026",
+      "city": "佛山",
+      "lot_id": null,
+      "province": "广东",
+      "source_id": "gd-lunjiao-total-estimate",
+      "work_type": "other",
+      "scale_unit": "m2",
+      "amount_kind": "estimate",
+      "amount_yuan": 11300000,
+      "notice_date": "2026-04-27",
+      "scale_basis": "existing_building_area",
+      "scale_quote": "建筑面积6.9405万平方米",
+      "scale_value": 69405,
+      "scope_level": "overall_project_investment",
+      "scope_quote": "对伦教常教社区及三洲社区老旧小区进行改造，涉及小区8个，住户601户，占地面积22570平方米，建筑面积6.9405万平方米。项目总投资估算约为1130万元。",
+      "amount_basis": "total_investment_estimate",
+      "amount_quote": "项目总投资估算约为1130万元。",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "佛山市顺德区伦教街道老旧小区改造项目",
+      "contract_date": null,
+      "amount_original": "1130万元",
+      "evidence_sources": [],
+      "comparability_note": "工程咨询采购公告中披露的整个改造项目总投资估算；采购本身为可研及资金申请咨询，7万余元咨询服务金额未作为工程造价入库。",
+      "supporting_source_ids": [],
+      "version": "9516bdfb32c4c033dce2fb0c9d8b209deacaa2ae3e99aed799c8fdcfe9ded4aa",
+      "source": {
+        "title": "佛山市顺德区伦教街道老旧小区改造项目（工程咨询）采购公告中的总投资估算",
+        "url": "https://ygp.gdzwfw.gov.cn/zjfwcs/gd-zjcs-pub/purchaseNotice/view/4406067977070022604271562",
+        "source_hash": "7bfe2cffc3a818f30a1d409970f916509580dc43749b6f5b95a168217dcef3a7",
+        "text_hash": "961baa64093532f4021aade1cd416d9547f811c9ea17b50d6aaf4c92cbc03d9d",
+        "published_at": "2026-04-27"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "仅施工或 EPC 工程金额参与本组造价基准。",
+          "缺少建筑面积或改造场地面积口径。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "GZ-QIAOZHONG-YIHE-CONTRACT-2025",
+      "city": "广州",
+      "lot_id": "JG2025-5259",
+      "province": "广东",
+      "source_id": "gz-qiaozhong-yhe-contract-2025",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "contract_price",
+      "amount_yuan": 61181045.29,
+      "notice_date": "2026-03-27",
+      "scale_basis": "building_floor_area",
+      "scale_quote": "改造范围内总建筑面积约 211400 平方米",
+      "scale_value": 211400,
+      "scope_level": "construction_lot",
+      "scope_quote": "项目改造范围涉及广州市荔湾区桥中街三个片区，分别为珠岛花园、拉丝厂宿舍区、净水厂宿舍区，改造范围约8.2公顷。改造范围内总建筑面积约 211400 平方米。项目主要建设内容包括维修安装楼栋门、楼道整治、无障碍设施改造、三线整治、第五立面改造、维修改造消防设施、社区公共区域设施完善、海绵城市建设等。（具体详见施工图纸和工程量清单）。",
+      "amount_basis": "construction_contract",
+      "amount_quote": "合同金额： 6118.104529万元",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "桥中街颐和片区微改造（颐和、长安、坦尾社区）项目施工总承包",
+      "contract_date": "2025-12-23",
+      "amount_original": "6118.104529万元",
+      "evidence_sources": [],
+      "comparability_note": "合同金额与总建筑面积来自同一合同公开公告。总建筑面积用于同口径强度比较，合同还含室外与共用设施，不代表每平方米实物修缮单价。未作地区、年份、工程量与施工深度调整；需结合范围比较。",
+      "supporting_source_ids": [],
+      "version": "be334b65763337fbd2ebd5ff079e7c250b076b6eec470205a3e00768748ce9a4",
+      "source": {
+        "title": "桥中街颐和片区微改造（颐和、长安、坦尾社区）项目施工总承包合同公开信息",
+        "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+        "source_hash": "90ea505caa230fa0e432572c5d720639ce2f5e9b9be8e08dc6dada669916558f",
+        "text_hash": "a16a749bdf3c5fbd7448a23da18b4ed59aa7112eb158710393e01a20b5d9992a",
+        "published_at": "2026-03-27"
+      },
+      "benchmark": {
+        "eligible": true,
+        "reasons": [],
+        "price_date": "2025-12-23",
+        "price_year": 2025,
+        "intensity_yuan_per_m2": 289.40891811731314
+      }
+    },
+    {
+      "id": "ZJ-SHEET-002-WINNING-BID",
+      "city": "丽水",
+      "lot_id": "A3311011160018043001001",
+      "province": "浙江",
+      "source_id": "zj-sheet-002-award",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "winning_bid",
+      "amount_yuan": 15012681,
+      "notice_date": "2025-12-30",
+      "scale_basis": "unknown",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "丽水市莲都区东升北区1-3栋、南区13栋及周边老旧小区改造工程",
+      "amount_basis": "construction_award",
+      "amount_quote": "中标价 : 大写 ： 人民币壹仟伍佰零壹万贰仟陆佰捌拾壹元整（ ¥15012681.00元 ）",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "丽水市莲都区东升北区1-3栋、南区13栋及周边老旧小区改造工程",
+      "contract_date": null,
+      "amount_original": "15012681.00元",
+      "evidence_sources": [],
+      "comparability_note": "正式中标通知书，载明中标下浮率11.9%；未给可作分母的改造面积。",
+      "supporting_source_ids": [],
+      "version": "c438ea120f97acb73e5e68738cd4c2bcd9981b571f3233b5fe070337202bebdb",
+      "source": {
+        "title": "丽水市莲都区东升北区1-3栋、南区13栋及周边老旧小区改造工程",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001008/20251230/ae7f6484-bbd6-4db7-9b83-412b3e33d580.html",
+        "source_hash": "1d2727d86177760204a225f9b81b27b3cfb08d3d97bfbf36221b6b6f98cf17f3",
+        "text_hash": "6706c71e864ed5e8512c728aba612b50e5c579a05d2a17152dc19391badff55c",
+        "published_at": "2025-12-30"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-SHEET-005-TENDER-CEILING",
+      "city": "丽水",
+      "lot_id": "A3311011160017973002001",
+      "province": "浙江",
+      "source_id": "zj-sheet-005-amendment",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "tender_ceiling",
+      "amount_yuan": 9667936,
+      "notice_date": "2025-11-26",
+      "scale_basis": "unknown",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "遂昌县妙高街道城镇老旧小区改造项目（一期）——渡船头区块工程",
+      "amount_basis": "construction_tender_control",
+      "amount_quote": "本次招标建安工程造价： 9667936元【其中暂列金（含税）327000元，含税暂列金计入总价，但不予下浮】。 二、招标文件【第三章评标定标办法】【第一节评标办法】【二、具体详细评审】【 3.商务标评审】中评审标准现修改为： 序号 评审内容 评审标准 评审标准 好 较好 一般 差 1 投标报价 投标人在评标基准价范围内的有效投标报价，投标报价为 8687138 元（含） - 8547024 元（含）【即投标下浮率 10.5%（含）-12%（含）】的为好； 投标报价为 8827252 元（不含） - 8687138 元（含）【即投标下浮 9.0%（含）-10.5%（不含）】的为较好； 投标报价为 8967366 元（不含） - 8827252 元（含）【即投标下浮率 7.5%（含）-9.0%（不含）】的为一般； 投标报价为 9107480 元（不含） — 8967366 元（含）【即投标下浮率 6.0%（含）—7.5%（不含）】或其他的为差。 注：评标基准价范围为最高投标限价下浮： 6.0%-12.0% （含税暂列金计入总价，但不作下浮）",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "遂昌县妙高街道城镇老旧小区改造项目（一期）——渡船头区块工程",
+      "contract_date": null,
+      "amount_original": "9667936元",
+      "evidence_sources": [],
+      "comparability_note": "补充修改通知的招标控制价，含不下浮暂列金327000元；原表63381㎡来自转载，官方原始面积尚待核实，面积不入核实记录。",
+      "supporting_source_ids": [],
+      "version": "7873f9c8bf9384745eadcdfea5a5807975627fd9e7aa5b038d77b24633730d0b",
+      "source": {
+        "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——渡船头区块工程招标公告变更公告",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001004/20251126/70199b46-37a3-42df-b836-7f2ac2085958.html",
+        "source_hash": "9d5f98438a89470cf0f414ade5ab3d1a5bf76ce7ddcae4fd006e5f449355dfe7",
+        "text_hash": "e2556d86e889f14db73d613f1538ec811eda0b48b9f39f0a51eb579a8c22de6f",
+        "published_at": "2025-11-26"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-SHEET-007-CANDIDATE-BID",
+      "city": "丽水",
+      "lot_id": "A3311011160017371001001",
+      "province": "浙江",
+      "source_id": "zj-sheet-007-candidate",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "candidate_bid",
+      "amount_yuan": 14972288,
+      "notice_date": "2025-09-12",
+      "scale_basis": "unknown",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "丽水市莲都区正达阳光城老旧小区改造工程",
+      "amount_basis": "candidate_bid_not_award",
+      "amount_quote": "预中标价 : 大写 壹仟肆佰玖拾柒万贰仟贰佰捌拾捌元整 （小写： ¥ 14972288 元）",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "丽水市莲都区正达阳光城老旧小区改造工程",
+      "contract_date": null,
+      "amount_original": "14972288 元",
+      "evidence_sources": [],
+      "comparability_note": "5名不分排名中标候选人均报14972288元；保存为一条标段候选报价，不算5个独立工程、不视作正式中标或结算。",
+      "supporting_source_ids": [],
+      "version": "ac9fe4eff08aab50e0557e6f29a621cc7a323ca450723aee32017add2baf4045",
+      "source": {
+        "title": "丽水市莲都区正达阳光城老旧小区改造工程中标候选人公示",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001007/20250912/a2634e00-a2f2-4967-bd0e-01c7305caf8e.html",
+        "source_hash": "a6377a7fe4ae29a9425dc783d557c43ac1bfae3f64c237db7b6269b19f1b7561",
+        "text_hash": "fc9ec4a2add5e50c6537d4c1121070b1e60baaec5db3ac3e4151b69784e008d0",
+        "published_at": "2025-09-12"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "候选中标报价尚未确认为中标价。",
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-SHEET-003-TENDER-CEILING",
+      "city": "丽水",
+      "lot_id": "A3311011160017563001001",
+      "province": "浙江",
+      "source_id": "zj-sheet-003-tender",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "tender_ceiling",
+      "amount_yuan": 8314400,
+      "notice_date": "2025-09-05",
+      "scale_basis": "road_area",
+      "scale_quote": "道路改造 : 修复面积 13477.831 平方米",
+      "scale_value": 13477.831,
+      "scope_level": "construction_lot",
+      "scope_quote": "丽水市莲都区东升南区及周边老旧小区改造工程",
+      "amount_basis": "construction_tender_control",
+      "amount_quote": "本次暂定的最高限价（工程费用）为 831.44 万元（最终以招标人委托第三方中介机构审核的施工图预算价为准）",
+      "field_issues": [],
+      "project_code": "2508-331102-04-01-923186",
+      "project_name": "丽水市莲都区东升南区及周边老旧小区改造工程",
+      "contract_date": null,
+      "amount_original": "831.44 万元",
+      "evidence_sources": [],
+      "comparability_note": "暂定最高限价，最终以审核施工图预算为准；13477.831㎡只是道路修复面积，金额还含管网等，禁止相除为道路单价。",
+      "supporting_source_ids": [],
+      "version": "338e1f5cb2859914d5bf6247c54712c30198ef7e46e74b9f2ff94abbbf7cf9e8",
+      "source": {
+        "title": "丽水市莲都区东升南区及周边老旧小区改造工程招标公告",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20250905/6331073c-1e49-45db-bc52-0e4ce18c18cc.html",
+        "source_hash": "a592432be82222034e68575bee038b72fb49d8101f184f297608c528d0b9e22a",
+        "text_hash": "36b6041c5dd26f70b3bcb2b580f7759a44233b5f125ec06bdfec43c393d0da23",
+        "published_at": "2025-09-05"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-LINPING-BLOCK2-CONTRACT-2024",
+      "city": "杭州",
+      "lot_id": "A3301131280523452001211",
+      "province": "浙江",
+      "source_id": "zj-linping-block2-contract",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "contract_price",
+      "amount_yuan": 26618361,
+      "notice_date": "2024-11-14",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "标段（包）名称: 临平街道2024年老旧住宅综合改造提升项目二区块",
+      "amount_basis": "construction_contract",
+      "amount_quote": "合同价款: 工期（或服务期、交货期）: 质量要求: 项目负责人: 浙江新瀚建设集团有限公司 26,618,361.00元",
+      "field_issues": [],
+      "project_code": "2405-330113-04-01-421602",
+      "project_name": "临平街道2024年老旧住宅综合改造提升项目二区块",
+      "contract_date": "2024-11-14",
+      "amount_original": "26,618,361.00元",
+      "evidence_sources": [],
+      "comparability_note": "二区块合同约定价，公告未给面积/户数；与同标段估算分阶段保存，不能相加或直接称节省金额。",
+      "supporting_source_ids": [],
+      "version": "d01235de0fa7262ad7b70b2d137ff91cbeb914ff65386b0ae70113e1564d1941",
+      "source": {
+        "title": "临平街道2024年老旧住宅综合改造提升项目二区块合同订立信息",
+        "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20241114/54b453ea-fc96-4252-83db-b71ffe1208ae.html",
+        "source_hash": "508a6d20ecabe621851114c1f8b88d5e97b33b87be2caf488d6b5134fa2c769b",
+        "text_hash": "0458fae298ab1fa2463323c3ad9dde7f83cde4d8de57f68b5b9838d44da3aa17",
+        "published_at": "2024-11-14"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ],
+        "price_date": "2024-11-14",
+        "price_year": 2024,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "city": "广州",
+      "lot_id": "JG2024-3573",
+      "province": "广东",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "contract_price",
+      "amount_yuan": 3464632.18,
+      "notice_date": "2024-10-11",
+      "scale_basis": "building_floor_area",
+      "scale_quote": "总建筑面积约1.1218万平方米",
+      "scale_value": 11218,
+      "scope_level": "construction_lot",
+      "scope_quote": "项目位于广州开发区夏港街石英路6号，用地面积约2400平方米，总建筑面积约1.1218万平方米，共1栋楼、1个梯口，共17层，居民户数123户，约370人。具体内容以施工图纸及工程量清单为准。",
+      "amount_basis": "construction_contract",
+      "amount_quote": "合同金额： 346.463218万元",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "夏港街2024年鸿中楼老旧小区微改造项目",
+      "contract_date": "2024-09-27",
+      "amount_original": "346.463218万元",
+      "evidence_sources": [],
+      "comparability_note": "合同金额与总建筑面积来自同一合同公开公告。总建筑面积用于同口径强度比较，合同还含室外与共用设施，不代表每平方米实物修缮单价。未作地区、年份、工程量与施工深度调整；需结合范围比较。",
+      "supporting_source_ids": [],
+      "version": "45a1a23662fb08842c7e0df119a134ec4185ea963398d59d633ad97a173decef",
+      "source": {
+        "title": "夏港街2024年鸿中楼老旧小区微改造项目合同公开信息",
+        "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+        "source_hash": "cbc78523e23547dcd6b5c31a5d1d84e4821390c27cad1b16cf9460d60fb0f48a",
+        "text_hash": "e4959ac4ccdcdbd975f236477d700da6a371aadade3a32820283e1555d256896",
+        "published_at": "2024-10-11"
+      },
+      "benchmark": {
+        "eligible": true,
+        "reasons": [],
+        "price_date": "2024-09-27",
+        "price_year": 2024,
+        "intensity_yuan_per_m2": 308.84579960777324
+      }
+    },
+    {
+      "id": "ZJ-LINPING-BLOCK2-ESTIMATE-2024",
+      "city": "杭州",
+      "lot_id": "A3301131280523452001211",
+      "province": "浙江",
+      "source_id": "zj-linping-block2-estimate",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "estimate",
+      "amount_yuan": 45095100,
+      "notice_date": "2024-09-06",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "招标内容、范围: 临平街道2024年老旧住宅综合改造提升项目二区块",
+      "amount_basis": "tender_estimate",
+      "amount_quote": "标段（包）招标估算金额: 45,095,100.00元",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "临平街道2024年老旧住宅综合改造提升项目二区块",
+      "contract_date": null,
+      "amount_original": "45,095,100.00元",
+      "evidence_sources": [],
+      "comparability_note": "原文为招标估算金额，非最高投标限价、非已支付成本。",
+      "supporting_source_ids": [],
+      "version": "50aecc2955e1fa97ac1df0d54cad85166e31461c6640158d48c7fbc645f773ed",
+      "source": {
+        "title": "临平街道2024年老旧住宅综合改造提升项目二区块招标公告",
+        "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001001/20240906/d9d5891e-c4bb-42fe-8d7a-10e61e15e0a0.html",
+        "source_hash": "d4cdc90b7ff29fb8600679c1abe8a752c994d1377364925b25d7df111bfd5a7e",
+        "text_hash": "7dfa53a15427a9fe357106808e4b742960676f495f7c11e10e655750472ab923",
+        "published_at": "2024-09-06"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "GZ-QINGNIANYUAN-CONTRACT-2024",
+      "city": "广州",
+      "lot_id": "JG2024-3494",
+      "province": "广东",
+      "source_id": "gz-qingnianyuan-contract-2024",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "contract_price",
+      "amount_yuan": 20020093.35,
+      "notice_date": "2024-09-04",
+      "scale_basis": "building_floor_area",
+      "scale_quote": "总建筑面积约63000平方米",
+      "scale_value": 63000,
+      "scope_level": "construction_lot",
+      "scope_quote": "项目用地面积约22854平方米，总建筑面积约63000平方米，共5栋楼。建设内容主要为：翻新楼栋门及更换门禁系统、楼道内修缮翻新、楼栋“三线”整治、楼栋消防设施维修更换、维修楼栋排水设施、重做屋面防水、化粪池维修更换、外墙治理及修缮、空调机位安装、完善小区无障碍设施、完善室外消防通道及设施、室外场地重新规划及铺装、设置休闲活动空间、完善非机动车泊位及机动车泊位等 。具体内容以施工图纸及工程量清单为准。",
+      "amount_basis": "construction_contract",
+      "amount_quote": "合同金额： 2002.009335万元",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "夏港街2024年青年苑老旧小区微改造项目施工总承包",
+      "contract_date": "2024-09-02",
+      "amount_original": "2002.009335万元",
+      "evidence_sources": [],
+      "comparability_note": "合同金额与总建筑面积来自同一合同公开公告。总建筑面积用于同口径强度比较，合同还含室外与共用设施，不代表每平方米实物修缮单价。未作地区、年份、工程量与施工深度调整；需结合范围比较。",
+      "supporting_source_ids": [],
+      "version": "9156dbcefd290cae30f854a4317d833754ab1d73df96821f9674defdd8521b8f",
+      "source": {
+        "title": "夏港街2024年青年苑老旧小区微改造项目施工总承包合同公开信息",
+        "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20240904/0020010011010131.html",
+        "source_hash": "644a9c673a94aac6f438b1fd48264671c0671e1f2c2c89c351e8e34ffa6852eb",
+        "text_hash": "c5797ca5ca3320e3ef67a14507f75fa8d42d7a17ce3dc27f5ac1af32fcd00a48",
+        "published_at": "2024-09-04"
+      },
+      "benchmark": {
+        "eligible": true,
+        "reasons": [],
+        "price_date": "2024-09-02",
+        "price_year": 2024,
+        "intensity_yuan_per_m2": 317.77925952380957
+      }
+    },
+    {
+      "id": "ZJ-ZHEGONG-EPC-CONTRACT-2023",
+      "city": "杭州",
+      "lot_id": "A3301050100508270001111",
+      "province": "浙江",
+      "source_id": "zj-zhegong-epc-contract",
+      "work_type": "epc",
+      "scale_unit": null,
+      "amount_kind": "contract_price",
+      "amount_yuan": 325583472,
+      "notice_date": "2023-12-08",
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "epc_package",
+      "scope_quote": "标段（包）名称: 浙工新村城市危旧房有机更新（试点）项目设计-采购-施工（EPC）总承包",
+      "amount_basis": "epc_contract_total",
+      "amount_quote": "合同价款: 工期（或服务期、交货期）: 质量要求: 项目负责人: 杭州天和建设集团有限公司;浙江省建筑设计研究院 325,583,472.00元",
+      "field_issues": [],
+      "project_code": "2308-330105-04-01-372252",
+      "project_name": "浙工新村城市危旧房有机更新（试点）项目设计-采购-施工（EPC）总承包",
+      "contract_date": "2023-11-09",
+      "amount_original": "325,583,472.00元",
+      "evidence_sources": [],
+      "comparability_note": "设计、采购与施工总承包合同约定价；公告未给面积/户数；不拆为施工单价。",
+      "supporting_source_ids": [],
+      "version": "6e646b934550d73ac6b6d79495b527436a14bbb47589dd8ea69ef91e6afd9c96",
+      "source": {
+        "title": "浙工新村城市危旧房有机更新（试点）项目设计-采购-施工（EPC）总承包合同订立信息",
+        "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20231208/f1b82e1a-5290-40cd-ac88-1bf59dfab2b6.html",
+        "source_hash": "fbf918c10fc32fc3d2923609301254ea66302e566032df009ba7685eed7deb4a",
+        "text_hash": "282f622dbb6d32127d6efc7e6ecebea7e7e41c95e45866c8c4608b52c3e9ff32",
+        "published_at": "2023-12-08"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ],
+        "price_date": "2023-11-09",
+        "price_year": 2023,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "ZJ-SHEET-006-TENDER-CEILING",
+      "city": "丽水",
+      "lot_id": "A3311011160013109001001",
+      "province": "浙江",
+      "source_id": "zj-sheet-006-tender",
+      "work_type": "construction",
+      "scale_unit": "m2",
+      "amount_kind": "tender_ceiling",
+      "amount_yuan": 11005241,
+      "notice_date": "2023-05-25",
+      "scale_basis": "unknown",
+      "scale_quote": "项目总改造面积 35684 平方米，共 18 幢建筑，主要改造内容包括：道路改造、改造绿化以及给水改造、路灯等同步改造内容",
+      "scale_value": 35684,
+      "scope_level": "construction_lot",
+      "scope_quote": "丽水市莲都区金山新村及周边老旧小区改造工程",
+      "amount_basis": "construction_tender_control",
+      "amount_quote": "最高投标限价： 11005241 元",
+      "field_issues": [],
+      "project_code": "2304-331102-04-01-919014",
+      "project_name": "丽水市莲都区金山新村及周边老旧小区改造工程",
+      "contract_date": null,
+      "amount_original": "11005241 元",
+      "evidence_sources": [],
+      "comparability_note": "原文写总改造面积35684㎡、18幢，未明示占地或建筑面积；面积保留但scale_basis=unknown，先排除同口径金额强度统计。",
+      "supporting_source_ids": [],
+      "version": "4bca0d5798684899158b18adf9d2b03787a8576dece72fd5bfa440c83b80c9e0",
+      "source": {
+        "title": "丽水市莲都区金山新村及周边老旧小区改造工程招标公告",
+        "url": "https://dzjy.lssggzy.lishui.gov.cn/ldweb/jyxx/002001/002001003/20230525/d07bb8fe-6729-4cc4-a716-8cb6cd192442.html",
+        "source_hash": "3b120c4f37eb59f079d5d51be721108b5dfe8a57581915e18ec2a19699a254df",
+        "text_hash": "58f3643bf3c67171505e8655e4114f2ead50ffa6188df15788fca32f811ca1d8",
+        "published_at": "2023-05-25"
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "SH-EXP-CANGYUAN-AWARD-2026",
+      "city": "上海",
+      "lot_id": "2603MH0001-C01",
+      "province": "上海",
+      "source_id": "sh-exp-cangyuan-award",
+      "work_type": "construction",
+      "award_date": "2026-08-29",
+      "scale_unit": "m2",
+      "amount_kind": "winning_bid",
+      "amount_yuan": 54301018,
+      "notice_date": null,
+      "scale_basis": "building_floor_area",
+      "scale_quote": "项目共47幢房屋，2049户，总建筑面积约122353.32平方米。建筑层数6层",
+      "scale_value": 122353.32,
+      "scope_level": "construction_lot",
+      "scope_quote": "主要内容:一是修缮房屋本体。包括屋面、外墙、公共楼道、入户单元的修缮;二是整治公共隐患。包括非机动车棚、机动车停车位、室外道路的修缮;三是提升综合环境。包括小区门头改造、出入口、公共活动空间的提升。",
+      "amount_basis": "construction_winning_bid",
+      "amount_quote": "中标人： 中建八局总承包建设有限公司 中标价： 5430.1018万元 中标日期： 2026-08-29",
+      "field_issues": [],
+      "project_code": "2603MH0001",
+      "project_name": "江川路街道沧源二村“美丽家园”综合修缮项目",
+      "contract_date": null,
+      "amount_original": "5430.1018万元",
+      "scale_source_id": "sh-exp-cangyuan-tender",
+      "scope_source_id": "sh-exp-cangyuan-tender",
+      "evidence_sources": [
+        {
+          "id": "sh-exp-cangyuan-tender",
+          "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f7cf9c361211b&SID=2d92a3959f58d85e019f82a542765c56",
+          "title": "江川路街道沧源二村“美丽家园”综合修缮项目施工招标公告",
+          "version": "4de37ea3e4ff570d5ad8819eed194a9a2db886222f18931492f8e7e84c973d18",
+          "text_hash": "f229214f4b1f38face35aef0ad46ced604597b1a71a3d6516e23fe244996525f",
+          "source_hash": "85a83fbb23bc7bb0e1eb87766a18e2be10590c2ea3424de92a817d326afb8775",
+          "published_at": null
+        }
+      ],
+      "comparability_note": "施工中标总价，分母为同报建编号C01招标公告明确的现有住宅总建筑面积，表示每平方米受益住宅建筑面积对应的施工中标金额；面积约数按原精度保留，暂列及暂估金额未扣除；最终结算未取得。",
+      "reported_scale_unit": "m2",
+      "reported_scale_label": "总建筑面积",
+      "reported_scale_value": 122353.32,
+      "supporting_source_ids": [
+        "sh-exp-cangyuan-tender"
+      ],
+      "version": "e1ca7f168bf5b25b67d3c530a730492d2a6a056f7489d6b0bfd0a9db78e04db4",
+      "source": {
+        "title": "江川路街道沧源二村“美丽家园”综合修缮项目中标结果公告",
+        "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=5fcd587e-411f-4617-9112-cf75a4b99372",
+        "source_hash": "6f62cd8275ba2e231ccfac1d6a1247e3ea18aab0b5eaf5767ea3f59744b932ee",
+        "text_hash": "9a14c3dd3bd3a69faf7a2941e8a4969134d6d34581ef82d864a93e3b329b1481",
+        "published_at": null
+      },
+      "benchmark": {
+        "eligible": true,
+        "reasons": [],
+        "price_date": "2026-08-29",
+        "price_year": 2026,
+        "intensity_yuan_per_m2": 443.8050230267556
+      }
+    },
+    {
+      "id": "SH-EXP-HAISHANG-AWARD-2026",
+      "city": "上海",
+      "lot_id": "2603MH0003-C01",
+      "province": "上海",
+      "source_id": "sh-exp-haishang-award",
+      "work_type": "construction",
+      "award_date": "2026-08-28",
+      "scale_unit": "m2",
+      "amount_kind": "winning_bid",
+      "amount_yuan": 33442825,
+      "notice_date": null,
+      "scale_basis": "building_floor_area",
+      "scale_quote": "总建筑面积为79126.42㎡，共19幢4-6层住宅。",
+      "scale_value": 79126.42,
+      "scope_level": "construction_lot",
+      "scope_quote": "工程类别: 房屋修缮工程 具体描述: (1)屋面:14051.63 平方米 (2)外立面:55055.94 平方米 (3)其他:总建筑面积为79126.42㎡，共19幢4-6层住宅。",
+      "amount_basis": "construction_winning_bid",
+      "amount_quote": "中标人： 上海建工四建集团有限公司 中标价： 3344.2825万元 中标日期： 2026-08-28",
+      "field_issues": [],
+      "project_code": "2603MH0003",
+      "project_name": "七宝镇海上新村“美丽家园”综合修缮项目",
+      "contract_date": null,
+      "amount_original": "3344.2825万元",
+      "scale_source_id": "sh-exp-haishang-tender",
+      "scope_source_id": "sh-exp-haishang-tender",
+      "evidence_sources": [
+        {
+          "id": "sh-exp-haishang-tender",
+          "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f82e04a22605d&SID=2d92a3959f58d85e019f82e050d9607e",
+          "title": "七宝镇海上新村“美丽家园”综合修缮项目施工招标公告",
+          "version": "ebc6514d2b758a7fdf6117b9c836d488feaf3882acf3cbbe83638a5804d65024",
+          "text_hash": "daa71fce0f9ad5ff12b72e06762bccfee48c82bacf6b02cbee08b6457b0da051",
+          "source_hash": "a2c2d5616c9bbfa7c57080504eba368ad5450a93392774afe5532b1db5d9d52c",
+          "published_at": null
+        }
+      ],
+      "comparability_note": "施工中标总价，分母为同报建编号C01招标公告明确的现有住宅总建筑面积，表示每平方米受益住宅建筑面积对应的施工中标金额；面积约数按原精度保留，暂列及暂估金额未扣除；最终结算未取得。",
+      "reported_scale_unit": "m2",
+      "reported_scale_label": "总建筑面积",
+      "reported_scale_value": 79126.42,
+      "supporting_source_ids": [
+        "sh-exp-haishang-tender"
+      ],
+      "version": "86501a74f71377dd965de756882448c88eb4aa0fc16d3f27d40bbeab468c1eb3",
+      "source": {
+        "title": "七宝镇海上新村“美丽家园”综合修缮项目中标结果公告",
+        "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=edc6719e-876e-4613-9879-e03a5cc8084d",
+        "source_hash": "a569c8f9f0239fa1430bd90e73ff7dfed776bb05a2f850e631c03f1acff6b902",
+        "text_hash": "9da98cea65758c970a194218c1f1ae872d46869692ef6bd2aa52de174c26e7a0",
+        "published_at": null
+      },
+      "benchmark": {
+        "eligible": true,
+        "reasons": [],
+        "price_date": "2026-08-28",
+        "price_year": 2026,
+        "intensity_yuan_per_m2": 422.6505508526735
+      }
+    },
+    {
+      "id": "SH-EXP-HEJIANG-AWARD-2026",
+      "city": "上海",
+      "lot_id": "2503QP0021-C01",
+      "province": "上海",
+      "source_id": "sh-exp-hejiang-award",
+      "work_type": "construction",
+      "award_date": "2026-04-09",
+      "scale_unit": null,
+      "amount_kind": "winning_bid",
+      "amount_yuan": 5635219,
+      "notice_date": null,
+      "scale_basis": "unknown",
+      "scale_quote": "修缮总面积约 3008平方米",
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "主要包括屋面修缮、外立面修缮、共用部位修缮、电气设施修缮、给排水、设施修缮及其他附属工程等，修缮总面积约 3008平方米。",
+      "amount_basis": "construction_winning_bid",
+      "amount_quote": "中标人： 上海华新建设（集团）有限公司 中标价： 563.5219万元 中标日期： 2026-04-09",
+      "field_issues": [],
+      "project_code": "2503QP0021",
+      "project_name": "2025年青浦区白鹤镇鹤江路房屋综合修缮项目",
+      "contract_date": null,
+      "amount_original": "563.5219万元",
+      "scale_source_id": "sh-exp-hejiang-tender",
+      "scope_source_id": "sh-exp-hejiang-tender",
+      "evidence_sources": [
+        {
+          "id": "sh-exp-hejiang-tender",
+          "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959ba20cf4019bda09fd1965bd&SID=2d92a3959ba20cf4019be8a919ee7746",
+          "title": "2025年青浦区白鹤镇鹤江路房屋综合修缮项目施工招标公告",
+          "version": "bf4e315ad32abbb97d0da6bf6d663f2d284eaa2aff2dbe5a61714c32ff9ddf62",
+          "text_hash": "38d85ea65fe89fe6326df57374244129cb925763267f716d05fe658e46e4f3b8",
+          "source_hash": "88dba3f767cce0fe916a2aaa12b52fac2dc59a0e099dea27e2e3d88cb68677bc",
+          "published_at": null
+        }
+      ],
+      "comparability_note": "施工中标总价；同标段招标公告仅称修缮面积，未明确建筑面积或具体作业面积，保留原值待补证，不自动计算平方米单价；最终结算未取得。",
+      "reported_scale_unit": "m2",
+      "reported_scale_label": "修缮总面积（未明确建筑面积/作业面积口径）",
+      "reported_scale_value": 3008,
+      "supporting_source_ids": [
+        "sh-exp-hejiang-tender"
+      ],
+      "version": "f9f81ad86e9d03460b174371a3d42688f20f4d18831c0d6908b47eedf6e0f9a4",
+      "source": {
+        "title": "2025年青浦区白鹤镇鹤江路房屋综合修缮项目中标结果公告",
+        "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=38813ff5-06f9-412f-98be-fc18b15b3a33",
+        "source_hash": "cd8f97c25b2b2dd6b80f114c51ac926b1d3d799e7906dd71bc0a20829135d527",
+        "text_hash": "cea4e87076c4a7eede0c9067ca41f0665d9c6867043d15b2b178d7822fcf814c",
+        "published_at": null
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ],
+        "price_date": "2026-04-09",
+        "price_year": 2026,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "SH-EXP-ZHUGUANG-AWARD-2025",
+      "city": "上海",
+      "lot_id": "2503QP0014-C01",
+      "province": "上海",
+      "source_id": "sh-exp-zhuguang-award",
+      "work_type": "construction",
+      "award_date": "2025-12-16",
+      "scale_unit": null,
+      "amount_kind": "winning_bid",
+      "amount_yuan": 7907702,
+      "notice_date": null,
+      "scale_basis": "unknown",
+      "scale_quote": "总修缮面积约16521.80平方米。",
+      "scale_value": null,
+      "scope_level": "construction_lot",
+      "scope_quote": "招标标段名称： 青浦区朱家角镇珠光新村小区综合修缮项目 建设地点： 青浦区朱家角镇漕平支路2弄 工程施工工程规模描述 项目类别: 房屋建筑工程 工程类别: 房屋修缮工程 具体描述: (1)其他:总修缮面积约16521.80平方米。",
+      "amount_basis": "construction_winning_bid",
+      "amount_quote": "中标人： 上海华辰建筑工程有限公司 中标价： 790.7702万元 中标日期： 2025-12-16",
+      "field_issues": [],
+      "project_code": "2503QP0014",
+      "project_name": "青浦区朱家角镇珠光新村小区综合修缮项目",
+      "contract_date": null,
+      "amount_original": "790.7702万元",
+      "scale_source_id": "sh-exp-zhuguang-tender",
+      "scope_source_id": "sh-exp-zhuguang-tender",
+      "evidence_sources": [
+        {
+          "id": "sh-exp-zhuguang-tender",
+          "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959a514169019a52a427fa125d&SID=2d92a3959a514169019a52a438641272",
+          "title": "青浦区朱家角镇珠光新村小区综合修缮项目施工招标公告",
+          "version": "269ceca47e3637cd2a603fe14ae470cc0acb8d2385d516dddb2a760d348ddb85",
+          "text_hash": "8647f862daef5c8c80c3f7801df9466509613d120b693e9bbd5c03edfd0ecf6b",
+          "source_hash": "9894ffbd2b96fdfbeb39bbddf39bcc4a9e1188600fe794752e0b361bc42f817a",
+          "published_at": null
+        }
+      ],
+      "comparability_note": "施工中标总价；同标段招标公告仅称修缮面积，未明确建筑面积或具体作业面积，保留原值待补证，不自动计算平方米单价；最终结算未取得。",
+      "reported_scale_unit": "m2",
+      "reported_scale_label": "修缮总面积（未明确建筑面积/作业面积口径）",
+      "reported_scale_value": 16521.8,
+      "supporting_source_ids": [
+        "sh-exp-zhuguang-tender"
+      ],
+      "version": "c2c9824cb2ef1c44ba627cec801b8d14ec434792a7ac3d0c07d99006bf957cff",
+      "source": {
+        "title": "青浦区朱家角镇珠光新村小区综合修缮项目中标结果公告",
+        "url": "https://xsjypt.fgj.sh.gov.cn/cebea-bid-result!view.do?packageId=9a6f5e12-a37a-4ab4-b139-7c16dc9b04e8",
+        "source_hash": "603b4e3b0e83103e0a05cfc3b66692efd59b93f0aa89e0aa7b886afbb450232c",
+        "text_hash": "752c4b7b91f56c1d195e14a58d0b9e7a2fb6905dc6c89e63fd32db4ec0e8bffc",
+        "published_at": null
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ],
+        "price_date": "2025-12-16",
+        "price_year": 2025,
+        "intensity_yuan_per_m2": null
+      }
+    },
+    {
+      "id": "SH-LINGLING-TELECOM-CONTRACT-2025",
+      "city": "上海",
+      "lot_id": null,
+      "province": "上海",
+      "source_id": "sh-lingling-telecom-contract",
+      "work_type": "construction",
+      "scale_unit": null,
+      "amount_kind": "contract_price",
+      "amount_yuan": 2623000,
+      "notice_date": null,
+      "scale_quote": null,
+      "scale_value": null,
+      "scope_level": "telecom_subproject",
+      "scope_quote": "3．2 乙方所交付的零陵路 677 弄 6-8 号旧住房成套改造项目-通信工程（项目名 称）服务还应符合国家和上海市有关安全、环保、卫生之规定。",
+      "amount_basis": "telecom_subproject_contract",
+      "amount_quote": "签约合同价格（中标价）为 2623000 元整。贰佰陆拾贰万叁仟元整",
+      "field_issues": [],
+      "project_code": null,
+      "project_name": "零陵路677弄6-8号旧住房成套改造项目-通信工程",
+      "contract_date": null,
+      "amount_original": "2623000 元整",
+      "evidence_sources": [],
+      "comparability_note": "通信弱电子项合同，固定单价结算；不作为整个旧住房成套改造总成本。PDF签章日期由第8页人工视觉核验，未统一填为合同日期；页面发布日期无来源。",
+      "supporting_source_ids": [],
+      "version": "0fae0ecefabf31eb7ecbe8a5bf565cfb44bac990720df0455702bc44f5c37595",
+      "source": {
+        "title": "零陵路677弄6-8号旧住房成套改造项目-通信工程的合同",
+        "url": "https://jpg.zfcg.sh.gov.cn/sh-gov-open-doc/1035IC/2aadd24d-f6b5-4e4b-bb3e-f56fb535c020.pdf",
+        "source_hash": "93bf97da80f2ed8078853db2e5ee8a521aec1ab7ad9497cabd975025bd5032a9",
+        "text_hash": "98a1f194bd43ffe05b98706182218aea8862cc792d1d895db283c165dee0213d",
+        "published_at": null
+      },
+      "benchmark": {
+        "eligible": false,
+        "reasons": [
+          "工程范围并非已明确的整体项目或施工标段。",
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ],
+        "price_date": null,
+        "price_year": null,
+        "intensity_yuan_per_m2": null
+      }
+    }
+  ],
+  "platforms": [
+    {
+      "name": "浙江省公共资源交易服务平台",
+      "url": "https://ggzy.zj.gov.cn/",
+      "status": "public_api_and_html_verified",
+      "note": "公开前端index.js使用POST /inteligentsearch/rest/esinteligentsearch/getFullTextDataNew，匿名token为空，实际200返回records及linkurl；HTML合同和招标公告可直接GET。web抓取器405不代表requests入口失败。按网页日期范围与有限分页采集；结果分词较宽，需本地项目/范围复核。"
+    },
+    {
+      "name": "上海公共资源交易平台",
+      "url": "https://seal.shggzy.com/",
+      "status": "housing_repair_results_verified",
+      "note": "通过上海住宅修缮工程交易平台公开接口核验4个施工中标项目，以项目编号和C01标段关联对应招标原件；原有通信分项合同单列。"
+    },
+    {
+      "name": "广东省公共资源交易平台",
+      "url": "https://ygp.gdzwfw.gov.cn/",
+      "status": "public_contracts_verified",
+      "note": "新增广州青年苑、鸿中楼、颐和片区3个施工合同原件；金额及建筑面积同源。原有佛山整体投资估算单列。"
+    }
+  ],
+  "benchmark": {
+    "groups": [
+      {
+        "id": "cost-benchmark:%7B%22province%22%3A%22%E5%B9%BF%E4%B8%9C%22%2C%22city%22%3A%22%E5%B9%BF%E5%B7%9E%22%2C%22work_type%22%3A%22construction%22%2C%22amount_kind%22%3A%22contract_price%22%2C%22scope_family%22%3A%22construction_lot%22%2C%22scope_level%22%3A%22construction_lot%22%2C%22scale_basis%22%3A%22building_floor_area%22%2C%22price_year%22%3A2024%2C%22amount_basis%22%3A%22construction_contract%22%7D",
+        "key": "{\"province\":\"广东\",\"city\":\"广州\",\"work_type\":\"construction\",\"amount_kind\":\"contract_price\",\"scope_family\":\"construction_lot\",\"scope_level\":\"construction_lot\",\"scale_basis\":\"building_floor_area\",\"price_year\":2024,\"amount_basis\":\"construction_contract\"}",
+        "dimensions": {
+          "province": "广东",
+          "city": "广州",
+          "work_type": "construction",
+          "amount_kind": "contract_price",
+          "scope_family": "construction_lot",
+          "scope_level": "construction_lot",
+          "scale_basis": "building_floor_area",
+          "price_year": 2024,
+          "amount_basis": "construction_contract"
+        },
+        "n_records": 2,
+        "n_projects": 2,
+        "min_yuan_per_m2": 308.84579960777324,
+        "median_yuan_per_m2": 313.3125295657914,
+        "max_yuan_per_m2": 317.77925952380957,
+        "status": "descriptive_group",
+        "item_ids": [
+          "GZ-HONGZHONGLOU-CONTRACT-2024",
+          "GZ-QINGNIANYUAN-CONTRACT-2024"
+        ],
+        "note": "按本组记录计算描述性统计；同一项目的多条记录不视为独立项目样本。"
+      },
+      {
+        "id": "cost-benchmark:%7B%22province%22%3A%22%E5%B9%BF%E4%B8%9C%22%2C%22city%22%3A%22%E5%B9%BF%E5%B7%9E%22%2C%22work_type%22%3A%22construction%22%2C%22amount_kind%22%3A%22contract_price%22%2C%22scope_family%22%3A%22construction_lot%22%2C%22scope_level%22%3A%22construction_lot%22%2C%22scale_basis%22%3A%22building_floor_area%22%2C%22price_year%22%3A2025%2C%22amount_basis%22%3A%22construction_contract%22%7D",
+        "key": "{\"province\":\"广东\",\"city\":\"广州\",\"work_type\":\"construction\",\"amount_kind\":\"contract_price\",\"scope_family\":\"construction_lot\",\"scope_level\":\"construction_lot\",\"scale_basis\":\"building_floor_area\",\"price_year\":2025,\"amount_basis\":\"construction_contract\"}",
+        "dimensions": {
+          "province": "广东",
+          "city": "广州",
+          "work_type": "construction",
+          "amount_kind": "contract_price",
+          "scope_family": "construction_lot",
+          "scope_level": "construction_lot",
+          "scale_basis": "building_floor_area",
+          "price_year": 2025,
+          "amount_basis": "construction_contract"
+        },
+        "n_records": 1,
+        "n_projects": 1,
+        "min_yuan_per_m2": 289.40891811731314,
+        "median_yuan_per_m2": 289.40891811731314,
+        "max_yuan_per_m2": 289.40891811731314,
+        "status": "single_reference",
+        "item_ids": [
+          "GZ-QIAOZHONG-YIHE-CONTRACT-2025"
+        ],
+        "note": "按本组记录计算描述性统计；同一项目的多条记录不视为独立项目样本。"
+      },
+      {
+        "id": "cost-benchmark:%7B%22province%22%3A%22%E4%B8%8A%E6%B5%B7%22%2C%22city%22%3A%22%E4%B8%8A%E6%B5%B7%22%2C%22work_type%22%3A%22construction%22%2C%22amount_kind%22%3A%22winning_bid%22%2C%22scope_family%22%3A%22construction_lot%22%2C%22scope_level%22%3A%22construction_lot%22%2C%22scale_basis%22%3A%22building_floor_area%22%2C%22price_year%22%3A2026%2C%22amount_basis%22%3A%22construction_winning_bid%22%7D",
+        "key": "{\"province\":\"上海\",\"city\":\"上海\",\"work_type\":\"construction\",\"amount_kind\":\"winning_bid\",\"scope_family\":\"construction_lot\",\"scope_level\":\"construction_lot\",\"scale_basis\":\"building_floor_area\",\"price_year\":2026,\"amount_basis\":\"construction_winning_bid\"}",
+        "dimensions": {
+          "province": "上海",
+          "city": "上海",
+          "work_type": "construction",
+          "amount_kind": "winning_bid",
+          "scope_family": "construction_lot",
+          "scope_level": "construction_lot",
+          "scale_basis": "building_floor_area",
+          "price_year": 2026,
+          "amount_basis": "construction_winning_bid"
+        },
+        "n_records": 2,
+        "n_projects": 2,
+        "min_yuan_per_m2": 422.6505508526735,
+        "median_yuan_per_m2": 433.2277869397145,
+        "max_yuan_per_m2": 443.8050230267556,
+        "status": "descriptive_group",
+        "item_ids": [
+          "SH-EXP-CANGYUAN-AWARD-2026",
+          "SH-EXP-HAISHANG-AWARD-2026"
+        ],
+        "note": "按本组记录计算描述性统计；同一项目的多条记录不视为独立项目样本。"
+      }
+    ],
+    "excluded": [
+      {
+        "id": "GD-LUNJIAO-TOTAL-ESTIMATE-2026",
+        "reasons": [
+          "仅施工或 EPC 工程金额参与本组造价基准。",
+          "缺少建筑面积或改造场地面积口径。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "SH-EXP-HEJIANG-AWARD-2026",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ]
+      },
+      {
+        "id": "SH-EXP-ZHUGUANG-AWARD-2025",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ]
+      },
+      {
+        "id": "SH-LINGLING-TELECOM-CONTRACT-2025",
+        "reasons": [
+          "工程范围并非已明确的整体项目或施工标段。",
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-LINPING-BLOCK2-CONTRACT-2024",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ]
+      },
+      {
+        "id": "ZJ-LINPING-BLOCK2-ESTIMATE-2024",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-001-TENDER-CEILING",
+        "reasons": [
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-001-WINNING-BID",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-002-WINNING-BID",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-003-TENDER-CEILING",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-004-TENDER-CEILING",
+        "reasons": [
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-005-TENDER-CEILING",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-006-TENDER-CEILING",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-SHEET-007-CANDIDATE-BID",
+        "reasons": [
+          "候选中标报价尚未确认为中标价。",
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。",
+          "缺少与价格阶段对应的已核验日期。"
+        ]
+      },
+      {
+        "id": "ZJ-ZHEGONG-EPC-CONTRACT-2023",
+        "reasons": [
+          "缺少建筑面积或改造场地面积口径。",
+          "规模单位须为平方米。",
+          "缺少有效的正数面积。"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "total": 20,
+    "matched": 20,
+    "source_count": 24,
+    "provinces": [
+      "上海",
+      "广东",
+      "浙江"
+    ],
+    "by_amount_kind": {
+      "winning_bid": 6,
+      "tender_ceiling": 5,
+      "estimate": 2,
+      "contract_price": 6,
+      "candidate_bid": 1
+    },
+    "by_work_type": {
+      "construction": 18,
+      "other": 1,
+      "epc": 1
+    },
+    "issues": [],
+    "sample_notice": "浙江、上海、广东官方平台已归档样本，按工程范围、价格阶段、面积口径与价格年份分组。金额强度是组内描述性参考；暂未作跨年折现，也未提供预测区间。"
+  }
+}

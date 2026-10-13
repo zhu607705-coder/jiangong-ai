@@ -1,0 +1,539 @@
+								<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" style="min-width:1200px">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="/static/glodon.gttp.index/default/css/global.css" rel="stylesheet" type="text/css" />
+	<link href="/static/glodon.gttp.shanghai/css/shanghai.css" rel="stylesheet" type="text/css" />
+
+	<link href="/static/glodon.gttp.index/js/dialog/css/loading.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/gboat2.web/js/jquery-1.8.2.min.js"></script>
+	    <script type="text/javascript" src="/static/gboat2.web/js/jquery-migrate.js"></script>
+    <script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/JQuery.loading.js"></script>
+	<script type="text/javascript" src="/static/glodon.gttp.index/js/ajaxpanel.js"></script>
+	
+	<title>中标结果公告-住宅修缮工程招投标电子化交易平台</title>
+<script type="text/javascript">
+var BASE_PATH = "";
+function zhdp(){
+	window.open("/zhdp-show!list.do");
+}
+function addFavorite(){
+   	var weburl = location.href;
+	var webname = window.location.href;
+   	try{
+       	window.external.addFavorite(weburl, webname);
+   	}catch (e){
+       	try{
+           	window.sidebar.addPanel(webname, weburl, "");
+       	}catch (e){
+           	alert("加入收藏失败，请使用Ctrl+D进行添加");
+       	}
+   	}
+}
+function changeSelect(self){
+	self = jQuery(self);
+	var l = self[0].offsetLeft;
+	var t = self[0].offsetTop - 1;
+	self.addClass('none');
+	var floatSel = jQuery('#floatSel');
+	floatSel.removeClass('none');
+	floatSel.css('top', t);
+	floatSel.css('left', l);
+	/**
+		tangj 2014-04-10 15:15
+	**/
+	if(jQuery('#searchType').val() == 'ZBGG'){
+		jQuery('#floatSelBox1').after(jQuery('#floatSelBox2'));
+		jQuery('#floatSelBox2').after(jQuery('#floatSelBox3'));
+
+		jQuery('#floatSelBox1').addClass('floatSelBox1');
+		jQuery('#floatSelBox1').removeClass('floatSelBox2');
+		jQuery('#floatSelBox1').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox2').addClass('floatSelBox2');
+		jQuery('#floatSelBox2').removeClass('floatSelBox1');
+		jQuery('#floatSelBox2').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox3').addClass('floatSelBox3');
+		jQuery('#floatSelBox3').removeClass('floatSelBox1');
+		jQuery('#floatSelBox3').removeClass('floatSelBox2');
+
+	} else if(jQuery('#searchType').val() == 'ZBHXRGS') {
+		jQuery('#floatSelBox2').after(jQuery('#floatSelBox1'));
+		jQuery('#floatSelBox1').after(jQuery('#floatSelBox3'));
+
+		jQuery('#floatSelBox1').addClass('floatSelBox2');
+		jQuery('#floatSelBox1').removeClass('floatSelBox1');
+		jQuery('#floatSelBox1').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox2').addClass('floatSelBox1');
+		jQuery('#floatSelBox2').removeClass('floatSelBox2');
+		jQuery('#floatSelBox2').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox3').addClass('floatSelBox2');
+		jQuery('#floatSelBox3').removeClass('floatSelBox1');
+		jQuery('#floatSelBox3').removeClass('floatSelBox3');
+
+	} else if(jQuery('#searchType').val() == 'ZCFG' ){
+		jQuery('#floatSelBox3').after(jQuery('#floatSelBox1'));
+		jQuery('#floatSelBox1').after(jQuery('#floatSelBox2'));
+
+		jQuery('#floatSelBox1').addClass('floatSelBox2');
+		jQuery('#floatSelBox1').removeClass('floatSelBox1');
+		jQuery('#floatSelBox1').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox2').addClass('floatSelBox2');
+		jQuery('#floatSelBox2').removeClass('floatSelBox1');
+		jQuery('#floatSelBox2').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox3').addClass('floatSelBox1');
+		jQuery('#floatSelBox3').removeClass('floatSelBox2');
+		jQuery('#floatSelBox3').removeClass('floatSelBox3');
+	}
+	var zw = jQuery('#zhanwei');
+	zw.removeClass('none');
+	zw.addClass('inlineblock');
+}
+
+ String.prototype.trim = function()
+    {
+      return this.replace(/(^\s*)|(\s*$)/g, "");
+    }
+
+function clickSelect(id){
+	var floatSel = jQuery('#floatSel');
+	floatSel.addClass('none');
+	var sel = jQuery('#' + id);
+	sel.removeClass('none');
+	sel.addClass('selectBox');
+	var zw = jQuery('#zhanwei');
+	zw.removeClass('inlineblock');
+	zw.addClass('none');
+	var st = jQuery('#searchType');
+	st.val(id);
+}
+function siteSearch(){
+	var type = jQuery("#searchType").val();
+	var text = jQuery("#searchText").val();
+	var url = "";
+	if( type != "ZCFG" )
+   	    url = "/sh-tender-notice!showNotice.do?&type="+type+"&name="+encodeURI(text);
+   	else
+   		url = "/sh-policy-law!view.do?type=ZCFG&name="+encodeURI(text);
+   	window.location.href = url;
+}
+
+function expertLogin(){
+	var html ="<div style='text-align:center'>请选择登陆平台：<select id='login-xz' >";
+	html= html + "<option value='/sh-portal!expertLogin.do'>评标中心</option>";
+	html= html + "<option value='/sh-portal!zgysExpertLogin.do'>资格预审评标</option>";
+	html= html + "</select><div>";
+	Jdialog.open({
+            Title: "请选择登陆平台",
+            dialogType:"2",
+			width:"300",
+			height:"150",
+			Text: html,
+            fn: function(data){
+            	var url = $("#login-xz").val();
+            	toAjax(url,{},function(result){
+            		debugger;
+					if( result.success == true ){
+						window.open(result.message);
+					}else{
+						Jdialog.open({Text:result.message});
+					}
+				});
+			    Jdialog.close();
+            }
+        });
+		return false;
+
+	//toAjax("/sh-portal!expertLogin.do",{},function(result){
+	//	if( result.success == true ){
+	//		window.open(result.message);
+	//	}else{
+	//		Jdialog.open({Text:result.message});
+	//	}
+	//});
+	// window.open("http://ylyzkpb.ebid.sh.cn/");
+
+}
+function tbrLogin(){
+	//Jdialog.open({width:"400",
+	//		height:"250",Text:"各招标代理、投标人：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接上海市数字认证中心通知，因其短信平台故障导致其提供的电子签章功能无法正常使用，初步估计在11月4日排除故障。受此影响，住宅修缮工程远程开标项目中各投标人代表无法完成签到。因此，11月4日远程开标项目的开标时间将顺延。具体开标时间待电子签章功能恢复正常后确定。请相关单位随时关注住宅修缮交易平台发布的通知公告。"});
+	//return;
+	toAjax("/sh-portal!tbrLogin.do",{},function(result){
+		if( result.success == true ){
+			window.open(result.message);
+		}else{
+			Jdialog.open({Text:result.message});
+		}
+	});
+}
+</script>
+</head>
+
+<body>
+	<!--
+	<script type="text/javascript" src="/static/glodon.gttp.shanghai/js/photo.js"></script>
+	<script type="text/javascript">
+		var id=function(o){return document.getElementById(o)}
+		var scroll=function (o){
+		 var space=id(o).offsetTop;
+		 id(o).style.top=space+'px';
+		 void function(){
+		   var goTo = 0;
+		   var roll=setInterval(function(){
+		    var height =document.documentElement.scrollTop+document.body.scrollTop+space;
+		    var top = parseInt(id(o).style.top);
+		    if(height!= top){
+		     goTo = height-parseInt((height - top)*0.9);
+		     id(o).style.top=goTo+'px';
+		    }
+		    //else{if(roll) clearInterval(roll);}
+		   },50);
+		 }()
+		}
+		scroll('box1');
+	</script>
+	<div id="box1" style="position:absolute;bottom:0;right:0;"><a href="www.baidu.com" target="_blank"><img width="180" height="180" src="/static/glodon.gttp.shanghai/images/piaofu.gif" border="0" alt=""></a></div>-->
+			    
+    	<!--head-->
+    <div class="head_top">
+		<div class="w_xs">
+			<span class="l">
+				<a href="javascript:void(0)" onclick="addFavorite();"><span class="collect"></span>&nbsp;加入收藏</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/sh-portal!home.do">返回首页</a>
+			</span>
+			<span class="r">
+								<a href="/shgttp/g-index!login.do">招投标人登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/shgttp/login!jgyLogin.do" >监管员登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="javascript:void(0)" onclick="tbrLogin()">远程开标中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="javascript:void(0)" onclick="expertLogin()">专家登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/sh-register!register.do" >免费注册</a>&nbsp;&nbsp;
+								
+				<span  style="display:none">
+				<b>&nbsp;&nbsp;服务热线：4000-166-166</b>
+				</span>
+							</span>
+		</div>
+    </div>
+	<div class="w_xs logo_box_xs">
+		<a href="/shgttp/g-index!home.do" class="block"><div class="logo_xs l"></div></a>
+             					</div>
+	<!--head end-->
+	<!--head end-->
+<div class="wrap">
+	<div class="w">
+
+		<form id="detailForm" name="detailForm" method="post" >
+		<div id="border_box_mar_pad" class="border_box mar_10 pad_10" style="min-height:420px;_height:420px">
+			<h2>中标结果公告</h2>			
+<script>
+$(function(){
+	var height = $(window).height() - 260;
+	$("#border_box_mar_pad").css("min-height",height+"px").css("_height",height+"px");
+})
+</script>
+
+<br />
+<div class="tex_center" style="color: rgb(47, 51, 42); line-height: 14px; padding-bottom: 5px; font-size: 15px; font-weight: bold;">
+	2025年青浦区白鹤镇鹤江路房屋综合修缮项目中标结果公告 <br>	
+</div>
+<br/>
+<div>
+	<table class="table_s" style="width: 100%">
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+	            <span>报建编号：</span>
+	        </td>
+	        <td style="text-align: left">
+	            <span id="Label2" classatt="tab_zbb_ybs_zbdj.jsdw">2503QP0021</span>
+	        </td>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+	            <span>标段号：</span>
+	        </td>
+	        <td style="text-align: left">
+	            <span id="Label2" classatt="tab_zbb_ybs_zbdj.jsdw" >C01</span>
+	        </td>
+	    </tr>	    
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>招标方式：</span>
+	        </td>
+	        <td style="text-align: left">
+	            <span id="lblzbfs" classatt="tab_zbb_ybs_zbdj.zbfs">公开招标</span>
+	        </td>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+	            <span>招标类型：</span>
+	        </td>
+	        <td style="text-align: left">
+	            <span id="Label2" classatt="tab_zbb_ybs_zbdj.jsdw" >施工</span>
+	        </td>
+	    </tr>		    
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>招标标段名称：</span>
+	        </td>
+	        <td colspan="3" style="text-align: left">
+				<span id="Label6" classatt="tab_zbb_ybs_zbdj.xmmc">2025年青浦区白鹤镇鹤江路房屋综合修缮项目</span>
+	        </td>
+	    </tr>	    
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>招标人：</span>
+	        </td>
+	        <td colspan="3" style="text-align: left">
+				<span id="Label2" classatt="tab_zbb_ybs_zbdj.jsdw">上海青浦房屋管理有限公司</span>
+	        </td>
+	    </tr>
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>招标代理机构：</span>
+	        </td>
+	        <td colspan="3" style="text-align: left">
+				<span id="Label4" classatt="tab_zbb_ybs_zbdj.zbdldw">上海臻诚建设管理咨询有限公司</span>
+	        </td>
+	    </tr>   
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>中标人：</span>
+	        </td>
+	        <td colspan="3" style="text-align: left">
+				<span id="Label4" classatt="tab_zbb_ybs_zbdj.zbdldw">上海华新建设（集团）有限公司</span>
+	        </td>
+	    </tr>  	
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>中标价：</span>
+	        </td>
+	        <td style="text-align: left">
+	            <span id="lblzbfs" classatt="tab_zbb_ybs_zbdj.zbfs">563.5219万元</span>
+	        </td>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+	            <span>中标日期：</span>
+	        </td>
+	        <td style="text-align: left">
+	            <span id="Label2" classatt="tab_zbb_ybs_zbdj.jsdw" >2026-04-09</span>
+	        </td>
+	    </tr> 
+	    		    <tr>
+		        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1" rowspan="4">
+					<span>暂列金额和<br>暂估价：</span>
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td colspan="3">暂列金额： <span>31</span>(万元)</td>
+		    </tr>
+		    <tr>
+		    	<td colspan="3">暂估价： <span>0</span>(万元)</td>
+		    </tr>
+		    <tr>
+		    	<td colspan="3">其中专业工程暂估价： <span>0</span>(万元)</td>
+		    </tr>
+	    	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>评标委员会：</span>
+	        </td>
+	        <td colspan="3" style="text-align: left">
+				<span id="Label4" classatt="tab_zbb_ybs_zbdj.zbdldw">胡月华、薛贵喜、葛万亮、俞林、黄鸿超</span>
+	        </td>
+	    </tr>  	    
+	    <tr>
+	        <td class="td_text" style="text-align: right" bgcolor="#f1f1f1">
+				<span>定标原因及依据：</span>
+	        </td>
+	        <td colspan="3" style="text-align: left">
+				<span id="Label4" classatt="tab_zbb_ybs_zbdj.zbdldw">根据评标办法，排名第一</span>
+	        </td>
+	    </tr>  	    
+	</table>
+</div>
+<br/>			
+
+		</div>
+        </form>
+	</div>
+</div>
+	<!--footer-->
+    <div class="footer">
+    	<p style="margin-bottom:8px;">
+			<img style="vertical-align: text-bottom;" src="/static/glodon.gttp.shanghai/images/home/icp.png" alt="沪ICP备：2021016245号-2">沪ICP备：2021016245号-2
+		</p>
+		<p>
+			 © 2014 一联易招科技（上海）有限公司 Ebid.sh.cn 技术支持
+		</p>    
+		<p>客服QQ：2521324209 | 客服电话：400-021-2928
+						<script type="text/javascript">document.write(unescape("%3Cspan id='cnzz_stat_icon_1279360348'%3E%3C/span%3E%3Cscript src='https://s9.cnzz.com/z_stat.php%3Fid%3D1279360348%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+		</p>
+	</div>
+	<!--footer  end-->
+
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dateutils.js"></script>
+<link href="/static/glodon.gttp.index/js/dialog/css/dialog.css" type="text/css"  rel="stylesheet"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/JQuery.Dialog.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/Jquery.drag.js"></script>
+<link href="/static/glodon.gttp.index/js/formValidator/css/validationEngine.jquery.css" type="text/css"  rel="stylesheet"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/formValidator/js/jquery.validationEngine.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/formValidator/js/jquery.validationEngine-zh_CN.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/jqueryTreeTable/js/jquery.treeTable.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/formToJson.js"></script>
+<link href="/static/glodon.gttp.index/js/jqueryTreeTable/css/jquery.treeTable.css" type="text/css"  rel="stylesheet"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/Hashtable.js"></script>
+<script type="text/javascript" src="/static/glodon.gbmp.attachment/plupload/js/plupload.full.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/static/glodon.gttp.index/js/dialog/css/pop.css"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/JQuery.pop.js"></script>
+<!--注释easyui引用
+<link rel="stylesheet" type="text/css" href="/static/glodon.gttp.shanghai/easyui/themes/default/easyui.css"/>
+<link rel="stylesheet" type="text/css" href="/static/glodon.gttp.shanghai/easyui/themes/icon.css"/>
+<script type="text/javascript" src="/static/glodon.gttp.shanghai/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.shanghai/easyui/locale/easyui-lang-zh_CN.js"></script> -->
+
+<script type="text/javascript" src="/static/glodon.gttp.index/js/shcaSecKit.js"></script>               
+<script type="text/javascript" src="/static/glodon.gttp.index/js/shcaUtils.js"></script>                  
+<script type="text/javascript" src="/static/glodon.gttp.index/js/SheCa.min.js"></script>                   
+<script type="text/javascript" src="/static/glodon.gttp.index/js/shecaCtrl.js"></script>                  
+<script type="text/javascript" src="/static/glodon.gttp.index/js/tool.js"></script>                       
+<script type="text/javascript" src="/static/glodon.gttp.index/js/base64-min.js"></script>                 
+<script type="text/javascript" src="/static/glodon.gttp.index/js/base64-str.js"></script>                 
+<script type="text/javascript" src="/static/glodon.gttp.index/js/jsrsasign-latest-all-min.js"></script>  
+
+<script type="text/javascript">
+    function subWayJumpUrl(projectId,packageId,jumpUrl){
+        var url = "/sub-way-nav!showSubway.do";
+        url = url +"?projectId="+projectId+"&packageId="+packageId+"&jumpUrl="+jumpUrl;
+        window.location.href = url;
+    }
+    function showErrorJdialog(param){
+        width = param.width;
+        height = param.height;
+        addHeight = param.addHeight;
+        shortMsg = param.shortMsg;
+        longMsg = param.longMsg;
+
+        var html = shortMsg+"   <a style='color:#3366cc;' onclick='return changeNextDiv(this,"+addHeight+");'>点击展开</a>";
+        html = html + "<div class='none' style='word-wrap: break-word; word-break: normal;width:"+(width-30)+"px;'>"+longMsg+"</div>";
+        Jdialog.open({
+            Text: html,
+            dialogType:"1",
+            width:width,
+            height:height
+        });
+    }
+
+    function changeNextDiv(obj,addHeight){
+        if($(obj).html()=='点击展开'){
+            $(obj).html('点击收起');
+            $(obj).next().removeClass('none');
+        }else{
+            $(obj).html('点击展开');
+            addHeight = addHeight*-1;
+            $(obj).next().addClass('none');
+        }
+        var parent = getParentByClass(obj,'jd_dialog_m');
+
+        var h = $(parent).height();
+        $(parent).height(h+addHeight);
+        h = $(parent).parent().height();
+        $(parent).parent().height(h+addHeight);
+        return false;
+    }
+    function getParentByClass(obj,clazz){
+        var parent = $(obj).parent();
+        if(parent.attr('class')==clazz){
+            return parent;
+        }else{
+            return getParentByClass(parent,clazz);
+        }
+    }
+    function checkBidder(projectId,packageId){
+        var url = "check-bider!checkBidderNum.do?packageId="+packageId;
+        toAjax(url,null,function(data){
+            if(data.success){
+                var message = data.msg;
+				var btn = "<div class='popBottom'><span><input type='button' value='确认' onclick='return msg_click(1,this,\""+projectId+"\",\""+packageId+"\")' class='dialog_but'/></span><span><input type='button' value='取消'  class='dialog_but' onclick='return msg_click(0,this);'/></span></div>";
+                /*var btn = '<div class="messager-button">';
+                btn = btn + '<a href="javascript:void(0)" onclick="return msg_click(1,this,\''+projectId+'\',\''+packageId+'\')" class="l-btn" group="" id="" style="margin-left: 10px;"><span class="l-btn-left"><span class="l-btn-text">确定</span></span></a>';
+                btn = btn + '<a href="javascript:void(0)" onclick="return msg_click(0,this)" class="l-btn" group="" id="" style="margin-left: 10px;"><span class="l-btn-left"><span class="l-btn-text">取消</span></span></a></div>';
+                jQuery.messager.show({
+                    title:'提示信息',
+                    height:130,
+                    msg: message + btn,
+                    timeout:0,
+                    showType:'slide'
+                }); */
+				pop=new Pop(message,"",btn);
+            }
+        },null);
+    }
+    function msg_click(type,obj,projectId,packageId){
+        if(type==1){
+            again_bidding(projectId,packageId);
+        }
+        pop.close();
+    }
+
+    function again_bidding(projectId,packageId){
+        var url = '/sh-records!againBidding.do?projectId='+projectId+'&packageId='+packageId;
+        Jdialog.open({
+            Text: '是否确认重新招标？重新招标后本次招标记录将不得再修改，请补充完整后再进行重新招标',
+            dialogType:"2",
+            fn:function(o){
+                toSubmit(url, null, function(data){
+                     if(data.success){
+                     	var url = "/sub-way-nav!showSubway.do?projectId="+data.projectId+"&packageId="+data.packageId;
+						window.location.href = url;
+                    }else{
+                        Jdialog.open({
+                            Title: "重新招标失败",
+                            Text: data.message,
+                            dialogType:"1"
+                        });
+                    }
+                });
+                Jdialog.close();
+            }
+        });
+        return false;
+    }
+	var pop;
+    jQuery(document).ready(function(){
+        var url = window.location.href;
+        if(url.indexOf('sub-way-nav')>0){
+            var paramstr = url.substring(url.indexOf('?')+1)
+            var params = paramstr.split('&');
+            var projectId = '';
+            var packageId = '';
+            for(idx in params){
+                var param = params[idx];
+                var sub_param = param.split('=');
+                if(sub_param.length>1){
+                    var p_name = sub_param[0];
+                    var p_val = sub_param[1];
+                    if('projectId' == p_name){
+                        projectId = p_val;
+                    }
+                    if('packageId' == p_name){
+                        packageId = p_val;
+                    }
+                }
+            }
+            if(packageId != '' && projectId != ''){
+                checkBidder(projectId,packageId);
+            }
+        }
+    });
+</script>
+  </body>
+</html>
+
+
+<script>
+function downloadfile(noticeItemId,type){
+	window.open("/bid-file-download!showDownload.do?"+result.message);
+}
+</script>

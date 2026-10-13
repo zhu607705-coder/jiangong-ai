@@ -1,0 +1,13 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/document-evaluation.test.ts tests/contracts/decision.test.ts tests/contracts/community-operations.test.ts
+
+
+ RUN  v4.1.11 D:/建工ai
+
+
+ Test Files  3 passed (3)
+      Tests  69 passed (69)
+   Start at  12:38:05
+   Duration  12.67s (transform 379ms, setup 0ms, import 1.05s, tests 11.33s, environment 0ms)
+

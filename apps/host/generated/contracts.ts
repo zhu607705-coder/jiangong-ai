@@ -237,6 +237,105 @@ export interface KnowledgeQuery {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsTimeBlock".
+ */
+export interface OperationsTimeBlock {
+  id: string;
+  name: string;
+  slots: OperationsValue;
+  capacity_per_slot: OperationsValue;
+  demand_visits: OperationsValue;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsValue".
+ */
+export interface OperationsValue {
+  value: number | null;
+  unit: string;
+  status: "factual" | "reference" | "assumption" | "missing";
+  source_kind: "observation" | "public_record" | "literature" | "interview" | "demo" | "missing";
+  source: string;
+  as_of: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsAnalysisBound".
+ */
+export interface OperationsAnalysisBound {
+  id: string;
+  target: "service_demand_multiplier" | "service_fee" | "service_paid_share" | "service_variable_cost" | "cash_amount";
+  item_id: string;
+  low: number;
+  high: number;
+  unit: string;
+  origin: "manual_scenario" | "literature_range" | "observed_range";
+  basis: string;
+  source_ref: string;
+  as_of: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsThreshold".
+ */
+export interface OperationsThreshold {
+  key: string;
+  label: string;
+  value: number | null;
+  unit: string;
+  status: "feasible" | "infeasible" | "not_identifiable" | "already_balanced";
+  basis: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsSensitivity".
+ */
+export interface OperationsSensitivity {
+  id: string;
+  label: string;
+  low: number;
+  base: number;
+  high: number;
+  low_balance: number | null;
+  base_balance: number | null;
+  high_balance: number | null;
+  span: number | null;
+  basis: string;
+  source_ref: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsJointRange".
+ */
+export interface OperationsJointRange {
+  tested_corners: number;
+  valid_corners: number;
+  min_balance: number | null;
+  max_balance: number | null;
+  worst_gap: number | null;
+  min_at: {
+    id: string;
+    value: number;
+  }[];
+  max_at: {
+    id: string;
+    value: number;
+  }[];
+  label: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsScientificResult".
+ */
+export interface OperationsScientificResult {
+  method_version: string;
+  break_even: OperationsThreshold[];
+  sensitivity: OperationsSensitivity[];
+  joint_range: OperationsJointRange | null;
+  notes: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "Finding".
  */
 export interface Finding {
@@ -1582,4 +1681,221 @@ export interface ActionReviewBatch {
    * @maxItems 30
    */
   warnings: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsService".
+ */
+export interface OperationsService {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  time_blocks?: OperationsTimeBlock[];
+  id: string;
+  name: string;
+  capacity_per_slot: OperationsValue;
+  available_slots: OperationsValue;
+  demand_visits: OperationsValue;
+  paid_share: OperationsValue;
+  fee_per_visit: OperationsValue;
+  variable_cost_per_visit: OperationsValue;
+  resource_id: string;
+  schedule_note: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsCashItem".
+ */
+export interface OperationsCashItem {
+  economic_item_id: string;
+  description: string;
+  kind:
+    | "fixed_cost"
+    | "other_earned_income"
+    | "government_purchase"
+    | "operating_subsidy"
+    | "other_support"
+    | "government_direct_cost";
+  amount: OperationsValue;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsInput".
+ */
+export interface OperationsInput {
+  /**
+   * @maxItems 6
+   */
+  analysis_bounds?: OperationsAnalysisBound[];
+  name: string;
+  facility_id: string;
+  facility_name: string;
+  period: string;
+  scope_note: string;
+  target_population: OperationsValue;
+  unique_users: OperationsValue;
+  cost_scope_complete: boolean;
+  /**
+   * @minItems 1
+   * @maxItems 20
+   */
+  services: OperationsService[];
+  /**
+   * @maxItems 100
+   */
+  cash_items: OperationsCashItem[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsMetrics".
+ */
+export interface OperationsMetrics {
+  capacity_visits: number | null;
+  served_visits: number | null;
+  unmet_visits: number | null;
+  utilization: number | null;
+  unique_users: number | null;
+  coverage: number | null;
+  fee_income: number | null;
+  earned_income: number | null;
+  operating_cost: number | null;
+  government_purchase: number | null;
+  operating_subsidy: number | null;
+  other_support: number | null;
+  balance_before_support: number | null;
+  balance_after_support: number | null;
+  unfunded_gap: number | null;
+  required_subsidy: number | null;
+  government_outlay: number | null;
+  government_cost_per_visit: number | null;
+  commercial_cost_coverage: number | null;
+  government_direct_cost: number | null;
+  total_service_cost: number | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsServiceMetrics".
+ */
+export interface OperationsServiceMetrics {
+  capacity_method?: "monthly_aggregate" | "time_blocks";
+  monthly_pooled_upper_bound?: number | null;
+  aggregation_overstatement_visits?: number | null;
+  id: string;
+  name: string;
+  capacity_visits: number | null;
+  served_visits: number | null;
+  unmet_visits: number | null;
+  utilization: number | null;
+  fee_income: number | null;
+  variable_cost: number | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsMissing".
+ */
+export interface OperationsMissing {
+  field: string;
+  reason: string;
+  collect_from: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsResult".
+ */
+export interface OperationsResult {
+  science?: OperationsScientificResult;
+  model_version: string;
+  result_kind: "scenario_prediction";
+  status: "complete" | "partial";
+  metrics: OperationsMetrics;
+  services: OperationsServiceMetrics[];
+  missing: OperationsMissing[];
+  warnings: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsSnapshot".
+ */
+export interface OperationsSnapshot {
+  id: string;
+  project_id: string;
+  context_version: number;
+  input_hash: string;
+  created_at: string;
+  input: OperationsInput;
+  result: OperationsResult;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsObservedMetrics".
+ */
+export interface OperationsObservedMetrics {
+  served_visits: number | null;
+  unique_users: number | null;
+  fee_income: number | null;
+  operating_cost: number | null;
+  government_purchase: number | null;
+  operating_subsidy: number | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsObservationInput".
+ */
+export interface OperationsObservationInput {
+  facility_id: string;
+  period: string;
+  source_id: string;
+  locator: string;
+  collected_at: string;
+  split: "calibration" | "holdout";
+  note: string;
+  metrics: OperationsObservedMetrics;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsObservation".
+ */
+export interface OperationsObservation {
+  id: string;
+  project_id: string;
+  snapshot_id: string;
+  created_at: string;
+  source_hash: string;
+  source_title: string;
+  input: OperationsObservationInput;
+  source_snapshot: Source;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsDifference".
+ */
+export interface OperationsDifference {
+  metric:
+    "served_visits" | "unique_users" | "fee_income" | "operating_cost" | "government_purchase" | "operating_subsidy";
+  predicted: number | null;
+  observed: number | null;
+  error: number | null;
+  absolute_error: number | null;
+  percentage_error: number | null;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsComparison".
+ */
+export interface OperationsComparison {
+  snapshot_id: string;
+  observation_id: string;
+  split: "calibration" | "holdout";
+  timing: "prospective" | "retrospective";
+  differences: OperationsDifference[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "OperationsWorkspace".
+ */
+export interface OperationsWorkspace {
+  scenarios: OperationsSnapshot[];
+  observations: OperationsObservation[];
+  comparisons: OperationsComparison[];
 }

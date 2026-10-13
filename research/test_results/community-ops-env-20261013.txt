@@ -1,0 +1,72 @@
+Community operations Windows runtime preparation - 2026-10-13
+Workspace: D:\建工ai
+Scope: local dependencies only; source code, package.json, package-lock.json and requirements files not modified by runtime_repair agent.
+
+Diagnosis:
+- Windows Node executable: C:\Program Files\nodejs\node.exe; Node v24.19.0; npm 11.17.0; win32-x64.
+- Existing .venv is the WSL Python 3.14.4 venv (bin/lib layout); .venv/Scripts/python.exe does not exist. Preserved without modification.
+- Missing Windows optional native packages caused Rollup MODULE_NOT_FOUND. Then Vite nested esbuild reported host 0.25.12 / binary 0.28.2 mismatch.
+
+Repairs:
+- Downloaded official registry.npmjs.org tarballs at exact package-lock.json versions and verified each full tarball with lock SHA-512 before extracting:
+  node_modules/@rollup/rollup-win32-x64-msvc 4.63.5
+  node_modules/@esbuild/win32-x64 0.28.2
+  node_modules/vite/node_modules/@esbuild/win32-x64 0.25.12
+- Generated 23 Windows npm .cmd/.ps1 wrappers with installed official npm cmd-shim; modifications confined to node_modules/.bin.
+- Created isolated .venv-win with C:\Users\123\moni\python.exe (Python 3.13.12). No packages installed into global moni.
+- Installation: .\.venv-win\Scripts\python.exe -m pip install --index-url https://pypi.org/simple -r requirements.lock.txt
+  Result: exit 0; all lock packages installed. Platform additions: colorama 0.4.6, tzdata 2026.5.
+
+Native/tool verification:
+- node --import tsx -e "console.log('tsx-import-ok')": passed.
+- npm exec -- vitest --version: vitest/4.1.11 win32-x64 node-v24.19.0.
+- npm exec -- tsx --version: tsx v4.23.15; node v24.19.0.
+- npm exec -- tsc --version: Version 5.9.3.
+- npm exec -- vite --version: vite/6.4.3 win32-x64 node-v24.19.0.
+
+Requested baseline:
+Command: node node_modules/vitest/vitest.mjs run tests/contracts/neighborhood-policy.test.ts tests/contracts/neighborhood-comparison.test.ts tests/contracts/retrofit-planning.test.ts
+Result: exit 0; Test Files 3 passed (3); Tests 27 passed (27); Duration 4.64s.
+
+Python verification:
+Executable: D:\建工ai\.venv-win\Scripts\python.exe
+Version: 3.13.12 | packaged by Anaconda, Inc. | (main, Feb 24 2026, 16:05:56) [MSC v.1942 64 bit (AMD64)]
+Imported successfully: fastapi, uvicorn, pydantic, httpx, pytest, datamodel_code_generator.__main__, pandas, openpyxl, pdfplumber, docx, pyproj, shapely, eviltransform.
+Imported services.capabilities.app and called GET /health via FastAPI TestClient: status 200, status=ok, service=capabilities, spatial_tool includes shapely and pyproj.
+Command: .\.venv-win\Scripts\python.exe -m datamodel_code_generator --version
+Result: datamodel-codegen 0.83.0, exit 0.
+Command: .\.venv-win\Scripts\python.exe -m pip check
+Result: No broken requirements found. exit 0.
+Non-blocking existing stack warning: Starlette TestClient's httpx integration is deprecated. No dependency pin was changed.
+No business model API call was made. HTTP TestClient health check is in-process, not a production service deployment test.
+
+Minimal commands:
+- npm run dev (requires lead agent's Python-runtime path selection change)
+- Explicit Python selection in PowerShell: $env:HZZ_PYTHON = (Resolve-Path '.venv-win/Scripts/python.exe').Path
+- Capability only: .\.venv-win\Scripts\python.exe -m uvicorn services.capabilities.app:app --host 127.0.0.1 --port 8000
+- Contract generator: .\.venv-win\Scripts\python.exe -m datamodel_code_generator --version
+
+Npm wrapper regression command and output:
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/neighborhood-policy.test.ts tests/contracts/neighborhood-comparison.test.ts tests/contracts/retrofit-planning.test.ts
+
+
+ RUN  v4.1.11 D:/建工ai
+
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  12:16:20
+   Duration  1.31s (transform 380ms, setup 0ms, import 853ms, tests 163ms, environment 0ms)
+
+Exit code: 0
+
+Follow-up: Windows DSH offline HTTP native dependency repair
+- Prior full HTTP run: 4 failed / 12 passed. All 4 failed offline DSH runs recorded identical diagnostic in isolated server.log: Cannot find the native Koffi module; did you bundle it correctly?
+- Failure reproduced with node -e "require('koffi')". DSH JSONL persistence imports Koffi in its Windows kernel32 lock/atomic-publish branch.
+- Installed node_modules/@koromix/koffi-win32-x64 3.1.1 from the official registry.npmjs.org resolved URL in package-lock.json; verified full tarball against the existing lock SHA-512 before extraction.
+- Smoke command: node -e "const k=require('koffi'); const lib=k.load('kernel32.dll'); console.log({koffiVersion:k.version,kernel32Loaded:!!lib,platform:process.platform,arch:process.arch});"
+- Result: koffiVersion=3.1.1, kernel32Loaded=true, platform=win32, arch=x64.
+- Changes limited to missing node_modules native package and this diagnostic log; no DSH code/manifest/lock changes. Main agent owns the HTTP re-run. Existing main development server on port 4310 was not operated on.
+Koffi smoke exit code: 0

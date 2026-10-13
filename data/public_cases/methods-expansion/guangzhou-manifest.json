@@ -1,0 +1,299 @@
+{
+  "schema_version": "1.1",
+  "snapshot_date": "2026-10-13",
+  "sources": [
+    {
+      "id": "gz-qingnianyuan-contract-2024",
+      "title": "夏港街2024年青年苑老旧小区微改造项目施工总承包合同公开信息",
+      "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20240904/0020010011010131.html",
+      "requested_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20240904/0020010011010131.html",
+      "final_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20240904/0020010011010131.html",
+      "province": "广东",
+      "raw_path": "data/public_cases/renewal-cost-sources/gz-qingnianyuan-contract-2024.html",
+      "text_path": "data/public_cases/renewal-cost-sources/gz-qingnianyuan-contract-2024.txt",
+      "raw_format": "html",
+      "http_status": 200,
+      "fetched_at": "2026-10-13T07:36:18.428895+00:00",
+      "raw_sha256": "644a9c673a94aac6f438b1fd48264671c0671e1f2c2c89c351e8e34ffa6852eb",
+      "text_sha256": "c5797ca5ca3320e3ef67a14507f75fa8d42d7a17ce3dc27f5ac1af32fcd00a48",
+      "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+      "published_at": "2024-09-04"
+    },
+    {
+      "id": "gz-hongzhonglou-contract-2024",
+      "title": "夏港街2024年鸿中楼老旧小区微改造项目合同公开信息",
+      "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+      "requested_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+      "final_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20241011/0020010011015508.html",
+      "province": "广东",
+      "raw_path": "data/public_cases/renewal-cost-sources/gz-hongzhonglou-contract-2024.html",
+      "text_path": "data/public_cases/renewal-cost-sources/gz-hongzhonglou-contract-2024.txt",
+      "raw_format": "html",
+      "http_status": 200,
+      "fetched_at": "2026-10-13T07:36:18.523136+00:00",
+      "raw_sha256": "cbc78523e23547dcd6b5c31a5d1d84e4821390c27cad1b16cf9460d60fb0f48a",
+      "text_sha256": "e4959ac4ccdcdbd975f236477d700da6a371aadade3a32820283e1555d256896",
+      "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+      "published_at": "2024-10-11"
+    },
+    {
+      "id": "gz-qiaozhong-yhe-contract-2025",
+      "title": "桥中街颐和片区微改造（颐和、长安、坦尾社区）项目施工总承包合同公开信息",
+      "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+      "requested_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+      "final_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+      "province": "广东",
+      "raw_path": "data/public_cases/renewal-cost-sources/gz-qiaozhong-yhe-contract-2025.html",
+      "text_path": "data/public_cases/renewal-cost-sources/gz-qiaozhong-yhe-contract-2025.txt",
+      "raw_format": "html",
+      "http_status": 200,
+      "fetched_at": "2026-10-13T07:36:18.601948+00:00",
+      "raw_sha256": "90ea505caa230fa0e432572c5d720639ce2f5e9b9be8e08dc6dada669916558f",
+      "text_sha256": "a16a749bdf3c5fbd7448a23da18b4ed59aa7112eb158710393e01a20b5d9992a",
+      "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+      "published_at": "2026-03-27"
+    }
+  ],
+  "records": [
+    {
+      "id": "GZ-QINGNIANYUAN-CONTRACT-2024",
+      "source_id": "gz-qingnianyuan-contract-2024",
+      "project_name": "夏港街2024年青年苑老旧小区微改造项目施工总承包",
+      "project_code": null,
+      "lot_id": "JG2024-3494",
+      "province": "广东",
+      "city": "广州",
+      "district": "黄埔区",
+      "work_type": "construction",
+      "amount_kind": "contract_price",
+      "amount_basis": "construction_contract",
+      "amount_yuan": 20020093.35,
+      "amount_original": "2002.009335万元",
+      "amount_quote": "合同金额： 2002.009335万元",
+      "scope_quote": "项目用地面积约22854平方米，总建筑面积约63000平方米，共5栋楼。建设内容主要为：翻新楼栋门及更换门禁系统、楼道内修缮翻新、楼栋“三线”整治、楼栋消防设施维修更换、维修楼栋排水设施、重做屋面防水、化粪池维修更换、外墙治理及修缮、空调机位安装、完善小区无障碍设施、完善室外消防通道及设施、室外场地重新规划及铺装、设置休闲活动空间、完善非机动车泊位及机动车泊位等 。具体内容以施工图纸及工程量清单为准。",
+      "scope_level": "construction_lot",
+      "scale_value": 63000,
+      "scale_unit": "m2",
+      "scale_basis": "building_floor_area",
+      "scale_quote": "总建筑面积约63000平方米",
+      "notice_date": "2024-09-04",
+      "contract_date": "2024-09-02",
+      "winning_bidder": "广州市第二建筑工程有限公司",
+      "actual_settled_cost": false,
+      "unit_cost_eligible": true,
+      "comparability_note": "合同金额与总建筑面积来自同一合同公开公告。总建筑面积用于同口径强度比较，合同还含室外与共用设施，不代表每平方米实物修缮单价。未作地区、年份、工程量与施工深度调整；需结合范围比较。",
+      "tender_ceiling_yuan": 20533218.48,
+      "tender_ceiling_quote": "招标控制价： 2053.321848万元",
+      "investment_estimate_yuan": null,
+      "winning_bid_yuan": null,
+      "road_area_m2": null,
+      "pipeline_length_m": null,
+      "bill_of_quantities": null,
+      "land_area_m2": 22854,
+      "renovation_site_area_m2": null,
+      "households": null,
+      "source_document_type": "official_contract_disclosure"
+    },
+    {
+      "id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "project_name": "夏港街2024年鸿中楼老旧小区微改造项目",
+      "project_code": null,
+      "lot_id": "JG2024-3573",
+      "province": "广东",
+      "city": "广州",
+      "district": "黄埔区",
+      "work_type": "construction",
+      "amount_kind": "contract_price",
+      "amount_basis": "construction_contract",
+      "amount_yuan": 3464632.18,
+      "amount_original": "346.463218万元",
+      "amount_quote": "合同金额： 346.463218万元",
+      "scope_quote": "项目位于广州开发区夏港街石英路6号，用地面积约2400平方米，总建筑面积约1.1218万平方米，共1栋楼、1个梯口，共17层，居民户数123户，约370人。具体内容以施工图纸及工程量清单为准。",
+      "scope_level": "construction_lot",
+      "scale_value": 11218,
+      "scale_unit": "m2",
+      "scale_basis": "building_floor_area",
+      "scale_quote": "总建筑面积约1.1218万平方米",
+      "notice_date": "2024-10-11",
+      "contract_date": "2024-09-27",
+      "winning_bidder": "广东明龙建设有限公司",
+      "actual_settled_cost": false,
+      "unit_cost_eligible": true,
+      "comparability_note": "合同金额与总建筑面积来自同一合同公开公告。总建筑面积用于同口径强度比较，合同还含室外与共用设施，不代表每平方米实物修缮单价。未作地区、年份、工程量与施工深度调整；需结合范围比较。",
+      "tender_ceiling_yuan": 3707471.71,
+      "tender_ceiling_quote": "招标控制价： 370.747171万元",
+      "investment_estimate_yuan": null,
+      "winning_bid_yuan": null,
+      "road_area_m2": null,
+      "pipeline_length_m": null,
+      "bill_of_quantities": null,
+      "land_area_m2": 2400,
+      "renovation_site_area_m2": null,
+      "households": 123,
+      "source_document_type": "official_contract_disclosure"
+    },
+    {
+      "id": "GZ-QIAOZHONG-YIHE-CONTRACT-2025",
+      "source_id": "gz-qiaozhong-yhe-contract-2025",
+      "project_name": "桥中街颐和片区微改造（颐和、长安、坦尾社区）项目施工总承包",
+      "project_code": null,
+      "lot_id": "JG2025-5259",
+      "province": "广东",
+      "city": "广州",
+      "district": "荔湾区",
+      "work_type": "construction",
+      "amount_kind": "contract_price",
+      "amount_basis": "construction_contract",
+      "amount_yuan": 61181045.29,
+      "amount_original": "6118.104529万元",
+      "amount_quote": "合同金额： 6118.104529万元",
+      "scope_quote": "项目改造范围涉及广州市荔湾区桥中街三个片区，分别为珠岛花园、拉丝厂宿舍区、净水厂宿舍区，改造范围约8.2公顷。改造范围内总建筑面积约 211400 平方米。项目主要建设内容包括维修安装楼栋门、楼道整治、无障碍设施改造、三线整治、第五立面改造、维修改造消防设施、社区公共区域设施完善、海绵城市建设等。（具体详见施工图纸和工程量清单）。",
+      "scope_level": "construction_lot",
+      "scale_value": 211400,
+      "scale_unit": "m2",
+      "scale_basis": "building_floor_area",
+      "scale_quote": "改造范围内总建筑面积约 211400 平方米",
+      "notice_date": "2026-03-27",
+      "contract_date": "2025-12-23",
+      "winning_bidder": "广州协安建设工程有限公司",
+      "actual_settled_cost": false,
+      "unit_cost_eligible": true,
+      "comparability_note": "合同金额与总建筑面积来自同一合同公开公告。总建筑面积用于同口径强度比较，合同还含室外与共用设施，不代表每平方米实物修缮单价。未作地区、年份、工程量与施工深度调整；需结合范围比较。",
+      "tender_ceiling_yuan": 63060194.1,
+      "tender_ceiling_quote": "招标控制价： 6306.01941万元",
+      "investment_estimate_yuan": null,
+      "winning_bid_yuan": null,
+      "road_area_m2": null,
+      "pipeline_length_m": null,
+      "bill_of_quantities": null,
+      "land_area_m2": null,
+      "renovation_site_area_m2": 82000,
+      "households": null,
+      "source_document_type": "official_contract_disclosure"
+    }
+  ],
+  "supplementary_claims": [
+    {
+      "record_id": "GZ-QINGNIANYUAN-CONTRACT-2024",
+      "source_id": "gz-qingnianyuan-contract-2024",
+      "field": "land_area_m2",
+      "value": 22854,
+      "unit": "m2",
+      "quote": "项目用地面积约22854平方米"
+    },
+    {
+      "record_id": "GZ-QINGNIANYUAN-CONTRACT-2024",
+      "source_id": "gz-qingnianyuan-contract-2024",
+      "field": "building_count",
+      "value": 5,
+      "unit": "栋",
+      "quote": "共5栋楼"
+    },
+    {
+      "record_id": "GZ-QINGNIANYUAN-CONTRACT-2024",
+      "source_id": "gz-qingnianyuan-contract-2024",
+      "field": "tender_ceiling_yuan",
+      "value": 20533218.48,
+      "unit": "CNY",
+      "quote": "招标控制价： 2053.321848万元"
+    },
+    {
+      "record_id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "field": "land_area_m2",
+      "value": 2400,
+      "unit": "m2",
+      "quote": "用地面积约2400平方米"
+    },
+    {
+      "record_id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "field": "building_count",
+      "value": 1,
+      "unit": "栋",
+      "quote": "共1栋楼"
+    },
+    {
+      "record_id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "field": "households",
+      "value": 123,
+      "unit": "户",
+      "quote": "居民户数123户"
+    },
+    {
+      "record_id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "field": "population",
+      "value": 370,
+      "unit": "人",
+      "quote": "约370人"
+    },
+    {
+      "record_id": "GZ-HONGZHONGLOU-CONTRACT-2024",
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "field": "tender_ceiling_yuan",
+      "value": 3707471.71,
+      "unit": "CNY",
+      "quote": "招标控制价： 370.747171万元"
+    },
+    {
+      "record_id": "GZ-QIAOZHONG-YIHE-CONTRACT-2025",
+      "source_id": "gz-qiaozhong-yhe-contract-2025",
+      "field": "renovation_site_area_m2",
+      "value": 82000,
+      "unit": "m2",
+      "quote": "改造范围约8.2公顷"
+    },
+    {
+      "record_id": "GZ-QIAOZHONG-YIHE-CONTRACT-2025",
+      "source_id": "gz-qiaozhong-yhe-contract-2025",
+      "field": "tender_ceiling_yuan",
+      "value": 63060194.1,
+      "unit": "CNY",
+      "quote": "招标控制价： 6306.01941万元"
+    }
+  ],
+  "platforms": [
+    {
+      "name": "广州交易集团有限公司（广州公共资源交易中心）",
+      "url": "https://www.gzggzy.cn/",
+      "status": "public_api_and_html_verified",
+      "note": "主入口重定向到https://ywtb.gzggzy.cn/；按前端已公开的/inteligentsearch/rest/esinteligentsearch/getFullTextDataNew匿名检索后读取静态合同公告。仅本次有限查询，无持续爬取或认证绕行。"
+    }
+  ],
+  "probe_notes": [
+    {
+      "stage": "legacy_path_resolution",
+      "status": "resolved",
+      "detail": "www.gzggzy.cn旧主机/js及交易详情相对路径返回404；观察首页最终URL后改为ywtb.gzggzy.cn即可读取200。"
+    },
+    {
+      "stage": "parallel_search",
+      "status": "transient_tls_error_resolved",
+      "detail": "首批并发查询2个请求出现SSL UNEXPECTED_EOF，降低为顺序请求正常返回；未禁用TLS验证。"
+    }
+  ],
+  "reference_groups": [
+    {
+      "id": "guangzhou-construction-contract-building-floor-area",
+      "record_ids": [
+        "GZ-QINGNIANYUAN-CONTRACT-2024",
+        "GZ-HONGZHONGLOU-CONTRACT-2024",
+        "GZ-QIAOZHONG-YIHE-CONTRACT-2025"
+      ],
+      "work_type": "construction",
+      "amount_kind": "contract_price",
+      "scale_basis": "building_floor_area",
+      "scale_unit": "m2",
+      "note": "3个独立工程；每条金额与总建筑面积同源。建筑总面积归一化只作粗粒度对照，不能推定工程量单价或杭州项目结算。"
+    }
+  ],
+  "notes": [
+    "本批3条主记录均为施工合同价，另列同源招标控制价，未将合同价重复填为中标价。",
+    "用地面积和改造范围面积分别存储，主分母为总建筑面积，未混用地块面积。",
+    "道路面积、管线长度、投资估算、工程量清单未在已读公告给出，保留null。",
+    "每条金额/范围/规模取同一source，未将其他公告面积拼入主记录。"
+  ]
+}
