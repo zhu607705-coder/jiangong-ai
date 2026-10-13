@@ -253,7 +253,7 @@ function AnalysisBoundsEditor({ input, onChange }: { input: OperationsInput; onC
   </details>
 }
 
-export default function CommunityOperationsPanel({ project, completeDemo, onPreviews }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void }) {
+export default function CommunityOperationsPanel({ project, completeDemo, onPreviews, analysisRevision = 0, onCalculationState }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void; analysisRevision?: number; onCalculationState?: (state: 'idle' | 'calculating' | 'error') => void }) {
   const scope = `${project.id}:${project.context_version}`
   const active = useRef({ scope, generation: 0 })
   if (active.current.scope !== scope) active.current = { scope, generation: active.current.generation + 1 }
@@ -271,6 +271,8 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  useEffect(() => { onCalculationState?.(busy === 'preview' ? 'calculating' : error || previews.some(p => p.error) ? 'error' : 'idle') }, [busy, error, previews, onCalculationState])
+  useEffect(() => { onPreviews?.(previews) }, [previews, onPreviews])
   const base = `/projects/${encodeURIComponent(project.id)}/community-operations`
   const workspace = loaded.scope === scope ? loaded.data : emptyWorkspace()
   const eligibleSources = project.input.sources.filter(isOperationsOriginal)
@@ -327,6 +329,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
     const issues = inputIssues()
     if (issues.length) { setError(issues.join(' ')); return }
     await run('preview', async (signal, current) => {
+      setPreviews([])
       const requests = ['保守', '基准', '积极'].map((label, index): Preview => {
         const input = structuredClone(draft), multiplier = Number(multipliers[index])
         input.name = `${input.name.slice(0, 110)} · ${label}`
@@ -355,10 +358,10 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
         const result = results[index]
         return result.status === 'fulfilled' ? { ...item, result: result.value } : { ...item, error: errorMessage(result.reason) }
       })
-      setPreviews(next); onPreviews?.(next)
+      setPreviews(next)
     })
   }
-  useEffect(() => { if (completeDemo) void previewAll() }, [completeDemo?.id, scope])
+  useEffect(() => { if (completeDemo) void previewAll() }, [completeDemo?.id, scope, analysisRevision])
   async function saveSnapshot(preview: Preview, index: number) {
     await run(`save:${index}`, async (signal, current) => {
       const snapshot = await api<OperationsSnapshot>(`${base}/scenarios`, { input: preview.input, expected_context_version: project.context_version }, signal)
@@ -472,7 +475,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
         <div className="ops-presets">{['保守', '基准', '积极'].map((label, index) => <label className="ops-field" key={label}>{label}需求倍率<input aria-label={`${label}需求倍率`} type="number" min="0" step="0.1" disabled={!!busy} value={multipliers[index]} onChange={event => { setMultipliers(values => values.map((value, position) => position === index ? event.target.value : value)); setPreviews([]) }} /></label>)}</div>
         <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy} onClick={() => void previewAll()}>{busy === 'preview' ? '正在计算三个情景…' : '计算三种情景'}</button></div>
         <div className="ops-preview-grid">{previews.map((preview, index) => <article className="ops-result-card" key={preview.label} aria-label={`${preview.label}情景结果`}><div className="ops-section-heading"><h4>{preview.label}</h4><span className="ops-badge">情景预测 · {preview.input.period}</span></div>
-          {preview.result ? <><Metrics result={preview.result} /><ScientificResults result={preview.result} complete={!!completeDemo} /><ResultDetails result={preview.result} />{!completeDemo && <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy || !!preview.savedId} onClick={() => void saveSnapshot(preview, index)}>{preview.savedId ? '已冻结保存' : busy === `save:${index}` ? '正在保存…' : `冻结保存${preview.label}情景`}</button></div>}</> : <><p className="ops-error" role="alert">{preview.error}</p><button type="button" className="ops-button" disabled={!!busy} onClick={() => void run(`retry:${index}`, async (signal, current) => { const result = await api<OperationsResult>(`${base}/preview`, { input: preview.input }, signal); if (current()) setPreviews(values => values.map((value, position) => position === index ? { ...value, result, error: '' } : value)) })}>重试{preview.label}情景</button></>}
+          {preview.result ? <><Metrics result={preview.result} /><ScientificResults result={preview.result} complete={!!completeDemo} /><ResultDetails result={preview.result} />{!completeDemo && <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy || !!preview.savedId} onClick={() => void saveSnapshot(preview, index)}>{preview.savedId ? '已冻结保存' : busy === `save:${index}` ? '正在保存…' : `冻结保存${preview.label}情景`}</button></div>}</> : <><p className="ops-error" role="alert">{preview.error}</p><button type="button" className="ops-button" disabled={!!busy} onClick={() => completeDemo ? void previewAll() : void run(`retry:${index}`, async (signal, current) => { const result = await api<OperationsResult>(`${base}/preview`, { input: preview.input }, signal); if (current()) setPreviews(values => values.map((value, position) => position === index ? { ...value, result, error: '' } : value)) })}>重试{preview.label}情景</button></>}
         </article>)}</div>
       </section>
       {!completeDemo && <><section className="ops-section" aria-label="已冻结的运营情景"><div className="ops-section-heading"><h3>3. 已冻结的运营情景</h3><button type="button" className="ops-button" disabled={!!busy || loaded.loading} onClick={() => setReload(value => value + 1)}>刷新已保存记录</button></div>

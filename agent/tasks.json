@@ -990,65 +990,180 @@
     },
     {
       "id": "T40",
-      "depends_on": ["T39"],
+      "depends_on": [
+        "T39"
+      ],
       "goal": "实现月度社区运营、公共服务情景、冻结预测与有来源的实际月份核验",
       "status": "completed_local_and_live_ui_verified",
-      "expected_artifacts": ["packages/operations/", "services/capabilities/community_operations.py", "apps/workspace/src/components/CommunityOperationsPanel.tsx"],
+      "expected_artifacts": [
+        "packages/operations/",
+        "services/capabilities/community_operations.py",
+        "apps/workspace/src/components/CommunityOperationsPanel.tsx"
+      ],
       "definition_of_done": "真实HTTP计算、持久化读回、来源隔离、报告下载与桌面手机UI验证；现金分账，不混模拟实绩，不宣称模型已训练。",
-      "write_scope": ["apps/", "packages/", "services/", "scripts/", "tests/", "docs/", "agent/", "research/"],
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "services/",
+        "scripts/",
+        "tests/",
+        "docs/",
+        "agent/",
+        "research/"
+      ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/community-operations-verification.json"
     },
     {
       "id": "T41",
-      "depends_on": ["T39"],
+      "depends_on": [
+        "T39"
+      ],
       "goal": "基于浙江上海广东公共交易原件建立首批历史工程成本索引与筛选导出",
       "status": "completed_first_batch_originals_and_live_ui_verified",
-      "expected_artifacts": ["packages/construction-costs/", "apps/workspace/src/components/ConstructionCostLibrary.tsx", "data/public_cases/renewal-cost-library-20261013.json"],
+      "expected_artifacts": [
+        "packages/construction-costs/",
+        "apps/workspace/src/components/ConstructionCostLibrary.tsx",
+        "data/public_cases/renewal-cost-library-20261013.json"
+      ],
       "definition_of_done": "首批原件真实归档并经哈希、单位、引文与工程标段核验；估算合同等阶段分开；同库查询及CSV下载读回通过。",
-      "write_scope": ["packages/construction-costs/", "apps/", "data/public_cases/", "tests/", "docs/", "agent/"],
+      "write_scope": [
+        "packages/construction-costs/",
+        "apps/",
+        "data/public_cases/",
+        "tests/",
+        "docs/",
+        "agent/"
+      ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/community-operations-verification.json"
     },
     {
-      "id":"T42", "depends_on":["T40","T43"],
-      "goal":"核验并应用分时容量、盈亏切换、参数范围、真实问卷与同口径造价方法，原位更新技术报告",
-      "status":"completed_methods_calculations_report_verified",
-      "expected_artifacts":["services/capabilities/operations_science.py","scripts/build-scientific-methods-evidence.py","docs/老旧小区改造案例拆分与六维数据说明.pdf"],
-      "definition_of_done":"一手方法、已执行计算和报告数值一致；相关回归、真实界面、PDF渲染及原件核验通过；不把演示范围当概率，不虚构真实预测效果。",
-      "write_scope":["services/","packages/","apps/","scripts/","tests/","docs/","research/","agent/"],
-      "upstream_verification_required":false,
-      "evidence_log":"research/test_results/scientific-methods-verification.json"
+      "id": "T42",
+      "depends_on": [
+        "T40",
+        "T43"
+      ],
+      "goal": "核验并应用分时容量、盈亏切换、参数范围、真实问卷与同口径造价方法，原位更新技术报告",
+      "status": "completed_methods_calculations_report_verified",
+      "expected_artifacts": [
+        "services/capabilities/operations_science.py",
+        "scripts/build-scientific-methods-evidence.py",
+        "docs/老旧小区改造案例拆分与六维数据说明.pdf"
+      ],
+      "definition_of_done": "一手方法、已执行计算和报告数值一致；相关回归、真实界面、PDF渲染及原件核验通过；不把演示范围当概率，不虚构真实预测效果。",
+      "write_scope": [
+        "services/",
+        "packages/",
+        "apps/",
+        "scripts/",
+        "tests/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/scientific-methods-verification.json"
     },
     {
-      "id":"T43", "depends_on":["T41"],
-      "goal":"保留用户AI采集表、逐项核实丽水线索，并补广州上海官方案例及字段级原件联结",
-      "status":"completed_user_workbook_and_regional_cases_verified",
-      "expected_artifacts":["data/imports/historical-projects-user-20261013.json","data/public_cases/methods-expansion/","research/test_results/expanded-cost-library.json"],
-      "definition_of_done":"原表哈希保持，公式审计与来源核验分开；金额阶段与面积分母准确；跨原件按明确项目标段关联，缺项不伪造。",
-      "write_scope":["data/","packages/construction-costs/","scripts/","tests/","agent/"],
-      "upstream_verification_required":false,
-      "evidence_log":"research/test_results/scientific-methods-verification.json"
+      "id": "T43",
+      "depends_on": [
+        "T41"
+      ],
+      "goal": "保留用户AI采集表、逐项核实丽水线索，并补广州上海官方案例及字段级原件联结",
+      "status": "completed_user_workbook_and_regional_cases_verified",
+      "expected_artifacts": [
+        "data/imports/historical-projects-user-20261013.json",
+        "data/public_cases/methods-expansion/",
+        "research/test_results/expanded-cost-library.json"
+      ],
+      "definition_of_done": "原表哈希保持，公式审计与来源核验分开；金额阶段与面积分母准确；跨原件按明确项目标段关联，缺项不伪造。",
+      "write_scope": [
+        "data/",
+        "packages/construction-costs/",
+        "scripts/",
+        "tests/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/scientific-methods-verification.json"
     },
     {
-      "id":"T44", "depends_on":["T39"],
-      "goal":"避免重复措施刷屏及相同原文重复提取新增卡片",
-      "status":"completed_measure_grouping_and_exact_reuse_verified",
-      "expected_artifacts":["packages/experience/presentation.ts","packages/experience/repository.ts","apps/workspace/src/components/ExperienceLibrary.tsx"],
-      "definition_of_done":"项目经验、因素表和技能来源分组；原卡对象、阶段、来源保留；完整草稿重复入库复用且审核版本不回退；并发回归与真实页面通过。",
-      "write_scope":["packages/experience/","apps/workspace/src/components/","tests/","agent/"],
-      "upstream_verification_required":false,
-      "evidence_log":"research/test_results/scientific-methods-verification.json"
+      "id": "T44",
+      "depends_on": [
+        "T39"
+      ],
+      "goal": "避免重复措施刷屏及相同原文重复提取新增卡片",
+      "status": "completed_measure_grouping_and_exact_reuse_verified",
+      "expected_artifacts": [
+        "packages/experience/presentation.ts",
+        "packages/experience/repository.ts",
+        "apps/workspace/src/components/ExperienceLibrary.tsx"
+      ],
+      "definition_of_done": "项目经验、因素表和技能来源分组；原卡对象、阶段、来源保留；完整草稿重复入库复用且审核版本不回退；并发回归与真实页面通过。",
+      "write_scope": [
+        "packages/experience/",
+        "apps/workspace/src/components/",
+        "tests/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/scientific-methods-verification.json"
     },
     {
-      "id":"T45", "depends_on":["T40","T42"],
-      "goal":"构造全量模拟社区数据，展示六维现况、拟方案、月度运营与模拟台账的完整政府工作人员报表",
-      "status":"completed_simulation_and_live_ui_verified",
-      "expected_artifacts":["packages/retrofit/complete-demo.ts","apps/workspace/src/components/CompleteCommunityDemo.tsx","data/templates/complete-community-demo-v1.json","research/test_results/complete-community-demo-verification.json"],
-      "definition_of_done":"六维和三种情景无缺失指标；人口、场次、收费、成本、资金及去重人数有生成依据并互相核对；真实事实和实绩不被模拟写入；导出读回、真实界面、回归、构建和报告渲染有证据。",
-      "write_scope":["apps/","packages/retrofit/","scripts/","data/templates/","tests/","docs/","research/","agent/"],
-      "upstream_verification_required":false,
-      "evidence_log":"research/test_results/complete-community-demo-verification.json"
+      "id": "T45",
+      "depends_on": [
+        "T40",
+        "T42"
+      ],
+      "goal": "构造全量模拟社区数据，展示六维现况、拟方案、月度运营与模拟台账的完整政府工作人员报表",
+      "status": "completed_simulation_and_live_ui_verified",
+      "expected_artifacts": [
+        "packages/retrofit/complete-demo.ts",
+        "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+        "data/templates/complete-community-demo-v1.json",
+        "research/test_results/complete-community-demo-verification.json"
+      ],
+      "definition_of_done": "六维和三种情景无缺失指标；人口、场次、收费、成本、资金及去重人数有生成依据并互相核对；真实事实和实绩不被模拟写入；导出读回、真实界面、回归、构建和报告渲染有证据。",
+      "write_scope": [
+        "apps/",
+        "packages/retrofit/",
+        "scripts/",
+        "data/templates/",
+        "tests/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/complete-community-demo-verification.json"
+    },
+    {
+      "id": "T46",
+      "depends_on": [
+        "T45"
+      ],
+      "goal": "提供可连续调整的运营推演、服务和资金联动、可恢复方案对照，并更新技术报告图件",
+      "status": "completed_interactive_ui_and_report_verified",
+      "expected_artifacts": [
+        "apps/workspace/src/components/CommunityOperationsPlayground.tsx",
+        "packages/retrofit/visual-analysis.ts",
+        "research/test_results/analysis-motion-verification.json"
+      ],
+      "definition_of_done": "三个变量连续组合调用现有计算器，取消旧请求；人数资金核对，真实写入隔离，本机保存刷新恢复与导出读回，手机动效失败重试和当前回归构建通过；报告数值图注渲染核验。",
+      "write_scope": [
+        "apps/workspace/",
+        "packages/retrofit/",
+        "scripts/",
+        "tests/",
+        "docs/",
+        "research/",
+        "agent/",
+        "output/playwright/analysis-motion/",
+        "output/documents/renewal-review/main/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/analysis-motion-verification.json"
     }
   ]
 }
