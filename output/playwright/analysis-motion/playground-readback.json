@@ -1,0 +1,73 @@
+{
+  "source": "D:\\临时\\完整社区模拟数据 (3).json",
+  "parameters": {
+    "demand": 1.5,
+    "activitySlots": 15,
+    "subsidy": 0
+  },
+  "metrics": {
+    "capacity_visits": 1594,
+    "served_visits": 1594,
+    "unmet_visits": 851,
+    "utilization": 1,
+    "unique_users": 293,
+    "coverage": 0.19533333333333333,
+    "fee_income": 17330,
+    "earned_income": 27330,
+    "operating_cost": 36780,
+    "government_purchase": 5000,
+    "operating_subsidy": 0,
+    "other_support": 0,
+    "balance_before_support": -9450,
+    "balance_after_support": -9450,
+    "unfunded_gap": 9450,
+    "required_subsidy": 9450,
+    "government_outlay": 7000,
+    "government_cost_per_visit": 4.39,
+    "commercial_cost_coverage": 0.6071234366503534,
+    "government_direct_cost": 2000,
+    "total_service_cost": 38780
+  },
+  "services": [
+    {
+      "capacity_method": "monthly_aggregate",
+      "monthly_pooled_upper_bound": 450,
+      "aggregation_overstatement_visits": 0,
+      "id": "activity",
+      "name": "社区活动",
+      "capacity_visits": 450,
+      "served_visits": 450,
+      "unmet_visits": 630,
+      "utilization": 1,
+      "fee_income": 2250,
+      "variable_cost": 900
+    },
+    {
+      "capacity_method": "monthly_aggregate",
+      "monthly_pooled_upper_bound": 1040,
+      "aggregation_overstatement_visits": 0,
+      "id": "meal",
+      "name": "社区助餐",
+      "capacity_visits": 1040,
+      "served_visits": 1040,
+      "unmet_visits": 208,
+      "utilization": 1,
+      "fee_income": 14040,
+      "variable_cost": 9360
+    },
+    {
+      "capacity_method": "monthly_aggregate",
+      "monthly_pooled_upper_bound": 104,
+      "aggregation_overstatement_visits": 0,
+      "id": "consultation",
+      "name": "家庭与养老咨询",
+      "capacity_visits": 104,
+      "served_visits": 104,
+      "unmet_visits": 13,
+      "utilization": 1,
+      "fee_income": 1040,
+      "variable_cost": 520
+    }
+  ],
+  "saved_plans": 2
+}

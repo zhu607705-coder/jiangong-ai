@@ -1,0 +1,33 @@
+{
+  "blocked_failures": 3,
+  "failed_progress": "0/3",
+  "retry": "重试基准情景",
+  "restored_progress": "3/3",
+  "responses": [
+    {
+      "url": "http://127.0.0.1:5173/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/community-operations/preview",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/community-operations/preview",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/community-operations/preview",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/community-operations/preview",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/community-operations/preview",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5173/api/projects/P-73678dc3-b255-4ae4-848b-86f26266f0c0/community-operations/preview",
+      "status": 200
+    }
+  ],
+  "network_block_restored": true
+}

@@ -1,4 +1,114 @@
 {
+  "community_interactive_analysis": {
+    "as_of": "2026-10-14",
+    "status": "completed_interactive_ui_report_and_regression_verified",
+    "changed_files": [
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+      "apps/workspace/src/components/DecisionDashboard.tsx",
+      "apps/workspace/src/components/CommunityAnalysisVisuals.tsx",
+      "apps/workspace/src/components/CommunityOperationsPlayground.tsx",
+      "apps/workspace/src/components/analysis-motion.tsx",
+      "apps/workspace/src/components/community-analysis-visuals.css",
+      "apps/workspace/src/components/community-operations-playground.css",
+      "packages/retrofit/visual-analysis.ts",
+      "packages/retrofit/analysis-palette.json",
+      "tests/contracts/visual-analysis.test.ts",
+      "scripts/render-community-analysis-figure.py",
+      "docs/figures/FIGURE_QA.md",
+      "docs/figures/community-analysis-figure.pdf",
+      "docs/figures/community-analysis-figure.json",
+      "docs/generated/complete-community-demo-section.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "docs/老旧小区改造_产品与验证方案.md",
+      "research/reuse_manifest.json"
+    ],
+    "evidence": "research/test_results/analysis-motion-verification.json",
+    "checks": {
+      "full_command": "npm run verify",
+      "full_exit_code": 0,
+      "javascript": 993,
+      "python": 211,
+      "http": 16,
+      "full_log": "research/test_results/analysis-motion-verify-current.log",
+      "focused_tests": 72,
+      "focused_log": "research/test_results/analysis-motion-focused.log",
+      "final_build": "research/test_results/analysis-motion-build-final.log"
+    },
+    "browser": {
+      "preview": "http://127.0.0.1:5173/",
+      "three_native_sliders": true,
+      "superseded_requests_cancelled": true,
+      "service_drilldown": true,
+      "saved_plans": 3,
+      "reload_and_restore_verified": true,
+      "original_parameters": {
+        "demand": 1,
+        "activitySlots": 30,
+        "subsidy": 12000
+      },
+      "constrained": {
+        "demand": 1.5,
+        "activitySlots": 15,
+        "subsidy": 0,
+        "served": 1594,
+        "unique": 293,
+        "cash": -9450,
+        "government": 7000,
+        "unmet": 851
+      },
+      "expanded": {
+        "demand": 1.5,
+        "activitySlots": 45,
+        "subsidy": 12000,
+        "served": 2224,
+        "unique": 409,
+        "cash": 4440,
+        "government": 19000,
+        "unmet": 221
+      },
+      "json_readback": [
+        "output/playwright/analysis-motion/playground-readback.json",
+        "output/playwright/analysis-motion/playground-capacity-readback.json"
+      ],
+      "markdown_current_parameters_and_metrics": true,
+      "api_block_error_and_retry": true,
+      "stale_report_export_disabled": true,
+      "network_block_restored": true,
+      "mobile": {
+        "viewport": 390,
+        "document_width": 390,
+        "control_width": 285.33,
+        "service_cards": 3,
+        "viewport_restored": true
+      },
+      "motion_display_only": true,
+      "numeric_and_polygon_interpolation_verified": true,
+      "reduced_motion_on_off": true,
+      "screenshots": [
+        "output/playwright/analysis-motion/interactive-final.png",
+        "output/playwright/analysis-motion/interactive-adjusted.png",
+        "output/playwright/analysis-motion/interactive-mobile.png"
+      ]
+    },
+    "report": {
+      "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "pages": 25,
+      "sha256": "95a9920cc88fa09232a40fbfd04a1df7079affacc1b7fe689fc6aedc1bc21787",
+      "figure": "docs/figures/community-analysis-figure.pdf",
+      "figure_sha256": "29849c6dcdfc820dbbd122582261fb74c3ef9dff7e3db7c9a96c2a0cc51cf4cd",
+      "generator": "scripts/render-community-analysis-figure.py",
+      "responsibility": "docs/figures/FIGURE_QA.md",
+      "render_review": "passed",
+      "latex_warnings": 0
+    },
+    "real_data_write": false,
+    "unresolved_questions": [],
+    "next_runnable_task": null,
+    "delivery": "User-authorized PR/merge pending final GitHub gates; preview kept open."
+  },
   "complete_community_data_demo": {
     "as_of": "2026-10-13",
     "status": "completed_simulation_and_live_ui_verified",
@@ -99,24 +209,76 @@
     "evidence": "research/test_results/scientific-methods-verification.json",
     "report": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
     "report_pages": 22,
-    "methods": ["source and codebook audit", "time-block service capacity", "cash switching values", "source-labelled one-way and joint endpoint sensitivity", "scope-stage-area-year comparable cost groups", "community-cluster resampling", "exact experience reuse and grouped presentation"],
-    "changed_files": ["services/capabilities/community_operations.py", "services/capabilities/operations_science.py", "packages/contracts/schema.json", "packages/operations/service.ts", "packages/operations/report.ts", "packages/construction-costs/library.ts", "packages/construction-costs/benchmark.ts", "packages/experience/repository.ts", "packages/experience/presentation.ts", "apps/workspace/src/components/CommunityOperationsPanel.tsx", "apps/workspace/src/components/ConstructionCostLibrary.tsx", "apps/workspace/src/components/KnowledgePipelinePanel.tsx", "apps/workspace/src/components/ExperienceLibrary.tsx", "docs/老旧小区改造案例拆分与六维数据说明.tex"],
-    "data": {"price_records":20,"archived_originals":27,"referenced_originals":24,"guangzhou_new_projects":3,"shanghai_new_projects":4,"user_workbook_original_unchanged":true},
-    "validation": {"javascript":985,"python":206,"http":16,"build":"passed","pdf":"rendered_and_checked","browser":"desktop_mobile_and_real_project_readback_passed"},
-    "unresolved": ["原论文2236/38至2202/36的筛选规则待作者代码核对。", "真实运营台账和独立预测效果样本尚待取得。", "当前造价参照不含跨年价格指数或具体施工深度校准。"],
+    "methods": [
+      "source and codebook audit",
+      "time-block service capacity",
+      "cash switching values",
+      "source-labelled one-way and joint endpoint sensitivity",
+      "scope-stage-area-year comparable cost groups",
+      "community-cluster resampling",
+      "exact experience reuse and grouped presentation"
+    ],
+    "changed_files": [
+      "services/capabilities/community_operations.py",
+      "services/capabilities/operations_science.py",
+      "packages/contracts/schema.json",
+      "packages/operations/service.ts",
+      "packages/operations/report.ts",
+      "packages/construction-costs/library.ts",
+      "packages/construction-costs/benchmark.ts",
+      "packages/experience/repository.ts",
+      "packages/experience/presentation.ts",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+      "apps/workspace/src/components/ConstructionCostLibrary.tsx",
+      "apps/workspace/src/components/KnowledgePipelinePanel.tsx",
+      "apps/workspace/src/components/ExperienceLibrary.tsx",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex"
+    ],
+    "data": {
+      "price_records": 20,
+      "archived_originals": 27,
+      "referenced_originals": 24,
+      "guangzhou_new_projects": 3,
+      "shanghai_new_projects": 4,
+      "user_workbook_original_unchanged": true
+    },
+    "validation": {
+      "javascript": 985,
+      "python": 206,
+      "http": 16,
+      "build": "passed",
+      "pdf": "rendered_and_checked",
+      "browser": "desktop_mobile_and_real_project_readback_passed"
+    },
+    "unresolved": [
+      "原论文2236/38至2202/36的筛选规则待作者代码核对。",
+      "真实运营台账和独立预测效果样本尚待取得。",
+      "当前造价参照不含跨年价格指数或具体施工深度校准。"
+    ],
     "next_runnable_task": "使用本轮原件清单继续补工程量及结算数据；取得真实运营月份后按冻结预测和独立项目/时间切分检验，不把模拟或问卷满意度当作实测到访率。"
   },
   "community_operations_and_cost_library": {
     "as_of": "2026-10-13",
     "status": "implemented_and_verified",
-    "nodes": {"T40":"completed_local_and_live_ui_verified","T41":"completed_first_batch_originals_and_live_ui_verified"},
+    "nodes": {
+      "T40": "completed_local_and_live_ui_verified",
+      "T41": "completed_first_batch_originals_and_live_ui_verified"
+    },
     "changed_files": [
-      "packages/operations/service.ts", "packages/operations/sources.ts", "packages/operations/report.ts",
-      "services/capabilities/community_operations.py", "apps/host/community-operations.ts",
-      "apps/workspace/src/components/CommunityOperationsPanel.tsx", "apps/workspace/src/components/community-operations.css",
-      "packages/construction-costs/library.ts", "apps/host/construction-costs.ts",
-      "apps/workspace/src/components/ConstructionCostLibrary.tsx", "apps/workspace/src/components/construction-cost-library.css",
-      "packages/contracts/schema.json", "scripts/python-runtime.ts", "docs/老旧小区改造_产品与验证方案.md"
+      "packages/operations/service.ts",
+      "packages/operations/sources.ts",
+      "packages/operations/report.ts",
+      "services/capabilities/community_operations.py",
+      "apps/host/community-operations.ts",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+      "apps/workspace/src/components/community-operations.css",
+      "packages/construction-costs/library.ts",
+      "apps/host/construction-costs.ts",
+      "apps/workspace/src/components/ConstructionCostLibrary.tsx",
+      "apps/workspace/src/components/construction-cost-library.css",
+      "packages/contracts/schema.json",
+      "scripts/python-runtime.ts",
+      "docs/老旧小区改造_产品与验证方案.md"
     ],
     "verification": "research/test_results/community-operations-verification.json",
     "live_evidence": "research/test_results/community-operations-live.json",
@@ -127,7 +289,11 @@
     "actual_operating_months": 0,
     "automatic_training": false,
     "preview_url": "http://127.0.0.1:5173/",
-    "unresolved_questions": ["实际运营台账尚待取得；当前没有真实预测效果指标。", "首批造价含合同及估算，尚无竣工结算样本。", "之前求是村完整真实模型运行失败保留原记录，本轮没有重跑或覆盖。"],
+    "unresolved_questions": [
+      "实际运营台账尚待取得；当前没有真实预测效果指标。",
+      "首批造价含合同及估算，尚无竣工结算样本。",
+      "之前求是村完整真实模型运行失败保留原记录，本轮没有重跑或覆盖。"
+    ],
     "next_runnable_task": "取得有使用权限的真实月度服务与收支原件；月前冻结预测后录入完整月份实绩。用既有原件清单流程继续补施工合同和结算样本。"
   },
   "completed_local_items": [

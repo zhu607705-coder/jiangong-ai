@@ -1,0 +1,85 @@
+{
+  "data_kind": "synthetic",
+  "generator": "scripts/render-community-analysis-figure.py",
+  "source_hashes": {
+    "data\\templates\\complete-community-demo-v1.json": "18acfa4ebfe0fadba3ff793a493662829a27432270a9a6396ca3bc3ea3dd9552",
+    "research\\test_results\\complete-community-demo-calculations.json": "f7e683a2ee014bb1c16197f6870380e49173bfb87f1a28f89925a04bd05c395c",
+    "packages\\retrofit\\analysis-palette.json": "4bce2d987a471346ae660dec5b6a64088787e812f287b52b0ef29c58b666f44a"
+  },
+  "formal_resamples": 0,
+  "seed_policy": "deterministic, no random sampling",
+  "panels": {
+    "a": {
+      "before": [
+        2.2,
+        3.3,
+        3,
+        3.4,
+        3,
+        3.5
+      ],
+      "after": [
+        4.6,
+        5,
+        4.8,
+        4.7,
+        5,
+        5
+      ]
+    },
+    "b": {
+      "served": [
+        1304,
+        1630,
+        1956
+      ],
+      "capacity": 2044
+    },
+    "c": {
+      "cash": [
+        1035,
+        2294,
+        3553
+      ],
+      "government_outlay": 19000
+    },
+    "d": {
+      "daily_visits": [
+        58,
+        58,
+        58,
+        58,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        57,
+        56,
+        56,
+        55,
+        55,
+        22,
+        22,
+        22,
+        22
+      ],
+      "total_visits": 1568,
+      "monthly_unique": 286
+    }
+  },
+  "output": "docs\\figures\\community-analysis-figure.pdf",
+  "sha256": "29849c6dcdfc820dbbd122582261fb74c3ef9dff7e3db7c9a96c2a0cc51cf4cd"
+}

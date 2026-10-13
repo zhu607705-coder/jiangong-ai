@@ -597,7 +597,7 @@ export default function App() {
         </section>
       ) : (
         <>
-          <div className="page-heading">
+          <div className={`page-heading${completeDemoActive ? " is-complete-demo" : ""}`}>
             <div>
               <div className="eyebrow">
                 <span className="project-type">
@@ -605,7 +605,7 @@ export default function App() {
                 </span>
                 <span>项目空间 / {project.id.slice(0, 10)}</span>
               </div>
-              <h1>{completeDemoActive ? '杭州样本社区 · 政府工作人员报表演示' : project.name}</h1>
+              <h1>{completeDemoActive ? '杭州样本社区 · 运营推演' : project.name}</h1>
               <p>
                 {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '改造需求与前期策划'} <span>·</span>{" "}
                 {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}

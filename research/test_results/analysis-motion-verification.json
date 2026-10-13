@@ -1,0 +1,95 @@
+{
+  "as_of": "2026-10-14",
+  "status": "implemented_interactive_ui_and_report_verified",
+  "data_kind": "synthetic",
+  "base_commit": "2d3a9dce64c6db89dcd644dd02ac793c628cb1b4",
+  "verification": {
+    "full_command": "npm run verify",
+    "full_exit_code": 0,
+    "javascript": 993,
+    "python": 211,
+    "http": 16,
+    "full_log": "research/test_results/analysis-motion-verify-current.log",
+    "focused_tests": 72,
+    "focused_log": "research/test_results/analysis-motion-focused.log",
+    "final_build": "research/test_results/analysis-motion-build-final.log"
+  },
+  "browser": {
+    "preview": "http://127.0.0.1:5173/",
+    "three_native_sliders": true,
+    "superseded_requests_cancelled": true,
+    "service_drilldown": true,
+    "saved_plans": 3,
+    "reload_and_restore_verified": true,
+    "original_parameters": {
+      "demand": 1,
+      "activitySlots": 30,
+      "subsidy": 12000
+    },
+    "constrained": {
+      "demand": 1.5,
+      "activitySlots": 15,
+      "subsidy": 0,
+      "served": 1594,
+      "unique": 293,
+      "cash": -9450,
+      "government": 7000,
+      "unmet": 851
+    },
+    "expanded": {
+      "demand": 1.5,
+      "activitySlots": 45,
+      "subsidy": 12000,
+      "served": 2224,
+      "unique": 409,
+      "cash": 4440,
+      "government": 19000,
+      "unmet": 221
+    },
+    "json_readback": [
+      "output/playwright/analysis-motion/playground-readback.json",
+      "output/playwright/analysis-motion/playground-capacity-readback.json"
+    ],
+    "markdown_current_parameters_and_metrics": true,
+    "api_block_error_and_retry": true,
+    "stale_report_export_disabled": true,
+    "network_block_restored": true,
+    "mobile": {
+      "viewport": 390,
+      "document_width": 390,
+      "control_width": 285.33,
+      "service_cards": 3,
+      "viewport_restored": true
+    },
+    "motion_display_only": true,
+    "numeric_and_polygon_interpolation_verified": true,
+    "reduced_motion_on_off": true,
+    "screenshots": [
+      "output/playwright/analysis-motion/interactive-final.png",
+      "output/playwright/analysis-motion/interactive-adjusted.png",
+      "output/playwright/analysis-motion/interactive-mobile.png"
+    ]
+  },
+  "isolation": {
+    "original_sources_unchanged": {
+      "data/templates/complete-community-demo-v1.json": "18acfa4ebfe0fadba3ff793a493662829a27432270a9a6396ca3bc3ea3dd9552",
+      "research/test_results/complete-community-demo-calculations.json": "f7e683a2ee014bb1c16197f6870380e49173bfb87f1a28f89925a04bd05c395c"
+    },
+    "real_facts_writes": 0,
+    "real_observation_writes": 0,
+    "model_training": false
+  },
+  "report": {
+    "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+    "pages": 25,
+    "sha256": "95a9920cc88fa09232a40fbfd04a1df7079affacc1b7fe689fc6aedc1bc21787",
+    "figure": "docs/figures/community-analysis-figure.pdf",
+    "figure_sha256": "29849c6dcdfc820dbbd122582261fb74c3ef9dff7e3db7c9a96c2a0cc51cf4cd",
+    "generator": "scripts/render-community-analysis-figure.py",
+    "responsibility": "docs/figures/FIGURE_QA.md",
+    "render_review": "passed",
+    "latex_warnings": 0
+  },
+  "material_boundary": "Original synthetic assumptions and two new interactive scheduling bounds are explicit. Real project facts and prior model failure remain separately recorded.",
+  "reference_application": "Prior microgrid multi-panel figure grammar and Nature rendering applied to the technical report; web uses interactive product presentation."
+}

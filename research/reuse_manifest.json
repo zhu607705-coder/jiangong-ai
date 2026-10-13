@@ -259,6 +259,30 @@
       ],
       "isolation": "Existing preview API only; no real facts, observations or training writes",
       "license": "local demonstration code; existing upstream attribution retained"
+    },
+    "community_interactive_analysis_20261014": {
+      "reuse": [
+        "packages/retrofit/complete-demo.ts:buildCompleteCommunityDemo,simulateScenarioUsers,summarizeDemoLedger",
+        "apps/workspace/src/api.ts:api",
+        "services/capabilities/community_operations.py:evaluate_operations",
+        "apps/workspace/src/components/DecisionDashboard.tsx",
+        "apps/workspace/src/components/WaitingScene.tsx",
+        "existing @tabler/icons-react package",
+        "scripts/render-scientific-methods-figure.py:Matplotlib configuration and PDF pattern"
+      ],
+      "new_logic": [
+        "read-only household and daily aggregations",
+        "reconciled actor-separated SVG cash flow",
+        "cancelled superseded what-if previews over explicit synthetic inputs",
+        "local synthetic plan comparison",
+        "display-only numeric and geometric interpolation"
+      ],
+      "reference": [
+        "user microgrid code/paper_figures.py multi-panel, marker and unit grammar",
+        "nature-figure/SKILL.md for the existing technical report composite"
+      ],
+      "isolation": "Existing preview API only; browser storage for synthetic plans; no real facts, observations, training or new runtime",
+      "license": "local code and existing licensed packages; upstream attribution preserved"
     }
   }
 }

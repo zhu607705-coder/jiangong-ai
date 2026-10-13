@@ -1,5 +1,5 @@
 {
-  "pages": 24,
+  "pages": 25,
   "input_workbooks": [
     {
       "name": "规则库和专家补充清单(1).xlsx",
@@ -29,22 +29,22 @@
     "criteria_tests": 5
   },
   "current_validation_logs": [
-    "research/test_results/complete-community-demo-verify.log",
-    "research/test_results/complete-community-demo-build-final.log"
+    "research/test_results/analysis-motion-verify-current.log",
+    "research/test_results/analysis-motion-focused.log",
+    "research/test_results/analysis-motion-build-final.log"
   ],
   "latex_warnings": 0,
   "contacts": [
-    "output/documents/renewal-review/main/render/contact-01.png",
-    "output/documents/renewal-review/main/render/contact-02.png",
-    "output/documents/renewal-review/main/render/contact-03.png",
-    "output/documents/renewal-review/main/render/contact-04.png",
-    "output/documents/renewal-review/main/render/contact-05.png",
-    "output/documents/renewal-review/main/render/contact-06.png",
-    "output/documents/renewal-review/main/render/contact-07.png",
-    "output/documents/renewal-review/main/render/contact-08.png"
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-01.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-02.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-03.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-04.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-05.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-06.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-07.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-08.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-09.png"
   ],
-  "visual_review": "passed",
-  "sha256": "861a9dbc03ba20096774cb5abf9c78f13cc0492c09caf0ecdec94b136dfe87e7",
-  "visual_review_scope": "New section pages13-14, shifted case tables19-23 and final references24 inspected; unchanged earlier sections reuse prior rendered review.",
-  "human_review": "not_requested"
+  "visual_review": "passed; affected pages 1, 15 and 16 inspected; remaining report checks reused and current source/worksheet audit passed",
+  "sha256": "95a9920cc88fa09232a40fbfd04a1df7079affacc1b7fe689fc6aedc1bc21787"
 }
