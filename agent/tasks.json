@@ -1039,6 +1039,16 @@
       "write_scope":["packages/experience/","apps/workspace/src/components/","tests/","agent/"],
       "upstream_verification_required":false,
       "evidence_log":"research/test_results/scientific-methods-verification.json"
+    },
+    {
+      "id":"T45", "depends_on":["T40","T42"],
+      "goal":"构造全量模拟社区数据，展示六维现况、拟方案、月度运营与模拟台账的完整政府工作人员报表",
+      "status":"completed_simulation_and_live_ui_verified",
+      "expected_artifacts":["packages/retrofit/complete-demo.ts","apps/workspace/src/components/CompleteCommunityDemo.tsx","data/templates/complete-community-demo-v1.json","research/test_results/complete-community-demo-verification.json"],
+      "definition_of_done":"六维和三种情景无缺失指标；人口、场次、收费、成本、资金及去重人数有生成依据并互相核对；真实事实和实绩不被模拟写入；导出读回、真实界面、回归、构建和报告渲染有证据。",
+      "write_scope":["apps/","packages/retrofit/","scripts/","data/templates/","tests/","docs/","research/","agent/"],
+      "upstream_verification_required":false,
+      "evidence_log":"research/test_results/complete-community-demo-verification.json"
     }
   ]
 }

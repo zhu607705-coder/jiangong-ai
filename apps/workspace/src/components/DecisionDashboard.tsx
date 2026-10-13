@@ -3,7 +3,7 @@ import type { DecisionDashboard as Dashboard, ResearchDimension } from '../../..
 import { dashboardDimensions, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../packages/decision/dashboard'
 
 /** Missing dimensions are never drawn as zero; individual known marks remain visible. */
-export default function DecisionDashboard({value,onEvidence}:{value:Dashboard;onEvidence:(refs:string[])=>void}){
+export default function DecisionDashboard({value,onEvidence,presentation}:{value:Dashboard;onEvidence:(refs:string[])=>void;presentation?:{title:string;scale:string;method:string}}){
   const [selected,setSelected]=useState<ResearchDimension|null>(null)
   const rows=dashboardDimensions(value.policy_version).map(d=>({...d,result:value.dimensions.find(x=>x.key===d.key)}))
   const known=rows.filter(d=>d.result?.value!=null)
@@ -11,9 +11,9 @@ export default function DecisionDashboard({value,onEvidence}:{value:Dashboard;on
   const polygon=(r:number)=>rows.map((_,i)=>xy(i,r).join(',')).join(' ')
   const selectedRow=rows.find(d=>d.key===selected)
   return <section className="decision-dashboard" aria-label="六维方案研判">
-    <header><h3>{value.policy_version===NEIGHBORHOOD_DASHBOARD_POLICY?'老旧小区六维观察':'方案研判'}</h3><span>适配度 · 1–5级</span></header>
+    <header><h3>{presentation?.title || (value.policy_version===NEIGHBORHOOD_DASHBOARD_POLICY?'老旧小区六维观察':'方案研判')}</h3><span>{presentation?.scale || '适配度 · 1–5级'}</span></header>
     <div className="dashboard-visual">
-      <svg viewBox="0 0 168 168" role="img" aria-label={`六维方案适配，${known.length}个维度已评估`}>
+      <svg viewBox="0 0 168 168" role="img" aria-label={`${presentation ? '六维模拟条件覆盖' : '六维方案适配'}，${known.length}个维度已评估`}>
         {[20,40,60].map(r=><polygon key={r} points={polygon(r)} className="radar-grid"/>)}
         {rows.map((d,i)=>{const p=xy(i,60);return <line key={d.key} x1="84" y1="84" x2={p[0]} y2={p[1]} className="radar-spoke"/>})}
         {known.length===6&&<polygon points={rows.map((d,i)=>xy(i,d.result!.value!/5*60).join(',')).join(' ')} className="radar-area"/>}
@@ -26,6 +26,6 @@ export default function DecisionDashboard({value,onEvidence}:{value:Dashboard;on
       </button>)}</div>
     </div>
     {selectedRow&&<div className="dimension-detail"><strong>{selectedRow.label}</strong><p>{selectedRow.result?.basis||selectedRow.question}</p>{!!selectedRow.result?.evidence_refs.length&&<button onClick={()=>onEvidence(selectedRow.result!.evidence_refs)}>查看依据 ↗</button>}</div>}
-    <details className="dashboard-method"><summary>评分依据</summary><p>按当前参与方案逐维评价；缺证据的维度留空。点击维度查看原文依据。</p>{rows.map(d=><p key={d.key}><strong>{d.label}：</strong>{d.levels[0]} → {d.levels[2]} → {d.levels[4]}</p>)}<p>{value.model} · {value.policy_version}</p></details>
+    <details className="dashboard-method"><summary>评分依据</summary><p>{presentation?.method || '按当前参与方案逐维评价；缺证据的维度留空。点击维度查看原文依据。'}</p>{!presentation && rows.map(d=><p key={d.key}><strong>{d.label}：</strong>{d.levels[0]} → {d.levels[2]} → {d.levels[4]}</p>)}<p>{value.model} · {value.policy_version}</p></details>
   </section>
 }

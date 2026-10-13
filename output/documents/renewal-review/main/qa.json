@@ -1,5 +1,5 @@
 {
-  "pages": 22,
+  "pages": 24,
   "input_workbooks": [
     {
       "name": "规则库和专家补充清单(1).xlsx",
@@ -29,8 +29,8 @@
     "criteria_tests": 5
   },
   "current_validation_logs": [
-    "research/test_results/scientific-methods-python.log",
-    "research/test_results/scientific-methods-vitest.log"
+    "research/test_results/complete-community-demo-verify.log",
+    "research/test_results/complete-community-demo-build-final.log"
   ],
   "latex_warnings": 0,
   "contacts": [
@@ -44,8 +44,7 @@
     "output/documents/renewal-review/main/render/contact-08.png"
   ],
   "visual_review": "passed",
-  "sha256": "5a310843c8171912d9d230d8327d904dc68fe3700ae49107a5206a7c77ba31d2",
-  "visual_review_scope": "All 23 original rendered pages inspected via contacts; original pages 9-13/22-23 inspected in detail. After reference-spacing correction, final pages21-22 inspected; finalPDF22pages, no orphan reference",
-  "numerical_crosscheck": "operations, survey aggregates, and cost benchmark JSON checked",
+  "sha256": "861a9dbc03ba20096774cb5abf9c78f13cc0492c09caf0ecdec94b136dfe87e7",
+  "visual_review_scope": "New section pages13-14, shifted case tables19-23 and final references24 inspected; unchanged earlier sections reuse prior rendered review.",
   "human_review": "not_requested"
 }
