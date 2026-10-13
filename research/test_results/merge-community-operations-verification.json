@@ -1,6 +1,6 @@
 {
   "as_of": "2026-10-13",
-  "status": "local_verified_remote_ci_pending",
+  "status": "merged_to_origin_main_verified",
   "branch": "codex/community-operations-scientific-integration",
   "base_commit": "a656650058861ed7073a8d097784ade7dcb7ed92",
   "scope": [
@@ -20,7 +20,8 @@
     "log": "research/test_results/merge-community-operations-verify.log",
     "staged_diff_check": "passed",
     "git_source_blobs_sha256": 54,
-    "original_user_workbook_sha256": "d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a"
+    "original_user_workbook_sha256": "d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a",
+    "hash_bound_figure_and_generator_blobs": 7
   },
   "prior_current_ui_and_pdf_evidence": "research/test_results/scientific-methods-verification.json",
   "publication": {
@@ -46,5 +47,31 @@
     "Survey paper sample-selection rule remains unresolved"
   ],
   "integration_note": "Latest root files consolidate agent contributions and later integration fixes; older branch snapshots are preserved rather than cherry-picked over the verified result.",
-  "ci_configuration_note": "Existing workflows preserved: GitHub rejected workflow modification because the OAuth credential lacks workflow scope. HTTP integration is covered by the passing local npm run verify log."
+  "ci_configuration_note": "Existing workflows preserved: GitHub rejected workflow modification because the OAuth credential lacks workflow scope. HTTP integration is covered by the passing local npm run verify log.",
+  "pr": {
+    "number": 20,
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/20",
+    "state": "MERGED",
+    "head_commit": "c06282a0f84f165ebe9b9e0098455a8fa6429737",
+    "merge_commit": "2f5fad58a346d8e4784dcce9091aaaaded578d2c"
+  },
+  "remote_ci": [
+    {
+      "workflow": "Intelligence integration review",
+      "run": 38373326645,
+      "conclusion": "success"
+    },
+    {
+      "workflow": "Map workspace quality",
+      "run": 38373326597,
+      "conclusion": "success"
+    },
+    {
+      "workflow": "Map workspace quality push superseded by PR",
+      "run": 38373317782,
+      "conclusion": "cancelled",
+      "counted_as_pass": false
+    }
+  ],
+  "delivery_reconciliation": "After the verified PR merge, this receipt and agent state are reconciled on main; hash-bound SVG and numerical figure input also retain exact bytes across checkout platforms. Runtime source is unchanged from the passing PR head."
 }
