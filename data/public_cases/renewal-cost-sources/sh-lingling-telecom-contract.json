@@ -1,0 +1,19 @@
+{
+  "id": "sh-lingling-telecom-contract",
+  "title": "零陵路677弄6-8号旧住房成套改造项目-通信工程的合同",
+  "requested_url": "https://jpg.zfcg.sh.gov.cn/sh-gov-open-doc/1035IC/2aadd24d-f6b5-4e4b-bb3e-f56fb535c020.pdf",
+  "final_url": "https://jpg.zfcg.sh.gov.cn/sh-gov-open-doc/1035IC/2aadd24d-f6b5-4e4b-bb3e-f56fb535c020.pdf",
+  "url": "https://jpg.zfcg.sh.gov.cn/sh-gov-open-doc/1035IC/2aadd24d-f6b5-4e4b-bb3e-f56fb535c020.pdf",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T04:29:54.002868+00:00",
+  "http_status": 200,
+  "raw_format": "pdf",
+  "content_type": "application/pdf",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-lingling-telecom-contract.pdf",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-lingling-telecom-contract.txt",
+  "raw_sha256": "93bf97da80f2ed8078853db2e5ee8a521aec1ab7ad9497cabd975025bd5032a9",
+  "text_sha256": "98a1f194bd43ffe05b98706182218aea8862cc792d1d895db283c165dee0213d",
+  "source_status": "fetched_official_public_source",
+  "extraction": "pypdf per-page text with whitespace normalization"
+}

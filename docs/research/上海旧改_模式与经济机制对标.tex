@@ -1,0 +1,255 @@
+% !TeX program = xelatex
+\documentclass[UTF8,11pt,fontset=windows]{ctexart}
+\usepackage[a4paper,left=22mm,right=22mm,top=21mm,bottom=21mm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\usepackage{array,booktabs,longtable,tabularx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!45!black,pdftitle={上海旧住房更新 改造模式与经济机制对标},pdfauthor={朱航成}}
+\renewcommand{\arraystretch}{1.28}
+\setlength{\tabcolsep}{4pt}
+\setlength{\parskip}{3pt}
+\linespread{1.22}
+\setlist[itemize]{leftmargin=1.8em,itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{leftmargin=2em,itemsep=3pt,topsep=4pt}
+\ctexset{section={format=\large\bfseries,beforeskip=12pt,afterskip=6pt},subsection={format=\normalsize\bfseries,beforeskip=8pt,afterskip=4pt},subsubsection={format=\normalsize\bfseries,beforeskip=7pt,afterskip=3pt}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+\raggedbottom
+\clubpenalty=10000
+\widowpenalty=10000
+\emergencystretch=2em
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\field}[2]{\par\noindent\textbf{#1}\quad #2\par}
+\newcommand{\decision}[2]{\Needspace{7\baselineskip}\subsection*{#1\quad #2}}
+
+\title{\bfseries\Large 上海旧住房更新\\改造模式与经济机制对标}
+\author{\normalsize 朱航成}
+\date{\small 2026年10月12日}
+
+\begin{document}
+\maketitle
+\vspace{-6mm}
+
+本文选取彭一小区、曹杨一村和曹杨八村75--76号三组上海案例，分别观察整体重建、保护更新和单幢混合改造。研究将公开资料拆成可引用的事实、改造举措、权益与资金安排，再形成杭州项目的候选方案和调查任务。资料检索截至2026年10月12日；各项数字保留来源时点、单位与范围。
+
+\section{改造模式如何前置判定}
+
+一个小区可以分楼栋、分资产、分期组合更新。建议将模式选择分成三条轴，而后匹配成可比较的方案。\cite{S10,S11}
+
+\begin{longtable}{@{}L{26mm}L{70mm}L{63mm}@{}}
+\toprule
+\textbf{比较轴} & \textbf{候选内容} & \textbf{需要取得的数据}\\
+\midrule
+\endfirsthead
+\toprule\textbf{比较轴} & \textbf{候选内容} & \textbf{需要取得的数据}\\\midrule
+\endhead
+物理与空间 & 综合修缮、结构加固、成套化、贴扩建、加层、抽户降密、局部原址改建、整体重建、功能置换。 & 鉴定与保护要求、房屋间距、基础、户型、消防日照、规划容量。\\
+权利与组织 & 政府统筹、公房调整、居民自主更新、承租权归集、协议置换、申请式腾退。 & 权利人清册、宗地与产权、承租关系、住户选择、协议和审批程序。\\
+资金与经营 & 财政、居民出资、专项债、合法租赁、社区设施经营、跨项目统筹。 & 经营资产与授权、目标人群预算、租售市场、建设及过渡费、维护与偿债。\\
+\bottomrule
+\end{longtable}
+
+\subsection{三个案例提供什么比较依据}
+
+\begin{longtable}{@{}L{32mm}L{71mm}L{56mm}@{}}
+\toprule\textbf{案例} & \textbf{措施组合与关键事实} & \textbf{用于判断的问题}\\\midrule
+\endfirsthead
+\toprule\textbf{案例} & \textbf{措施组合与关键事实} & \textbf{用于判断的问题}\\\midrule
+\endhead
+彭一小区 & 40幢旧楼更新为17幢高层；2110户；产权与承租群体采用不同面积和得益安排。 & 整体更新能否解决多重功能缺口，回搬权益如何协调。\\
+曹杨一村 & 保护风貌、加固结构、局部贴扩建及厨卫成套化；户均使用面积增约8平方米。 & 如何在保留历史住区的同时改善生活功能。\\
+曹杨八村75--76号 & 一幢内同时采用贴扩建、内部分隔、原址改建；76户；投资匡算2901万元。 & 能否按部位组合更新，以及怎样分解投入。\\
+\bottomrule
+\end{longtable}
+
+\field{判定顺序}{先筛选安全、保护、规划与权利条件支持的组合，再比较居民得益、资金负担和全周期经营。各方案分别列明可推进措施、关键缺项及取得资料后要重算的指标。}
+
+\clearpage
+\section{彭一小区：整体重建与差异化回搬}
+
+\subsection{事实及权益安排}
+
+\begin{longtable}{@{}L{40mm}L{85mm}L{34mm}@{}}
+\toprule\textbf{字段} & \textbf{内容与口径} & \textbf{时点与来源}\\\midrule
+\endfirsthead
+\toprule\textbf{字段} & \textbf{内容与口径} & \textbf{时点与来源}\\\midrule
+\endhead
+原楼与改后住宅 & 40幢非成套旧住房更新为17幢高层电梯住宅。 & 2025年6月\cite{S01}\\
+涉改住户及配套 & 2110户；1600个车位；植入养老、体育与文化设施。 & 回搬报道\cite{S01}\\
+权利与户型 & 362户产权房；原始房型282种；存在产权与租赁住户。 & 权益报道\cite{S02}\\
+产权房增量 & 建筑面积约增20平方米；政府承担增量费用的80\%。 & 产权房安排\cite{S02}\\
+租赁房增量 & 使用面积约增2平方米；含厨卫和阳台的套内总增量14--17平方米。 & 租赁房安排\cite{S02}\\
+宗地与阶段 & 统筹周边收储地块；2025年6月29日启动居民回搬。 & 项目报道\cite{S01}\\
+\bottomrule
+\end{longtable}
+
+\subsection{沉淀为四项举措}
+
+\field{PENG1-A01 整体重建}{将旧楼现状、新楼布局、电梯、停车、公共服务及搬迁过渡关联到同一工程，并登记建设与回搬节点。}
+\field{PENG1-A02 产权房增量}{关联产权户、增加建筑面积、补贴对象与比例、实际支付、分配及回搬协议。}
+\field{PENG1-A03 租赁房成套化}{分别保存使用面积和套内总增量，关联承租关系、独用厨卫、阳台及权益调整。}
+\field{PENG1-A04 宗地整合与配套}{关联整合地块、规划指标、公共设施及其产权、服务和维护主体。}
+
+\subsection{经济机制、方案与当前决策}
+
+\field{经济机制}{案例已采得的是产权房增量费用分担和宗地统筹。整体投入、过渡费、可经营资产面积、租售价格及维护费进入采集清单；按资产建立资金和收益账。}
+\field{候选方案}{整体重建＋差异化回搬＋公共服务补齐；产权房、承租房和经营设施分别测算，并比较分期实施与整体实施的过渡支出。}
+\field{当前决策}{杭州具备可比结构与规划条件的对象进入重建专项调查：核定回搬需求和权益名册，识别经营资产，取得建设与过渡费用。}
+\field{判断原因与规则}{案例说明整体重建可以同时调整住房功能与社区服务；权利差异会改变面积、资金和协商安排。对应规则为保护与结构前置、资产收入映射、分群支付能力（见第五节）。}
+
+\clearpage
+\section{曹杨一村：保护更新与功能成套化}
+
+\subsection{事实与改造范围}
+
+\begin{longtable}{@{}L{40mm}L{85mm}L{34mm}@{}}
+\toprule\textbf{字段} & \textbf{内容与口径} & \textbf{时点与来源}\\\midrule
+\endfirsthead
+\toprule\textbf{字段} & \textbf{内容与口径} & \textbf{时点与来源}\\\midrule
+\endhead
+保护属性 & 上海市优秀历史建筑；总平面和重点保护南立面延续。 & 2025年回顾\cite{S03}\\
+保护修缮范围 & 48幢、1499户、2400人、4.89万平方米房屋及小区。 & 市住建委\cite{S03}\\
+街道回搬总结 & 48个自然幢、67个门牌幢、约1500户；四工区交房。 & 街道总结\cite{S05}\\
+工程内容 & 结构加固、北侧局部改造、独立厨卫、楼梯重新布局。 & 工程回顾\cite{S03}\\
+面积改善 & 户均使用面积增加约8平方米；增量服务住户厨卫功能。 & 项目总结\cite{S03,S04}\\
+参与与阶段 & 一户一图纸，居民参与协商；2021年底施工和交房回搬总体完成。 & 案例及街道\cite{S04,S05}\\
+\bottomrule
+\end{longtable}
+
+\subsection{沉淀为四项举措}
+
+\field{CAOYANG1-A01 风貌保护}{保存保护部位、总平面、立面和保护审批，与结构及功能措施建立依赖关系。}
+\field{CAOYANG1-A02 结构加固}{提取基础、墙体、楼板的工程动作，关联鉴定、设计、工程量与费用。}
+\field{CAOYANG1-A03 贴扩建与成套化}{关联北侧局部空间、厨卫、管线和受益住户，保存使用面积及增量用途。}
+\field{CAOYANG1-A04 楼梯与参与设计}{关联老人出行困难、楼梯调整、住户意见、设计图与最终选择。}
+
+\subsection{经济机制、方案与当前决策}
+
+\field{经济机制}{先测算修复、贴扩建、管线与过渡的分项投入，再识别具有明确经营权的社区资产。项目总投入、居民支付、经营空间和维护费均列入补采任务。}
+\field{候选方案}{保护修缮＋结构加固＋局部贴扩建＋厨卫成套化，按楼栋与住户条件组合；公共服务和通行改善形成独立措施。}
+\field{当前决策}{杭州具有保护价值且可保留的住区纳入此类候选方案，优先取得保护要求、安全鉴定、分户功能需求与工程报价。}
+\field{判断原因与规则}{历史风貌和原有空间组织决定设计范围，局部措施可改善实际居住功能。对应规则为保护与结构前置、分楼栋拆分措施、全周期资金测算。}
+
+\clearpage
+\section{曹杨八村75--76号：单幢混合改造}
+
+\subsection{批复数据与成本构成}
+
+\begin{longtable}{@{}L{41mm}L{84mm}L{34mm}@{}}
+\toprule\textbf{字段} & \textbf{内容与口径} & \textbf{时点与来源}\\\midrule
+\endfirsthead
+\toprule\textbf{字段} & \textbf{内容与口径} & \textbf{时点与来源}\\\midrule
+\endhead
+规模与措施 & 1幢、76户；贴扩建、内部分隔、原址改建。 & 2025年1月批复\cite{S06}\\
+建筑面积 & 改前约2266平方米，改后约3072平方米。 & 项目建议书\cite{S06}\\
+整体投资匡算 & 2901万元，区财政统筹；前期费在可研明确。 & 项目建议书\cite{S06}\\
+费用分项 & 建安2378万元，其他385万元，预备138万元。 & 项目建议书\cite{S06}\\
+年度资金 & 2026年度申请556万元，来源为当年财政拨款。 & 年度目标表第27页\cite{S09}\\
+审批与交付阶段 & 已立项；规划土地意见书及设计方案有效期延续；存在2026年度完成目标。 & 2026年记录\cite{S07,S08,S09}\\
+\bottomrule
+\end{longtable}
+
+\subsection{拆分和计算示例}
+
+将贴扩建、内部分隔、局部原址改建和资金交付分别建立措施卡。整体金额挂在项目层，后续由工程量清单提供措施分项。按2025年批复计算：
+
+\begin{align*}
+\Delta A &= 3072-2266=806\ \text{平方米},\\
+g_A &= 806/2266=35.57\%,\\
+C_{\mathrm{household}} &= 2901/76=38.17\ \text{万元/户},\\
+C_{\mathrm{gross}} &= 29010000/3072=9443.36\ \text{元/平方米},\\
+C_{\mathrm{build}} &= 23780000/3072=7740.89\ \text{元/平方米}.
+\end{align*}
+
+\subsection{经济机制、方案与当前决策}
+
+\field{经济机制}{案例提供整体匡算、分项和年度财政预算。需补采增量面积用途与归属、居民支付、过渡和维护费用；随后识别适宜经营的资产并取得授权与市场数据。}
+\field{候选方案}{同一幢、不同部位分别采用保留、贴扩建、内部分隔或原址改建。将动作、工程量、依赖条件和资金安排对应起来。}
+\field{当前决策}{作为混合模式与成本结构样例，杭州方案重新取得本地设计、工程量与报价，逐部位筛选方案并进行资金比较。}
+\field{判断原因与规则}{政府批复在同一幢配置多种动作，说明工程条件可按部位响应；成本与年度预算支持分阶段测算。对应规则为分楼栋拆分措施、资产收入映射、关键缺项分级。}
+
+\clearpage
+\section{经济研判与专家规则如何衔接}
+
+\subsection{把造血机制拆到具体资产}
+
+上海官方材料提出增量保障性租赁住房与周边经营性设施统筹，也提出承租权归集、自有物权自主更新和长周期金融支持。\cite{S10,S11} 调研时将住房、停车、充电、社区服务等分别建为资产，记录产权、经营授权、规模、市场与费用，然后组织三本账：
+
+\begin{itemize}
+\item \textbf{项目现金流账：}居民出资、财政和补助、出售收入、租赁与经营收入，扣除建设、过渡、融资、税费和长期维护支出。
+\item \textbf{居民账：}支付能力、分摊、面积和功能改善、租金负担、过渡影响、回搬及退出权益。
+\item \textbf{公共价值账：}安全、服务容量、可达性、风貌和社区联系，采用可核对的实物指标。
+\end{itemize}
+
+\[
+\begin{aligned}
+CF^{\mathrm{fund}}_t={}&R^{\mathrm{rent}}_t+R^{\mathrm{operation}}_t+R^{\mathrm{sale}}_t+F_t+H_t\\
+&-C^{\mathrm{build}}_t-C^{\mathrm{transition}}_t-C^{\mathrm{maintenance}}_t
+-C^{\mathrm{finance,tax}}_t .
+\end{aligned}
+\]
+上式为\textbf{资金计划现金流}：收入项分别为租赁、经营、出售，成本项分别为建设、过渡、维护及融资税费；$F_t$为财政及补助，$H_t$为居民出资。\textbf{经营盈利与NPV采用营业收入减项目成本的现金流计算；财政补助、居民分摊及借款在资金安排账展示。}对租金、入住率、造价与过渡时间进行情景比较，回答资金缺口、维护覆盖、居民负担及方案差异。
+
+\subsection{交给导师确认的五类规则}
+
+\begin{longtable}{@{}L{37mm}L{72mm}L{50mm}@{}}
+\toprule\textbf{候选规则} & \textbf{判定所需数据} & \textbf{对应输出}\\\midrule
+\endfirsthead
+\toprule\textbf{候选规则} & \textbf{判定所需数据} & \textbf{对应输出}\\\midrule
+\endhead
+保护与结构前置 & 保护名录、安全鉴定、修复设计、消防日照和规划。 & 保留、局部更新及整体重建的可行组合。\\
+分栋分资产拆分 & 分栋现状、间距、基础、户型、功能缺口与工程量。 & 混合方案、措施依赖和分项投入。\\
+收入按资产映射 & 权属、经营授权、可售可租面积、价格、需求和维护。 & 资产收入、项目现金流与资金缺口。\\
+得益与支付能力 & 权利类型、住户需求、预算、意愿和分摊安排。 & 分群支付与权益协商任务。\\
+关键缺项分级 & 结构、规划、经营权、主要成本和市场资料覆盖。 & 先补充关键资料再判断，或推进具备条件的独立措施。\\
+\bottomrule
+\end{longtable}
+
+\field{杭州重新采集}{权利与审批、结构和保护、本地工程成本、租售样本、目标人群预算、经营期限和维护合同。系统逐项保存来源类别、采集方式和命中规则，缺项以空值与调查任务登记。}
+
+\field{资料阶段对照}{凤南一村2026年4月记录1813户、8栋20--26层住宅、首栋封顶，计划公共服务超过6000平方米。此类记录按施工节点进入案例库，继续追加交付和运行资料。\cite{S12}}
+
+\clearpage
+\section{资料来源与追溯位置}
+
+以下12份资料均来自上海市、区政府或主管部门网站。网页数字按发布或回顾时点保存；PDF资料附页码。配套JSON登记41条事实、12个缺项、计算式、措施卡与规则候选。
+
+\begin{thebibliography}{12}
+\bibitem{S01} 上海市人民政府网站（解放日报）. 彭一小区首批居民回搬. 2025-06-29. 原楼、新楼、住户、车位与宗地统筹：
+\href{https://www.shanghai.gov.cn/nw4411/20250629/122d68440df64622856c021d406fbbc7.html?siteId=1}{查看原文}.
+\bibitem{S02} 上海市住房和城乡建设管理委员会. 彭一小区居民喜提新家. 2025-06-30. 产权住户、面积增量与费用分担：
+\href{https://zjw.sh.gov.cn/gqdt/20250630/5851d22372be48108cd6e72ee46b4dbd.html}{查看原文}.
+\bibitem{S03} 上海市住房和城乡建设管理委员会. 曹杨一村片区保护更新. 2025-12-17. 保护范围、人数、面积与设计原则：
+\href{https://zjw.sh.gov.cn/gqdt/20251217/cb50bb7da9164cd8a69ed06dd5a5c379.html}{查看原文}.
+\bibitem{S04} 普陀区规划和自然资源局. 曹杨社区城市更新优秀实践案例. 2025-11-26. 结构、参与设计与面积改善：
+\href{https://www.shpt.gov.cn/gtj-zfbm/tpxinwen-gtj/20251126/965414.html}{查看原文}.
+\bibitem{S05} 普陀区曹杨新村街道. 曹杨一村回搬总结. 正文日期2022-10-27. 四工区幢数、住户及2021年底回搬：
+\href{https://www.shpt.gov.cn/cyjd-jiedaozhen/alcy-cyjd/20220218/834027.html}{查看原文}.
+\bibitem{S06} 普陀区发展和改革委员会. 曹杨八村75--76号工程项目建议书批复. 2025-01-20，普发改投〔2025〕5号. 规模、措施及投资表：
+\href{https://www.shpt.gov.cn/zhengwu/xmjyssp-fgwzdgz/2025/42/194395.html}{查看原文}.
+\bibitem{S07} 普陀区规划和自然资源局. 曹杨八村75--76号规划土地意见书有效期延续. 2026-01-21. 有效期至2027-02-18：
+\href{https://www.shpt.gov.cn/zhengwu/yslztz-ghzyjzdgz/2026/23/201338.html}{查看原文}.
+\bibitem{S08} 普陀区规划和自然资源局. 曹杨八村75--76号设计方案有效期延续. 2026-04-16，PDF第2页. 有效期至2027-05-18：
+\href{https://www.shpt.gov.cn/zhengwu/jsgcsjfascyj-ghzyjzdgz/2026/107/203278/18e7d017497049799af82794390c8f39.pdf}{查看原文}.
+\bibitem{S09} 普陀区住房保障和房屋管理局. 2026年度项目绩效目标汇总表. PDF第27页. 年度申请556万元及年度目标：
+\href{https://www.shpt.gov.cn/zhengwu/jxpj-czzj/2026/37/201586/fc5eaffcdf4148fdbd4cdd7d931c056b.pdf}{查看原文}.
+\bibitem{S10} 上海市房屋管理局. 市政协十四届三次会议第0126号提案答复. 2025-05-30，沪房提案复〔2025〕18号. 改造组织及经营路径：
+\href{https://www.shanghai.gov.cn/gwk/search/content/1c9b99697c324050b5d4f47bfc637f73}{查看原文}.
+\bibitem{S11} 上海市人民政府新闻办公室. 上海“小梁薄板”改造加速起跑. 页面日期未显示. 改造方式、增量保租房及经营设施统筹：
+\href{https://en.shio.gov.cn/TrueCMS/shxwbgs/ywts/content/c235c900-c155-4ff6-a785-9714debc8642.htm}{查看原文}.
+\bibitem{S12} 杨浦区人民政府. 凤南一村更新首栋住宅封顶. 2026-04-03. 工程节点、楼栋与公共服务：
+\href{https://www.shyp.gov.cn/shypq/xwzx-jzdt/20260403/502950.html}{查看原文}.
+\end{thebibliography}
+
+\end{document}

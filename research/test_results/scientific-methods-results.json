@@ -1,0 +1,1370 @@
+{
+  "source_class": "demonstration",
+  "model_version": "community-operations-1.1",
+  "baseline_input": {
+    "name": "科学方法演示基准",
+    "facility_id": "METHOD-DEMO",
+    "facility_name": "演示社区中心",
+    "period": "2026-11",
+    "scope_note": "单一独立服务；月度需求可匹配已登记场次；当月服务当月收付。",
+    "target_population": {
+      "value": 1000,
+      "unit": "person",
+      "status": "assumption",
+      "source_kind": "demo",
+      "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+      "as_of": "2026-10-13"
+    },
+    "unique_users": {
+      "value": 120,
+      "unit": "person",
+      "status": "assumption",
+      "source_kind": "demo",
+      "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+      "as_of": "2026-10-13"
+    },
+    "cost_scope_complete": true,
+    "services": [
+      {
+        "id": "activity",
+        "name": "活动服务",
+        "resource_id": "room-1",
+        "schedule_note": "每月26场、每场20人次；各场需求可匹配的演示假设",
+        "capacity_per_slot": {
+          "value": 20,
+          "unit": "visit/slot",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "available_slots": {
+          "value": 26,
+          "unit": "slot/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "demand_visits": {
+          "value": 400,
+          "unit": "visit/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "paid_share": {
+          "value": 0.4,
+          "unit": "ratio",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "fee_per_visit": {
+          "value": 10,
+          "unit": "yuan/visit",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "variable_cost_per_visit": {
+          "value": 2,
+          "unit": "yuan/visit",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      }
+    ],
+    "cash_items": [
+      {
+        "economic_item_id": "fixed_cost",
+        "description": "fixed_cost",
+        "kind": "fixed_cost",
+        "amount": {
+          "value": 10000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "other_earned_income",
+        "description": "other_earned_income",
+        "kind": "other_earned_income",
+        "amount": {
+          "value": 1000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "government_purchase",
+        "description": "government_purchase",
+        "kind": "government_purchase",
+        "amount": {
+          "value": 2000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "operating_subsidy",
+        "description": "operating_subsidy",
+        "kind": "operating_subsidy",
+        "amount": {
+          "value": 6000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "other_support",
+        "description": "other_support",
+        "kind": "other_support",
+        "amount": {
+          "value": 0,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "government_direct_cost",
+        "description": "government_direct_cost",
+        "kind": "government_direct_cost",
+        "amount": {
+          "value": 0,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      }
+    ]
+  },
+  "baseline": {
+    "science": {
+      "method_version": "operations-science-1.0",
+      "break_even": [
+        {
+          "key": "required_subsidy",
+          "label": "按当前服务量所需运营补贴",
+          "value": 6200.0,
+          "unit": "yuan/month",
+          "status": "feasible",
+          "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+        },
+        {
+          "key": "minimum_fee_per_visit",
+          "label": "固定服务量时最低收费",
+          "value": 11.25,
+          "unit": "yuan/visit",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、收费比例、成本和其他收支不变求收支平衡；未预测调价后的需求变化。"
+        },
+        {
+          "key": "minimum_paid_share",
+          "label": "固定服务量时最低收费比例",
+          "value": 0.45,
+          "unit": "ratio",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、单价、成本和其他收支不变；收费比例须在0至1之间。"
+        },
+        {
+          "key": "break_even_visits",
+          "label": "单服务保本人次",
+          "value": 500.0,
+          "unit": "visit/month",
+          "status": "feasible",
+          "basis": "月度汇总单服务，保持单价、收费比例、单位变动成本和其他收支不变；每人次边际结余=收费比例×单价－单位变动成本。所需人次与登记月容量520比较；容量可达不等于已经取得相应需求。"
+        }
+      ],
+      "sensitivity": [],
+      "joint_range": null,
+      "notes": [
+        "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+        "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+        "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+        "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+        "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+        "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+        "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+      ]
+    },
+    "model_version": "community-operations-1.1",
+    "result_kind": "scenario_prediction",
+    "status": "complete",
+    "metrics": {
+      "capacity_visits": 520.0,
+      "served_visits": 400.0,
+      "unmet_visits": 0.0,
+      "utilization": 0.7692307692307693,
+      "unique_users": 120.0,
+      "coverage": 0.12,
+      "fee_income": 1600.0,
+      "earned_income": 4600.0,
+      "operating_cost": 10800.0,
+      "government_purchase": 2000.0,
+      "operating_subsidy": 6000.0,
+      "other_support": 0.0,
+      "balance_before_support": -6200.0,
+      "balance_after_support": -200.0,
+      "unfunded_gap": 200.0,
+      "required_subsidy": 6200.0,
+      "government_outlay": 8000.0,
+      "government_cost_per_visit": 20.0,
+      "commercial_cost_coverage": 0.24074074074074073,
+      "government_direct_cost": 0.0,
+      "total_service_cost": 10800.0
+    },
+    "services": [
+      {
+        "capacity_method": "monthly_aggregate",
+        "monthly_pooled_upper_bound": 400.0,
+        "aggregation_overstatement_visits": 0.0,
+        "id": "activity",
+        "name": "活动服务",
+        "capacity_visits": 520.0,
+        "served_visits": 400.0,
+        "unmet_visits": 0.0,
+        "utilization": 0.7692307692307693,
+        "fee_income": 1600.0,
+        "variable_cost": 800.0
+      }
+    ],
+    "missing": [],
+    "warnings": [
+      "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+    ]
+  },
+  "pressure_input": {
+    "name": "科学方法演示基准",
+    "facility_id": "METHOD-DEMO",
+    "facility_name": "演示社区中心",
+    "period": "2026-11",
+    "scope_note": "单一独立服务；月度需求可匹配已登记场次；当月服务当月收付。",
+    "target_population": {
+      "value": 1000,
+      "unit": "person",
+      "status": "assumption",
+      "source_kind": "demo",
+      "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+      "as_of": "2026-10-13"
+    },
+    "unique_users": {
+      "value": 120,
+      "unit": "person",
+      "status": "assumption",
+      "source_kind": "demo",
+      "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+      "as_of": "2026-10-13"
+    },
+    "cost_scope_complete": true,
+    "services": [
+      {
+        "id": "activity",
+        "name": "活动服务",
+        "resource_id": "room-1",
+        "schedule_note": "每月26场、每场20人次；各场需求可匹配的演示假设",
+        "capacity_per_slot": {
+          "value": 20,
+          "unit": "visit/slot",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "available_slots": {
+          "value": 26,
+          "unit": "slot/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "demand_visits": {
+          "value": 400,
+          "unit": "visit/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "paid_share": {
+          "value": 0.4,
+          "unit": "ratio",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "fee_per_visit": {
+          "value": 10,
+          "unit": "yuan/visit",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "variable_cost_per_visit": {
+          "value": 2,
+          "unit": "yuan/visit",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      }
+    ],
+    "cash_items": [
+      {
+        "economic_item_id": "fixed_cost",
+        "description": "fixed_cost",
+        "kind": "fixed_cost",
+        "amount": {
+          "value": 10000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "other_earned_income",
+        "description": "other_earned_income",
+        "kind": "other_earned_income",
+        "amount": {
+          "value": 1000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "government_purchase",
+        "description": "government_purchase",
+        "kind": "government_purchase",
+        "amount": {
+          "value": 2000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "operating_subsidy",
+        "description": "operating_subsidy",
+        "kind": "operating_subsidy",
+        "amount": {
+          "value": 6000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "other_support",
+        "description": "other_support",
+        "kind": "other_support",
+        "amount": {
+          "value": 0,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "government_direct_cost",
+        "description": "government_direct_cost",
+        "kind": "government_direct_cost",
+        "amount": {
+          "value": 0,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      }
+    ],
+    "analysis_bounds": [
+      {
+        "id": "demand",
+        "target": "service_demand_multiplier",
+        "item_id": "activity",
+        "low": 0.7,
+        "high": 1.3,
+        "unit": "ratio",
+        "origin": "manual_scenario",
+        "basis": "人工设定需求压力范围，不是实测波动或置信区间",
+        "source_ref": "本报告机制演示",
+        "as_of": "2026-10-13"
+      },
+      {
+        "id": "fixed",
+        "target": "cash_amount",
+        "item_id": "fixed_cost",
+        "low": 9000,
+        "high": 11000,
+        "unit": "yuan/month",
+        "origin": "manual_scenario",
+        "basis": "人工设定固定支出压力范围，不是实测分布",
+        "source_ref": "本报告机制演示",
+        "as_of": "2026-10-13"
+      }
+    ]
+  },
+  "pressure": {
+    "science": {
+      "method_version": "operations-science-1.0",
+      "break_even": [
+        {
+          "key": "required_subsidy",
+          "label": "按当前服务量所需运营补贴",
+          "value": 6200.0,
+          "unit": "yuan/month",
+          "status": "feasible",
+          "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+        },
+        {
+          "key": "minimum_fee_per_visit",
+          "label": "固定服务量时最低收费",
+          "value": 11.25,
+          "unit": "yuan/visit",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、收费比例、成本和其他收支不变求收支平衡；未预测调价后的需求变化。"
+        },
+        {
+          "key": "minimum_paid_share",
+          "label": "固定服务量时最低收费比例",
+          "value": 0.45,
+          "unit": "ratio",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、单价、成本和其他收支不变；收费比例须在0至1之间。"
+        },
+        {
+          "key": "break_even_visits",
+          "label": "单服务保本人次",
+          "value": 500.0,
+          "unit": "visit/month",
+          "status": "feasible",
+          "basis": "月度汇总单服务，保持单价、收费比例、单位变动成本和其他收支不变；每人次边际结余=收费比例×单价－单位变动成本。所需人次与登记月容量520比较；容量可达不等于已经取得相应需求。"
+        }
+      ],
+      "sensitivity": [
+        {
+          "id": "fixed",
+          "label": "fixed_cost：月度现金事项",
+          "low": 9000.0,
+          "base": 10000.0,
+          "high": 11000.0,
+          "low_balance": 800.0,
+          "base_balance": -200.0,
+          "high_balance": -1200.0,
+          "span": 2000.0,
+          "basis": "情景假设，逐项变动其余输入固定；人工设定固定支出压力范围，不是实测分布；范围类型manual_scenario，时点2026-10-13。",
+          "source_ref": "本报告机制演示"
+        },
+        {
+          "id": "demand",
+          "label": "活动服务：服务需求倍率",
+          "low": 0.7,
+          "base": 1.0,
+          "high": 1.3,
+          "low_balance": -440.0,
+          "base_balance": -200.0,
+          "high_balance": 40.0,
+          "span": 480.0,
+          "basis": "情景假设，逐项变动其余输入固定；人工设定需求压力范围，不是实测波动或置信区间；范围类型manual_scenario，时点2026-10-13。",
+          "source_ref": "本报告机制演示"
+        }
+      ],
+      "joint_range": {
+        "tested_corners": 4,
+        "valid_corners": 4,
+        "min_balance": -1440.0,
+        "max_balance": 1040.0,
+        "worst_gap": 1440.0,
+        "min_at": [
+          {
+            "id": "demand",
+            "value": 0.7
+          },
+          {
+            "id": "fixed",
+            "value": 11000.0
+          }
+        ],
+        "max_at": [
+          {
+            "id": "demand",
+            "value": 1.3
+          },
+          {
+            "id": "fixed",
+            "value": 9000.0
+          }
+        ],
+        "label": "已测试参数组合范围"
+      },
+      "notes": [
+        "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+        "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+        "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+        "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+        "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+        "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+        "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+      ]
+    },
+    "model_version": "community-operations-1.1",
+    "result_kind": "scenario_prediction",
+    "status": "complete",
+    "metrics": {
+      "capacity_visits": 520.0,
+      "served_visits": 400.0,
+      "unmet_visits": 0.0,
+      "utilization": 0.7692307692307693,
+      "unique_users": 120.0,
+      "coverage": 0.12,
+      "fee_income": 1600.0,
+      "earned_income": 4600.0,
+      "operating_cost": 10800.0,
+      "government_purchase": 2000.0,
+      "operating_subsidy": 6000.0,
+      "other_support": 0.0,
+      "balance_before_support": -6200.0,
+      "balance_after_support": -200.0,
+      "unfunded_gap": 200.0,
+      "required_subsidy": 6200.0,
+      "government_outlay": 8000.0,
+      "government_cost_per_visit": 20.0,
+      "commercial_cost_coverage": 0.24074074074074073,
+      "government_direct_cost": 0.0,
+      "total_service_cost": 10800.0
+    },
+    "services": [
+      {
+        "capacity_method": "monthly_aggregate",
+        "monthly_pooled_upper_bound": 400.0,
+        "aggregation_overstatement_visits": 0.0,
+        "id": "activity",
+        "name": "活动服务",
+        "capacity_visits": 520.0,
+        "served_visits": 400.0,
+        "unmet_visits": 0.0,
+        "utilization": 0.7692307692307693,
+        "fee_income": 1600.0,
+        "variable_cost": 800.0
+      }
+    ],
+    "missing": [],
+    "warnings": [
+      "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+    ]
+  },
+  "time_block_input": {
+    "name": "科学方法演示基准",
+    "facility_id": "METHOD-DEMO",
+    "facility_name": "演示社区中心",
+    "period": "2026-11",
+    "scope_note": "两时段需求不可转移；每时段各一场，每场50人次。",
+    "target_population": {
+      "value": 1000,
+      "unit": "person",
+      "status": "assumption",
+      "source_kind": "demo",
+      "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+      "as_of": "2026-10-13"
+    },
+    "unique_users": {
+      "value": null,
+      "unit": "person",
+      "status": "missing",
+      "source_kind": "missing",
+      "source": "改变需求后另行调查去重使用人数",
+      "as_of": "2026-10-13"
+    },
+    "cost_scope_complete": true,
+    "services": [
+      {
+        "id": "activity",
+        "name": "活动服务",
+        "resource_id": "room-1",
+        "schedule_note": "每月26场、每场20人次；各场需求可匹配的演示假设",
+        "capacity_per_slot": {
+          "value": 20,
+          "unit": "visit/slot",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "available_slots": {
+          "value": 26,
+          "unit": "slot/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "demand_visits": {
+          "value": 400,
+          "unit": "visit/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "paid_share": {
+          "value": 0.4,
+          "unit": "ratio",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "fee_per_visit": {
+          "value": 10,
+          "unit": "yuan/visit",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "variable_cost_per_visit": {
+          "value": 2,
+          "unit": "yuan/visit",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        },
+        "time_blocks": [
+          {
+            "id": "1",
+            "name": "时段1",
+            "slots": {
+              "value": 1,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+              "as_of": "2026-10-13"
+            },
+            "capacity_per_slot": {
+              "value": 50,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 80,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+              "as_of": "2026-10-13"
+            }
+          },
+          {
+            "id": "2",
+            "name": "时段2",
+            "slots": {
+              "value": 1,
+              "unit": "slot/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+              "as_of": "2026-10-13"
+            },
+            "capacity_per_slot": {
+              "value": 50,
+              "unit": "visit/slot",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+              "as_of": "2026-10-13"
+            },
+            "demand_visits": {
+              "value": 20,
+              "unit": "visit/month",
+              "status": "assumption",
+              "source_kind": "demo",
+              "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+              "as_of": "2026-10-13"
+            }
+          }
+        ]
+      }
+    ],
+    "cash_items": [
+      {
+        "economic_item_id": "fixed_cost",
+        "description": "fixed_cost",
+        "kind": "fixed_cost",
+        "amount": {
+          "value": 10000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "other_earned_income",
+        "description": "other_earned_income",
+        "kind": "other_earned_income",
+        "amount": {
+          "value": 1000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "government_purchase",
+        "description": "government_purchase",
+        "kind": "government_purchase",
+        "amount": {
+          "value": 2000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "operating_subsidy",
+        "description": "operating_subsidy",
+        "kind": "operating_subsidy",
+        "amount": {
+          "value": 6000,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "other_support",
+        "description": "other_support",
+        "kind": "other_support",
+        "amount": {
+          "value": 0,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      },
+      {
+        "economic_item_id": "government_direct_cost",
+        "description": "government_direct_cost",
+        "kind": "government_direct_cost",
+        "amount": {
+          "value": 0,
+          "unit": "yuan/month",
+          "status": "assumption",
+          "source_kind": "demo",
+          "source": "技术报告人工演示参数；检验计算机制，未作为实际运营数据",
+          "as_of": "2026-10-13"
+        }
+      }
+    ]
+  },
+  "time_blocks": {
+    "science": {
+      "method_version": "operations-science-1.0",
+      "break_even": [
+        {
+          "key": "required_subsidy",
+          "label": "按当前服务量所需运营补贴",
+          "value": 6860.0,
+          "unit": "yuan/month",
+          "status": "feasible",
+          "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+        },
+        {
+          "key": "minimum_fee_per_visit",
+          "label": "固定服务量时最低收费",
+          "value": 40.714285714285715,
+          "unit": "yuan/visit",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、收费比例、成本和其他收支不变求收支平衡；未预测调价后的需求变化。"
+        },
+        {
+          "key": "minimum_paid_share",
+          "label": "固定服务量时最低收费比例",
+          "value": 1.6285714285714286,
+          "unit": "ratio",
+          "status": "infeasible",
+          "basis": "保持当前已服务人次、单价、成本和其他收支不变；收费比例须在0至1之间。"
+        },
+        {
+          "key": "break_even_visits",
+          "label": "单服务保本人次",
+          "value": null,
+          "unit": "visit/month",
+          "status": "not_identifiable",
+          "basis": "采用分时段容量；总人次无法指定需求落在哪些时段，需要给出分时段需求结构再判断。"
+        }
+      ],
+      "sensitivity": [],
+      "joint_range": null,
+      "notes": [
+        "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+        "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+        "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+        "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+        "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+        "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+        "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+      ]
+    },
+    "model_version": "community-operations-1.1",
+    "result_kind": "scenario_prediction",
+    "status": "partial",
+    "metrics": {
+      "capacity_visits": 100.0,
+      "served_visits": 70.0,
+      "unmet_visits": 30.0,
+      "utilization": 0.7,
+      "unique_users": null,
+      "coverage": null,
+      "fee_income": 280.0,
+      "earned_income": 3280.0,
+      "operating_cost": 10140.0,
+      "government_purchase": 2000.0,
+      "operating_subsidy": 6000.0,
+      "other_support": 0.0,
+      "balance_before_support": -6860.0,
+      "balance_after_support": -860.0,
+      "unfunded_gap": 860.0,
+      "required_subsidy": 6860.0,
+      "government_outlay": 8000.0,
+      "government_cost_per_visit": 114.29,
+      "commercial_cost_coverage": 0.126232741617357,
+      "government_direct_cost": 0.0,
+      "total_service_cost": 10140.0
+    },
+    "services": [
+      {
+        "capacity_method": "time_blocks",
+        "monthly_pooled_upper_bound": 100.0,
+        "aggregation_overstatement_visits": 30.0,
+        "id": "activity",
+        "name": "活动服务",
+        "capacity_visits": 100.0,
+        "served_visits": 70.0,
+        "unmet_visits": 30.0,
+        "utilization": 0.7,
+        "fee_income": 280.0,
+        "variable_cost": 140.0
+      }
+    ],
+    "missing": [
+      {
+        "field": "unique_users",
+        "reason": "该输入尚缺，依赖它的指标保留未知。",
+        "collect_from": "将当月签到、预约与服务记录按匿名居民标识跨服务去重，限定同一目标人群范围。"
+      }
+    ],
+    "warnings": [
+      "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+    ]
+  },
+  "fixed_cost_stress": {
+    "science": {
+      "method_version": "operations-science-1.0",
+      "break_even": [
+        {
+          "key": "required_subsidy",
+          "label": "按当前服务量所需运营补贴",
+          "value": 7200.0,
+          "unit": "yuan/month",
+          "status": "feasible",
+          "basis": "复用月度核算：max(0,运营成本－收费收入－其他经营收入－政府购买服务－其他支持)；政府直接支付单列。"
+        },
+        {
+          "key": "minimum_fee_per_visit",
+          "label": "固定服务量时最低收费",
+          "value": 17.5,
+          "unit": "yuan/visit",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、收费比例、成本和其他收支不变求收支平衡；未预测调价后的需求变化。"
+        },
+        {
+          "key": "minimum_paid_share",
+          "label": "固定服务量时最低收费比例",
+          "value": 0.7,
+          "unit": "ratio",
+          "status": "feasible",
+          "basis": "保持当前已服务人次、单价、成本和其他收支不变；收费比例须在0至1之间。"
+        },
+        {
+          "key": "break_even_visits",
+          "label": "单服务保本人次",
+          "value": 1000.0,
+          "unit": "visit/month",
+          "status": "infeasible",
+          "basis": "月度汇总单服务，保持单价、收费比例、单位变动成本和其他收支不变；每人次边际结余=收费比例×单价－单位变动成本。所需人次与登记月容量520比较；容量可达不等于已经取得相应需求。"
+        }
+      ],
+      "sensitivity": [],
+      "joint_range": null,
+      "notes": [
+        "分析期沿用输入period对应自然月；资金与政府直接支付口径复用正式月度核算。",
+        "分时段方法逐组计算min(需求,容量)再汇总，容量不跨时段结转；月度汇总潜在高估量另列。尚未执行共享资源排班优化。",
+        "方法参考：GAO Cost Estimating and Assessment Guide (2020) 敏感性分析；HM Treasury Green Book (2026) switching values；Green等(2007)时变需求与服务能力。",
+        "范围端点均作为情景假设输入，observed_range或literature_range只说明范围来源，不将模拟结果标为事实。",
+        "单参数低/基准/高测试及全部范围端点组合沿用同一核算公式；已测试参数组合范围不代表全域极值或95%概率区间。",
+        "改变需求时各时段按倍率调整并四舍五入为整数，去重人数及覆盖率保留未知；缺项或超出支持范围的试算无有效现金结果。",
+        "收费与比例阈值保持服务量不变，用于识别改变结论的条件；未估计价格弹性，未自动优化收费。"
+      ]
+    },
+    "model_version": "community-operations-1.1",
+    "result_kind": "scenario_prediction",
+    "status": "complete",
+    "metrics": {
+      "capacity_visits": 520.0,
+      "served_visits": 400.0,
+      "unmet_visits": 0.0,
+      "utilization": 0.7692307692307693,
+      "unique_users": 120.0,
+      "coverage": 0.12,
+      "fee_income": 1600.0,
+      "earned_income": 4600.0,
+      "operating_cost": 11800.0,
+      "government_purchase": 2000.0,
+      "operating_subsidy": 6000.0,
+      "other_support": 0.0,
+      "balance_before_support": -7200.0,
+      "balance_after_support": -1200.0,
+      "unfunded_gap": 1200.0,
+      "required_subsidy": 7200.0,
+      "government_outlay": 8000.0,
+      "government_cost_per_visit": 20.0,
+      "commercial_cost_coverage": 0.22033898305084745,
+      "government_direct_cost": 0.0,
+      "total_service_cost": 11800.0
+    },
+    "services": [
+      {
+        "capacity_method": "monthly_aggregate",
+        "monthly_pooled_upper_bound": 400.0,
+        "aggregation_overstatement_visits": 0.0,
+        "id": "activity",
+        "name": "活动服务",
+        "capacity_visits": 520.0,
+        "served_visits": 400.0,
+        "unmet_visits": 0.0,
+        "utilization": 0.7692307692307693,
+        "fee_income": 1600.0,
+        "variable_cost": 800.0
+      }
+    ],
+    "missing": [],
+    "warnings": [
+      "容量汇总以各服务资源排班不重叠为前提；采用已登记的服务范围核算。"
+    ]
+  },
+  "demand_sweep": [
+    {
+      "demand_visits": 0,
+      "served_visits": 0.0,
+      "cash_balance": -1000.0
+    },
+    {
+      "demand_visits": 10,
+      "served_visits": 10.0,
+      "cash_balance": -980.0
+    },
+    {
+      "demand_visits": 20,
+      "served_visits": 20.0,
+      "cash_balance": -960.0
+    },
+    {
+      "demand_visits": 30,
+      "served_visits": 30.0,
+      "cash_balance": -940.0
+    },
+    {
+      "demand_visits": 40,
+      "served_visits": 40.0,
+      "cash_balance": -920.0
+    },
+    {
+      "demand_visits": 50,
+      "served_visits": 50.0,
+      "cash_balance": -900.0
+    },
+    {
+      "demand_visits": 60,
+      "served_visits": 60.0,
+      "cash_balance": -880.0
+    },
+    {
+      "demand_visits": 70,
+      "served_visits": 70.0,
+      "cash_balance": -860.0
+    },
+    {
+      "demand_visits": 80,
+      "served_visits": 80.0,
+      "cash_balance": -840.0
+    },
+    {
+      "demand_visits": 90,
+      "served_visits": 90.0,
+      "cash_balance": -820.0
+    },
+    {
+      "demand_visits": 100,
+      "served_visits": 100.0,
+      "cash_balance": -800.0
+    },
+    {
+      "demand_visits": 110,
+      "served_visits": 110.0,
+      "cash_balance": -780.0
+    },
+    {
+      "demand_visits": 120,
+      "served_visits": 120.0,
+      "cash_balance": -760.0
+    },
+    {
+      "demand_visits": 130,
+      "served_visits": 130.0,
+      "cash_balance": -740.0
+    },
+    {
+      "demand_visits": 140,
+      "served_visits": 140.0,
+      "cash_balance": -720.0
+    },
+    {
+      "demand_visits": 150,
+      "served_visits": 150.0,
+      "cash_balance": -700.0
+    },
+    {
+      "demand_visits": 160,
+      "served_visits": 160.0,
+      "cash_balance": -680.0
+    },
+    {
+      "demand_visits": 170,
+      "served_visits": 170.0,
+      "cash_balance": -660.0
+    },
+    {
+      "demand_visits": 180,
+      "served_visits": 180.0,
+      "cash_balance": -640.0
+    },
+    {
+      "demand_visits": 190,
+      "served_visits": 190.0,
+      "cash_balance": -620.0
+    },
+    {
+      "demand_visits": 200,
+      "served_visits": 200.0,
+      "cash_balance": -600.0
+    },
+    {
+      "demand_visits": 210,
+      "served_visits": 210.0,
+      "cash_balance": -580.0
+    },
+    {
+      "demand_visits": 220,
+      "served_visits": 220.0,
+      "cash_balance": -560.0
+    },
+    {
+      "demand_visits": 230,
+      "served_visits": 230.0,
+      "cash_balance": -540.0
+    },
+    {
+      "demand_visits": 240,
+      "served_visits": 240.0,
+      "cash_balance": -520.0
+    },
+    {
+      "demand_visits": 250,
+      "served_visits": 250.0,
+      "cash_balance": -500.0
+    },
+    {
+      "demand_visits": 260,
+      "served_visits": 260.0,
+      "cash_balance": -480.0
+    },
+    {
+      "demand_visits": 270,
+      "served_visits": 270.0,
+      "cash_balance": -460.0
+    },
+    {
+      "demand_visits": 280,
+      "served_visits": 280.0,
+      "cash_balance": -440.0
+    },
+    {
+      "demand_visits": 290,
+      "served_visits": 290.0,
+      "cash_balance": -420.0
+    },
+    {
+      "demand_visits": 300,
+      "served_visits": 300.0,
+      "cash_balance": -400.0
+    },
+    {
+      "demand_visits": 310,
+      "served_visits": 310.0,
+      "cash_balance": -380.0
+    },
+    {
+      "demand_visits": 320,
+      "served_visits": 320.0,
+      "cash_balance": -360.0
+    },
+    {
+      "demand_visits": 330,
+      "served_visits": 330.0,
+      "cash_balance": -340.0
+    },
+    {
+      "demand_visits": 340,
+      "served_visits": 340.0,
+      "cash_balance": -320.0
+    },
+    {
+      "demand_visits": 350,
+      "served_visits": 350.0,
+      "cash_balance": -300.0
+    },
+    {
+      "demand_visits": 360,
+      "served_visits": 360.0,
+      "cash_balance": -280.0
+    },
+    {
+      "demand_visits": 370,
+      "served_visits": 370.0,
+      "cash_balance": -260.0
+    },
+    {
+      "demand_visits": 380,
+      "served_visits": 380.0,
+      "cash_balance": -240.0
+    },
+    {
+      "demand_visits": 390,
+      "served_visits": 390.0,
+      "cash_balance": -220.0
+    },
+    {
+      "demand_visits": 400,
+      "served_visits": 400.0,
+      "cash_balance": -200.0
+    },
+    {
+      "demand_visits": 410,
+      "served_visits": 410.0,
+      "cash_balance": -180.0
+    },
+    {
+      "demand_visits": 420,
+      "served_visits": 420.0,
+      "cash_balance": -160.0
+    },
+    {
+      "demand_visits": 430,
+      "served_visits": 430.0,
+      "cash_balance": -140.0
+    },
+    {
+      "demand_visits": 440,
+      "served_visits": 440.0,
+      "cash_balance": -120.0
+    },
+    {
+      "demand_visits": 450,
+      "served_visits": 450.0,
+      "cash_balance": -100.0
+    },
+    {
+      "demand_visits": 460,
+      "served_visits": 460.0,
+      "cash_balance": -80.0
+    },
+    {
+      "demand_visits": 470,
+      "served_visits": 470.0,
+      "cash_balance": -60.0
+    },
+    {
+      "demand_visits": 480,
+      "served_visits": 480.0,
+      "cash_balance": -40.0
+    },
+    {
+      "demand_visits": 490,
+      "served_visits": 490.0,
+      "cash_balance": -20.0
+    },
+    {
+      "demand_visits": 500,
+      "served_visits": 500.0,
+      "cash_balance": 0.0
+    },
+    {
+      "demand_visits": 510,
+      "served_visits": 510.0,
+      "cash_balance": 20.0
+    },
+    {
+      "demand_visits": 520,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 530,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 540,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 550,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 560,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 570,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 580,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 590,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 600,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 610,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 620,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 630,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 640,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 650,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 660,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 670,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 680,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 690,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    },
+    {
+      "demand_visits": 700,
+      "served_visits": 520.0,
+      "cash_balance": 40.0
+    }
+  ],
+  "code_sha256": {
+    "scripts\\build-scientific-methods-evidence.py": "22704b34176bf5ef442c88f19eb89b1f069c49c6578284045afc93fd2970ffbc",
+    "services\\capabilities\\community_operations.py": "c2d8e8b2b87c6c79460b4d63cee52b638fd46e79588a07987169564ad312a6cd",
+    "services\\capabilities\\operations_science.py": "cc88e6f3860f79f9cfa9f2eb95c4a819e57c6c9cc0fb2815c7ae77c46b329a9a"
+  }
+}

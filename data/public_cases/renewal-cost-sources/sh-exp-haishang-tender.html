@@ -1,0 +1,790 @@
+								<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" style="min-width:1200px">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="/static/glodon.gttp.index/default/css/global.css" rel="stylesheet" type="text/css" />
+	<link href="/static/glodon.gttp.shanghai/css/shanghai.css" rel="stylesheet" type="text/css" />
+
+	<link href="/static/glodon.gttp.index/js/dialog/css/loading.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/gboat2.web/js/jquery-1.8.2.min.js"></script>
+	    <script type="text/javascript" src="/static/gboat2.web/js/jquery-migrate.js"></script>
+    <script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/JQuery.loading.js"></script>
+	<script type="text/javascript" src="/static/glodon.gttp.index/js/ajaxpanel.js"></script>
+	
+	<title>网上报名-住宅修缮工程招投标电子化交易平台</title>
+<script type="text/javascript">
+var BASE_PATH = "";
+function zhdp(){
+	window.open("/zhdp-show!list.do");
+}
+function addFavorite(){
+   	var weburl = location.href;
+	var webname = window.location.href;
+   	try{
+       	window.external.addFavorite(weburl, webname);
+   	}catch (e){
+       	try{
+           	window.sidebar.addPanel(webname, weburl, "");
+       	}catch (e){
+           	alert("加入收藏失败，请使用Ctrl+D进行添加");
+       	}
+   	}
+}
+function changeSelect(self){
+	self = jQuery(self);
+	var l = self[0].offsetLeft;
+	var t = self[0].offsetTop - 1;
+	self.addClass('none');
+	var floatSel = jQuery('#floatSel');
+	floatSel.removeClass('none');
+	floatSel.css('top', t);
+	floatSel.css('left', l);
+	/**
+		tangj 2014-04-10 15:15
+	**/
+	if(jQuery('#searchType').val() == 'ZBGG'){
+		jQuery('#floatSelBox1').after(jQuery('#floatSelBox2'));
+		jQuery('#floatSelBox2').after(jQuery('#floatSelBox3'));
+
+		jQuery('#floatSelBox1').addClass('floatSelBox1');
+		jQuery('#floatSelBox1').removeClass('floatSelBox2');
+		jQuery('#floatSelBox1').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox2').addClass('floatSelBox2');
+		jQuery('#floatSelBox2').removeClass('floatSelBox1');
+		jQuery('#floatSelBox2').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox3').addClass('floatSelBox3');
+		jQuery('#floatSelBox3').removeClass('floatSelBox1');
+		jQuery('#floatSelBox3').removeClass('floatSelBox2');
+
+	} else if(jQuery('#searchType').val() == 'ZBHXRGS') {
+		jQuery('#floatSelBox2').after(jQuery('#floatSelBox1'));
+		jQuery('#floatSelBox1').after(jQuery('#floatSelBox3'));
+
+		jQuery('#floatSelBox1').addClass('floatSelBox2');
+		jQuery('#floatSelBox1').removeClass('floatSelBox1');
+		jQuery('#floatSelBox1').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox2').addClass('floatSelBox1');
+		jQuery('#floatSelBox2').removeClass('floatSelBox2');
+		jQuery('#floatSelBox2').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox3').addClass('floatSelBox2');
+		jQuery('#floatSelBox3').removeClass('floatSelBox1');
+		jQuery('#floatSelBox3').removeClass('floatSelBox3');
+
+	} else if(jQuery('#searchType').val() == 'ZCFG' ){
+		jQuery('#floatSelBox3').after(jQuery('#floatSelBox1'));
+		jQuery('#floatSelBox1').after(jQuery('#floatSelBox2'));
+
+		jQuery('#floatSelBox1').addClass('floatSelBox2');
+		jQuery('#floatSelBox1').removeClass('floatSelBox1');
+		jQuery('#floatSelBox1').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox2').addClass('floatSelBox2');
+		jQuery('#floatSelBox2').removeClass('floatSelBox1');
+		jQuery('#floatSelBox2').removeClass('floatSelBox3');
+
+		jQuery('#floatSelBox3').addClass('floatSelBox1');
+		jQuery('#floatSelBox3').removeClass('floatSelBox2');
+		jQuery('#floatSelBox3').removeClass('floatSelBox3');
+	}
+	var zw = jQuery('#zhanwei');
+	zw.removeClass('none');
+	zw.addClass('inlineblock');
+}
+
+ String.prototype.trim = function()
+    {
+      return this.replace(/(^\s*)|(\s*$)/g, "");
+    }
+
+function clickSelect(id){
+	var floatSel = jQuery('#floatSel');
+	floatSel.addClass('none');
+	var sel = jQuery('#' + id);
+	sel.removeClass('none');
+	sel.addClass('selectBox');
+	var zw = jQuery('#zhanwei');
+	zw.removeClass('inlineblock');
+	zw.addClass('none');
+	var st = jQuery('#searchType');
+	st.val(id);
+}
+function siteSearch(){
+	var type = jQuery("#searchType").val();
+	var text = jQuery("#searchText").val();
+	var url = "";
+	if( type != "ZCFG" )
+   	    url = "/sh-tender-notice!showNotice.do?&type="+type+"&name="+encodeURI(text);
+   	else
+   		url = "/sh-policy-law!view.do?type=ZCFG&name="+encodeURI(text);
+   	window.location.href = url;
+}
+
+function expertLogin(){
+	var html ="<div style='text-align:center'>请选择登陆平台：<select id='login-xz' >";
+	html= html + "<option value='/sh-portal!expertLogin.do'>评标中心</option>";
+	html= html + "<option value='/sh-portal!zgysExpertLogin.do'>资格预审评标</option>";
+	html= html + "</select><div>";
+	Jdialog.open({
+            Title: "请选择登陆平台",
+            dialogType:"2",
+			width:"300",
+			height:"150",
+			Text: html,
+            fn: function(data){
+            	var url = $("#login-xz").val();
+            	toAjax(url,{},function(result){
+            		debugger;
+					if( result.success == true ){
+						window.open(result.message);
+					}else{
+						Jdialog.open({Text:result.message});
+					}
+				});
+			    Jdialog.close();
+            }
+        });
+		return false;
+
+	//toAjax("/sh-portal!expertLogin.do",{},function(result){
+	//	if( result.success == true ){
+	//		window.open(result.message);
+	//	}else{
+	//		Jdialog.open({Text:result.message});
+	//	}
+	//});
+	// window.open("http://ylyzkpb.ebid.sh.cn/");
+
+}
+function tbrLogin(){
+	//Jdialog.open({width:"400",
+	//		height:"250",Text:"各招标代理、投标人：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接上海市数字认证中心通知，因其短信平台故障导致其提供的电子签章功能无法正常使用，初步估计在11月4日排除故障。受此影响，住宅修缮工程远程开标项目中各投标人代表无法完成签到。因此，11月4日远程开标项目的开标时间将顺延。具体开标时间待电子签章功能恢复正常后确定。请相关单位随时关注住宅修缮交易平台发布的通知公告。"});
+	//return;
+	toAjax("/sh-portal!tbrLogin.do",{},function(result){
+		if( result.success == true ){
+			window.open(result.message);
+		}else{
+			Jdialog.open({Text:result.message});
+		}
+	});
+}
+</script>
+</head>
+
+<body>
+	<!--
+	<script type="text/javascript" src="/static/glodon.gttp.shanghai/js/photo.js"></script>
+	<script type="text/javascript">
+		var id=function(o){return document.getElementById(o)}
+		var scroll=function (o){
+		 var space=id(o).offsetTop;
+		 id(o).style.top=space+'px';
+		 void function(){
+		   var goTo = 0;
+		   var roll=setInterval(function(){
+		    var height =document.documentElement.scrollTop+document.body.scrollTop+space;
+		    var top = parseInt(id(o).style.top);
+		    if(height!= top){
+		     goTo = height-parseInt((height - top)*0.9);
+		     id(o).style.top=goTo+'px';
+		    }
+		    //else{if(roll) clearInterval(roll);}
+		   },50);
+		 }()
+		}
+		scroll('box1');
+	</script>
+	<div id="box1" style="position:absolute;bottom:0;right:0;"><a href="www.baidu.com" target="_blank"><img width="180" height="180" src="/static/glodon.gttp.shanghai/images/piaofu.gif" border="0" alt=""></a></div>-->
+			    
+    	<!--head-->
+    <div class="head_top">
+		<div class="w_xs">
+			<span class="l">
+				<a href="javascript:void(0)" onclick="addFavorite();"><span class="collect"></span>&nbsp;加入收藏</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/sh-portal!home.do">返回首页</a>
+			</span>
+			<span class="r">
+								<a href="/shgttp/g-index!login.do">招投标人登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/shgttp/login!jgyLogin.do" >监管员登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="javascript:void(0)" onclick="tbrLogin()">远程开标中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="javascript:void(0)" onclick="expertLogin()">专家登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/sh-register!register.do" >免费注册</a>&nbsp;&nbsp;
+								
+				<span  style="display:none">
+				<b>&nbsp;&nbsp;服务热线：4000-166-166</b>
+				</span>
+							</span>
+		</div>
+    </div>
+	<div class="w_xs logo_box_xs">
+		<a href="/shgttp/g-index!home.do" class="block"><div class="logo_xs l"></div></a>
+             					</div>
+	<!--head end-->
+	<!--head end-->
+<div class="wrap">
+	<div class="w">
+
+		<form id="detailForm" name="detailForm" method="post" >
+		<div id="border_box_mar_pad" class="border_box mar_10 pad_10" style="min-height:420px;_height:420px">
+			<h2>网上报名</h2>			
+<script>
+$(function(){
+	var height = $(window).height() - 260;
+	$("#border_box_mar_pad").css("min-height",height+"px").css("_height",height+"px");
+})
+</script>
+<input type="hidden" id="canEnroll" value="true"/>
+<div style="height: 165px;">
+	<p style="margin-top: 10px;font-size: 14px;color:red;">
+		<span id="context"></span>
+		<span id='timeout_year'></span>
+		<span id='timeout_mon'></span>
+		<span id='timeout_day'></span>
+		<span id='timeout_hour'></span>
+		<span id='timeout_mini'></span>
+		<span id='timeout_sec'></span>
+		<br />
+		为配合本市住宅修缮工程招投标工作，请到“上海市住房城乡和建设管理委员会网站（http://zjw.sh.gov.cn）市房管局-住宅修缮施工企业信用评价”栏目完成企业信用评价登记。
+				<br>
+					采用远程开标项目注意事项：<br>
+									1、采用远程开标的项目在投标人在报名时，请确保拟报名项目经理/总监已经通过人脸核身认证。<br>
+					2、项目经理/总监人脸核身可以在住宅修缮企业管理平台中进行验证。<br>
+					3、开标时报名项目经理/总监需要通过电脑人脸识别进行身份验证（不能使用IE内核的浏览器），因此需要保证远程开标时电脑的摄像头可用。
+							</p>
+</div>
+<input type="hidden" id="packageId" value="edc6719e-876e-4613-9879-e03a5cc8084d"/>
+<div style="text-align:left;"><table id="" width="100%" border="0" cellpadding="0" cellspacing="0" class=" table_s">
+    <col width="17%"></col>
+    <col width="33%"></col>
+    <col width="17%"></col>
+    <tr>
+        <th colspan = "4" align="center" style="font-size:16px;background-color:#FFFFFF;">建设工程招标公告</th>
+    </tr>
+    <tr>
+        <td bgcolor="#f1f1f1" class="tex_right">                
+            报建编号:
+        </td>
+        <td>                
+             2603MH0003
+        </td>
+        <td bgcolor="#f1f1f1" class="tex_right">                
+            标段号：
+        </td>
+        <td>                
+            C01
+        </td>
+    </tr>
+    <tr>
+        <td  bgcolor="#f1f1f1" class="tex_right">               
+            招标人:
+        </td>
+        <td colspan="3">                
+            上海闵房建筑工程有限公司
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#f1f1f1" class="tex_right">                
+            招标人地址:
+        </td>
+        <td colspan="3">                
+            秀文路526号
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#f1f1f1" class="tex_right">                
+            招标标段名称：
+        </td>
+        <td colspan="3">                
+             七宝镇海上新村“美丽家园”综合修缮项目
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#f1f1f1" class="tex_right">                
+            建设地点：
+        </td>
+        <td colspan="3">                
+            漕宝路1800弄
+        </td>
+    </tr>
+</table>																															
+    
+					<h3>
+						工程施工工程规模描述
+		</h3>
+		        <table id="" width="100%" border="0" cellpadding="0" cellspacing="0" class=" table_s">
+        			<tr>
+				        		<td width="17%"  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				项目类别:
+    			            		</td>
+        		        		<td width="33%"  class="" >
+        								        											            																							            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            														            					            				            											房屋建筑工程 
+    					    				        		</td>
+        		        		<td width="17%"  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				工程类别:
+    			            		</td>
+        		        		<td width=""  class="" >
+        								        											            														            														            														            														            																							            					            				            											房屋修缮工程 
+    					    				        		</td>
+        		        	</tr>
+          			<tr>
+				        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				具体描述:
+    			            		</td>
+        		        		<td width=""  class=""  colspan="3" >
+        								        				(1)屋面:14051.63 平方米<br/>(2)外立面:55055.94 平方米<br/>(3)其他:总建筑面积为79126.42㎡，共19幢4-6层住宅。<br/> 
+        		            		</td>
+        		        	</tr>
+          			<tr>
+				        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				工程总投资:
+    			            		</td>
+        		        		<td width=""  class="" >
+        								        				3878.77 万元人民币
+        		            		</td>
+        		        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				建安费用:
+    			            		</td>
+        		        		<td width=""  class="" >
+        								        				3397.76 万元人民币
+        		            		</td>
+        		        	</tr>
+          			<tr>
+				        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				工程概（预）算:
+    			            		</td>
+        		        		<td width=""  class="" >
+        								        				3878.77 万元人民币
+        		            		</td>
+        		        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				施工工期:
+    			            		</td>
+        		        		<td width=""  class="" >
+        								        				365 日历天
+        		            		</td>
+        		        	</tr>
+          			<tr>
+				        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				本标段最高投标限价:
+    			            		</td>
+        		        		<td width=""  class="" >
+        								        				3396.5312 万元人民币
+        		            		</td>
+        		        	</tr>
+          			<tr>
+				        		<td width=""  bgcolor="#f1f1f1"  class="tex_right" >
+        								        				其他说明:
+    			            		</td>
+        		        		<td width=""  class=""  colspan="3" >
+        								        				/ 
+        		            		</td>
+        		        	</tr>
+                  </table>
+		
+<h3>投标条件</h3>
+	<table id="tbtj" width="100%" border="0" cellpadding="0" cellspacing="0" class=" table_s">
+		<col width="17%"></col>
+		<col width="33%"></col>
+		<col width="17%"></col>
+		<tr>
+			<td bgcolor="#f1f1f1" class="tex_right">企业资质要求:</td>
+			<td colspan="3">
+			 	<div id="zizhi_div" style="word-break:break-all">
+				    %3Ctable%20width%3D%22100%25%22%20class%3D%22table_s%22%20id%3D%22zizhi_table%22%3E%3Ctbody%3E%3Ctr%3E%3Cth%20class%3D%22tex_center%22%20colspan%3D%222%22%3E%E6%96%BD%E5%B7%A5%E8%B5%84%E8%B4%A8%E8%A6%81%E6%B1%82%3C%2Fth%3E%3C%2Ftr%3E%3Ctr%20isnew%3D%22true%22%3E%3Ctd%3E%E7%AC%AC1%E6%9D%A1%3C%2Ftd%3E%3Ctd%3E%3Cdiv%20name%3D%22id_name_div%22%20isnew%3D%22true%22%3E%3Cspan%20name%3D%22name%22%3E%E6%96%BD%E5%B7%A5%E8%B5%84%E8%B4%A8%2C%E6%96%BD%E5%B7%A5%E6%80%BB%E6%89%BF%E5%8C%85%2C%E5%BB%BA%E7%AD%91%E5%B7%A5%E7%A8%8B%2C%E4%B8%89%E7%BA%A7%E5%8F%8A%E5%85%B6%E4%BB%A5%E4%B8%8A%3C%2Fspan%3E%3Cspan%20class%3D%22none%22%20name%3D%22id%22%3E%7B%22zzdl%22%3A%224%22%2C%22zzxl%22%3A%2240%22%2C%22zzlb%22%3A%22104001%22%2C%22zzdj%22%3A%223%22%7D%3C%2Fspan%3E%3C%2Fdiv%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E
+	            </div>
+	 		</td>
+	 	</tr>
+	 	<tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">是否接受联合体投标:</td>
+	        <td colspan="3">
+									否
+							 </td>
+		 </tr>
+		 		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">网上资质比对网址:</td>
+	        <td colspan="3">
+				http://www.ciac.sh.cn/zbxx_new.aspx
+			 </td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">获取招标文件地址:</td>
+	        <td colspan="3">
+				http://xsjypt.fgj.sh.gov.cn
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">获取招标文件时间:</td>
+	        <td colspan="3">
+	        		        		2026年07月28日 00时00分 至 2026年08月02日 00时00分 (休息3日（含）以上的节假日除外) <br>
+	        				</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">注意:</td>
+	        <td colspan="3" style="color:blue;font-weight:bold;">
+				1、投标人需持凭证，获得招标文件<br/>
+				2、潜在投标人或者其他利害关系人对资格预审文件有异议的，应当在提交资格预审申请文件截止时间2日前以书面署名形式向招标人提出；对招标文件有异议的，应当在投标截止时间10日前以书面署名形式向招标人提出。（信息屏蔽的项目，具体流程详见招标文件。）
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">招标代理机构:</td>
+	        <td colspan="3">
+				上海中星联合咨询有限公司
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">获取招标文件联系人:</td>
+	        <td>
+				左文杰
+			</td>
+			<td bgcolor="#f1f1f1" class="tex_right">联系电话:</td>
+	        <td>
+				15901884860
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">传真:</td>
+	        <td colspan="3">
+				/
+			</td>
+		 </tr>
+		 			 <tr>
+			 	<td bgcolor="#f1f1f1" class="tex_right">是否采用投标报名筛选:</td>
+		        <td colspan='3'>
+		        				         否
+								</td>
+			 </tr>
+			 		 		 
+		 		 <tr>
+		 					<td bgcolor="#f1f1f1" valign="top"><div align="right">是否采用远程开标:</div></td>
+		       	<td colspan="3">
+											是<span style='margin-left:20px'>(<span style='color:red;'>注</span>:所有投标人必须在线上完成开标程序，开标的具体规则详见招标文件)</span>
+									</td>
+					 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">获取招标文件时需提供材料（如有）:</td>
+	        <td colspan="3">
+				采用网上购买标书的：遵循相关规定
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">备注:</td>
+	        <td colspan="3">
+				建筑工程专业贰级（及以上）注册建造师执业资格，且不得担任其他在建建设工程项目的项目经理。</br>
+									<br>本项目须按照“关于本市政府采购工程项目招标投标领域落实支持中小企业发展政策的通知”[沪财采 (2023) 11号]文件执行。
+							</td>
+		 </tr>
+		 		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">提交投标文件地址:</td>
+	        <td colspan="3">
+							<div>
+					<p>电子投标文件提交地址: http://xsjypt.fgj.sh.gov.cn</p>
+					<p>(电子投标文件以网络反馈上传成功为确认提交成功。) </p>
+								   </div>
+		    			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">提交投标文件截止时间:</td>
+	        <td colspan="3">
+				2026-08-18 14:30:00<span style='margin-left:20px'>(<span style='color:red;'>注</span>:采用远程异地开标的投标文件解密时长为提交投标文件截止时间起30分钟)</span>
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">投标保证金:</td>
+	        <td>
+				10万元人民币
+			</td>
+			<td bgcolor="#f1f1f1" class="tex_right">招标文件工本费:</td>
+	        <td>
+				0元人民币
+			</td>
+		 </tr>
+		 		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">同时发布本次招标公告的媒体名称:</td>
+	        <td colspan="3">
+				http://xsjypt.fgj.sh.gov.cn
+			</td>
+		 </tr>
+		 		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">填报单位:</td>
+	        <td colspan="3">
+				上海中星联合咨询有限公司
+			</td>
+		 </tr>
+		 <tr>
+		 	<td bgcolor="#f1f1f1" class="tex_right">监管部门:</td>
+	        <td>
+				上海市闵行区住宅修缮工程管理中心
+			</td>
+			<td bgcolor="#f1f1f1" class="tex_right">监管部门联系电话:</td>
+	        <td>
+				64885298
+			</td>
+		 </tr>
+	</table>
+
+<script>
+	jQuery(document).ready(function(){
+		
+		if("BXS" == "XS"){
+			var val = "";
+			if(1784607164000<1701187200000){
+				val = val + "<input type='checkbox' checked disabled name='bidPackage.screenCondition' value='0' >信用评价";
+			}
+	    	if("".indexOf("1") != -1){
+	    		val = val + "<input type='checkbox' disabled checked name='bidPackage.screenCondition' value='1' >行政处罚";
+	    	} else {
+	    		val = val + "&emsp;<input type='checkbox' disabled name='bidPackage.screenCondition' value='1' >行政处罚";
+	    	}
+	    	if("".indexOf("2") != -1){
+	    		val = val + "&emsp;<input type='checkbox' disabled checked name='bidPackage.screenCondition' value='2' >行贿犯罪记录";
+	    	} else {
+	    		val = val + "&emsp;<input type='checkbox' disabled name='bidPackage.screenCondition' value='2' >行贿犯罪记录";
+	    	}
+	    	if("".indexOf("3") != -1){
+	    		$("#evaluation").css("display","");
+	    		val = val + "&emsp;<input id='lypj' disabled onchange='lypjChange()' type='checkbox' checked name='bidPackage.screenCondition' value='3' >履约评价</td>";
+	    	} else {
+	    		val = val + "&emsp;<input id='lypj' disabled onchange='lypjChange()' type='checkbox' name='bidPackage.screenCondition' value='3' >履约评价</td>";
+	    	}
+	    	$("#tbsxtj").append(val);
+	    }
+	})
+</script>
+	<input type="hidden" id="enrollEndTime" value="2026-08-02 00:00:00" />
+</div>
+<div id="text" style="text-align:center; display:none">
+	<span style="color:red;">未到报名开始时间</span>
+</div>
+				    	    	<div style="text-align:center;">
+	    		<span style="color:red;">报名截止时间已过</span>
+	    	</div>
+	        <script type="text/javascript">
+	$(function(){
+		$('#zizhi_div').html(decodeURIComponent($('#zizhi_div').html()));
+	});
+</script>
+		</div>
+        </form>
+	</div>
+</div>
+	<!--footer-->
+    <div class="footer">
+    	<p style="margin-bottom:8px;">
+			<img style="vertical-align: text-bottom;" src="/static/glodon.gttp.shanghai/images/home/icp.png" alt="沪ICP备：2021016245号-2">沪ICP备：2021016245号-2
+		</p>
+		<p>
+			 © 2014 一联易招科技（上海）有限公司 Ebid.sh.cn 技术支持
+		</p>    
+		<p>客服QQ：2521324209 | 客服电话：400-021-2928
+						<script type="text/javascript">document.write(unescape("%3Cspan id='cnzz_stat_icon_1279360348'%3E%3C/span%3E%3Cscript src='https://s9.cnzz.com/z_stat.php%3Fid%3D1279360348%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+		</p>
+	</div>
+	<!--footer  end-->
+
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dateutils.js"></script>
+<link href="/static/glodon.gttp.index/js/dialog/css/dialog.css" type="text/css"  rel="stylesheet"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/JQuery.Dialog.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/Jquery.drag.js"></script>
+<link href="/static/glodon.gttp.index/js/formValidator/css/validationEngine.jquery.css" type="text/css"  rel="stylesheet"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/formValidator/js/jquery.validationEngine.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/formValidator/js/jquery.validationEngine-zh_CN.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/jqueryTreeTable/js/jquery.treeTable.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/formToJson.js"></script>
+<link href="/static/glodon.gttp.index/js/jqueryTreeTable/css/jquery.treeTable.css" type="text/css"  rel="stylesheet"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/Hashtable.js"></script>
+<script type="text/javascript" src="/static/glodon.gbmp.attachment/plupload/js/plupload.full.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/static/glodon.gttp.index/js/dialog/css/pop.css"/>
+<script type="text/javascript" src="/static/glodon.gttp.index/js/dialog/js/JQuery.pop.js"></script>
+<!--注释easyui引用
+<link rel="stylesheet" type="text/css" href="/static/glodon.gttp.shanghai/easyui/themes/default/easyui.css"/>
+<link rel="stylesheet" type="text/css" href="/static/glodon.gttp.shanghai/easyui/themes/icon.css"/>
+<script type="text/javascript" src="/static/glodon.gttp.shanghai/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/glodon.gttp.shanghai/easyui/locale/easyui-lang-zh_CN.js"></script> -->
+
+<script type="text/javascript" src="/static/glodon.gttp.index/js/shcaSecKit.js"></script>               
+<script type="text/javascript" src="/static/glodon.gttp.index/js/shcaUtils.js"></script>                  
+<script type="text/javascript" src="/static/glodon.gttp.index/js/SheCa.min.js"></script>                   
+<script type="text/javascript" src="/static/glodon.gttp.index/js/shecaCtrl.js"></script>                  
+<script type="text/javascript" src="/static/glodon.gttp.index/js/tool.js"></script>                       
+<script type="text/javascript" src="/static/glodon.gttp.index/js/base64-min.js"></script>                 
+<script type="text/javascript" src="/static/glodon.gttp.index/js/base64-str.js"></script>                 
+<script type="text/javascript" src="/static/glodon.gttp.index/js/jsrsasign-latest-all-min.js"></script>  
+
+<script type="text/javascript">
+    function subWayJumpUrl(projectId,packageId,jumpUrl){
+        var url = "/sub-way-nav!showSubway.do";
+        url = url +"?projectId="+projectId+"&packageId="+packageId+"&jumpUrl="+jumpUrl;
+        window.location.href = url;
+    }
+    function showErrorJdialog(param){
+        width = param.width;
+        height = param.height;
+        addHeight = param.addHeight;
+        shortMsg = param.shortMsg;
+        longMsg = param.longMsg;
+
+        var html = shortMsg+"   <a style='color:#3366cc;' onclick='return changeNextDiv(this,"+addHeight+");'>点击展开</a>";
+        html = html + "<div class='none' style='word-wrap: break-word; word-break: normal;width:"+(width-30)+"px;'>"+longMsg+"</div>";
+        Jdialog.open({
+            Text: html,
+            dialogType:"1",
+            width:width,
+            height:height
+        });
+    }
+
+    function changeNextDiv(obj,addHeight){
+        if($(obj).html()=='点击展开'){
+            $(obj).html('点击收起');
+            $(obj).next().removeClass('none');
+        }else{
+            $(obj).html('点击展开');
+            addHeight = addHeight*-1;
+            $(obj).next().addClass('none');
+        }
+        var parent = getParentByClass(obj,'jd_dialog_m');
+
+        var h = $(parent).height();
+        $(parent).height(h+addHeight);
+        h = $(parent).parent().height();
+        $(parent).parent().height(h+addHeight);
+        return false;
+    }
+    function getParentByClass(obj,clazz){
+        var parent = $(obj).parent();
+        if(parent.attr('class')==clazz){
+            return parent;
+        }else{
+            return getParentByClass(parent,clazz);
+        }
+    }
+    function checkBidder(projectId,packageId){
+        var url = "check-bider!checkBidderNum.do?packageId="+packageId;
+        toAjax(url,null,function(data){
+            if(data.success){
+                var message = data.msg;
+				var btn = "<div class='popBottom'><span><input type='button' value='确认' onclick='return msg_click(1,this,\""+projectId+"\",\""+packageId+"\")' class='dialog_but'/></span><span><input type='button' value='取消'  class='dialog_but' onclick='return msg_click(0,this);'/></span></div>";
+                /*var btn = '<div class="messager-button">';
+                btn = btn + '<a href="javascript:void(0)" onclick="return msg_click(1,this,\''+projectId+'\',\''+packageId+'\')" class="l-btn" group="" id="" style="margin-left: 10px;"><span class="l-btn-left"><span class="l-btn-text">确定</span></span></a>';
+                btn = btn + '<a href="javascript:void(0)" onclick="return msg_click(0,this)" class="l-btn" group="" id="" style="margin-left: 10px;"><span class="l-btn-left"><span class="l-btn-text">取消</span></span></a></div>';
+                jQuery.messager.show({
+                    title:'提示信息',
+                    height:130,
+                    msg: message + btn,
+                    timeout:0,
+                    showType:'slide'
+                }); */
+				pop=new Pop(message,"",btn);
+            }
+        },null);
+    }
+    function msg_click(type,obj,projectId,packageId){
+        if(type==1){
+            again_bidding(projectId,packageId);
+        }
+        pop.close();
+    }
+
+    function again_bidding(projectId,packageId){
+        var url = '/sh-records!againBidding.do?projectId='+projectId+'&packageId='+packageId;
+        Jdialog.open({
+            Text: '是否确认重新招标？重新招标后本次招标记录将不得再修改，请补充完整后再进行重新招标',
+            dialogType:"2",
+            fn:function(o){
+                toSubmit(url, null, function(data){
+                     if(data.success){
+                     	var url = "/sub-way-nav!showSubway.do?projectId="+data.projectId+"&packageId="+data.packageId;
+						window.location.href = url;
+                    }else{
+                        Jdialog.open({
+                            Title: "重新招标失败",
+                            Text: data.message,
+                            dialogType:"1"
+                        });
+                    }
+                });
+                Jdialog.close();
+            }
+        });
+        return false;
+    }
+	var pop;
+    jQuery(document).ready(function(){
+        var url = window.location.href;
+        if(url.indexOf('sub-way-nav')>0){
+            var paramstr = url.substring(url.indexOf('?')+1)
+            var params = paramstr.split('&');
+            var projectId = '';
+            var packageId = '';
+            for(idx in params){
+                var param = params[idx];
+                var sub_param = param.split('=');
+                if(sub_param.length>1){
+                    var p_name = sub_param[0];
+                    var p_val = sub_param[1];
+                    if('projectId' == p_name){
+                        projectId = p_val;
+                    }
+                    if('packageId' == p_name){
+                        packageId = p_val;
+                    }
+                }
+            }
+            if(packageId != '' && projectId != ''){
+                checkBidder(projectId,packageId);
+            }
+        }
+    });
+</script>
+  </body>
+</html>
+
+<script type="text/javascript" >
+	var timecha = 0;//服务器当前时间和客户端时间的时间差
+	jQuery(document).ready(function(){
+		var val = $("#canEnroll").val();
+		if(val == "false"){
+			$("#text").css("display","");
+		} else {
+			$("#text").css("display","none");
+			$("#context").html("离报名截止时间还有");
+		    getDateTimeFromServer();
+		    //设置获取时间差间隔（5分钟）
+		    setInterval("getDateTimeFromServer()", 5*60*1000);
+	    }
+	});
+	function getDateTimeFromServer(){
+	    toAjax('/bid-manage!getNowDateTime.do', null, function(data){
+	        if(data && data.success){
+	            timecha = data.datetime - new Date().getTime();//获取服务器当前时间和客户端时间的时间差
+			    showEndDate();
+	        }
+	    });
+	}
+	//显示报名倒计时
+	var isEnd;
+	function showEndDate(){
+		var obj = {
+	        sec: document.getElementById("timeout_sec"),
+	        mini: document.getElementById("timeout_mini"),
+	        hour: document.getElementById("timeout_hour"),
+	        day: document.getElementById("timeout_day"),
+	        month: document.getElementById("timeout_mon"),
+	        year: document.getElementById("timeout_year")
+	    };
+	    var enddate = _parseDate($("#enrollEndTime").val());
+	    fnTimeCount.countDown(enddate.getTime(), timecha, obj);
+	    	}
+	
+	function checkTimeIsEnd(){
+		if(fnTimeCount.timeEnd){
+			clearInterval(isEnd);
+			location.reload();
+		}
+	}
+</script>

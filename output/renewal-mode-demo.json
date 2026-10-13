@@ -1,0 +1,1461 @@
+{
+  "formula_version": "renewal-economics-0.1",
+  "purpose": "纯演示假设；全部数字仅用于离线公式复核，不对应求是村、浙工新村或上海案例",
+  "settings": {
+    "horizon_years": 5,
+    "discount_rate": {
+      "value": 0.05,
+      "unit": "ratio",
+      "status": "assumption",
+      "source": {
+        "kind": "演示假设",
+        "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+      },
+      "as_of": "2026-10-12"
+    }
+  },
+  "modes": [
+    {
+      "mode_id": "repair-operation",
+      "name": "演示假设：保留整治与服务空间运营",
+      "components": [
+        "building_repair",
+        "barrier_free",
+        "service_operation"
+      ],
+      "cash_subject": "renewal_cooperative",
+      "calculation_gate": "建议开展专项调查",
+      "missing": [],
+      "hard_conflicts": [],
+      "reasons": [
+        {
+          "rule_id": "ECON-NPV",
+          "text": "5 年本方案现金主体净现值为 56,392.31 元"
+        }
+      ],
+      "conditional_opportunities": [],
+      "excluded_items": [],
+      "input_snapshot": {
+        "mode_id": "repair-operation",
+        "name": "演示假设：保留整治与服务空间运营",
+        "components": [
+          "building_repair",
+          "barrier_free",
+          "service_operation"
+        ],
+        "cash_subject": "renewal_cooperative",
+        "explicit_baseline": true,
+        "opening_cash": {
+          "value": 0,
+          "unit": "yuan",
+          "status": "assumption",
+          "source": {
+            "kind": "演示假设",
+            "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+          },
+          "as_of": "2026-10-12"
+        },
+        "cost_scope_complete": {
+          "value": true,
+          "unit": "boolean",
+          "status": "assumption",
+          "source": {
+            "kind": "演示假设",
+            "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+          },
+          "as_of": "2026-10-12"
+        },
+        "hard_conditions": [],
+        "costs": [
+          {
+            "id": "construction",
+            "kind": "construction",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 1000000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 0
+          },
+          {
+            "id": "annual-maintenance",
+            "kind": "maintenance",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 80000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 1,
+            "through_year": 5
+          }
+        ],
+        "cash_receipts": [
+          {
+            "id": "service-rent",
+            "kind": "rent",
+            "year": 1,
+            "through_year": 5,
+            "recipient": "renewal_cooperative",
+            "beneficiaries": [
+              "residents",
+              "service_operator"
+            ],
+            "required": true,
+            "authorized": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "use_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "disposal_or_collection_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "price_basis": {
+              "city": "演示城市",
+              "as_of": "2026-10-12",
+              "tax_basis": "含税",
+              "use": "经营服务空间",
+              "area_measure": "rentable_area"
+            },
+            "rentable_area": {
+              "value": 300,
+              "unit": "m2",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "monthly_rent": {
+              "value": 120,
+              "unit": "yuan/m2/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "occupancy": {
+              "value": 0.75,
+              "unit": "ratio",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "funding": [
+          {
+            "id": "resident-sharing",
+            "kind": "resident",
+            "recipient": "renewal_cooperative",
+            "payer": "resident-sharing",
+            "year": 0,
+            "amount": {
+              "value": 200000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "fiscal-subsidy",
+            "kind": "subsidy",
+            "recipient": "renewal_cooperative",
+            "payer": "fiscal-subsidy",
+            "year": 0,
+            "amount": {
+              "value": 500000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "loan",
+            "kind": "loan",
+            "recipient": "renewal_cooperative",
+            "payer": "loan",
+            "year": 0,
+            "amount": {
+              "value": 300000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "repayment_schedule_complete": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "repayment_outflow_ids": [
+              "loan-principal-interest"
+            ]
+          }
+        ],
+        "finance_outflows": [
+          {
+            "id": "loan-principal-interest",
+            "payer": "renewal_cooperative",
+            "year": 1,
+            "through_year": 5,
+            "amount": {
+              "value": 66000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "asset_benefits": [
+          {
+            "id": "property-appreciation",
+            "year": 5,
+            "beneficiary": "residents",
+            "value_change": {
+              "value": 2000000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "target_groups": [
+          {
+            "id": "resident-households",
+            "name": "演示居民家庭",
+            "required": true,
+            "monthly_charge": {
+              "value": 100,
+              "unit": "yuan/household/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "monthly_budget": {
+              "value": 200,
+              "unit": "yuan/household/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "upfront_charge": {
+              "value": 2000,
+              "unit": "yuan/household",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "upfront_budget": {
+              "value": 5000,
+              "unit": "yuan/household",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ]
+      },
+      "cost_account": {
+        "total_yuan": 1400000.0,
+        "known_subtotal_yuan": 1400000.0
+      },
+      "revenue_account": {
+        "total_yuan": 1620000.0,
+        "baseline_known_yuan": 1620000.0,
+        "scope": "registered_receipts",
+        "conditional_opportunity_ids": []
+      },
+      "economic_npv_yuan": 56392.31,
+      "static_net_cash_yuan": 220000.0,
+      "funding_account": {
+        "planned_peak_gap_yuan": 0.0,
+        "secured_peak_gap_yuan": 0.0,
+        "planned_inflows_yuan": 1000000.0,
+        "secured_inflows_yuan": 1000000.0
+      },
+      "asset_benefit_account": [
+        {
+          "id": "property-appreciation",
+          "beneficiary": "residents",
+          "year": 5,
+          "value_change_yuan": 2000000.0,
+          "source_status": "assumption"
+        }
+      ],
+      "break_even": [
+        {
+          "receipt_id": "service-rent",
+          "price_unit": "yuan/m2/month",
+          "npv_zero_price": 115.18
+        }
+      ],
+      "affordability": [
+        {
+          "group_id": "resident-households",
+          "name": "演示居民家庭",
+          "monthly_affordable": true,
+          "monthly_gap": 0.0,
+          "upfront_affordable": true,
+          "upfront_gap": 0.0
+        }
+      ],
+      "annual_cash": [
+        {
+          "year": 0,
+          "cost_yuan": 1000000.0,
+          "revenue_yuan": 0.0,
+          "operating_revenue_yuan": 0.0,
+          "maintenance_yuan": 0.0,
+          "maintenance_balance_yuan": 0.0,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 1,
+          "cost_yuan": 80000.0,
+          "revenue_yuan": 324000.0,
+          "operating_revenue_yuan": 324000.0,
+          "maintenance_yuan": 80000.0,
+          "maintenance_balance_yuan": 244000.0,
+          "maintenance_coverage": 4.05
+        },
+        {
+          "year": 2,
+          "cost_yuan": 80000.0,
+          "revenue_yuan": 324000.0,
+          "operating_revenue_yuan": 324000.0,
+          "maintenance_yuan": 80000.0,
+          "maintenance_balance_yuan": 244000.0,
+          "maintenance_coverage": 4.05
+        },
+        {
+          "year": 3,
+          "cost_yuan": 80000.0,
+          "revenue_yuan": 324000.0,
+          "operating_revenue_yuan": 324000.0,
+          "maintenance_yuan": 80000.0,
+          "maintenance_balance_yuan": 244000.0,
+          "maintenance_coverage": 4.05
+        },
+        {
+          "year": 4,
+          "cost_yuan": 80000.0,
+          "revenue_yuan": 324000.0,
+          "operating_revenue_yuan": 324000.0,
+          "maintenance_yuan": 80000.0,
+          "maintenance_balance_yuan": 244000.0,
+          "maintenance_coverage": 4.05
+        },
+        {
+          "year": 5,
+          "cost_yuan": 80000.0,
+          "revenue_yuan": 324000.0,
+          "operating_revenue_yuan": 324000.0,
+          "maintenance_yuan": 80000.0,
+          "maintenance_balance_yuan": 244000.0,
+          "maintenance_coverage": 4.05
+        }
+      ]
+    },
+    {
+      "mode_id": "hybrid-phased",
+      "name": "演示假设：部分保留、局部拆建与经营组合",
+      "components": [
+        "building_repair",
+        "selective_rebuild",
+        "external_sale",
+        "service_operation"
+      ],
+      "cash_subject": "renewal_cooperative",
+      "calculation_gate": "建议开展专项调查",
+      "missing": [],
+      "hard_conflicts": [],
+      "reasons": [
+        {
+          "rule_id": "ECON-NPV",
+          "text": "5 年本方案现金主体净现值为 -285,683.11 元"
+        },
+        {
+          "rule_id": "ECON-CASH-GAP",
+          "text": "按年度收支与出资时序，峰值资金缺口为 1,000,000.00 元"
+        }
+      ],
+      "conditional_opportunities": [],
+      "excluded_items": [],
+      "input_snapshot": {
+        "mode_id": "hybrid-phased",
+        "name": "演示假设：部分保留、局部拆建与经营组合",
+        "components": [
+          "building_repair",
+          "selective_rebuild",
+          "external_sale",
+          "service_operation"
+        ],
+        "cash_subject": "renewal_cooperative",
+        "explicit_baseline": true,
+        "opening_cash": {
+          "value": 0,
+          "unit": "yuan",
+          "status": "assumption",
+          "source": {
+            "kind": "演示假设",
+            "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+          },
+          "as_of": "2026-10-12"
+        },
+        "cost_scope_complete": {
+          "value": true,
+          "unit": "boolean",
+          "status": "assumption",
+          "source": {
+            "kind": "演示假设",
+            "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+          },
+          "as_of": "2026-10-12"
+        },
+        "hard_conditions": [],
+        "costs": [
+          {
+            "id": "construction",
+            "kind": "construction",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 2000000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 0
+          },
+          {
+            "id": "annual-maintenance",
+            "kind": "maintenance",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 150000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 1,
+            "through_year": 5
+          }
+        ],
+        "cash_receipts": [
+          {
+            "id": "service-rent",
+            "kind": "rent",
+            "year": 1,
+            "through_year": 5,
+            "recipient": "renewal_cooperative",
+            "beneficiaries": [
+              "residents",
+              "service_operator"
+            ],
+            "required": true,
+            "authorized": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "use_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "disposal_or_collection_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "price_basis": {
+              "city": "演示城市",
+              "as_of": "2026-10-12",
+              "tax_basis": "含税",
+              "use": "经营服务空间",
+              "area_measure": "rentable_area"
+            },
+            "rentable_area": {
+              "value": 200,
+              "unit": "m2",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "monthly_rent": {
+              "value": 120,
+              "unit": "yuan/m2/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "occupancy": {
+              "value": 0.75,
+              "unit": "ratio",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "external-sale",
+            "kind": "sale",
+            "transaction_type": "external_sale",
+            "economic_item_id": "external-public-sale-units",
+            "year": 1,
+            "recipient": "renewal_cooperative",
+            "beneficiaries": [
+              "project_cooperative"
+            ],
+            "required": true,
+            "authorized": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "use_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "disposal_or_collection_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "price_basis": {
+              "city": "演示城市",
+              "as_of": "2026-10-12",
+              "tax_basis": "含税",
+              "use": "可对外出售的独立住宅空间",
+              "area_measure": "sellable_area"
+            },
+            "sellable_area": {
+              "value": 100,
+              "unit": "m2",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "unit_price": {
+              "value": 15000,
+              "unit": "yuan/m2",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "funding": [
+          {
+            "id": "resident-sharing",
+            "kind": "resident",
+            "recipient": "renewal_cooperative",
+            "payer": "resident-sharing",
+            "year": 0,
+            "amount": {
+              "value": 200000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "fiscal-subsidy",
+            "kind": "subsidy",
+            "recipient": "renewal_cooperative",
+            "payer": "fiscal-subsidy",
+            "year": 0,
+            "amount": {
+              "value": 500000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "loan",
+            "kind": "loan",
+            "recipient": "renewal_cooperative",
+            "payer": "loan",
+            "year": 0,
+            "amount": {
+              "value": 300000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "repayment_schedule_complete": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "repayment_outflow_ids": [
+              "loan-principal-interest"
+            ]
+          }
+        ],
+        "finance_outflows": [
+          {
+            "id": "loan-principal-interest",
+            "payer": "renewal_cooperative",
+            "year": 1,
+            "through_year": 5,
+            "amount": {
+              "value": 66000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "asset_benefits": [
+          {
+            "id": "property-appreciation",
+            "year": 5,
+            "beneficiary": "residents",
+            "value_change": {
+              "value": 2000000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "target_groups": [
+          {
+            "id": "resident-households",
+            "name": "演示居民家庭",
+            "required": true,
+            "monthly_charge": {
+              "value": 100,
+              "unit": "yuan/household/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "monthly_budget": {
+              "value": 200,
+              "unit": "yuan/household/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "upfront_charge": {
+              "value": 10000,
+              "unit": "yuan/household",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "upfront_budget": {
+              "value": 20000,
+              "unit": "yuan/household",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ]
+      },
+      "cost_account": {
+        "total_yuan": 2750000.0,
+        "known_subtotal_yuan": 2750000.0
+      },
+      "revenue_account": {
+        "total_yuan": 2580000.0,
+        "baseline_known_yuan": 2580000.0,
+        "scope": "registered_receipts",
+        "conditional_opportunity_ids": []
+      },
+      "economic_npv_yuan": -285683.11,
+      "static_net_cash_yuan": -170000.0,
+      "funding_account": {
+        "planned_peak_gap_yuan": 1000000.0,
+        "secured_peak_gap_yuan": 1000000.0,
+        "planned_inflows_yuan": 1000000.0,
+        "secured_inflows_yuan": 1000000.0
+      },
+      "asset_benefit_account": [
+        {
+          "id": "property-appreciation",
+          "beneficiary": "residents",
+          "year": 5,
+          "value_change_yuan": 2000000.0,
+          "source_status": "assumption"
+        }
+      ],
+      "break_even": [
+        {
+          "receipt_id": "service-rent",
+          "price_unit": "yuan/m2/month",
+          "npv_zero_price": 156.66
+        },
+        {
+          "receipt_id": "external-sale",
+          "price_unit": "yuan/m2",
+          "npv_zero_price": 17999.67
+        }
+      ],
+      "affordability": [
+        {
+          "group_id": "resident-households",
+          "name": "演示居民家庭",
+          "monthly_affordable": true,
+          "monthly_gap": 0.0,
+          "upfront_affordable": true,
+          "upfront_gap": 0.0
+        }
+      ],
+      "annual_cash": [
+        {
+          "year": 0,
+          "cost_yuan": 2000000.0,
+          "revenue_yuan": 0.0,
+          "operating_revenue_yuan": 0.0,
+          "maintenance_yuan": 0.0,
+          "maintenance_balance_yuan": 0.0,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 1,
+          "cost_yuan": 150000.0,
+          "revenue_yuan": 1716000.0,
+          "operating_revenue_yuan": 216000.0,
+          "maintenance_yuan": 150000.0,
+          "maintenance_balance_yuan": 66000.0,
+          "maintenance_coverage": 1.44
+        },
+        {
+          "year": 2,
+          "cost_yuan": 150000.0,
+          "revenue_yuan": 216000.0,
+          "operating_revenue_yuan": 216000.0,
+          "maintenance_yuan": 150000.0,
+          "maintenance_balance_yuan": 66000.0,
+          "maintenance_coverage": 1.44
+        },
+        {
+          "year": 3,
+          "cost_yuan": 150000.0,
+          "revenue_yuan": 216000.0,
+          "operating_revenue_yuan": 216000.0,
+          "maintenance_yuan": 150000.0,
+          "maintenance_balance_yuan": 66000.0,
+          "maintenance_coverage": 1.44
+        },
+        {
+          "year": 4,
+          "cost_yuan": 150000.0,
+          "revenue_yuan": 216000.0,
+          "operating_revenue_yuan": 216000.0,
+          "maintenance_yuan": 150000.0,
+          "maintenance_balance_yuan": 66000.0,
+          "maintenance_coverage": 1.44
+        },
+        {
+          "year": 5,
+          "cost_yuan": 150000.0,
+          "revenue_yuan": 216000.0,
+          "operating_revenue_yuan": 216000.0,
+          "maintenance_yuan": 150000.0,
+          "maintenance_balance_yuan": 66000.0,
+          "maintenance_coverage": 1.44
+        }
+      ]
+    },
+    {
+      "mode_id": "rebuild-unknown-rights",
+      "name": "演示假设：整体拆建与新增面积（核心权利及价格缺项）",
+      "components": [
+        "whole_rebuild",
+        "resettlement",
+        "external_sale"
+      ],
+      "cash_subject": "renewal_cooperative",
+      "calculation_gate": "先补充关键资料再判断",
+      "missing": [
+        {
+          "path": "cash_receipts.0",
+          "rule_id": "ECON-REALIZABLE",
+          "description": "补充实现权利、工程量及市场价格后重算"
+        }
+      ],
+      "hard_conflicts": [],
+      "reasons": [],
+      "conditional_opportunities": [],
+      "excluded_items": [],
+      "input_snapshot": {
+        "mode_id": "rebuild-unknown-rights",
+        "name": "演示假设：整体拆建与新增面积（核心权利及价格缺项）",
+        "components": [
+          "whole_rebuild",
+          "resettlement",
+          "external_sale"
+        ],
+        "cash_subject": "renewal_cooperative",
+        "explicit_baseline": true,
+        "opening_cash": {
+          "value": 0,
+          "unit": "yuan",
+          "status": "assumption",
+          "source": {
+            "kind": "演示假设",
+            "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+          },
+          "as_of": "2026-10-12"
+        },
+        "cost_scope_complete": {
+          "value": true,
+          "unit": "boolean",
+          "status": "assumption",
+          "source": {
+            "kind": "演示假设",
+            "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+          },
+          "as_of": "2026-10-12"
+        },
+        "hard_conditions": [],
+        "costs": [
+          {
+            "id": "rebuild",
+            "kind": "construction",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 5000000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 0
+          },
+          {
+            "id": "relocation",
+            "kind": "relocation",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 500000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 0
+          },
+          {
+            "id": "annual-maintenance",
+            "kind": "maintenance",
+            "payer": "renewal_cooperative",
+            "beneficiaries": [
+              "residents"
+            ],
+            "amount": {
+              "value": 120000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "year": 1,
+            "through_year": 5
+          }
+        ],
+        "cash_receipts": [
+          {
+            "id": "external-sale",
+            "kind": "sale",
+            "transaction_type": "external_sale",
+            "economic_item_id": "external-public-sale-units",
+            "year": 1,
+            "recipient": "renewal_cooperative",
+            "beneficiaries": [
+              "project_cooperative"
+            ],
+            "required": true,
+            "authorized": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "use_permitted": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "disposal_or_collection_permitted": {
+              "value": null,
+              "unit": "boolean",
+              "status": "missing",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "price_basis": {
+              "city": "演示城市",
+              "as_of": "2026-10-12",
+              "tax_basis": "含税",
+              "use": "可对外出售的独立住宅空间",
+              "area_measure": "sellable_area"
+            },
+            "sellable_area": {
+              "value": 600,
+              "unit": "m2",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "unit_price": {
+              "value": null,
+              "unit": "yuan/m2",
+              "status": "missing",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "funding": [
+          {
+            "id": "resident-sharing",
+            "kind": "resident",
+            "recipient": "renewal_cooperative",
+            "payer": "resident-sharing",
+            "year": 0,
+            "amount": {
+              "value": 200000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "fiscal-subsidy",
+            "kind": "subsidy",
+            "recipient": "renewal_cooperative",
+            "payer": "fiscal-subsidy",
+            "year": 0,
+            "amount": {
+              "value": 500000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          },
+          {
+            "id": "loan",
+            "kind": "loan",
+            "recipient": "renewal_cooperative",
+            "payer": "loan",
+            "year": 0,
+            "amount": {
+              "value": 300000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "available": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "repayment_schedule_complete": {
+              "value": true,
+              "unit": "boolean",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "repayment_outflow_ids": [
+              "loan-principal-interest"
+            ]
+          }
+        ],
+        "finance_outflows": [
+          {
+            "id": "loan-principal-interest",
+            "payer": "renewal_cooperative",
+            "year": 1,
+            "through_year": 5,
+            "amount": {
+              "value": 66000,
+              "unit": "yuan",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ],
+        "asset_benefits": [],
+        "target_groups": [
+          {
+            "id": "resident-households",
+            "name": "演示居民家庭",
+            "required": true,
+            "monthly_charge": {
+              "value": 100,
+              "unit": "yuan/household/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "monthly_budget": {
+              "value": 200,
+              "unit": "yuan/household/month",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "upfront_charge": {
+              "value": 10000,
+              "unit": "yuan/household",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            },
+            "upfront_budget": {
+              "value": 20000,
+              "unit": "yuan/household",
+              "status": "assumption",
+              "source": {
+                "kind": "演示假设",
+                "ref": "非任何真实小区报价；用于复核公式与缺项状态"
+              },
+              "as_of": "2026-10-12"
+            }
+          }
+        ]
+      },
+      "cost_account": {
+        "total_yuan": 6100000.0,
+        "known_subtotal_yuan": 6100000.0
+      },
+      "revenue_account": {
+        "total_yuan": null,
+        "baseline_known_yuan": 0.0,
+        "scope": "registered_receipts",
+        "conditional_opportunity_ids": []
+      },
+      "economic_npv_yuan": null,
+      "static_net_cash_yuan": null,
+      "funding_account": {
+        "planned_peak_gap_yuan": null,
+        "secured_peak_gap_yuan": null,
+        "planned_inflows_yuan": 1000000.0,
+        "secured_inflows_yuan": 1000000.0
+      },
+      "asset_benefit_account": [],
+      "break_even": [],
+      "affordability": [
+        {
+          "group_id": "resident-households",
+          "name": "演示居民家庭",
+          "monthly_affordable": true,
+          "monthly_gap": 0.0,
+          "upfront_affordable": true,
+          "upfront_gap": 0.0
+        }
+      ],
+      "annual_cash": [
+        {
+          "year": 0,
+          "cost_yuan": 5500000.0,
+          "revenue_yuan": null,
+          "operating_revenue_yuan": null,
+          "maintenance_yuan": 0.0,
+          "maintenance_balance_yuan": null,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 1,
+          "cost_yuan": 120000.0,
+          "revenue_yuan": null,
+          "operating_revenue_yuan": null,
+          "maintenance_yuan": 120000.0,
+          "maintenance_balance_yuan": null,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 2,
+          "cost_yuan": 120000.0,
+          "revenue_yuan": null,
+          "operating_revenue_yuan": null,
+          "maintenance_yuan": 120000.0,
+          "maintenance_balance_yuan": null,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 3,
+          "cost_yuan": 120000.0,
+          "revenue_yuan": null,
+          "operating_revenue_yuan": null,
+          "maintenance_yuan": 120000.0,
+          "maintenance_balance_yuan": null,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 4,
+          "cost_yuan": 120000.0,
+          "revenue_yuan": null,
+          "operating_revenue_yuan": null,
+          "maintenance_yuan": 120000.0,
+          "maintenance_balance_yuan": null,
+          "maintenance_coverage": null
+        },
+        {
+          "year": 5,
+          "cost_yuan": 120000.0,
+          "revenue_yuan": null,
+          "operating_revenue_yuan": null,
+          "maintenance_yuan": 120000.0,
+          "maintenance_balance_yuan": null,
+          "maintenance_coverage": null
+        }
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "mode_id": "repair-operation",
+      "cash_subject": "renewal_cooperative",
+      "gate": "建议开展专项调查",
+      "npv_yuan": 56392.31,
+      "funding_gap_yuan": 0.0
+    },
+    {
+      "mode_id": "hybrid-phased",
+      "cash_subject": "renewal_cooperative",
+      "gate": "建议开展专项调查",
+      "npv_yuan": -285683.11,
+      "funding_gap_yuan": 1000000.0
+    },
+    {
+      "mode_id": "rebuild-unknown-rights",
+      "cash_subject": "renewal_cooperative",
+      "gate": "先补充关键资料再判断",
+      "npv_yuan": null,
+      "funding_gap_yuan": null
+    }
+  ]
+}

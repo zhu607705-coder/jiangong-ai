@@ -1,0 +1,20 @@
+{
+  "id": "zj-sheet-002-tender",
+  "title": "丽水市莲都区东升北区1-3栋、南区13栋及周边老旧小区改造工程招标公告",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20251205/8f5c5ffb-6738-4411-bf65-c8a3696f9e1d.html",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20251205/8f5c5ffb-6738-4411-bf65-c8a3696f9e1d.html",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20251205/8f5c5ffb-6738-4411-bf65-c8a3696f9e1d.html",
+  "province": "浙江",
+  "published_at": "2025-12-05",
+  "fetched_at": "2026-10-13T07:38:32.088032+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-002-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-002-tender.txt",
+  "raw_sha256": "c6e1ee1f5ec24631d19677e7bd2051833bef6d6ca5c88875ab306b2a94ca10be",
+  "text_sha256": "0867478ec076564900b9dfcf5959d0dd435512fc2fb97c405879fb23a0e2c2c5",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "lot_id": "A3311011160018043001001"
+}

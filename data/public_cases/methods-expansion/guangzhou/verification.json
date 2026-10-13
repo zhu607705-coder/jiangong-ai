@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "source_count": 3,
+  "record_count": 3,
+  "independent_projects": 3,
+  "exact_quote_checks": 28,
+  "checks": [
+    {
+      "source_id": "gz-qingnianyuan-contract-2024",
+      "raw_sha256_pass": true,
+      "text_sha256_pass": true,
+      "exact_quote_checks": 9,
+      "all_quotes_pass": true,
+      "amount_conversion_pass": true,
+      "area_conversion_pass": true
+    },
+    {
+      "source_id": "gz-hongzhonglou-contract-2024",
+      "raw_sha256_pass": true,
+      "text_sha256_pass": true,
+      "exact_quote_checks": 11,
+      "all_quotes_pass": true,
+      "amount_conversion_pass": true,
+      "area_conversion_pass": true
+    },
+    {
+      "source_id": "gz-qiaozhong-yhe-contract-2025",
+      "raw_sha256_pass": true,
+      "text_sha256_pass": true,
+      "exact_quote_checks": 8,
+      "all_quotes_pass": true,
+      "amount_conversion_pass": true,
+      "area_conversion_pass": true
+    }
+  ]
+}

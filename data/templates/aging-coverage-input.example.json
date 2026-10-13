@@ -1,0 +1,947 @@
+{
+  "purpose": "演示住区前期推断；人口、分组、路线、容量与采用概率均为明确假设；33%参照2023求是社区报道，不表示求是村当前人口",
+  "period": "month",
+  "seed": 20261012,
+  "population": {
+    "value": 1000,
+    "unit": "person",
+    "status": "assumption",
+    "source": {
+      "kind": "演示假设",
+      "ref": "演示住区情景假设"
+    },
+    "as_of": "2026-10-12"
+  },
+  "elderly_ratio": {
+    "value": 0.33,
+    "unit": "ratio",
+    "status": "assumption",
+    "source": {
+      "kind": "演示假设",
+      "ref": "情景取值参照2023求是社区电梯托管报道中的33%老年人口占比；https://hznews.hangzhou.com.cn/shehui/content/2023-12/28/content_8666802.htm"
+    },
+    "as_of": "2026-10-12"
+  },
+  "groups": [
+    {
+      "group_id": "A",
+      "name": "近端健康长者",
+      "elderly_count": {
+        "value": 110,
+        "unit": "person",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "maximum_distance": {
+        "value": 500,
+        "unit": "m",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "visits_per_user": {
+        "value": 4,
+        "unit": "visit/person/month",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "group_id": "B",
+      "name": "远端健康长者",
+      "elderly_count": {
+        "value": 100,
+        "unit": "person",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "maximum_distance": {
+        "value": 500,
+        "unit": "m",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "visits_per_user": {
+        "value": 4,
+        "unit": "visit/person/month",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "group_id": "C",
+      "name": "行动受限长者",
+      "elderly_count": {
+        "value": 80,
+        "unit": "person",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "maximum_distance": {
+        "value": 300,
+        "unit": "m",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "visits_per_user": {
+        "value": 8,
+        "unit": "visit/person/month",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "group_id": "D",
+      "name": "高龄独居长者",
+      "elderly_count": {
+        "value": 40,
+        "unit": "person",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "maximum_distance": {
+        "value": 200,
+        "unit": "m",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      },
+      "visits_per_user": {
+        "value": 8,
+        "unit": "visit/person/month",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    }
+  ],
+  "adoption_scenarios": [
+    {
+      "scenario_id": "低",
+      "adoption_probability": {
+        "value": 0.3,
+        "unit": "ratio",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "scenario_id": "中",
+      "adoption_probability": {
+        "value": 0.5,
+        "unit": "ratio",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    },
+    {
+      "scenario_id": "高",
+      "adoption_probability": {
+        "value": 0.7,
+        "unit": "ratio",
+        "status": "assumption",
+        "source": {
+          "kind": "演示假设",
+          "ref": "演示住区情景假设"
+        },
+        "as_of": "2026-10-12"
+      }
+    }
+  ],
+  "baseline_mode_id": "baseline",
+  "modes": [
+    {
+      "mode_id": "baseline",
+      "name": "基线组合",
+      "components": [
+        "existing_meal_service",
+        "existing_activity_room"
+      ],
+      "facilities": [
+        {
+          "facility_id": "meal",
+          "name": "社区助餐",
+          "monthly_capacity": {
+            "value": 240,
+            "unit": "visit/month",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "adoption_factor": {
+            "value": 0.8,
+            "unit": "ratio",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "routes": [
+            {
+              "group_id": "A",
+              "distance": {
+                "value": 100,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "B",
+              "distance": {
+                "value": 700,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "C",
+              "distance": {
+                "value": 250,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": false,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "D",
+              "distance": {
+                "value": 150,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": false,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            }
+          ]
+        },
+        {
+          "facility_id": "activity",
+          "name": "康养活动",
+          "monthly_capacity": {
+            "value": 480,
+            "unit": "visit/month",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "adoption_factor": {
+            "value": 0.7,
+            "unit": "ratio",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "routes": [
+            {
+              "group_id": "A",
+              "distance": {
+                "value": 200,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "B",
+              "distance": {
+                "value": 800,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "C",
+              "distance": {
+                "value": 350,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "D",
+              "distance": {
+                "value": 500,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode_id": "improved",
+      "name": "改善组合",
+      "components": [
+        "continuous_barrier_free_routes",
+        "nearby_service_point",
+        "extended_service_hours"
+      ],
+      "facilities": [
+        {
+          "facility_id": "meal",
+          "name": "社区助餐",
+          "monthly_capacity": {
+            "value": 720,
+            "unit": "visit/month",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "adoption_factor": {
+            "value": 0.8,
+            "unit": "ratio",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "routes": [
+            {
+              "group_id": "A",
+              "distance": {
+                "value": 100,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "B",
+              "distance": {
+                "value": 400,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "C",
+              "distance": {
+                "value": 250,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "D",
+              "distance": {
+                "value": 150,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            }
+          ]
+        },
+        {
+          "facility_id": "activity",
+          "name": "康养活动",
+          "monthly_capacity": {
+            "value": 960,
+            "unit": "visit/month",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "adoption_factor": {
+            "value": 0.7,
+            "unit": "ratio",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "routes": [
+            {
+              "group_id": "A",
+              "distance": {
+                "value": 200,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "B",
+              "distance": {
+                "value": 450,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "C",
+              "distance": {
+                "value": 250,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "D",
+              "distance": {
+                "value": 180,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode_id": "missing-field",
+      "name": "关键资料缺项组合",
+      "components": [
+        "continuous_barrier_free_routes",
+        "nearby_service_point",
+        "extended_service_hours"
+      ],
+      "facilities": [
+        {
+          "facility_id": "meal",
+          "name": "社区助餐",
+          "monthly_capacity": {
+            "value": null,
+            "unit": "visit/month",
+            "status": "missing",
+            "source": {
+              "kind": "演示假设",
+              "ref": "设施排班与容量访谈尚未取得"
+            },
+            "as_of": "2026-10-12"
+          },
+          "adoption_factor": {
+            "value": 0.8,
+            "unit": "ratio",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "routes": [
+            {
+              "group_id": "A",
+              "distance": {
+                "value": 100,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "B",
+              "distance": {
+                "value": 400,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "C",
+              "distance": {
+                "value": 250,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "D",
+              "distance": {
+                "value": 150,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            }
+          ]
+        },
+        {
+          "facility_id": "activity",
+          "name": "康养活动",
+          "monthly_capacity": {
+            "value": 960,
+            "unit": "visit/month",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "adoption_factor": {
+            "value": 0.7,
+            "unit": "ratio",
+            "status": "assumption",
+            "source": {
+              "kind": "演示假设",
+              "ref": "演示住区情景假设"
+            },
+            "as_of": "2026-10-12"
+          },
+          "routes": [
+            {
+              "group_id": "A",
+              "distance": {
+                "value": 200,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "B",
+              "distance": {
+                "value": 450,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "C",
+              "distance": {
+                "value": 250,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": true,
+                "unit": "boolean",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              }
+            },
+            {
+              "group_id": "D",
+              "distance": {
+                "value": 180,
+                "unit": "m",
+                "status": "assumption",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "演示住区情景假设"
+                },
+                "as_of": "2026-10-12"
+              },
+              "continuous_accessible_route": {
+                "value": null,
+                "unit": "boolean",
+                "status": "missing",
+                "source": {
+                  "kind": "演示假设",
+                  "ref": "连续无障碍路线现场核查尚未完成"
+                },
+                "as_of": "2026-10-12"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-13",
+  "channel": "ChatGPT web",
+  "mode_observed": "Pro",
+  "conversation_url": "https://chatgpt.com/c/6acdaef5-bc14-83e8-9e12-dd222a7d295e",
+  "response_observed": "complete",
+  "accepted": [
+    "monthly service and cash accounting",
+    "separate government purchase subsidy and direct payment",
+    "immutable input/output snapshots",
+    "unknown distinct from zero",
+    "source-tagged scenarios separate from actual records",
+    "Shanghai-time month-start freeze boundary for prospective validation",
+    "project-scoped authorization and original evidence snapshots"
+  ],
+  "implementation_choices": {
+    "storage": "two immutable operations tables in existing Store instead of six separate tables",
+    "calculation": "deterministic monthly accounting extension reusing existing Decimal/source helpers; person-level simulators remain unchanged",
+    "demand_scenarios": "explicit configurable sensitivity multipliers; not confidence intervals; distinct users unknown outside unchanged base",
+    "actual_data": "manual source-bound month-end records and frozen prediction comparison; no automatic fitting or model training",
+    "historical_costs": "added after review at user request; independent source-bound capital-cost library in same database"
+  }
+}

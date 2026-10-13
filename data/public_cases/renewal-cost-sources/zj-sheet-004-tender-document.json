@@ -1,0 +1,29 @@
+{
+  "id": "zj-sheet-004-tender-document",
+  "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——叶坦区块施工招标文件",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/EpointWebBuilder/pages/webbuildermis/attach/downloadztbattach?attachGuid=59ebdd16-9200-455b-b5d2-87c1e2bd3bcb&appUrlFlag=ztb001&siteGuid=7eb5f7f1-9041-43ad-8e13-8fcb82ea831a",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/EpointWebBuilder/pages/webbuildermis/attach/ztbAttachDownloadAction.action?cmd=getContent&attachGuid=59ebdd16-9200-455b-b5d2-87c1e2bd3bcb&appUrlFlag=ztb001&siteGuid=7eb5f7f1-9041-43ad-8e13-8fcb82ea831a",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/EpointWebBuilder/pages/webbuildermis/attach/downloadztbattach?attachGuid=59ebdd16-9200-455b-b5d2-87c1e2bd3bcb&appUrlFlag=ztb001&siteGuid=7eb5f7f1-9041-43ad-8e13-8fcb82ea831a",
+  "landing_notice_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+  "linked_notice_source_id": "zj-sheet-004-tender",
+  "province": "浙江",
+  "published_at": "2026-06-30",
+  "fetched_at": "2026-10-13T07:45:49.244953+00:00",
+  "http_status": 200,
+  "raw_format": "pdf",
+  "content_type": ".pdf",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-004-tender-document.pdf",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-004-tender-document.txt",
+  "raw_sha256": "be27dbda5732ad54759e6238b58672759000831d35158e4fad0dc77d5dcb7865",
+  "text_sha256": "35ae05e2a7f975ae670143ffc85f5b4c365031f53613b2a418d89c2ff82100aa",
+  "source_status": "fetched_official_public_source",
+  "retrieval_method": "GET official public attachment form then POST its declared download action",
+  "extraction": "pypdf page-wise text with whitespace normalization and explicit one-based PDF page labels",
+  "pages": 142,
+  "lot_id": null,
+  "linked_notice_lot_id": "A3311011160018768001001",
+  "reviewed_pages": [
+    3,
+    9
+  ]
+}

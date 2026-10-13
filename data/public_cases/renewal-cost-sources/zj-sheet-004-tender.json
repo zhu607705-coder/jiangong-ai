@@ -1,0 +1,20 @@
+{
+  "id": "zj-sheet-004-tender",
+  "title": "遂昌县妙高街道城镇老旧小区改造项目（一期）——叶坦区块招标公告",
+  "requested_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+  "final_url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+  "url": "https://dzjy.lssggzy.lishui.gov.cn/lsweb/jyxx/002001/002001003/20260630/3513c558-b45f-4855-8cb1-7a058fcf1f67.html",
+  "province": "浙江",
+  "published_at": "2026-06-30",
+  "fetched_at": "2026-10-13T07:38:32.221478+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-sheet-004-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-sheet-004-tender.txt",
+  "raw_sha256": "a4e0174de47378316eeca9a29908f1246b012606ddbafa30146e8260e1b26171",
+  "text_sha256": "53b3f51f11241ab0b303c6e37d5882935123d618e1736019781e5d1ba24f6a8a",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "lot_id": "A3311011160018768001001"
+}

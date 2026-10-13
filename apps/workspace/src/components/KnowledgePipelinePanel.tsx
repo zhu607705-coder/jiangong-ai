@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ActionChunk, DistilledSkill, ExperienceCard, ExperienceEvidence, FactorDefinition, FactorPolicy, KnowledgeCondition, KnowledgeGrouping, MeasureFactor } from '../../../host/generated/contracts'
 import type { ParsedDocument } from '../../../../packages/experience/document-slices'
 import { validate } from '../../../../packages/contracts/validate'
+import { cardPresentationDetails, changeSkillSourceSelection, groupMeasureCards, MAX_SKILL_SOURCE_CARDS, skillSourceEligible, type MeasurePresentationGroup } from '../../../../packages/experience/presentation'
 import { api } from '../api'
 import './knowledge-pipeline-panel.css'
 
@@ -24,6 +25,8 @@ const asEditor = (policy: FactorPolicy): PolicyEditor => ({ id: policy.id, revis
 const newDefinition = (): FactorDefinition => ({ key: '', label: '', value_type: 'number', role: 'pending', weight: 0, unit: null, scale: null, measure_keys: [], evidence: [] })
 const message = (error: unknown) => error instanceof Error ? error.message : '请求未完成，请重试。'
 const merge = <T extends { id: string }>(current: T[], next: T[]): T[] => [...next, ...current.filter(item => !next.some(update => update.id === item.id))]
+const kindLabel = (kind: MeasurePresentationGroup['kind']) => kind === 'case' ? '案例记录' : kind === 'rule' ? '规则记录' : '类型待核'
+const groupSummary = (group: MeasurePresentationGroup) => `${kindLabel(group.kind)} · ${group.cards.length} 条证据记录 · ${group.sourceCount} 份原件${group.sourceVersionCount > group.sourceCount ? ` / ${group.sourceVersionCount} 个版本` : ''}`
 
 function Evidence({ items, documents }: { items: ExperienceEvidence[]; documents: Document[] }) {
   return items.length ? <details className="pipeline-evidence"><summary>原文定位与引用 · {items.length}</summary>{items.map((item, index) => <div key={index}>
@@ -40,6 +43,7 @@ function Conditions({ title, items, documents }: { title: string; items: Knowled
 }
 
 function FactorTable({ card, documents }: { card: ExperienceCard; documents: Document[] }) {
+  const details = cardPresentationDetails(card)
   return <article className="pipeline-card" aria-label={`措施因素：${card.title}`}>
     <header><div><strong>{card.knowledge?.measure_name || card.title}</strong><small>{card.knowledge?.measure_key || '举措待归类'} · {card.stage || '阶段待核'} · {card.id} v{card.revision}</small></div><span className={`pipeline-badge is-${card.status}`}>{statusLabels[card.status]}</span></header>
     {card.knowledge?.factors?.length ? <table className="pipeline-factor-table"><caption>措施与因素记录</caption><thead><tr><th>因素</th><th>取值与单位</th><th>关联与口径</th><th>依据</th></tr></thead><tbody>{card.knowledge.factors.map((factor, index) => <tr key={`${factor.key}:${index}`}>
@@ -48,6 +52,36 @@ function FactorTable({ card, documents }: { card: ExperienceCard; documents: Doc
       <td data-label="关联与口径">{associationLabels[factor.association]} · {amountLabels[factor.amount_kind]}<small>对象 {factor.object_ref || '未定位'} · {factor.stage || '阶段待核'}{factor.observed_at ? ` · ${factor.observed_at}` : ''}</small>{factor.derivation && <small>计算 {factor.derivation.formula}：{factor.derivation.numerator_key} / {factor.derivation.denominator_key}</small>}</td>
       <td data-label="依据"><Evidence items={factor.evidence} documents={documents} /></td>
     </tr>)}</tbody></table> : <p className="pipeline-muted">这张卡尚未记录结构化因素；原文无记载的内容留空。</p>}
+    <details className="pipeline-original-card"><summary>查看原卡与来源 · {card.id}</summary><p>{card.title} · 对象 {details.objects.join('、') || '未定位'} · {details.stages.join('、') || '阶段待核'}</p>
+      {card.fields.filter(field => field.value !== null).map(field => <p key={field.key}>{field.value}</p>)}
+      <Evidence items={details.evidence} documents={documents} />
+    </details>
+  </article>
+}
+
+function SkillSourceGroup({ group, documents, cards, selected, onSelection }: { group: MeasurePresentationGroup; documents: Document[]; cards: ExperienceCard[]; selected: string[]; onSelection: (ids: string[], checked: boolean) => void }) {
+  const eligible = group.cards.filter(skillSourceEligible).map(card => card.id)
+  const selectedCount = eligible.filter(id => selected.includes(id)).length
+  const allSelected = !!eligible.length && selectedCount === eligible.length
+  const check = changeSkillSourceSelection(cards, selected, eligible, true)
+  return <article className="pipeline-measure" aria-label={`技能来源措施：${group.title}`}>
+    <label className="pipeline-checkbox pipeline-measure-heading"><input type="checkbox" aria-label={`选择措施组：${group.title} · ${kindLabel(group.kind)}`} checked={allSelected} ref={element => { if (element) element.indeterminate = selectedCount > 0 && !allSelected }} disabled={!eligible.length || (!allSelected && !!check.error)} onChange={event => onSelection(eligible, event.target.checked)} />
+      <span><strong>{group.title}</strong><small>{groupSummary(group)}</small><small>可选 {eligible.length} 条 · 已选 {selectedCount} 条{!group.measureKey ? ' · 举措标识待补' : ''}</small></span>
+    </label>
+    {!!eligible.length && !allSelected && check.error && <p className="pipeline-selection-hint">{check.error}</p>}
+    <details><summary>展开对象、阶段与来源记录</summary><div className="pipeline-measure-records">{group.cards.map(card => {
+      const details = cardPresentationDetails(card)
+      const selectedCard = selected.includes(card.id)
+      const selection = changeSkillSourceSelection(cards, selected, [card.id], true)
+      return <div className="pipeline-measure-record" key={card.id}>
+        <label className="pipeline-checkbox"><input type="checkbox" aria-label={`选择技能来源：${card.title} · ${card.id}`} checked={selectedCard} disabled={!selectedCard && !!selection.error} onChange={event => onSelection([card.id], event.target.checked)} />
+          <span>{card.knowledge?.measure_name || card.title} · 对象 {details.objects.join('、') || '未定位'}<small>{details.stages.join('、') || '阶段待核'} · {statusLabels[card.status]}</small><small>来源 {details.sourceIds.map(id => documents.find(document => document.id === id)?.file_name || id).join('、') || '原件待补'}</small><small>{card.id} v{card.revision}</small></span>
+        </label>
+        <details><summary>查看原卡：{card.title}</summary><p>{card.knowledge?.measure_key || '举措待归类'} · {kindLabel(card.knowledge?.kind || 'unclassified')}</p>
+          {card.fields.filter(field => field.value !== null).map(field => <p key={field.key}>{field.value}</p>)}<Evidence items={details.evidence} documents={documents} />
+        </details>
+      </div>
+    })}</div></details>
   </article>
 }
 
@@ -157,6 +191,11 @@ export default function KnowledgePipelinePanel({ projectId, revision, onChanged 
     setNotice(status === 'approved' ? '已记录导师复核。政策审核状态不代表企业效果已验证。' : '已记录未通过原因，可修改后重新保存草稿。')
   })
   const selectedMeasure = data.cards.find(card => selectedCards.includes(card.id))?.knowledge?.measure_key
+  const measureGroups = groupMeasureCards(data.cards)
+  const changeSelection = (ids: string[], checked: boolean) => {
+    const result = changeSkillSourceSelection(data.cards, selectedCards, ids, checked)
+    setError(result.error || ''); setSelectedCards(result.ids)
+  }
   const currentPolicy = data.policies.find(policy => policy.id === editor.id)
   const policyDirty = !!currentPolicy && (definitionsJson !== null || JSON.stringify(editor) !== JSON.stringify(asEditor(currentPolicy)))
   const selectedGroupPolicy = data.policies.find(policy => policy.id === groupPolicyId)
@@ -205,7 +244,7 @@ export default function KnowledgePipelinePanel({ projectId, revision, onChanged 
         if (!isCurrent()) return
         update(value => ({ ...value, cards: merge(value.cards, result.cards) })); setSelectedDocuments([]); setWarnings(result.warnings || []); setGroupResult(null)
         setChunks(current => merge(current, result.cards.flatMap(card => card.knowledge?.chunks || [])))
-        setNotice(`已生成 ${result.cards.length} 张措施经验草稿；本次模型调用 ${result.model_calls} 次。请在下方项目经验卡中复核。`)
+        setNotice(`已整理 ${groupMeasureCards(result.cards).length} 个措施组 / ${result.cards.length} 条证据记录；相同原文和内容复用已有卡片。本次模型调用 ${result.model_calls} 次。`)
         try { await onChanged?.() } catch (cause) { if (isCurrent()) setError(`草稿已保存，但经验卡列表刷新失败：${message(cause)}`) }
       })}>{busy === 'extract' ? '正在提取…' : '提取措施与因素草稿'}</button>
       {!!warnings.length && <ul className="pipeline-warnings">{warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>}
@@ -215,7 +254,10 @@ export default function KnowledgePipelinePanel({ projectId, revision, onChanged 
         {!!chunk.context_chunk_ids.length && <p className="pipeline-muted">关联上下文：{chunk.context_chunk_ids.join('、')}</p>}<Evidence items={chunk.spans} documents={data.documents} />
       </article>)}</div>
       <h4>2. 措施与因素表</h4><p className="pipeline-muted">直接关联、共享金额与待核归属分别保留；草稿因素不会自动成为已批准的判断门槛。</p>
-      {data.cards.map(card => <FactorTable key={card.id} card={card} documents={data.documents} />)}{!data.cards.length && <p className="pipeline-muted">尚无措施经验卡。</p>}
+      <p className="pipeline-measure-count">{measureGroups.length} 个措施组 / {data.cards.length} 条证据记录</p>
+      {measureGroups.map(group => <details key={group.id} className="pipeline-measure" aria-label={`措施因素分组：${group.title}`}><summary><strong>{group.title}</strong><small>{groupSummary(group)}</small></summary>
+        {group.cards.map(card => <FactorTable key={card.id} card={card} documents={data.documents} />)}
+      </details>)}{!data.cards.length && <p className="pipeline-muted">尚无措施经验卡。</p>}
     </div>}
     {ready && page === 'policy' && <div className="pipeline-page" aria-label="导师因素政策">
       <h4>导师复核因素与适用范围</h4><p className="pipeline-muted">因素角色、权重、单位、尺度与分组参数先保存为草稿；专业依据和原文条件可在高级 JSON 中完整编辑。</p>
@@ -267,11 +309,11 @@ export default function KnowledgePipelinePanel({ projectId, revision, onChanged 
     </div>}
     {ready && page === 'skills' && <div className="pipeline-page" aria-label="技能蒸馏">
       <h4>从已审核同举措卡片形成技能草稿</h4><p className="pipeline-muted">先选择已审核经验，整理输入、前置条件、流程与反例。草稿复核通过后才能导出。</p>
-      <fieldset disabled={!!busy}><legend>选择技能来源卡片{selectedMeasure ? ` · 当前举措 ${selectedMeasure}` : ''}</legend><div className="pipeline-skill-sources">{data.cards.map(card => {
-        const eligible = card.status === 'approved' && !!card.knowledge?.measure_key
-        const sameMeasure = !selectedMeasure || card.knowledge?.measure_key === selectedMeasure
-        return <label className="pipeline-checkbox" key={card.id}><input type="checkbox" aria-label={`选择技能来源：${card.title}`} checked={selectedCards.includes(card.id)} disabled={!eligible || !sameMeasure || (selectedCards.length >= 20 && !selectedCards.includes(card.id))} onChange={event => setSelectedCards(current => event.target.checked ? [...current, card.id] : current.filter(id => id !== card.id))} /><span>{card.title}<small>{card.knowledge?.measure_key || '举措待归类'} · {statusLabels[card.status]} · {card.id} v{card.revision}{eligible && !sameMeasure ? ' · 与已选举措不同' : ''}</small></span></label>
-      })}</div>{!data.cards.length && <p className="pipeline-muted">先提取并在项目经验卡中审核措施记录。</p>}</fieldset>
+      <p className="pipeline-measure-count">{measureGroups.length} 个措施组 / {data.cards.length} 条证据记录 · 已选 {selectedCards.length} / {MAX_SKILL_SOURCE_CARDS} 条</p>
+      <p className="pipeline-muted">按举措标识归组；具体名称、对象、阶段与来源在组内分别保留。</p>
+      <fieldset disabled={!!busy}><legend>选择技能来源卡片{selectedMeasure ? ` · 当前举措 ${selectedMeasure}` : ''}</legend><div className="pipeline-skill-sources">{measureGroups.map(group =>
+        <SkillSourceGroup key={group.id} group={group} documents={data.documents} cards={data.cards} selected={selectedCards} onSelection={changeSelection} />
+      )}</div>{!data.cards.length && <p className="pipeline-muted">先提取并在项目经验卡中审核措施记录。</p>}</fieldset>
       <button type="button" className="pipeline-primary" disabled={!!busy || !selectedCards.length} onClick={() => void run('distill', async isCurrent => {
         const skill = await api<DistilledSkill>(`${base}/skills/distill`, { card_ids: selectedCards })
         if (!isCurrent()) return

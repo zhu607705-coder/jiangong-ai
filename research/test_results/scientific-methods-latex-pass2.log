@@ -1,0 +1,131 @@
+xelatex: security risk: running with elevated privileges
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(docs/老旧小区改造案例拆分与六维数据说明.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex\ctexart.cls
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/config\ctexbackend.c
+fg) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-xetex
+.def))
+Document Class: ctexart 2022/07/14 v2.5.10 Chinese adapter for class article (C
+TEX)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex\ctexhook.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex\ctexpatch.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/base\fix-cm.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1enc.def))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/config\ctexopts.cfg)
+ (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.clo))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/engine\ctex-engine-x
+etex.def
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/xelatex/xecjk\xeCJK.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xtemplate\xtem
+plate.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/fontspec\fontspec.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xparse.
+sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/fontspec\fontspec-xetex.s
+ty (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/fontspec\fontspec.cfg)))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/xelatex/xecjk\xeCJK.cfg)))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/zhnumber\zhnumber.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/zhnumber\zhnumber-utf8.cf
+g))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/scheme\ctex-scheme-c
+hinese-article.def
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/config\ctex-name-utf
+8.cfg))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/fontset\ctex-fontset
+-windows.def))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/ctex/config\ctex.cfg)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\xetex.def)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
+))) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape.sty
+
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape-nomet
+adata.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty)))
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/needspace\needspace.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefineke
+ys.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.s
+ty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.sty
+))) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitle
+string.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty))
+) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.sty
+) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.s
+ty))) (C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hxetex.def
+
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfilec
+heck.sty
+(C:\Users\123\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquecou
+nter.sty))) (D:\建工ai\output\documents\renewal-review\main\renewal-review.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+(D:\建工ai\output\documents\renewal-review\main\renewal-review.out)
+(D:\建工ai\output\documents\renewal-review\main\renewal-review.out)
+docs/老旧小区改造案例拆分与六维数据说明.tex:73: ignored error: Infinite glue shrinkage found in 
+miktex-dvipdfmx: security risk: running with elevated privileges
+box being split [1] [2] [3] [4] [5] [6] [7] [8]
+(docs/generated/scientific-methods-section.tex [9] [10] [11] [12]
+Underfull \hbox (badness 10000) in paragraph at lines 134--135
+[]\TU/SimSun(0)/m/n/10.95 月 度 计 算 与 科 学 核 验：| $[][][][][][][][] [] [][][][][][]
+[][][][][][] [] [][][][][][][][][] [] [][][][][][][][][][] [] [][]$、| $[][][][]
+[][][][] []
+) [13] [14] [15] [16] [17]
+docs/老旧小区改造案例拆分与六维数据说明.tex:530: ignored error: Infinite glue shrinkage found in
+ box being split [18]
+docs/老旧小区改造案例拆分与六维数据说明.tex:530: ignored error: Infinite glue shrinkage found in
+ box being split [19]
+docs/老旧小区改造案例拆分与六维数据说明.tex:572: ignored error: Infinite glue shrinkage found in
+ box being split [20] [21] [22] [23]
+miktex-dvipdfmx: major issue: So far, you have not checked for MiKTeX updates.
+(D:\建工ai\output\documents\renewal-review\main\renewal-review.aux) )
+(see the transcript file for additional information)
+Output written on D:\建工ai\output\documents\renewal-review\main\renewal-review.p
+df (23 pages).
+Transcript written on D:\建工ai\output\documents\renewal-review\main\renewal-revi
+ew.log.
+xelatex: major issue: So far, you have not checked for MiKTeX updates.

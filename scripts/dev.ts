@@ -1,9 +1,8 @@
 import { spawn, type ChildProcess } from 'node:child_process'
-import { existsSync } from 'node:fs'
 import { config } from '../apps/host/config'
+import { projectPython } from './python-runtime'
 
-const python = process.platform === 'win32' ? '.venv/Scripts/python.exe' : '.venv/bin/python'
-if (!existsSync(python)) throw new Error('请先创建 .venv 并安装 requirements.txt')
+const python = projectPython()
 const existing = await fetch(`http://127.0.0.1:${config.PORT}/health`, { signal: AbortSignal.timeout(1000) }).then(async response => response.ok ? response.json() as Promise<{ service?: string }> : null).catch(() => null)
 if (existing?.service === 'haizhizi-host') {
   console.log(`工作台已经运行：http://127.0.0.1:${config.WORKSPACE_PORT}。无需再次启动。`)

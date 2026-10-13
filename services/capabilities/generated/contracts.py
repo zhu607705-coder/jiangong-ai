@@ -7,7 +7,114 @@ from datetime import date
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, RootModel
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, RootModel
+
+
+class Target(StrEnum):
+    service_demand_multiplier = 'service_demand_multiplier'
+    service_fee = 'service_fee'
+    service_paid_share = 'service_paid_share'
+    service_variable_cost = 'service_variable_cost'
+    cash_amount = 'cash_amount'
+
+
+class Origin(StrEnum):
+    manual_scenario = 'manual_scenario'
+    literature_range = 'literature_range'
+    observed_range = 'observed_range'
+
+
+class OperationsAnalysisBound(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=80, min_length=1)
+    target: Target
+    item_id: str = Field(..., max_length=100, min_length=1)
+    low: float = Field(..., ge=0.0, le=1000000000000.0)
+    high: float = Field(..., ge=0.0, le=1000000000000.0)
+    unit: str = Field(..., max_length=40, min_length=1)
+    origin: Origin
+    basis: str = Field(..., max_length=1500, min_length=1)
+    source_ref: str = Field(..., max_length=1500, min_length=1)
+    as_of: date
+
+
+class Status(StrEnum):
+    feasible = 'feasible'
+    infeasible = 'infeasible'
+    not_identifiable = 'not_identifiable'
+    already_balanced = 'already_balanced'
+
+
+class OperationsThreshold(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str
+    label: str
+    value: float | None
+    unit: str
+    status: Status
+    basis: str
+
+
+class OperationsSensitivity(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str
+    label: str
+    low: float
+    base: float
+    high: float
+    low_balance: float | None
+    base_balance: float | None
+    high_balance: float | None
+    span: float | None
+    basis: str
+    source_ref: str
+
+
+class MinAtItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str
+    value: float
+
+
+class MaxAtItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str
+    value: float
+
+
+class OperationsJointRange(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    tested_corners: int = Field(..., ge=0, le=64)
+    valid_corners: int = Field(..., ge=0, le=64)
+    min_balance: float | None
+    max_balance: float | None
+    worst_gap: float | None
+    min_at: list[MinAtItem]
+    max_at: list[MaxAtItem]
+    label: str
+
+
+class OperationsScientificResult(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    method_version: str
+    break_even: list[OperationsThreshold]
+    sensitivity: list[OperationsSensitivity]
+    joint_range: OperationsJointRange | None
+    notes: list[str]
 
 
 class CoordinateItem(RootModel[list[float]]):
@@ -197,7 +304,7 @@ class Dimension(StrEnum):
     resources = 'resources'
 
 
-class Status(StrEnum):
+class Status1(StrEnum):
     supported = 'supported'
     conditional = 'conditional'
     unknown = 'unknown'
@@ -211,13 +318,13 @@ class Finding(BaseModel):
     id: str
     dimension: Dimension
     claim: str
-    status: Status
+    status: Status1
     evidence_refs: list[str]
     opposition_refs: list[str]
     unknowns: list[str]
 
 
-class Status1(StrEnum):
+class Status2(StrEnum):
     known = 'known'
     unknown = 'unknown'
     conflict = 'conflict'
@@ -231,11 +338,11 @@ class Metric(BaseModel):
     label: str
     value: float | None
     unit: str | None
-    status: Status1
+    status: Status2
     source_refs: list[str]
 
 
-class Status2(StrEnum):
+class Status3(StrEnum):
     conditional = 'conditional'
     blocked = 'blocked'
     investigate = 'investigate'
@@ -265,7 +372,7 @@ class Review(BaseModel):
     recommendation: str
 
 
-class Status3(StrEnum):
+class Status4(StrEnum):
     suggested = 'suggested'
     requested = 'requested'
 
@@ -283,7 +390,7 @@ class Followup(BaseModel):
     title: str
     why: str
     impacted_paths: list[CandidateId]
-    status: Status3
+    status: Status4
     evidence_refs: list[EvidenceRef] | None = Field(None, max_length=100, min_length=0)
 
 
@@ -307,7 +414,7 @@ class ExecutionMode(StrEnum):
     live = 'live'
 
 
-class Status4(StrEnum):
+class Status5(StrEnum):
     success = 'success'
     partial = 'partial'
     empty = 'empty'
@@ -324,7 +431,7 @@ class CapabilityResult(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    status: Status4
+    status: Status5
     findings: list[Finding]
     metrics: list[Metric]
     warnings: list[str]
@@ -333,7 +440,7 @@ class CapabilityResult(BaseModel):
     version: str
 
 
-class Status6(StrEnum):
+class Status7(StrEnum):
     running = 'running'
     completed = 'completed'
     failed = 'failed'
@@ -348,7 +455,7 @@ class RuntimeEvent(BaseModel):
     id: int = Field(..., ge=1)
     run_id: str
     stage: str
-    status: Status6
+    status: Status7
     message: str
     artifact_ref: str | None
     created_at: str
@@ -496,7 +603,7 @@ class ModelCall(BaseModel):
     error_code: str | None = None
 
 
-class Status7(StrEnum):
+class Status8(StrEnum):
     success = 'success'
     partial = 'partial'
     blocked = 'blocked'
@@ -507,7 +614,7 @@ class ResearchTrace(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    status: Status7
+    status: Status8
     queries: list[str]
     source_ids: list[str]
     warnings: list[str]
@@ -574,7 +681,7 @@ class Key(StrEnum):
     civic = 'civic'
 
 
-class Status8(StrEnum):
+class Status9(StrEnum):
     available = 'available'
     failed = 'failed'
     capped = 'capped'
@@ -596,7 +703,7 @@ class MapScreenEvidence(BaseModel):
     source_id: str = Field(..., max_length=100)
     label: str = Field(..., max_length=100)
     types_query: str = Field(..., max_length=150)
-    status: Status8
+    status: Status9
     reported_count: ReportedCount | None
     sample: list[MapScreenPoi] = Field(..., max_length=25)
     retrieved_at: str = Field(..., max_length=50)
@@ -607,7 +714,7 @@ class Address(RootModel[str]):
     root: str = Field(..., max_length=500)
 
 
-class Status9(StrEnum):
+class Status10(StrEnum):
     complete = 'complete'
     partial = 'partial'
 
@@ -636,7 +743,7 @@ class NextStep(RootModel[str]):
     root: str = Field(..., max_length=48)
 
 
-class Status10(StrEnum):
+class Status11(StrEnum):
     completed = 'completed'
     unavailable = 'unavailable'
     failed = 'failed'
@@ -661,7 +768,7 @@ class Rank(RootModel[int]):
     root: int = Field(..., ge=1, le=24)
 
 
-class Status11(StrEnum):
+class Status12(StrEnum):
     completed = 'completed'
     partial = 'partial'
 
@@ -781,7 +888,7 @@ class DecisionChoice(BaseModel):
     probabilities: dict[str, Probabilities]
 
 
-class Status12(StrEnum):
+class Status13(StrEnum):
     completed = 'completed'
     unavailable = 'unavailable'
     failed = 'failed'
@@ -880,7 +987,7 @@ class PublicRecord(BaseModel):
     source_hash: str | None = Field(None, max_length=100)
 
 
-class Status13(StrEnum):
+class Status14(StrEnum):
     success = 'success'
     empty = 'empty'
     access_required = 'access_required'
@@ -899,7 +1006,7 @@ class AdapterReceipt(BaseModel):
     )
     source_id: str = Field(..., max_length=100)
     adapter: str = Field(..., max_length=40)
-    status: Status13
+    status: Status14
     record_ids: list[RecordId] = Field(..., max_length=50)
 
 
@@ -923,7 +1030,7 @@ class DimensionScore(BaseModel):
     basis: str = Field(..., max_length=180)
 
 
-class Status14(StrEnum):
+class Status15(StrEnum):
     completed = 'completed'
     partial = 'partial'
     unavailable = 'unavailable'
@@ -938,7 +1045,7 @@ class DecisionDashboard(BaseModel):
     dimensions: list[DimensionScore] = Field(..., max_length=6)
     model: str = Field(..., max_length=100)
     request_id: str | None = Field(..., max_length=200)
-    status: Status14
+    status: Status15
 
 
 class DimensionEvidence(BaseModel):
@@ -984,7 +1091,7 @@ class ExperienceField(BaseModel):
     evidence: list[ExperienceEvidence] = Field(..., max_length=5)
 
 
-class Status15(StrEnum):
+class Status16(StrEnum):
     draft = 'draft'
     approved = 'approved'
     rejected = 'rejected'
@@ -1058,7 +1165,7 @@ class Kind4(StrEnum):
     rule = 'rule'
 
 
-class Origin(StrEnum):
+class Origin1(StrEnum):
     project_case = 'project_case'
     official_policy = 'official_policy'
     research_paper = 'research_paper'
@@ -1144,7 +1251,7 @@ class KnowledgeMatch(BaseModel):
     title: str = Field(..., max_length=120)
     source_project_id: str = Field(..., max_length=80)
     kind: Kind4
-    origin: Origin
+    origin: Origin1
     measure_key: str = Field(..., max_length=80)
     measure_name: str = Field(..., max_length=120)
     similarity: float = Field(..., ge=0.0, le=1.0)
@@ -1439,7 +1546,7 @@ class FactorPolicy(BaseModel):
     id: str = Field(..., max_length=150)
     project_id: str = Field(..., max_length=150)
     revision: int = Field(..., ge=1)
-    status: Status15
+    status: Status16
     definitions: list[FactorDefinition] = Field(..., max_length=100)
     min_coverage: float = Field(..., ge=0.0, le=1.0)
     max_distance: float = Field(..., ge=0.0, le=1.0)
@@ -1569,7 +1676,7 @@ class DistilledSkill(BaseModel):
     id: str = Field(..., max_length=150)
     project_id: str = Field(..., max_length=150)
     revision: int = Field(..., ge=1)
-    status: Status15
+    status: Status16
     title: str = Field(..., max_length=300)
     measure_key: str = Field(..., max_length=80)
     card_refs: list[SkillCardRef] = Field(..., max_length=20)
@@ -1618,7 +1725,7 @@ class ActionReviewMeasure(BaseModel):
     )
     measure_name: str = Field(..., max_length=120, min_length=1)
     kind: Kind7
-    origin: Origin
+    origin: Origin1
     action_chunk_ids: list[ActionChunkId] = Field(..., max_length=30, min_length=1)
     context_chunk_ids: list[ContextChunkId1] = Field(..., max_length=30)
     fields: list[ActionFieldSelection] = Field(..., max_length=10)
@@ -1633,6 +1740,217 @@ class ActionReviewBatch(BaseModel):
     )
     measures: list[ActionReviewMeasure] = Field(..., max_length=3)
     warnings: list[Warning] = Field(..., max_length=30)
+
+
+class Status19(StrEnum):
+    factual = 'factual'
+    reference = 'reference'
+    assumption = 'assumption'
+    missing = 'missing'
+
+
+class SourceKind(StrEnum):
+    observation = 'observation'
+    public_record = 'public_record'
+    literature = 'literature'
+    interview = 'interview'
+    demo = 'demo'
+    missing = 'missing'
+
+
+class OperationsValue(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    value: float | None = Field(..., ge=0.0, le=1000000000000.0)
+    unit: str = Field(..., max_length=40, min_length=1)
+    status: Status19
+    source_kind: SourceKind
+    source: str = Field(..., max_length=1500, min_length=1)
+    as_of: date
+
+
+class Kind9(StrEnum):
+    fixed_cost = 'fixed_cost'
+    other_earned_income = 'other_earned_income'
+    government_purchase = 'government_purchase'
+    operating_subsidy = 'operating_subsidy'
+    other_support = 'other_support'
+    government_direct_cost = 'government_direct_cost'
+
+
+class OperationsCashItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    economic_item_id: str = Field(..., max_length=100, min_length=1)
+    description: str = Field(..., max_length=300, min_length=1)
+    kind: Kind9
+    amount: OperationsValue
+
+
+class OperationsMetrics(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    capacity_visits: float | None
+    served_visits: float | None
+    unmet_visits: float | None
+    utilization: float | None
+    unique_users: float | None
+    coverage: float | None
+    fee_income: float | None
+    earned_income: float | None
+    operating_cost: float | None
+    government_purchase: float | None
+    operating_subsidy: float | None
+    other_support: float | None
+    balance_before_support: float | None
+    balance_after_support: float | None
+    unfunded_gap: float | None
+    required_subsidy: float | None
+    government_outlay: float | None
+    government_cost_per_visit: float | None
+    commercial_cost_coverage: float | None
+    government_direct_cost: float | None
+    total_service_cost: float | None
+
+
+class CapacityMethod(StrEnum):
+    monthly_aggregate = 'monthly_aggregate'
+    time_blocks = 'time_blocks'
+
+
+class OperationsServiceMetrics(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    capacity_method: CapacityMethod | None = None
+    monthly_pooled_upper_bound: float | None = None
+    aggregation_overstatement_visits: float | None = None
+    id: str = Field(..., max_length=80, min_length=1)
+    name: str = Field(..., max_length=120, min_length=1)
+    capacity_visits: float | None
+    served_visits: float | None
+    unmet_visits: float | None
+    utilization: float | None
+    fee_income: float | None
+    variable_cost: float | None
+
+
+class OperationsMissing(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    field: str = Field(..., max_length=200, min_length=1)
+    reason: str = Field(..., max_length=500, min_length=1)
+    collect_from: str = Field(..., max_length=500, min_length=1)
+
+
+class ResultKind(StrEnum):
+    scenario_prediction = 'scenario_prediction'
+
+
+class Status20(StrEnum):
+    complete = 'complete'
+    partial = 'partial'
+
+
+class Warning2(RootModel[str]):
+    root: str = Field(..., max_length=1000, min_length=1)
+
+
+class OperationsResult(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    science: OperationsScientificResult | None = None
+    model_version: str = Field(..., max_length=80, min_length=1)
+    result_kind: ResultKind
+    status: Status20
+    metrics: OperationsMetrics
+    services: list[OperationsServiceMetrics]
+    missing: list[OperationsMissing]
+    warnings: list[Warning2]
+
+
+class OperationsObservedMetrics(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    served_visits: float | None = Field(..., ge=0.0, le=1000000000000.0)
+    unique_users: float | None = Field(..., ge=0.0, le=1000000000000.0)
+    fee_income: float | None = Field(..., ge=0.0, le=1000000000000.0)
+    operating_cost: float | None = Field(..., ge=0.0, le=1000000000000.0)
+    government_purchase: float | None = Field(..., ge=0.0, le=1000000000000.0)
+    operating_subsidy: float | None = Field(..., ge=0.0, le=1000000000000.0)
+
+
+class Split(StrEnum):
+    calibration = 'calibration'
+    holdout = 'holdout'
+
+
+class OperationsObservationInput(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    facility_id: str = Field(..., max_length=100, min_length=1)
+    period: str = Field(..., pattern='^20[0-9]{2}-(0[1-9]|1[0-2])$')
+    source_id: str = Field(..., max_length=100, min_length=1)
+    locator: str = Field(..., max_length=500, min_length=1)
+    collected_at: date
+    split: Split
+    note: str = Field(..., max_length=1500, min_length=1)
+    metrics: OperationsObservedMetrics
+
+
+class Metric1(StrEnum):
+    served_visits = 'served_visits'
+    unique_users = 'unique_users'
+    fee_income = 'fee_income'
+    operating_cost = 'operating_cost'
+    government_purchase = 'government_purchase'
+    operating_subsidy = 'operating_subsidy'
+
+
+class OperationsDifference(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    metric: Metric1
+    predicted: float | None
+    observed: float | None
+    error: float | None
+    absolute_error: float | None
+    percentage_error: float | None
+
+
+class Timing(StrEnum):
+    prospective = 'prospective'
+    retrospective = 'retrospective'
+
+
+class OperationsComparison(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    snapshot_id: str = Field(..., max_length=100, min_length=1)
+    observation_id: str = Field(..., max_length=100, min_length=1)
+    split: Split
+    timing: Timing
+    differences: list[OperationsDifference]
+
+
+class OperationsTimeBlock(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=80, min_length=1)
+    name: str = Field(..., max_length=160, min_length=1)
+    slots: OperationsValue
+    capacity_per_slot: OperationsValue
+    demand_visits: OperationsValue
 
 
 class Scope(BaseModel):
@@ -1691,7 +2009,7 @@ class Scenario(BaseModel):
     )
     id: CandidateId
     title: str
-    status: Status2
+    status: Status3
     actions: list[str]
     prerequisites: list[str]
     blockers: list[str]
@@ -1791,7 +2109,7 @@ class DecisionSupport(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    status: Status12
+    status: Status13
     provider: Literal['qwen_systemone']
     model: str = Field(..., max_length=100)
     policy_version: str = Field(..., max_length=60)
@@ -1816,7 +2134,7 @@ class ExperienceKnowledge(BaseModel):
         extra='forbid',
     )
     kind: Kind4
-    origin: Origin
+    origin: Origin1
     measure_key: str = Field(
         ..., max_length=80, min_length=1, pattern='^[A-Za-z0-9_.-]+$'
     )
@@ -1848,6 +2166,78 @@ class KnowledgeTrace(BaseModel):
     skill_refs: list[SkillRef] | None = Field(None, max_length=30)
 
 
+class OperationsService(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    time_blocks: list[OperationsTimeBlock] | None = Field(
+        None, max_length=100, min_length=1
+    )
+    id: str = Field(..., max_length=80, min_length=1)
+    name: str = Field(..., max_length=120, min_length=1)
+    capacity_per_slot: OperationsValue
+    available_slots: OperationsValue
+    demand_visits: OperationsValue
+    paid_share: OperationsValue
+    fee_per_visit: OperationsValue
+    variable_cost_per_visit: OperationsValue
+    resource_id: str = Field(..., max_length=100, min_length=1)
+    schedule_note: str = Field(..., max_length=500, min_length=1)
+
+
+class OperationsInput(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    analysis_bounds: list[OperationsAnalysisBound] | None = Field(None, max_length=6)
+    name: str = Field(..., max_length=120, min_length=1)
+    facility_id: str = Field(..., max_length=100, min_length=1)
+    facility_name: str = Field(..., max_length=120, min_length=1)
+    period: str = Field(..., pattern='^20[0-9]{2}-(0[1-9]|1[0-2])$')
+    scope_note: str = Field(..., max_length=1500, min_length=1)
+    target_population: OperationsValue
+    unique_users: OperationsValue
+    cost_scope_complete: bool
+    services: list[OperationsService] = Field(..., max_length=20, min_length=1)
+    cash_items: list[OperationsCashItem] = Field(..., max_length=100)
+
+
+class OperationsSnapshot(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=100, min_length=1)
+    project_id: str = Field(..., max_length=100, min_length=1)
+    context_version: int = Field(..., ge=0)
+    input_hash: str = Field(..., max_length=64, min_length=1)
+    created_at: AwareDatetime
+    input: OperationsInput
+    result: OperationsResult
+
+
+class OperationsObservation(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., max_length=100, min_length=1)
+    project_id: str = Field(..., max_length=100, min_length=1)
+    snapshot_id: str = Field(..., max_length=100, min_length=1)
+    created_at: AwareDatetime
+    source_hash: str = Field(..., max_length=64, min_length=1)
+    source_title: str = Field(..., max_length=500, min_length=1)
+    input: OperationsObservationInput
+    source_snapshot: Source
+
+
+class OperationsWorkspace(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    scenarios: list[OperationsSnapshot]
+    observations: list[OperationsObservation]
+    comparisons: list[OperationsComparison]
+
+
 class DecisionPacket(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -1861,7 +2251,7 @@ class DecisionPacket(BaseModel):
     mode: Mode
     execution_mode: ExecutionMode
     synthetic: bool
-    status: Status4
+    status: Status5
     summary: str
     as_of: str
     created_at: str
@@ -1902,7 +2292,7 @@ class MapScreenContext(BaseModel):
     expires_at: str = Field(..., max_length=50)
     address: Address | None
     groups: list[MapScreenEvidence] = Field(..., max_length=4)
-    status: Status9
+    status: Status10
     gaps: list[Gap] = Field(..., max_length=12)
     metric_note: str = Field(..., max_length=500)
     city: str | None
@@ -1918,7 +2308,7 @@ class MapScreenAnalysis(BaseModel):
     )
     context_id: str = Field(..., max_length=100)
     profile: MapScreenProfile
-    status: Status10
+    status: Status11
     assessment: MapPreliminaryAssessment | None
     model_calls: list[ModelCall] = Field(..., max_length=6)
     reason: Reason | None
@@ -1961,7 +2351,7 @@ class MapScreenResult(BaseModel):
     profile: MapScreenProfile
     created_at: str = Field(..., max_length=50)
     cells: list[MapScreenCell] = Field(..., max_length=24)
-    status: Status11
+    status: Status12
     method: str = Field(..., max_length=100)
     comparison_count: int = Field(..., ge=0, le=24)
     notes: list[Note] = Field(..., max_length=10)
@@ -1991,7 +2381,7 @@ class ExperienceCard(BaseModel):
     fields: list[ExperienceField] = Field(..., max_length=10)
     id: str
     project_id: str
-    status: Status15
+    status: Status16
     revision: int = Field(..., ge=1)
     review_note: str | None = Field(..., max_length=2000)
     created_at: str

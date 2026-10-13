@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-hejiang-tender",
+  "title": "2025年青浦区白鹤镇鹤江路房屋综合修缮项目施工招标公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959ba20cf4019bda09fd1965bd&SID=2d92a3959ba20cf4019be8a919ee7746",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959ba20cf4019bda09fd1965bd&SID=2d92a3959ba20cf4019be8a919ee7746",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959ba20cf4019bda09fd1965bd&SID=2d92a3959ba20cf4019be8a919ee7746",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:15.444253+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-hejiang-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-hejiang-tender.txt",
+  "raw_sha256": "88dba3f767cce0fe916a2aaa12b52fac2dc59a0e099dea27e2e3d88cb68677bc",
+  "text_sha256": "38d85ea65fe89fe6326df57374244129cb925763267f716d05fe658e46e4f3b8",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "scale_and_scope",
+  "publication_date_note": "页面显示招标文件获取期间，未将其起日推定为发布日期。"
+}

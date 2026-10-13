@@ -1,0 +1,15 @@
+{
+  "source": "research\\test_results\\scientific-methods-results.json",
+  "source_sha256": "afdaceefb0f8d06f5d0533ba364a066611c1699238d4b21d087fd6da1a79bf1e",
+  "generator": "scripts/render-scientific-methods-figure.py",
+  "data_kind": "explicit_demonstration",
+  "panels": [
+    "two time blocks: 70 served vs 100 pooled",
+    "cash balance by demand with capacity 520"
+  ],
+  "outputs": {
+    "pdf": "e12669d2921053ddd80ccf9ed71846dac990e84026c9b4fc60e3378f2eee4dac",
+    "svg": "db09a7ac4d382532bcf38f59ad8adc843eb41af98fe818a4278c4e605bdfd535",
+    "png": "766323cb571e85a17ce9b92279f0047d39220562a6d0f471e7e7c5e910a7bde8"
+  }
+}

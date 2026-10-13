@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "raw_and_text_hash_checks": 22,
+  "source_quote_checks": 24,
+  "case_column_cache_candidate_invariants": "passed",
+  "offline_replay_byte_identical": true,
+  "original_workbook_sha256": "d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a",
+  "official_sources": 11,
+  "records": 8,
+  "by_stage": {
+    "tender_ceiling": 5,
+    "winning_bid": 2,
+    "candidate_bid": 1
+  },
+  "rendered_and_visually_checked": [
+    "zj-sheet-001-tender-document-page-3.png",
+    "zj-sheet-001-tender-document-page-9.png",
+    "zj-sheet-004-tender-document-page-3.png",
+    "zj-sheet-004-tender-document-page-9.png"
+  ],
+  "reproduction_command": "python scripts/intake-historical-projects-workbook.py",
+  "scope": "Intake and verified source evidence; not predictive accuracy evaluation"
+}

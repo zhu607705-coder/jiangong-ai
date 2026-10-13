@@ -1,0 +1,17 @@
+{
+  "id": "gz-qiaozhong-yhe-contract-2025",
+  "title": "桥中街颐和片区微改造（颐和、长安、坦尾社区）项目施工总承包合同公开信息",
+  "url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+  "requested_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+  "final_url": "https://ywtb.gzggzy.cn/jyfw/002001/002001001/20260327/0020010011066086.html",
+  "province": "广东",
+  "raw_path": "data/public_cases/renewal-cost-sources/gz-qiaozhong-yhe-contract-2025.html",
+  "text_path": "data/public_cases/renewal-cost-sources/gz-qiaozhong-yhe-contract-2025.txt",
+  "raw_format": "html",
+  "http_status": 200,
+  "fetched_at": "2026-10-13T07:36:18.601948+00:00",
+  "raw_sha256": "90ea505caa230fa0e432572c5d720639ce2f5e9b9be8e08dc6dada669916558f",
+  "text_sha256": "a16a749bdf3c5fbd7448a23da18b4ed59aa7112eb158710393e01a20b5d9992a",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "published_at": "2026-03-27"
+}

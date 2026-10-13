@@ -1,0 +1,19 @@
+{
+  "id": "zj-linping-block2-estimate",
+  "title": "临平街道2024年老旧住宅综合改造提升项目二区块招标公告",
+  "requested_url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001001/20240906/d9d5891e-c4bb-42fe-8d7a-10e61e15e0a0.html",
+  "final_url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001001/20240906/d9d5891e-c4bb-42fe-8d7a-10e61e15e0a0.html",
+  "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001001/20240906/d9d5891e-c4bb-42fe-8d7a-10e61e15e0a0.html",
+  "province": "浙江",
+  "published_at": "2024-09-06",
+  "fetched_at": "2026-10-13T04:29:53.774494+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html; charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/zj-linping-block2-estimate.html",
+  "text_path": "data/public_cases/renewal-cost-sources/zj-linping-block2-estimate.txt",
+  "raw_sha256": "d4cdc90b7ff29fb8600679c1abe8a752c994d1377364925b25d7df111bfd5a7e",
+  "text_sha256": "7dfa53a15427a9fe357106808e4b742960676f495f7c11e10e655750472ab923",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized"
+}

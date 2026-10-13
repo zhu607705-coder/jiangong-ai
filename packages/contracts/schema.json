@@ -4,6 +4,69 @@
   "title": "ProjectInput",
   "$ref": "#/definitions/ProjectInput",
   "definitions": {
+    "OperationsTimeBlock": {
+      "type":"object","additionalProperties":false,
+      "required":["id","name","slots","capacity_per_slot","demand_visits"],
+      "properties":{
+        "id":{"type":"string","minLength":1,"maxLength":80},
+        "name":{"type":"string","minLength":1,"maxLength":160},
+        "slots":{"$ref":"#/definitions/OperationsValue"},
+        "capacity_per_slot":{"$ref":"#/definitions/OperationsValue"},
+        "demand_visits":{"$ref":"#/definitions/OperationsValue"}
+      }
+    },
+    "OperationsAnalysisBound": {
+      "type":"object","additionalProperties":false,
+      "required":["id","target","item_id","low","high","unit","origin","basis","source_ref","as_of"],
+      "properties":{
+        "id":{"type":"string","minLength":1,"maxLength":80},
+        "target":{"type":"string","enum":["service_demand_multiplier","service_fee","service_paid_share","service_variable_cost","cash_amount"]},
+        "item_id":{"type":"string","minLength":1,"maxLength":100},
+        "low":{"type":"number","minimum":0,"maximum":1000000000000},
+        "high":{"type":"number","minimum":0,"maximum":1000000000000},
+        "unit":{"type":"string","minLength":1,"maxLength":40},
+        "origin":{"type":"string","enum":["manual_scenario","literature_range","observed_range"]},
+        "basis":{"type":"string","minLength":1,"maxLength":1500},
+        "source_ref":{"type":"string","minLength":1,"maxLength":1500},
+        "as_of":{"type":"string","format":"date"}
+      }
+    },
+    "OperationsThreshold": {
+      "type":"object","additionalProperties":false,
+      "required":["key","label","value","unit","status","basis"],
+      "properties":{
+        "key":{"type":"string"},"label":{"type":"string"},"value":{"type":["number","null"]},"unit":{"type":"string"},
+        "status":{"type":"string","enum":["feasible","infeasible","not_identifiable","already_balanced"]},"basis":{"type":"string"}
+      }
+    },
+    "OperationsSensitivity": {
+      "type":"object","additionalProperties":false,
+      "required":["id","label","low","base","high","low_balance","base_balance","high_balance","span","basis","source_ref"],
+      "properties":{
+        "id":{"type":"string"},"label":{"type":"string"},"low":{"type":"number"},"base":{"type":"number"},"high":{"type":"number"},
+        "low_balance":{"type":["number","null"]},"base_balance":{"type":["number","null"]},"high_balance":{"type":["number","null"]},"span":{"type":["number","null"]},
+        "basis":{"type":"string"},"source_ref":{"type":"string"}
+      }
+    },
+    "OperationsJointRange": {
+      "type":"object","additionalProperties":false,
+      "required":["tested_corners","valid_corners","min_balance","max_balance","worst_gap","min_at","max_at","label"],
+      "properties":{
+        "tested_corners":{"type":"integer","minimum":0,"maximum":64},"valid_corners":{"type":"integer","minimum":0,"maximum":64},
+        "min_balance":{"type":["number","null"]},"max_balance":{"type":["number","null"]},"worst_gap":{"type":["number","null"]},
+        "min_at":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["id","value"],"properties":{"id":{"type":"string"},"value":{"type":"number"}}}},
+        "max_at":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["id","value"],"properties":{"id":{"type":"string"},"value":{"type":"number"}}}},
+        "label":{"type":"string"}
+      }
+    },
+    "OperationsScientificResult": {
+      "type":"object","additionalProperties":false,"required":["method_version","break_even","sensitivity","joint_range","notes"],
+      "properties":{
+        "method_version":{"type":"string"},"break_even":{"type":"array","items":{"$ref":"#/definitions/OperationsThreshold"}},
+        "sensitivity":{"type":"array","items":{"$ref":"#/definitions/OperationsSensitivity"}},
+        "joint_range":{"anyOf":[{"$ref":"#/definitions/OperationsJointRange"},{"type":"null"}]},"notes":{"type":"array","items":{"type":"string"}}
+      }
+    },
     "Geometry": {
       "type": "object",
       "properties": {
@@ -5047,6 +5110,863 @@
         "measures",
         "warnings"
       ]
+    },
+    "OperationsValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "factual",
+            "reference",
+            "assumption",
+            "missing"
+          ]
+        },
+        "source_kind": {
+          "type": "string",
+          "enum": [
+            "observation",
+            "public_record",
+            "literature",
+            "interview",
+            "demo",
+            "missing"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "status",
+        "source_kind",
+        "source",
+        "as_of"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsService": {
+      "type": "object",
+      "properties": {
+        "time_blocks": {"type":"array","minItems":1,"maxItems":100,"items":{"$ref":"#/definitions/OperationsTimeBlock"}},
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "capacity_per_slot": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "available_slots": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "demand_visits": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "paid_share": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "fee_per_visit": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "variable_cost_per_visit": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "resource_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "schedule_note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "capacity_per_slot",
+        "available_slots",
+        "demand_visits",
+        "paid_share",
+        "fee_per_visit",
+        "variable_cost_per_visit",
+        "resource_id",
+        "schedule_note"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsCashItem": {
+      "type": "object",
+      "properties": {
+        "economic_item_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "fixed_cost",
+            "other_earned_income",
+            "government_purchase",
+            "operating_subsidy",
+            "other_support",
+            "government_direct_cost"
+          ]
+        },
+        "amount": {
+          "$ref": "#/definitions/OperationsValue"
+        }
+      },
+      "required": [
+        "economic_item_id",
+        "description",
+        "kind",
+        "amount"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsInput": {
+      "type": "object",
+      "properties": {
+        "analysis_bounds": {"type":"array","maxItems":6,"items":{"$ref":"#/definitions/OperationsAnalysisBound"}},
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "facility_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "facility_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "period": {
+          "type": "string",
+          "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$"
+        },
+        "scope_note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "target_population": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "unique_users": {
+          "$ref": "#/definitions/OperationsValue"
+        },
+        "cost_scope_complete": {
+          "type": "boolean"
+        },
+        "services": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/definitions/OperationsService"
+          }
+        },
+        "cash_items": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/definitions/OperationsCashItem"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "facility_id",
+        "facility_name",
+        "period",
+        "scope_note",
+        "target_population",
+        "unique_users",
+        "cost_scope_complete",
+        "services",
+        "cash_items"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsMetrics": {
+      "type": "object",
+      "properties": {
+        "capacity_visits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "served_visits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unmet_visits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "utilization": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unique_users": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "coverage": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fee_income": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "earned_income": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "operating_cost": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "government_purchase": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "operating_subsidy": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "other_support": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "balance_before_support": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "balance_after_support": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unfunded_gap": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "required_subsidy": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "government_outlay": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "government_cost_per_visit": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "commercial_cost_coverage": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "government_direct_cost": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "total_service_cost": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "capacity_visits",
+        "served_visits",
+        "unmet_visits",
+        "utilization",
+        "unique_users",
+        "coverage",
+        "fee_income",
+        "earned_income",
+        "operating_cost",
+        "government_purchase",
+        "operating_subsidy",
+        "other_support",
+        "balance_before_support",
+        "balance_after_support",
+        "unfunded_gap",
+        "required_subsidy",
+        "government_outlay",
+        "government_cost_per_visit",
+        "commercial_cost_coverage",
+        "government_direct_cost",
+        "total_service_cost"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsServiceMetrics": {
+      "type": "object",
+      "properties": {
+        "capacity_method":{"type":"string","enum":["monthly_aggregate","time_blocks"]},
+        "monthly_pooled_upper_bound":{"type":["number","null"]},
+        "aggregation_overstatement_visits":{"type":["number","null"]},
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "capacity_visits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "served_visits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unmet_visits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "utilization": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fee_income": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "variable_cost": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "capacity_visits",
+        "served_visits",
+        "unmet_visits",
+        "utilization",
+        "fee_income",
+        "variable_cost"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsMissing": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "collect_from": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "field",
+        "reason",
+        "collect_from"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsResult": {
+      "type": "object",
+      "properties": {
+        "science":{"$ref":"#/definitions/OperationsScientificResult"},
+        "model_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "result_kind": {
+          "type": "string",
+          "enum": [
+            "scenario_prediction"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial"
+          ]
+        },
+        "metrics": {
+          "$ref": "#/definitions/OperationsMetrics"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationsServiceMetrics"
+          }
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationsMissing"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      },
+      "required": [
+        "model_version",
+        "result_kind",
+        "status",
+        "metrics",
+        "services",
+        "missing",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsSnapshot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "context_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_hash": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "input": {
+          "$ref": "#/definitions/OperationsInput"
+        },
+        "result": {
+          "$ref": "#/definitions/OperationsResult"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "context_version",
+        "input_hash",
+        "created_at",
+        "input",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsObservedMetrics": {
+      "type": "object",
+      "properties": {
+        "served_visits": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "unique_users": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "fee_income": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "operating_cost": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "government_purchase": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "operating_subsidy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        }
+      },
+      "required": [
+        "served_visits",
+        "unique_users",
+        "fee_income",
+        "operating_cost",
+        "government_purchase",
+        "operating_subsidy"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsObservationInput": {
+      "type": "object",
+      "properties": {
+        "facility_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "period": {
+          "type": "string",
+          "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$"
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "collected_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "split": {
+          "type": "string",
+          "enum": [
+            "calibration",
+            "holdout"
+          ]
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "metrics": {
+          "$ref": "#/definitions/OperationsObservedMetrics"
+        }
+      },
+      "required": [
+        "facility_id",
+        "period",
+        "source_id",
+        "locator",
+        "collected_at",
+        "split",
+        "note",
+        "metrics"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsObservation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_hash": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "source_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "input": {
+          "$ref": "#/definitions/OperationsObservationInput"
+        },
+        "source_snapshot": {
+          "$ref": "#/definitions/Source"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "created_at",
+        "source_hash",
+        "source_title",
+        "input",
+        "source_snapshot"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsDifference": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string",
+          "enum": [
+            "served_visits",
+            "unique_users",
+            "fee_income",
+            "operating_cost",
+            "government_purchase",
+            "operating_subsidy"
+          ]
+        },
+        "predicted": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "observed": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "error": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "absolute_error": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "percentage_error": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "metric",
+        "predicted",
+        "observed",
+        "error",
+        "absolute_error",
+        "percentage_error"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsComparison": {
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "observation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "split": {
+          "type": "string",
+          "enum": [
+            "calibration",
+            "holdout"
+          ]
+        },
+        "timing": {
+          "type": "string",
+          "enum": [
+            "prospective",
+            "retrospective"
+          ]
+        },
+        "differences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationsDifference"
+          }
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "observation_id",
+        "split",
+        "timing",
+        "differences"
+      ],
+      "additionalProperties": false
+    },
+    "OperationsWorkspace": {
+      "type": "object",
+      "properties": {
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationsSnapshot"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationsObservation"
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationsComparison"
+          }
+        }
+      },
+      "required": [
+        "scenarios",
+        "observations",
+        "comparisons"
+      ],
+      "additionalProperties": false
     }
   }
 }

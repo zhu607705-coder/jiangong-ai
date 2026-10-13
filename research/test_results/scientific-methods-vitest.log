@@ -1,0 +1,13 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run tests/contracts/operations-science-input.test.ts tests/contracts/measure-presentation.test.ts tests/contracts/community-operations.test.ts tests/contracts/construction-costs.test.ts tests/contracts/construction-cost-benchmark.test.ts
+
+
+ RUN  v4.1.11 D:/建工ai
+
+
+ Test Files  5 passed (5)
+      Tests  79 passed (79)
+   Start at  16:00:36
+   Duration  40.92s (transform 336ms, setup 0ms, import 1.17s, tests 39.27s, environment 0ms)
+

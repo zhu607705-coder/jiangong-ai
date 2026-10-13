@@ -26,6 +26,8 @@ import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
+import CommunityOperationsPanel from './components/CommunityOperationsPanel';
+import ConstructionCostLibrary from './components/ConstructionCostLibrary';
 import ExperienceLibrary from './components/ExperienceLibrary';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
 import { buildDecisionBrief } from '../../../packages/decision/brief-view';
@@ -691,6 +693,8 @@ export default function App() {
                 draft={neighborhoodDrafts[project.id] || createNeighborhoodDraft()}
                 onDraftChange={update => setNeighborhoodDrafts(current => ({ ...current, [project.id]: update(current[project.id] || createNeighborhoodDraft()) }))}
                 onEvidence={openEvidence} />}
+              {project.input.business_profile === 'neighborhood' && <CommunityOperationsPanel key={`operations-${project.id}`} project={project} />}
+              {project.input.business_profile === 'neighborhood' && <ConstructionCostLibrary key={`construction-costs-${project.id}`} projectId={project.id} />}
               <section className="summary-panel">
                 <details className="project-metrics-details"><summary>研究分流依据</summary><DecisionRoute value={packet?.decision_support} profile={project.input.business_profile === 'neighborhood' ? 'neighborhood' : 'balanced'} details /></details>
                 <div className="summary-heading">

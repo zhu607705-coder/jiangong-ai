@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-zhuguang-tender",
+  "title": "青浦区朱家角镇珠光新村小区综合修缮项目施工招标公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959a514169019a52a427fa125d&SID=2d92a3959a514169019a52a438641272",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959a514169019a52a427fa125d&SID=2d92a3959a514169019a52a438641272",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959a514169019a52a427fa125d&SID=2d92a3959a514169019a52a438641272",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:15.714084+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-zhuguang-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-zhuguang-tender.txt",
+  "raw_sha256": "9894ffbd2b96fdfbeb39bbddf39bcc4a9e1188600fe794752e0b361bc42f817a",
+  "text_sha256": "8647f862daef5c8c80c3f7801df9466509613d120b693e9bbd5c03edfd0ecf6b",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "scale_and_scope",
+  "publication_date_note": "页面显示招标文件获取期间，未将其起日推定为发布日期。"
+}

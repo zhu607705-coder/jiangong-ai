@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { ExperienceCard, ExperienceDraft, ProjectInput, Source } from '../../apps/host/generated/contracts'
 import type { Database } from '../../apps/host/store'
-import { searchExpression, searchTokens } from '../intelligence/domain'
+import { canonical, searchExpression, searchTokens } from '../intelligence/domain'
 import { documentSlices, ExperienceError, normalizeDraft, validateEvidence, type ParsedDocument } from './domain'
 import { experienceEvidenceGroups } from './pipeline-normalize'
 
@@ -21,6 +21,7 @@ CREATE INDEX IF NOT EXISTS experience_knowledge_kind ON experience_cards ((paylo
 CREATE INDEX IF NOT EXISTS experience_knowledge_measure ON experience_history ((payload->'knowledge'->>'measure_key'));
 `
 const searchable = (draft: ExperienceDraft) => searchTokens([draft.title, draft.project_type, draft.development_mode, draft.stage, ...draft.fields.map(field => field.value || ''), draft.knowledge?.measure_key || '', draft.knowledge?.measure_name || '', ...(draft.knowledge?.transfer_notes || [])].join(' ')).join(' ')
+const draftContent = ({ title, project_type, development_mode, stage, fields, knowledge }: ExperienceDraft) => canonical({ title, project_type, development_mode, stage, fields, ...(knowledge ? { knowledge } : {}) })
 export type SearchFilter = { q?: string; project_type?: string; development_mode?: string; stage?: string; as_of?: string; exclude_project?: string; synthetic?: boolean; limit?: number; kind?: 'case' | 'rule' }
 export type KnowledgeFilter = { as_of: string; synthetic: boolean; mode: ProjectInput['mode']; measure_key?: string; limit?: number; exclude_project?: string }
 export type KnowledgeMaterial = { documents: ParsedDocument[]; sources: Source[] }
@@ -72,12 +73,25 @@ export class ExperienceRepository {
   }
   async create(projectId: string, drafts: ExperienceDraft[], reviewer: string): Promise<ExperienceCard[]> {
     return this.db.transaction(async db => {
+      // Serialize creation per project, including concurrent model/local extractions in PostgreSQL.
+      await db.query('SELECT id FROM projects WHERE id=$1 FOR UPDATE', [projectId])
+      const existing = await db.query<{ payload: ExperienceCard }>('SELECT payload FROM experience_cards WHERE project_id=$1 ORDER BY updated_at DESC,id', [projectId])
+      const byContent = new Map<string, ExperienceCard>()
+      for (const { payload } of existing.rows) {
+        const content = draftContent(payload)
+        if (!byContent.has(content)) byContent.set(content, payload)
+      }
       const cards: ExperienceCard[] = []
       for (const draft of drafts) {
+        // Compare the full current draft, including source version, object, stage and monetary basis.
+        // Review state and history belong to the existing card and must never be reset by re-extraction.
+        const content = draftContent(draft), previous = byContent.get(content)
+        if (previous) { if (!cards.some(card => card.id === previous.id)) cards.push(previous); continue }
         const clock = new Date().toISOString()
         const card: ExperienceCard = { ...draft, id: `EXP-${randomUUID()}`, project_id: projectId, status: 'draft', revision: 1, review_note: null, created_at: clock, updated_at: clock }
         await db.query('INSERT INTO experience_cards(id,project_id,revision,payload) VALUES($1,$2,$3,$4)', [card.id, projectId, 1, JSON.stringify(card)])
         await this.history(db, card, 'create', reviewer)
+        byContent.set(content, card)
         cards.push(card)
       }
       return cards

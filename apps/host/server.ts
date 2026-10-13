@@ -19,6 +19,8 @@ import { AmapSettings, registerAmap } from './amap'
 import { registerMapScreening } from './map-screening'
 import { registerIntelligence } from './intelligence'
 import { registerExperience } from './experience'
+import { registerCommunityOperations } from './community-operations'
+import { registerConstructionCosts } from './construction-costs'
 import { ExperienceError } from '../../packages/experience/domain'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
@@ -58,6 +60,8 @@ app.use(['/api', '/_AMapService'], (req, _res, next) => {
 })
 const intelligence = registerIntelligence(app,store)
 const experience = await registerExperience(app,store,requireProject)
+await registerCommunityOperations(app,store,requireProject)
+await registerConstructionCosts(app,store,requireProject)
 registerAmap(app, amapSettings)
 registerMapScreening(app, amapSettings, store)
 app.get('/api/ready', async (_req, res) => {

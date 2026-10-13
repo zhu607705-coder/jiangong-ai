@@ -3,6 +3,7 @@
 !.env.example
 .tools/
 .venv/
+.venv-win/
 .cache/
 node_modules/
 dist/

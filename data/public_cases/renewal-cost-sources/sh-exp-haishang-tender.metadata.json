@@ -1,0 +1,21 @@
+{
+  "id": "sh-exp-haishang-tender",
+  "title": "七宝镇海上新村“美丽家园”综合修缮项目施工招标公告",
+  "requested_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f82e04a22605d&SID=2d92a3959f58d85e019f82e050d9607e",
+  "final_url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f82e04a22605d&SID=2d92a3959f58d85e019f82e050d9607e",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-notice!apply.do?projectId=2d92a3959f58d85e019f82e04a22605d&SID=2d92a3959f58d85e019f82e050d9607e",
+  "province": "上海",
+  "published_at": null,
+  "fetched_at": "2026-10-13T07:37:15.126745+00:00",
+  "http_status": 200,
+  "raw_format": "html",
+  "content_type": "text/html;charset=utf-8",
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-haishang-tender.html",
+  "text_path": "data/public_cases/renewal-cost-sources/sh-exp-haishang-tender.txt",
+  "raw_sha256": "a2c2d5616c9bbfa7c57080504eba368ad5450a93392774afe5532b1db5d9d52c",
+  "text_sha256": "daa71fce0f9ad5ff12b72e06762bccfee48c82bacf6b02cbee08b6457b0da051",
+  "source_status": "fetched_official_public_source",
+  "extraction": "BeautifulSoup script/style removed; whitespace normalized",
+  "source_role": "scale_and_scope",
+  "publication_date_note": "页面显示招标文件获取期间，未将其起日推定为发布日期。"
+}

@@ -1,5 +1,61 @@
 {
-  "status": "knowledge_pipeline_implemented_verified_business_review_pending",
+  "community_operations_merge": {
+    "as_of": "2026-10-13",
+    "status": "local_verified_remote_ci_pending",
+    "branch": "codex/community-operations-scientific-integration",
+    "evidence": "research/test_results/merge-community-operations-verification.json",
+    "checks": {
+      "command": "npm run verify",
+      "exit_code": 0,
+      "javascript": 985,
+      "python": 211,
+      "http": 16,
+      "build": "passed",
+      "log": "research/test_results/merge-community-operations-verify.log",
+      "staged_diff_check": "passed",
+      "git_source_blobs_sha256": 54,
+      "original_user_workbook_sha256": "d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a"
+    },
+    "next_runnable_task": "Read CI on this PR, merge the verified head to origin/main, then verify remote/main SHA and record delivery."
+  },
+  "status": "scientific_methods_case_expansion_and_grouping_verified",
+  "scientific_methods_upgrade": {
+    "as_of": "2026-10-13",
+    "status": "implemented_and_verified",
+    "evidence": "research/test_results/scientific-methods-verification.json",
+    "report": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+    "report_pages": 22,
+    "methods": ["source and codebook audit", "time-block service capacity", "cash switching values", "source-labelled one-way and joint endpoint sensitivity", "scope-stage-area-year comparable cost groups", "community-cluster resampling", "exact experience reuse and grouped presentation"],
+    "changed_files": ["services/capabilities/community_operations.py", "services/capabilities/operations_science.py", "packages/contracts/schema.json", "packages/operations/service.ts", "packages/operations/report.ts", "packages/construction-costs/library.ts", "packages/construction-costs/benchmark.ts", "packages/experience/repository.ts", "packages/experience/presentation.ts", "apps/workspace/src/components/CommunityOperationsPanel.tsx", "apps/workspace/src/components/ConstructionCostLibrary.tsx", "apps/workspace/src/components/KnowledgePipelinePanel.tsx", "apps/workspace/src/components/ExperienceLibrary.tsx", "docs/老旧小区改造案例拆分与六维数据说明.tex"],
+    "data": {"price_records":20,"archived_originals":27,"referenced_originals":24,"guangzhou_new_projects":3,"shanghai_new_projects":4,"user_workbook_original_unchanged":true},
+    "validation": {"javascript":985,"python":206,"http":16,"build":"passed","pdf":"rendered_and_checked","browser":"desktop_mobile_and_real_project_readback_passed"},
+    "unresolved": ["原论文2236/38至2202/36的筛选规则待作者代码核对。", "真实运营台账和独立预测效果样本尚待取得。", "当前造价参照不含跨年价格指数或具体施工深度校准。"],
+    "next_runnable_task": "使用本轮原件清单继续补工程量及结算数据；取得真实运营月份后按冻结预测和独立项目/时间切分检验，不把模拟或问卷满意度当作实测到访率。"
+  },
+  "community_operations_and_cost_library": {
+    "as_of": "2026-10-13",
+    "status": "implemented_and_verified",
+    "nodes": {"T40":"completed_local_and_live_ui_verified","T41":"completed_first_batch_originals_and_live_ui_verified"},
+    "changed_files": [
+      "packages/operations/service.ts", "packages/operations/sources.ts", "packages/operations/report.ts",
+      "services/capabilities/community_operations.py", "apps/host/community-operations.ts",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx", "apps/workspace/src/components/community-operations.css",
+      "packages/construction-costs/library.ts", "apps/host/construction-costs.ts",
+      "apps/workspace/src/components/ConstructionCostLibrary.tsx", "apps/workspace/src/components/construction-cost-library.css",
+      "packages/contracts/schema.json", "scripts/python-runtime.ts", "docs/老旧小区改造_产品与验证方案.md"
+    ],
+    "verification": "research/test_results/community-operations-verification.json",
+    "live_evidence": "research/test_results/community-operations-live.json",
+    "design_review": "research/test_results/community-operations-design-pro-20261013.json",
+    "cost_manifest": "data/public_cases/renewal-cost-library-20261013.json",
+    "cost_records": 5,
+    "official_originals": 5,
+    "actual_operating_months": 0,
+    "automatic_training": false,
+    "preview_url": "http://127.0.0.1:5173/",
+    "unresolved_questions": ["实际运营台账尚待取得；当前没有真实预测效果指标。", "首批造价含合同及估算，尚无竣工结算样本。", "之前求是村完整真实模型运行失败保留原记录，本轮没有重跑或覆盖。"],
+    "next_runnable_task": "取得有使用权限的真实月度服务与收支原件；月前冻结预测后录入完整月份实绩。用既有原件清单流程继续补施工合同和结算样本。"
+  },
   "completed_local_items": [
     "original_RETQA_port_and_fixtures_preserved",
     "canonical_TS_Pydantic_contracts",
@@ -36,9 +92,9 @@
     "scanned_image_OCR_engine_optional_source_capability",
     "real_user_import_visual_readback_waits_for_authorized_uploaded_material"
   ],
-  "next_task": "Obtain approved professional numeric indicators before activating additional business cutoffs; current implementation pass complete.",
+  "next_task": "Collect authorized real monthly operating ledgers and additional bill-of-quantities/settlement originals; validate frozen forecasts by independent community/time groups. Obtain the paper's exact sample-selection rules before reproducing its 2202-response analysis.",
   "rule": "Do not infer app completion from local fixture tests.",
-  "updated_at": "2026-10-11",
+  "updated_at": "2026-10-13",
   "workspace": "/mnt/d/建工ai",
   "decisions": [
     "Implement building/implementation/demand/enterprise decision workflow; price is not the main axis.",
@@ -75,7 +131,7 @@
     "decision_model": "decision-model-preview via DSH ToolRuntime; official preview endpoint verified"
   },
   "latest_evidence": "research/test_results/knowledge-pipeline.json",
-  "current_delivery": "Unified six-dimensional business registry/condition evaluator and independent professional-rule gate. Shared-scope admission fixed; new comparisons cover six dimensions and candidates with historical semantics retained.185 JS/70 Python checks, build, real project/UI/mobile passed; no new model calls or professional numeric thresholds.",
+  "current_delivery": "Scientific methods applied in the workbench and authoritative 22-page report: time-block capacity, switching values, explicit-range sensitivity, clustered survey audit, 20 official price records and three comparable groups. Duplicate measures grouped across three UI entry points; exact extraction reuses existing cards. 985 JS/206 Python/16 HTTP checks, build, rendered PDF and live desktop/mobile verified. Real operating prediction accuracy remains unmeasured.",
   "node_status": {
     "T00": "completed",
     "T01": "completed_with_documented_baseline_limit",
@@ -115,7 +171,12 @@
     "T36": "completed_neighborhood_focus_verified",
     "T37": "completed_public_research_and_local_intake_live_comparison_failed",
     "T38": "completed_design_superseded_by_T39",
-    "T39": "completed_engineering_and_public_source_verified"
+    "T39": "completed_engineering_and_public_source_verified",
+    "T40": "completed_local_and_live_ui_verified",
+    "T41": "completed_first_batch_originals_and_live_ui_verified",
+    "T42": "completed_methods_calculations_report_verified",
+    "T43": "completed_user_workbook_and_regional_cases_verified",
+    "T44": "completed_measure_grouping_and_exact_reuse_verified"
   },
   "preview_url": "http://127.0.0.1:5173/",
   "source_archive": {
@@ -905,5 +966,377 @@
       "draft_cards": 15,
       "new_model_calls": 0
     }
+  },
+  "workbench_video": {
+    "status": "recorded_and_verified",
+    "artifact": "output/playwright/qiushi-demo/求是村_工作台演示_约2分钟.mp4",
+    "duration_seconds": 123,
+    "chapters": 14,
+    "resolution": "1920x1080",
+    "evidence": "research/test_results/qiushi-demo-video.json",
+    "new_model_calls": 0,
+    "drafts_approved": 0,
+    "next_runnable_task": "Current recording request complete."
+  },
+  "chemical_scope_corpus_20261012": {
+    "status": "all_148_main_PDFs_screened_JACS_selected_scope_annotation_verified_JOC_remaining_annotation_in_queue",
+    "request": "Consolidate main articles into D:/人工下载/JOC and D:/人工下载/JAC; extract scope and annotate using previous benchmark formats",
+    "canonical_main_PDF_counts": {
+      "JOC": 98,
+      "JACS": 50
+    },
+    "artifacts": [
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\consolidation-receipt.json",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\validation-log.json",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\JOC_JACS正文与标注索引.md",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\remaining-annotation-queue.json",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\source-coverage.json",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\validation-current.json",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\delivery-receipt.json",
+      "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\delivery-independent\\verification-report.json",
+      "D:\\人工下载\\JAC\\标注索引.md"
+    ],
+    "changed_files": [
+      "3 journal source indices",
+      "8 current source assignments",
+      "181 current provenance JSON files plus forward-slash aliases",
+      "150 image caption metadata sidecars",
+      "58 dual-format source metadata pairs",
+      "20 current review caption-only version receipts",
+      "caption index and live scope index",
+      "27 new JACS dual-format pairs and corrected 3 legacy JACS pairs",
+      "7 new source-cropped JACS scope PNGs and Luna caption sidecars",
+      "JAC scope delivery: 128 source-identical artifacts and 14 title texts",
+      "JACS live indexes and annotation/source queues"
+    ],
+    "validation": {
+      "all_PDF_pages_readable": true,
+      "all_148_target_sha256_and_size_match": true,
+      "existing_chemical_and_geometry_fields_unchanged": true,
+      "new_37_PNGs_hash_and_dimensions_readback": true,
+      "new_3_dual_JSONs_current_SHA_and_mtime_review_binding": true,
+      "numbered_folders_98_PDFs_151_PNGs_151_metadata_98_titles": true,
+      "JACS_current_32_pair_versions_verified": true,
+      "JACS_delivery_142_files_independently_verified": true,
+      "JACS_all_50_source_PDF_hashes_and_pages_verified": true
+    },
+    "unresolved": [
+      "JOC: 98 selected images still lack paired annotations and 44 existing pairs await current independent review",
+      "Known-source gaps are masked; current JACS deliverables are model references, not human gold"
+    ],
+    "next_runnable_task": "Current JACS request complete; remaining JOC annotation/review is recorded in remaining-annotation-queue.json.",
+    "updated_at_China": "2026-10-12T23:31:33+08:00",
+    "current_counts": {
+      "JOC": {
+        "main_PDFs": 98,
+        "scope_images_extracted": 151,
+        "dual_format_annotations_written": 53,
+        "case_records_written": 712,
+        "current_source_review_accepted": 9,
+        "complete_chemical_review_pass": 8,
+        "known_fields_review_accepted": 1
+      },
+      "JACS": {
+        "main_PDFs": 50,
+        "scope_images_extracted": 32,
+        "dual_format_annotations_written": 32,
+        "case_records_written": 538,
+        "current_source_review_accepted": 32,
+        "complete_chemical_review_pass": 0,
+        "known_fields_review_accepted": 32
+      }
+    },
+    "this_run": {
+      "new_scope_figures_extracted": 37,
+      "new_dual_format_annotations": 3,
+      "new_current_known_fields_review_accepted": 3,
+      "new_full_chemistry_review_passed": 0
+    },
+    "caption_enrichment": {
+      "status": "complete_verified",
+      "model_requested": "gpt-6-luna",
+      "subagents": 4,
+      "image_titles": 176,
+      "image_sidecars": 176,
+      "dual_format_pairs_enriched": 58,
+      "validation": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\captions\\validation-log.json",
+      "caption_index": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\captions\\caption-index.json",
+      "source": "original published figure titles and captions, matched by DOI plus original figure label and PDF page",
+      "existing_chemistry_and_geometry_unchanged": true,
+      "validation_numbered_extra": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\numbered-joc\\extra-scope-caption-integration.json"
+    },
+    "numbered_JOC_layout": {
+      "status": "complete_verified",
+      "root": "D:\\人工下载\\JOC",
+      "numeric_directories": 98,
+      "main_PDFs": 98,
+      "scope_PNGs": 151,
+      "title_text_files": 98,
+      "caption_sidecars": 151,
+      "papers_with_scope": 76,
+      "papers_without_selected_scope": 22,
+      "original_indices_retained": true,
+      "extra_source_PDFs_screened": 22,
+      "extra_scope_images": 26,
+      "scope_extraction_model_requested": "gpt-6-sol",
+      "caption_model_requested": "gpt-6-luna",
+      "manifest": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\numbered-joc\\numbered-layout.json",
+      "recovery_manifest": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\numbered-joc\\move-manifest.json",
+      "current_reference_migration": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\numbered-joc\\source-reference-migration.json",
+      "independent_verification": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\numbered-joc\\independent-verification.json",
+      "verification_errors": 0,
+      "paper_scope_status": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\organization\\numbered-joc\\missing-scope-status.json"
+    },
+    "JACS_annotation": {
+      "status": "completed_all_50_source_pdfs_and_32_selected_scope_pairs_known_fields_review_verified",
+      "existing_images": 25,
+      "new_dual_pairs": 27,
+      "all_current_dual_pairs": 32,
+      "current_known_fields_review_accepted": 32,
+      "full_chemical_review_pass": 0,
+      "reaction_or_experimental_records": 538,
+      "graph_encoding_occurrences_physically_checked": 3519,
+      "unique_graph_encodings_physically_checked": 810,
+      "index": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\JACS标注索引.md",
+      "validation": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\validation-current.json",
+      "source_reference_model_outputs_not_human_gold": true,
+      "remaining_source_PDFs_to_screen": 0,
+      "scope_images": 32,
+      "dual_format_pairs": 32,
+      "source_pdfs_screened": 50,
+      "source_coverage": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\source-coverage.json",
+      "delivery": "D:\\人工下载\\JAC\\scope",
+      "next_task": null,
+      "delivery_independent_verification": "D:\\建工ai\\light 4\\artifacts\\manual-paper-scope-20261012\\jacs-annotation\\delivery-independent\\verification-report.json",
+      "final_physical_checks": {
+        "checks": 2423,
+        "image_copies": 32,
+        "caption_copies": 32,
+        "scene_copies": 32,
+        "reactions_copies": 32,
+        "images_decoded": 32,
+        "records_checked": 32,
+        "pdfs_checked": 50,
+        "index_links_checked": 392
+      }
+    },
+    "latest_scope_audit": {
+      "date": "2026-10-13",
+      "proposal": "D:\\建工ai\\light 4\\artifacts\\scope-context-research-20261013\\scope-audit-selected\\corrected-selection-proposal.json",
+      "candidate_delivery": "D:\\建工ai\\light 4\\artifacts\\scope-context-research-20261013\\candidate-delivery.json",
+      "JACS_original32_selection_is_not_exhaustive": true,
+      "JOC040_Scheme6_latest_decision": "stereochemical_control_context_defer_resolved"
+    }
+  },
+  "renewal_modes_market_and_coverage": {
+    "as_of": "2026-10-12",
+    "status": "research_and_offline_prototypes_verified",
+    "mode_families": 7,
+    "data_design": "front_mode_gate_plus_six_existing_domains_plus_market_returns",
+    "user_inputs": {
+      "core_fields": 46,
+      "selected_rules": 27,
+      "default_missing_fields": 76,
+      "expert_pending": 15,
+      "original_workbooks_unchanged": true
+    },
+    "model_validation": {
+      "economic_tests": 10,
+      "aging_tests": 6,
+      "on_demand_tests": 5,
+      "model_api_calls": 0
+    },
+    "rule_usage_demo": {
+      "requested_rule": "R007",
+      "requested_extension_fields": [
+        "X013",
+        "X014"
+      ],
+      "other_default_missing": 74
+    },
+    "reports": {
+      "main": {
+        "pages": 18,
+        "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf"
+      },
+      "zhegong": {
+        "pages": 5,
+        "path": "docs/research/浙工新村_模式与经济机制研究.pdf"
+      },
+      "shanghai": {
+        "pages": 6,
+        "cases": 3,
+        "path": "docs/research/上海旧改_模式与经济机制对标.pdf"
+      }
+    },
+    "data_artifacts": [
+      "data/imports/teacher-criteria-20261012.json",
+      "data/templates/renewal-mode-catalog.json",
+      "data/templates/renewal-research-register.json",
+      "data/public_cases/zhegong-renewal-20261012.json",
+      "data/public_cases/shanghai-renewal-20261012.json"
+    ],
+    "scripts": [
+      "scripts/compare-renewal-modes.py",
+      "scripts/simulate-aging-coverage.py",
+      "scripts/review-teacher-criteria.py"
+    ],
+    "production_integration": "not_changed",
+    "expert_work": "five_question_groups_prepared_from_pending_items"
+  },
+  "scope_context_research_20261013": {
+    "status": "local_algorithm_context_contract_and_scope_audit_complete_API_comparison_requires_configuration",
+    "report": "D:\\建工ai\\light 4\\artifacts\\scope-context-research-20261013\\研究结论.md",
+    "verification": "D:\\建工ai\\light 4\\artifacts\\scope-context-research-20261013\\final-verification.json",
+    "changed_files": [
+      "web_app/paper_context_index.py",
+      "web_app/scope_relation_contract.py",
+      "scene_dataset/scope_speed_duel.py",
+      "MolParser four utils listed in multiring-patch/patch-verification.json",
+      "Chemeagle-light-3/THIRD_PARTY.md",
+      "docs/当前模型架构.md",
+      "four new focused test modules",
+      "JAC candidate folder and current indexes"
+    ],
+    "tests": {
+      "independent_review": "accept",
+      "new_multiring_tests_passed": 33,
+      "relation_contract_tests_passed": 79,
+      "context_plus_relation_base_python_tests_passed": 96,
+      "old_regression_before_and_after": "99 passed; same existing one failure; zero new regressions"
+    },
+    "scope_counts": {
+      "original_annotated": 32,
+      "additional_source_candidates": 14,
+      "broad_retained_and_candidates": 46
+    },
+    "upstream_report": "D:\\建工ai\\light 4\\artifacts\\scope-context-research-20261013\\upstream\\report.json",
+    "local_comparison": "D:\\建工ai\\light 4\\artifacts\\scope-context-research-20261013\\local-speed\\summary.json",
+    "unresolved": [
+      "API endpoint/key/model are not configured; API A/B and optimal-format claim remain untested",
+      "Cam project name/link not supplied"
+    ],
+    "next_runnable_task": "With the user-designated API configuration, compare image-only/caption/PDF/cross-figure inputs on frozen source-only packets with equal model and request budgets; do not use old weak-training benchmark as independent accuracy."
+  },
+  "scope_body_context_20261013": {
+    "status": "completed_source_prose_and_automatic_extraction_verified",
+    "corpus": {
+      "source_images": 197,
+      "source_PDFs": 95,
+      "body_excerpt_count": 1081,
+      "journal_counts": {
+        "JACS": 46,
+        "JOC": 151
+      },
+      "source_enrichment_wall_seconds": 9.051894899981562,
+      "error_count": 0
+    },
+    "changed_files": [
+      "web_app/scope_body_context.py",
+      "scene_dataset/scope_context_sidecars.py",
+      "scene_dataset/paper400_extract.py",
+      "two focused test modules",
+      "AGENTS.md",
+      "docs/当前模型架构.md",
+      "197 source and delivery context sidecar pairs and journal indexes"
+    ],
+    "report": "D:\\建工ai\\light 4\\artifacts\\scope-body-context-20261013\\finalization\\report.json",
+    "physical_readback": "D:\\建工ai\\light 4\\artifacts\\scope-body-context-20261013\\review\\physical-readback-final.json",
+    "tests": {
+      "body_and_index": "39 passed",
+      "related_existing": "56 passed",
+      "latest_targeted": "4 passed in 0.39s"
+    },
+    "source_inputs_only": true,
+    "existing_pixels_PDFs_and_chemical_annotations_unchanged": true,
+    "real_detector_body_integration": {
+      "molecules": 22,
+      "document_alias": "explicit_same_PDF_and_image_SHA",
+      "cross_source_rejected": true
+    },
+    "API_calls": 0,
+    "GPU_calls": 0,
+    "unresolved_questions": [
+      "Complete semantic recall and chemical accuracy improvement require separate frozen model evaluation; cross-figure bindings remain candidates."
+    ],
+    "next_runnable_task": "Automatic extraction and source prose supplementation complete. For model comparison use the frozen source-only request and user-designated model/service; no chemical labels in inputs."
+  },
+  "scope_model_review_20261013": {
+    "status": "completed_requested_web_Pro_design_review",
+    "report": "D:\\建工ai\\light 4\\artifacts\\scope-pro-review-20261013\\completion.json",
+    "adoption_decisions": "D:\\建工ai\\light 4\\artifacts\\scope-pro-review-20261013\\采用决定.md",
+    "web_mode": "Pro",
+    "web_review_complete": true,
+    "changed_files": [
+      "docs/当前模型架构.md",
+      "artifacts/scope-context-research-20261013/研究结论.md",
+      "artifacts/scope-context-research-20261013/api-contract/README.md",
+      "scope-pro-review-20261013 artifacts"
+    ],
+    "tests": {
+      "read_only_contract_probes": "8 expected results (6 accept, 2 reject)",
+      "Pro_v2_rejected_by_v1": true,
+      "document_links_checked": 26
+    },
+    "runtime": {
+      "known_port": 8503,
+      "running": false,
+      "active_model": null,
+      "source_default_model": "MolParser-Mobile-V2-C1",
+      "source_default_batch": 32
+    },
+    "batch_model_replacement_verified": false,
+    "API_image_calls": 0,
+    "GPU_calls": 0,
+    "unresolved_questions": [],
+    "next_runnable_task": null,
+    "user_clarification": {
+      "answer": "设计评审用网页 Pro",
+      "requested_scope": "web_Pro_design_review_only",
+      "batch_model_switch_requested": false,
+      "recorded_at_UTC": "2026-10-13T07:21:48.968118+00:00"
+    },
+    "remaining_required_work": [],
+    "optional_future_work": "Live batch API compatibility/quality comparison requires a separately designated model/service; not a completion requirement for the requested design review."
+  },
+  "luna_scope_pool_4143_20261013": {
+    "status": "luna_classification_in_progress",
+    "requested_model": "gpt-6-luna",
+    "input_images": 4143,
+    "available_images": 4143,
+    "restored_images": 20,
+    "source_pool": "D:\\建工ai\\light 4\\artifacts\\luna-scope-4143-20261013\\frozen-inputs.json",
+    "source_pool_sha256": "ea5e1135e8a8389bb78af80b8d4d3a04b2f47daef583a49778b60496a9b6fd95",
+    "classification_contract": "D:\\建工ai\\light 4\\artifacts\\luna-scope-4143-20261013\\CLASSIFICATION.md",
+    "recovery_report": "D:\\建工ai\\light 4\\artifacts\\luna-scope-4143-20261013\\recovery\\physical-readback.json",
+    "progress": "D:\\建工ai\\light 4\\artifacts\\luna-scope-4143-20261013\\progress.json",
+    "classified_images": 2817,
+    "remaining_images": 1326,
+    "decision_counts": {
+      "include": 941,
+      "exclude": 1845,
+      "defer": 31
+    },
+    "layer_counts": {
+      "core_scope": 782,
+      "context_only": 1384,
+      "non_scope": 459,
+      "unclear": 31,
+      "mixed_scope": 23,
+      "micro_scope": 104,
+      "extended_scope": 33,
+      "continuation": 1
+    },
+    "changed_files": [
+      "artifacts/luna-scope-4143-20261013/** only"
+    ],
+    "chemical_annotations_changed": false,
+    "full_chemical_annotation_or_human_gold": false,
+    "tests": {
+      "recovery": "177 physical checks, 0 errors",
+      "construction_protection": "3 tests passed; real 4-source smoke uses explicit classification fixture"
+    },
+    "next_runnable_task": "Finish all eight Luna image-classification shards, aggregate and validate, then construct layered source/context/legacy-reference dataset with pending chemistry and verify physical readback.",
+    "report": null
   }
 }

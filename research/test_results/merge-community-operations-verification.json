@@ -1,0 +1,50 @@
+{
+  "as_of": "2026-10-13",
+  "status": "local_verified_remote_ci_pending",
+  "branch": "codex/community-operations-scientific-integration",
+  "base_commit": "a656650058861ed7073a8d097784ade7dcb7ed92",
+  "scope": [
+    "community monthly operations and source-bound actuals",
+    "scientific capacity, switching and bounded scenario calculations",
+    "20-record historical construction cost library and 27 official originals",
+    "measure grouping and exact draft reuse",
+    "22-page authoritative technical report and required research dependencies"
+  ],
+  "checks": {
+    "command": "npm run verify",
+    "exit_code": 0,
+    "javascript": 985,
+    "python": 211,
+    "http": 16,
+    "build": "passed",
+    "log": "research/test_results/merge-community-operations-verify.log",
+    "staged_diff_check": "passed",
+    "git_source_blobs_sha256": 54,
+    "original_user_workbook_sha256": "d9578f005d48136be6e7971d8760399392f36def99b0727d27b3bcfd5091b16a"
+  },
+  "prior_current_ui_and_pdf_evidence": "research/test_results/scientific-methods-verification.json",
+  "publication": {
+    "ordinary_git": [
+      "runtime modules, UI, canonical contracts and tests",
+      "public cost originals, source manifests and user workbook audit",
+      "report PDFs, LaTeX, figures and contact sheets",
+      "research prototypes, extracted criteria and verification logs"
+    ],
+    "release_assets": [],
+    "local_only": [
+      "light 4 chemical project",
+      "unrelated Qiushi video/demo assets",
+      "downloaded literature PDFs",
+      "render/build caches and machine-specific QA helper",
+      "local databases, .env, dependencies and Python environments"
+    ],
+    "worktrees": "preserved"
+  },
+  "limits": [
+    "No observed operating month or enterprise effectiveness claim",
+    "Historical cost comparators remain scope/stage/area/year specific",
+    "Survey paper sample-selection rule remains unresolved"
+  ],
+  "integration_note": "Latest root files consolidate agent contributions and later integration fixes; older branch snapshots are preserved rather than cherry-picked over the verified result.",
+  "ci_configuration_note": "Existing workflows preserved: GitHub rejected workflow modification because the OAuth credential lacks workflow scope. HTTP integration is covered by the passing local npm run verify log."
+}

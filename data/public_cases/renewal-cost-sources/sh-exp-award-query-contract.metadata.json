@@ -1,0 +1,10 @@
+{
+  "id": "sh-exp-award-query-contract",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-bidder.do?type=ZBJG",
+  "method": "GET",
+  "data": null,
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-award-query-contract.html",
+  "raw_sha256": "8530981d8dc6f39bd88495efc59d2dcc2b248c68ce38d741c3b94c60301395f8",
+  "http_status": 200,
+  "fetched_at": "2026-10-13T07:38:00.985903+00:00"
+}

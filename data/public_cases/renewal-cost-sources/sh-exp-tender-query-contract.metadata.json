@@ -1,0 +1,10 @@
+{
+  "id": "sh-exp-tender-query-contract",
+  "url": "https://xsjypt.fgj.sh.gov.cn/sh-tender-notice!showNotice.do?type=ZBGG",
+  "method": "GET",
+  "data": null,
+  "raw_path": "data/public_cases/renewal-cost-sources/sh-exp-tender-query-contract.html",
+  "raw_sha256": "30a79ff63dabc2553cb346728090a6034bf00b3c64b7ba3aa4763b295d9feb0c",
+  "http_status": 200,
+  "fetched_at": "2026-10-13T07:38:01.170594+00:00"
+}

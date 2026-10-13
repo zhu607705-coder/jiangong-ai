@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField, ProjectInput, KnowledgeQuery } from '../../../host/generated/contracts'
 import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/document-slices'
+import { groupMeasureCards } from '../../../../packages/experience/presentation'
 import { api } from '../api'
 import WaitingScene from './WaitingScene'
 import { retrofitAdvice } from '../../../../packages/retrofit/planning'
@@ -112,6 +113,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([])
   const [useModel,setUseModel]=useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([])
   const [editing, setEditing] = useState<{ card: ExperienceCard | null; draft: ExperienceDraft } | null>(null)
   const savePending = useRef(false)
   const [reviewNote, setReviewNote] = useState('')
@@ -132,7 +134,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   useEffect(() => {
     const controller = new AbortController()
     setLoaded({ key: requestKey, documents: [], cards: [], error: '', loading: true })
-    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setEditing(null); setReviewNote(''); setBusy(''); savePending.current = false; setPipelineOpen(false)
+    setSelectedDocuments([]); setUseModel(false); setExpanded(null); setExpandedGroups([]); setEditing(null); setReviewNote(''); setBusy(''); savePending.current = false; setPipelineOpen(false)
     setActionError(''); setNotice(''); setWarnings([]); setMatches([]); setSearched(false); setSearching(false)
     searchSequence.current += 1
     void Promise.all([
@@ -149,6 +151,12 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
   const ready = loaded.key === requestKey
   const documents = ready ? loaded.documents : []
   const cards = ready ? loaded.cards : []
+  const measureGroups = useMemo(() => groupMeasureCards(cards), [cards])
+  useEffect(() => {
+    if (!expanded) return
+    const group = measureGroups.find(group => group.cards.some(card => card.id === expanded))
+    if (group) setExpandedGroups(current => current.includes(group.id) ? current : [...current, group.id])
+  }, [expanded, measureGroups])
   const citableDocuments = useMemo(() => documents.flatMap(document => {
     if (!document.parser_result?.source_hash || document.parser_result.status === 'ocr_required') return []
     try {
@@ -282,7 +290,12 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
         <DraftEditor draft={editing.draft} documents={documents} citableDocuments={citableDocuments} busy={busy} creating={true}
           onChange={changeDraft} onSave={() => void save()} onCancel={cancelEdit} /></section>}
       {!cards.length && <p className="experience-empty">尚无经验卡。提取后的草稿会在这里逐项展示决策、实施和结果。</p>}
-      <div className="experience-card-list">{cards.map(card => <article className="experience-card" key={card.id}>
+      {!!cards.length && <p className="experience-measure-count">{measureGroups.length} 个措施组 / {cards.length} 条证据记录</p>}
+      <div className="experience-card-list">{measureGroups.map(group => <details className="experience-measure-group" key={group.id} aria-label={`项目经验措施组：${group.title}`} open={expandedGroups.includes(group.id)}>
+        <summary onClick={event => { event.preventDefault(); setExpandedGroups(current => current.includes(group.id) ? current.filter(id => id !== group.id) : [...current, group.id]) }}>
+          <strong>{group.title}</strong><small>{group.kind === 'case' ? '案例记录' : group.kind === 'rule' ? '规则记录' : '类型待核'} · {group.cards.length} 条证据记录 · {group.sourceCount} 份原件{group.sourceVersionCount > group.sourceCount ? ` / ${group.sourceVersionCount} 个版本` : ''}</small>
+        </summary>
+        <div className="experience-measure-records">{group.cards.map(card => <article className="experience-card" key={card.id}>
         <button className="experience-card-heading" type="button" aria-expanded={expanded === card.id} onClick={() => { setExpanded(expanded === card.id ? null : card.id); setEditing(null); setReviewNote(''); setActionError('') }}>
           <span><strong>{card.title}</strong><small>{[card.project_type, card.development_mode, card.stage].filter(Boolean).join(' · ') || '项目分类待补充'}</small></span>
           <span className={`experience-status is-${card.status}`}>{statusLabel[card.status]} · v{card.revision}</span></button>
@@ -296,7 +309,7 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
                 <button type="button" disabled={!!busy} onClick={() => void review(card, 'rejected')}>审核不通过</button></div></div>}
           </>}
         </div>}
-      </article>)}</div>
+      </article>)}</div></details>)}</div>
     </> : <>
       <form className="experience-search" onSubmit={event => { event.preventDefault(); void search() }}>
         <label className="experience-search-query">决策问题或关键条件<input value={query} onChange={event => setQuery(event.target.value)} placeholder="如加装电梯、居民协商、管网改造" /></label>

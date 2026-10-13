@@ -1,0 +1,1551 @@
+{
+  "schema_version": "public-renewal-case.research.v1",
+  "case_id": "zhegong-renewal-20261012",
+  "name": "浙工新村自主更新",
+  "research_date": "2026-10-12",
+  "location": "杭州市拱墅区朝晖六区，上塘路与潮王路附近",
+  "scope": "事实研究、模式组合、经济机制、决策与调查设计；未写入生产知识库审批状态",
+  "status_vocabulary": {
+    "factual": "已核对的政府文件或官方陈述",
+    "reference": "公开报道/采访/市场样本记录",
+    "assumption": "研究建议、模型规则候选或计算情景",
+    "missing": "本轮未获得，可继续采集"
+  },
+  "sources": [
+    {
+      "id": "ZG-S01",
+      "title": "打造大运河畔富有人间烟火气的幸福家园 开创街道高质量发展新局面",
+      "publisher": "拱墅区政府·朝晖街道",
+      "published_at": "2024-02-21",
+      "url": "https://www.gongshu.gov.cn/art/2024/2/21/art_1229782350_59079232.html",
+      "source_type": "official",
+      "locator": "解锁亚运“时代密码”段；网页L31-L33",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S02",
+      "title": "中共杭州市拱墅区委关于十五届省委第一轮巡视整改进展情况的通报",
+      "publisher": "拱墅区政府",
+      "published_at": "2023-06-26",
+      "url": "https://www.gongshu.gov.cn/art/2023/6/26/art_1230544_59075321.html",
+      "source_type": "official",
+      "locator": "九、（二）全力推进浙工新村危房改造",
+      "retrieval": "search_indexed"
+    },
+    {
+      "id": "ZG-S03",
+      "title": "全省率先试点城市危旧房有机更新 拱墅区如何做到“第一个吃螃蟹”？",
+      "publisher": "杭州政协网转载杭州日报",
+      "published_at": "2024-01-19",
+      "url": "https://www.hzzx.gov.cn/cshz/content/2024-01/19/content_8677402.htm",
+      "source_type": "official_media_reprint",
+      "locator": "网页L37-L57：工程规模、历史预算和住户算账",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S04",
+      "title": "选房啦！杭州首个自主更新小区 传来好消息",
+      "publisher": "杭州网转载潮新闻",
+      "published_at": "2024-11-11",
+      "url": "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm",
+      "source_type": "media",
+      "locator": "网页L64-L66：重建方案与总建筑面积",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S05",
+      "title": "杭州首个“原拆原建”自主更新的小区——浙工新村下月交付",
+      "publisher": "杭州网转载都市快报",
+      "published_at": "2025-02-11",
+      "url": "https://hwyst.hangzhou.com.cn/mtld/content/2025-02/11/content_8857599.htm",
+      "source_type": "media",
+      "locator": "原面积结算、扩面价格、车位及目标客群段（压缩网页L7）",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S06",
+      "title": "杭州首个“原拆原建”自住更新小区交付",
+      "publisher": "杭州网·每日商报",
+      "published_at": "2025-02-27",
+      "url": "https://hznews.hangzhou.com.cn/chengshi/content/2025-02/27/content_8868888.htm",
+      "source_type": "media",
+      "locator": "网页L21-L32：距离、交付、沿街商铺与付款",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S07",
+      "title": "杭州市中心两大焦点安置房逆势热销",
+      "publisher": "杭州网报道杭州贝壳研究院数据",
+      "published_at": "2025-07-31",
+      "url": "https://hznews.hangzhou.com.cn/jingji/content/2025-07/31/content_9050608_2.htm",
+      "source_type": "media_market_data",
+      "locator": "网页L19-L21：首套网签及成交套数",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S08",
+      "title": "老旧小区原拆原建签约率100%，居民自筹资金自主更新，其他地方能学吗？",
+      "publisher": "解放日报·上观新闻",
+      "published_at": "2026-08-19",
+      "url": "https://www.jfdaily.com/wx/detail.do?id=1162310",
+      "source_type": "media_interview",
+      "locator": "网页L22-L24、L62、L95-L109、L149；报道日期见L7",
+      "retrieval": "opened"
+    },
+    {
+      "id": "ZG-S09",
+      "title": "关于稳步推进城镇老旧小区自主更新试点工作的指导意见（试行）",
+      "publisher": "浙江省住房和城乡建设厅、发展改革委、自然资源厅",
+      "published_at": "2024-04-01",
+      "effective_at": "2024-05-01",
+      "document_number": "浙建〔2024〕2号",
+      "url": "https://zjjcmspublic.oss-cn-hangzhou-zwynet-d01-a.internet.cloud.zj.gov.cn/jcms_files/jcms1/web1838/site/attach/0/a66346da98264bbdbadf0310ebc148c6.pdf",
+      "source_type": "official_policy",
+      "locator": "PDF正文第4-9页：组织实施、政策保障、标准、管理",
+      "retrieval": "opened",
+      "policy_use": "历史试点机制；新项目适用时另核所在市县最新政策"
+    },
+    {
+      "id": "ZG-S10",
+      "title": "拱墅12个重大项目集中开工15个项目竣工",
+      "publisher": "今日拱墅",
+      "published_at": "2025-02-28",
+      "url": "https://gsb.qybk.cn/resfile/2025-02-28/02/jrgs-20250228-002.pdf",
+      "source_type": "district_newspaper",
+      "locator": "PDF第2版导语：浙工新村试点项目竣工投用",
+      "retrieval": "search_indexed"
+    }
+  ],
+  "facts": [
+    {
+      "id": "ZG-F01",
+      "name": "实际更新模式",
+      "value": "业主自主更新＋危旧房原址拆建＋自愿扩面＋地下停车＋公共服务配置",
+      "unit": null,
+      "scope": "浙工新村试点",
+      "as_of": "2025-02",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04",
+        "ZG-S06"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm",
+        "https://hznews.hangzhou.com.cn/chengshi/content/2025-02/27/content_8868888.htm"
+      ],
+      "locator": "重建方案与交付段",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MODE-COMBINATION",
+        "MODE-SAFETY"
+      ]
+    },
+    {
+      "id": "ZG-F02",
+      "name": "更新住宅户数",
+      "value": 548,
+      "unit": "户",
+      "scope": "浙工新村住宅",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L64",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "SCALE-HOUSEHOLDS",
+        "CAPACITY-NOINCREASE"
+      ]
+    },
+    {
+      "id": "ZG-F03",
+      "name": "重建住宅套数",
+      "value": 548,
+      "unit": "套",
+      "scope": "新建住宅；增容不增套",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L64",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CAPACITY-NOINCREASE"
+      ]
+    },
+    {
+      "id": "ZG-F04",
+      "name": "新建楼幢数",
+      "value": 7,
+      "unit": "幢",
+      "scope": "新建住宅",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L64",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "DESIGN-HEIGHT"
+      ]
+    },
+    {
+      "id": "ZG-F05",
+      "name": "新建楼层",
+      "value": 11,
+      "unit": "层",
+      "scope": "上述新建住宅",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L64",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "DESIGN-HEIGHT"
+      ]
+    },
+    {
+      "id": "ZG-F06",
+      "name": "重建总建筑面积",
+      "value": 81000,
+      "unit": "平方米",
+      "scope": "方案；地上＋地下总建筑面积",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L66",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "AREA-SCOPE",
+        "COST-QUANTITY"
+      ]
+    },
+    {
+      "id": "ZG-F07",
+      "name": "地上建筑面积",
+      "value": 57000,
+      "unit": "平方米",
+      "scope": "重建方案地上总面积",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L66",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "AREA-SCOPE"
+      ]
+    },
+    {
+      "id": "ZG-F08",
+      "name": "地下建筑面积",
+      "value": 24000,
+      "unit": "平方米",
+      "scope": "重建方案地下总面积",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L66",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "AREA-SCOPE",
+        "PARKING-CASH"
+      ]
+    },
+    {
+      "id": "ZG-F09",
+      "name": "每户可自选扩面上限",
+      "value": 20,
+      "unit": "平方米/户",
+      "scope": "有偿自选扩面，不包括公摊/套内保留形成的面积变化",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L64",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "AREA-DISPOSITION",
+        "HOUSEHOLD-AFFORDABILITY"
+      ]
+    },
+    {
+      "id": "ZG-F10",
+      "name": "绿化率",
+      "value": ">25",
+      "unit": "%",
+      "scope": "新建小区",
+      "as_of": "2024-11-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2024-11/11/content_8811527_0.htm"
+      ],
+      "locator": "L66",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "SPACE-ENVIRONMENT"
+      ]
+    },
+    {
+      "id": "ZG-F11",
+      "name": "历史报道更新总预算",
+      "value": 530000000,
+      "unit": "元",
+      "scope": "2024年报道的项目整体更新费用",
+      "as_of": "2024-01-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S03"
+      ],
+      "source_urls": [
+        "https://www.hzzx.gov.cn/cshz/content/2024-01/19/content_8677402.htm"
+      ],
+      "locator": "L41",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CAPITAL-BALANCE"
+      ]
+    },
+    {
+      "id": "ZG-F12",
+      "name": "历史报道居民自筹",
+      "value": 470000000,
+      "unit": "元",
+      "scope": "对应2024年报道资金方案",
+      "as_of": "2024-01-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S03"
+      ],
+      "source_urls": [
+        "https://www.hzzx.gov.cn/cshz/content/2024-01/19/content_8677402.htm"
+      ],
+      "locator": "L41",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CAPITAL-BALANCE"
+      ]
+    },
+    {
+      "id": "ZG-F13",
+      "name": "最新回顾整体更新费用",
+      "value": 560000000,
+      "unit": "元",
+      "scope": "2026年报道回顾项目整体费用；非公开终审决算表",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L24",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CAPITAL-VERSION",
+        "CAPITAL-BALANCE"
+      ]
+    },
+    {
+      "id": "ZG-F14",
+      "name": "最新回顾居民自筹",
+      "value": 490000000,
+      "unit": "元",
+      "scope": "对应2026年报道的居民自筹总额",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L24",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CAPITAL-VERSION",
+        "CAPITAL-BALANCE"
+      ]
+    },
+    {
+      "id": "ZG-F15",
+      "name": "签约过程",
+      "value": {
+        "elapsed_days": 84,
+        "rate_percent": 99.82
+      },
+      "unit": "天/%",
+      "scope": "街道总结报道阶段",
+      "as_of": "2024-02-21",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S01"
+      ],
+      "source_urls": [
+        "https://www.gongshu.gov.cn/art/2024/2/21/art_1229782350_59079232.html"
+      ],
+      "locator": "L33",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CONSENT-CURRENT"
+      ]
+    },
+    {
+      "id": "ZG-F16",
+      "name": "腾房过程",
+      "value": {
+        "elapsed_days": 66,
+        "rate_percent": 98.91
+      },
+      "unit": "天/%",
+      "scope": "街道总结报道阶段",
+      "as_of": "2024-02-21",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S01"
+      ],
+      "source_urls": [
+        "https://www.gongshu.gov.cn/art/2024/2/21/art_1229782350_59079232.html"
+      ],
+      "locator": "L33",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "RELOCATION-PROGRESS"
+      ]
+    },
+    {
+      "id": "ZG-F17",
+      "name": "全体业主完成签约",
+      "value": "2024-05",
+      "unit": "年月",
+      "scope": "最后一户业主签约后的全体548户",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L22-L24",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "CONSENT-CURRENT"
+      ]
+    },
+    {
+      "id": "ZG-F18",
+      "name": "基础面积出资单价",
+      "value": 1350,
+      "unit": "元/平方米",
+      "scope": "原有住房面积；不足53平方米按53平方米计价",
+      "as_of": "2025-02-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "source_urls": [
+        "https://hwyst.hangzhou.com.cn/mtld/content/2025-02/11/content_8857599.htm"
+      ],
+      "locator": "原面积结算段",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "HOUSEHOLD-AFFORDABILITY",
+        "PRICE-BASIS"
+      ]
+    },
+    {
+      "id": "ZG-F19",
+      "name": "自选扩面单价",
+      "value": 34520,
+      "unit": "元/平方米",
+      "scope": "专业评估后扩面出资价格",
+      "as_of": "2025-02-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "source_urls": [
+        "https://hwyst.hangzhou.com.cn/mtld/content/2025-02/11/content_8857599.htm"
+      ],
+      "locator": "扩面估价段",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "HOUSEHOLD-AFFORDABILITY",
+        "PRICE-BASIS"
+      ]
+    },
+    {
+      "id": "ZG-F20",
+      "name": "地下车位购买价格",
+      "value": 221000,
+      "unit": "元/个",
+      "scope": "居民自愿购买；历史报道报价",
+      "as_of": "2025-02-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "source_urls": [
+        "https://hwyst.hangzhou.com.cn/mtld/content/2025-02/11/content_8857599.htm"
+      ],
+      "locator": "车位另付段",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "PARKING-CASH",
+        "PRICE-BASIS"
+      ]
+    },
+    {
+      "id": "ZG-F21",
+      "name": "原楼数量",
+      "value": 13,
+      "unit": "幢",
+      "scope": "2024试点纳入范围",
+      "as_of": "2024-01-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S03"
+      ],
+      "source_urls": [
+        "https://www.hzzx.gov.cn/cshz/content/2024-01/19/content_8677402.htm"
+      ],
+      "locator": "L37",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "ASSET-INVENTORY"
+      ]
+    },
+    {
+      "id": "ZG-F22",
+      "name": "公共服务配套面积",
+      "value": ">1500",
+      "unit": "平方米",
+      "scope": "一老一小活动中心等配套设施；方案口径",
+      "as_of": "2024-01-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S03"
+      ],
+      "source_urls": [
+        "https://www.hzzx.gov.cn/cshz/content/2024-01/19/content_8677402.htm"
+      ],
+      "locator": "L39",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "SERVICE-CAPACITY"
+      ]
+    },
+    {
+      "id": "ZG-F23",
+      "name": "危房情况",
+      "value": 4,
+      "unit": "幢C级危房",
+      "scope": "2014年前被鉴定的房屋",
+      "as_of": "2024-01-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S03"
+      ],
+      "source_urls": [
+        "https://www.hzzx.gov.cn/cshz/content/2024-01/19/content_8677402.htm"
+      ],
+      "locator": "L37",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MODE-SAFETY"
+      ]
+    },
+    {
+      "id": "ZG-F24",
+      "name": "集中住宅交付",
+      "value": "2025-02-25至2025-02-28",
+      "unit": "日期区间",
+      "scope": "住宅毛坯交付",
+      "as_of": "2025-02-27",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S06"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2025-02/27/content_8868888.htm"
+      ],
+      "locator": "L26",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "PROJECT-STAGE"
+      ]
+    },
+    {
+      "id": "ZG-F25",
+      "name": "北侧沿街商铺",
+      "value": "新增",
+      "unit": null,
+      "scope": "交付现场观察；面积/产权/租约缺项",
+      "as_of": "2025-02-27",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S06"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2025-02/27/content_8868888.htm"
+      ],
+      "locator": "L23",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "COMMERCIAL-CASH",
+        "AREA-DISPOSITION"
+      ]
+    },
+    {
+      "id": "ZG-F26",
+      "name": "交付缴款安排",
+      "value": "交付时一次付清",
+      "unit": null,
+      "scope": "该项目住户结算安排",
+      "as_of": "2025-02-27",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S06"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2025-02/27/content_8868888.htm"
+      ],
+      "locator": "L30",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "LIQUIDITY-TIMING"
+      ]
+    },
+    {
+      "id": "ZG-F27",
+      "name": "至潮王路站步行距离",
+      "value": "约400",
+      "unit": "米",
+      "scope": "报道路线描述，非GIS实测",
+      "as_of": "2025-02-27",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S06"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/chengshi/content/2025-02/27/content_8868888.htm"
+      ],
+      "locator": "L21",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "ACCESSIBILITY"
+      ]
+    },
+    {
+      "id": "ZG-F28",
+      "name": "首套二手网签单价",
+      "value": 41114,
+      "unit": "元/平方米",
+      "scope": "贝壳数据经媒体报道的一套样本；不扩展为均价",
+      "as_of": "2025-05上旬",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S07"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/jingji/content/2025-07/31/content_9050608_2.htm"
+      ],
+      "locator": "L21",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MARKET-COMPARABLE"
+      ]
+    },
+    {
+      "id": "ZG-F29",
+      "name": "阶段二手成交数量",
+      "value": 15,
+      "unit": "套",
+      "scope": "2025年5月和6月累计",
+      "as_of": "2025-06",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S07"
+      ],
+      "source_urls": [
+        "https://hznews.hangzhou.com.cn/jingji/content/2025-07/31/content_9050608_2.htm"
+      ],
+      "locator": "L21",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MARKET-ABSORPTION"
+      ]
+    },
+    {
+      "id": "ZG-F30",
+      "name": "更新后二手成交价格",
+      "value": ">40000",
+      "unit": "元/平方米",
+      "scope": "2026年媒体采访概括；非逐笔网签",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L149",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MARKET-COMPARABLE"
+      ]
+    },
+    {
+      "id": "ZG-F31",
+      "name": "交付后累计二手成交",
+      "value": ">100",
+      "unit": "套",
+      "scope": "截至2026-08-19媒体报道",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L149",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MARKET-ABSORPTION"
+      ]
+    },
+    {
+      "id": "ZG-F32",
+      "name": "相邻2000年前后小区价格",
+      "value": "约20000",
+      "unit": "元/平方米",
+      "scope": "2026年采访概括；未控制品质楼层时点",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L149",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "MARKET-COMPARABLE"
+      ]
+    },
+    {
+      "id": "ZG-F33",
+      "name": "附近改善型购房总价预算语境",
+      "value": "500万至600万",
+      "unit": "元/套",
+      "scope": "2025-02中介对购房客群的观察，不是问卷样本",
+      "as_of": "2025-02-11",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "source_urls": [
+        "https://hwyst.hangzhou.com.cn/mtld/content/2025-02/11/content_8857599.htm"
+      ],
+      "locator": "周边二手与潜在买家段",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "TARGET-AFFORDABILITY"
+      ]
+    },
+    {
+      "id": "ZG-F34",
+      "name": "建设期资金垫付",
+      "value": "国企垫资",
+      "unit": null,
+      "scope": "2026回顾报道；金额/利率/期限缺项",
+      "as_of": "2026-08-19",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S08"
+      ],
+      "source_urls": [
+        "https://www.jfdaily.com/wx/detail.do?id=1162310"
+      ],
+      "locator": "L104",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "LIQUIDITY-TIMING"
+      ]
+    },
+    {
+      "id": "ZG-F35",
+      "name": "实施方案公告日期",
+      "value": "2023-05-23",
+      "unit": "日期",
+      "scope": "浙工新村试点项目实施方案",
+      "as_of": "2023-06-26",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S02"
+      ],
+      "source_urls": [
+        "https://www.gongshu.gov.cn/art/2023/6/26/art_1230544_59075321.html"
+      ],
+      "locator": "九、（二）",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "APPROVAL-PROJECT"
+      ]
+    },
+    {
+      "id": "ZG-F36",
+      "name": "官方报道阶段",
+      "value": "竣工投用",
+      "unit": null,
+      "scope": "2025年一季度重点项目活动",
+      "as_of": "2025-02-28",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S10"
+      ],
+      "source_urls": [
+        "https://gsb.qybk.cn/resfile/2025-02-28/02/jrgs-20250228-002.pdf"
+      ],
+      "locator": "第2版导语",
+      "data_source_category": "公开",
+      "collection_method": "公开原文人工核对与结构化提取",
+      "rule_ids": [
+        "PROJECT-STAGE"
+      ]
+    }
+  ],
+  "measure_cards": [
+    {
+      "measure_id": "ZG-A01",
+      "measure": "危旧房原址重建",
+      "physical_mode": "整体拆建",
+      "organization": "居民主体、国企实施、政府指导",
+      "source_ids": [
+        "ZG-S03",
+        "ZG-S04"
+      ],
+      "status": "reference",
+      "mode_factors": [
+        "安全鉴定",
+        "已完成加固的效果",
+        "建筑结构",
+        "权籍清晰度",
+        "原址居住意愿",
+        "规划条件"
+      ]
+    },
+    {
+      "measure_id": "ZG-A02",
+      "measure": "原套内保留＋自愿付费扩面",
+      "physical_mode": "重建中的户型及面积再配置",
+      "source_ids": [
+        "ZG-S04",
+        "ZG-S05"
+      ],
+      "status": "reference",
+      "mode_factors": [
+        "新旧面积口径",
+        "扩面上限",
+        "实际支付能力",
+        "面积分配规则"
+      ]
+    },
+    {
+      "measure_id": "ZG-A03",
+      "measure": "地下停车＋人车分流",
+      "physical_mode": "地下空间新建",
+      "source_ids": [
+        "ZG-S04",
+        "ZG-S05"
+      ],
+      "status": "reference",
+      "mode_factors": [
+        "基坑及周边保护",
+        "停车需求",
+        "可售权属",
+        "专项成本",
+        "购买意愿"
+      ]
+    },
+    {
+      "measure_id": "ZG-A04",
+      "measure": "一老一小公共空间＋无障碍＋沿街服务",
+      "physical_mode": "公共空间改善与服务嵌入",
+      "source_ids": [
+        "ZG-S03",
+        "ZG-S06"
+      ],
+      "status": "reference",
+      "mode_factors": [
+        "服务覆盖",
+        "产权去向",
+        "运营方",
+        "持续维护与收费"
+      ]
+    },
+    {
+      "measure_id": "ZG-A05",
+      "measure": "居民参与审计、协商、回迁缴费与物业管理",
+      "physical_mode": "治理与运营配套",
+      "source_ids": [
+        "ZG-S06",
+        "ZG-S08"
+      ],
+      "status": "reference",
+      "mode_factors": [
+        "质量意见闭环",
+        "分项成本透明",
+        "支付时间",
+        "维护责任"
+      ]
+    }
+  ],
+  "missing_fields": [
+    {
+      "id": "ZG-M01",
+      "field": "original_approved_area",
+      "label": "原始权籍及核准建筑面积",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "产权登记/历史测绘",
+      "collection_method": "调取权籍清单、测绘报告",
+      "rule_ids": [
+        "AREA-SCOPE"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M02",
+      "field": "approved_planning_parameters",
+      "label": "批准容积率、限高及面积去向",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "规划主管部门/项目档案",
+      "collection_method": "调取规划条件、总平批复、规划核验及不动产登记",
+      "rule_ids": [
+        "APPROVAL-PROJECT"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M03",
+      "field": "final_audited_cost",
+      "label": "分项工程终审成本与资金实收",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "项目实施主体/审计",
+      "collection_method": "获取结算、审计、收支及垫资台账",
+      "rule_ids": [
+        "CAPITAL-BALANCE"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M04",
+      "field": "household_affordability_distribution",
+      "label": "家庭可支配资金、扩面选择与支付困难比例",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "问卷/访谈",
+      "collection_method": "按年龄、面积、收入与居住用途分层访谈；核对匿名支付区间",
+      "rule_ids": [
+        "HOUSEHOLD-AFFORDABILITY"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M05",
+      "field": "current_verified_sale_comparables",
+      "label": "2026-10附近同品质逐笔成交",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "公开/市场数据授权",
+      "collection_method": "获取同面积、楼层、装修、建成年代成交，回归或分层配对",
+      "rule_ids": [
+        "MARKET-COMPARABLE"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M06",
+      "field": "verified_rent",
+      "label": "真实租约租金及空置期",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "公开/访谈/租约授权",
+      "collection_method": "采集成交租约、签约日期、装修和空置记录",
+      "rule_ids": [
+        "RENT-CASH"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M07",
+      "field": "commercial_area_and_rights",
+      "label": "沿街商铺可经营面积、产权、租约与实收",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "项目实施主体/产权资料",
+      "collection_method": "对照测绘、权属、租赁和运营台账",
+      "rule_ids": [
+        "COMMERCIAL-CASH"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M08",
+      "field": "parking_sold_and_cost",
+      "label": "车位数量终值、已售数量、收款、专项成本",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "项目实施主体/物业",
+      "collection_method": "车位权属、销售及成本表一一匹配",
+      "rule_ids": [
+        "PARKING-CASH"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M09",
+      "field": "maintenance_cash",
+      "label": "电梯、地下室、公共空间长期维护与维修资金",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "物业/业委会",
+      "collection_method": "年度预算、合同、维修资金归集与故障记录",
+      "rule_ids": [
+        "OPERATION-CASH"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M10",
+      "field": "loan_terms",
+      "label": "垫资余额、利率、偿还时点",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "实施主体/银行",
+      "collection_method": "融资合同与月度现金流",
+      "rule_ids": [
+        "LIQUIDITY-TIMING"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    },
+    {
+      "id": "ZG-M11",
+      "field": "public_service_operation",
+      "label": "一老一小设施容量、运营主体、收费和补贴",
+      "value": null,
+      "status": "missing",
+      "data_source_category": "社区/运营方",
+      "collection_method": "服务合同、使用记录、收费和补贴台账",
+      "rule_ids": [
+        "SERVICE-OPERATION"
+      ],
+      "effect": "该字段相关收益或条件保持未知；收集后更新相应方案"
+    }
+  ],
+  "expert_rule_candidates": [
+    {
+      "id": "ZG-R01",
+      "label": "更新方案必须包含组织、代理、筹资、产权与设计",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S09"
+      ],
+      "locator": "PDF第4-5页 二（二）",
+      "scope": "2024浙江自主更新试点程序",
+      "test": "材料齐全后进入审查；缺项生成专项调查任务"
+    },
+    {
+      "id": "ZG-R02",
+      "label": "新增面积去向与成本抵扣按地方政策及规划调整处理",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S09"
+      ],
+      "locator": "PDF第8页 三（一）",
+      "scope": "2024浙江试点政策",
+      "test": "分别登记住户扩面、保障房/公共服务移交及其他面积去向"
+    },
+    {
+      "id": "ZG-R03",
+      "label": "公共安全与现状底线作为规划技术处理条件",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S09"
+      ],
+      "locator": "PDF第8页 三（二）",
+      "scope": "2024浙江试点技术处理",
+      "test": "核对安全、日照、间距与地方审批意见"
+    },
+    {
+      "id": "ZG-R04",
+      "label": "更新完成后的专业物业与维修资金机制",
+      "status": "factual",
+      "source_ids": [
+        "ZG-S09"
+      ],
+      "locator": "PDF第9页 三（四）",
+      "scope": "2024浙江试点维护安排",
+      "test": "建立物业合同、责任、维修资金归集和续筹记录"
+    }
+  ],
+  "financial_channels": [
+    {
+      "channel": "resident_contribution",
+      "role": "建设资金来源",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S03",
+        "ZG-S08"
+      ],
+      "project_cashflow": "按实际收款入建设现金流；不记为运营利润",
+      "payer": "原产权业主/家庭",
+      "recipient": "项目建设结算主体（具体合同及收款主体待采）",
+      "beneficiary": "原产权业主获得新住房和自选面积",
+      "cash_type": "建设资金筹措"
+    },
+    {
+      "channel": "government_support",
+      "role": "专项支持/过渡支持",
+      "amount": null,
+      "status": "missing",
+      "source_ids": [
+        "ZG-S03",
+        "ZG-S08"
+      ],
+      "project_cashflow": "需明确拨付口径、受领主体与成本补贴对应",
+      "payer": "财政/专项支持渠道",
+      "recipient": "项目主体或居民（分项待采）",
+      "beneficiary": "居民过渡与公共设施改善",
+      "cash_type": "补贴及政策支持"
+    },
+    {
+      "channel": "parking_sales",
+      "role": "潜在建设回收渠道",
+      "unit_price": 221000,
+      "sold_count": null,
+      "net_cash": null,
+      "status": "missing",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "project_cashflow": "销售实收减专项成本及费用；先核权属",
+      "payer": "购位业主",
+      "recipient": "车位产权人/销售主体（待权属合同核对）",
+      "beneficiary": "购位业主及持有车位回款主体",
+      "cash_type": "资产交易收入"
+    },
+    {
+      "channel": "commercial_leasing",
+      "role": "潜在持续运营渠道",
+      "area": null,
+      "rent": null,
+      "net_cash": null,
+      "status": "missing",
+      "source_ids": [
+        "ZG-S06"
+      ],
+      "project_cashflow": "可租面积×实际租金×出租率－运营维护税费",
+      "payer": "商铺承租经营者",
+      "recipient": "商铺产权人/合法运营方（待采）",
+      "beneficiary": "产权/经营收益归属主体及服务使用居民",
+      "cash_type": "潜在经营现金流"
+    },
+    {
+      "channel": "resident_asset_change",
+      "role": "居民端经济效果",
+      "net_gain": null,
+      "status": "missing",
+      "source_ids": [
+        "ZG-S07",
+        "ZG-S08"
+      ],
+      "project_cashflow": "另列居民持有/出售账户，不计入项目现金流",
+      "payer": "居民出售时的二手买家；持有时无付款方",
+      "recipient": "出售住房的原产权人",
+      "beneficiary": "原产权家庭",
+      "cash_type": "持有增值或二手转售现金"
+    },
+    {
+      "channel": "housing_external_sale",
+      "role": "可售新增住宅渠道",
+      "area": null,
+      "status": "missing",
+      "source_ids": [
+        "ZG-S04"
+      ],
+      "project_cashflow": "已公开重建548套归原住户；如评估外售须另有获批面积与权属资料",
+      "payer": "新增外售房买家（该渠道未取得批准证据）",
+      "recipient": "具可售产权的项目主体（待采）",
+      "beneficiary": "需按权属与合同分配",
+      "cash_type": "新增资产销售候选"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "ZG-D01",
+      "recommendation": "将浙工新村作为已完成自主更新的组合案例，进入运行评估与资金复盘。",
+      "status": "assumption",
+      "decision_type": "research_proposal",
+      "basis": [
+        "ZG-F01",
+        "ZG-F24",
+        "ZG-F36"
+      ],
+      "rule_ids": [
+        "PROJECT-STAGE"
+      ],
+      "next_actions": [
+        "汇总竣备、交房、产权与运行材料"
+      ]
+    },
+    {
+      "id": "ZG-D02",
+      "recommendation": "候选区域同时比较保留整治、加固更新、局部拆建、整体自主拆建及保留建筑与新增经营服务空间的组合。",
+      "status": "assumption",
+      "decision_type": "transfer_proposal",
+      "basis": [
+        "ZG-A01",
+        "ZG-A02",
+        "ZG-A03",
+        "ZG-A04"
+      ],
+      "rule_ids": [
+        "MODE-COMBINATION",
+        "MODE-SAFETY"
+      ],
+      "next_actions": [
+        "逐幢建立安全与功能清单",
+        "对措施组合分别测算"
+      ]
+    },
+    {
+      "id": "ZG-D03",
+      "recommendation": "以原套内保留为基础包，将扩面、车位分别列为自选包，按家庭支付能力分组验证。",
+      "status": "assumption",
+      "decision_type": "transfer_proposal",
+      "basis": [
+        "ZG-F18",
+        "ZG-F19",
+        "ZG-F20",
+        "ZG-F26"
+      ],
+      "rule_ids": [
+        "HOUSEHOLD-AFFORDABILITY",
+        "LIQUIDITY-TIMING"
+      ],
+      "next_actions": [
+        "补家庭资金和融资安排",
+        "比较零扩面与扩面方案"
+      ]
+    },
+    {
+      "id": "ZG-D04",
+      "recommendation": "单列居民出资、政府支持、车位及商铺收入、运营收入；匹配各自成本、权属和收款时点。",
+      "status": "assumption",
+      "decision_type": "model_design",
+      "basis": [
+        "ZG-F11",
+        "ZG-F12",
+        "ZG-F13",
+        "ZG-F14",
+        "ZG-F25",
+        "ZG-F34"
+      ],
+      "rule_ids": [
+        "CAPITAL-BALANCE",
+        "AREA-DISPOSITION",
+        "PARKING-CASH",
+        "COMMERCIAL-CASH"
+      ],
+      "next_actions": [
+        "补实收、专项成本与经营权资料"
+      ]
+    },
+    {
+      "id": "ZG-D05",
+      "recommendation": "用当地同类成交构建保守、基准、上行情景，分别输出居民资产变化和项目经营现金流。",
+      "status": "assumption",
+      "decision_type": "model_design",
+      "basis": [
+        "ZG-F28",
+        "ZG-F29",
+        "ZG-F30",
+        "ZG-F31",
+        "ZG-F32"
+      ],
+      "rule_ids": [
+        "MARKET-COMPARABLE",
+        "MARKET-ABSORPTION"
+      ],
+      "next_actions": [
+        "补同品质逐笔成交及租约"
+      ]
+    },
+    {
+      "id": "ZG-D06",
+      "recommendation": "对租金、商铺和车位净收益缺项的候选方案，输出“先补充关键资料再判断”；安全及必要维护方案独立推进。",
+      "status": "assumption",
+      "decision_type": "missing_data_action",
+      "basis": [
+        "ZG-M06",
+        "ZG-M07",
+        "ZG-M08",
+        "ZG-M09"
+      ],
+      "rule_ids": [
+        "RENT-CASH",
+        "COMMERCIAL-CASH",
+        "PARKING-CASH",
+        "OPERATION-CASH"
+      ],
+      "next_actions": [
+        "先获取权属、租约、实际收款与运行成本"
+      ]
+    },
+    {
+      "id": "ZG-D07",
+      "recommendation": "建设期按月模拟国企垫资、居民交付结算和补助到账，评估峰值资金缺口。",
+      "status": "assumption",
+      "decision_type": "model_design",
+      "basis": [
+        "ZG-F26",
+        "ZG-F34",
+        "ZG-M10"
+      ],
+      "rule_ids": [
+        "LIQUIDITY-TIMING"
+      ],
+      "next_actions": [
+        "获取垫资合同与逐月款项计划"
+      ]
+    },
+    {
+      "id": "ZG-D08",
+      "recommendation": "以安全改善、居住功能、居民负担、项目收支及运营可持续共同排序；以规划、权属和有效居民决议形成模式准入条件。",
+      "status": "assumption",
+      "decision_type": "expert_review_candidate",
+      "basis": [
+        "ZG-F23",
+        "ZG-F35",
+        "ZG-S09"
+      ],
+      "rule_ids": [
+        "MODE-SAFETY",
+        "APPROVAL-PROJECT",
+        "HOUSEHOLD-AFFORDABILITY",
+        "OPERATION-CASH"
+      ],
+      "next_actions": [
+        "请规划老师审定硬条件与比较指标"
+      ]
+    }
+  ],
+  "calculations": [
+    {
+      "id": "ZG-C01",
+      "status": "assumption",
+      "kind": "derived_historical_ratio",
+      "formula": "470000000 / 530000000",
+      "value": 0.8867924528301887,
+      "inputs": [
+        "ZG-F11",
+        "ZG-F12"
+      ],
+      "note": "2024报道预算的居民出资比；非终审决算比例"
+    },
+    {
+      "id": "ZG-C02",
+      "status": "assumption",
+      "kind": "derived_report_ratio",
+      "formula": "490000000 / 560000000",
+      "value": 0.875,
+      "inputs": [
+        "ZG-F13",
+        "ZG-F14"
+      ],
+      "note": "2026回顾报道总额的居民出资比"
+    },
+    {
+      "id": "ZG-C03",
+      "status": "assumption",
+      "kind": "household_pricing_example",
+      "inputs": {
+        "original_chargeable_area_m2": 75,
+        "voluntary_extension_m2": 20,
+        "parking_spaces": 1
+      },
+      "formula": "75*1350 + 20*34520 + 221000",
+      "gross_yuan": 1012650,
+      "without_parking_yuan": 791650,
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "note": "同档政策算例，不对应一户实际结算；补助、装修、租住过渡和融资另列"
+    }
+  ],
+  "unresolved_scope_differences": [
+    {
+      "field": "原始楼幢数量",
+      "reported_values": [
+        {
+          "value": 13,
+          "source_id": "ZG-S03"
+        },
+        {
+          "value": 14,
+          "source_id": "ZG-S06"
+        }
+      ],
+      "resolution": "待权籍/实施范围清单核对；保留两个来源口径"
+    },
+    {
+      "field": "项目预算版本",
+      "reported_values": [
+        {
+          "total_yuan": 530000000,
+          "resident_yuan": 470000000,
+          "date": "2024-01-19",
+          "source_id": "ZG-S03"
+        },
+        {
+          "total_yuan": 560000000,
+          "resident_yuan": 490000000,
+          "date": "2026-08-19",
+          "source_id": "ZG-S08"
+        }
+      ],
+      "resolution": "时间版本分别保留，待终审决算及范围变更表"
+    },
+    {
+      "field": "原始面积、批准容积率、新增面积归属",
+      "reported_values": [],
+      "resolution": "本轮缺获批权籍及规划表，保留missing"
+    }
+  ],
+  "target_groups": [
+    {
+      "group": "原产权业主长期自住与养老改善",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "known": "中老年、大学退休教职工与家属占较高比例；自住意愿较强",
+      "affordability_value": null,
+      "affordability_status": "missing",
+      "collection": "分别问原面积包、扩面包、车位包的支付上限和可用资金"
+    },
+    {
+      "group": "周边老旧小区的改善型二手买家",
+      "status": "reference",
+      "source_ids": [
+        "ZG-S05"
+      ],
+      "known": "采访中介观察；500万至600万元总价涉及新房替代竞争",
+      "affordability_value": null,
+      "affordability_status": "missing",
+      "collection": "同总价成交去化、面积选择、贷款和首付能力"
+    },
+    {
+      "group": "小区商铺承租人与社区服务运营者",
+      "status": "missing",
+      "source_ids": [
+        "ZG-S06"
+      ],
+      "known": "有沿街商铺；本轮未取得租约与运营合同",
+      "affordability_value": null,
+      "affordability_status": "missing",
+      "collection": "租金支付、营业额、客户覆盖、竞争和可承担租金"
+    }
+  ],
+  "financial_model": {
+    "status": "assumption",
+    "project_cashflow_formula": "居民实收+政府实际支持+可售资产实收+经营净现金-工程款-过渡费用-咨询迁改-税费-融资成本-维护责任",
+    "resident_net_asset_change_formula": "更新后同类可实现住房价值-更新前同类住房价值-家庭净新增投入-交易税费与融资成本",
+    "resident_sale_cash_formula": "出售实收-税费-剩余贷款；另报家庭持有资产与此前投入",
+    "separation": "原产权人二手出售由原产权人收款；仅有获批可售/可经营资产、权属及合同的收入计入对应项目/运营主体；政府支持和居民出资归资金来源",
+    "loan_cost": null,
+    "loan_cost_status": "missing"
+  }
+}
