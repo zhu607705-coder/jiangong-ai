@@ -51,6 +51,7 @@ await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
  else if(path==='/api/projects'&&method==='POST'){createdInput=JSON.parse(body);created={id:createdInput.input.project_id,name:createdInput.name,input:createdInput.input,context_version:0,runs:[]};data=created}
  else if(path==='/api/projects')data=created?[created]:[]
  else if(created&&path==='/api/projects/'+created.id)data=created
+ else if(created&&path==='/api/projects/'+created.id+'/knowledge/pipeline')data={documents:[],cards:[],policies:[],skills:[],public_sources:[]}
  else if(created&&path.startsWith('/api/projects/'+created.id+'/'))data=[]
  else if(path==='/api/maps/geometry/wgs84'){conversionCalls++;converted.coordinates=JSON.parse(body).geometry.coordinates.map(r=>r.map(([x,y])=>[x-.005,y-.003]));data={geometry:converted,coordinate_encoding:'WGS84'}}
  else if(path.startsWith('/api/maps/screening/analysis/')){studyReads++;data=studies.get(url.searchParams.get('profile'))||null}

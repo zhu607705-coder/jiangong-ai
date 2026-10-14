@@ -1314,7 +1314,7 @@
       "definition_of_done": "同服务自然语言检索、信息库打开、同文档版本定位、范围切换与焦点行为、真实浏览器和PDF渲染有证据；不新增事实写入。",
       "write_scope": [
         "apps/workspace/",
-        "tests/contracts/",
+        "tests/",
         "docs/",
         "research/",
         "agent/",

@@ -73,5 +73,17 @@
     "new_search_client": false,
     "project_fact_writes": 0
   },
-  "scope": "Project material search and navigation; automatic source-answer generation and corpus retrieval-quality statistics remain separate work."
+  "scope": "Project material search and navigation; automatic source-answer generation and corpus retrieval-quality statistics remain separate work.",
+  "map_fixture_regression": {
+    "initial_run": 38516378364,
+    "initial_head": "20aaedd8bbff905f178cc7ad3ff3041bc881c1be",
+    "initial_status": "failed_browser_fixture_protocol",
+    "cause": "The existing generic project sub-API fixture returned [] for knowledge/pipeline; actual KnowledgePipelineService.state returns an object containing cards/documents/policies/skills/public_sources. Empty-material rendering read undefined cards.",
+    "fix": "Use the real empty pipeline response shape before the generic array fallback; preserve page errors assertions and project creation navigation.",
+    "file": "tests/browser/map-workspace.mjs",
+    "focused_command": "$env:HZZ_UI_HANDOFF='expanded-ready'; node tests/browser/map-workspace.mjs",
+    "focused_status": "passed",
+    "assertions": 6,
+    "log": "research/test_results/floating-map-created-project-regression.log"
+  }
 }

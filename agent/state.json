@@ -1862,7 +1862,9 @@
       "docs/老旧小区改造案例拆分与六维数据说明.tex",
       "docs/老旧小区改造案例拆分与六维数据说明.pdf",
       "research/reuse_manifest.json",
-      "research/test_results/floating-evidence-report-verification.json"
+      "research/test_results/floating-evidence-report-verification.json",
+      "tests/browser/map-workspace.mjs",
+      "research/test_results/floating-map-created-project-regression.log"
     ],
     "evidence": "research/test_results/floating-evidence-report-verification.json",
     "checks": {
@@ -1870,7 +1872,8 @@
       "build": "passed",
       "live_browser": "passed",
       "pdf_pages": 30,
-      "report_render": "passed"
+      "report_render": "passed",
+      "created_project_browser_fixture": "expanded-ready passed 6 assertions after actual response contract repair"
     },
     "unresolved_questions": [],
     "next_runnable_task": "Run required PR checks and merge the authorized reviewed revision."
