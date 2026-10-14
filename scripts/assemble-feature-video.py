@@ -17,7 +17,7 @@ from pathlib import Path
 FFMPEG = Path("C:/Users/123/AppData/Local/Microsoft/WinGet/Links/ffmpeg.exe")
 FFPROBE = Path("C:/Users/123/AppData/Local/Microsoft/WinGet/Links/ffprobe.exe")
 POWERSHELL = Path("C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe")
-WIDTH, HEIGHT, PICTURE_HEIGHT, FPS = 1920, 1080, 920, 30
+WIDTH, HEIGHT, PICTURE_HEIGHT, FPS = 1920, 1080, 1080, 30
 
 
 def read_json(path: Path):
@@ -43,16 +43,14 @@ def ffconcat_path(path: Path):
 
 
 def normalized_frame(frame_run, directory: Path):
-    """Keep changing capture dimensions from resetting FFmpeg's filter timestamps."""
+    """Normalize the captured page to a full 16:9 canvas without side borders."""
     from PIL import Image, ImageOps
     directory.mkdir(exist_ok=True)
-    destination = directory / f"{frame_run['sha256']}.jpg"
+    destination = directory / f"{frame_run['sha256']}-{WIDTH}x{HEIGHT}-full.jpg"
     if not destination.exists():
         with Image.open(frame_run["file"]) as source:
-            picture = ImageOps.contain(source.convert("RGB"), (WIDTH, PICTURE_HEIGHT), Image.Resampling.LANCZOS)
-            canvas = Image.new("RGB", (WIDTH, PICTURE_HEIGHT), "#f2f6f3")
-            canvas.paste(picture, ((WIDTH-picture.width)//2, (PICTURE_HEIGHT-picture.height)//2))
-            canvas.save(destination, quality=95, subsampling=0)
+            picture = ImageOps.fit(source.convert("RGB"), (WIDTH, HEIGHT), Image.Resampling.LANCZOS, centering=(.5, 0))
+            picture.save(destination, quality=95, subsampling=0)
     return destination
 
 
@@ -191,7 +189,7 @@ def action_markers(actions, runs, duration):
 
 
 def write_ass(path: Path, chapter, duration: float, utterances):
-    # All annotations occupy the dedicated 160px lower band, never the recorded UI.
+    # Compact overlays retain a full-frame page instead of reserving a caption band.
     header = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 1920
@@ -200,15 +198,14 @@ WrapStyle: 0
 ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Title,Microsoft YaHei,34,&H00FFFFFF,&H00FFFFFF,&H00163836,&H00163836,-1,0,0,0,100,100,0,0,1,0,0,7,80,80,0,1
+Style: Title,Microsoft YaHei,24,&H00FFFFFF,&H00FFFFFF,&H70000000,&H70000000,-1,0,0,0,100,100,0,0,3,6,0,9,24,24,18,1
 Style: Subtitle,Microsoft YaHei,26,&H00D5EEE6,&H00D5EEE6,&H00163836,&H00163836,0,0,0,0,100,100,0,0,1,0,0,7,80,80,0,1
-Style: Narration,Microsoft YaHei,30,&H00FFFFFF,&H00FFFFFF,&H00163836,&H00163836,0,0,0,0,100,100,0,0,1,0,0,2,80,80,14,1
+Style: Narration,Microsoft YaHei,34,&H00FFFFFF,&H00FFFFFF,&H70000000,&H70000000,0,0,0,0,100,100,0,0,3,8,0,2,80,80,18,1
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
     lines = [header,
-             f"Dialogue: 0,0:00:00.00,{ass_time(duration)},Title,,0,0,0,,{{\\pos(80,926)}}{ass_text(chapter['title'])}",
-             f"Dialogue: 0,0:00:00.00,{ass_time(duration)},Subtitle,,0,0,0,,{{\\pos(80,972)}}{ass_text(chapter.get('subtitle', ''))}"]
+             f"Dialogue: 0,0:00:00.00,{ass_time(duration)},Title,,0,0,0,,{ass_text(chapter['title'])}"]
     for utterance in utterances:
         lines.append(f"Dialogue: 1,{ass_time(utterance['chapter_start_seconds'])},{ass_time(utterance['chapter_end_seconds'])},Narration,,0,0,0,,{ass_text(utterance['text'])}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -283,6 +280,7 @@ def assemble(options):
                 "source_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
                 "source_url": manifest.get("source_url"), "source_revision": manifest.get("source_revision"),
                 "source_resolution": manifest.get("resolution"), "output_resolution": {"width": WIDTH, "height": HEIGHT},
+                "frame_layout":"full_frame_16_9", "caption_layout":"overlay",
                 "voice": options.voice, "voice_rate": options.voice_rate, "network_used": False,
                 "static_wait_policy": "Only consecutive identical JPEG bytes shorten a wait, capped at 2 seconds; distinct visual frames retain source duration.",
                 "video": str(video), "chapters": [], "omitted_chapters": [chapter for chapter in manifest.get("chapters", []) if chapter.get("valid") is not True],

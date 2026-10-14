@@ -1,12 +1,13 @@
 """Cut actual recorded UI footage into an offline Mandarin showcase under 120 seconds.
 
-Uses the full video and its recorded-frame timeline. Never launches a browser or
-changes application data. Old narration and the old subtitle band are discarded.
+Uses the recorded-frame timeline and original page captures. Never launches a
+browser or changes application data. Titles and narration overlay a full 16:9 page.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import subprocess
 import wave
@@ -32,7 +33,7 @@ SCENES = [
      [('experience_library', 4.1, 3), ('factor_policy', 6.4, 6)]),
     ('costs', '1277条补全工程记录', 10,
      '补全版一千二百七十七条工程记录，按金额阶段和地区筛选。',
-     [('cost_library', 13.53, 4.57), ('cost_library', 18.1, 5.38)]),
+     [('cost_library', 4.5, 4.5), ('cost_library', 10, 4.4)]),
     ('neural', '神经网络：合成与公告试验', 10,
      '合成示例验证预测流程；公告试验误差较大，仍需真实数据校准。',
      [('neural_demo', 2.72, 3.74), ('neural_demo', 6.46, 2.318), ('community_six_dimensions', 0, 2.15)]),
@@ -41,7 +42,7 @@ SCENES = [
      [('operations', 0, 10.966)]),
     ('six_dimensions', '六维现况与改造改善', 8,
      '完整模拟社区展示六维现况，切换拟改造方案，查看指标改善。',
-     [('community_six_dimensions', 2.25, 6.09)]),
+     [('community_six_dimensions', 5, 6.09)]),
     ('budget_ledger', '情景预算与逐日台账', 9,
      '比较标准情景与年度预算，再用逐日模拟台账核对月末结果。',
      [('standard_scenarios', 3, 5.1), ('daily_ledger', 1.9, 3.9)]),
@@ -87,13 +88,13 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Title,Microsoft YaHei,32,&H00D5EEE6,&H00D5EEE6,&H00163836,&H00163836,-1,0,0,0,100,100,0,0,1,0,0,7,80,80,0,1
-Style: Speech,Microsoft YaHei,34,&H00FFFFFF,&H00FFFFFF,&H00163836,&H00163836,0,0,0,0,100,100,0,0,1,0,0,7,80,80,0,1
+Style: Title,Microsoft YaHei,26,&H00FFFFFF,&H00FFFFFF,&H70000000,&H70000000,-1,0,0,0,100,100,0,0,3,6,0,9,24,24,18,1
+Style: Speech,Microsoft YaHei,34,&H00FFFFFF,&H00FFFFFF,&H70000000,&H70000000,0,0,0,0,100,100,0,0,3,8,0,2,80,80,18,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.00,{ass_time(duration)},Title,,0,0,0,,{{\\pos(80,932)}}{title}
-Dialogue: 0,0:00:00.00,{ass_time(duration)},Speech,,0,0,0,,{{\\pos(80,993)}}{narration}
+Dialogue: 0,0:00:00.00,{ass_time(duration)},Title,,0,0,0,,{title}
+Dialogue: 0,0:00:00.00,{ass_time(duration)},Speech,,0,0,0,,{narration}
 '''
 
 
@@ -112,6 +113,10 @@ def main():
         folder.mkdir(exist_ok=True)
     meta = json.loads(coverage.read_text(encoding='utf-8-sig'))
     chapters = {c['key']: c for c in meta['chapters']}
+    module_spec = importlib.util.spec_from_file_location('feature_assembly', Path('scripts/assemble-feature-video.py').resolve())
+    renderer = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(renderer)
+    frames_directory = out/'full-frame'
     plan = {'utterances': [{'id': s[0], 'text': s[3]} for s in SCENES]}
     plan_file = out/'narration-plan.json'
     write_json(plan_file, plan)
@@ -126,11 +131,29 @@ def main():
         inputs, filters, intervals = [], [], []
         for j, (chapter_key, relative, length) in enumerate(selections):
             chapter = chapters[chapter_key]
-            if relative < 0 or relative + length > chapter['edited_visual_seconds'] + .05:
-                raise ValueError(f'{key}: selected interval extends beyond recorded footage')
+            available = chapter['edited_visual_seconds']
+            if available <= 0:
+                raise ValueError(f'{key}: no recorded footage')
+            length = min(length, available)
+            relative = min(max(0, relative), max(0, available-length))
             start = chapter['start_seconds'] + relative
-            inputs += ['-ss', f'{start:.6f}', '-t', f'{length:.6f}', '-i', source]
-            filters.append(f'[{j}:v]trim=duration={length:.6f},setpts=PTS-STARTPTS,crop=1920:920:0:0,fps=30,setsar=1[v{j}]')
+            sequence_file = clips/f'{key}-source-{j}.ffconcat'
+            sequence_lines = ['ffconcat version 1.0']
+            selected_frames = []
+            for frame in chapter['frame_timeline']:
+                begin = max(relative, frame['edited_start_seconds'])
+                end = min(relative+length, frame['edited_start_seconds']+frame['duration_seconds'])
+                if end <= begin:
+                    continue
+                frame_file = renderer.normalized_frame(frame, frames_directory)
+                sequence_lines += [f"file '{renderer.ffconcat_path(frame_file)}'", f'duration {end-begin:.9f}']
+                selected_frames.append(frame_file)
+            if not selected_frames:
+                raise ValueError(f'No captured page covers {key} selection {j}')
+            sequence_lines.append(f"file '{renderer.ffconcat_path(selected_frames[-1])}'")
+            sequence_file.write_text('\n'.join(sequence_lines)+'\n', encoding='utf-8')
+            inputs += ['-f', 'concat', '-safe', '0', '-i', sequence_file]
+            filters.append(f'[{j}:v]trim=duration={length:.6f},setpts=PTS-STARTPTS,fps=30,setsar=1[v{j}]')
             frame_ids = [f['source_sequence'] for f in chapter['frame_timeline']
                          if f['edited_start_seconds'] < relative + length
                          and f['edited_start_seconds'] + f['duration_seconds'] > relative]
@@ -146,7 +169,7 @@ def main():
         ass_file.write_text(subtitle_ass(f'{i:02d} · {title}', narration, duration), encoding='utf-8')
         # Retain real-time recorded operation; only freeze the final UI where narration needs reading time.
         filters.append(''.join(f'[v{j}]' for j in range(len(selections))) + f'concat=n={len(selections)}:v=1:a=0[sequence]')
-        filters.append(f'[sequence]tpad=stop_mode=clone:stop_duration={duration},trim=duration={duration},pad=1920:1080:0:0:color=0x163836,ass={ass_file.name}[picture]')
+        filters.append(f'[sequence]tpad=stop_mode=clone:stop_duration={duration},trim=duration={duration},ass={ass_file.name}[picture]')
         filters.append(f'[{len(selections)}:a]aresample=48000,apad,atrim=duration={duration},asetpts=PTS-STARTPTS[speech]')
         target = clips/(key+'.mp4')
         if render_keys is None or key in render_keys:
@@ -181,7 +204,8 @@ def main():
         f"{r['output_start_seconds']:.0f}–{r['output_end_seconds']:.0f}秒 · {r['title']}\n\n{r['narration']}" for r in output_rows)+'\n', encoding='utf-8')
     write_json(out/'短版选段.json', {'source_video': str(source), 'source_coverage': str(coverage),
                'video': str(final), 'network_used': False, 'old_audio_discarded': True,
-               'source_crop': {'x':0,'y':0,'width':1920,'height':920}, 'scenes': output_rows,
+               'source_material':'original_browser_frames', 'frame_layout':'full_frame_16_9',
+               'caption_layout':'overlay', 'output_resolution':{'width':1920,'height':1080}, 'scenes': output_rows,
                'planned_duration_seconds': cursor})
     probe = json.loads(run([FFPROBE, '-v', 'error', '-show_format', '-show_streams', '-show_chapters', '-of', 'json', final]))
     seconds = float(probe['format']['duration'])

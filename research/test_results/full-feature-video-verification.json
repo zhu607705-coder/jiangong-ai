@@ -3,7 +3,7 @@
   "status": "completed_full_and_short_video_and_database",
   "video": {
     "path": "D:\\建工ai\\output\\video\\full-feature-20261014\\rendered\\老旧小区改造工作台_全功能演示.mp4",
-    "sha256": "48696c048dd058d7dc0f8e59086766edb226bc9c347581c1edbb88733c53edbe",
+    "sha256": "54fed8045229d6c66c003dba7f2b38a60f1919e7208085c79f3e8c86a759cc71",
     "seconds": 667.921333,
     "chapters": 18,
     "resolution": [
@@ -24,8 +24,9 @@
       "full_decode": true,
       "audio_non_silent_and_not_clipped": true
     },
-    "visual_review": "reviewed_chapter_contact_sheet_and_cost_operations_frames",
-    "speech_pronunciation_review": "not_manually_listened"
+    "visual_review": "RAG and six-dimension frames inspected; no added side borders or cropped right columns",
+    "speech_pronunciation_review": "not_manually_listened",
+    "frame_layout": "full_frame_16_9"
   },
   "database": {
     "manifest": "data/imports/renewal-database-20261014/manifest.json",
@@ -106,8 +107,8 @@
   "short_video": {
     "path": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\老旧小区改造工作台_2分钟内精华版.mp4",
     "seconds": 102.021354,
-    "bytes": 5134252,
-    "sha256": "5f7b498eb450a8033278527eda72f953137907a67bd31d6e03745ab900e92477",
+    "bytes": 5293424,
+    "sha256": "1e30d2dd3207ce984e6fd9cdfadffa4c6aadce1d107363b2d7c7927a84f15520",
     "passed": true,
     "checks": {
       "duration_under_120": true,
@@ -128,5 +129,6 @@
         }
       ]
     }
-  }
+  },
+  "layout_revision": "research/test_results/video-full-frame-verification.json"
 }
