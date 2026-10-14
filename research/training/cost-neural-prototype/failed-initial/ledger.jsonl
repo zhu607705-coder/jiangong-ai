@@ -1,0 +1,7 @@
+{"event": "start", "utc": "2026-10-14T03:15:49Z", "manifest_sha256": "sha256:0190f7dd8abcb9f3af4d26491c3e8d399f3409de84c90f20f9a685e839cd26c4", "pid": 28696, "device": "CPU", "threads": 2}
+{"event": "trial", "utc": "2026-10-14T03:15:49Z", "dataset": "synthetic", "generation": 0, "particle": 0, "hidden": [10, 5], "learning_rate": 0.01, "l2": 0.001, "development_log_mse": 0.007228506602346934}
+{"event": "trial", "utc": "2026-10-14T03:15:49Z", "dataset": "synthetic", "generation": 0, "particle": 1, "hidden": [15, 7], "learning_rate": 0.009012711679692248, "l2": 0.00016600811965436464, "development_log_mse": 0.009199959411300617}
+{"event": "trial", "utc": "2026-10-14T03:15:49Z", "dataset": "synthetic", "generation": 0, "particle": 2, "hidden": [12, 6], "learning_rate": 0.014790928615826551, "l2": 0.0003834944279534848, "development_log_mse": 0.0075181543786516205}
+{"event": "trial", "utc": "2026-10-14T03:15:50Z", "dataset": "synthetic", "generation": 0, "particle": 3, "hidden": [10, 5], "learning_rate": 0.0062524575844068115, "l2": 0.009431353351569307, "development_log_mse": 0.005895836925607472}
+{"event": "trial", "utc": "2026-10-14T03:15:50Z", "dataset": "synthetic", "generation": 0, "particle": 4, "hidden": [10, 5], "learning_rate": 0.01953484778622762, "l2": 0.00026300148329206263, "development_log_mse": 0.006823433182233995}
+{"event": "failure", "utc": "2026-10-14T03:15:50Z", "error_type": "OSError", "message": "GetProcessMemoryInfo failed"}

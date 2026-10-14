@@ -4,13 +4,12 @@ import { api, type Project } from '../api'
 import type { OperationsInput, OperationsResult } from '../../../host/generated/contracts'
 import { simulateScenarioUsers, type CompleteCommunityDemo } from '../../../../packages/retrofit/complete-demo'
 import { defaultExploration, explorationInput, summarizeExploration, type ExplorationParameters } from '../../../../packages/retrofit/visual-analysis'
-import { readDemoPlans } from '../../../../packages/retrofit/demo-workflow'
+import { createDemoPlan, demoPlanSavedTime, nextDemoPlanNumber, readDemoPlans, type DemoPlan } from '../../../../packages/retrofit/demo-workflow'
 import { AnimatedNumber } from './analysis-motion'
 import { MonthlyCashFlowVisual } from './CommunityAnalysisVisuals'
 import './community-operations-playground.css'
 
 export type ExplorationSnapshot = { parameters: ExplorationParameters; input: OperationsInput; result: OperationsResult }
-type SavedExploration = ExplorationSnapshot & { name: string }
 const format = (value: number) => value.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
 
 export default function CommunityOperationsPlayground({ project, demo, baseline, motion, onResult }: {
@@ -22,7 +21,7 @@ export default function CommunityOperationsPlayground({ project, demo, baseline,
   const [busy, setBusy] = useState(true), [error, setError] = useState(''), [retry, setRetry] = useState(0)
   const [serviceId, setServiceId] = useState('activity')
   const storageKey = `hzz-synthetic-explorations:${project.id}`
-  const [saved, setSaved] = useState<SavedExploration[]>(() => {
+  const [saved, setSaved] = useState<DemoPlan[]>(() => {
     try {
       const values: unknown = JSON.parse(localStorage.getItem(storageKey) || '[]')
       return readDemoPlans(demo, values)
@@ -55,7 +54,7 @@ export default function CommunityOperationsPlayground({ project, demo, baseline,
   function change(key: keyof ExplorationParameters, value: number) { setParameters(current => ({ ...current, [key]: value })) }
   function keep() {
     if (!computed || busy || error || !unchanged || saved.length === 3) return
-    setSaved(values => [...values, { ...structuredClone(computed), name: `方案 ${values.length + 1} · ${new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}` }])
+    setSaved(values => [...values, createDemoPlan(computed, nextDemoPlanNumber(values))])
   }
   const deficit = metrics?.balance_after_support != null && metrics.balance_after_support < 0
   const unmet = result?.services.reduce((sum, service) => sum + (service.unmet_visits ?? 0), 0) ?? 0
@@ -88,8 +87,11 @@ export default function CommunityOperationsPlayground({ project, demo, baseline,
       <header><h4>方案对比</h4><span>保存在本机 · 完整模拟</span></header>
       <div className="playground-saved-grid">{saved.map((value, index) => {
         const summary = summarizeExploration(value)
+        const savedTime = demoPlanSavedTime(value)
         return <article key={`${value.name}:${index}`}>
           <header><strong>{value.name}</strong><button type="button" aria-label={`移除${value.name}`} onClick={() => setSaved(values => values.filter((_, position) => position !== index))}>×</button></header>
+          {savedTime?.kind === 'saved' && <p className="playground-plan-saved-time"><time dateTime={savedTime.dateTime}>{savedTime.text}</time></p>}
+          {savedTime?.kind === 'legacy' && <details className="playground-plan-save-details"><summary>保存信息</summary><p>{savedTime.text}</p></details>}
           <p className="playground-plan-condition">需求条件：{summary.condition}</p>
           <section className="playground-plan-measures" aria-label={`${value.name}关键举措`}><h5>关键举措</h5><ul>{summary.measures.map(measure => <li key={measure}>{measure}</li>)}</ul></section>
           <dl className="playground-plan-metrics"><div><dt>服务量</dt><dd>{summary.service}</dd></div><div><dt>覆盖居民</dt><dd>{summary.coverage}</dd></div><div><dt>{summary.balanceLabel}</dt><dd className={summary.deficit ? 'is-deficit' : ''}>{summary.balance}</dd></div><div><dt>政府投入</dt><dd>{summary.government}</dd></div></dl>

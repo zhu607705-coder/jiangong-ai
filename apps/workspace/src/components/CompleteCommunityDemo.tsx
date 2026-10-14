@@ -5,6 +5,7 @@ import DecisionDashboard from './DecisionDashboard'
 import CommunityOperationsPanel, { type OperationsPreview } from './CommunityOperationsPanel'
 import { CommunityDataFabric, ServiceCapacityVisual, MonthlyCashFlowVisual, DailyLedgerVisual } from './CommunityAnalysisVisuals'
 import CommunityOperationsPlayground, { type ExplorationSnapshot } from './CommunityOperationsPlayground'
+import CostNeuralPreview from './CostNeuralPreview'
 import { AnimatedNumber, useAnalysisMotion } from './analysis-motion'
 import './complete-community-demo.css'
 
@@ -50,6 +51,7 @@ export default function CompleteCommunityDemo({ project }: { project: Project })
       <div className="full-demo-actions"><button type="button" disabled={!baseline || !exploration || calculationState === 'calculating'} onClick={exportReport}>导出完整模拟报表</button><button type="button" onClick={() => download('完整社区模拟数据.json', JSON.stringify({ ...demo, analysis: { selectedScenario: activeScenario, scenarios: previews, playground: exploration } }, null, 2), 'application/json')}>导出样本与当前分析</button><button type="button" className="analysis-motion-control" aria-pressed={motion.userReduced} onClick={() => motion.setUserReduced(!motion.userReduced)}>{motion.enabled ? '减少动效' : '动效已减少'}</button></div>
     </header>
     <CommunityOperationsPlayground key={`${project.id}:${project.context_version}`} project={project} demo={demo} baseline={baseline || undefined} motion={motion.enabled} onResult={setExploration} />
+    <CostNeuralPreview />
     <details className="full-demo-secondary"><summary>查看社区名册、现况与改造安排</summary>
     <div className="full-demo-overview" aria-label="模拟社区规模">
       <div><span>覆盖家庭</span><strong><AnimatedNumber value={demo.households} enabled={motion.enabled} /> <small>户</small></strong><p>540份问卷＋60户补访</p></div>

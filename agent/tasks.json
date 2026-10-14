@@ -1226,6 +1226,80 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/community-workflow-verification.json"
+    },
+    {
+      "id": "T49",
+      "depends_on": [
+        "T48",
+        "T47"
+      ],
+      "goal": "尝试中标价神经网络与合成示例，分离方案名及保存时刻",
+      "status": "completed_functional_demo_and_readonly_integration_verified",
+      "expected_artifacts": [
+        "research/test_results/neural-rag-verification.json"
+      ],
+      "definition_of_done": "代码、计算或检索契约、真实本机渲染与读回、当前回归构建及原报告渲染有证据；模拟/AI/真实和未审核内容分列，无真实事实写入。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "scripts/",
+        "tests/",
+        "data/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/neural-rag-verification.json"
+    },
+    {
+      "id": "T50",
+      "depends_on": [
+        "T44",
+        "T47"
+      ],
+      "goal": "跨文本举措定位，原文Markdown/JSON转换与RAG准备",
+      "status": "completed_functional_demo_and_readonly_integration_verified",
+      "expected_artifacts": [
+        "research/test_results/neural-rag-verification.json"
+      ],
+      "definition_of_done": "代码、计算或检索契约、真实本机渲染与读回、当前回归构建及原报告渲染有证据；模拟/AI/真实和未审核内容分列，无真实事实写入。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "scripts/",
+        "tests/",
+        "data/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/neural-rag-verification.json"
+    },
+    {
+      "id": "T51",
+      "depends_on": [
+        "T50"
+      ],
+      "goal": "系统RAG检索设计、范围版本门控与既有BM25接口实装",
+      "status": "completed_functional_demo_and_readonly_integration_verified",
+      "expected_artifacts": [
+        "research/test_results/neural-rag-verification.json"
+      ],
+      "definition_of_done": "代码、计算或检索契约、真实本机渲染与读回、当前回归构建及原报告渲染有证据；模拟/AI/真实和未审核内容分列，无真实事实写入。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "scripts/",
+        "tests/",
+        "data/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/neural-rag-verification.json"
     }
   ]
 }

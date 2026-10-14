@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "D:\建工ai\scripts\train-cost-neural-prototype.py", line 122, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "D:\建工ai\scripts\train-cost-neural-prototype.py", line 110, in main
+    result[name]=train_dataset(name,json.loads(path.read_text(encoding='utf-8')),deadline)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\建工ai\scripts\train-cost-neural-prototype.py", line 72, in train_dataset
+    if rss_mib()>512: raise MemoryError('512 MiB RAM budget exceeded')
+       ^^^^^^^^^
+  File "D:\建工ai\scripts\train-cost-neural-prototype.py", line 38, in rss_mib
+    if not ctypes.windll.psapi.GetProcessMemoryInfo(handle,ctypes.byref(counters),counters.cb): raise OSError('GetProcessMemoryInfo failed')
+                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: GetProcessMemoryInfo failed

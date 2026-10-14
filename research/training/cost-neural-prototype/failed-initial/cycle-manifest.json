@@ -1,0 +1,288 @@
+{
+  "schema_version": "autoresearch-cycle/v4",
+  "cycle_id": "20261014-cost-neural-prototype",
+  "parent_cycle_id": null,
+  "status": "preflighted",
+  "decision": {
+    "question": "Can a bounded PSO/BP adapter produce reloadable positive predictions and measure its limits on workbook and synthetic surfaces?",
+    "on_pass": "keep labelled demonstration artifacts only",
+    "on_fail": "report poor predictive performance and keep the synthetic workflow demonstration",
+    "on_inconclusive": "keep the exploratory record and no production claims",
+    "why_existing_evidence_is_insufficient": "The prior admission audit did not fit any model; no loadable model or team prediction results exist."
+  },
+  "hypothesis": "Existing declared-price records can support an exploratory bid-intensity model; a separate synthetic seven-indicator network can demonstrate interactive prediction without settlement labels.",
+  "budget": {
+    "wall_time_minutes": 5,
+    "max_trials": 54,
+    "max_failures": 1,
+    "max_gate_opens": 1
+  },
+  "gate_usage": {
+    "replacement_gate_open_count_before_cycle": 0,
+    "replacement_gate_status": "eligible",
+    "locked_final_audit_open_count_before_cycle": 0,
+    "locked_final_audit_feedback_used_for_search": false
+  },
+  "preflight_checks": [
+    "git_state",
+    "process_ownership",
+    "resource_lease",
+    "storage_headroom",
+    "artifact_paths",
+    "data_authority",
+    "hardware_profile",
+    "runtime_benchmark"
+  ],
+  "surfaces": {
+    "train": [
+      {
+        "id": "synthetic/train",
+        "fingerprint": "sha256:f34f216bc946ef309e98833dd638f6ab633ab4877efa0e4ef419053bd8e50c86"
+      },
+      {
+        "id": "workbook/train",
+        "fingerprint": "sha256:dbf9ca2b367ac59eab73afceaa69b621e0a7b1a366fdf3d9d3f3247dc0a82972"
+      }
+    ],
+    "development": [
+      {
+        "id": "synthetic/development",
+        "fingerprint": "sha256:cc2dc2c3aa48c1e483ce57477c104f9ae9fe2c60621231bd28a510c2e0509ef0"
+      },
+      {
+        "id": "workbook/development",
+        "fingerprint": "sha256:d2b63c6f8ebb706ecbfbcb8bad5f2ce5fc4afd951f146884267a4ed475d24946"
+      }
+    ],
+    "replacement_gate": [
+      {
+        "id": "synthetic/replacement_gate",
+        "fingerprint": "sha256:75fa61403bed1f8f9945255383370aae3aee53a1f8aedd8d34d0c8edfbfbd5ad"
+      },
+      {
+        "id": "workbook/replacement_gate",
+        "fingerprint": "sha256:cb45a956320b70d8c915791f2ade0972801a9c7536aabd70b9e77b9d2d2ae4ea"
+      }
+    ],
+    "locked_final_audit": [
+      {
+        "id": "synthetic/locked_final_audit",
+        "fingerprint": "sha256:aebc296c6bbed17544efc108b670f594b93d252703df7a7703a63a85a06fe7a8"
+      },
+      {
+        "id": "workbook/locked_final_audit",
+        "fingerprint": "sha256:af79a2c905319629b89e1fc93ab533241e2ede71ab30477d0d4861721547657b"
+      }
+    ]
+  },
+  "baseline": {
+    "artifact": "research/training/cost-neural-prototype/train-median-baseline.json",
+    "code_revision": "489254a2b9aabd52f9cc60452723dc9308a98584",
+    "data_fingerprint": "sha256:201ba0ecec9195ae1e80171f483f9e8c8b024fc52cf9ebcc096cda352ad2d2c9",
+    "config_fingerprint": "sha256:201ba0ecec9195ae1e80171f483f9e8c8b024fc52cf9ebcc096cda352ad2d2c9"
+  },
+  "candidate": {
+    "candidate_id": "bounded-pso-bp",
+    "parent_candidate_id": "train-median",
+    "hypothesis_family": "small-tabular-neural-adapter",
+    "search_stage": "development",
+    "change_from_parent": "two-hidden-layer BP with PSO development-only architecture/LR/L2 search",
+    "artifact": "data/templates/cost-neural-prototype.json",
+    "parent_artifact": "research/training/cost-neural-prototype/train-median-baseline.json",
+    "mutation_scope": [
+      "isolated cost prototype weights only"
+    ],
+    "command": [
+      "C:/Users/123/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+      "scripts/train-cost-neural-prototype.py",
+      "--manifest",
+      "research/training/cost-neural-prototype/cycle-manifest.json"
+    ],
+    "seed_set": [
+      20261014
+    ],
+    "config_fingerprint": "sha256:a4b8825ca9e0d7f53051feff7d3982afaf1e9edf38732e8a72385aa7bcb9bcda",
+    "code_fingerprints": {
+      "training_script": "sha256:a4b8825ca9e0d7f53051feff7d3982afaf1e9edf38732e8a72385aa7bcb9bcda",
+      "bp_core": "sha256:543027d1f5d5b7e04e3f090b5caa64e4d3b9a6bb0b5014028274083fe7a77ac3"
+    }
+  },
+  "search": {
+    "authority_surface": "development",
+    "pruning_surface": "development",
+    "strategy": "5 particles x 5 generations, 500 equal full-batch BP steps; one fixed seed",
+    "max_candidates_per_family": 25,
+    "fair_budget_rule": "all neural fits use 500 full-batch updates on identical fitting rows and seed; baseline BP uses the same budget",
+    "stage_order": [
+      "smoke",
+      "development",
+      "confirmation",
+      "replacement_gate"
+    ],
+    "parameters": [
+      {
+        "name": "hidden_width",
+        "kind": "integer",
+        "scale": "linear",
+        "bounds": [
+          6,
+          16
+        ]
+      },
+      {
+        "name": "learning_rate",
+        "kind": "float",
+        "scale": "log",
+        "bounds": [
+          0.001,
+          0.04
+        ]
+      },
+      {
+        "name": "l2",
+        "kind": "float",
+        "scale": "log",
+        "bounds": [
+          1e-05,
+          0.01
+        ]
+      }
+    ],
+    "learning_rate_policy": {
+      "applicable": true,
+      "range_test_on": "train",
+      "selection_surface": "development",
+      "scheduler": "constant Adam",
+      "warmup_fraction": 0
+    }
+  },
+  "resources": {
+    "hardware_profile": {
+      "artifact": "research/training/cost-neural-prototype/hardware-profile.json",
+      "fingerprint": "sha256:9dd2560ccfd247d2b3c00e014d935d78811860988866cf591952f04d55b2c676"
+    },
+    "workload_class": "single_gpu_neural",
+    "device_plan": {
+      "primary": "cpu",
+      "fallback": "none",
+      "selection_basis": "measured_benchmark",
+      "equal_scientific_budget": true
+    },
+    "limits": {
+      "max_concurrent_trials": 1,
+      "cpu_threads_per_trial": 2,
+      "max_ram_fraction": 0.1,
+      "max_vram_fraction": 0,
+      "min_free_vram_mib": 0
+    },
+    "measurement": {
+      "warmup_runs": 1,
+      "timed_runs": 3,
+      "capture_wall_time": true,
+      "capture_peak_rss": true,
+      "capture_peak_vram": true,
+      "capture_throughput": true
+    },
+    "failure_policy": {
+      "oom_action": "child_cycle",
+      "backend_change_requires_child_cycle": true,
+      "precision_change_requires_child_cycle": true,
+      "resource_observation_is_promotion_evidence": false
+    },
+    "runtime_benchmark": {
+      "artifact": "research/training/cost-neural-prototype/runtime-benchmark.json",
+      "fingerprint": "sha256:d1b1a81a3e1bc30852675748dea7513a1a6574fe02c7f47dda3e1ac9a1ddccee"
+    }
+  },
+  "review": {
+    "artifact_readback_required": true,
+    "claim_evidence_reconciliation_required": true,
+    "independent_verification_required": true,
+    "unresolved_contradictions_block_promotion": true,
+    "failure_taxonomy": [
+      "data",
+      "code",
+      "resource",
+      "evaluation",
+      "claim"
+    ]
+  },
+  "metrics": {
+    "development_objective": {
+      "name": "log_mse",
+      "direction": "minimize",
+      "surface": "development"
+    },
+    "replacement_metric": {
+      "name": "mae",
+      "direction": "minimize",
+      "surface": "replacement_gate",
+      "uncertainty_method": "descriptive paired project errors only; no promotion"
+    },
+    "hard_buckets": [
+      "known vs unknown renovation scope",
+      "synthetic vs workbook; never pooled"
+    ],
+    "guardrails": [
+      {
+        "name": "finite_positive_predictions",
+        "surface": "replacement_gate",
+        "rule": "all retained prices finite positive and exact JSON reload matches"
+      },
+      {
+        "name": "no_zhejiang_claim",
+        "surface": "replacement_gate",
+        "rule": "no Zhejiang validation exists; workbook remains unverified-price exploration"
+      }
+    ]
+  },
+  "stop_rules": [
+    {
+      "name": "budget_exhausted",
+      "condition": "any declared cycle budget is exhausted",
+      "action": "aborted"
+    },
+    {
+      "name": "non_finite",
+      "condition": "a required metric or loss is non-finite",
+      "action": "failed"
+    },
+    {
+      "name": "guardrail_breach",
+      "condition": "a predeclared hard guardrail fails",
+      "action": "rejected"
+    },
+    {
+      "name": "low_decision_value",
+      "condition": "remaining candidates cannot plausibly change the decision or unlock a useful next step",
+      "action": "aborted"
+    }
+  ],
+  "recovery": {
+    "checkpoint": "research/training/cost-neural-prototype",
+    "retry_budget": 0,
+    "resume_requires_same_contract": true
+  },
+  "artifacts": {
+    "run_dir": "research/training/cost-neural-prototype",
+    "state_file": "research/training/cost-neural-prototype/cycle-state.json",
+    "ledger_file": "research/training/cost-neural-prototype/ledger.jsonl",
+    "report_file": "research/training/cost-neural-prototype/results.json"
+  },
+  "promotion": {
+    "target": "trial_keep",
+    "rule": "retain labelled trial artifacts on finite predictions and reload; poor external accuracy reported, never promoted to production",
+    "rollback_artifact": "research/training/cost-neural-prototype/train-median-baseline.json",
+    "current_level": "none",
+    "requested_level": "trial_keep",
+    "eligible_surface": "development",
+    "persisted_artifact_reload_required": true,
+    "paired_predecessor_comparison_required": true,
+    "minimum_reproduction_runs": 1,
+    "deploy_allowed": false
+  },
+  "dataset_fingerprints": {
+    "synthetic": "sha256:910410d92a39b3a0b1f81abc0f9f77e417cebebe05d7412c75d66d47c967e5aa",
+    "workbook": "sha256:24fd6aa3653cd3922e9cd1bcec29d4a9a3362831b55e6089b115a651b9c4d258"
+  }
+}

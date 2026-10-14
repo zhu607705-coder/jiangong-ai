@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../api'
 import type { AmountKind, WorkType, CostLibraryResult } from '../../../../packages/construction-costs/library'
 import './construction-cost-library.css'
+import CostNeuralPreview from './CostNeuralPreview'
 
 const amountLabels: Record<AmountKind, string> = { estimate: '估算', budget: '预算', tender_ceiling: '招标控制价', candidate_bid: '候选报价', winning_bid: '中标价', contract_price: '合同价', settlement: '结算价' }
 const workLabels: Record<WorkType, string> = { construction: '施工', epc: 'EPC工程总承包', design: '设计', supervision: '监理', other: '其他' }
@@ -31,6 +32,7 @@ export default function ConstructionCostLibrary({ projectId }: { projectId: stri
   return <section className="construction-cost-library" aria-label="历史改造工程造价库">
     <button className="cost-library-toggle" type="button" aria-expanded={open} onClick={() => setOpen(value => !value)}><span><strong>历史改造工程造价库</strong><small>公开交易公告 · 按工程与价格阶段查阅</small></span><span aria-hidden="true">{open ? '收起 −' : '展开 +'}</span></button>
     {open && <div className="cost-library-body">
+      <CostNeuralPreview />
       <p className="cost-library-note">浙江、上海、广东官方平台已归档样本，正在逐项补充。工程类型、价格阶段与面积口径分别记录；跨公告引用保留各自原件。候选报价待正式定标。</p>
       <div className="cost-library-filters">
         <label>关键词<input value={q} onChange={event => setQ(event.target.value)} placeholder="项目名称、标段或工程范围" maxLength={300}/></label>

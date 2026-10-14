@@ -1,0 +1,703 @@
+{
+  "as_of": "2026-10-14",
+  "status": "completed_bounded_training_rag_retrieval_and_exports",
+  "checks": {
+    "full_command": "npm run verify",
+    "exit_code": 0,
+    "javascript": 1037,
+    "python": 219,
+    "http": 16,
+    "log": "research/test_results/neural-rag-verify.log",
+    "build": "research/test_results/neural-rag-build-final.log"
+  },
+  "neural": {
+    "workbook_records": 37,
+    "workbook_target": "construction winning-bid divided by beneficiary building floor area; unverified source workbook",
+    "workbook_audit": {
+      "n": 9,
+      "mae": 214.38051797640682,
+      "rmse": 222.7106006397361,
+      "mape": 128.77030904546407,
+      "r2": -1.655493694472487
+    },
+    "workbook_verdict": "poor out-of-scope transfer; no Zhejiang or settlement claim",
+    "synthetic_records": 480,
+    "synthetic_audit": {
+      "n": 60,
+      "mae": 78.08945000596063,
+      "rmse": 111.10923430562652,
+      "mape": 6.282236040722024,
+      "r2": 0.9452007738295857
+    },
+    "synthetic_verdict": "learning generated mechanism; interactive demonstration only",
+    "json_reload": true,
+    "python_typescript_forward_match": true,
+    "bounded_cycle": "research/training/cost-neural-prototype/cycle-manifest.json",
+    "independent_review": "research/training/cost-neural-prototype/independent-verification.json"
+  },
+  "rag": {
+    "design": "docs/RAG检索与跨文本证据设计.md",
+    "live_probe": "node --import tsx scripts/verify-rag-workspace.ts <project-id>",
+    "live_result": "research/test_results/rag-workspace-live.json",
+    "primary_scope_answer": "line:22, four buildings 29/30/31/48, total252 households, Liubo excluded; historical2023 original",
+    "source_isolation": true,
+    "metadata_gate_before_single_existing_bm25": true,
+    "query_expansions_visible": true,
+    "txt_mirror_aliases_preserved": true,
+    "new_vector_store": false,
+    "llm_generation_called": false,
+    "fact_writes": 0,
+    "cross_text": "5 source documents/15 cards; water appears in3 documents, only1 with registered citations",
+    "downloads": "research/test_results/neural-rag-download-readback.json",
+    "exported_existing_project_chunks": 123,
+    "current_docs_exported_md_and_json": true,
+    "original_files_unchanged": true
+  },
+  "ui": {
+    "saved_plan_names": "meaningful input-based names; legacy time secondary, missing date not invented",
+    "browser_time_note": "历史保存时刻00:24（日期未记录）",
+    "native_model_changed": {
+      "entity_unit_before": 900,
+      "prediction_before": 1135.1,
+      "entity_unit_after": 1800,
+      "prediction_after": 2121.4
+    },
+    "model_export_readback": true,
+    "rag_source_jump_and_context": true,
+    "mobile": {
+      "viewport": 390,
+      "document_width": 390,
+      "model_panel": 286.67,
+      "rag_panel": 251.33,
+      "cross_panel": 226,
+      "viewport_restored": true,
+      "filter_columns": "single full-width column, 218px; no date/selection clipping"
+    },
+    "screenshots": [
+      "output/playwright/neural-rag/cross-text-location.jpg",
+      "output/playwright/neural-rag/neural-interactive.jpg",
+      "output/playwright/neural-rag/neural-mobile.jpg",
+      "output/playwright/neural-rag/plan-names.jpg",
+      "output/playwright/neural-rag/rag-mobile.jpg",
+      "output/playwright/neural-rag/rag-retrieval.jpg",
+      "output/playwright/neural-rag/workbook-model-result.jpg"
+    ]
+  },
+  "report": {
+    "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+    "pages": 31,
+    "sha256": "27eff0b42c3156743494ed380f3a64f8171bdf340715a917e35362a4a3e00224",
+    "latex_warnings": 0,
+    "render_review": "passed"
+  },
+  "remaining": [
+    "No reliable Zhejiang/EPC settlement model validated.",
+    "Current retrieval is project source browsing and export; new automatic DSH answer generation and semantic recall not claimed.",
+    "Human-labelled retrieval accuracy remains unevaluated."
+  ],
+  "attachments": {
+    "schema_version": "haizhizi-attachment-rag-manifest/1.0",
+    "source_files": 4,
+    "source_files_unchanged": true,
+    "project_data_written": false,
+    "raw_outputs_remain_local": true,
+    "source_classification_preserved": true,
+    "entries": [
+      {
+        "file_name": "PSO-BP神经网络模型在改造工程造价预测的应用研究：以广东省为例_王宝龙(1).pdf",
+        "document_id": "DOC-20af4965c3b3d236",
+        "context_role": "method_reference",
+        "source_sha256_before": "20af4965c3b3d23693bdd4ddde144aa93faf45ca6521e56e25ae28d84769b5b5",
+        "source_sha256_after": "20af4965c3b3d23693bdd4ddde144aa93faf45ca6521e56e25ae28d84769b5b5",
+        "output_json_sha256": "232ce2137f65f013c1259aeb1c5d584b83d948395d38b2c536891b03b92154bc",
+        "output_markdown_sha256": "afeaa5a99290f2af6fdc2366c976e002e4e24ea8069ce655d2c11ec30e83b73d",
+        "source_counts": {
+          "pages": 8
+        },
+        "extraction_boundaries": {
+          "export_extension": null,
+          "online_parser_snapshot": {
+            "text_chars": 16230,
+            "segments": 8,
+            "notes": [
+              "最多解析前 50 页，页码定位保留；扫描页需要 OCR，不能被解释为没有内容。",
+              "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+            ],
+            "tables": []
+          },
+          "text_truncated": false,
+          "returned_text_chars": 16230,
+          "returned_segment_count": 8,
+          "retained_segment_text_chars": 16144,
+          "pdf_page_limit_applies": false,
+          "docx_table_limit_applies": false,
+          "docx_rows_limit_applies": false,
+          "returned_segments_may_be_capped": false,
+          "xlsx_read_limit_may_apply": false,
+          "tables": [],
+          "notes": [
+            "最多解析前 50 页，页码定位保留；扫描页需要 OCR，不能被解释为没有内容。",
+            "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+          ],
+          "coverage_statement": "保留 ParserPort 实际返回的 text、segments、profile；导出仅覆盖解析快照与表格预览。未预览单元格、扫描图像和未解析页不在导出中。"
+        }
+      },
+      {
+        "file_name": "海之子_老旧小区改造研判工作台_项目说明文档_修订版.docx",
+        "document_id": "DOC-75bbca78830fbebf",
+        "context_role": "project_design",
+        "source_sha256_before": "75bbca78830fbebf681f791aac044366408dabd2178fe616e5e077217a2cb841",
+        "source_sha256_after": "75bbca78830fbebf681f791aac044366408dabd2178fe616e5e077217a2cb841",
+        "output_json_sha256": "b7cf36733a87b0f613065a8411fc9ec981d29cefdba75d1e55374818f3fad9ae",
+        "output_markdown_sha256": "418a36c30e0adb4d851748423bf92944dcdcc5813f9ac534a41b1dc02fc07ceb",
+        "source_counts": {
+          "paragraph_count": 107,
+          "nonempty_paragraph_count": 84,
+          "table_count": 8,
+          "tables": [
+            {
+              "index": 1,
+              "rows_including_header": 5,
+              "columns": 2
+            },
+            {
+              "index": 2,
+              "rows_including_header": 7,
+              "columns": 3
+            },
+            {
+              "index": 3,
+              "rows_including_header": 4,
+              "columns": 2
+            },
+            {
+              "index": 4,
+              "rows_including_header": 5,
+              "columns": 2
+            },
+            {
+              "index": 5,
+              "rows_including_header": 5,
+              "columns": 2
+            },
+            {
+              "index": 6,
+              "rows_including_header": 4,
+              "columns": 2
+            },
+            {
+              "index": 7,
+              "rows_including_header": 4,
+              "columns": 2
+            },
+            {
+              "index": 8,
+              "rows_including_header": 5,
+              "columns": 3
+            }
+          ]
+        },
+        "extraction_boundaries": {
+          "export_extension": null,
+          "online_parser_snapshot": {
+            "text_chars": 7703,
+            "segments": 92,
+            "notes": [
+              "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+            ],
+            "tables": [
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              },
+              {
+                "sheet": null,
+                "row_count": 6,
+                "preview_rows": 6
+              },
+              {
+                "sheet": null,
+                "row_count": 3,
+                "preview_rows": 3
+              },
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              },
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              },
+              {
+                "sheet": null,
+                "row_count": 3,
+                "preview_rows": 3
+              },
+              {
+                "sheet": null,
+                "row_count": 3,
+                "preview_rows": 3
+              },
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              }
+            ]
+          },
+          "text_truncated": false,
+          "returned_text_chars": 7703,
+          "returned_segment_count": 92,
+          "retained_segment_text_chars": 6179,
+          "pdf_page_limit_applies": false,
+          "docx_table_limit_applies": false,
+          "docx_rows_limit_applies": false,
+          "returned_segments_may_be_capped": false,
+          "xlsx_read_limit_may_apply": false,
+          "tables": [
+            {
+              "table": 1,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            },
+            {
+              "table": 2,
+              "sheet": null,
+              "parser_rows": 6,
+              "returned_preview_rows": 6,
+              "preview_truncated": false
+            },
+            {
+              "table": 3,
+              "sheet": null,
+              "parser_rows": 3,
+              "returned_preview_rows": 3,
+              "preview_truncated": false
+            },
+            {
+              "table": 4,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            },
+            {
+              "table": 5,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            },
+            {
+              "table": 6,
+              "sheet": null,
+              "parser_rows": 3,
+              "returned_preview_rows": 3,
+              "preview_truncated": false
+            },
+            {
+              "table": 7,
+              "sheet": null,
+              "parser_rows": 3,
+              "returned_preview_rows": 3,
+              "preview_truncated": false
+            },
+            {
+              "table": 8,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            }
+          ],
+          "notes": [
+            "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+          ],
+          "coverage_statement": "保留 ParserPort 实际返回的 text、segments、profile；导出仅覆盖解析快照与表格预览。未预览单元格、扫描图像和未解析页不在导出中。"
+        }
+      },
+      {
+        "file_name": "海之子_老旧小区改造研判工作台_项目说明文档_修订版 (1).docx",
+        "document_id": "DOC-7a7938de3bf98d0f",
+        "context_role": "project_design",
+        "source_sha256_before": "7a7938de3bf98d0f06857c12249430b3fec7abece5500fd38c5868bde2e24242",
+        "source_sha256_after": "7a7938de3bf98d0f06857c12249430b3fec7abece5500fd38c5868bde2e24242",
+        "output_json_sha256": "59ef20babe23ebf53d8ed35cc2e43f09262361ec8f2bd93b30b6eed81d71f582",
+        "output_markdown_sha256": "cf8cca006010f0ce58d1260bbdf76a341828e6143087ba94c4cb38b8ca152ea9",
+        "source_counts": {
+          "paragraph_count": 107,
+          "nonempty_paragraph_count": 84,
+          "table_count": 8,
+          "tables": [
+            {
+              "index": 1,
+              "rows_including_header": 5,
+              "columns": 2
+            },
+            {
+              "index": 2,
+              "rows_including_header": 7,
+              "columns": 3
+            },
+            {
+              "index": 3,
+              "rows_including_header": 4,
+              "columns": 2
+            },
+            {
+              "index": 4,
+              "rows_including_header": 5,
+              "columns": 2
+            },
+            {
+              "index": 5,
+              "rows_including_header": 5,
+              "columns": 2
+            },
+            {
+              "index": 6,
+              "rows_including_header": 4,
+              "columns": 2
+            },
+            {
+              "index": 7,
+              "rows_including_header": 4,
+              "columns": 2
+            },
+            {
+              "index": 8,
+              "rows_including_header": 5,
+              "columns": 3
+            }
+          ]
+        },
+        "extraction_boundaries": {
+          "export_extension": null,
+          "online_parser_snapshot": {
+            "text_chars": 7836,
+            "segments": 92,
+            "notes": [
+              "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+            ],
+            "tables": [
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              },
+              {
+                "sheet": null,
+                "row_count": 6,
+                "preview_rows": 6
+              },
+              {
+                "sheet": null,
+                "row_count": 3,
+                "preview_rows": 3
+              },
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              },
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              },
+              {
+                "sheet": null,
+                "row_count": 3,
+                "preview_rows": 3
+              },
+              {
+                "sheet": null,
+                "row_count": 3,
+                "preview_rows": 3
+              },
+              {
+                "sheet": null,
+                "row_count": 4,
+                "preview_rows": 4
+              }
+            ]
+          },
+          "text_truncated": false,
+          "returned_text_chars": 7836,
+          "returned_segment_count": 92,
+          "retained_segment_text_chars": 6312,
+          "pdf_page_limit_applies": false,
+          "docx_table_limit_applies": false,
+          "docx_rows_limit_applies": false,
+          "returned_segments_may_be_capped": false,
+          "xlsx_read_limit_may_apply": false,
+          "tables": [
+            {
+              "table": 1,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            },
+            {
+              "table": 2,
+              "sheet": null,
+              "parser_rows": 6,
+              "returned_preview_rows": 6,
+              "preview_truncated": false
+            },
+            {
+              "table": 3,
+              "sheet": null,
+              "parser_rows": 3,
+              "returned_preview_rows": 3,
+              "preview_truncated": false
+            },
+            {
+              "table": 4,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            },
+            {
+              "table": 5,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            },
+            {
+              "table": 6,
+              "sheet": null,
+              "parser_rows": 3,
+              "returned_preview_rows": 3,
+              "preview_truncated": false
+            },
+            {
+              "table": 7,
+              "sheet": null,
+              "parser_rows": 3,
+              "returned_preview_rows": 3,
+              "preview_truncated": false
+            },
+            {
+              "table": 8,
+              "sheet": null,
+              "parser_rows": 4,
+              "returned_preview_rows": 4,
+              "preview_truncated": false
+            }
+          ],
+          "notes": [
+            "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+          ],
+          "coverage_statement": "保留 ParserPort 实际返回的 text、segments、profile；导出仅覆盖解析快照与表格预览。未预览单元格、扫描图像和未解析页不在导出中。"
+        }
+      },
+      {
+        "file_name": "老旧小区改造历史工程数据库_浙沪粤_20261013.xlsx",
+        "document_id": "DOC-9de99aa97f43c66a",
+        "context_role": "ai_collected_leads",
+        "source_sha256_before": "9de99aa97f43c66a61c1ea4fc26a265f43834d9582e89290223a71b1fa2648f4",
+        "source_sha256_after": "9de99aa97f43c66a61c1ea4fc26a265f43834d9582e89290223a71b1fa2648f4",
+        "output_json_sha256": "630962347ec93f45cbad420fbceeef2a1dc36c86fec7faaea71831d23887e3e8",
+        "output_markdown_sha256": "2b368f9edae7c759e7c15bda2f9a45e03bb2007213344d54da2e78b944fc3f78",
+        "source_counts": {
+          "sheets": [
+            {
+              "name": "数据库概览",
+              "physical_rows": 35,
+              "nonempty_rows": 18
+            },
+            {
+              "name": "历史工程",
+              "physical_rows": 149,
+              "nonempty_rows": 149
+            },
+            {
+              "name": "来源证据",
+              "physical_rows": 314,
+              "nonempty_rows": 314
+            },
+            {
+              "name": "论文研究",
+              "physical_rows": 9,
+              "nonempty_rows": 9
+            },
+            {
+              "name": "公开数据与计价",
+              "physical_rows": 9,
+              "nonempty_rows": 9
+            },
+            {
+              "name": "浙江应用方案",
+              "physical_rows": 11,
+              "nonempty_rows": 11
+            },
+            {
+              "name": "字段与口径",
+              "physical_rows": 80,
+              "nonempty_rows": 80
+            },
+            {
+              "name": "模板复核",
+              "physical_rows": 8,
+              "nonempty_rows": 8
+            }
+          ]
+        },
+        "extraction_boundaries": {
+          "export_extension": "full_authorized_workbook_rows",
+          "online_parser_snapshot": {
+            "text_chars": 100000,
+            "segments": 529,
+            "notes": [
+              "公式只读取文件缓存值，不执行宏或外部链接；最多 30 表、每表 5000 行，展示前 250 行。",
+              "文本超过 100000 字符，研判输入已截断，原文件仍保留。",
+              "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。"
+            ],
+            "tables": [
+              {
+                "sheet": "数据库概览",
+                "row_count": 27,
+                "preview_rows": 27
+              },
+              {
+                "sheet": "历史工程",
+                "row_count": 148,
+                "preview_rows": 148
+              },
+              {
+                "sheet": "来源证据",
+                "row_count": 313,
+                "preview_rows": 250
+              },
+              {
+                "sheet": "论文研究",
+                "row_count": 8,
+                "preview_rows": 8
+              },
+              {
+                "sheet": "公开数据与计价",
+                "row_count": 8,
+                "preview_rows": 8
+              },
+              {
+                "sheet": "浙江应用方案",
+                "row_count": 7,
+                "preview_rows": 7
+              },
+              {
+                "sheet": "字段与口径",
+                "row_count": 74,
+                "preview_rows": 74
+              },
+              {
+                "sheet": "模板复核",
+                "row_count": 7,
+                "preview_rows": 7
+              }
+            ]
+          },
+          "text_truncated": true,
+          "returned_text_chars": 100000,
+          "returned_segment_count": 592,
+          "retained_segment_text_chars": 449894,
+          "pdf_page_limit_applies": false,
+          "docx_table_limit_applies": false,
+          "docx_rows_limit_applies": false,
+          "returned_segments_may_be_capped": false,
+          "xlsx_read_limit_may_apply": false,
+          "tables": [
+            {
+              "table": 1,
+              "sheet": "数据库概览",
+              "parser_rows": 27,
+              "returned_preview_rows": 27,
+              "preview_truncated": false
+            },
+            {
+              "table": 2,
+              "sheet": "历史工程",
+              "parser_rows": 148,
+              "returned_preview_rows": 148,
+              "preview_truncated": false
+            },
+            {
+              "table": 3,
+              "sheet": "来源证据",
+              "parser_rows": 313,
+              "returned_preview_rows": 313,
+              "preview_truncated": false
+            },
+            {
+              "table": 4,
+              "sheet": "论文研究",
+              "parser_rows": 8,
+              "returned_preview_rows": 8,
+              "preview_truncated": false
+            },
+            {
+              "table": 5,
+              "sheet": "公开数据与计价",
+              "parser_rows": 8,
+              "returned_preview_rows": 8,
+              "preview_truncated": false
+            },
+            {
+              "table": 6,
+              "sheet": "浙江应用方案",
+              "parser_rows": 7,
+              "returned_preview_rows": 7,
+              "preview_truncated": false
+            },
+            {
+              "table": 7,
+              "sheet": "字段与口径",
+              "parser_rows": 74,
+              "returned_preview_rows": 74,
+              "preview_truncated": false
+            },
+            {
+              "table": 8,
+              "sheet": "模板复核",
+              "parser_rows": 7,
+              "returned_preview_rows": 7,
+              "preview_truncated": false
+            }
+          ],
+          "notes": [
+            "公式只读取文件缓存值，不执行宏或外部链接；最多 30 表、每表 5000 行，展示前 250 行。",
+            "文本超过 100000 字符，研判输入已截断，原文件仍保留。",
+            "解析内容仍是待核证据，不能自动成为法规、组织约束或工程结论。",
+            "本地RAG导出补充：复用CRE表头定位与单元格序列化，在原有每表5000行读取范围内保存全部授权行；在线250行预览限制保持不变，原text的100000字符截取标记保留。"
+          ],
+          "coverage_statement": "本地工作簿RAG导出已补齐原有每表5000行读取范围内全部授权行，保留原text截取标记；在线解析预览仍为250行。扫描图像及超过读取范围的单元格未导出。"
+        }
+      }
+    ],
+    "full_workbook": {
+      "passed": true,
+      "tables": 8,
+      "source_evidence_rows": 313,
+      "history_rows": 148,
+      "new_tail_rows_compared_directly_to_openpyxl": 63,
+      "returned_segments": 592,
+      "unique_locators": 592,
+      "rag_chunks": 1184,
+      "every_chunk_in_markdown": true,
+      "text_100000_limit_marker_retained": true,
+      "source_hash_unchanged": "9de99aa97f43c66a61c1ea4fc26a265f43834d9582e89290223a71b1fa2648f4",
+      "online_preview_unchanged": 250,
+      "extension": "full_authorized_workbook_rows"
+    },
+    "local_manifest": ".cache/rag-user-inputs/manifest.json",
+    "reproduce": "node --import tsx scripts/export-user-rag-materials.ts --help"
+  }
+}

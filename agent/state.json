@@ -1685,5 +1685,160 @@
       "Real Qiushi failed model run and missing typed facts remain separate from this UI/simulation delivery."
     ],
     "next_task": "Collect authorized same-project settlement and seven original features; train with inner grouped tuning and external Zhejiang test. No trained accuracy or transferred weights claimed."
+  },
+  "cost_neural_and_rag": {
+    "as_of": "2026-10-14",
+    "status": "completed_bounded_training_rag_retrieval_and_exports",
+    "changed_files": [
+      "agent/mission.md",
+      "agent/tasks.json",
+      "requirements.txt",
+      "scripts/check-python.ts",
+      "scripts/cost_neural_model.py",
+      "scripts/train-cost-neural-prototype.py",
+      "scripts/prepare-cost-neural-trial.py",
+      "scripts/audit-cost-training-feasibility.py",
+      "scripts/verify-rag-workspace.ts",
+      "scripts/export-user-rag-materials.ts",
+      "tests/test_cost_neural_model.py",
+      "tests/contracts/community-plan-names.test.ts",
+      "tests/contracts/cost-neural-preview.test.ts",
+      "tests/contracts/cross-document-rag.test.ts",
+      "tests/contracts/rag-retrieval.test.ts",
+      "packages/retrofit/demo-workflow.ts",
+      "packages/construction-costs/neural-preview.ts",
+      "packages/experience/rag-export.ts",
+      "packages/experience/retrieval.ts",
+      "apps/host/experience.ts",
+      "apps/host/rag-retrieval.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/CommunityOperationsPlayground.tsx",
+      "apps/workspace/src/components/CommunityDemoWorkflow.tsx",
+      "apps/workspace/src/components/community-demo-workflow.css",
+      "apps/workspace/src/components/community-operations-playground.css",
+      "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+      "apps/workspace/src/components/ConstructionCostLibrary.tsx",
+      "apps/workspace/src/components/CostNeuralPreview.tsx",
+      "apps/workspace/src/components/cost-neural-preview.css",
+      "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "apps/workspace/src/imports/CrossDocumentMeasures.tsx",
+      "apps/workspace/src/imports/cross-document-measures.css",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "apps/workspace/src/imports/rag-evidence-search.css",
+      "data/imports/cost-training-feasibility-20261014.json",
+      "data/templates/cost-neural-prototype.json",
+      "docs/老旧小区改造_产品与验证方案.md",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "docs/RAG检索与跨文本证据设计.md",
+      "docs/generated/rag-design-section.tex",
+      "research/reuse_manifest.json"
+    ],
+    "evidence": "research/test_results/neural-rag-verification.json",
+    "checks": {
+      "full_command": "npm run verify",
+      "exit_code": 0,
+      "javascript": 1037,
+      "python": 219,
+      "http": 16,
+      "log": "research/test_results/neural-rag-verify.log",
+      "build": "research/test_results/neural-rag-build-final.log"
+    },
+    "neural": {
+      "workbook_records": 37,
+      "workbook_target": "construction winning-bid divided by beneficiary building floor area; unverified source workbook",
+      "workbook_audit": {
+        "n": 9,
+        "mae": 214.38051797640682,
+        "rmse": 222.7106006397361,
+        "mape": 128.77030904546407,
+        "r2": -1.655493694472487
+      },
+      "workbook_verdict": "poor out-of-scope transfer; no Zhejiang or settlement claim",
+      "synthetic_records": 480,
+      "synthetic_audit": {
+        "n": 60,
+        "mae": 78.08945000596063,
+        "rmse": 111.10923430562652,
+        "mape": 6.282236040722024,
+        "r2": 0.9452007738295857
+      },
+      "synthetic_verdict": "learning generated mechanism; interactive demonstration only",
+      "json_reload": true,
+      "python_typescript_forward_match": true,
+      "bounded_cycle": "research/training/cost-neural-prototype/cycle-manifest.json",
+      "independent_review": "research/training/cost-neural-prototype/independent-verification.json"
+    },
+    "rag": {
+      "design": "docs/RAG检索与跨文本证据设计.md",
+      "live_probe": "node --import tsx scripts/verify-rag-workspace.ts <project-id>",
+      "live_result": "research/test_results/rag-workspace-live.json",
+      "primary_scope_answer": "line:22, four buildings 29/30/31/48, total252 households, Liubo excluded; historical2023 original",
+      "source_isolation": true,
+      "metadata_gate_before_single_existing_bm25": true,
+      "query_expansions_visible": true,
+      "txt_mirror_aliases_preserved": true,
+      "new_vector_store": false,
+      "llm_generation_called": false,
+      "fact_writes": 0,
+      "cross_text": "5 source documents/15 cards; water appears in3 documents, only1 with registered citations",
+      "downloads": "research/test_results/neural-rag-download-readback.json",
+      "exported_existing_project_chunks": 123,
+      "current_docs_exported_md_and_json": true,
+      "original_files_unchanged": true
+    },
+    "ui": {
+      "saved_plan_names": "meaningful input-based names; legacy time secondary, missing date not invented",
+      "browser_time_note": "历史保存时刻00:24（日期未记录）",
+      "native_model_changed": {
+        "entity_unit_before": 900,
+        "prediction_before": 1135.1,
+        "entity_unit_after": 1800,
+        "prediction_after": 2121.4
+      },
+      "model_export_readback": true,
+      "rag_source_jump_and_context": true,
+      "mobile": {
+        "viewport": 390,
+        "document_width": 390,
+        "model_panel": 286.67,
+        "rag_panel": 251.33,
+        "cross_panel": 226,
+        "viewport_restored": true,
+        "filter_columns": "single full-width column, 218px; no date/selection clipping"
+      },
+      "screenshots": [
+        "output/playwright/neural-rag/cross-text-location.jpg",
+        "output/playwright/neural-rag/neural-interactive.jpg",
+        "output/playwright/neural-rag/neural-mobile.jpg",
+        "output/playwright/neural-rag/plan-names.jpg",
+        "output/playwright/neural-rag/rag-mobile.jpg",
+        "output/playwright/neural-rag/rag-retrieval.jpg",
+        "output/playwright/neural-rag/workbook-model-result.jpg"
+      ]
+    },
+    "report": {
+      "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "pages": 31,
+      "sha256": "27eff0b42c3156743494ed380f3a64f8171bdf340715a917e35362a4a3e00224",
+      "latex_warnings": 0,
+      "render_review": "passed"
+    },
+    "unresolved": [
+      "No reliable Zhejiang/EPC settlement model validated.",
+      "Current retrieval is project source browsing and export; new automatic DSH answer generation and semantic recall not claimed.",
+      "Human-labelled retrieval accuracy remains unevaluated."
+    ],
+    "next_task": "Collect source-verified scope-matched Zhejiang/settlement inputs; add human-labelled retrieval questions and evaluate recall/citation/scope before extending semantic or generation capabilities.",
+    "attachments": {
+      "evidence": "research/test_results/rag-attachments-conversion.json",
+      "local_manifest": ".cache/rag-user-inputs/manifest.json",
+      "files": 4,
+      "source_files_unchanged": true,
+      "workbook_source_evidence_rows": 313,
+      "workbook_history_rows": 148,
+      "no_real_project_import": true,
+      "raw_outputs_not_pushed": true
+    }
   }
 }

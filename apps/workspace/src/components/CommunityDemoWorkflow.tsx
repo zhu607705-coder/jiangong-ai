@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { OperationsResult } from '../../../host/generated/contracts'
 import { buildCompleteCommunityDemo, simulateScenarioUsers } from '../../../../packages/retrofit/complete-demo'
 import { defaultExploration, explorationInput, summarizeExploration } from '../../../../packages/retrofit/visual-analysis'
-import { compareDemoPlans, demoInvestigations, emptyProgress, readDemoPlans, validInvestigationProgress, type DemoPlan, type InvestigationProgress } from '../../../../packages/retrofit/demo-workflow'
+import { compareDemoPlans, demoInvestigations, demoPlanName, demoPlanSavedTime, emptyProgress, readDemoPlans, validInvestigationProgress, type DemoPlan, type InvestigationProgress } from '../../../../packages/retrofit/demo-workflow'
 import { api, type Project } from '../api'
 import './community-demo-workflow.css'
 
@@ -23,19 +23,19 @@ function useDemoPlans(project:Project) {
     setExample(true)
     void (async () => {
       const examples = [
-        {name:'示例 V1 · 基准运营', parameters:{...defaultExploration}},
-        {name:'示例 V2 · 需求高峰、缩减排班', parameters:{demand:1.5,activitySlots:15,subsidy:0}},
-        {name:'示例 V3 · 增加开放与补贴', parameters:{demand:1.5,activitySlots:45,subsidy:12000}},
+        {parameters:{...defaultExploration}},
+        {parameters:{demand:1.5,activitySlots:15,subsidy:0}},
+        {parameters:{demand:1.5,activitySlots:45,subsidy:12000}},
       ]
       const endpoint = `/projects/${encodeURIComponent(project.id)}/community-operations/preview`
       const computed:DemoPlan[] = []
-      for (const example of examples) {
+      for (const [index, example] of examples.entries()) {
         const draft = explorationInput(demo, example.parameters)
         const first = await api<OperationsResult>(endpoint,{input:draft},controller.signal)
         if (first.metrics.served_visits == null) throw new Error('示例服务量未完成计算')
         const input = simulateScenarioUsers(draft,first.metrics.served_visits,demo.visitsPerResident)
         const result = await api<OperationsResult>(endpoint,{input},controller.signal)
-        computed.push({...example,input,result})
+        computed.push({...example,name:`示例 ${demoPlanName(example.parameters,index+1)}`,input,result})
       }
       if (!controller.signal.aborted) setPlans(computed)
     })().catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : '示例计算暂不可用') })
@@ -55,10 +55,10 @@ export function DemoPlanVersions({project,onExplore}:{project:Project;onExplore:
     {error ? <p role="alert">{error}<button type="button" onClick={retry}>重新计算</button></p> : !before || !after ? <p role="status">正在生成版本对照…</p> : <>
       <div className="demo-version-selectors"><label>原版本<select aria-label="原方案版本" value={Math.min(from,plans.length-1)} onChange={event=>setFrom(Number(event.target.value))}>{plans.map((plan,index)=><option key={index} value={index}>{plan.name}</option>)}</select></label><span aria-hidden="true">→</span><label>对比版本<select aria-label="对比方案版本" value={Math.min(to,plans.length-1)} onChange={event=>setTo(Number(event.target.value))}>{plans.map((plan,index)=><option key={index} value={index}>{plan.name}</option>)}</select></label></div>
       <div className="demo-version-summary" role="status"><strong>{rows.filter(row=>row.delta !== null && row.delta !== 0).length}项数值发生变化</strong><p>服务量变化 {format(rows.find(row=>row.label==='月度服务')!.delta)} 人次/月 · 现金结余变化 {format(rows.find(row=>row.label==='支持后现金结余')!.delta)} 元/月</p></div>
-      <div className="demo-version-measures">{[before,after].map((plan,index)=>{const summary=summarizeExploration(plan); return <article key={index}><span>{index===0?'原版本':'对比版本'}</span><h3>{plan.name}</h3><p>{summary.condition}</p><h4>关键举措</h4><ul>{summary.measures.map(measure=><li key={measure}>{measure}</li>)}</ul><p className="demo-version-outcome">{summary.outcome}</p></article>})}</div>
+      <div className="demo-version-measures">{[before,after].map((plan,index)=>{const summary=summarizeExploration(plan), savedTime=demoPlanSavedTime(plan); return <article key={index}><span>{index===0?'原版本':'对比版本'}</span><h3>{plan.name}</h3>{savedTime?.kind==='saved' && <p className="demo-plan-saved-time"><time dateTime={savedTime.dateTime}>{savedTime.text}</time></p>}{savedTime?.kind==='legacy' && <details className="demo-plan-save-details"><summary>保存信息</summary><p>{savedTime.text}</p></details>}<p>{summary.condition}</p><h4>关键举措</h4><ul>{summary.measures.map(measure=><li key={measure}>{measure}</li>)}</ul><p className="demo-version-outcome">{summary.outcome}</p></article>})}</div>
       <div className="demo-version-table"><table><thead><tr><th>参数与结果</th><th>原版本</th><th>对比版本</th><th>变化</th></tr></thead><tbody>{rows.map(row=><tr key={row.label}><th>{row.label}<small>{row.unit}</small></th><td>{format(row.from)}</td><td>{format(row.to)}</td><td className={row.delta===0?'':'is-changed'}>{row.delta!=null && row.delta>0?'+':''}{format(row.delta)}</td></tr>)}</tbody></table></div>
       <p className="demo-workflow-note">需求、排班与补贴可能同时变化，表内差额为这组参数的合计结果。实际工程判断版本在返回真实项目后查看。</p>
-      <button type="button" onClick={()=>download('模拟方案版本对比.md',`# 模拟方案版本对比\n\n${before.name} → ${after.name}\n\n完整模拟；来源：${example?'按月度接口计算的示例':'本机保存的预算方案'}。\n\n|指标|原版本|对比版本|变化|单位|\n|---|---:|---:|---:|---|\n${rows.map(row=>`|${row.label}|${format(row.from)}|${format(row.to)}|${format(row.delta)}|${row.unit}|`).join('\n')}\n\n## 原版本关键举措\n${summarizeExploration(before).measures.map(row=>'- '+row).join('\n')}\n\n## 对比版本关键举措\n${summarizeExploration(after).measures.map(row=>'- '+row).join('\n')}`)}>导出版本对照</button>
+      <button type="button" onClick={()=>download('模拟方案版本对比.md',`# 模拟方案版本对比\n\n${before.name} → ${after.name}\n\n完整模拟；来源：${example?'按月度接口计算的示例':'本机保存的预算方案'}。\n\n原版本${demoPlanSavedTime(before)?.text || '：未记录保存时间'}\n\n对比版本${demoPlanSavedTime(after)?.text || '：未记录保存时间'}\n\n|指标|原版本|对比版本|变化|单位|\n|---|---:|---:|---:|---|\n${rows.map(row=>`|${row.label}|${format(row.from)}|${format(row.to)}|${format(row.delta)}|${row.unit}|`).join('\n')}\n\n## 原版本关键举措\n${summarizeExploration(before).measures.map(row=>'- '+row).join('\n')}\n\n## 对比版本关键举措\n${summarizeExploration(after).measures.map(row=>'- '+row).join('\n')}`)}>导出版本对照</button>
     </>}
   </section>
 }

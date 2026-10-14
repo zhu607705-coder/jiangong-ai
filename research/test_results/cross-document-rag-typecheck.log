@@ -1,0 +1,2 @@
+packages/experience/retrieval.ts(61,110): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.

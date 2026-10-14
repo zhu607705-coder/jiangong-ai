@@ -1,0 +1,7 @@
+{
+  "status": "reported",
+  "result": "trial_keep",
+  "artifact": "data/templates/cost-neural-prototype.json",
+  "cpu_wall_seconds": 3.0459999999729916,
+  "peak_rss_mib": 44.22265625
+}

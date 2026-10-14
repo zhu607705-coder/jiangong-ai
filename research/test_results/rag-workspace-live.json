@@ -1,0 +1,1901 @@
+{
+  "as_of": "2026-10-14",
+  "scope": "real local authenticated read-only endpoint with the existing Python BM25; no LLM",
+  "project": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "queries": [
+    {
+      "request": {
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？",
+        "measure_key": "pipe_network",
+        "limit": 5
+      },
+      "result": {
+        "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？",
+        "rank_query": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？\n幢 户 不纳入",
+        "query_expansions": [
+          {
+            "matched_terms": [
+              "楼栋"
+            ],
+            "added_term": "幢",
+            "reason": "楼栋数量在工程材料中常用“幢”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "户数"
+            ],
+            "added_term": "户",
+            "reason": "住户数量在工程材料中常用“户”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "排除"
+            ],
+            "added_term": "不纳入",
+            "reason": "排除范围在工程材料中可能写作“不纳入”，补充这一明确措辞。"
+          }
+        ],
+        "as_of": null,
+        "hits": [
+          {
+            "id": "RAG-121e414422d07241ce52b58961bd7bec832322d1cfef18d9510a6f945b4cf942",
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:22",
+            "alias_locators": [
+              "table:1/row:22"
+            ],
+            "text": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。经过初期的踏勘，浙大求是村二次供水改造存在着计量水表老旧，部分管道锈蚀渗漏，泵房空间布局紧凑等问题。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00.000Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier",
+                "value": "29幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier.50695fc88c",
+                "value": "30幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier.100a535f6d",
+                "value": "31幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier.8b4ea9a8f0",
+                "value": "48幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "household_count",
+                "value": 252,
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-16120dfe-9d94-4394-8880-494b385cf2d2",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:留博楼",
+                "field_key": "location_description",
+                "value": "留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。",
+                "evidence": {
+                  "quote": "留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              }
+            ],
+            "matched_measure_links": [
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier",
+                "value": "29幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier.50695fc88c",
+                "value": "30幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier.100a535f6d",
+                "value": "31幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "building_identifier.8b4ea9a8f0",
+                "value": "48幢",
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-8fb43037-0680-4136-8844-edcb789391f4",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:29幢",
+                "field_key": "household_count",
+                "value": 252,
+                "evidence": {
+                  "quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-16120dfe-9d94-4394-8880-494b385cf2d2",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:留博楼",
+                "field_key": "location_description",
+                "value": "留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。",
+                "evidence": {
+                  "quote": "留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。",
+                  "locator": "line:22",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              }
+            ],
+            "measure_mentions": [
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 5,
+                    "end": 9
+                  },
+                  {
+                    "term": "二次供水",
+                    "start": 83,
+                    "end": 87
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [
+              "building:29幢",
+              "building:留博楼"
+            ],
+            "review_statuses": [
+              "draft"
+            ],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "筛选条件在同一条实际引用中匹配",
+              "解析镜像table:1/row:22与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 7.03114
+          },
+          {
+            "id": "RAG-7ae4be30a6f6fec13d5a28486ee1c2c0b707d47f9a6285afb206728544a3360f",
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:20",
+            "alias_locators": [
+              "table:1/row:20"
+            ],
+            "text": "今年，“完成居民住宅小区二次供水设施改造200个”被列入杭州市政府2023年度民生实事。二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00.000Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [
+              {
+                "card_id": "EXP-3cbc9027-6c40-49c6-9767-edec50043a5f",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "proposal",
+                "stage": "将",
+                "object_ref": null,
+                "field_key": "proposal",
+                "value": "二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。",
+                "evidence": {
+                  "quote": "二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。",
+                  "locator": "line:20",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              }
+            ],
+            "matched_measure_links": [
+              {
+                "card_id": "EXP-3cbc9027-6c40-49c6-9767-edec50043a5f",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "proposal",
+                "stage": "将",
+                "object_ref": null,
+                "field_key": "proposal",
+                "value": "二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。",
+                "evidence": {
+                  "quote": "二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。",
+                  "locator": "line:20",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              }
+            ],
+            "measure_mentions": [
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 12,
+                    "end": 16
+                  },
+                  {
+                    "term": "二次供水",
+                    "start": 44,
+                    "end": 48
+                  }
+                ]
+              }
+            ],
+            "stages": [
+              "将"
+            ],
+            "objects": [],
+            "review_statuses": [
+              "draft"
+            ],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "筛选条件在同一条实际引用中匹配",
+              "解析镜像table:1/row:20与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 3.49688
+          },
+          {
+            "id": "RAG-5a3847d3d7e3222d2d89c334ceda6132a957a5022edfd6b173293c401d70275d",
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:24",
+            "alias_locators": [
+              "table:1/row:24"
+            ],
+            "text": "据悉，随着改造现场踏勘、科学研究设计方案、设计方案公示、留博楼不纳入改造原因公示、一户一表供水合同上门签订工作的完成，紧接着会进行业主同意率公示。有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00.000Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [
+              {
+                "card_id": "EXP-16120dfe-9d94-4394-8880-494b385cf2d2",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "proposal",
+                "stage": "将",
+                "object_ref": "building:留博楼",
+                "field_key": "proposal",
+                "value": "有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。",
+                "evidence": {
+                  "quote": "有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。",
+                  "locator": "line:24",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-16120dfe-9d94-4394-8880-494b385cf2d2",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:留博楼",
+                "field_key": "household_count",
+                "value": "一",
+                "evidence": {
+                  "quote": "据悉，随着改造现场踏勘、科学研究设计方案、设计方案公示、留博楼不纳入改造原因公示、一户一表供水合同上门签订工作的完成，紧接着会进行业主同意率公示。",
+                  "locator": "line:24",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              }
+            ],
+            "matched_measure_links": [
+              {
+                "card_id": "EXP-16120dfe-9d94-4394-8880-494b385cf2d2",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "proposal",
+                "stage": "将",
+                "object_ref": "building:留博楼",
+                "field_key": "proposal",
+                "value": "有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。",
+                "evidence": {
+                  "quote": "有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。",
+                  "locator": "line:24",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              },
+              {
+                "card_id": "EXP-16120dfe-9d94-4394-8880-494b385cf2d2",
+                "card_revision": 2,
+                "review_status": "draft",
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "kind": "case",
+                "phase": "factor",
+                "stage": "",
+                "object_ref": "building:留博楼",
+                "field_key": "household_count",
+                "value": "一",
+                "evidence": {
+                  "quote": "据悉，随着改造现场踏勘、科学研究设计方案、设计方案公示、留博楼不纳入改造原因公示、一户一表供水合同上门签订工作的完成，紧接着会进行业主同意率公示。",
+                  "locator": "line:24",
+                  "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+                  "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa"
+                }
+              }
+            ],
+            "measure_mentions": [
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 95,
+                    "end": 99
+                  }
+                ]
+              }
+            ],
+            "stages": [
+              "将"
+            ],
+            "objects": [
+              "building:留博楼"
+            ],
+            "review_statuses": [
+              "draft"
+            ],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "筛选条件在同一条实际引用中匹配",
+              "解析镜像table:1/row:24与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 3.08108
+          },
+          {
+            "id": "RAG-2849adb1b2d120d5c86dbed4dcb88a1952accff1f8f8dd77523a1914a20631fe",
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:39",
+            "alias_locators": [
+              "table:1/row:39"
+            ],
+            "text": "浙大求是社区推进二次供水改造",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00.000Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 8,
+                    "end": 12
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "原文逐字提及该举措，尚无对应审核引用",
+              "解析镜像table:1/row:39与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 2.52359
+          },
+          {
+            "id": "RAG-791fdd221b67587895ded7c52b8183ee664522a2f5e2913c66ca253bd3177aed",
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:1",
+            "alias_locators": [
+              "table:1/row:1"
+            ],
+            "text": "浙大求是社区推进二次供水改造",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00.000Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 8,
+                    "end": 12
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "原文逐字提及该举措，尚无对应审核引用",
+              "解析镜像table:1/row:1与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 2.52359
+          }
+        ],
+        "candidate_counts": {
+          "documents": 5,
+          "parsed_chunks": 123,
+          "eligible_chunks": 8,
+          "ranked_chunks": 8,
+          "batches": 1,
+          "unresolved_references": 0
+        },
+        "skipped": [
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "code": "GENERATED_SOURCE_EXCLUDED",
+            "reason": "默认检索排除AI草稿与模拟示例，可显式开启原文浏览。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "code": "GENERATED_SOURCE_EXCLUDED",
+            "reason": "默认检索排除AI草稿与模拟示例，可显式开启原文浏览。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:3",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:4",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:5",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:6",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:7",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:8",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:9",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:10",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:11",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:12",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:13",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:15",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:16",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:17",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:18",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:19",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:23",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:25",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:26",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:27",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:28",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:29",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:30",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:31",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:32",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:33",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:34",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:35",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:36",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:37",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:38",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:40",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:41",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:42",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:43",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:44",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:45",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:46",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:47",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:48",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:49",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:50",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:51",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "line:52",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:2",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:3",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:4",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:5",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:6",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:7",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:8",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:9",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:10",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:11",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:12",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:13",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:15",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:16",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:17",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:18",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:19",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:23",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:25",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:26",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:27",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:28",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:29",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:30",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:31",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:32",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:33",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:34",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:35",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:36",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:37",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:38",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:40",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:41",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:42",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:43",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:44",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:45",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:46",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:47",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:48",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:49",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:50",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:51",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:52",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+            "locator": "line:1",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+            "locator": "table:1/row:1",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+            "locator": "line:1",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+            "locator": "table:1/row:1",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:1",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:1逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:14",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:14逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:20",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:20逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:21",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:21逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:22",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:22逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:24",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:24逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "locator": "table:1/row:39",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:39逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          }
+        ],
+        "method": "metadata_gated_bm25",
+        "score_meaning": "BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。",
+        "ranking_note": "在权限、来源版本和元数据筛选后，直接复用现有BM25原文检索。",
+        "content_role": "untrusted_source_material",
+        "fact_writes": 0
+      }
+    },
+    {
+      "request": {
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？",
+        "measure_key": "pipe_network",
+        "limit": 5,
+        "source_kind": "ai_draft",
+        "include_ai": true
+      },
+      "result": {
+        "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？",
+        "rank_query": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？\n幢 户 不纳入",
+        "query_expansions": [
+          {
+            "matched_terms": [
+              "楼栋"
+            ],
+            "added_term": "幢",
+            "reason": "楼栋数量在工程材料中常用“幢”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "户数"
+            ],
+            "added_term": "户",
+            "reason": "住户数量在工程材料中常用“户”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "排除"
+            ],
+            "added_term": "不纳入",
+            "reason": "排除范围在工程材料中可能写作“不纳入”，补充这一明确措辞。"
+          }
+        ],
+        "as_of": null,
+        "hits": [
+          {
+            "id": "RAG-80190362af50f754e55cb83ff6746d1173b565a2400f4ac1ff3a71839294e7a7",
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "version": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+            "locator": "page:7",
+            "alias_locators": [],
+            "text": "建工 AI | 求是村旧改：研究决策与行动计划\n10. 来源与定位\n以下截至2026-10-10完成公开核查。媒体记述保留报道年份；政策的项目适用性仍需由有权主体核实。全文\n抓取与哈希保存在本地研究卷，未将居民隐私资料或原始网页批量发布。\n- H01：浙大后勤历史档案，2007-01-17，物业创业历史段，说明年代与治理背景。\n- H02：西湖年鉴2019官方PDF，PDF第575页、印刷页265，加梯试点条目；事件期为2018，文件制作时间\n不作出版日。\n- H03：20幢3单元加梯专题，2019-11-01，2018投用及管线协同段。\n- H04：西湖区民生实事进展，2021-07-06，美好家园进度栏。\n- H05：红色物业通讯稿，2023-02-17，历史充电设施及协同段。\n- H06：二次供水改造，2023-08-18，范围、留博楼排除及拟进场段。\n- H07：二供进场对接转载线索，2023-11-16，来源署西湖区五水共治，原始发布页尚未核齐。\n- H08：浙江日报托管报道，2023-12-28，47部电梯、托管协商及当时费用；杭州网为同一报道转载，不作独\n立印证。\n- H09：灵隐街道重大决策目录，2024-09-14，第1行75幢1单元。\n- H10：75幢1单元征求公告，2024-09-18，征集期限与附件列表；最终工程结果另查。\n- H11：西湖报邻里中心启用，2025-10-28，首段及功能场景段。\n- H12：社区加梯进展，2026-08-29，7幢案例、累计与当年阶段统计段。\n- M3：市级加梯补助办法2025—2027，杭房局〔2024〕94号，有效期限及产权/维护资金等规定。\n- M6：维修资金管理办法，第353号令，成文2025-11-14、发布11-25、施行2026-01-01，列支与交接条款。\n- M7：西湖区加梯补助征求稿，2025-03-10，正文与起草说明，正式文本另查。\n- M8：该轮征求意见反馈，2025-03-21，反馈结果，不代替最终文件。\n方法采用改造历史的纵向追踪与当前举措的横向比较，借鉴本地hv-analysis研究Skill，具体判断依据求是村材\n料形成，没有按其他小区规模复制资金或人口。\n2026-10-10 | 公开资料研究 · 现场与专业确认另列 7",
+            "file_name": "求是村_公开资料研究与改造计划_AI研究草稿_已校验版.pdf",
+            "source": {
+              "id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+              "hash": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+              "title": "求是村_公开资料研究与改造计划_AI研究草稿_已校验版.pdf",
+              "locator": "document:DOC-d714c411-138c-4926-bd87-5c897815b31c",
+              "synthetic": false,
+              "data_class": "internal",
+              "visibility": "internal",
+              "parse_status": "extracted",
+              "content_status": "uploaded"
+            },
+            "source_kind": "ai_draft",
+            "source_date": null,
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [
+              {
+                "measure_key": "elevator",
+                "measure_name": "大家商讨了托管费用、托管协议和电梯管理细则等，最终将托管费用从每台每月600元降至300元 / 电梯",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "电梯",
+                    "start": 464,
+                    "end": 466
+                  }
+                ]
+              },
+              {
+                "measure_key": "maintenance",
+                "measure_name": "形成委托物业托管的长效管理机制 / 物业管理 / 维护",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "维护",
+                    "start": 706,
+                    "end": 708
+                  }
+                ]
+              },
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 352,
+                    "end": 356
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "原文逐字提及该举措，尚无对应审核引用",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": -1.71993
+          },
+          {
+            "id": "RAG-eecebba8da52a706093c05ec3715f405ea241675b29c5bade58668db501ab3d4",
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "version": "d5ed890037f488c4f5b0a3ce726464f256260c591cf44be46f08a33cc4567d7f",
+            "locator": "page:7",
+            "alias_locators": [],
+            "text": "建工 AI | 求是村旧改：研究决策与行动计划\n9. 信息沉淀：让下一个项目能用，但不能误用\n资料按“项目—楼幢/单元—设施/举措—证据版本—决策—实施—结果”关联。加梯、供水、连续通行、服务\n运行及维护交接分别成卡。每卡保留背景、条件、备选、提议、实际决定、依据、实施、结果、适用边界和逐\n字段出处。\n2023二供记录只能支持当时拟改及排除线索；2024征求稿只能记录决策阶段；2025启用报道可记录报道的启\n用及功能描述，不能补写全年运行效果。2026加梯记录中的社区数量与单元阶段分开存。\n本次新增公开原文复用工作台现有 `intelligence intake → attach`，不新建求是村副本，不自动生成工程确认\n事实，也不批准规则或训练用途。完整报告作为AI研究草稿供用户复核；历史案例条件未经专业核验前仍为草\n稿/线索。\n研究输出分为：引用可追溯的公开发现、当前方案的分析建议、向实际责任主体核实的任务。它们不能互相替\n代。下一次拿到验收、合同或现场资料，应更新受影响子题，保留旧版本。\n10. 来源与定位\n以下截至2026-10-10完成公开核查。媒体记述保留报道年份；政策的项目适用性仍需由有权主体核实。全文\n抓取与哈希保存在本地研究卷，未将居民隐私资料或原始网页批量发布。\n- H01：浙大后勤历史档案，2007-01-17，物业创业历史段，说明年代与治理背景。\n- H02：西湖年鉴2019官方PDF，PDF第575页、印刷页265，加梯试点条目；事件期为2018，文件制作时间\n不作出版日。\n- H03：20幢3单元加梯专题，2019-11-01，2018投用及管线协同段。\n- H04：西湖区民生实事进展，2021-07-06，美好家园进度栏。\n- H05：红色物业通讯稿，2023-02-17，历史充电设施及协同段。\n- H06：二次供水改造，2023-08-18，范围、留博楼排除及拟进场段。\n- H07：二供进场对接转载线索，2023-11-16，来源署西湖区五水共治，原始发布页尚未核齐。\n- H08：浙江日报托管报道，2023-12-28，47部电梯、托管协商及当时费用；杭州网为同一报道转载，不作独\n立印证。\n- H09：灵隐街道重大决策目录，2024-09-14，第1行75幢1单元。\n- H10：75幢1单元征求公告，2024-09-18，征集期限与附件列表；最终工程结果另查。\n- H11：西湖报邻里中心启用，2025-10-28，首段及功能场景段。\n- H12：社区加梯进展，2026-08-29，7幢案例、累计与当年阶段统计段。\n- M3：市级加梯补助办法2025—2027，杭房局〔2024〕94号，有效期限及产权/维护资金等规定。\n- M6：维修资金管理办法，第353号令，成文2025-11-14、发布11-25、施行2026-01-01，列支与交接条款。\n- M7：西湖区加梯补助征求稿，2025-03-10，正文与起草说明，正式文本另查。\n- M8：该轮征求意见反馈，2025-03-21，反馈结果，不代替最终文件。\n2026-10-10 | 公开资料研究 · 现场与专业确认另列 7",
+            "file_name": "求是村_公开资料研究与改造计划_AI研究草稿.pdf",
+            "source": {
+              "id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+              "hash": "d5ed890037f488c4f5b0a3ce726464f256260c591cf44be46f08a33cc4567d7f",
+              "title": "求是村_公开资料研究与改造计划_AI研究草稿.pdf",
+              "locator": "document:DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+              "synthetic": false,
+              "data_class": "internal",
+              "visibility": "internal",
+              "parse_status": "extracted",
+              "content_status": "uploaded"
+            },
+            "source_kind": "ai_draft",
+            "source_date": null,
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [
+              {
+                "measure_key": "elevator",
+                "measure_name": "大家商讨了托管费用、托管协议和电梯管理细则等，最终将托管费用从每台每月600元降至300元 / 电梯",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "电梯",
+                    "start": 893,
+                    "end": 895
+                  }
+                ]
+              },
+              {
+                "measure_key": "maintenance",
+                "measure_name": "形成委托物业托管的长效管理机制 / 物业管理 / 维护",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "维护",
+                    "start": 100,
+                    "end": 102
+                  },
+                  {
+                    "term": "维护",
+                    "start": 1135,
+                    "end": 1137
+                  }
+                ]
+              },
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 781,
+                    "end": 785
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "原文逐字提及该举措，尚无对应审核引用",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": -1.81899
+          },
+          {
+            "id": "RAG-614d42a06b3d29dfb1b74c4738e2ace0152164bd8c384078f09b2f95dc96f876",
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "version": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+            "locator": "page:2",
+            "alias_locators": [],
+            "text": "建工 AI | 求是村旧改：研究决策与行动计划\n2. 求是村已经经历什么：阶段不能混在一起\n时点与对象 核到的公开记录 对当前研究的用途\n历史住宅与物业治 浙大后勤历史稿记求是村始建于20世纪50年代 逐幢分类。不能认定所有楼栋同龄、同产权、\n理 ，存在不同年代住宅，并记载1997—1998年的 同技术条件。\n管理改革。H01\n2018年加梯试点 官方年鉴记录社区协调费用、管线迁移及通行细 作为已建设施后评估样本；当年的好评不能\n节；2019年报道明确20幢3单元电梯于2018年5 替代现在的检验与维护记录。\n月投用。H02H03\n2021年“美好家园 西湖区进展通报将求是村列为当轮提升整改任务 回读该轮实际清单。不是后来所有工程的总\n” 已完成对象。H04 体验收证明。\n2023年充电与物业 通讯稿记累计设置电瓶车充电桩75个等设施。 核当前位置、可用性、配电、收费及管理，\nH05 不能把历史安装数量当现时服务能力。\n2023年二次供水 拟改29、30、31、48幢共252户；留博楼因当 四幢追踪合同、施工、验收、接管；留博楼\n时泵房位置问题未纳入。报道时仍在设计、公示 单列。252户只属于该报道中的工程范围。\n与进场准备阶段。H06\n2023年电梯托管 浙江日报报道社区已有47部电梯，并协商形成物 取得逐梯现行合同。报道中的托管费变化不\n业托管机制。H08 能作为2026现价或全成本。\n2024年75幢1单元 街道正式目录和征求公告记该单元加梯决策计划 继续找最终决定、审批、施工和投用记录。\n；意见征集期为9月18日至10月18日。H09H10 目录计划完成时间不是竣工日期。\n2025年邻里中心 10月28日西湖报报道中心已揭牌启用，包含康 先评估开放、使用和可达性，不默认再建同\n养、文化及家庭服务空间。H11 类服务中心。\n2026年8月加梯 报道记社区累计成功加梯54台，当年1台落地、 区分已建、审批、协调三个队列；申请逐台\n2台审批、3台协调，并提到7幢某单元。H12 清册，不能直接计算全小区覆盖率。\n这些记录表明，求是村已有持续改善和协调基础。真正需要建立的是一张贯通建设、使用、责任和缺口的现况\n图。 54台、252户、75个充电桩分属不同对象、时间和计数单位，不相加、不互作分母。浙大求是社区的统计\n也不能自动等同于求是村住宅宗地。\n另有2023年11月施工进场对接的转载线索，但原始发布页和具体包件关系尚未完整核实，保留为调查线索，不\n据此确认四幢已施工或竣工。H07\n2026-10-10 | 公开资料研究 · 现场与专业确认另列 2",
+            "file_name": "求是村_公开资料研究与改造计划_AI研究草稿_已校验版.pdf",
+            "source": {
+              "id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+              "hash": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+              "title": "求是村_公开资料研究与改造计划_AI研究草稿_已校验版.pdf",
+              "locator": "document:DOC-d714c411-138c-4926-bd87-5c897815b31c",
+              "synthetic": false,
+              "data_class": "internal",
+              "visibility": "internal",
+              "parse_status": "extracted",
+              "content_status": "uploaded"
+            },
+            "source_kind": "ai_draft",
+            "source_date": null,
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [
+              {
+                "measure_key": "elevator",
+                "measure_name": "大家商讨了托管费用、托管协议和电梯管理细则等，最终将托管费用从每台每月600元降至300元 / 电梯",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "电梯",
+                    "start": 234,
+                    "end": 236
+                  },
+                  {
+                    "term": "电梯",
+                    "start": 532,
+                    "end": 534
+                  },
+                  {
+                    "term": "电梯",
+                    "start": 550,
+                    "end": 552
+                  }
+                ]
+              },
+              {
+                "measure_key": "maintenance",
+                "measure_name": "形成委托物业托管的长效管理机制 / 物业管理 / 维护",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "维护",
+                    "start": 252,
+                    "end": 254
+                  }
+                ]
+              },
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 421,
+                    "end": 425
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "原文逐字提及该举措，尚无对应审核引用",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": -1.86346
+          },
+          {
+            "id": "RAG-d80d1a719caad6141eb840b5eaf04bbee0a35f66915a3d18ee09e0bdaa6190f7",
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "version": "d5ed890037f488c4f5b0a3ce726464f256260c591cf44be46f08a33cc4567d7f",
+            "locator": "page:2",
+            "alias_locators": [],
+            "text": "建工 AI | 求是村旧改：研究决策与行动计划\n2. 求是村已经经历什么：阶段不能混在一起\n时点与对象 核到的公开记录 对当前研究的用途\n历史住宅与物业治 浙大后勤历史稿记求是村始建于20世纪50年代 逐幢分类。不能认定所有楼栋同龄、同产权、\n理 ，存在不同年代住宅，并记载1997—1998年的 同技术条件。\n管理改革。H01\n2018年加梯试点 官方年鉴记录社区协调费用、管线迁移及通行细 作为已建设施后评估样本；当年的好评不能\n节；2019年报道明确20幢3单元电梯于2018年5 替代现在的检验与维护记录。\n月投用。H02H03\n2021年“美好家园 西湖区进展通报将求是村列为当轮提升整改任务 回读该轮实际清单。不是后来所有工程的总\n” 已完成对象。H04 体验收证明。\n2023年充电与物业 通讯稿记累计设置电瓶车充电桩75个等设施。 核当前位置、可用性、配电、收费及管理，\nH05 不能把历史安装数量当现时服务能力。\n2023年二次供水 拟改29、30、31、48幢共252户；留博楼因当 四幢追踪合同、施工、验收、接管；留博楼\n时泵房位置问题未纳入。报道时仍在设计、公示 单列。252户只属于该报道中的工程范围。\n与进场准备阶段。H06\n2023年电梯托管 浙江日报报道社区已有47部电梯，并协商形成物 取得逐梯现行合同。报道中的托管费变化不\n业托管机制。H08 能作为2026现价或全成本。\n2024年75幢1单元 街道正式目录和征求公告记该单元加梯决策计划 继续找最终决定、审批、施工和投用记录。\n；意见征集期为9月18日至10月18日。H09H10 目录计划完成时间不是竣工日期。\n2025年邻里中心 10月28日西湖报报道中心已揭牌启用，包含康 先评估开放、使用和可达性，不默认再建同\n养、文化及家庭服务空间。H11 类服务中心。\n2026年8月加梯 报道记社区累计成功加梯54台，当年1台落地、 区分已建、审批、协调三个队列；申请逐台\n2台审批、3台协调，并提到7幢某单元。H12 清册，不能直接计算全小区覆盖率。\n这些记录表明，求是村已有持续改善和协调基础。真正需要建立的是一张贯通建设、使用、责任和缺口的现况\n图。 54台、252户、75个充电桩分属不同对象、时间和计数单位，不相加、不互作分母。浙大求是社区的统计\n也不能自动等同于求是村住宅宗地。\n另有2023年11月施工进场对接的转载线索，但原始发布页和具体包件关系尚未完整核实，保留为调查线索，不\n据此确认四幢已施工或竣工。H07\n2026-10-10 | 公开资料研究 · 现场与专业确认另列 2",
+            "file_name": "求是村_公开资料研究与改造计划_AI研究草稿.pdf",
+            "source": {
+              "id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+              "hash": "d5ed890037f488c4f5b0a3ce726464f256260c591cf44be46f08a33cc4567d7f",
+              "title": "求是村_公开资料研究与改造计划_AI研究草稿.pdf",
+              "locator": "document:DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+              "synthetic": false,
+              "data_class": "internal",
+              "visibility": "internal",
+              "parse_status": "extracted",
+              "content_status": "uploaded"
+            },
+            "source_kind": "ai_draft",
+            "source_date": null,
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [
+              {
+                "measure_key": "elevator",
+                "measure_name": "大家商讨了托管费用、托管协议和电梯管理细则等，最终将托管费用从每台每月600元降至300元 / 电梯",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "电梯",
+                    "start": 234,
+                    "end": 236
+                  },
+                  {
+                    "term": "电梯",
+                    "start": 532,
+                    "end": 534
+                  },
+                  {
+                    "term": "电梯",
+                    "start": 550,
+                    "end": 552
+                  }
+                ]
+              },
+              {
+                "measure_key": "maintenance",
+                "measure_name": "形成委托物业托管的长效管理机制 / 物业管理 / 维护",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "维护",
+                    "start": 252,
+                    "end": 254
+                  }
+                ]
+              },
+              {
+                "measure_key": "pipe_network",
+                "measure_name": "二次供水",
+                "annotation_kind": "literal_mention",
+                "review_status": "not_reviewed",
+                "matches": [
+                  {
+                    "term": "二次供水",
+                    "start": 421,
+                    "end": 425
+                  }
+                ]
+              }
+            ],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "原文逐字提及该举措，尚无对应审核引用",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": -1.86511
+          }
+        ],
+        "candidate_counts": {
+          "documents": 5,
+          "parsed_chunks": 123,
+          "eligible_chunks": 4,
+          "ranked_chunks": 4,
+          "batches": 1,
+          "unresolved_references": 0
+        },
+        "skipped": [
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "locator": "page:1",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "locator": "page:3",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "locator": "page:4",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "locator": "page:5",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "locator": "page:6",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "locator": "page:8",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "locator": "page:1",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "locator": "page:3",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "locator": "page:4",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "locator": "page:5",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "locator": "page:6",
+            "code": "ANNOTATION_FILTER",
+            "reason": "没有同时符合举措、对象、阶段及审核范围的同版本引用。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "code": "SOURCE_KIND_FILTER",
+            "reason": "来源类别不符合本次筛选。"
+          },
+          {
+            "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+            "code": "SOURCE_KIND_FILTER",
+            "reason": "来源类别不符合本次筛选。"
+          },
+          {
+            "document_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+            "code": "SOURCE_KIND_FILTER",
+            "reason": "来源类别不符合本次筛选。"
+          }
+        ],
+        "method": "metadata_gated_bm25",
+        "score_meaning": "BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。",
+        "ranking_note": "在权限、来源版本和元数据筛选后，直接复用现有BM25原文检索。",
+        "content_role": "untrusted_source_material",
+        "fact_writes": 0
+      }
+    },
+    {
+      "request": {
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？",
+        "measure_key": "pipe_network",
+        "limit": 5,
+        "as_of": "2020-01-01"
+      },
+      "result": {
+        "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？",
+        "rank_query": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？\n幢 户 不纳入",
+        "query_expansions": [
+          {
+            "matched_terms": [
+              "楼栋"
+            ],
+            "added_term": "幢",
+            "reason": "楼栋数量在工程材料中常用“幢”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "户数"
+            ],
+            "added_term": "户",
+            "reason": "住户数量在工程材料中常用“户”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "排除"
+            ],
+            "added_term": "不纳入",
+            "reason": "排除范围在工程材料中可能写作“不纳入”，补充这一明确措辞。"
+          }
+        ],
+        "as_of": "2020-01-01",
+        "hits": [],
+        "candidate_counts": {
+          "documents": 5,
+          "parsed_chunks": 123,
+          "eligible_chunks": 0,
+          "ranked_chunks": 0,
+          "batches": 0,
+          "unresolved_references": 0
+        },
+        "skipped": [
+          {
+            "document_id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+            "code": "GENERATED_SOURCE_EXCLUDED",
+            "reason": "默认检索排除AI草稿与模拟示例，可显式开启原文浏览。"
+          },
+          {
+            "document_id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+            "code": "GENERATED_SOURCE_EXCLUDED",
+            "reason": "默认检索排除AI草稿与模拟示例，可显式开启原文浏览。"
+          },
+          {
+            "document_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+            "code": "SOURCE_AFTER_AS_OF",
+            "reason": "来源正文晚于本次研判时点。"
+          },
+          {
+            "document_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+            "code": "SOURCE_AFTER_AS_OF",
+            "reason": "来源正文晚于本次研判时点。"
+          },
+          {
+            "document_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+            "code": "SOURCE_AFTER_AS_OF",
+            "reason": "来源正文晚于本次研判时点。"
+          }
+        ],
+        "method": "metadata_gated_bm25",
+        "score_meaning": "BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。",
+        "ranking_note": "在权限、来源版本和元数据筛选后，直接复用现有BM25原文检索。",
+        "content_role": "untrusted_source_material",
+        "fact_writes": 0
+      }
+    }
+  ],
+  "project_input_unchanged": true,
+  "fact_writes": 0,
+  "assertions": "public source separation, exact location/version, AI explicit browsing, prior-date exclusion, no project mutations"
+}

@@ -3,6 +3,7 @@ import type { Fact, MapScreenProfile, Source } from '../../../host/generated/con
 import { api } from '../api'
 import WaitingScene from '../components/WaitingScene'
 import DocumentEvidenceLineage from './DocumentEvidenceLineage'
+import CrossDocumentMeasures from './CrossDocumentMeasures'
 import { buildImportGraph, layoutImportGraph, previewColumnValues, recordForNode,
   type GraphDepth, type GraphNode, type GraphScope, type ImportDocument, type ParsedColumn } from './graph-model'
 import { buildEvidenceCoverage, type CoverageEvidence } from './evidence-coverage'
@@ -137,6 +138,7 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
   </section>
 
   return <section className="import-explorer" aria-label="导入数据关系与分析">
+    <CrossDocumentMeasures projectId={projectId} revision={revision} documents={graph.documents} rawDocuments={documents} sources={graph.sources} onEvidence={onEvidence} />
     <DocumentEvidenceLineage projectId={projectId} revision={revision} documents={graph.documents} sources={sources} onEvidence={onEvidence} />
     <header className="import-explorer-heading">
       <div><small>DATA ARCHITECTURE / 只读结构</small><h3>{view === 'coverage' ? '初步调研资料覆盖' : '导入数据关系图'}</h3>

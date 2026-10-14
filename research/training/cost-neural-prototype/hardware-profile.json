@@ -1,0 +1,55 @@
+{
+  "schema": "autoresearch-hardware-profile/v1",
+  "capturedAtUtc": "2026-10-14T03:03:36.787746+00:00",
+  "platform": {
+    "system": "Windows",
+    "release": "11",
+    "python": "3.12.14"
+  },
+  "cpu": {
+    "name": "Intel(R) Core(TM) Ultra 9 275HX",
+    "physicalCores": 24,
+    "logicalProcessors": 24
+  },
+  "memory": {
+    "totalGiB": 31.4585,
+    "freeGiB": 5.9535
+  },
+  "gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+      "driverVersion": "616.56",
+      "memoryTotalMiB": 12227,
+      "memoryFreeMiB": 11330,
+      "memoryUsedMiB": 615,
+      "gpuUtilizationPercent": 0,
+      "memoryUtilizationPercent": 0,
+      "computeCapability": "12.0"
+    }
+  ],
+  "disk": {
+    "path": "D:\\建工ai",
+    "freeGiB": 134.5221
+  },
+  "packages": {
+    "numpy": "2.3.5",
+    "pandas": "3.0.1",
+    "scikit-learn": null,
+    "xgboost": null,
+    "torch": null,
+    "joblib": null,
+    "optuna": null
+  },
+  "workloadClass": "single_gpu_neural",
+  "recommendedPlan": {
+    "primaryDevice": "cuda",
+    "fallbackDevice": "cpu",
+    "maxConcurrentTrials": 1,
+    "cpuThreadsPerTrial": 12,
+    "maxRamFraction": 0.75,
+    "maxVramFraction": 0.75,
+    "minFreeVramMiB": 2048,
+    "maxObservedAllocationMiB": 9170,
+    "rationale": "reserve 2 GiB and cap one process at 75 percent of physical VRAM"
+  }
+}

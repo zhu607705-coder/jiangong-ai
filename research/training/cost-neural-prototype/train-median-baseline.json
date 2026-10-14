@@ -1,0 +1,14 @@
+{
+  "status": "fitted_train_rows_only",
+  "models": {
+    "synthetic": {
+      "kind": "median",
+      "value": 1284.1898694105362
+    },
+    "workbook": {
+      "kind": "median",
+      "value": 441.1846179518055
+    }
+  },
+  "source": "captured completed experiment results; no model/search changes"
+}
