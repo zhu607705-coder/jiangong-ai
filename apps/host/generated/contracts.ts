@@ -585,6 +585,7 @@ export interface DecisionSupport {
   };
   error_code: string | null;
   dashboard?: DecisionDashboard;
+  renewal_mode?: RenewalModeAssessment;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -625,6 +626,28 @@ export interface DimensionScore {
    */
   evidence_refs: string[];
   basis: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalModeAssessment".
+ */
+export interface RenewalModeAssessment {
+  policy_version: string;
+  model_choice: DecisionChoice;
+  priority_constraint: DecisionChoice;
+  evidence_basis: DecisionChoice;
+  direction: "comprehensive" | "rebuild" | "compare" | "investigate";
+  status: "preliminary" | "constrained" | "uncertain";
+  summary: string;
+  /**
+   * @maxItems 12
+   */
+  reasons: string[];
+  next_step: string;
+  /**
+   * @maxItems 20
+   */
+  source_ids: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -1898,4 +1921,71 @@ export interface OperationsWorkspace {
   scenarios: OperationsSnapshot[];
   observations: OperationsObservation[];
   comparisons: OperationsComparison[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalStrategy".
+ */
+export interface RenewalStrategy {
+  headline: string;
+  summary: string;
+  preferred_mode: "comprehensive" | "rebuild" | "compare";
+  /**
+   * @maxItems 6
+   */
+  rationale: {
+    point: string;
+    source_id: string;
+    quote: string;
+  }[];
+  /**
+   * @maxItems 2
+   */
+  paths: {
+    mode: "comprehensive" | "rebuild";
+    title: string;
+    description: string;
+    /**
+     * @maxItems 5
+     */
+    actions: {
+      title: string;
+      detail: string;
+      /**
+       * @maxItems 8
+       */
+      evidence_refs: string[];
+    }[];
+    /**
+     * @maxItems 5
+     */
+    requirements: string[];
+  }[];
+  /**
+   * @maxItems 6
+   */
+  dimensions: {
+    key: "demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources";
+    current: string;
+    current_level: "low" | "medium" | "high" | "unknown";
+    comprehensive: string;
+    comprehensive_level: "low" | "medium" | "high" | "unknown";
+    rebuild: string;
+    rebuild_level: "low" | "medium" | "high" | "unknown";
+    /**
+     * @maxItems 8
+     */
+    evidence_refs: string[];
+  }[];
+  /**
+   * @maxItems 5
+   */
+  next_checks: {
+    title: string;
+    detail: string;
+    /**
+     * @maxItems 8
+     */
+    evidence_refs: string[];
+  }[];
 }

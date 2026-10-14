@@ -10,6 +10,7 @@ import { booleanValid } from '@turf/boolean-valid'
 import { decisionFactors, neighborhoodMapAdvice } from '../../packages/maps/decision-factors'
 import { applyDecisionGuards } from '../../packages/decision/structured-route'
 import { decisionPolicy, DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
+import { mapDecisionInput } from '../../packages/decision/structured-route'
 import { dashboardPolicy } from '../../packages/decision/dashboard'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -149,6 +150,10 @@ export class MapScreeningService {
   async savedAnalysis(id:string,profile:MapScreenProfile,signal:AbortSignal):Promise<MapScreenAnalysis|null>{
     const context=await this.loadContext(id,signal)
     return this.restore(context,profile)
+  }
+
+  async modeInput(id:string,signal:AbortSignal) {
+    return mapDecisionInput(await this.loadContext(id,signal),'先判定改造模式，再进行六维研判','neighborhood')
   }
 
   async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal, emit: ResearchSink = () => {}): Promise<MapScreenAnalysis> {

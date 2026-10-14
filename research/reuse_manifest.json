@@ -341,6 +341,26 @@
       ],
       "isolation": "No new parser, index service, vector database, model caller or scheduler; no true project facts/observations rewritten; raw user attachment outputs remain local .cache",
       "license": "local adaptation and existing upstream licensed packages; attribution retained"
+    },
+    "renewal_mode_strategy_20261015": {
+      "reuse": [
+        "LiveSession.call/runReadCapability and shared System One transport",
+        "collectSelectedEvidence/mountPublicWeb and original public adapters",
+        "ConstructionCostLibrary.search and imported history-records snapshot",
+        "Store owner/version checks and result storage",
+        "DecisionDashboard and buildCompleteCommunityDemo",
+        "DocumentEvidenceLineage/CrossDocumentMeasures/normalizeImportDocument",
+        "existing XeLaTeX report"
+      ],
+      "new_logic": [
+        "five-group preliminary mode standard and nine dated conditions",
+        "bounded source aliases and six-query research budget",
+        "DeepSeek mode/paths/six-dimension strategy with literal-source guards",
+        "synthetic same-baseline rebuilding comparison",
+        "plan-first subpages and source-to-decision rows"
+      ],
+      "isolation": "No parallel scheduler, parser, search client or general context system; no real fact or ledger mutation. Synthetic strategy results use a separate cache identity.",
+      "license": "Local adaptations; existing upstream package licensing and attribution retained."
     }
   }
 }

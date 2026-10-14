@@ -11,6 +11,8 @@ import DecisionDashboard from '../components/DecisionDashboard'
 import ResearchActivity from '../components/ResearchActivity'
 import { analyzeSelection } from './screening-stream'
 import { buildPreliminaryResearch } from '../../../../packages/maps/preliminary-research'
+import { mapRenewalModeInput } from '../../../../packages/retrofit/renewal-mode'
+import RenewalModePanel from './RenewalModePanel'
 
 export default function PreliminaryCard({ selection, profile, cell, onContext, onProfile, onOpenProject, onAssessment }: {
   selection: PlaceSelection; profile: MapScreenProfile; theme: MapScreenTheme; cell: MapScreenCell | null;
@@ -88,6 +90,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     {stage==='context'&&<p role="status">正在读取所选位置…</p>}
     {context&&<>
       {cell&&<div className="screening-tier" style={{'--tier-color':screenTiers(profile)[cell.tier].color} as React.CSSProperties}><i/>{screenTiers(profile)[cell.tier].label}</div>}
+      {profile==='neighborhood'&&<RenewalModePanel key={context.id} endpoint={`/maps/screening/renewal-mode/${encodeURIComponent(context.id)}`} input={mapRenewalModeInput({...context,research_sources:analysis?.research_sources||context.research_sources})} decision={analysis?.decision_support} onInvestigate={local.length===1?()=>onOpenProject(local[0].project_id):undefined}/>}
       {preview&&<div className="preliminary-research" aria-label="对象初步调研">
         <h4>初步调研</h4>
         {preview.lines.map((line,index)=><p key={index}>{line.text}{!!line.sourceRefs.length&&<button className="claim-source" onClick={()=>showEvidence(line.sourceRefs)} title={cite(line.sourceRefs)}>依据</button>}</p>)}

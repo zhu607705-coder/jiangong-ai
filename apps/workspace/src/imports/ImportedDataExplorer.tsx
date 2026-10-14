@@ -1,308 +1,34 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Fact, MapScreenProfile, Source } from '../../../host/generated/contracts'
 import { api } from '../api'
-import WaitingScene from '../components/WaitingScene'
 import DocumentEvidenceLineage from './DocumentEvidenceLineage'
-import { evidenceFocusKey, type EvidenceFocusLocation } from './evidence-focus'
 import CrossDocumentMeasures from './CrossDocumentMeasures'
-import { buildImportGraph, layoutImportGraph, previewColumnValues, recordForNode,
-  type GraphDepth, type GraphNode, type GraphScope, type ImportDocument, type ParsedColumn } from './graph-model'
-import { buildEvidenceCoverage, type CoverageEvidence } from './evidence-coverage'
-import './import-graph.css'
+import { normalizeImportDocument, type ImportDocument } from './graph-model'
+import type { EvidenceFocusLocation } from './evidence-focus'
+import './evidence-decision-map.css'
 
-type Props = {
-  projectId: string
-  projectName: string
-  revision: number
-  sources: Source[]
-  researchSources: Source[]
-  facts: Fact[]
-  profile?: MapScreenProfile
-  asOf?: string
-  onEvidence?: (refs: string[]) => void
-  focusLocation?: EvidenceFocusLocation
-}
+type Props = {projectId:string;projectName:string;revision:number;sources:Source[];researchSources:Source[];facts:Fact[];profile?:MapScreenProfile;asOf?:string;onEvidence?:(refs:string[])=>void;focusLocation?:EvidenceFocusLocation}
 
-const labels: Record<GraphNode['kind'], string> = {
-  project: '项目', document: '导入文件', source: '关联来源', table: '解析表', text_lines: '文本行',
-  column: '字段', segment: '原文定位', fact: '来源记录', record: '公开记录',
-}
-const safeLink = (value?: string) => {
-  try { const url = new URL(value || ''); return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password ? url.href : null }
-  catch { return null }
-}
-const percent = (value: number | null) => value === null ? '—' : `${Math.round(value * 100)}%`
-const previewText = (value: unknown, max = 700) => {
-  const raw = typeof value === 'string' ? value : JSON.stringify(value) ?? ''
-  return raw.length > max ? `${raw.slice(0, max)}…` : raw
-}
-
-export default function ImportedDataExplorer({ projectId, projectName, revision, sources, researchSources, facts, profile, asOf, onEvidence, focusLocation }: Props) {
-  const requestKey = `${projectId}\u0000${revision}`
-  const [documentLoad, setDocumentLoad] = useState<{ key: string; rows: ImportDocument[]; error: string; loading: boolean }>({ key: '', rows: [], error: '', loading: true })
-  const [view, setView] = useState<'structure' | 'coverage'>('structure')
-  const [coverageSelection, setCoverageSelection] = useState<{ objectRef: string; dimension: string } | null>(null)
-  const [objectLimit, setObjectLimit] = useState(20)
-  const [depth, setDepth] = useState<GraphDepth>('read')
-  const [scope, setScope] = useState<GraphScope>('imports')
-  const [query, setQuery] = useState('')
-  const [selectedId, setSelectedId] = useState(`project:${projectId}`)
-  const [manualNode, setManualNode] = useState<GraphNode | null>(null)
-  const [focusedColumn, setFocusedColumn] = useState<{ documentId: string; tableIndex: number; columnIndex: number } | null>(null)
-  const [segmentQuery, setSegmentQuery] = useState('')
-  const [segmentLimit, setSegmentLimit] = useState(20)
-  const [zoom, setZoom] = useState(1)
-  const canvasRef = useRef<HTMLDivElement>(null)
-  const inspectorRef = useRef<HTMLElement>(null)
-  const focusKey = focusLocation ? `${projectId}:${evidenceFocusKey(focusLocation)}` : ''
-
-  useEffect(() => {
-    if (!focusKey) return
-    setView('structure'); setScope('all'); setQuery(''); setManualNode(null); setFocusedColumn(null)
-  }, [focusKey])
-
-  useEffect(() => {
-    const controller = new AbortController()
-    setDocumentLoad({ key: requestKey, rows: [], error: '', loading: true })
-    setManualNode(null); setFocusedColumn(null); setSelectedId(`project:${projectId}`)
-    setSegmentQuery(''); setSegmentLimit(20); setCoverageSelection(null); setObjectLimit(20)
-    void api<ImportDocument[]>(`/projects/${encodeURIComponent(projectId)}/documents`, undefined, controller.signal)
-      .then(rows => { if (!controller.signal.aborted) setDocumentLoad({ key: requestKey, rows: Array.isArray(rows) ? rows : [], error: '', loading: false }) })
-      .catch(reason => { if (!controller.signal.aborted) setDocumentLoad({ key: requestKey, rows: [], error: reason instanceof Error ? reason.message : '导入数据暂不可读', loading: false }) })
-    return () => controller.abort()
-  }, [projectId, requestKey])
-
-  const documents = documentLoad.key === requestKey ? documentLoad.rows : []
-  const loading = documentLoad.key !== requestKey || documentLoad.loading
-  const error = documentLoad.key === requestKey ? documentLoad.error : ''
-  const effectiveScope = scope === 'imports' && !documents.length ? 'all' : scope
-  const graph = useMemo(() => buildImportGraph({ projectId, projectName, projectSources: sources, researchSources,
-    facts, documents, depth, scope: effectiveScope, query }), [projectId, projectName, sources, researchSources, facts, documents, depth, effectiveScope, query])
-  const layout = useMemo(() => layoutImportGraph(graph), [graph])
-  const coverage = useMemo(() => buildEvidenceCoverage({ ...graph, projectId, projectName, profile, asOf }), [graph, projectId, projectName, profile, asOf])
-  const coverageCell = coverage.cells.find(cell => cell.objectRef === coverageSelection?.objectRef && cell.dimension === coverageSelection?.dimension)
-  const coverageLabel = coverage.dimensions.find(dimension => dimension.key === coverageCell?.dimension)?.label
-  const coverageStates = { locatable: '有可定位依据', clue: '待核线索', empty: '尚无依据' }
-  const openCoverageSource = (sourceId: string, item?: CoverageEvidence) => {
-    const parentId = `project:${projectId}`, isDocument = graph.documents.some(document => document.id === sourceId)
-    setView('structure'); setScope('all'); setQuery(''); setFocusedColumn(null)
-    setManualNode(item?.factId ? { id: `coverage-fact:${item.factId}`, kind: 'fact', label: graph.facts.find(fact => fact.id === item.factId)?.kind || '来源记录',
-      subtitle: item.locator || '原文定位未提供', parentId, level: 2, relation: '显式来源引用', sourceId, factId: item.factId }
-      : item?.recordId ? { id: `coverage-record:${sourceId}:${item.recordId}`, kind: 'record', label: graph.sources.find(source => source.id === sourceId)?.public_records?.find(record => record.id === item.recordId)?.subject || '公开记录',
-        subtitle: item.locator || '原文定位未提供', parentId, level: 2, relation: '结构化原文记录', sourceId, recordId: item.recordId }
-      : { id: `coverage-source:${sourceId}`, kind: isDocument ? 'document' : 'source', label: graph.documents.find(document => document.id === sourceId)?.fileName || graph.sources.find(source => source.id === sourceId)?.title || sourceId,
-        subtitle: '调研资料', parentId, level: 1, relation: '显式来源引用', sourceId, ...(isDocument ? { documentId: sourceId } : {}) })
-    requestAnimationFrame(() => { inspectorRef.current?.scrollIntoView({ block: 'nearest', behavior: 'auto' }); inspectorRef.current?.focus({ preventScroll: true }) })
-  }
-  const selected = manualNode && graph.nodes.some(node => node.id === manualNode.parentId)
-    ? manualNode : graph.nodes.find(node => node.id === selectedId) || graph.nodes[0]
-  const byId = new Map(layout.nodes.map(node => [node.id, node]))
-  const chain = new Set<string>()
-  let cursor: GraphNode | undefined = selected
-  while (cursor) { chain.add(cursor.id); cursor = cursor.parentId ? graph.nodes.find(node => node.id === cursor!.parentId) : undefined }
-  for (const node of graph.nodes) if (node.parentId === selected.id) chain.add(node.id)
-  const breadcrumbs: GraphNode[] = []
-  cursor = selected
-  while (cursor) { breadcrumbs.unshift(cursor); cursor = cursor.parentId ? graph.nodes.find(node => node.id === cursor!.parentId) : undefined }
-  const document = graph.documents.find(item => item.id === selected.documentId)
-  const source = graph.sources.find(item => item.id === (selected.sourceId || selected.documentId))
-  const table = document?.tables[selected.tableIndex ?? -1]
-  const columnFocus = focusedColumn && (selected.kind === 'table' || selected.kind === 'text_lines') && focusedColumn.documentId === document?.id && focusedColumn.tableIndex === selected.tableIndex ? focusedColumn : null
-  const column: ParsedColumn | undefined = table?.columns[columnFocus?.columnIndex ?? selected.columnIndex ?? -1]
-  const segment = document?.segments[selected.segmentIndex ?? -1]
-  const fact = graph.facts.find(item => item.id === selected.factId)
-  const record = source && selected.recordId ? recordForNode(source, selected.recordId) : undefined
-  const matchingSegments = document?.segments.map((item, index) => ({ item, index })).filter(({ item }) =>
-    !segmentQuery || `${item.locator} ${item.text}`.toLowerCase().includes(segmentQuery.toLowerCase())) || []
-  const openTable = (index: number) => {
-    if (!document) return
-    const item = document.tables[index]
-    setFocusedColumn(null)
-    setManualNode({ id: `detail-table:${document.id}:${index}`, kind: item.kind,
-      label: item.kind === 'text_lines' ? '文本行' : item.label,
-      subtitle: `${item.rowCount} 行解析 · ${item.previewRows.length} 行预览`, parentId: `document:${document.id}`,
-      level: 2, relation: '解析得到', documentId: document.id, tableIndex: index })
-  }
-  const openSegment = (index: number) => {
-    if (!document) return
-    const item = document.segments[index]
-    setManualNode({ id: `detail-segment:${document.id}:${index}`, kind: 'segment', label: item.locator,
-      subtitle: item.text.slice(0, 55), parentId: `document:${document.id}`,
-      level: 2, relation: '原文定位', documentId: document.id, segmentIndex: index })
-  }
-  const jumpToNode = (id: string) => {
-    const node = byId.get(id), canvas = canvasRef.current
-    if (!node) return
-    setManualNode(null); setFocusedColumn(null); setSelectedId(id)
-    setSegmentQuery(''); setSegmentLimit(20)
-    if (canvas) canvas.scrollTo({ left: Math.max(0, (node.x + 110) * zoom - canvas.clientWidth / 2),
-      top: Math.max(0, node.y * zoom - canvas.clientHeight / 2), behavior: 'smooth' })
-  }
-
-  if (loading || error) return <section className="import-explorer" aria-label="导入数据关系与分析">
-    <header className="import-explorer-heading"><div><small>DATA ARCHITECTURE / 只读结构</small><h3>导入数据关系图</h3></div></header>
-    {loading ? <WaitingScene variant="research" compact title="正在读取导入资料" detail="正在整理文件、表、字段与来源的结构…" />
-      : <p role="alert" className="import-graph-error">导入数据暂不可读：{error}。下方仍可查看项目来源列表。</p>}
-  </section>
-
-  return <section className="import-explorer" aria-label="导入数据关系与分析">
-    <CrossDocumentMeasures projectId={projectId} revision={revision} documents={graph.documents} rawDocuments={documents} sources={graph.sources} onEvidence={onEvidence} />
-    <DocumentEvidenceLineage projectId={projectId} revision={revision} documents={graph.documents} sources={sources} onEvidence={onEvidence} focusLocation={focusLocation} />
-    <header className="import-explorer-heading">
-      <div><small>DATA ARCHITECTURE / 只读结构</small><h3>{view === 'coverage' ? '初步调研资料覆盖' : '导入数据关系图'}</h3>
-        <p>{view === 'coverage' ? '按明确对象和登记维度查看依据、待核线索与未匹配资料；覆盖状态不表示判断通过。' : '项目、来源、解析表与字段按已保存的引用连线；选中节点查看结构和数据质量。'}</p></div>
-      <span className="import-explorer-count">{graph.stats.importedFiles} 份导入文件</span>
-    </header>
-    <div className="import-graph-toolbar"><div className="import-graph-switch" aria-label="资料视图"><button type="button" aria-pressed={view === 'structure'} onClick={() => setView('structure')}>结构关系</button><button type="button" aria-pressed={view === 'coverage'} onClick={() => setView('coverage')}>调研覆盖</button></div></div>
-    {view === 'coverage' ? <div className="research-coverage" aria-label="对象与六维资料覆盖">
-      <p className="import-graph-note">{asOf ? `研究截止 ${asOf} · ` : ''}项目层资料只留在项目范围；未明确绑定的原始行不下放到楼栋。</p>
-      <div className="coverage-legend"><span>有可定位依据</span><span>待核线索</span><span>尚无依据</span></div>
-      <div className="coverage-body"><div className="coverage-matrix-scroll"><table className="coverage-matrix"><thead><tr><th>研究对象</th>{coverage.dimensions.map(dimension => <th key={dimension.key}>{dimension.label}</th>)}</tr></thead><tbody>
-        {coverage.objects.slice(0, objectLimit).map(object => <tr key={object.ref}><th scope="row">{object.label}</th>{coverage.dimensions.map(dimension => {
-          const cell = coverage.cells.find(item => item.objectRef === object.ref && item.dimension === dimension.key)!
-          return <td key={dimension.key}><button type="button" className={`coverage-cell state-${cell.state}`} aria-label={`${object.label} · ${dimension.label} · ${coverageStates[cell.state]}`} aria-pressed={coverageSelection?.objectRef === object.ref && coverageSelection?.dimension === dimension.key} onClick={() => setCoverageSelection({ objectRef: object.ref, dimension: dimension.key })}><span className="coverage-cell-label">{dimension.label}</span>{coverageStates[cell.state]}{cell.evidence.length ? ` ${cell.evidence.length}` : ''}</button></td>
-        })}</tr>)}
-      </tbody></table>{coverage.objects.length > objectLimit && <button type="button" className="import-more-button" onClick={() => setObjectLimit(value => value + 20)}>再显示 20 个对象</button>}</div>
-      <aside className="coverage-inspector" aria-label="调研依据">{coverageCell ? <>
-        <h4>{coverage.objects.find(object => object.ref === coverageCell.objectRef)?.label} · {coverageLabel}</h4>
-        <p>{coverageStates[coverageCell.state]}。这是资料定位状态，不是方案适配分或完成确认。</p>
-        {coverageCell.evidence.map(item => <article key={item.id}><strong>{coverage.sources.find(source => source.id === item.sourceId)?.title || item.sourceId}</strong><p>{previewText(item.value, 200)}{item.unit ? ` ${item.unit}` : ''}</p>
-          <p>对象：{item.objectRefs.join(' / ')} · 单位：{typeof item.value === 'boolean' ? '不适用' : item.unit || '未提供'}</p><p>{item.reason} · 原文 {item.locator || '未提供'}</p><p>观察 / 统计：{item.observedAt || '未提供'}；发布日期：{item.publishedAt?.slice(0, 10) || '未提供'}</p><p className="coverage-version">来源版本：{item.version || '未提供'}</p>
-          <button type="button" onClick={() => openCoverageSource(item.sourceId, item)}>原文与资料</button>{onEvidence && <button type="button" onClick={() => onEvidence([item.sourceId])}>定位证据卡</button>}
-        </article>)}
-        {!coverageCell.evidence.length && <p>该对象在此维度没有已登记的资料绑定；可先查看下方项目资料，再核对对象与口径。</p>}
-      </> : <p>选择一个对象与维度，查看资料来源、口径、时点及原文定位。</p>}</aside></div>
-      <details className="coverage-unmatched" open><summary>未匹配对象或口径：{coverage.rawRows.reduce((sum, row) => sum + row.count, 0)} 条来源绑定原始行 · {coverage.unmatched.length} 条其他记录</summary>
-        {coverage.rawRows.map(row => <p key={row.sourceId}>{coverage.sources.find(source => source.id === row.sourceId)?.title || row.sourceId} · {row.count} 条已保存原始行（不等于全文件行数） <button type="button" onClick={() => openCoverageSource(row.sourceId)}>查看文件与原始行</button></p>)}
-        {coverage.unmatched.slice(0, 20).map(item => <p key={item.id}>{item.reason} · {item.locator || '定位未提供'} {coverage.sources.some(source => source.id === item.sourceId) && <button type="button" onClick={() => openCoverageSource(item.sourceId, item)}>查看记录</button>}</p>)}
-        {coverage.unmatched.length > 20 && <p>另有 {coverage.unmatched.length - 20} 条未匹配记录，可在结构关系中按文件查看。</p>}
-        {!coverage.rawRows.length && !coverage.unmatched.length && <p>当前没有未匹配的已保存记录。</p>}
-      </details>
-      <details className="coverage-project-sources" open><summary>项目层可用资料 · {coverage.sources.length} 份</summary><div className="import-document-items">{coverage.sources.map(source => <button type="button" key={source.id} onClick={() => openCoverageSource(source.id)}>{source.title} · {source.content_status || '内容状态未提供'} · {source.published_at?.slice(0, 10) || '发布日期未提供'}</button>)}</div></details>
-    </div> : <>
-    <div className="import-metrics" aria-label="导入数据概况">
-      <div><strong>{graph.stats.importedFiles}</strong><span>导入文件</span></div>
-      <div><strong>{graph.stats.tables}</strong><span>解析表</span></div>
-      <div><strong>{graph.stats.textLines}</strong><span>文本行</span></div>
-      <div><strong>{graph.stats.parsedRows}</strong><span>解析行数</span></div>
-      <div><strong>{graph.stats.previewRows}</strong><span>可见预览行</span></div>
-      <div><strong>{graph.stats.originalRowRecords}</strong><span>来源绑定原始行</span></div>
-      <div><strong>{graph.stats.ocrRequired}</strong><span>待 OCR 文件</span></div>
-    </div>
-    {!documents.length && <p className="import-graph-note">本项目尚无上传文件。图中显示已有项目来源；上传 CSV、Excel、Word、PDF 或文本后可展开表、字段与原文定位。</p>}
-    <div className="import-graph-toolbar">
-      <div className="import-graph-switch" aria-label="图示深度">{([
-        ['map', '总览'], ['read', '结构'], ['full', '字段'],
-      ] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={depth === value} onClick={() => setDepth(value)}>{label}</button>)}</div>
-      <div className="import-graph-switch" aria-label="来源范围">
-        <button type="button" aria-pressed={effectiveScope === 'imports'} disabled={!documents.length} onClick={() => setScope('imports')}>导入文件</button>
-        <button type="button" aria-pressed={effectiveScope === 'all'} onClick={() => setScope('all')}>全部来源</button>
-      </div>
-      <label className="import-graph-search">筛选节点<input value={query} onChange={event => setQuery(event.target.value)} placeholder="文件名或来源名" /></label>
-      <label className="import-graph-jump">快速定位节点<select value={selected.level === 1 ? selected.id : ''} onChange={event => jumpToNode(event.target.value)}>
-        <option value="">选择文件或来源</option>{graph.nodes.filter(node => node.level === 1).map(node => <option key={node.id} value={node.id}>{node.label}</option>)}
-      </select></label>
-      <div className="import-graph-zoom" aria-label="图形缩放">
-        <button type="button" aria-label="缩小关系图" onClick={() => setZoom(value => Math.max(.7, +(value - .15).toFixed(2)))}>−</button>
-        <button type="button" aria-label="重置关系图缩放" onClick={() => setZoom(1)}>{Math.round(zoom * 100)}%</button>
-        <button type="button" aria-label="放大关系图" onClick={() => setZoom(value => Math.min(1.45, +(value + .15).toFixed(2)))}>+</button>
-      </div>
-    </div>
-    <div className="import-graph-body">
-      <div className="import-graph-canvas" ref={canvasRef} role="region" aria-label="可交互的数据关系图" tabIndex={0}>
-        <svg width={layout.width * zoom} height={layout.height * zoom} viewBox={`0 0 ${layout.width} ${layout.height}`} role="group" aria-label={`${graph.nodes.length} 个有来源的节点，${graph.edges.length} 条显式关系`}>
-          <defs><pattern id="import-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e7eeed" strokeWidth=".7"/></pattern></defs>
-          <rect width={layout.width} height={layout.height} fill="url(#import-grid)" />
-          {layout.edges.map(edge => {
-            const from = byId.get(edge.from)!, to = byId.get(edge.to)!
-            const middle = (from.x + 220 + to.x) / 2
-            const highlighted = selected.kind === 'project' || chain.has(edge.from) && chain.has(edge.to)
-            return <g key={edge.id} className={`import-edge ${highlighted ? 'is-related' : 'is-muted'}`}>
-              <path d={`M ${from.x + 220} ${from.y} C ${middle} ${from.y}, ${middle} ${to.y}, ${to.x} ${to.y}`} />
-              <title>{edge.relation}</title>
-            </g>
-          })}
-          {layout.nodes.map(node => <g key={node.id} role="button" tabIndex={0}
-            aria-label={`${labels[node.kind]}：${node.label}`} aria-pressed={selected.id === node.id}
-            className={`import-node kind-${node.kind} ${selected.id === node.id ? 'is-selected' : ''} ${selected.kind !== 'project' && !chain.has(node.id) ? 'is-muted' : ''}`}
-            transform={`translate(${node.x},${node.y - 31})`}
-            onClick={() => { setManualNode(null); setFocusedColumn(null); setSelectedId(node.id); setSegmentQuery(''); setSegmentLimit(20) }}
-            onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setManualNode(null); setFocusedColumn(null); setSelectedId(node.id); setSegmentQuery(''); setSegmentLimit(20) } }}>
-            <rect width="220" height="62" rx="9" />
-            <text className="import-node-kind" x="12" y="17">{labels[node.kind]}</text>
-            <text className="import-node-title" x="12" y="37">{node.label.length > 18 ? `${node.label.slice(0, 18)}…` : node.label}</text>
-            <text className="import-node-subtitle" x="12" y="53">{node.subtitle.length > 27 ? `${node.subtitle.slice(0, 27)}…` : node.subtitle}</text>
-            <title>{node.label} · {node.subtitle}</title>
-          </g>)}
-        </svg>
-      </div>
-      <aside ref={inspectorRef} tabIndex={-1} className="import-inspector" aria-label="节点分析">
-        <div className="import-inspector-breadcrumb">{breadcrumbs.map((item, index) => <span key={item.id}>{index > 0 ? ' / ' : ''}{labels[item.kind]}</span>)}</div>
-        {manualNode && selected.id === manualNode.id && <button type="button" className="import-back-button" onClick={() => setManualNode(null)}>返回文件</button>}
-        <h4>{selected.label}</h4><p className="import-inspector-subtitle">{selected.subtitle}</p>
-        {selected.kind === 'project' && <>
-          <p>已关联 {graph.stats.linkedSources} 个来源；其中 {graph.stats.importedFiles} 份为本项目上传文件。</p>
-          <dl className="import-inspector-stats"><div><dt>格式</dt><dd>{Object.entries(graph.stats.formats).map(([format, n]) => `${format.toUpperCase()} ${n}`).join(' · ') || '暂无导入'}</dd></div>
-            <div><dt>其他结构化事实</dt><dd>{graph.stats.otherFacts}</dd></div><div><dt>已截取预览表</dt><dd>{graph.stats.truncatedTables}</dd></div></dl>
-          <p className="import-quality-note">“解析行数”来自本地解析器，Excel 等格式有读取上限；“可见预览行”只统计实际可查看的记录，不能代替总量。</p>
-        </>}
-        {selected.kind === 'document' && document && <>
-          <dl className="import-inspector-stats"><div><dt>解析状态</dt><dd>{document.status === 'ocr_required' ? '扫描页待 OCR' : document.status}</dd></div>
-            <div><dt>解析器</dt><dd>{document.parser}</dd></div><div><dt>文件指纹</dt><dd className="import-hash">{document.hash || '未提供'}</dd></div>
-            <div><dt>解析结构 / 原文段</dt><dd>{document.tables.length} / {document.segments.length}</dd></div></dl>
-          {[...document.issues, ...document.notes].map(note => <p className="import-quality-note" key={note}>{note}</p>)}
-          {document.status === 'ocr_required' && <p className="import-quality-note">未取得可读正文，图中不会生成字段或已核事实。</p>}
-          {!!source?.locator && <p>来源定位：{source.locator}</p>}
-          {!!document.tables.length && <><h5>全部解析结构</h5><div className="import-document-items">{document.tables.map((item, index) =>
-            <button type="button" key={item.id} onClick={() => openTable(index)}>{item.kind === 'text_lines' ? '文本行' : item.label} · {item.rowCount} 行</button>)}</div></>}
-          {!!document.segments.length && <><h5>原文定位（{document.segments.length}）</h5>
-            <label className="import-segment-search">查找定位或内容<input value={segmentQuery} onChange={event => { setSegmentQuery(event.target.value); setSegmentLimit(20) }} /></label>
-            <div className="import-document-items">{matchingSegments.slice(0, segmentLimit).map(({ item, index }) =>
-              <button type="button" key={`${item.locator}:${index}`} onClick={() => openSegment(index)}>{item.locator} · {previewText(item.text, 65)}</button>)}</div>
-            {matchingSegments.length > segmentLimit && <button type="button" className="import-more-button" onClick={() => setSegmentLimit(value => value + 20)}>再显示 20 个定位</button>}
-            {!matchingSegments.length && <p className="import-quality-note">没有匹配的原文定位。</p>}
-          </>}
-        </>}
-        {(selected.kind === 'table' || selected.kind === 'text_lines') && table && <>
-          <dl className="import-inspector-stats"><div><dt>解析行数</dt><dd>{table.rowCount}</dd></div><div><dt>可见预览行</dt><dd>{table.previewRows.length}</dd></div>
-            <div><dt>字段数</dt><dd>{table.columnCount}</dd></div>{table.sheet && <div><dt>工作表</dt><dd>{table.sheet}</dd></div>}</dl>
-          {table.truncated && <p className="import-quality-note">这里只显示前 {table.previewRows.length} 行预览，统计不能当作全部原始文件。</p>}
-          <h5>字段完整度</h5><div className="import-column-list">{table.columns.map((field, index) => <button type="button" key={`${field.name}:${index}`} aria-pressed={columnFocus?.columnIndex === index} onClick={() => setFocusedColumn({ documentId: document!.id, tableIndex: selected.tableIndex!, columnIndex: index })}>
-            <span>{field.name}</span><strong>{percent(field.fillRate)}</strong><i style={{ width: `${Math.round((field.fillRate || 0) * 100)}%` }} /></button>)}</div>
-          {columnFocus && column && <div className="import-focused-column"><h5>{column.name} · 字段分析</h5>
-            <p>填充率 {percent(column.fillRate)} · 类型 {column.valueType || '未提供'} · 缺失 {column.missingCount ?? '—'}</p>
-            <p className="import-quality-note">{column.quality === 'parsed' ? '填充率按解析行计算；去重值基于预览。' : column.quality === 'estimated' ? '填充率按截取的预览行推算。' : column.quality === 'preview' ? '仅按可见预览行估算。' : '缺少可用行预览。'}</p>
-            <ul className="import-value-list">{previewColumnValues(table, column).map(entry => <li key={entry.value}><span>{previewText(entry.value, 45)}</span><strong>{entry.count}</strong></li>)}</ul>
-          </div>}
-          <h5>原始行预览</h5><div className="import-preview-scroll"><table><thead><tr><th>行</th>{table.columns.slice(0, 5).map(field => <th key={field.name}>{field.name}</th>)}</tr></thead>
-            <tbody>{table.previewRows.slice(0, 8).map(row => <tr key={row.rowNumber}><th>{row.rowNumber}</th>{table.columns.slice(0, 5).map(field => <td key={field.name}>{previewText(row.values[field.name] || '', 70)}</td>)}</tr>)}</tbody></table></div>
-        </>}
-        {selected.kind === 'column' && column && table && <>
-          <dl className="import-inspector-stats"><div><dt>字段类型</dt><dd>{column.valueType || '未提供'}</dd></div>
-            <div><dt>填充率</dt><dd>{percent(column.fillRate)}</dd></div><div><dt>缺失数</dt><dd>{column.missingCount ?? '—'}</dd></div>
-            <div><dt>去重值</dt><dd>{column.uniqueCount ?? '仅预览可见'}</dd></div></dl>
-          <div className="import-fill-bar"><i style={{ width: `${Math.round((column.fillRate || 0) * 100)}%` }} /></div>
-          <p className="import-quality-note">{column.quality === 'parsed' ? '按解析行计算。去重值仍基于预览。' : column.quality === 'estimated' ? '按最多 250 行预览推算，非全表逐行统计。' : column.quality === 'preview' ? '仅按可见预览行估算。' : '缺少可用行预览。'}</p>
-          {!!column.examples.length && <p>样例：{column.examples.join(' · ')}</p>}
-          <h5>预览中出现较多的值</h5><ul className="import-value-list">{previewColumnValues(table, column).map(entry => <li key={entry.value}><span>{previewText(entry.value, 45)}</span><strong>{entry.count}</strong></li>)}</ul>
-        </>}
-        {selected.kind === 'segment' && segment && <><p>原文定位：{segment.locator}</p><blockquote>{previewText(segment.text, 900)}</blockquote></>}
-        {selected.kind === 'source' && source && <>
-          <dl className="import-inspector-stats"><div><dt>资料类别</dt><dd>{source.data_class}</dd></div><div><dt>可见性</dt><dd>{source.visibility === 'internal' ? '本项目内部' : '公开'}</dd></div>
-            <div><dt>内容状态</dt><dd>{source.content_status || '未标注'}</dd></div>{source.locator && <div><dt>定位</dt><dd>{source.locator}</dd></div>}</dl>
-          {safeLink(source.url) && <a href={safeLink(source.url)!} target="_blank" rel="noopener noreferrer">查看原始来源 ↗</a>}
-          {source.untrusted_text && <details><summary>原文摘录</summary><p>{previewText(source.untrusted_text, 800)}</p></details>}
-        </>}
-        {selected.kind === 'fact' && fact && <><p>记录类型：{fact.kind}</p><p>明确来源：{fact.source_id}</p>
-          <p>资料语义：{fact.epistemic_status?({fact:'事实记录',estimate:'估算',assumption:'方案假设',missing:'缺失'})[fact.epistemic_status]:'未分类原始记录'}</p>
-          <p>原文定位：{fact.locator || fact.object_ref || '未标注'}</p><blockquote>{previewText(fact.value)}</blockquote>
-          {fact.kind === 'table_row' && <p className="import-quality-note">这是解析出的原始行，不自动等同于已核业务事实。</p>}</>}
-        {selected.kind === 'record' && record && <><p>对象：{record.subject}</p><p>来源：{record.source_id} · {record.adapter}</p><p>记录时点：{record.period}</p>
-          <ul className="import-value-list">{record.fields.slice(0, 12).map(field => <li key={field.key}><span>{field.label || field.key}</span><strong>{previewText(field.value, 55)}</strong></li>)}</ul></>}
-      </aside>
-    </div>
-    {(graph.hiddenSources > 0 || graph.hiddenDetails > 0) && <p className="import-graph-note">图形为避免拥挤收起了 {graph.hiddenSources} 个来源、{graph.hiddenDetails} 个结构、字段或定位；可筛选文件，并在文件面板打开收起的内容。</p>}
-    </>}
-    <p className="import-graph-footnote">关系线只表示“项目归属、解析结果、字段结构或显式来源引用”。同名对象不会被自动合并；描述统计也不会自动触发模型研判。</p>
+/** File/quote views reuse the stored parser; decisions are shown separately above. */
+export default function ImportedDataExplorer({projectId,revision,sources,researchSources,onEvidence,focusLocation}:Props) {
+  const [loaded,setLoaded]=useState<{key:string;rows:ImportDocument[];error:string}>({key:'',rows:[],error:''})
+  const key=`${projectId}:${revision}`
+  useEffect(()=>{const controller=new AbortController();setLoaded({key:'',rows:[],error:''})
+    void api<ImportDocument[]>(`/projects/${encodeURIComponent(projectId)}/documents`,undefined,controller.signal).then(rows=>{if(!controller.signal.aborted)setLoaded({key,rows,error:''})}).catch(error=>{if(!controller.signal.aborted)setLoaded({key,rows:[],error:error instanceof Error?error.message:'资料读取未完成。'})});return()=>controller.abort()
+  },[key,projectId])
+  const rows=loaded.key===key?loaded.rows:[]
+  const documents=useMemo(()=>rows.map(normalizeImportDocument),[rows])
+  const allSources=useMemo(()=>[...new Map([...sources,...researchSources].map(source=>[source.id,source])).values()],[sources,researchSources])
+  return <section aria-label="材料、原文与举措对应">
+    <CrossDocumentMeasures projectId={projectId} revision={revision} documents={documents} rawDocuments={rows} sources={allSources} onEvidence={onEvidence}/>
+    <DocumentEvidenceLineage projectId={projectId} revision={revision} documents={documents} sources={allSources} onEvidence={onEvidence} focusLocation={focusLocation}/>
+    <section className="import-file-list" aria-label="导入文件与数据预览"><header><h3>文件与数据预览</h3><p>{documents.length} 份导入文件 · 原文、表格和定位分别保留；全部解析内容可通过上方 Markdown / JSON 导出。</p></header>
+      {loaded.key!==key&&<p role="status">正在读取导入文件…</p>}{loaded.error&&<p role="alert">{loaded.error}</p>}
+      {documents.map(document=><details key={document.id} open={focusLocation?.documentId===document.id}><summary>{document.fileName} · {document.format} · {document.tables.length} 张表 / {document.segments.length} 个原文段</summary><p>材料版本：{document.hash||'未登记'} · 解析状态：{document.status}</p>
+        {document.tables.map(table=><details key={table.id}><summary>{table.label} · {table.rowCount} 行 / {table.columnCount} 列</summary><div className="file-table-scroll"><table><thead><tr><th>原行</th>{table.columns.slice(0,14).map(column=><th key={column.name}>{column.name}</th>)}</tr></thead><tbody>{table.previewRows.slice(0,10).map(row=><tr key={row.rowNumber}><td>{row.rowNumber}</td>{table.columns.slice(0,14).map(column=><td key={column.name}>{row.values[column.name]||''}</td>)}</tr>)}</tbody></table></div><p>预览最多10行、14列；完整数据保留在解析快照与导出中。</p></details>)}
+        {document.segments.slice(0,12).map((segment,index)=><details key={index}><summary>原文 · {segment.locator}</summary><blockquote>{segment.text}</blockquote></details>)}
+      </details>)}
+      {!documents.length&&loaded.key===key&&!loaded.error&&<p>本项目未上传文件；下方保留已取得的公开资料与来源。</p>}
+    </section>
   </section>
 }

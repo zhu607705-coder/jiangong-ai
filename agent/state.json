@@ -2069,5 +2069,87 @@
     "application_code_changed": false,
     "extra_software_regression_runs": 0,
     "next_runnable_task": "已更新两版视频原文件，可直接播放。"
+  },
+  "renewal_mode_strategy_overview_20261015": {
+    "task_id": "T55",
+    "as_of": "2026-10-15",
+    "status": "completed_local_live_models_ui_report",
+    "changed_files": [
+      "apps/host/generated/contracts.ts",
+      "apps/host/map-screening.ts",
+      "apps/host/server.ts",
+      "apps/host/renewal-mode.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/maps/MapWorkspace.tsx",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/maps/RenewalModePanel.tsx",
+      "apps/workspace/src/maps/RenewalModePanel.css",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "apps/workspace/src/components/strategy-overview.css",
+      "apps/workspace/src/components/StrategyInvestigations.tsx",
+      "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "apps/workspace/src/imports/EvidenceDecisionMap.tsx",
+      "apps/workspace/src/imports/evidence-decision-map.css",
+      "packages/contracts/schema.json",
+      "packages/decision/structured-route.ts",
+      "packages/retrofit/complete-demo.ts",
+      "packages/retrofit/renewal-mode.ts",
+      "packages/retrofit/strategy.ts",
+      "runtime/dsh/live-session.ts",
+      "runtime/dsh/public-web.ts",
+      "runtime/workflows/live.ts",
+      "services/capabilities/decision-model.ts",
+      "services/capabilities/generated/contracts.py",
+      "services/capabilities/research.ts",
+      "services/map-screening/service.ts",
+      "services/map-screening/renewal-history.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "data/public_cases/renewal-mode-benchmarks-20261014.json",
+      "tests/contracts/renewal-mode.test.ts",
+      "tests/contracts/renewal-strategy.test.ts",
+      "docs/老旧小区改造_产品与验证方案.md",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "research/reuse_manifest.json",
+      "agent/tasks.json",
+      "research/test_results/renewal-mode-verification.json",
+      "tests/contracts/neighborhood-alignment.test.ts"
+    ],
+    "tests": {
+      "command": "npx vitest run tests/contracts/neighborhood-alignment.test.ts tests/contracts/renewal-mode.test.ts tests/contracts/renewal-strategy.test.ts tests/contracts/decision-model.test.ts tests/contracts/map-decision-factors.test.ts",
+      "passed": 83,
+      "log": "research/test_results/renewal-mode-focused.log",
+      "regression_followup": "Five old neighborhood protocol fixtures were updated for the three new mode questions; all 83 affected tests passed. No claim of a second full-suite run."
+    },
+    "build": {
+      "command": "npm run build",
+      "status": "passed",
+      "log": "research/test_results/renewal-mode-build.log"
+    },
+    "live": {
+      "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "real_strategy": "completed",
+      "real_model_calls": 2,
+      "real_search_queries": 6,
+      "research_warnings": [],
+      "demo_strategy": "completed",
+      "demo_model_calls": 1,
+      "qwen": "completed",
+      "qwen_mode_status": "uncertain"
+    },
+    "artifact_refs": [
+      "research/test_results/renewal-mode-verification.json",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf"
+    ],
+    "decisions": [
+      "Use DeepSeek proposal before six-dimension/operations content; keep Qwen uncertainty visible.",
+      "Separate real source evidence, case references and synthetic mode targets.",
+      "Replace document graph with source-to-decision rows while preserving parsed exports."
+    ],
+    "unresolved_questions": [
+      "Project structural/rights/planning/consent/funding evidence remains in the investigation list.",
+      "No enterprise decision-quality evaluation or engineering approval has been performed."
+    ],
+    "next_runnable_task": null
   }
 }

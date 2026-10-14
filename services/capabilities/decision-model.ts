@@ -6,7 +6,8 @@ import { config } from '../../apps/host/config'
 import type { DecisionChoice, DecisionSupport, MapScreenProfile } from '../../apps/host/generated/contracts'
 import { decisionPolicy, DECISION_THRESHOLDS, applyDecisionGuards, type DecisionInput } from '../../packages/decision/structured-route'
 import { ensureHarnessNetwork } from '../../runtime/dsh/public-web'
-import { validate } from '../../packages/contracts/validate'
+import { validate, ContractError } from '../../packages/contracts/validate'
+import { renewalQuestions, modeAssessment } from '../../packages/retrofit/renewal-mode'
 
 const actionCriteria={investigate:'缺少关键事实，先补查证据。',resolve_blocker:'来源已明确指出阻点，先核查或处理该条件。',compare:'实施、空间、需求、运营、资源核心条件均有充分依据，可比较研究路径。',review:'现有来源相互冲突，需要复核判断。'}
 const dimensions={implementation:'用途、权利与腾退。',adaptation:'结构、消防和功能适配。',demand:'实际使用人群、同类供给和空置。',operations:'运营主体、付费者和收入路径。',resources:'改造投入、分期资金和企业能力。',access:'建筑入口与站点的实际通行。'}
@@ -48,7 +49,8 @@ export function parseDecisionResponse(raw:any,profile?:MapScreenProfile):Pick<De
 export type DecisionSettings={apiKey:string;endpoint:string;model:string;timeoutMs?:number}
 export function decisionRequestBody(input:DecisionInput, model='decision-model-preview') {
   const profile=input.profile||input.dashboard?.profile
-  return {model,state:input.dashboard?{evidence:input.state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:input.state,questions:{...decisionQuestions(profile),...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
+  const state=input.renewalMode?{evidence:input.state,renewal_mode_screening:input.renewalMode}:input.state
+  return {model,state:input.dashboard?{evidence:state,purpose:input.dashboard.purpose,dashboard_evidence:input.dashboard.evidence}:state,questions:{...(input.renewalMode?renewalQuestions(input.renewalMode):{}),...decisionQuestions(profile),...(input.dashboard?dashboardQuestions(input.dashboard):{})}}
 }
 export function decisionCacheDescriptor(input:DecisionInput, settings:Pick<DecisionSettings,'model'|'endpoint'>) {
   return {request:decisionRequestBody(input,settings.model),model:settings.model,endpoint:settings.endpoint,policy:decisionPolicy(input.profile||input.dashboard?.profile),thresholds:DECISION_THRESHOLDS,source_ids:input.sourceIds,factors:input.factors,neighborhood_action:input.neighborhoodAction}
@@ -63,11 +65,20 @@ export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, 
   try {
     const raw=await requestDecisionQuestions(body.state,body.questions,signal,settings,transport)
     signal.throwIfAborted()
-    return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw,profile),status:'completed',duration_ms:Date.now()-start,...(input.dashboard?{dashboard:parseDashboard(raw,input.dashboard)}:{})},input.factors,profile,input.neighborhoodAction))
+    const renewal=input.renewalMode
+    const mode=renewal?modeAssessment(renewal,
+      parseDecisionChoice(raw.answers?.renewal_mode,Object.keys(renewalQuestions(renewal).renewal_mode.criteria)),
+      parseDecisionChoice(raw.answers?.renewal_priority,Object.keys(renewalQuestions(renewal).renewal_priority.criteria)),
+      parseDecisionChoice(raw.answers?.renewal_evidence,Object.keys(renewalQuestions(renewal).renewal_evidence.criteria))):undefined
+    return validate<DecisionSupport>('DecisionSupport',applyDecisionGuards({...base,...parseDecisionResponse(raw,profile),status:'completed',duration_ms:Date.now()-start,...(mode?{renewal_mode:mode}:{}),...(input.dashboard?{dashboard:parseDashboard(raw,input.dashboard)}:{})},input.factors,profile,input.neighborhoodAction))
   } catch(error) {
     signal.throwIfAborted()
     const message=error instanceof Error ? error.message : ''
-    const code=/^DECISION_(ENDPOINT_INVALID|MODEL_INVALID|TIMEOUT_INVALID|TIMEOUT|HTTP_\d{3}|INVALID_RESPONSE|RESPONSE_LIMIT|INPUT_LIMIT)$/.test(message)?message:'DECISION_REQUEST_FAILED'
+    const code=error instanceof ContractError?'DECISION_INVALID_RESPONSE':/^DECISION_(ENDPOINT_INVALID|MODEL_INVALID|TIMEOUT_INVALID|TIMEOUT|HTTP_\d{3}|INVALID_RESPONSE|RESPONSE_LIMIT|INPUT_LIMIT)$/.test(message)?message:'DECISION_REQUEST_FAILED'
+    if(code==='DECISION_REQUEST_FAILED') {
+      const cause=(error as {cause?:{code?:unknown}})?.cause?.code
+      console.warn(JSON.stringify({event:'decision_request_failed',category:error instanceof Error?error.name:'unknown',...(typeof cause==='string'&&/^[A-Z_0-9]{1,60}$/.test(cause)?{network_code:cause}:{})}))
+    }
     return {...base,status:'failed',duration_ms:Date.now()-start,error_code:code}
   }
 }

@@ -7,10 +7,11 @@ import { projectDashboardInput } from './project-dashboard'
 import { retrofitAdvice, type RetrofitAdvice } from '../retrofit/planning'
 import {NEIGHBORHOOD_DIMENSION_POLICY} from '../retrofit/policy'
 import {MODEL_SIGNAL_THRESHOLDS} from './thresholds'
+import { mapRenewalModeInput, projectRenewalModeInput, type RenewalModeInput } from '../retrofit/renewal-mode'
 import type { MapScreenProfile } from '../../apps/host/generated/contracts'
 
 export const DECISION_POLICY = 'structured-research-route-v1'
-export const NEIGHBORHOOD_DECISION_POLICY='structured-neighborhood-route-v2'
+export const NEIGHBORHOOD_DECISION_POLICY='structured-neighborhood-route-v3-mode-first'
 export const decisionPolicy=(profile?:MapScreenProfile)=>profile==='neighborhood'?NEIGHBORHOOD_DECISION_POLICY:DECISION_POLICY
 export const DECISION_THRESHOLDS = MODEL_SIGNAL_THRESHOLDS.research_route
 export { DECISION_ACTIONS } from './route-labels'
@@ -21,7 +22,7 @@ export const INVESTIGATION_STEPS = {
 } as const
 export const NEIGHBORHOOD_INVESTIGATION_STEPS=Object.fromEntries(NEIGHBORHOOD_DIMENSION_POLICY.map(d=>[d.key,d.investigation])) as Record<ResearchDimension,string>
 export type ResearchDimension = keyof typeof FACTOR_LABELS | 'supply'
-export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]; dashboard?: DashboardInput;profile?:MapScreenProfile;neighborhoodAction?:RetrofitAdvice}
+export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]; dashboard?: DashboardInput;profile?:MapScreenProfile;neighborhoodAction?:RetrofitAdvice;renewalMode?:RenewalModeInput}
 const essentials: ResearchDimension[] = ['implementation','adaptation','demand','operations','resources']
 
 export function mapDecisionInput(context: MapScreenContext, purpose: string,profile?:MapScreenProfile): DecisionInput {
@@ -35,7 +36,7 @@ export function mapDecisionInput(context: MapScreenContext, purpose: string,prof
     facts:p.facts.filter(f=>factAppliesToTarget(f,p,publicContext.target))}))
   const places = context.groups.map(g => ({source_id:g.source_id,category:g.label,status:g.status,
     examples:g.sample.slice(0,5).map(p=>({name:p.name,category:p.category}))}))
-  return {profile,...(neighborhoodAction?{neighborhoodAction}:{}),state:{...(neighborhoodAction?{neighborhood_action:neighborhoodAction}:{}),business_profile:profile==='neighborhood'?'neighborhood':'general',purpose,as_of:profile==='neighborhood'&&selected?.as_of?selected.as_of:context.created_at,address:context.address,scope:publicContext.target,verified_conditions:factors,
+  return {profile,...(profile==='neighborhood'?{renewalMode:mapRenewalModeInput(context)}:{}),...(neighborhoodAction?{neighborhoodAction}:{}),state:{...(neighborhoodAction?{neighborhood_action:neighborhoodAction}:{}),business_profile:profile==='neighborhood'?'neighborhood':'general',purpose,as_of:profile==='neighborhood'&&selected?.as_of?selected.as_of:context.created_at,address:context.address,scope:publicContext.target,verified_conditions:factors,
     projects,place_clues:places,missing_categories:context.groups.filter(g=>g.status==='failed').map(g=>g.label)}, factors,
     sourceIds:[...context.groups.filter(g=>g.status!=='failed').map(g=>g.source_id),...projects.flatMap(p=>p.sources.map(s=>s.id))]}
 }
@@ -51,8 +52,8 @@ export function projectDecisionInput(input: ProjectInput): DecisionInput {
   const context={created_at:asOf,target:{object_ref:`project:${input.project_id}`},local_projects:[{project_id:input.project_id,relation:'within_scope',business_profile:input.business_profile,as_of:input.as_of,sources,facts}]} as unknown as MapScreenContext
   const factors=decisionFactors(context,asOf,profile)
   const dashboard=projectDashboardInput(publicInput)
-  return {profile,...(profile?{neighborhoodAction:retrofitAdvice(publicInput)}:{}),...(dashboard?{dashboard}:{}),state:{scope:input.scope,as_of:input.as_of,synthetic:input.synthetic,business_profile:input.business_profile||'general',purpose:input.business_profile==='neighborhood'?'老旧小区改造前期研判：居民需求、公共服务、居住工程、实施协同、长效维护、资金交付':'存量空间前期研判',verified_conditions:factors,facts,...(profile?{neighborhood_action:retrofitAdvice(publicInput)}:{}),
-    sources:sources.filter(s=>s.content_status!=='metadata_only').map(s=>({id:s.id,title:s.title,text:s.untrusted_text?.slice(0,2400),published_at:s.published_at||null}))},
+  return {profile,...(profile?{renewalMode:projectRenewalModeInput(publicInput),neighborhoodAction:retrofitAdvice(publicInput)}:{}),...(dashboard?{dashboard}:{}),state:{scope:input.scope,as_of:input.as_of,synthetic:input.synthetic,business_profile:input.business_profile||'general',purpose:input.business_profile==='neighborhood'?'老旧小区改造前期研判：居民需求、公共服务、居住工程、实施协同、长效维护、资金交付':'存量空间前期研判',verified_conditions:factors,facts,...(profile?{neighborhood_action:retrofitAdvice(publicInput)}:{}),
+    sources:sources.filter(s=>s.content_status!=='metadata_only').map(s=>({id:s.id,title:s.title,...(!profile?{text:s.untrusted_text?.slice(0,2400)}:{}),published_at:s.published_at||null}))},
     factors,sourceIds:sources.filter(s=>s.content_status!=='metadata_only').map(s=>s.id)}
 }
 
