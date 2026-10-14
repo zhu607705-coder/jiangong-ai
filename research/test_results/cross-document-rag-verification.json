@@ -1,0 +1,130 @@
+{
+  "as_of": "2026-10-14",
+  "project_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "scope": "read_only_live_material_export_adapter",
+  "commands": {
+    "focused": "npx vitest run tests/contracts/cross-document-rag.test.ts tests/contracts/document-evidence-lineage.test.ts",
+    "focused_passed": 15,
+    "typecheck": "npx tsc --noEmit",
+    "typecheck_exit_code": 0
+  },
+  "documents": [
+    {
+      "name": "求是村_公开资料研究与改造计划_AI研究草稿.pdf",
+      "id": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+      "kind": "ai_research_draft",
+      "hash": "d5ed890037f488c4f5b0a3ce726464f256260c591cf44be46f08a33cc4567d7f",
+      "source": "DOC-3c32b23f-3400-4ded-b93b-db1ec30877f6",
+      "chunks": 8,
+      "linked": 0,
+      "tables": []
+    },
+    {
+      "name": "求是村_公开资料研究与改造计划_AI研究草稿_已校验版.pdf",
+      "id": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+      "kind": "ai_research_draft",
+      "hash": "6178bec9da09dff2a8e24b804c505ef3d40bcd0f156be3fd1520233cdb3d227a",
+      "source": "DOC-d714c411-138c-4926-bd87-5c897815b31c",
+      "chunks": 7,
+      "linked": 0,
+      "tables": []
+    },
+    {
+      "name": "浙大求是社区推进二次供水改造.txt",
+      "id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+      "kind": "public_original",
+      "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+      "source": "PUBLIC-DOCUMENT-DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa",
+      "chunks": 104,
+      "linked": 5,
+      "tables": [
+        {
+          "table_id": "DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa-table",
+          "label": "项目材料",
+          "sheet": null,
+          "row_count": 52,
+          "exported_rows": 52,
+          "column_count": 2,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "name": "西湖区三方协同为居民幸福加码.txt",
+      "id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+      "kind": "public_original",
+      "hash": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+      "source": "PUBLIC-DOCUMENT-DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5",
+      "chunks": 2,
+      "linked": 1,
+      "tables": [
+        {
+          "table_id": "DOC-b9965a69-d96b-4197-8ccb-59d7ebbfa4f5-table",
+          "label": "项目材料",
+          "sheet": null,
+          "row_count": 1,
+          "exported_rows": 1,
+          "column_count": 2,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "name": "这个“康养生活综合体”，已焕新启用！.txt",
+      "id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+      "kind": "public_original",
+      "hash": "a4ad7fa4084f8cd375881d60750815d05dc3c04287e00db78d6c7f838adb3860",
+      "source": "PUBLIC-DOCUMENT-DOC-66e841e4-f676-464e-90ed-b81733f39ea8",
+      "chunks": 2,
+      "linked": 1,
+      "tables": [
+        {
+          "table_id": "DOC-66e841e4-f676-464e-90ed-b81733f39ea8-table",
+          "label": "项目材料",
+          "sheet": null,
+          "row_count": 1,
+          "exported_rows": 1,
+          "column_count": 2,
+          "truncated": false
+        }
+      ]
+    }
+  ],
+  "cards": 15,
+  "measure_groups": [
+    {
+      "title": "大家商讨了托管费用、托管协议和电梯管理细则等，最终将托管费用从每台每月600元降至300元 / 电梯",
+      "document_count": 3,
+      "referenced_document_count": 1,
+      "entries": 15,
+      "literal_mentions": 12
+    },
+    {
+      "title": "二次供水",
+      "document_count": 3,
+      "referenced_document_count": 1,
+      "entries": 16,
+      "literal_mentions": 7
+    },
+    {
+      "title": "形成委托物业托管的长效管理机制 / 物业管理 / 维护",
+      "document_count": 3,
+      "referenced_document_count": 1,
+      "entries": 19,
+      "literal_mentions": 14
+    },
+    {
+      "title": "养老",
+      "document_count": 1,
+      "referenced_document_count": 1,
+      "entries": 2,
+      "literal_mentions": 0
+    }
+  ],
+  "unresolved": 0,
+  "json_roundtrip_exact_text": true,
+  "md_contains_all_parsed_chunks": true,
+  "browser_download_verified": true,
+  "frontend_render_verified": true,
+  "browser_evidence": "research/test_results/neural-rag-download-readback.json"
+}

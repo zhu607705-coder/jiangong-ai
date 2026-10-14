@@ -1,8 +1,42 @@
 import type { OperationsInput, OperationsResult } from '../../apps/host/generated/contracts'
-import { explorationInput, type ExplorationParameters } from './visual-analysis'
+import { defaultExploration, explorationInput, type ExplorationParameters } from './visual-analysis'
 import type { CompleteCommunityDemo } from './complete-demo'
 
-export type DemoPlan = { name: string; parameters: ExplorationParameters; input: OperationsInput; result: OperationsResult }
+export type DemoPlan = {
+  name: string; parameters: ExplorationParameters; input: OperationsInput; result: OperationsResult;
+  createdAt?: string; legacySavedTime?: string;
+}
+
+export function demoPlanName(parameters: ExplorationParameters, number: number) {
+  const changes = [
+    parameters.demand > defaultExploration.demand ? '需求高峰' : parameters.demand < defaultExploration.demand ? '需求减少' : '',
+    parameters.activitySlots > defaultExploration.activitySlots ? '增加开放' : parameters.activitySlots < defaultExploration.activitySlots ? '缩减排班' : '',
+    parameters.subsidy === 0 ? '取消补贴' : parameters.subsidy < defaultExploration.subsidy ? '减少补贴' : parameters.subsidy > defaultExploration.subsidy ? '增加补贴' : '',
+  ].filter(Boolean)
+  return `方案 ${number} · ${changes.join('、') || '基准运营'}`
+}
+
+export function nextDemoPlanNumber(plans: DemoPlan[]) {
+  return Math.max(0, ...plans.map((plan, index) => Number(/^方案\s+(\d+)\s*·/.exec(plan.name)?.[1] || index + 1))) + 1
+}
+
+const completeTimestamp = (value: unknown): value is string => typeof value === 'string'
+  && /^\d{4}-\d{2}-\d{2}T.+(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value))
+const legacyTime = /^(?:[01]\d|2[0-3]):[0-5]\d$/
+
+export function createDemoPlan(snapshot: Pick<DemoPlan, 'parameters' | 'input' | 'result'>, number: number, createdAt = new Date().toISOString()): DemoPlan {
+  if (!completeTimestamp(createdAt)) throw new Error('保存时刻需要包含日期和时区')
+  return {...structuredClone(snapshot), name:demoPlanName(snapshot.parameters, number), createdAt}
+}
+
+export function demoPlanSavedTime(plan: DemoPlan): {kind:'saved'|'legacy'; text:string; dateTime?:string} | null {
+  if (completeTimestamp(plan.createdAt)) {
+    const date = new Intl.DateTimeFormat('zh-CN', {timeZone:'Asia/Shanghai', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hourCycle:'h23'}).format(new Date(plan.createdAt))
+    return {kind:'saved', text:`保存于 ${date}（北京时间）`, dateTime:plan.createdAt}
+  }
+  if (typeof plan.legacySavedTime === 'string' && legacyTime.test(plan.legacySavedTime)) return {kind:'legacy', text:`历史保存时刻 ${plan.legacySavedTime}（日期未记录）`}
+  return null
+}
 
 export function readDemoPlans(demo: CompleteCommunityDemo, value: unknown): DemoPlan[] {
   if (!Array.isArray(value)) return []
@@ -13,7 +47,17 @@ export function readDemoPlans(demo: CompleteCommunityDemo, value: unknown): Demo
         && plan.input?.period === demo.operations.period && Array.isArray(plan.result?.services)
         && ['served_visits', 'unique_users', 'balance_after_support', 'government_outlay'].every(key => Number.isFinite(plan.result?.metrics?.[key]))
     } catch { return false }
-  }).slice(0, 3)
+  }).slice(0, 3).map((plan, index) => {
+    const legacyName = /^方案\s*(\d+)\s*·\s*((?:[01]\d|2[0-3]):[0-5]\d)$/.exec(plan.name)
+    const normalized = {...plan}
+    if (legacyName) {
+      normalized.name = demoPlanName(plan.parameters, Number(legacyName[1]) || index + 1)
+      normalized.legacySavedTime = legacyName[2]
+    }
+    if (!completeTimestamp(normalized.createdAt)) delete normalized.createdAt
+    if (!legacyTime.test(normalized.legacySavedTime || '')) delete normalized.legacySavedTime
+    return normalized
+  })
 }
 
 /** Stored numeric inputs and outputs; no inferred decision revision or causal attribution. */

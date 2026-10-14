@@ -5,6 +5,7 @@ import { ContractError } from '../../packages/contracts/validate'
 import { ExperienceError } from '../../packages/experience/domain'
 import { ExperienceService } from '../../packages/experience/service'
 import { KnowledgePipelineService } from '../../packages/experience/pipeline'
+import { registerRagRetrieval } from './rag-retrieval'
 
 const revision = z.number().int().min(1)
 const version = z.number().int().min(0)
@@ -19,6 +20,7 @@ export async function registerExperience(app: Express, store: Store, requireProj
   await service.initialize()
   const pipeline = new KnowledgePipelineService(store, service)
   await pipeline.initialize()
+  registerRagRetrieval(app, store, requireProject, { pipeline })
   const route = (operation: (request: Request, response: Response) => Promise<unknown>) => async (request: Request, response: Response) => {
     try { await operation(request, response) }
     catch (error) {

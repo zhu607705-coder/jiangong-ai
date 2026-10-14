@@ -63,6 +63,11 @@
 .playground-saved-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
 .playground-saved article { padding: 20px; border: 1px solid #d8e6dd; border-radius: 11px; background: #fbfdfb; min-width: 0; }
 .playground-saved article > header { display: flex; justify-content: space-between; align-items: center; font-size: 17px; }
+.playground-saved article > header strong { min-width: 0; overflow-wrap: anywhere; }
+.playground-saved article > header button { flex-shrink: 0; }
+.complete-community-demo .playground-plan-saved-time,.playground-plan-save-details { color: #587166; font-size: 14px; line-height: 1.6; margin: 8px 0; }
+.playground-plan-save-details summary { cursor: pointer; }
+.complete-community-demo .playground-plan-save-details p { font-size: 14px; margin: 5px 0; }
 .complete-community-demo .playground-saved article > header button { padding: 0 5px; background: transparent; border: none; font-size: 20px; color: #78968a; }
 .playground-saved article p { font-size: 15px; margin: 7px 0 12px; }
 .complete-community-demo .playground-saved article > button { font-size: 15px; padding: 5px 9px; }

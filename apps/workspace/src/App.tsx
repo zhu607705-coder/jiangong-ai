@@ -25,6 +25,7 @@ import type { MapScreenContext, KnowledgeQuery } from '../../host/generated/cont
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
+import RagEvidenceSearch from './imports/RagEvidenceSearch';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
@@ -1101,6 +1102,7 @@ export default function App() {
                 TXT、Markdown、CSV、PDF、Word、Excel（≤ 10
                 MB）。真实材料使用独立真实项目。
               </p>
+              <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} onEvidence={openEvidence} />
               <ImportedDataExplorer
                 projectId={project.id}
                 projectName={project.name}

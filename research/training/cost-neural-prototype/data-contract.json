@@ -1,0 +1,66 @@
+{
+  "seed": 20261014,
+  "dataset_fingerprints": {
+    "synthetic": "910410d92a39b3a0b1f81abc0f9f77e417cebebe05d7412c75d66d47c967e5aa",
+    "workbook": "24fd6aa3653cd3922e9cd1bcec29d4a9a3362831b55e6089b115a651b9c4d258"
+  },
+  "surfaces": {
+    "train": [
+      {
+        "id": "synthetic/train",
+        "fingerprint": "sha256:f34f216bc946ef309e98833dd638f6ab633ab4877efa0e4ef419053bd8e50c86"
+      },
+      {
+        "id": "workbook/train",
+        "fingerprint": "sha256:dbf9ca2b367ac59eab73afceaa69b621e0a7b1a366fdf3d9d3f3247dc0a82972"
+      }
+    ],
+    "development": [
+      {
+        "id": "synthetic/development",
+        "fingerprint": "sha256:cc2dc2c3aa48c1e483ce57477c104f9ae9fe2c60621231bd28a510c2e0509ef0"
+      },
+      {
+        "id": "workbook/development",
+        "fingerprint": "sha256:d2b63c6f8ebb706ecbfbcb8bad5f2ce5fc4afd951f146884267a4ed475d24946"
+      }
+    ],
+    "replacement_gate": [
+      {
+        "id": "synthetic/replacement_gate",
+        "fingerprint": "sha256:75fa61403bed1f8f9945255383370aae3aee53a1f8aedd8d34d0c8edfbfbd5ad"
+      },
+      {
+        "id": "workbook/replacement_gate",
+        "fingerprint": "sha256:cb45a956320b70d8c915791f2ade0972801a9c7536aabd70b9e77b9d2d2ae4ea"
+      }
+    ],
+    "locked_final_audit": [
+      {
+        "id": "synthetic/locked_final_audit",
+        "fingerprint": "sha256:aebc296c6bbed17544efc108b670f594b93d252703df7a7703a63a85a06fe7a8"
+      },
+      {
+        "id": "workbook/locked_final_audit",
+        "fingerprint": "sha256:af79a2c905319629b89e1fc93ab533241e2ede71ab30477d0d4861721547657b"
+      }
+    ]
+  },
+  "split_counts": {
+    "synthetic": {
+      "train": 300,
+      "development": 60,
+      "replacement_gate": 60,
+      "locked_final_audit": 60
+    },
+    "workbook": {
+      "train": 20,
+      "development": 4,
+      "replacement_gate": 4,
+      "locked_final_audit": 9
+    }
+  },
+  "selection": "development only",
+  "external_feedback_used_for_search": false,
+  "production_promotion": false
+}

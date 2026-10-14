@@ -1,5 +1,5 @@
 {
-  "pages": 28,
+  "pages": 31,
   "input_workbooks": [
     {
       "name": "规则库和专家补充清单(1).xlsx",
@@ -29,8 +29,9 @@
     "criteria_tests": 5
   },
   "current_validation_logs": [
-    "research/test_results/community-workflow-verify.log",
-    "research/test_results/community-workflow-live.json"
+    "research/test_results/neural-rag-verify.log",
+    "research/test_results/rag-workspace-live.json",
+    "research/test_results/neural-rag-download-readback.json"
   ],
   "latex_warnings": 0,
   "contacts": [
@@ -43,12 +44,9 @@
     "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-07.png",
     "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-08.png",
     "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-09.png",
-    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-10.png"
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-10.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-11.png"
   ],
-  "visual_review": "passed_pages_21_22_23_28; unchanged pages reuse prior rendered review",
-  "sha256": "a1fbb1ad413522f69d716a54b1cf33d9d4eefb3c8f0ff9d9e5c82010ee547cc6",
-  "new_sections": [
-    "11.5 interactive versions and investigation records",
-    "12 PSO-BP candidate and data admission"
-  ]
+  "visual_review": "passed new model and RAG sections, pages22-26; prior unchanged pages reuse reviewed renders",
+  "sha256": "27eff0b42c3156743494ed380f3a64f8171bdf340715a917e35362a4a3e00224"
 }

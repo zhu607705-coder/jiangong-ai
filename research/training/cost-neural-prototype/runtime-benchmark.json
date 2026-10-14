@@ -1,0 +1,24 @@
+{
+  "phase": "bounded_preflight_only_no_weight_updates",
+  "backend": "NumPy CPU float64",
+  "threads": 2,
+  "shape": [
+    300,
+    7,
+    12,
+    6,
+    1
+  ],
+  "warmup": 1,
+  "timed_runs": 3,
+  "gradient_step_seconds": [
+    0.0001068379997741431,
+    0.00010431900038383901,
+    0.00010486699989996851
+  ],
+  "median_seconds": 0.00010486699989996851,
+  "selection_basis": "small dense tabular workload; existing NumPy CPU runtime measured; no torch/GPU allocation",
+  "ownership": "root cost-neural-prototype; other processes not terminated",
+  "ram_limit_mib": 512,
+  "one_concurrent_trial": true
+}

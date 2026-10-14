@@ -304,6 +304,28 @@
       ],
       "isolation": "No model training, real fact/observation/followup writes, new parser/search client or runtime",
       "license": "local domain code; existing upstream attribution retained"
+    },
+    "cost_neural_and_rag_20261014": {
+      "reuse": [
+        "NumPy installed via existing pandas",
+        "packages/experience/document-slices.ts:documentSlices",
+        "packages/experience/lineage.ts:recordEvidence",
+        "packages/experience/presentation.ts:groupMeasureCards",
+        "existing KnowledgePipelineService.state and owner gates",
+        "services/capabilities/analysis.py:retrieval_query, jieba/BM25/STORM",
+        "packages/context/compiler.ts and existing reviewed knowledge/DSH chain",
+        "existing binary ParserPort safe local blob copy",
+        "existing XeLaTeX report QA"
+      ],
+      "new_logic": [
+        "bounded NumPy Adam BP + PSO adaptation with explicit experimental data roles",
+        "JSON saved-weight browser forward",
+        "same-version cross-document source links and unreviewed literal mentions",
+        "MD/JSON parsed snapshot exports",
+        "metadata-gated source browsing, explicit query extensions, TXT parse aliases"
+      ],
+      "isolation": "No new parser, index service, vector database, model caller or scheduler; no true project facts/observations rewritten; raw user attachment outputs remain local .cache",
+      "license": "local adaptation and existing upstream licensed packages; attribution retained"
     }
   }
 }

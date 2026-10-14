@@ -1,0 +1,42 @@
+{
+  "as_of": "2026-10-14",
+  "documents": 5,
+  "chunks": 123,
+  "kinds": {
+    "ai_research_draft": 2,
+    "public_original": 3
+  },
+  "md_all_raw_chunks_exact": true,
+  "json_versions_and_quotes_exact": true,
+  "export_sha256": {
+    "md": "2db9dcf0a15fc9da0bce99b9de4eda119caf7703edb673ddb6ff96af35e68c32",
+    "json": "e2f016e02de40753a269affb9964158f5fb274c6c2573212c0d9eac472db8f2c"
+  },
+  "cost_export": {
+    "data_kind": "synthetic",
+    "target": "合成EPC单方成本示例",
+    "inputs": [
+      900,
+      75,
+      70,
+      30,
+      18000,
+      50,
+      120
+    ],
+    "predicted_yuan_per_m2": 1135.0706036992335,
+    "predicted_total_wan": 2043.1270866586206,
+    "comparison_baseline": 1284.1898694105362,
+    "metrics": {
+      "n": 60,
+      "mae": 78.08945000596063,
+      "rmse": 111.10923430562652,
+      "mape": 6.282236040722024,
+      "r2": 0.9452007738295857
+    },
+    "note": "生成假设，用于训练与预测工作流展示；不是实际结算。",
+    "model_version": "cost-bp-numpy-1"
+  },
+  "original_user_files_edited": false,
+  "phase_and_review_status_preserved": true
+}
