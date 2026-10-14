@@ -1,0 +1,58 @@
+{
+  "as_of": "2026-10-14",
+  "status": "completed_full_frame_videos",
+  "changed_files": [
+    "scripts/assemble-feature-video.py",
+    "scripts/create-short-feature-video.py"
+  ],
+  "recorded_viewport": [
+    1600,
+    900
+  ],
+  "captured_resolutions": [
+    "1600x900"
+  ],
+  "output_resolution": [
+    1920,
+    1080
+  ],
+  "retaken_chapters": 18,
+  "frame_layout": "full_frame_16_9",
+  "captions": "compact_overlay",
+  "full_video": {
+    "path": "D:\\建工ai\\output\\video\\full-feature-20261014\\rendered\\老旧小区改造工作台_全功能演示.mp4",
+    "seconds": 667.921333,
+    "sha256": "54fed8045229d6c66c003dba7f2b38a60f1919e7208085c79f3e8c86a759cc71",
+    "passed": true
+  },
+  "short_video": {
+    "path": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\老旧小区改造工作台_2分钟内精华版.mp4",
+    "seconds": 102.021354,
+    "bytes": 5293424,
+    "sha256": "1e30d2dd3207ce984e6fd9cdfadffa4c6aadce1d107363b2d7c7927a84f15520",
+    "passed": true,
+    "checks": {
+      "duration_under_120": true,
+      "format_h264_aac_1080p": true,
+      "complete_decode": true,
+      "visual_samples": [
+        {
+          "time_seconds": 5.0,
+          "file": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\preview-1.jpg"
+        },
+        {
+          "time_seconds": 14.0,
+          "file": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\preview-2.jpg"
+        },
+        {
+          "time_seconds": 68.0,
+          "file": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\preview-3.jpg"
+        }
+      ]
+    }
+  },
+  "visual_review": "RAG and six-dimension frames inspected; no added side borders or cropped right columns",
+  "application_code_changed": false,
+  "extra_software_regression_runs": 0,
+  "next_runnable_task": "已更新两版视频原文件，可直接播放。"
+}

@@ -1344,6 +1344,26 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/full-feature-video-verification.json"
+    },
+    {
+      "id": "T54",
+      "depends_on": [
+        "T53"
+      ],
+      "goal": "修正功能视频画幅与页面截断",
+      "status": "completed_full_frame_videos",
+      "expected_artifacts": [
+        "research/test_results/video-full-frame-verification.json"
+      ],
+      "definition_of_done": "18章固定1600×900重新录制，两版1080p视频铺满画面，字幕使用叠加样式；短版保持两分钟以内。",
+      "write_scope": [
+        "scripts/",
+        "output/video/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/video-full-frame-verification.json"
     }
   ]
 }
