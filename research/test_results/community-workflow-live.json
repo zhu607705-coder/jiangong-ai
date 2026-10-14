@@ -1,0 +1,110 @@
+{
+  "as_of": "2026-10-14",
+  "project": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "plans": [
+    {
+      "parameters": {
+        "demand": 1,
+        "activitySlots": 30,
+        "subsidy": 12000
+      },
+      "served": 1630,
+      "users": 300,
+      "cash": 2294,
+      "government": 19000,
+      "unmet": 0
+    },
+    {
+      "parameters": {
+        "demand": 1.5,
+        "activitySlots": 15,
+        "subsidy": 0
+      },
+      "served": 1594,
+      "users": 293,
+      "cash": -9450,
+      "government": 7000,
+      "unmet": 851
+    },
+    {
+      "parameters": {
+        "demand": 1.5,
+        "activitySlots": 45,
+        "subsidy": 12000
+      },
+      "served": 2224,
+      "users": 409,
+      "cash": 4440,
+      "government": 19000,
+      "unmet": 221
+    }
+  ],
+  "evidence": {
+    "documents": 5,
+    "cards": 15,
+    "selected_document_chunks": 63,
+    "selected_quote": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+    "linked_cards": 1,
+    "entries": [
+      {
+        "key": "building_identifier",
+        "label": "楼幢编号",
+        "value": "29幢",
+        "unit": "",
+        "object": "building:29幢",
+        "stage": "",
+        "cardIds": [
+          "EXP-8fb43037-0680-4136-8844-edcb789391f4"
+        ]
+      },
+      {
+        "key": "building_identifier.50695fc88c",
+        "label": "楼幢编号",
+        "value": "30幢",
+        "unit": "",
+        "object": "building:29幢",
+        "stage": "",
+        "cardIds": [
+          "EXP-8fb43037-0680-4136-8844-edcb789391f4"
+        ]
+      },
+      {
+        "key": "building_identifier.100a535f6d",
+        "label": "楼幢编号",
+        "value": "31幢",
+        "unit": "",
+        "object": "building:29幢",
+        "stage": "",
+        "cardIds": [
+          "EXP-8fb43037-0680-4136-8844-edcb789391f4"
+        ]
+      },
+      {
+        "key": "building_identifier.8b4ea9a8f0",
+        "label": "楼幢编号",
+        "value": "48幢",
+        "unit": "",
+        "object": "building:29幢",
+        "stage": "",
+        "cardIds": [
+          "EXP-8fb43037-0680-4136-8844-edcb789391f4"
+        ]
+      },
+      {
+        "key": "household_count",
+        "label": "住户数",
+        "value": "252",
+        "unit": "户",
+        "object": "building:29幢",
+        "stage": "",
+        "cardIds": [
+          "EXP-8fb43037-0680-4136-8844-edcb789391f4"
+        ]
+      }
+    ]
+  },
+  "real_project_input_unchanged": true,
+  "real_followups_unchanged": true,
+  "real_operations_records_unchanged": true,
+  "exports_readback": true
+}

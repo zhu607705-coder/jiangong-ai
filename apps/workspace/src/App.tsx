@@ -28,6 +28,7 @@ import ImportedDataExplorer from './imports/ImportedDataExplorer';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
+import { DemoPlanVersions, DemoInvestigationPanel } from './components/CommunityDemoWorkflow';
 import ConstructionCostLibrary from './components/ConstructionCostLibrary';
 import ExperienceLibrary from './components/ExperienceLibrary';
 import { publicMapContext, handoffPublicSources } from '../../../packages/maps/public-context';
@@ -190,7 +191,8 @@ export default function App() {
   const [completeDemoProject, setCompleteDemoProject] = useState<string | null>(() => {
     try { return localStorage.getItem('hzz-complete-demo-project'); } catch { return null; }
   });
-  const completeDemoActive = !!project && project.id === completeDemoProject && tab === 'overview';
+  const demoSessionActive = !!project && project.id === completeDemoProject;
+  const completeDemoActive = demoSessionActive && ['overview', 'compare', 'actions'].includes(tab);
   const [sourceFocus, setSourceFocus] = useState<{ projectId: string; refs: string[] } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
@@ -605,7 +607,7 @@ export default function App() {
                 </span>
                 <span>项目空间 / {project.id.slice(0, 10)}</span>
               </div>
-              <h1>{completeDemoActive ? '杭州样本社区 · 运营推演' : project.name}</h1>
+              <h1>{completeDemoActive ? `杭州样本社区 · ${tab === 'compare' ? '版本变化' : tab === 'actions' ? '下一步调查' : '运营推演'}` : project.name}</h1>
               <p>
                 {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '改造需求与前期策划'} <span>·</span>{" "}
                 {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
@@ -634,12 +636,12 @@ export default function App() {
             </div>
           )}
           {project.input.business_profile === 'neighborhood' && <div className="full-demo-mode-toolbar">
-            <p>{completeDemoActive ? '全量模拟：六维现况、改造方案、月度运营和模拟台账均有完整数值与推算依据。' : '可查看真实项目资料，或打开全量模拟数据，演示政府工作人员掌握完整资料后的报表。'}</p>
+            <p>{completeDemoActive ? '全量模拟：六维现况、改造方案、月度运营和模拟台账均有完整数值与推算依据；支持版本对比与下一步调查。' : demoSessionActive ? '当前查看真实项目的材料与证据。模拟方案、版本对比和调查演示可通过顶部标签返回。' : '可查看真实项目资料，或打开全量模拟数据，演示政府工作人员掌握完整资料后的报表。'}</p>
             <button className="secondary" type="button" onClick={() => {
-              const next = completeDemoActive ? null : project.id;
+              const next = demoSessionActive ? null : project.id;
               setCompleteDemoProject(next); setTab('overview');
               try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
-            }}>{completeDemoActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
+            }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
           </div>}
           {tab === 'overview' && completeDemoActive && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "overview" && !completeDemoActive && (
@@ -1211,7 +1213,8 @@ export default function App() {
               )}
             </section>
           )}
-          {tab === "compare" && (
+          {tab === 'compare' && completeDemoActive && <DemoPlanVersions key={`demo-versions-${project.id}`} project={project} onExplore={() => setTab('overview')} />}
+          {tab === "compare" && !completeDemoActive && (
             <section className="content-panel">
               <div className="kicker">REVISION HISTORY</div>
               <h2>看见判断为什么改变</h2>
@@ -1278,7 +1281,8 @@ export default function App() {
               )}
             </section>
           )}
-          {tab === "actions" && (
+          {tab === 'actions' && completeDemoActive && <DemoInvestigationPanel key={`demo-investigations-${project.id}`} project={project} />}
+          {tab === "actions" && !completeDemoActive && (
             <section className="content-panel">
               <div className="kicker">NEXT ACTIONS</div>
               <h2>优先调查，最可能改变判断的事</h2>

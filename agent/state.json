@@ -1578,5 +1578,112 @@
     },
     "next_runnable_task": "Finish all eight Luna image-classification shards, aggregate and validate, then construct layered source/context/legacy-reference dataset with pending chemistry and verify physical readback.",
     "report": null
+  },
+  "community_workflow_and_cost_candidate": {
+    "as_of": "2026-10-14",
+    "status": "completed_ui_workflow_and_candidate_data_review",
+    "changed_files": [
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/CommunityDemoWorkflow.tsx",
+      "apps/workspace/src/components/community-demo-workflow.css",
+      "apps/workspace/src/components/CommunityOperationsPlayground.tsx",
+      "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+      "apps/workspace/src/components/community-operations-playground.css",
+      "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "apps/workspace/src/imports/DocumentEvidenceLineage.tsx",
+      "apps/workspace/src/imports/document-evidence-lineage.css",
+      "packages/retrofit/demo-workflow.ts",
+      "packages/retrofit/visual-analysis.ts",
+      "packages/experience/lineage.ts",
+      "tests/contracts/community-demo-workflow.test.ts",
+      "tests/contracts/document-evidence-lineage.test.ts",
+      "scripts/audit-cost-neural-inputs.py",
+      "scripts/verify-community-workflow.ts",
+      "data/imports/cost-neural-dataset-audit-20261014.json",
+      "docs/老旧小区改造_产品与验证方案.md",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "agent/mission.md",
+      "agent/tasks.json",
+      "research/reuse_manifest.json"
+    ],
+    "evidence": "research/test_results/community-workflow-verification.json",
+    "checks": {
+      "full_command": "npm run verify",
+      "exit_code": 0,
+      "javascript": 1000,
+      "python": 211,
+      "http": 16,
+      "build": "passed",
+      "log": "research/test_results/community-workflow-verify.log",
+      "live_probe": "node --import tsx scripts/verify-community-workflow.ts <qiushi-project-id> [version.md investigation.md]",
+      "live_log": "research/test_results/community-workflow-live.json"
+    },
+    "browser": {
+      "url": "http://127.0.0.1:5173/",
+      "computed_font_sizes": {
+        "mode_note": 16,
+        "month_line": 14,
+        "control_description": 15,
+        "saved_measures": 15,
+        "saved_metrics": 17
+      },
+      "wording": [
+        "部分服务需求尚未满足",
+        "方案对比",
+        "关键举措"
+      ],
+      "version_selection_and_signed_deltas": true,
+      "investigation_editing_and_remount_persistence": true,
+      "completion_requires_note_and_locator": true,
+      "qa_task_record_cleared_after_verification": true,
+      "exports_readback": true,
+      "evidence_quote": "四幢共252户; same version/locator/literal quotation; source fields and factors, not context pointers",
+      "document_excerpt_counts": {
+        "water_original_chunks": 63,
+        "unique_cited_excerpts": 9
+      },
+      "mobile": {
+        "viewport": 390,
+        "document_width": 390,
+        "panel_width": 286.67,
+        "version_select_width": 249.33,
+        "investigation_textarea_width": 216,
+        "viewport_restored": true
+      },
+      "screenshots": [
+        "output/playwright/community-workflow/evidence-lineage.jpg",
+        "output/playwright/community-workflow/investigations-mobile.jpg",
+        "output/playwright/community-workflow/investigations.jpg",
+        "output/playwright/community-workflow/operations-readable.jpg",
+        "output/playwright/community-workflow/version-comparison.jpg",
+        "output/playwright/community-workflow/versions-mobile.jpg"
+      ]
+    },
+    "report": {
+      "path": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "pages": 28,
+      "sha256": "a1fbb1ad413522f69d716a54b1cf33d9d4eefb3c8f0ff9d9e5c82010ee547cc6",
+      "render_review": "passed",
+      "latex_warnings": 0
+    },
+    "neural_model": {
+      "paper_doi": "10.13991/j.cnki.jem.2026.03.022",
+      "validation_claim_owner": "paper experiments only; user clarified",
+      "paper_weights_supplied": false,
+      "team_training_performed": false,
+      "zhejiang_test_performed": false,
+      "data_rows": 148,
+      "building_area_rows": 61,
+      "settlement_rows": 0,
+      "admission": "blocked_missing_labels_and_features",
+      "audit": "data/imports/cost-neural-dataset-audit-20261014.json"
+    },
+    "unresolved": [
+      "Collect same-project settlement and seven features, verify original notices and scope, then train and independently test Zhejiang.",
+      "Original AI research PDFs exceeding 100 chunks retain the existing split-limit error; public primary originals are displayed.",
+      "Real Qiushi failed model run and missing typed facts remain separate from this UI/simulation delivery."
+    ],
+    "next_task": "Collect authorized same-project settlement and seven original features; train with inner grouped tuning and external Zhejiang test. No trained accuracy or transferred weights claimed."
   }
 }

@@ -283,6 +283,27 @@
       ],
       "isolation": "Existing preview API only; browser storage for synthetic plans; no real facts, observations, training or new runtime",
       "license": "local code and existing licensed packages; upstream attribution preserved"
+    },
+    "community_workflow_cost_candidate_20261014": {
+      "reuse": [
+        "packages/retrofit/complete-demo.ts:buildCompleteCommunityDemo,simulateScenarioUsers",
+        "packages/retrofit/visual-analysis.ts:explorationInput",
+        "apps/workspace/src/api.ts:api",
+        "services/capabilities/community_operations.py:evaluate_operations",
+        "existing knowledge pipeline/chunks API",
+        "packages/experience/presentation.ts:groupMeasureCards",
+        "existing normalized ParsedDocument graph",
+        "existing XeLaTeX report and qa_main_report.py",
+        "bundled openpyxl workbook reader"
+      ],
+      "new_logic": [
+        "synthetic plan comparison over stored inputs and results",
+        "local synthetic investigation progress and export",
+        "same-version same-locator literal source linkage with display-only deduplication",
+        "read-only neural candidate dataset admission audit"
+      ],
+      "isolation": "No model training, real fact/observation/followup writes, new parser/search client or runtime",
+      "license": "local domain code; existing upstream attribution retained"
     }
   }
 }

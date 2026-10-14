@@ -7,6 +7,38 @@ export { analysisColors }
 export type ExplorationParameters = { demand: number; activitySlots: number; subsidy: number }
 export const defaultExploration: ExplorationParameters = { demand: 1, activitySlots: 30, subsidy: 12000 }
 
+/** Explain the stored plan using its actual input and result, without changing either. */
+export function summarizeExploration(plan: { parameters: ExplorationParameters; input: OperationsInput; result: OperationsResult }) {
+  const number = (value: number | null | undefined) => value != null && Number.isFinite(value) ? value.toLocaleString('zh-CN', { maximumFractionDigits: 2 }) : '待核'
+  const activity = plan.input.services.find(service => service.id === 'activity')
+  const slots = activity?.available_slots.value
+  const capacity = slots != null && activity?.capacity_per_slot.value != null ? slots * activity.capacity_per_slot.value : null
+  const subsidy = plan.input.cash_items.find(item => item.kind === 'operating_subsidy')?.amount.value
+  const slotChange = slots == null ? null : slots - defaultExploration.activitySlots
+  const subsidyChange = subsidy == null ? null : subsidy - defaultExploration.subsidy
+  const meals = plan.input.services.find(service => service.id === 'meal')?.available_slots.value
+  const consultations = plan.input.services.find(service => service.id === 'consultation')?.available_slots.value
+  const cash = plan.result.metrics.balance_after_support
+  const unknownDemand = plan.result.services.some(service => service.unmet_visits == null)
+  const unmet = plan.result.services.reduce((sum, service) => sum + (service.unmet_visits ?? 0), 0)
+  return {
+    condition: `需求为基准的${Math.round(plan.parameters.demand * 100)}%`,
+    measures: [
+      slotChange == null ? '活动室开放安排待核' : `${slotChange === 0 ? '维持' : slotChange != null && slotChange > 0 ? '增加' : '减少'}活动室开放至${number(slots)}场/月（容量${number(capacity)}人次/月）`,
+      subsidy == null ? '运营补贴安排待核' : subsidy === 0 ? `取消运营补贴（较基准减少${number(defaultExploration.subsidy)}元/月）`
+        : `${subsidyChange === 0 ? '维持' : subsidyChange != null && subsidyChange > 0 ? '增加' : '减少'}运营补贴至${number(subsidy)}元/月`,
+      `维持助餐${number(meals)}个供餐时段/月、咨询${number(consultations)}场/月的独立排班`,
+    ],
+    service: `${number(plan.result.metrics.served_visits)}人次/月`,
+    coverage: `${number(plan.result.metrics.unique_users)}人${plan.result.metrics.coverage == null ? '' : ` · ${(plan.result.metrics.coverage * 100).toFixed(1)}%`}`,
+    balanceLabel: cash != null && cash < 0 ? '月度资金缺口' : '支持后月度结余',
+    balance: `${number(cash == null ? null : Math.abs(cash))}元/月`,
+    deficit: cash != null && cash < 0,
+    government: `${number(plan.result.metrics.government_outlay)}元/月`,
+    outcome: unknownDemand ? '未满足需求量待核' : unmet > 0 ? `仍有${number(unmet)}人次/月的需求尚未满足` : '当前服务需求均已满足',
+  }
+}
+
 /** A reversible what-if draft over the registered sample; no real project writes. */
 export function explorationInput(demo: CompleteCommunityDemo, parameters: ExplorationParameters): OperationsInput {
   if (!Number.isFinite(parameters.demand) || parameters.demand < .5 || parameters.demand > 1.5
