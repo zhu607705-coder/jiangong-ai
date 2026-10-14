@@ -1840,5 +1840,42 @@
       "no_real_project_import": true,
       "raw_outputs_not_pushed": true
     }
+  },
+  "floating_evidence_report_review": {
+    "as_of": "2026-10-14",
+    "status": "completed_local_ui_report_and_regression_verified",
+    "changed_files": [
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/maps/MapWorkspace.tsx",
+      "apps/workspace/src/maps/DataSourcesPanel.tsx",
+      "apps/workspace/src/maps/map.css",
+      "apps/workspace/src/imports/FloatingEvidenceSearch.tsx",
+      "apps/workspace/src/imports/floating-evidence-search.css",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+      "apps/workspace/src/imports/DocumentEvidenceLineage.tsx",
+      "apps/workspace/src/imports/evidence-focus.ts",
+      "tests/contracts/floating-evidence-search.test.ts",
+      "tests/contracts/document-evidence-focus.test.ts",
+      "docs/generated/rag-design-section.tex",
+      "docs/RAG检索与跨文本证据设计.md",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "research/reuse_manifest.json",
+      "research/test_results/floating-evidence-report-verification.json",
+      "tests/browser/map-workspace.mjs",
+      "research/test_results/floating-map-created-project-regression.log"
+    ],
+    "evidence": "research/test_results/floating-evidence-report-verification.json",
+    "checks": {
+      "focused_tests": 47,
+      "build": "passed",
+      "live_browser": "passed",
+      "pdf_pages": 30,
+      "report_render": "passed",
+      "created_project_browser_fixture": "expanded-ready passed 6 assertions after actual response contract repair"
+    },
+    "unresolved_questions": [],
+    "next_runnable_task": "Run required PR checks and merge the authorized reviewed revision."
   }
 }

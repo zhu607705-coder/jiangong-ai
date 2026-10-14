@@ -1,0 +1,89 @@
+{
+  "as_of": "2026-10-14",
+  "status": "local_ui_report_and_regression_verified",
+  "tests": {
+    "command": "npx vitest run tests/contracts/floating-evidence-search.test.ts tests/contracts/document-evidence-focus.test.ts tests/contracts/document-evidence-lineage.test.ts tests/contracts/rag-retrieval.test.ts tests/contracts/cross-document-rag.test.ts",
+    "files_passed": 5,
+    "tests_passed": 47,
+    "log": "research/test_results/floating-evidence-regression.log"
+  },
+  "build": {
+    "command": "npm run build",
+    "status": "passed",
+    "log": "research/test_results/floating-evidence-build.log"
+  },
+  "browser": {
+    "url": "http://127.0.0.1:5173/",
+    "information_library_shortcut": "passed",
+    "current_project_question_returns_public_original": "passed",
+    "first_hit_locator": "line:22",
+    "first_hit_object_scope": "29/30/31/48幢，共252户；留博楼未纳入",
+    "project_selection_clears_previous_question_and_hits": "passed",
+    "escape_closes_and_returns_launcher_focus": "passed",
+    "exact_original_navigation": {
+      "activeLabel": "原文定位 line:22",
+      "rect": {
+        "height": 96.29167175292967,
+        "y": 616.9375
+      },
+      "text": "浙大求是社区推进二次供水改造.txt · line:22浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。",
+      "viewport": {
+        "height": 1244,
+        "width": 2504
+      }
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "page_horizontal_overflow": false,
+      "panel_bounds": {
+        "left": 12,
+        "right": 378,
+        "top": 104.59375,
+        "bottom": 736.666687
+      }
+    },
+    "screenshots": [
+      "output/playwright/floating-evidence/information-library-search.png",
+      "output/playwright/floating-evidence/located-original.png",
+      "output/playwright/floating-evidence/mobile-search.png"
+    ]
+  },
+  "report": {
+    "path": "D:\\建工ai\\docs\\老旧小区改造案例拆分与六维数据说明.pdf",
+    "pages": 30,
+    "sha256": "2362185afb7fc171efa207d9800e9422562212306c7c2a8067c9d369191767cb",
+    "latex_warnings": 0,
+    "teacher_question_section_removed": true,
+    "core_fields": 46,
+    "selected_rules": 27,
+    "rendered_pages_reviewed": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "qa": "output/documents/renewal-review/main/qa.json"
+  },
+  "runtime": {
+    "search": "existing owner-gated metadata BM25 API",
+    "new_model_caller": false,
+    "new_search_client": false,
+    "project_fact_writes": 0
+  },
+  "scope": "Project material search and navigation; automatic source-answer generation and corpus retrieval-quality statistics remain separate work.",
+  "map_fixture_regression": {
+    "initial_run": 38516378364,
+    "initial_head": "20aaedd8bbff905f178cc7ad3ff3041bc881c1be",
+    "initial_status": "failed_browser_fixture_protocol",
+    "cause": "The existing generic project sub-API fixture returned [] for knowledge/pipeline; actual KnowledgePipelineService.state returns an object containing cards/documents/policies/skills/public_sources. Empty-material rendering read undefined cards.",
+    "fix": "Use the real empty pipeline response shape before the generic array fallback; preserve page errors assertions and project creation navigation.",
+    "file": "tests/browser/map-workspace.mjs",
+    "focused_command": "$env:HZZ_UI_HANDOFF='expanded-ready'; node tests/browser/map-workspace.mjs",
+    "focused_status": "passed",
+    "assertions": 6,
+    "log": "research/test_results/floating-map-created-project-regression.log"
+  }
+}

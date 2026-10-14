@@ -1300,6 +1300,28 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/neural-rag-verification.json"
+    },
+    {
+      "id": "T52",
+      "depends_on": [
+        "T51"
+      ],
+      "goal": "悬浮直接问资料、信息库入口与精准原文跳转；按批注修订原技术报告",
+      "status": "completed_local_ui_report_and_regression_verified",
+      "expected_artifacts": [
+        "research/test_results/floating-evidence-report-verification.json"
+      ],
+      "definition_of_done": "同服务自然语言检索、信息库打开、同文档版本定位、范围切换与焦点行为、真实浏览器和PDF渲染有证据；不新增事实写入。",
+      "write_scope": [
+        "apps/workspace/",
+        "tests/",
+        "docs/",
+        "research/",
+        "agent/",
+        "output/documents/renewal-review/main/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/floating-evidence-report-verification.json"
     }
   ]
 }
