@@ -1164,6 +1164,68 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/analysis-motion-verification.json"
+    },
+    {
+      "id": "T47",
+      "depends_on": [
+        "T46",
+        "T44"
+      ],
+      "goal": "提升可读性，展示材料证据关联、可选方案版本变化及本机调查工作流",
+      "status": "completed_browser_exports_and_regression_verified",
+      "expected_artifacts": [
+        "apps/workspace/src/App.tsx",
+        "apps/workspace/src/components/CommunityDemoWorkflow.tsx",
+        "apps/workspace/src/components/community-demo-workflow.css",
+        "apps/workspace/src/components/CommunityOperationsPlayground.tsx",
+        "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+        "apps/workspace/src/components/community-operations-playground.css",
+        "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+        "apps/workspace/src/imports/DocumentEvidenceLineage.tsx",
+        "apps/workspace/src/imports/document-evidence-lineage.css",
+        "packages/retrofit/demo-workflow.ts",
+        "packages/retrofit/visual-analysis.ts",
+        "packages/experience/lineage.ts",
+        "tests/contracts/community-demo-workflow.test.ts",
+        "tests/contracts/document-evidence-lineage.test.ts",
+        "research/test_results/community-workflow-verification.json"
+      ],
+      "definition_of_done": "字体与举措实测；材料版本和引文绑定，摘要归并保留记录；模拟版本和调查进度导出、读回、手机与真实写入隔离验证。",
+      "write_scope": [
+        "apps/workspace/",
+        "packages/retrofit/",
+        "packages/experience/",
+        "tests/",
+        "scripts/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/community-workflow-verification.json"
+    },
+    {
+      "id": "T48",
+      "depends_on": [
+        "T43"
+      ],
+      "goal": "核对PSO–BP论文和新工程工作簿，实施数据准入审计并写入原技术报告",
+      "status": "completed_source_review_and_admission_audit; training_pending_real_labels",
+      "expected_artifacts": [
+        "scripts/audit-cost-neural-inputs.py",
+        "data/imports/cost-neural-dataset-audit-20261014.json",
+        "docs/老旧小区改造案例拆分与六维数据说明.pdf"
+      ],
+      "definition_of_done": "说明模型任务时点、七个输入、价格范围及标签，区分论文结果；统计真实字段和原件哈希；给出浙江验证和参数重估路径，原位报告渲染通过。",
+      "write_scope": [
+        "scripts/",
+        "data/imports/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/community-workflow-verification.json"
     }
   ]
 }

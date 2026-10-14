@@ -3,7 +3,8 @@ import { IconAdjustmentsHorizontal, IconArrowUpRight, IconBookmark, IconCoffee, 
 import { api, type Project } from '../api'
 import type { OperationsInput, OperationsResult } from '../../../host/generated/contracts'
 import { simulateScenarioUsers, type CompleteCommunityDemo } from '../../../../packages/retrofit/complete-demo'
-import { defaultExploration, explorationInput, type ExplorationParameters } from '../../../../packages/retrofit/visual-analysis'
+import { defaultExploration, explorationInput, summarizeExploration, type ExplorationParameters } from '../../../../packages/retrofit/visual-analysis'
+import { readDemoPlans } from '../../../../packages/retrofit/demo-workflow'
 import { AnimatedNumber } from './analysis-motion'
 import { MonthlyCashFlowVisual } from './CommunityAnalysisVisuals'
 import './community-operations-playground.css'
@@ -24,10 +25,7 @@ export default function CommunityOperationsPlayground({ project, demo, baseline,
   const [saved, setSaved] = useState<SavedExploration[]>(() => {
     try {
       const values: unknown = JSON.parse(localStorage.getItem(storageKey) || '[]')
-      if (!Array.isArray(values)) return []
-      return values.filter(value => {
-        try { explorationInput(demo, value.parameters); return typeof value.name === 'string' && Number.isFinite(value.result?.metrics?.served_visits) && Number.isFinite(value.result?.metrics?.balance_after_support) && value.input?.facility_id === demo.operations.facility_id } catch { return false }
-      }).slice(0, 3)
+      return readDemoPlans(demo, values)
     } catch { return [] }
   })
   useEffect(() => { localStorage.setItem(storageKey, JSON.stringify(saved)) }, [saved, storageKey])
@@ -72,21 +70,34 @@ export default function CommunityOperationsPlayground({ project, demo, baseline,
         <details className="playground-assumptions"><summary>这些调整怎样计算</summary><p>需求基于原样本乘倍率；活动室仍为30席，每场1小时，在15–45场内由现有社区岗排班，固定工资预算不变。助餐、咨询排班保持原样。去重人数用已服务人次÷5.433333次/人/月推算。购买服务和政府直付另列。</p></details>
       </aside>
       <div className={`playground-result${busy ? ' is-updating' : ''}`}>
-        <header className="playground-result-heading"><div><span>你的运营方案</span><h3>{!metrics ? '正在展开服务与预算' : deficit ? '这份方案还需要补齐资金' : unmet > 0 ? '有一些需求还没接住' : '当前排班可以接住这些需求'}</h3></div><button type="button" disabled={busy || !!error || !computed || !unchanged || saved.length === 3} onClick={keep}><IconBookmark size={16} />{saved.length === 3 ? '已保留3个方案' : '保留作对照'}</button></header>
+        <header className="playground-result-heading"><div><span>你的运营方案</span><h3>{!metrics ? '正在展开服务与预算' : deficit ? '这份方案还需要补齐资金' : unmet > 0 ? '部分服务需求尚未满足' : '当前服务需求已满足'}</h3></div><button type="button" disabled={busy || !!error || !computed || !unchanged || saved.length === 3} onClick={keep}><IconBookmark size={16} />{saved.length === 3 ? '已保留3个方案' : '保留作对照'}</button></header>
         {error && <div className="playground-error" role="alert">{error}。当前结果未更新，请重试。<button type="button" onClick={() => setRetry(value => value + 1)}>重新计算</button></div>}
         {metrics ? <>
           <div className="playground-kpis"><div><span>每月服务</span><strong><AnimatedNumber value={metrics.served_visits!} enabled={motion} /><small>人次</small></strong><p>月度覆盖 {metrics.unique_users} 位居民 · {(metrics.coverage! * 100).toFixed(1)}%</p></div><div><span>{deficit ? '每月资金缺口' : '支持后月度结余'}</span><strong className={deficit ? 'is-deficit' : 'is-positive'}><AnimatedNumber key={deficit ? "gap" : "balance"} value={Math.abs(metrics.balance_after_support!)} enabled={motion} /><small>元</small></strong><p>政府共投入 {format(metrics.government_outlay!)} 元/月</p></div></div>
           <div className="playground-service-canvas" aria-label="服务响应图">{result!.services.map((service, index) => {
             const icons = [IconUsers, IconCoffee, IconHeartHandshake], Icon = icons[index]
             const utilization = service.utilization ?? 0
-            return <button type="button" key={service.id} className={`playground-service${serviceId === service.id ? ' is-active' : ''}`} aria-pressed={serviceId === service.id} aria-label={`查看${service.name}，服务${service.served_visits}人次`} onClick={() => setServiceId(service.id)}><div className={`playground-orbit orbit-${index}`}><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="43" className="orbit-track" /><circle cx="50" cy="50" r="43" className="orbit-fill" strokeDasharray={Math.PI * 86} strokeDashoffset={Math.PI * 86 * (1 - utilization)} /></svg><Icon size={27} stroke={1.5} /></div><span>{service.name}</span><strong><AnimatedNumber value={service.served_visits!} enabled={motion} /><small>人次</small></strong><small>{service.unmet_visits ? `还有${service.unmet_visits}人次需求` : '需求已接住'}</small></button>
+            return <button type="button" key={service.id} className={`playground-service${serviceId === service.id ? ' is-active' : ''}`} aria-pressed={serviceId === service.id} aria-label={`查看${service.name}，服务${service.served_visits}人次`} onClick={() => setServiceId(service.id)}><div className={`playground-orbit orbit-${index}`}><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="43" className="orbit-track" /><circle cx="50" cy="50" r="43" className="orbit-fill" strokeDasharray={Math.PI * 86} strokeDashoffset={Math.PI * 86 * (1 - utilization)} /></svg><Icon size={27} stroke={1.5} /></div><span>{service.name}</span><strong><AnimatedNumber value={service.served_visits!} enabled={motion} /><small>人次</small></strong><small>{service.unmet_visits ? `尚未满足${service.unmet_visits}人次需求` : '需求已满足'}</small></button>
           })}</div>
           {selected && <div className="playground-service-detail" role="status"><strong>{selected.name}</strong><span>开放容量 {format(selected.capacity_visits!)} 人次/月</span><span>利用率 {(selected.utilization! * 100).toFixed(1)}%</span><span>收费收入 {format(selected.fee_income!)} 元/月</span></div>}
           <div className="playground-change"><IconArrowUpRight size={18} /><span>{baseline ? `对比标准草稿的基准：服务${metrics.served_visits! - baseline.metrics.served_visits! >= 0 ? '增加' : '减少'}${format(Math.abs(metrics.served_visits! - baseline.metrics.served_visits!))}人次，政府投入${metrics.government_outlay! - baseline.metrics.government_outlay! >= 0 ? '增加' : '减少'}${format(Math.abs(metrics.government_outlay! - baseline.metrics.government_outlay!))}元/月。` : '每次调整都会重新核算容量、收费、支出与财政投入。'}</span></div>
         </> : <div className="playground-empty">正在连接你的服务安排与资金预算…</div>}
       </div>
     </div>
-    {!!saved.length && <div className="playground-saved" aria-label="保留方案对照"><header><h4>放在一起比较</h4><span>保存在本机 · 完整模拟</span></header><div className="playground-saved-grid">{saved.map((value, index) => <article key={`${value.name}:${index}`}><header><strong>{value.name}</strong><button type="button" aria-label={`移除${value.name}`} onClick={() => setSaved(values => values.filter((_, position) => position !== index))}>×</button></header><p>需求{Math.round(value.parameters.demand * 100)}% · {value.parameters.activitySlots}场 · 补贴{format(value.parameters.subsidy)}元</p><div><span>服务 <b>{format(value.result.metrics.served_visits!)}</b> 人次</span><span>结余 <b>{format(value.result.metrics.balance_after_support!)}</b> 元</span></div><button type="button" onClick={() => setParameters({ ...value.parameters })}>恢复这个方案</button></article>)}</div></div>}
+    {!!saved.length && <div className="playground-saved" aria-label="保留方案对照">
+      <header><h4>方案对比</h4><span>保存在本机 · 完整模拟</span></header>
+      <div className="playground-saved-grid">{saved.map((value, index) => {
+        const summary = summarizeExploration(value)
+        return <article key={`${value.name}:${index}`}>
+          <header><strong>{value.name}</strong><button type="button" aria-label={`移除${value.name}`} onClick={() => setSaved(values => values.filter((_, position) => position !== index))}>×</button></header>
+          <p className="playground-plan-condition">需求条件：{summary.condition}</p>
+          <section className="playground-plan-measures" aria-label={`${value.name}关键举措`}><h5>关键举措</h5><ul>{summary.measures.map(measure => <li key={measure}>{measure}</li>)}</ul></section>
+          <dl className="playground-plan-metrics"><div><dt>服务量</dt><dd>{summary.service}</dd></div><div><dt>覆盖居民</dt><dd>{summary.coverage}</dd></div><div><dt>{summary.balanceLabel}</dt><dd className={summary.deficit ? 'is-deficit' : ''}>{summary.balance}</dd></div><div><dt>政府投入</dt><dd>{summary.government}</dd></div></dl>
+          <p className="playground-plan-outcome">结果摘要：{summary.outcome}</p>
+          <button type="button" onClick={() => setParameters({ ...value.parameters })}>恢复这个方案</button>
+        </article>
+      })}</div>
+    </div>}
     <details className="playground-flow"><summary>看看这份方案的钱怎样流动</summary><MonthlyCashFlowVisual result={result || null} period={demo.operations.period} /></details>
   </section>
 }

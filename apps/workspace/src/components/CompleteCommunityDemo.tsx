@@ -46,7 +46,7 @@ export default function CompleteCommunityDemo({ project }: { project: Project })
   }
   const theme = Object.fromEntries(Object.entries(analysisColors).map(([key, value]) => [`--analysis-${key}`, value])) as CSSProperties
   return <section className="complete-community-demo" style={theme} data-motion={motion.enabled ? 'on' : 'off'} aria-label="完整社区数据模拟报表">
-    <header className="full-demo-heading analysis-hero-card"><div><span className="full-demo-tag">完整模拟 · 可交互推演</span><h2>拖动需求和预算，看看社区怎么运行</h2><p>600户 · 1500人 · 三类服务。调一调参数，保留不同方案，放在一起比较。</p></div>
+    <header className="full-demo-heading analysis-hero-card"><div><span className="full-demo-tag">完整模拟 · 可交互推演</span><h2>拖动需求和预算，看看社区怎么运行</h2><p>600户 · 1500人 · 三类服务。调一调参数，保留不同方案，进行方案对比。</p></div>
       <div className="full-demo-actions"><button type="button" disabled={!baseline || !exploration || calculationState === 'calculating'} onClick={exportReport}>导出完整模拟报表</button><button type="button" onClick={() => download('完整社区模拟数据.json', JSON.stringify({ ...demo, analysis: { selectedScenario: activeScenario, scenarios: previews, playground: exploration } }, null, 2), 'application/json')}>导出样本与当前分析</button><button type="button" className="analysis-motion-control" aria-pressed={motion.userReduced} onClick={() => motion.setUserReduced(!motion.userReduced)}>{motion.enabled ? '减少动效' : '动效已减少'}</button></div>
     </header>
     <CommunityOperationsPlayground key={`${project.id}:${project.context_version}`} project={project} demo={demo} baseline={baseline || undefined} motion={motion.enabled} onResult={setExploration} />
