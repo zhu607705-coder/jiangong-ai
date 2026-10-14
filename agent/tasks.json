@@ -1364,6 +1364,31 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/video-full-frame-verification.json"
+    },
+    {
+      "id": "T55",
+      "depends_on": [
+        "T54"
+      ],
+      "goal": "模式判定前置、DeepSeek方案首屏、六维模式切换与资料到决策对应",
+      "status": "completed_local_live_models_ui_report",
+      "expected_artifacts": [
+        "research/test_results/renewal-mode-verification.json"
+      ],
+      "definition_of_done": "五组初筛与两种路径接入现有DSH/Qwen；真实项目六查询及Agent输出、独立完整模拟、实际页面切换与原报告更新有证据。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "runtime/",
+        "services/",
+        "data/public_cases/",
+        "docs/",
+        "tests/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/renewal-mode-verification.json"
     }
   ]
 }

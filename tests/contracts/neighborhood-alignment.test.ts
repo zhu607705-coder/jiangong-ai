@@ -29,6 +29,16 @@ const highDashboard={policy_version:NEIGHBORHOOD_DASHBOARD_POLICY,purpose:'测�
 const cell=(ctx:MapScreenContext):MapScreenCell=>({id:'cell',context:ctx,dashboard:highDashboard} as MapScreenCell)
 const choices=['demand','supply','adaptation','implementation','operations','resources']
 function response(){return {model:'decision-model-preview',request_id:'TEST',usage:{input_tokens:80},answers:{next_action:{type:'choice',choice:'compare',confidence:.95,probabilities:{investigate:.01,resolve_blocker:.01,compare:.97,review:.01}},priority_dimension:{type:'choice',choice:'supply',confidence:.95,probabilities:Object.fromEntries(choices.map(k=>[k,k==='supply'?.95:.01]))},evidence_sufficient:{type:'noul',noul:.95},...Object.fromEntries(choices.map(k=>['fit_'+k,{type:'score',score:4,confidence:.95,probabilities:{0:0,1:0,2:0,3:0,4:1}}]))}}}
+async function protocolResponse(_url:unknown,init?:RequestInit) {
+  const body=JSON.parse(String(init?.body)),value:any=response()
+  for(const [id,selected] of [['renewal_mode','comprehensive'],['renewal_priority','safety'],['renewal_evidence','object_source_1']]) {
+    const question=body.questions[id]
+    if(!question)continue
+    const keys=Object.keys(question.criteria),choice=keys.includes(selected)?selected:'no_object_evidence'
+    value.answers[id]={type:'choice',choice,confidence:.95,probabilities:Object.fromEntries(keys.map(key=>[key,key===choice?.9:.1/(keys.length-1)]))}
+  }
+  return new Response(JSON.stringify(value))
+}
 const settings={apiKey:'test-not-real',endpoint:'https://maas.qianwenaiapi.com/compatible-mode/v1',model:'decision-model-preview'}
 
 describe('one neighborhood policy at map and project boundaries',()=>{
@@ -90,13 +100,14 @@ describe('one neighborhood policy at map and project boundaries',()=>{
 
 describe('source-bound project scoring and research route',()=>{
   it('sends six fit questions and profile-specific priority choices through the existing transport',async()=>{
-    const input=projectDecisionInput(project()),transport=vi.fn(async()=>new Response(JSON.stringify(response())))
+    const input=projectDecisionInput(project()),transport=vi.fn(protocolResponse)
     expect(input.dashboard?.evidence).toHaveLength(6)
     const result=await evaluateDecision(input,new AbortController().signal,settings,transport as typeof fetch)
     const body=JSON.parse((transport.mock.calls[0] as unknown as [string,RequestInit])[1].body as string)
-    expect(Object.keys(body.questions)).toHaveLength(9)
+    expect(Object.keys(body.questions)).toHaveLength(12)
+    expect(body.questions).toHaveProperty('renewal_mode');expect(body.questions).toHaveProperty('renewal_priority');expect(body.questions).toHaveProperty('renewal_evidence')
     expect(Object.keys(body.questions.priority_dimension.criteria)).toEqual(choices)
-    expect(JSON.stringify(body.questions)).not.toMatch(/腾退|到岗|空置|收入路径/)
+    expect(JSON.stringify(body.questions.priority_dimension)).not.toMatch(/到岗|空置|收入路径/)
     expect(result.status).toBe('completed');expect(result.policy_version).toBe(NEIGHBORHOOD_DECISION_POLICY)
     expect(result.dashboard?.dimensions.every(d=>d.value===5)).toBe(true)
     expect(result.priority).toBe('supply')
@@ -120,7 +131,7 @@ describe('source-bound project scoring and research route',()=>{
   })
   it('keeps the unrequested demand score null even if the provider includes extra answers',async()=>{
     const p=project();delete p.facts[0].locator
-    const input=projectDecisionInput(p),transport=vi.fn(async()=>new Response(JSON.stringify(response())))
+    const input=projectDecisionInput(p),transport=vi.fn(protocolResponse)
     const out=await evaluateDecision(input,new AbortController().signal,settings,transport as typeof fetch)
     const body=JSON.parse((transport.mock.calls[0] as unknown as [string,RequestInit])[1].body as string)
     expect(body.questions).not.toHaveProperty('fit_demand')
@@ -145,7 +156,7 @@ describe('source-bound project scoring and research route',()=>{
   })
   it('keeps a safety veto despite six high model grades',async()=>{
     const p=project();p.facts.push(fact('safety_veto','engineering_review_passed'))
-    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,async()=>new Response(JSON.stringify(response())))
+    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,protocolResponse)
     expect(out.status).toBe('completed');expect(out.action).toBe('resolve_blocker');expect(out.priority).toBe('adaptation')
     expect(retrofitAdvice(p).decision).toBe('defer')
     expect(out.dashboard?.dimensions.every(d=>d.value===5)).toBe(true)
@@ -162,12 +173,12 @@ describe('source-bound project scoring and research route',()=>{
     expect(advice.decision).toBe('defer');expect(advice.reasons[0].text).toContain('权属')
     expect(factors.find(f=>f.key==='adaptation')).toMatchObject({state:'conditional',conflict:true})
     expect(factors.find(f=>f.key==='implementation')).toMatchObject({state:'blocked'})
-    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,async()=>new Response(JSON.stringify(response())))
+    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,protocolResponse)
     expect(out.action).toBe('resolve_blocker');expect(out.priority).toBe('implementation')
   })
   it('cannot use fit to waive the independent professional rule confirmation',async()=>{
     const p=project();p.facts=p.facts.filter(f=>f.kind!=='retrofit.rule_set_confirmed')
-    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,async()=>new Response(JSON.stringify(response())))
+    const out=await evaluateDecision(projectDecisionInput(p),new AbortController().signal,settings,protocolResponse)
     expect(out.status).toBe('completed');expect(out.action).toBe('investigate')
     expect(out.next_step).toContain('专业规则')
     expect(out.dashboard?.dimensions.every(d=>d.value===5)).toBe(true)

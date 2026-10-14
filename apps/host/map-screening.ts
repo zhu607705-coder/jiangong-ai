@@ -90,4 +90,5 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
     }
     finally { activeScreens--; if (!res.destroyed) res.end() }
   })
+  return service
 }

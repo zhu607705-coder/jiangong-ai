@@ -14,6 +14,8 @@ import { WaitingMotif } from '../components/WaitingScene'
 import { scanMap } from './screening-stream'
 import { screenTiers, classifyCells as classifySnapshotCells } from '../../../../packages/maps/screening-policy'
 import { projectPreliminaryResearch } from '../../../../packages/maps/preliminary-research'
+import { projectRenewalModeInput } from '../../../../packages/retrofit/renewal-mode'
+import RenewalModePanel from './RenewalModePanel'
 import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell, MapScreenContext, MapScreenProfile, MapScreenResult, MapScreenTheme } from '../../../host/generated/contracts'
 
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
@@ -313,6 +315,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       {projectPreview && project ? <>
         <div className="atlas-selection-icon"><IconBuildingSkyscraper size={27} stroke={1.4} /></div><h2>{project.name}</h2><p>{project.input.scope.name}</p>
         <div className="atlas-selection-tags"><span>{project.input.synthetic ? '合成项目' : '研究项目'}</span><span>经验 v{project.context_version}</span></div>
+        {project.input.business_profile==='neighborhood'&&<RenewalModePanel key={project.id} endpoint={`/projects/${encodeURIComponent(project.id)}/renewal-mode`} contextVersion={project.context_version} input={projectRenewalModeInput(project.input)} decision={project.runs?.find(run=>run.decision)?.decision?.decision_support} onInvestigate={()=>onOpenProject()}/>}
         {projectResearch && <div className="preliminary-research" aria-label="对象初步调研"><h4>初步调研 · 截止 {project.input.as_of}</h4>
           {projectResearch.lines.map((line, index) => <p key={index}>{line.text}{!!line.sourceRefs.length && onEvidence && <button className="claim-source" onClick={() => onEvidence(line.sourceRefs.map(ref => ref.startsWith(`${project.id}:`) ? ref.slice(project.id.length + 1) : ref))}>依据</button>}</p>)}
         </div>}

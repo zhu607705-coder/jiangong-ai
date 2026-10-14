@@ -21,6 +21,7 @@ import { registerIntelligence } from './intelligence'
 import { registerExperience } from './experience'
 import { registerCommunityOperations } from './community-operations'
 import { registerConstructionCosts } from './construction-costs'
+import { registerRenewalMode } from './renewal-mode'
 import { ExperienceError } from '../../packages/experience/domain'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
@@ -61,9 +62,10 @@ app.use(['/api', '/_AMapService'], (req, _res, next) => {
 const intelligence = registerIntelligence(app,store)
 const experience = await registerExperience(app,store,requireProject)
 await registerCommunityOperations(app,store,requireProject)
-await registerConstructionCosts(app,store,requireProject)
+const costLibrary = await registerConstructionCosts(app,store,requireProject)
 registerAmap(app, amapSettings)
-registerMapScreening(app, amapSettings, store)
+const mapScreening = registerMapScreening(app, amapSettings, store)
+await registerRenewalMode(app,store,requireProject,costLibrary,(id,signal)=>mapScreening.modeInput(id,signal))
 app.get('/api/ready', async (_req, res) => {
   let capability = false
   try { capability = (await fetch(`${config.capabilityUrl}/health`, { signal: AbortSignal.timeout(1500) })).ok } catch { /* explicit unavailable status below */ }

@@ -1,0 +1,242 @@
+{
+  "as_of": "2026-10-15",
+  "scope": "mode-first and source-grounded project overview",
+  "targeted_tests": {
+    "command": "npx vitest run tests/contracts/neighborhood-alignment.test.ts tests/contracts/renewal-mode.test.ts tests/contracts/renewal-strategy.test.ts tests/contracts/decision-model.test.ts tests/contracts/map-decision-factors.test.ts",
+    "passed": 83,
+    "log": "research/test_results/renewal-mode-focused.log"
+  },
+  "build": {
+    "command": "npm run build",
+    "status": "passed",
+    "log": "research/test_results/renewal-mode-build.log"
+  },
+  "live_real": {
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "context_version": 0,
+    "input_hash": "30f012d74d99d5a2994ffbc3411b8b8d35a164bc3e3b841228b5938be7ccafa8",
+    "created_at": "2026-10-14T16:50:37.208Z",
+    "synthetic": false,
+    "status": "completed",
+    "model_calls": [
+      {
+        "stage": "renewal_strategy",
+        "requested_model": "deepseek-flash",
+        "returned_model": null,
+        "finish_reason": "error",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "duration_ms": 25908,
+        "session_id": null,
+        "error_code": "MALFORMED_RESPONSE"
+      },
+      {
+        "stage": "renewal_strategy_format_retry",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 28015,
+        "output_tokens": 3810,
+        "duration_ms": 19437,
+        "session_id": "e0c8a142-c57c-4422-bbf6-4ba780f97512",
+        "cache_read_tokens": 27648,
+        "cache_write_tokens": 0
+      }
+    ],
+    "error": null,
+    "headline": "求是村：管网与适老配套综合整治为主，原拆原建仅限逐栋鉴定后的部分楼栋",
+    "preferred_mode": "compare",
+    "source_count": 23,
+    "current_source_count": 10,
+    "research": {
+      "status": "success",
+      "queries": [
+        "浙大求是村 综合整治 原拆原建 房屋安全鉴定 site:gov.cn",
+        "浙大求是村 加装电梯 二次供水 邻里中心",
+        "浙大求是村 更新 权属 规划 居民协商 资金 安置",
+        "杭州 浙工新村 自主更新 居民筹资 工程 总投资 site:gov.cn",
+        "上海 旧住房 成套改造 综合修缮 拆除重建 2026 site:shanghai.gov.cn",
+        "上海 凤南一村 彭一小区 拆除重建 回搬 site:shanghai.gov.cn"
+      ],
+      "source_ids": [
+        "PUB-10c65fd27bc66567",
+        "PUB-d77a47f628facc42",
+        "PUB-8f9a3d253d17a4fd",
+        "PUB-62fc38dfe56bfeba",
+        "PUB-afb9c13020d6ab50",
+        "PUB-e3895019c813c315",
+        "PUB-9b07712b1504f0f5",
+        "PUB-97bce04c18c97107",
+        "PUB-2bc9c66fd5fa0897",
+        "PUB-d43ac4e710028259"
+      ],
+      "warnings": [],
+      "reused": false
+    }
+  },
+  "live_demo": {
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "context_version": 0,
+    "input_hash": "490477312a56fd559ee967b46095911ca8e1b40137f9239c326fda73bc0caf45",
+    "created_at": "2026-10-14T16:56:25.676Z",
+    "synthetic": true,
+    "status": "completed",
+    "model_calls": [
+      {
+        "stage": "renewal_strategy",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 9041,
+        "output_tokens": 3169,
+        "duration_ms": 15839,
+        "session_id": "f47b754b-82e2-4b0e-a519-782108c25775",
+        "cache_read_tokens": 1408,
+        "cache_write_tokens": 0
+      }
+    ],
+    "error": null,
+    "headline": "杭州600户模拟样本：15幢、4.5万㎡以管网供水、适老通行、助餐活动阵地为重点，同步比较原拆原建",
+    "preferred_mode": "compare",
+    "source_count": 4,
+    "current_source_count": 1,
+    "research": null
+  },
+  "qwen": {
+    "status": "completed",
+    "model": "decision-model-preview",
+    "input_hash": "d84a380ffb2cfda55528dd1ebe2107dc1ddde4a1ecd96319022b4aa9061f526c",
+    "created_at": "2026-10-14T16:48:56.407Z",
+    "request_id": "4173cfda-1ce3-4e3f-971a-e4d2729d55a8",
+    "duration_ms": 1333,
+    "input_tokens": 15911,
+    "error_code": null,
+    "renewal_mode": {
+      "policy_version": "renewal-mode-first-v3",
+      "model_choice": {
+        "choice": "rebuild",
+        "confidence": 0.66,
+        "probabilities": {
+          "comprehensive": 0.06,
+          "rebuild": 0.75,
+          "compare": 0.05,
+          "investigate": 0.14
+        }
+      },
+      "priority_constraint": {
+        "choice": "rights_planning",
+        "confidence": 0.16,
+        "probabilities": {
+          "safety": 0.26,
+          "rights_planning": 0.32,
+          "consent_relocation": 0.19,
+          "funding": 0.2,
+          "maintenance": 0.03
+        }
+      },
+      "evidence_basis": {
+        "choice": "object_source_10",
+        "confidence": 0.1,
+        "probabilities": {
+          "object_source_1": 0.05,
+          "object_source_2": 0.09,
+          "object_source_3": 0.04,
+          "object_source_4": 0.15,
+          "object_source_5": 0.1,
+          "object_source_6": 0.08,
+          "object_source_7": 0.02,
+          "object_source_8": 0.08,
+          "object_source_9": 0.16,
+          "object_source_10": 0.19,
+          "no_object_evidence": 0.05
+        }
+      },
+      "direction": "investigate",
+      "status": "uncertain",
+      "summary": "先调查影响模式选择的关键条件，再确定优先路径。",
+      "reasons": [
+        "模式选项尚未达到初判阈值，需要先取得能区分两条路径的资料。"
+      ],
+      "next_step": "核对不动产登记、保护名录及规划条件，向属地主管部门确认可采用的程序。",
+      "source_ids": [
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-0446a77889998b53"
+      ]
+    }
+  },
+  "ui": {
+    "url": "http://127.0.0.1:5173/",
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "verified": [
+      "DeepSeek first-screen summary",
+      "mode selection and source-limited criteria",
+      "evidence-to-decision rows and source expansion",
+      "same-baseline six-dimension scenario switch",
+      "operations at final subpage; 1630 monthly visits and 300 unique residents in synthetic baseline"
+    ],
+    "artifacts": [
+      "output/playwright/renewal-mode/strategy-overview.jpg",
+      "output/playwright/renewal-mode/evidence-decision-map.jpg",
+      "output/playwright/renewal-mode/rebuild-after.jpg"
+    ]
+  },
+  "report": {
+    "path": "docs\\老旧小区改造案例拆分与六维数据说明.pdf",
+    "pages": 31,
+    "new_section_pages": [
+      29,
+      30
+    ],
+    "sha256": "1380db33461676e99e1895c8ceafc4e091da92fa77440b91829763a2dc62df8c"
+  },
+  "limits": [
+    "Initial research directions and target scenarios; no engineering approval or enterprise outcome claim.",
+    "Synthetic six-dimension and rebuilding costs remain separate from the real project."
+  ],
+  "changed_files": [
+    "apps/host/generated/contracts.ts",
+    "apps/host/map-screening.ts",
+    "apps/host/server.ts",
+    "apps/host/renewal-mode.ts",
+    "apps/workspace/src/App.tsx",
+    "apps/workspace/src/maps/MapWorkspace.tsx",
+    "apps/workspace/src/maps/PreliminaryCard.tsx",
+    "apps/workspace/src/maps/RenewalModePanel.tsx",
+    "apps/workspace/src/maps/RenewalModePanel.css",
+    "apps/workspace/src/components/StrategyOverview.tsx",
+    "apps/workspace/src/components/strategy-overview.css",
+    "apps/workspace/src/components/StrategyInvestigations.tsx",
+    "apps/workspace/src/imports/ImportedDataExplorer.tsx",
+    "apps/workspace/src/imports/EvidenceDecisionMap.tsx",
+    "apps/workspace/src/imports/evidence-decision-map.css",
+    "packages/contracts/schema.json",
+    "packages/decision/structured-route.ts",
+    "packages/retrofit/complete-demo.ts",
+    "packages/retrofit/renewal-mode.ts",
+    "packages/retrofit/strategy.ts",
+    "runtime/dsh/live-session.ts",
+    "runtime/dsh/public-web.ts",
+    "runtime/workflows/live.ts",
+    "services/capabilities/decision-model.ts",
+    "services/capabilities/generated/contracts.py",
+    "services/capabilities/research.ts",
+    "services/map-screening/service.ts",
+    "services/map-screening/renewal-history.ts",
+    "services/map-screening/renewal-strategy.ts",
+    "data/public_cases/renewal-mode-benchmarks-20261014.json",
+    "tests/contracts/renewal-mode.test.ts",
+    "tests/contracts/renewal-strategy.test.ts",
+    "docs/老旧小区改造_产品与验证方案.md",
+    "docs/老旧小区改造案例拆分与六维数据说明.tex",
+    "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+    "tests/contracts/neighborhood-alignment.test.ts"
+  ],
+  "regression": {
+    "initial_full_run": {
+      "passed": 1057,
+      "failed": 5,
+      "files": 65,
+      "log": "research/test_results/renewal-mode-node-regression.log"
+    },
+    "followup": "Five old neighborhood protocol fixtures were updated for the three new mode questions; all 83 affected tests passed. No claim of a second full-suite run."
+  }
+}

@@ -25,12 +25,15 @@ import type { MapScreenContext, KnowledgeQuery } from '../../host/generated/cont
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
+import EvidenceDecisionMap from './imports/EvidenceDecisionMap';
 import RagEvidenceSearch from './imports/RagEvidenceSearch';
 import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
 import type { RetrievalHit } from '../../../packages/experience/retrieval';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
+import StrategyOverview from './components/StrategyOverview';
+import StrategyInvestigations from './components/StrategyInvestigations';
 import { DemoPlanVersions, DemoInvestigationPanel } from './components/CommunityDemoWorkflow';
 import ConstructionCostLibrary from './components/ConstructionCostLibrary';
 import ExperienceLibrary from './components/ExperienceLibrary';
@@ -623,7 +626,7 @@ export default function App() {
                 </span>
                 <span>项目空间 / {project.id.slice(0, 10)}</span>
               </div>
-              <h1>{completeDemoActive ? `杭州样本社区 · ${tab === 'compare' ? '版本变化' : tab === 'actions' ? '下一步调查' : '运营推演'}` : project.name}</h1>
+              <h1>{completeDemoActive ? `杭州样本社区 · ${tab === 'compare' ? '版本变化' : tab === 'actions' ? '下一步调查' : '方案总览'}` : project.name}</h1>
               <p>
                 {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '改造需求与前期策划'} <span>·</span>{" "}
                 {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
@@ -659,9 +662,10 @@ export default function App() {
               try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
             }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
           </div>}
-          {tab === 'overview' && completeDemoActive && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
+          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} />}
+          {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "overview" && !completeDemoActive && (
-            <>
+            <details className="overview-legacy" open={project.input.business_profile !== 'neighborhood'}><summary>完整研判、计算与运行记录</summary>
               {run?.status === "failed" && (
                 <div className="feedback notice">
                   <span>
@@ -944,7 +948,7 @@ export default function App() {
                   </a>
                 </div>
               )}
-            </>
+            </details>
           )}
           {tab === "context" && (
             <section className="content-panel">
@@ -1117,6 +1121,7 @@ export default function App() {
                 TXT、Markdown、CSV、PDF、Word、Excel（≤ 10
                 MB）。真实材料使用独立真实项目。
               </p>
+              {project.input.business_profile === 'neighborhood' && <EvidenceDecisionMap projectId={project.id} revision={project.context_version} sourceIds={project.input.sources.map(source => source.id)} onEvidence={openEvidence} onOverview={() => setTab('overview')} />}
               <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} onEvidence={openEvidence} onLocateHit={locateEvidence} />
               <ImportedDataExplorer
                 projectId={project.id}
@@ -1300,6 +1305,7 @@ export default function App() {
             </section>
           )}
           {tab === 'actions' && completeDemoActive && <DemoInvestigationPanel key={`demo-investigations-${project.id}`} project={project} />}
+          {tab === 'actions' && !completeDemoActive && project.input.business_profile === 'neighborhood' && <StrategyInvestigations project={project} onEvidence={openEvidence} />}
           {tab === "actions" && !completeDemoActive && (
             <section className="content-panel">
               <div className="kicker">NEXT ACTIONS</div>

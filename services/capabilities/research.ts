@@ -50,7 +50,7 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
         return !domain||!local.some(s=>{const host=s.url?new URL(s.url).hostname:'';return (host===domain||host.endsWith('.'+domain))&&s.untrusted_text&&s.date_status==='verified'&&Date.now()-Date.parse(s.retrieved_at||'')<6*3600000})
       })
     }
-    if(ctx){await mountPublicWeb(ctx);web=ctx.web as unknown as ResearchWeb}
+    if(ctx){await mountPublicWeb(ctx,{maxSearchUses:queries.length});web=ctx.web as unknown as ResearchWeb}
     for(const original of [...seed,...local]){
       if(original.published_at&&Date.parse(original.published_at)>end)continue
       if(sources.some(s=>s.id===original.id||(s.url&&s.url===original.url)))continue

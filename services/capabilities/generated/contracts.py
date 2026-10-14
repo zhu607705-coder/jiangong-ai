@@ -888,7 +888,44 @@ class DecisionChoice(BaseModel):
     probabilities: dict[str, Probabilities]
 
 
+class Direction(StrEnum):
+    comprehensive = 'comprehensive'
+    rebuild = 'rebuild'
+    compare = 'compare'
+    investigate = 'investigate'
+
+
 class Status13(StrEnum):
+    preliminary = 'preliminary'
+    constrained = 'constrained'
+    uncertain = 'uncertain'
+
+
+class Reason1(RootModel[str]):
+    root: str = Field(..., max_length=200)
+
+
+class SourceId(RootModel[str]):
+    root: str = Field(..., max_length=250)
+
+
+class RenewalModeAssessment(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy_version: str = Field(..., max_length=60)
+    model_choice: DecisionChoice
+    priority_constraint: DecisionChoice
+    evidence_basis: DecisionChoice
+    direction: Direction
+    status: Status13
+    summary: str = Field(..., max_length=400)
+    reasons: list[Reason1] = Field(..., max_length=12)
+    next_step: str = Field(..., max_length=240)
+    source_ids: list[SourceId] = Field(..., max_length=20)
+
+
+class Status14(StrEnum):
     completed = 'completed'
     unavailable = 'unavailable'
     failed = 'failed'
@@ -987,7 +1024,7 @@ class PublicRecord(BaseModel):
     source_hash: str | None = Field(None, max_length=100)
 
 
-class Status14(StrEnum):
+class Status15(StrEnum):
     success = 'success'
     empty = 'empty'
     access_required = 'access_required'
@@ -1006,7 +1043,7 @@ class AdapterReceipt(BaseModel):
     )
     source_id: str = Field(..., max_length=100)
     adapter: str = Field(..., max_length=40)
-    status: Status14
+    status: Status15
     record_ids: list[RecordId] = Field(..., max_length=50)
 
 
@@ -1030,7 +1067,7 @@ class DimensionScore(BaseModel):
     basis: str = Field(..., max_length=180)
 
 
-class Status15(StrEnum):
+class Status16(StrEnum):
     completed = 'completed'
     partial = 'partial'
     unavailable = 'unavailable'
@@ -1045,7 +1082,7 @@ class DecisionDashboard(BaseModel):
     dimensions: list[DimensionScore] = Field(..., max_length=6)
     model: str = Field(..., max_length=100)
     request_id: str | None = Field(..., max_length=200)
-    status: Status15
+    status: Status16
 
 
 class DimensionEvidence(BaseModel):
@@ -1091,7 +1128,7 @@ class ExperienceField(BaseModel):
     evidence: list[ExperienceEvidence] = Field(..., max_length=5)
 
 
-class Status16(StrEnum):
+class Status17(StrEnum):
     draft = 'draft'
     approved = 'approved'
     rejected = 'rejected'
@@ -1103,7 +1140,7 @@ class Decision(StrEnum):
     defer = 'defer'
 
 
-class Reason1(BaseModel):
+class Reason2(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
@@ -1128,7 +1165,7 @@ class NeighborhoodActionAdvice(BaseModel):
     decision: Decision
     label: str
     rule_version: str
-    reasons: list[Reason1]
+    reasons: list[Reason2]
     missing: list[MissingItem]
 
 
@@ -1279,7 +1316,7 @@ class Route(StrEnum):
     agent_fallback = 'agent_fallback'
 
 
-class Reason2(RootModel[str]):
+class Reason3(RootModel[str]):
     root: str = Field(..., max_length=1000)
 
 
@@ -1546,7 +1583,7 @@ class FactorPolicy(BaseModel):
     id: str = Field(..., max_length=150)
     project_id: str = Field(..., max_length=150)
     revision: int = Field(..., ge=1)
-    status: Status16
+    status: Status17
     definitions: list[FactorDefinition] = Field(..., max_length=100)
     min_coverage: float = Field(..., ge=0.0, le=1.0)
     max_distance: float = Field(..., ge=0.0, le=1.0)
@@ -1676,7 +1713,7 @@ class DistilledSkill(BaseModel):
     id: str = Field(..., max_length=150)
     project_id: str = Field(..., max_length=150)
     revision: int = Field(..., ge=1)
-    status: Status16
+    status: Status17
     title: str = Field(..., max_length=300)
     measure_key: str = Field(..., max_length=80)
     card_refs: list[SkillCardRef] = Field(..., max_length=20)
@@ -1742,7 +1779,7 @@ class ActionReviewBatch(BaseModel):
     warnings: list[Warning] = Field(..., max_length=30)
 
 
-class Status19(StrEnum):
+class Status20(StrEnum):
     factual = 'factual'
     reference = 'reference'
     assumption = 'assumption'
@@ -1764,7 +1801,7 @@ class OperationsValue(BaseModel):
     )
     value: float | None = Field(..., ge=0.0, le=1000000000000.0)
     unit: str = Field(..., max_length=40, min_length=1)
-    status: Status19
+    status: Status20
     source_kind: SourceKind
     source: str = Field(..., max_length=1500, min_length=1)
     as_of: date
@@ -1851,7 +1888,7 @@ class ResultKind(StrEnum):
     scenario_prediction = 'scenario_prediction'
 
 
-class Status20(StrEnum):
+class Status21(StrEnum):
     complete = 'complete'
     partial = 'partial'
 
@@ -1867,7 +1904,7 @@ class OperationsResult(BaseModel):
     science: OperationsScientificResult | None = None
     model_version: str = Field(..., max_length=80, min_length=1)
     result_kind: ResultKind
-    status: Status20
+    status: Status21
     metrics: OperationsMetrics
     services: list[OperationsServiceMetrics]
     missing: list[OperationsMissing]
@@ -1940,6 +1977,120 @@ class OperationsComparison(BaseModel):
     split: Split
     timing: Timing
     differences: list[OperationsDifference]
+
+
+class PreferredMode(StrEnum):
+    comprehensive = 'comprehensive'
+    rebuild = 'rebuild'
+    compare = 'compare'
+
+
+class RationaleItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    point: str = Field(..., max_length=200)
+    source_id: str = Field(..., max_length=250)
+    quote: str = Field(..., max_length=1000)
+
+
+class Mode2(StrEnum):
+    comprehensive = 'comprehensive'
+    rebuild = 'rebuild'
+
+
+class EvidenceRef8(RootModel[str]):
+    root: str = Field(..., max_length=250)
+
+
+class Action2(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=80)
+    detail: str = Field(..., max_length=240)
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8)
+
+
+class Requirement(RootModel[str]):
+    root: str = Field(..., max_length=160)
+
+
+class Path(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    mode: Mode2
+    title: str = Field(..., max_length=100)
+    description: str = Field(..., max_length=360)
+    actions: list[Action2] = Field(..., max_length=5)
+    requirements: list[Requirement] = Field(..., max_length=5)
+
+
+class Key4(StrEnum):
+    demand = 'demand'
+    supply = 'supply'
+    adaptation = 'adaptation'
+    implementation = 'implementation'
+    operations = 'operations'
+    resources = 'resources'
+
+
+class CurrentLevel(StrEnum):
+    low = 'low'
+    medium = 'medium'
+    high = 'high'
+    unknown = 'unknown'
+
+
+class ComprehensiveLevel(StrEnum):
+    low = 'low'
+    medium = 'medium'
+    high = 'high'
+    unknown = 'unknown'
+
+
+class RebuildLevel(StrEnum):
+    low = 'low'
+    medium = 'medium'
+    high = 'high'
+    unknown = 'unknown'
+
+
+class Dimension1(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: Key4
+    current: str = Field(..., max_length=240)
+    current_level: CurrentLevel
+    comprehensive: str = Field(..., max_length=240)
+    comprehensive_level: ComprehensiveLevel
+    rebuild: str = Field(..., max_length=240)
+    rebuild_level: RebuildLevel
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8)
+
+
+class NextCheck(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    title: str = Field(..., max_length=80)
+    detail: str = Field(..., max_length=240)
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8)
+
+
+class RenewalStrategy(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    headline: str = Field(..., max_length=120)
+    summary: str = Field(..., max_length=600)
+    preferred_mode: PreferredMode
+    rationale: list[RationaleItem] = Field(..., max_length=6)
+    paths: list[Path] = Field(..., max_length=2)
+    dimensions: list[Dimension1] = Field(..., max_length=6)
+    next_checks: list[NextCheck] = Field(..., max_length=5)
 
 
 class OperationsTimeBlock(BaseModel):
@@ -2109,7 +2260,7 @@ class DecisionSupport(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    status: Status13
+    status: Status14
     provider: Literal['qwen_systemone']
     model: str = Field(..., max_length=100)
     policy_version: str = Field(..., max_length=60)
@@ -2127,6 +2278,7 @@ class DecisionSupport(BaseModel):
     thresholds: Thresholds
     error_code: ErrorCode | None
     dashboard: DecisionDashboard | None = None
+    renewal_mode: RenewalModeAssessment | None = None
 
 
 class ExperienceKnowledge(BaseModel):
@@ -2158,7 +2310,7 @@ class KnowledgeTrace(BaseModel):
     case_hits: list[KnowledgeMatch] = Field(..., max_length=20)
     rule_hits: list[KnowledgeMatch] = Field(..., max_length=20)
     candidates: list[KnowledgeMatch] = Field(..., max_length=100)
-    reasons: list[Reason2] = Field(..., max_length=30)
+    reasons: list[Reason3] = Field(..., max_length=30)
     fallback_status: FallbackStatus
     agent_status: AgentStatus | None = None
     grouping: KnowledgeGrouping | None = None
@@ -2381,7 +2533,7 @@ class ExperienceCard(BaseModel):
     fields: list[ExperienceField] = Field(..., max_length=10)
     id: str
     project_id: str
-    status: Status16
+    status: Status17
     revision: int = Field(..., ge=1)
     review_note: str | None = Field(..., max_length=2000)
     created_at: str

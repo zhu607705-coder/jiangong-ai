@@ -147,7 +147,7 @@ export async function executeLiveRun(store: Store, run: RunRecord, signal: Abort
     const findings = roles.map(role => results.get(role.id)!)
     impact.invalidated.push('scenarios', 'critic', 'comparator', 'report')
     await store.addEvent(run.id, 'scenarios', 'running', '模型正在生成不同实施路径，并保留具体调查选项')
-    const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings, ...(decisionSupport?{research_route:{action:decisionSupport.action,priority:decisionSupport.priority,next_step:decisionSupport.next_step,guard_reasons:decisionSupport.guard_reasons}}:{}) })
+    const shared = JSON.stringify({ snapshot: modelView(modelProject), research: findings, ...(decisionSupport?{research_route:{action:decisionSupport.action,priority:decisionSupport.priority,next_step:decisionSupport.next_step,guard_reasons:decisionSupport.guard_reasons},renewal_mode:decisionSupport.renewal_mode}: {}) })
     // Source bodies contain many unrelated terms; match examples to the selected
     // research object so a campus does not inherit incidental community cases.
     const referenceCases = selectReferenceCases(neighborhood?`${full.scope.name} 老旧小区 社区更新 居民 公共服务`:full.scope.name)

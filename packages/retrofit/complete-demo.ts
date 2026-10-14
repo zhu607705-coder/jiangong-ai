@@ -12,6 +12,27 @@ const round = (value: number) => Math.round(value * 100) / 100
 const score = (ratio: number) => Math.round((1 + 4 * Math.min(1, Math.max(0, ratio))) * 10) / 10
 const value = (number: number, unit: string, basis: string): OperationsValue => ({ value: number, unit, status: 'assumption', source_kind: 'demo', source: `完整模拟数据 v1：${basis}`, as_of: '2026-10-13' })
 
+/** Same community and denominator; rebuilding adds explicit construction and relocation assumptions. */
+export function buildStrategyDemo(mode: 'comprehensive' | 'rebuild') {
+  const demo = buildCompleteCommunityDemo()
+  if (mode === 'comprehensive') return { before: demo.beforeDashboard, after: demo.afterDashboard, dimensions: demo.dimensions, budget_wan: demo.capital.total!, assumptions: '综合整治复用完整模拟工程清单、协商记录和出资安排。' }
+  const construction = demo.buildingArea * 4500 / 10000, demolition = demo.buildingArea * 20 / 10000
+  const relocation = demo.households * 2000 * 24 / 10000, contingency = construction * .1
+  const budget = round(construction + demolition + relocation + contingency)
+  const changes: Record<string, { ratio: number; text: string }> = {
+    demand: { ratio: 10 / 10, text: '演示目标：重建后覆盖10/10项优先诉求；停车和户型问题纳入设计。' },
+    supply: { ratio: 1, text: '演示目标：保留并重配社区服务设施，满足同一1630人次月需求；过渡期另安排服务。' },
+    adaptation: { ratio: 16 / 16, text: '演示目标：新建方案解决16/16项工程与功能任务；实施仍需专业设计与验收。' },
+    implementation: { ratio: 420 / 600, text: '拆建情景另假设420/600户表达研究意愿，180户继续协商；不是已通过法定决议。' },
+    operations: { ratio: 8 / 10, text: '拆建情景假设8/10项长效职责有安排，临时搬迁服务与新物业收费两项尚需落实。' },
+    resources: { ratio: 1600 / budget, text: `同样1600万元已安排资金，对比拆建演示预算${budget}万元；资金缺口${round(budget - 1600)}万元。` },
+  }
+  const dimensions = demo.dimensions.map(row => ({ ...row, after: changes[row.key].text, afterRatio: changes[row.key].ratio, source: 'SIM-REBUILD-TARGET' }))
+  const after: DecisionDashboard = { ...demo.afterDashboard, request_id: 'SIM-REBUILD-TARGET-v1', purpose: '原拆原建方案条件（模拟）', dimensions: demo.afterDashboard.dimensions.map(row => ({ ...row, value: score(changes[row.key].ratio), basis: changes[row.key].text + ' 分值=1+4×覆盖比例，上限5。', evidence_refs: ['SIM-REBUILD-TARGET'] })) }
+  return { before: demo.beforeDashboard, after, dimensions, budget_wan: budget,
+    assumptions: `拆建模拟：45000㎡×假设4500元/㎡建安，拆除20元/㎡；600户×2000元/月×24个月过渡安置；建安预备费10%。合计${budget}万元。建设单价、周期和意愿均为演示假设，未使用上海房价推算。` }
+}
+
 /** A fictional Hangzhou sample. No values are inserted into real facts or observations. */
 export function buildCompleteCommunityDemo() {
   const households = 600, population = 1500, buildingArea = 45000

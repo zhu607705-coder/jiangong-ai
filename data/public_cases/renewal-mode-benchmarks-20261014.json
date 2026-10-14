@@ -1,0 +1,76 @@
+{
+  "version": "renewal-mode-benchmarks/1",
+  "retrieved_at": "2026-10-14",
+  "cases": [
+    {
+      "id": "MODE-ZHEGONG-20261012",
+      "name": "浙工新村",
+      "city": "杭州",
+      "mode": "原拆原建 · 居民自主更新",
+      "reported_stage": "报道时已交付",
+      "published_at": "2026-10-12",
+      "source_title": "杭州浙工新村：居民“自主更新”的旧改探索",
+      "publisher": "杭州政协网转载新华社",
+      "url": "https://www.hzzx.gov.cn/cshz/content/2026-10/12/content_9334536.htm",
+      "metrics": [
+        { "label": "原住户", "value": 548, "unit": "户", "scope": "参与更新的原业主" },
+        { "label": "项目总投资", "value": 560000000, "unit": "元", "scope": "报道中的整体投入，非结算审定价" },
+        { "label": "居民筹资", "value": 499000000, "unit": "元", "scope": "同一报道口径，占总投资89.11%" },
+        { "label": "原面积出资单价", "value": 1350, "unit": "元/㎡", "scope": "原住房面积部分" },
+        { "label": "扩面购买单价", "value": 34520, "unit": "元/㎡", "scope": "新增面积部分" },
+        { "label": "车位购买价", "value": 221000, "unit": "元/个", "scope": "购置车位" }
+      ],
+      "funding_note": "居民自治组织参与方案与出资协商，国企受托实施；分别核对业主出资、政策支持和项目现金流。",
+      "comparison_note": "杭州本地组织与筹资参考；2024年5.3亿元、2026年8月5.6亿元/4.9亿元等旧报道另存，采用时注明版本。居民资产增值不计入实施主体收入。",
+      "related_source": {
+        "title": "全省首个！正式开工！效果图来啦→",
+        "publisher": "拱墅区政府 / 拱墅发布",
+        "published_at": "2023-12-01",
+        "url": "https://www.gongshu.gov.cn/art/2023/12/1/art_1229322176_59077771.html",
+        "note": "原13幢、548户；拆除建筑面积3.97万㎡以上，新建总面积约8.1万㎡（地上5.7万、地下2.4万）。拆除与新建面积分别登记。"
+      }
+    },
+    {
+      "id": "MODE-SH-FENGNAN-20240628",
+      "name": "凤南一村",
+      "city": "上海",
+      "mode": "拆除重建",
+      "reported_stage": "2024年6月报道时启动建设",
+      "published_at": "2024-06-28",
+      "source_title": "凤南一村拆除重建项目启动建设",
+      "publisher": "上海市政府网站 / 解放日报",
+      "url": "https://www.shanghai.gov.cn/nw4411/20240628/e6c15eb4d57b4bbf949489c86701911d.html",
+      "metrics": [
+        { "label": "原住户", "value": 1813, "unit": "户", "scope": "原居民户数" },
+        { "label": "设计户数", "value": 2081, "unit": "户", "scope": "新建设计户数，与原住户口径不同" },
+        { "label": "新建楼栋", "value": 8, "unit": "幢", "scope": "20至26层住宅" }
+      ],
+      "funding_note": "本报道未提供完整出资与结算数据，资金字段不以房价反推。",
+      "comparison_note": "参考工程组织、居住功能和安置规模；上海成本、产权安排及扩容条件须与杭州分别测算。"
+    },
+    {
+      "id": "MODE-SH-PENGYI-20250701",
+      "name": "彭一小区",
+      "city": "上海",
+      "mode": "拆除重建 · 旧住房成套改造",
+      "reported_stage": "2025年6月底开始回搬",
+      "published_at": "2025-07-01",
+      "source_title": "静安彭一小区2110户居民开始陆续回搬",
+      "publisher": "上海市政府网站 / 静安区政府",
+      "url": "https://www.shanghai.gov.cn/nw15343/20250708/5a71cffe715b40a097176469b7066c35.html",
+      "metrics": [
+        { "label": "回搬居民", "value": 2110, "unit": "户", "scope": "彭一小区，不是彭浦四个小区合计4907户" },
+        { "label": "新建楼栋", "value": 17, "unit": "幢", "scope": "彭一小区住宅" },
+        { "label": "养老床位", "value": 172, "unit": "张", "scope": "配套养老设施" }
+      ],
+      "funding_note": "涉及公有租赁住房及房改产权安排，与杭州业主自筹模式的权属、受益主体和资金来源不同。",
+      "comparison_note": "参考分期腾退、回搬和服务设施交付；原报道的社区服务中心及四个小区总量单列，不合并进本案住宅造价。"
+    }
+  ],
+  "method_reference": {
+    "title": "上海市城市更新和住房发展“十五五”规划",
+    "published_at": "2026-08-20",
+    "url": "https://www.shanghai.gov.cn/nw12344/20260820/f584d873f87045148c7eccce1ae637b3.html",
+    "use": "先体检、后改造及多种更新方式的研究参考；不是杭州项目直接适用的审批或表决规则。"
+  }
+}
