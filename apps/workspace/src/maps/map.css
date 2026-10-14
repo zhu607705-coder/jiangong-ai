@@ -351,6 +351,9 @@
 .initial-assessment .assessment-footnote {font-size:11px}
 .map-data-panel {position:absolute;z-index:12;left:112px;top:178px;width:370px;max-height:calc(100dvh - 250px);overflow:auto;border-radius:12px;padding:22px;color:#bccfd7}
 .map-data-panel > header {display:flex;align-items:center;justify-content:space-between}
+.data-panel-header-actions {display:flex;align-items:center;gap:8px;flex-shrink:0}
+.data-panel-header-actions .map-text-button {font-size:14px;padding:8px 10px;border:1px solid #91b8af66;border-radius:8px;background:#183b39;color:#eefaf4;white-space:nowrap}
+@media(max-width:760px){.map-data-panel > header{flex-wrap:wrap;gap:8px}}
 .map-data-panel header small {font:10px ui-monospace,monospace;letter-spacing:1.5px;color:#80aca7}
 .map-data-panel h2 {font-size:22px;font-weight:500;color:#e0eeee;margin:7px 0}
 .map-data-panel h3 {font-size:13px;font-weight:500;color:#b7ddd1;margin:25px 0 10px}

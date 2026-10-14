@@ -19,10 +19,11 @@ import type { MapScreenTarget, MapScreenAnalysis, MapScreenBounds, MapScreenCell
 const DEFAULT_CENTER: [number, number] = [120.153576, 30.287459]
 const classifyCells=(cells:MapScreenCell[],theme:MapScreenTheme,profile:MapScreenProfile)=>classifySnapshotCells(cells,theme,new Date().toISOString(),profile)
 const cellWithStudy=(cell:MapScreenCell,result:MapScreenAnalysis|null):MapScreenCell=>({...cell,factors:result?.assessment?.factors,dashboard:result?.decision_support?.dashboard,analysis_available:!!result?.assessment})
-export default function MapWorkspace({ ready, interactionBlocked, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace, onEvidence }: {
+export default function MapWorkspace({ ready, interactionBlocked, project, focusProject, settingsRequest, onOpenProject, onCreateFromPlace, onEvidence, onAskEvidence }: {
   ready: boolean; interactionBlocked: boolean; project: Project | null; focusProject: number; settingsRequest: number;
   onOpenProject: (id?: string) => void; onCreateFromPlace: (place: PlaceSelection, context?: MapScreenContext | null) => void;
   onEvidence?: (refs: string[]) => void;
+  onAskEvidence?: () => void;
 }) {
   const canvas = useRef<HTMLDivElement>(null), map = useRef<AMap.Map | null>(null), sdk = useRef<AmapSdk | null>(null)
   const marker = useRef<AMap.Marker | null>(null), projectOverlays = useRef<any[]>([])
@@ -294,7 +295,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
     }} running={screenRunning} completed={screenProgress}
       cells={screenCells} result={screenResult} error={screenError} enabled={interactive} stale={screenStale}
       onScan={() => void startScreen()} onCancel={() => { screenAbort.current?.abort(); screenVersion.current++; studiesDuringScan.current=null; setScreenRunning(false); setScreenCells(cells => classifyCells(cells,theme,profile).map(c=>c.context?c:{...c,tier:'incomplete'})); setScreenError('已停止。') }} onClear={clearScreen} onCell={chooseCell} onData={() => setDataOpen(true)} />
-    {dataOpen && <DataSourcesPanel onClose={() => setDataOpen(false)} onOpenProject={id => { setDataOpen(false); onOpenProject(id) }} />}
+    {dataOpen && <DataSourcesPanel onClose={() => setDataOpen(false)} onAskEvidence={onAskEvidence} onOpenProject={id => { setDataOpen(false); onOpenProject(id) }} />}
     <div className="atlas-status glass-panel"><i className={interactive ? 'is-live' : ''} />{interactive ? `高德地图 · ${satellite ? '卫星影像' : webgl && camera.pitch > 0 ? '3D 城市' : '2D 浏览'}` : phase === 'loading' ? '地图连接中' : '地图待连接'}</div>
 
     {phase !== 'ready' && <div className="atlas-connection" role={phase === 'error' ? 'alert' : phase === 'loading' ? 'status' : undefined} aria-live={phase === 'loading' ? 'polite' : undefined} aria-hidden={!ready && phase === 'loading'}>

@@ -3,6 +3,7 @@ import type { Fact, MapScreenProfile, Source } from '../../../host/generated/con
 import { api } from '../api'
 import WaitingScene from '../components/WaitingScene'
 import DocumentEvidenceLineage from './DocumentEvidenceLineage'
+import { evidenceFocusKey, type EvidenceFocusLocation } from './evidence-focus'
 import CrossDocumentMeasures from './CrossDocumentMeasures'
 import { buildImportGraph, layoutImportGraph, previewColumnValues, recordForNode,
   type GraphDepth, type GraphNode, type GraphScope, type ImportDocument, type ParsedColumn } from './graph-model'
@@ -19,6 +20,7 @@ type Props = {
   profile?: MapScreenProfile
   asOf?: string
   onEvidence?: (refs: string[]) => void
+  focusLocation?: EvidenceFocusLocation
 }
 
 const labels: Record<GraphNode['kind'], string> = {
@@ -35,7 +37,7 @@ const previewText = (value: unknown, max = 700) => {
   return raw.length > max ? `${raw.slice(0, max)}…` : raw
 }
 
-export default function ImportedDataExplorer({ projectId, projectName, revision, sources, researchSources, facts, profile, asOf, onEvidence }: Props) {
+export default function ImportedDataExplorer({ projectId, projectName, revision, sources, researchSources, facts, profile, asOf, onEvidence, focusLocation }: Props) {
   const requestKey = `${projectId}\u0000${revision}`
   const [documentLoad, setDocumentLoad] = useState<{ key: string; rows: ImportDocument[]; error: string; loading: boolean }>({ key: '', rows: [], error: '', loading: true })
   const [view, setView] = useState<'structure' | 'coverage'>('structure')
@@ -52,6 +54,12 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
   const [zoom, setZoom] = useState(1)
   const canvasRef = useRef<HTMLDivElement>(null)
   const inspectorRef = useRef<HTMLElement>(null)
+  const focusKey = focusLocation ? `${projectId}:${evidenceFocusKey(focusLocation)}` : ''
+
+  useEffect(() => {
+    if (!focusKey) return
+    setView('structure'); setScope('all'); setQuery(''); setManualNode(null); setFocusedColumn(null)
+  }, [focusKey])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -139,7 +147,7 @@ export default function ImportedDataExplorer({ projectId, projectName, revision,
 
   return <section className="import-explorer" aria-label="导入数据关系与分析">
     <CrossDocumentMeasures projectId={projectId} revision={revision} documents={graph.documents} rawDocuments={documents} sources={graph.sources} onEvidence={onEvidence} />
-    <DocumentEvidenceLineage projectId={projectId} revision={revision} documents={graph.documents} sources={sources} onEvidence={onEvidence} />
+    <DocumentEvidenceLineage projectId={projectId} revision={revision} documents={graph.documents} sources={sources} onEvidence={onEvidence} focusLocation={focusLocation} />
     <header className="import-explorer-heading">
       <div><small>DATA ARCHITECTURE / 只读结构</small><h3>{view === 'coverage' ? '初步调研资料覆盖' : '导入数据关系图'}</h3>
         <p>{view === 'coverage' ? '按明确对象和登记维度查看依据、待核线索与未匹配资料；覆盖状态不表示判断通过。' : '项目、来源、解析表与字段按已保存的引用连线；选中节点查看结构和数据质量。'}</p></div>

@@ -26,6 +26,8 @@ import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
 import RagEvidenceSearch from './imports/RagEvidenceSearch';
+import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
+import type { RetrievalHit } from '../../../packages/experience/retrieval';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
@@ -195,6 +197,8 @@ export default function App() {
   const demoSessionActive = !!project && project.id === completeDemoProject;
   const completeDemoActive = demoSessionActive && ['overview', 'compare', 'actions'].includes(tab);
   const [sourceFocus, setSourceFocus] = useState<{ projectId: string; refs: string[] } | null>(null);
+  const [askEvidenceRequest, setAskEvidenceRequest] = useState(0);
+  const [evidenceLocation, setEvidenceLocation] = useState<{ projectId: string; documentId: string; version: string; locator: string; quote: string; token: number } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
     "offline",
@@ -211,8 +215,18 @@ export default function App() {
   const stale =
     !!packet && !!project && packet.context_version !== project.context_version;
   function openEvidence(refs: string[] = []) {
+    setEvidenceLocation(null);
     if (project) setSourceFocus({ projectId: project.id, refs: [...new Set(refs)] });
     setTab('evidence');
+    setDetailsOpen(true);
+  }
+  function locateEvidence(hit: RetrievalHit) {
+    if (!project) return;
+    setSourceFocus(null);
+    setEvidenceLocation(previous => ({ projectId: project.id, documentId: hit.document_id,
+      version: hit.version, locator: hit.locator, quote: hit.text, token: (previous?.token || 0) + 1 }));
+    setTab('evidence');
+    setDetailsOpen(true);
   }
   useEffect(() => {
     if (tab !== 'evidence' || !focusedSourceIds.length) return;
@@ -500,6 +514,7 @@ export default function App() {
       }
       onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
       mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+        onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
         onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
@@ -1102,10 +1117,11 @@ export default function App() {
                 TXT、Markdown、CSV、PDF、Word、Excel（≤ 10
                 MB）。真实材料使用独立真实项目。
               </p>
-              <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} onEvidence={openEvidence} />
+              <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} onEvidence={openEvidence} onLocateHit={locateEvidence} />
               <ImportedDataExplorer
                 projectId={project.id}
                 projectName={project.name}
+                focusLocation={evidenceLocation?.projectId === project.id ? evidenceLocation : undefined}
                 revision={project.context_version}
                 sources={project.input.sources}
                 researchSources={packet?.sources || []}
@@ -1341,6 +1357,12 @@ export default function App() {
           )}
         </>
       )}
+      {!loading && !loadingTarget && !createOpen && createPortal(<FloatingEvidenceSearch
+        projectId={project?.id} projectName={project?.name} projects={projects}
+        openRequest={askEvidenceRequest} onEvidence={openEvidence} onLocateHit={locateEvidence}
+        onOpenMaterials={() => openEvidence()}
+        onSelectProject={id => action(async () => { await loadProject(id); })}
+      />, document.body)}
       {createOpen && createPortal(
         <div className="modal-backdrop" onClick={() => setCreateOpen(false)}>
           <section

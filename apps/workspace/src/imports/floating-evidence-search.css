@@ -1,0 +1,44 @@
+.floating-evidence-search { position: fixed; right: 24px; bottom: 32px; z-index: 60; color: #21463f; font-size: 15px; }
+.floating-evidence-trigger { display: flex; align-items: center; gap: 10px; border: 1px solid #2a6e5f; border-radius: 28px; padding: 13px 20px; margin-left: auto; font: inherit; font-weight: 650; color: #fff; background: #286e5f; cursor: pointer; box-shadow: 0 5px 18px #213e3330; }
+.floating-evidence-trigger > span { font-size: 24px; font-weight: 400; line-height: 1; }
+.floating-evidence-trigger:hover { background: #1f5d51; }
+.floating-evidence-panel { width: min(460px, calc(100vw - 48px)); max-height: min(760px, calc(100dvh - 115px)); display: flex; flex-direction: column; margin-bottom: 14px; background: #fff; border: 1px solid #c8ded3; border-radius: 18px; box-shadow: 0 18px 64px #24443830; overflow: hidden; }
+.floating-evidence-panel > header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 19px 22px 15px; background: #f0f7f3; border-bottom: 1px solid #dbe8e0; }
+.floating-evidence-panel h2 { font-size: 21px; margin: 0; line-height: 1.4; }
+.floating-evidence-panel > header p { margin: 5px 0 0; color: #537369; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.floating-evidence-panel > header > button { border: 0; background: transparent; color: #476e61; width: 32px; height: 32px; flex: 0 0 32px; font: inherit; font-size: 27px; cursor: pointer; border-radius: 8px; }
+.floating-evidence-panel > header > button:hover { background: #dcebe2; }
+.floating-evidence-body { padding: 18px 22px 20px; overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
+.floating-evidence-description { margin: 0 0 15px; font-size: 15px; line-height: 1.65; color: #4c6d61; }
+.floating-evidence-project { display: grid; gap: 6px; margin-bottom: 16px; font-size: 14px; }
+.floating-evidence-project select, .floating-evidence-choose select { width: 100%; min-width: 0; border: 1px solid #c4d7cb; border-radius: 8px; padding: 9px 10px; background: #fff; color: #325c4c; font: inherit; font-size: 15px; }
+.floating-evidence-panel > footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 13px 22px; border-top: 1px solid #dbe8e0; background: #fbfdfb; }
+.floating-evidence-panel > footer > button, .floating-evidence-choose button { font: inherit; font-size: 15px; border: 0; background: transparent; color: #246c58; padding: 3px 0; cursor: pointer; }
+.floating-evidence-panel > footer > span { font-size: 14px; color: #5d746a; }
+.floating-evidence-choose h3 { margin: 0; font-size: 19px; }
+.floating-evidence-choose p { font-size: 15px; line-height: 1.7; margin: 10px 0 18px; }
+.floating-evidence-choose label { display: grid; gap: 8px; font-size: 15px; }
+.floating-evidence-search button:focus-visible, .floating-evidence-search select:focus-visible, .floating-evidence-search textarea:focus-visible, .floating-evidence-search input:focus-visible { outline: 3px solid #3e9f7d; outline-offset: 2px; }
+.rag-evidence-search.is-floating { margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; min-width: 0; }
+.rag-evidence-search.is-floating textarea { font-size: 16px; min-height: 95px; line-height: 1.6; }
+.rag-evidence-search.is-floating label { font-size: 15px; gap: 7px; }
+.rag-evidence-search.is-floating .rag-search-filters { grid-template-columns: minmax(0, 1fr); gap: 11px; }
+.rag-evidence-search.is-floating .rag-floating-filters { margin-top: 12px; font-size: 14px; }
+.rag-evidence-search.is-floating .rag-floating-filters > summary { cursor: pointer; color: #53786a; }
+.rag-evidence-search.is-floating .rag-search-submit { flex-direction: column; align-items: stretch; gap: 13px; margin-top: 15px; }
+.rag-evidence-search.is-floating .rag-search-submit > label { font-size: 14px; display: flex; }
+.rag-evidence-search.is-floating .rag-search-submit input[type="checkbox"] { width: 17px; height: 17px; flex: 0 0 auto; }
+.rag-evidence-search.is-floating .rag-search-submit > button { width: 100%; padding: 11px 16px; font-size: 16px; }
+.rag-evidence-search.is-floating .rag-search-results { margin-top: 20px; }
+.rag-evidence-search.is-floating .rag-floating-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+.rag-evidence-search.is-floating .rag-floating-examples > button { padding: 5px 10px; font-size: 14px; border-radius: 16px; background: #f6faf7; }
+.rag-evidence-search.is-floating .rag-search-results article { padding: 15px; margin: 12px 0; }
+.rag-evidence-search.is-floating .rag-search-results article > header { flex-direction: column; align-items: flex-start; gap: 8px; }
+.rag-evidence-search.is-floating .rag-search-results h4 { font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+.rag-evidence-search.is-floating .rag-search-results p { font-size: 14px !important; line-height: 1.65; }
+.rag-evidence-search.is-floating .rag-search-results blockquote { font-size: 15px; line-height: 1.75; padding: 11px 12px; margin: 11px 0; max-height: none; }
+.rag-evidence-search.is-floating .rag-search-results details blockquote { max-height: 290px; overflow-y: auto; }
+.rag-evidence-search.is-floating .rag-hit-actions { gap: 9px; }
+.rag-evidence-search.is-floating .rag-hit-actions button { font-size: 15px; padding: 8px 11px; }
+.rag-evidence-search.is-floating .rag-hit-actions a { font-size: 14px; }
+@media (max-width: 600px) { .floating-evidence-search { right: 12px; bottom: 48px; } .floating-evidence-panel { width: calc(100vw - 24px); max-height: calc(100dvh - 140px); margin-bottom: 10px; border-radius: 14px; } .floating-evidence-panel > header { padding: 16px; } .floating-evidence-body { padding: 16px; } .floating-evidence-panel > footer { padding: 12px 16px; } .floating-evidence-trigger { padding: 12px 17px; } }

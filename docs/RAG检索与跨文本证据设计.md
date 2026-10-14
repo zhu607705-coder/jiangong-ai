@@ -4,6 +4,8 @@
 
 本次把资料整理、跨文本举措定位和原文检索接入现有工作台。用户可以围绕一项举措查看不同文件中的提议、实际决策、实施和结果，也可以导出 Markdown、JSON，保留逐段原文、未引用的上下文、来源版本和审核状态。检索先检查项目权限、材料版本、来源类别与时点，再复用现有 Jieba/BM25 能力排序。自动研判继续使用已审核案例与规则匹配、DSH Agent 和逐项引用校验；本次原文浏览接口尚未自动接入原文问答生成。
 
+“直接问资料”悬浮入口在地图信息库和项目工作区均可使用，信息库标题也提供打开按钮。用户选择已授权项目或归档资料库，以自然语言输入问题，查看有出处的原文命中。点击结果后进入项目资料与证据页，按文档、版本、定位和摘录选中对应片段；版本变化或定位不匹配时显示核对提示。悬浮窗和完整资料页复用同一检索服务，关闭或切换项目时取消旧请求。
+
 ## 1. 服务整个系统的检索对象
 
 RAG（检索增强生成）在本系统中提供可追溯依据，服务前置模式判定、业务六维、市场收益、方案版本和专项调查。它负责找到材料和解释适用条件；工程量核算、月度运营计算和神经网络造价预测各自保持独立输入与计算流程。
@@ -100,9 +102,11 @@ flowchart TD
 
 ## 5. 真实材料例：四幢252户与留博楼
 
-现有公开原件《浙大求是社区推进二次供水改造》登记日期为2023年8月18日，解析定位 `line:22` 记载改造范围为29、30、31、48幢，共252户，并记载留博楼因当时泵房位置问题未纳入。`line:24` 记录设计方案与排除原因公示、供水合同签订及后续拟进场施工。这一链条支持“当时范围、排除原因及进场准备”的核查；要判断2026年的实际完成与使用情况，需取得对应四幢的施工、验收、接管与运行记录，留博楼单列核查。
+《浙大求是社区推进二次供水改造》于2023年8月18日报道，求是村二次供水拟改范围为29、30、31、48幢，共252户。留博楼因泵房位于居民楼正下方、不符合规范要求而未纳入。报道时项目处于方案公示与进场准备阶段。材料拆分以四幢和252户表示该项工程范围，以留博楼及其泵房位置问题表示排除条件，以公示与拟进场表示报道阶段，三类信息分别保留原件依据。
 
-可引用对象为 `DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa`，当前材料版本为 `98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc`。下列是接口真实命中中的字段投影，展示来源与草稿字段的区别，不表示新的审核结论：
+查询“二次供水涉及哪些楼栋和户数、哪些楼栋被排除”时，系统从原件返回工程范围和排除原因；查询“当时到了哪个阶段”时，返回方案公示与进场准备的记录。研判当前完成情况与运营效果，则需取得四幢对应的施工、验收、接管和运行材料，按各幢更新实施与结果字段；留博楼单列核查现状及后续方案。调查任务据此明确对象、所需材料、待补字段和影响方案。
+
+可引用对象为 `DOC-8b4a8090-e0b0-49c6-9127-b5a9606cd1fa`，当前材料版本为 `98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc`。下列字段投影保留原件身份、版本和当前草稿标注，供后续索引读取：
 
 ```json
 {
@@ -117,9 +121,9 @@ flowchart TD
 }
 ```
 
-原文中的四幢与252户可以逐字回读，当前提取字段仍为草稿，部分对象映射和阶段需要复核。不要把 `objects` 中的一项标识理解为原文全部范围，更不能把252户用作整个社区的总户数。类似“2023年将进场”的措辞需要按计划阶段登记，不以检索命中推成现在已经改造完成。
+当前提取字段为草稿，对象映射和阶段经复核后更新。查询工程范围时回读原件中的四幢与252户；查询当前完成情况时使用新增施工、验收与接管材料，分别保存历史计划与实际结果。
 
-同名AI研究报告可以通过 `include_ai: true`、`source_kind: "ai_draft"` 单独浏览，作为回找原件的线索。它与公开原件保留不同文档身份，重复转述不增加独立印证数量。查询加 `as_of: "2020-01-01"` 的真实接口核验未返回该2023年材料，项目输入保持不变，事实写入为0。
+同名AI研究报告可以通过 `include_ai: true`、`source_kind: "ai_draft"` 单独浏览，作为回找原件的线索；它与公开原件保留各自文档身份和来源类别。
 
 ## 6. 验证与后续评价
 
@@ -144,6 +148,6 @@ flowchart TD
 - Markdown/JSON导出及跨文本举措：[rag-export.ts](../packages/experience/rag-export.ts)、[lineage.ts](../packages/experience/lineage.ts)。
 - 版本、来源、日期、同条引用筛选及措辞扩展：[retrieval.ts](../packages/experience/retrieval.ts)。
 - 项目所有者与请求校验、既有能力桥接：[rag-retrieval.ts](../apps/host/rag-retrieval.ts)；分词与BM25：[analysis.py](../services/capabilities/analysis.py)。
-- 用户界面：[CrossDocumentMeasures.tsx](../apps/workspace/src/imports/CrossDocumentMeasures.tsx)、[RagEvidenceSearch.tsx](../apps/workspace/src/imports/RagEvidenceSearch.tsx)。
+- 用户界面：[CrossDocumentMeasures.tsx](../apps/workspace/src/imports/CrossDocumentMeasures.tsx)、[RagEvidenceSearch.tsx](../apps/workspace/src/imports/RagEvidenceSearch.tsx)、[FloatingEvidenceSearch.tsx](../apps/workspace/src/imports/FloatingEvidenceSearch.tsx)；精准定位：[evidence-focus.ts](../apps/workspace/src/imports/evidence-focus.ts)。
 - 自动研判原入口：[service.ts](../packages/experience/service.ts)、[knowledge.ts](../runtime/workflows/knowledge.ts)、[knowledge-agent.ts](../runtime/workflows/knowledge-agent.ts)。
 - 真实接口示例：[rag-workspace-live.json](../research/test_results/rag-workspace-live.json)；公开原件来源：[浙大求是社区推进二次供水改造](https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml)。

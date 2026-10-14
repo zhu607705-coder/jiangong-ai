@@ -305,6 +305,21 @@
       "isolation": "No model training, real fact/observation/followup writes, new parser/search client or runtime",
       "license": "local domain code; existing upstream attribution retained"
     },
+    "floating_evidence_and_report_20261014": {
+      "reuse": [
+        "RagEvidenceSearch and existing /projects/:id/knowledge/retrieve owner-gated BM25 service",
+        "App project navigation and ImportedDataExplorer parsed documents",
+        "DocumentEvidenceLineage chunks and same-version literal source spans",
+        "existing XeLaTeX source and report QA"
+      ],
+      "new_logic": [
+        "non-modal floating question entry and information-library shortcut",
+        "project-scoped cancellation and source result navigation",
+        "one-shot document/version/locator/quote focus with explicit mismatch notice"
+      ],
+      "isolation": "No new search client, parser, scheduler or model generation; no project fact writes",
+      "license": "local UI adaptation; existing upstream attribution retained"
+    },
     "cost_neural_and_rag_20261014": {
       "reuse": [
         "NumPy installed via existing pandas",

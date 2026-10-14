@@ -1,5 +1,5 @@
 {
-  "pages": 31,
+  "pages": 30,
   "input_workbooks": [
     {
       "name": "规则库和专家补充清单(1).xlsx",
@@ -29,9 +29,8 @@
     "criteria_tests": 5
   },
   "current_validation_logs": [
-    "research/test_results/neural-rag-verify.log",
-    "research/test_results/rag-workspace-live.json",
-    "research/test_results/neural-rag-download-readback.json"
+    "research/test_results/scientific-methods-python.log",
+    "research/test_results/scientific-methods-vitest.log"
   ],
   "latex_warnings": 0,
   "contacts": [
@@ -44,9 +43,19 @@
     "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-07.png",
     "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-08.png",
     "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-09.png",
-    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-10.png",
-    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-11.png"
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\render\\contact-10.png"
   ],
-  "visual_review": "passed new model and RAG sections, pages22-26; prior unchanged pages reuse reviewed renders",
-  "sha256": "27eff0b42c3156743494ed380f3a64f8171bdf340715a917e35362a4a3e00224"
+  "visual_review": {
+    "status": "passed",
+    "pages": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "notes": "Case scope/date/stage rewritten, teacher-question section removed, tables and references render without clipping."
+  },
+  "sha256": "2362185afb7fc171efa207d9800e9422562212306c7c2a8067c9d369191767cb"
 }
