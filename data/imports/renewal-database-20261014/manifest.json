@@ -1,0 +1,94 @@
+{
+  "schema_version": "renewal-database-update-import/1",
+  "imported_at": "2026-10-14T08:30:24.664Z",
+  "project_id": "P-CASE-RULE-LIBRARY-20261008",
+  "project_name": "旧改案例与规则资料库 · 公开来源",
+  "original_uploads": [
+    {
+      "id": "DOC-19065d52-3704-4773-a1e0-0785440f68e2",
+      "file_name": "老旧小区改造数据库_独立核验与修正报告_20261014.txt",
+      "status": "extracted",
+      "sha256": "db00157da69a7e2ad628c36b036d61973425aad7cc1886559233cd0454dce350"
+    },
+    {
+      "id": "DOC-0eeeae1f-39ab-411b-9193-cfa75d3a0d9a",
+      "file_name": "老旧小区改造历史工程数据库_浙沪粤_补全版_20261014.xlsx",
+      "status": "extracted",
+      "sha256": "dde57099ebed2189184868885e831946e9a408387ea57a90960f2f68a6ba0106",
+      "online_rows_are_preview_only": true
+    }
+  ],
+  "full_row_derivatives": [
+    {
+      "id": "DOC-c7d3ad26-e021-455b-b3a8-c3aa067ba4d8",
+      "file_name": "用户补全数据_1277工程_完整检索材料_20261014.md",
+      "sha256": "a767108f63ea3487c1e1e4597c3d32086a299c66a8ba27f9580e3d54b32e592e",
+      "characters": 4413476,
+      "parsed_status": "extracted"
+    }
+  ],
+  "stats": {
+    "records": 1277,
+    "tables": [
+      {
+        "sheet": "历史工程总表",
+        "rows": 1277,
+        "full_rows_saved": 1277
+      },
+      {
+        "sheet": "补录证据",
+        "rows": 1399,
+        "full_rows_saved": 1399
+      },
+      {
+        "sheet": "核验未通过",
+        "rows": 45,
+        "full_rows_saved": 45
+      },
+      {
+        "sheet": "来源证据",
+        "rows": 4118,
+        "full_rows_saved": 4118
+      },
+      {
+        "sheet": "剔除清单",
+        "rows": 575,
+        "full_rows_saved": 575
+      }
+    ],
+    "amount_available": {
+      "tender_budget": 694,
+      "tender_ceiling": 194,
+      "winning_bid": 831,
+      "contract_price": 1146,
+      "settlement": 0
+    },
+    "building_area_available": 281,
+    "province_counts": {
+      "浙江省": 1181,
+      "上海市": 50,
+      "广东省": 46
+    },
+    "declared_verification_status_counts": {
+      "已通过回源核验": 608,
+      "未记载": 669
+    }
+  },
+  "full_authorized_rows_preserved": true,
+  "datasets": {
+    "history_records": "D:\\建工ai\\data\\imports\\renewal-database-20261014\\history-records.json",
+    "full_parsed": "D:\\建工ai\\data\\imports\\renewal-database-20261014\\workbook-parsed-full.json",
+    "complete_markdown": "D:\\建工ai\\data\\imports\\renewal-database-20261014\\complete-workbook.md",
+    "report": "D:\\建工ai\\data\\imports\\renewal-database-20261014\\correction-report.json"
+  },
+  "component_visibility": [
+    "资料与证据：两原件及完整行派生MD",
+    "导入数据关系：原工作簿5表及行/字段预览",
+    "RAG导出：完整行派生MD所有原文行与原件sheet/row定位"
+  ],
+  "review_status": "unreviewed",
+  "primary_source_verification_performed": false,
+  "official_global_cost_library_changed": false,
+  "production_weights_changed": false,
+  "original_files_unchanged": true
+}

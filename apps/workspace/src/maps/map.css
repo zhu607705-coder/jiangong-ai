@@ -88,7 +88,7 @@
 .atlas-marker { position: relative; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #78e8d026; border: 1px solid #a4ffef88; box-shadow: 0 0 20px #6be4c749; }
 .atlas-marker-core { height: 10px; width: 10px; border: 2px solid #edfff9; border-radius: 50%; background: #5bd7b8; }
 .atlas-marker-label { position: absolute; bottom: 47px; left: 50%; transform: translateX(-50%); max-width: 220px; color: #dcfff7; border: 1px solid #8ed8c366; background: #11242bee; box-shadow: 0 7px 24px #0004; border-radius: 6px; padding: 6px 11px; white-space: nowrap; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
-.atlas-layer-control { position: absolute; left: 112px; bottom: 84px; z-index: 5; }
+.atlas-layer-control { position: absolute; left: 112px; bottom: 144px; z-index: 5; }
 .atlas-layer-toggle { color: #c2d5dd; padding: 13px 16px; border-radius: 10px; font-size: 12px; gap: 9px; }
 .atlas-layer-toggle span { margin-left: 22px; color: #74919f; font-size: 10px; }
 .atlas-layer-toggle.active { border-color: #85d4c25b; }
@@ -282,7 +282,7 @@
   .atlas-view:has(.atlas-inspector.is-expanded) .atlas-navigation { display: none; }
   .atlas-navigation button { width: 31px; height: 33px; }
   .atlas-navigation button:first-child { height: 40px; }
-  .atlas-layer-control { left: 78px; bottom: 35px; }
+  .atlas-layer-control { left: 78px; bottom: 132px; }
   .atlas-layer-toggle { padding: 10px 12px; font-size: 11px; border-radius: 8px; }
   .atlas-layer-toggle span { margin-left: 10px; }
   .atlas-layer-panel { width: min(272px, calc(100vw - 92px)); }
@@ -462,7 +462,7 @@
  .map-shell .atlas-inspector {top:auto;left:62px;right:8px;bottom:38px;width:auto;max-height:54vh;padding:18px}
  .map-shell .atlas-inspector h2 {font-size:20px}
  .map-shell .atlas-navigation {right:10px;bottom:100px}
- .map-shell .atlas-layer-control {left:70px;bottom:60px}
+ .map-shell .atlas-layer-control {left:70px;bottom:132px}
  .map-shell .area-selection-controls {z-index:30}
  .ai-disclaimer {left:64px;max-width:calc(100vw - 74px);font-size:12px;bottom:8px;z-index:30}
 }
