@@ -1,0 +1,26 @@
+{
+  "schema_version": "video-knowledge-demo-v1",
+  "project_name": "知识沉淀 · 合成流程演示",
+  "measure_key": "pipe_network",
+  "measure_name": "二次供水改造",
+  "as_of": "2026-10-14",
+  "observation_date": "2026-10-01",
+  "review_note": "合成流程模拟审核，用于功能视频，不代表专业或真实项目批准。",
+  "boundary": "以下楼栋、金额、住户、实施和结果均为人为构造的合成示例，只供独立合成项目的功能流程演示，不对应真实小区。",
+  "cases": [
+    { "id": "case-1", "building": "1号楼", "amount_wan": 40, "households": 40, "pipe_m": 120, "duration_days": 28, "feedback_before": 12, "feedback_after": 3, "approve": true },
+    { "id": "case-2", "building": "2号楼", "amount_wan": 42, "households": 42, "pipe_m": 126, "duration_days": 30, "feedback_before": 14, "feedback_after": 4, "approve": true },
+    { "id": "case-3", "building": "3号楼", "amount_wan": 39, "households": 38, "pipe_m": 114, "duration_days": 27, "feedback_before": 10, "feedback_after": 2, "approve": true },
+    { "id": "case-4", "building": "4号楼", "amount_wan": 55, "households": 52, "pipe_m": 180, "duration_days": 42, "feedback_before": 18, "feedback_after": 5, "approve": false }
+  ],
+  "policy": {
+    "note": "合成流程演示假设：三项因素仅用于展示距离计算，不是工程适用性、专业批准或真实经验权重。",
+    "min_coverage": 1,
+    "max_distance": 0.25,
+    "definitions": [
+      { "key": "amount_contract", "label": "合同金额", "value_type": "number", "role": "key", "weight": 0.4, "unit": "万元", "scale": 20 },
+      { "key": "benefited_households", "label": "受益户数", "value_type": "number", "role": "key", "weight": 0.3, "unit": "户", "scale": 20 },
+      { "key": "pipe_length", "label": "更新管线长度", "value_type": "number", "role": "key", "weight": 0.3, "unit": "米", "scale": 100 }
+    ]
+  }
+}

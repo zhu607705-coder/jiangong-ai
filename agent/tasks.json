@@ -1322,6 +1322,28 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/floating-evidence-report-verification.json"
+    },
+    {
+      "id": "T53",
+      "depends_on": [
+        "T52"
+      ],
+      "goal": "完整功能演示视频、两分钟以内短版及20261014补全数据库导入",
+      "status": "completed_full_and_short_video_and_database",
+      "expected_artifacts": [
+        "research/test_results/full-feature-video-verification.json"
+      ],
+      "definition_of_done": "真实浏览器功能录像、中文解说与字幕、完整及短版可播放；两原件完整入库与1277工程可筛选定位导出；仅必要构建、读回和视频解码。",
+      "write_scope": [
+        "apps/workspace/",
+        "scripts/",
+        "data/",
+        "docs/",
+        "research/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/full-feature-video-verification.json"
     }
   ]
 }

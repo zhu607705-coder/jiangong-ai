@@ -1877,5 +1877,137 @@
     },
     "unresolved_questions": [],
     "next_runnable_task": "Run required PR checks and merge the authorized reviewed revision."
+  },
+  "full_feature_video_and_database_20261014": {
+    "as_of": "2026-10-14",
+    "status": "completed_full_and_short_video_and_database",
+    "video": {
+      "path": "D:\\建工ai\\output\\video\\full-feature-20261014\\rendered\\老旧小区改造工作台_全功能演示.mp4",
+      "sha256": "48696c048dd058d7dc0f8e59086766edb226bc9c347581c1edbb88733c53edbe",
+      "seconds": 667.921333,
+      "chapters": 18,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "checks": {
+        "video_h264": true,
+        "resolution_1920x1080": true,
+        "video_yuv420p": true,
+        "video_30fps": true,
+        "aac_48khz": true,
+        "chapter_count": true,
+        "chapter_titles": true,
+        "chapter_intervals": true,
+        "duration_matches": true,
+        "failed_segments_excluded": true,
+        "full_decode": true,
+        "audio_non_silent_and_not_clipped": true
+      },
+      "visual_review": "reviewed_chapter_contact_sheet_and_cost_operations_frames",
+      "speech_pronunciation_review": "not_manually_listened"
+    },
+    "database": {
+      "manifest": "data/imports/renewal-database-20261014/manifest.json",
+      "records": 1277,
+      "provinces": {
+        "浙江省": 1181,
+        "上海市": 50,
+        "广东省": 46
+      },
+      "amount_available": {
+        "tender_budget": 694,
+        "tender_ceiling": 194,
+        "winning_bid": 831,
+        "contract_price": 1146,
+        "settlement": 0
+      },
+      "original_uploads": [
+        {
+          "id": "DOC-19065d52-3704-4773-a1e0-0785440f68e2",
+          "file_name": "老旧小区改造数据库_独立核验与修正报告_20261014.txt",
+          "status": "extracted",
+          "sha256": "db00157da69a7e2ad628c36b036d61973425aad7cc1886559233cd0454dce350"
+        },
+        {
+          "id": "DOC-0eeeae1f-39ab-411b-9193-cfa75d3a0d9a",
+          "file_name": "老旧小区改造历史工程数据库_浙沪粤_补全版_20261014.xlsx",
+          "status": "extracted",
+          "sha256": "dde57099ebed2189184868885e831946e9a408387ea57a90960f2f68a6ba0106",
+          "online_rows_are_preview_only": true
+        }
+      ],
+      "complete_markdown": [
+        {
+          "id": "DOC-c7d3ad26-e021-455b-b3a8-c3aa067ba4d8",
+          "file_name": "用户补全数据_1277工程_完整检索材料_20261014.md",
+          "sha256": "a767108f63ea3487c1e1e4597c3d32086a299c66a8ba27f9580e3d54b32e592e",
+          "characters": 4413476,
+          "parsed_status": "extracted"
+        }
+      ],
+      "ui": "研判总览 → 历史改造工程造价库 → 用户补全数据 · 2026-10-14",
+      "source_materials_ui": "旧改案例与规则资料库 · 公开来源 → 资料与证据",
+      "original_rows": 7414,
+      "review_status": "unreviewed",
+      "original_files_unchanged": true
+    },
+    "validation": {
+      "build": "output/video/full-feature-20261014/imported-database-build.log",
+      "build_exit_code": 0,
+      "ui_readback": "output/video/full-feature-20261014/数据库导入效果.png",
+      "extra_regression_runs": 0
+    },
+    "changed_files": [
+      "apps/workspace/src/components/ImportedRenewalDatabase.tsx",
+      "apps/workspace/src/components/ImportedRenewalDatabase.css",
+      "apps/workspace/src/components/ConstructionCostLibrary.tsx",
+      "apps/workspace/src/maps/map.css",
+      "scripts/assemble-feature-video.py",
+      "scripts/prepare-feature-video.py",
+      "scripts/cua-feature-video-recorder.mjs",
+      "scripts/synthesize-feature-narration.ps1",
+      "scripts/seed-video-knowledge-demo.ts",
+      "scripts/import-renewal-database-update.ts",
+      "data/imports/renewal-database-20261014/history-records.json",
+      "data/imports/renewal-database-20261014/correction-report.json",
+      "data/imports/renewal-database-20261014/manifest.json",
+      "data/imports/renewal-database-20261014/README.md",
+      "data/templates/full-feature-video-scenes.json",
+      "data/templates/video-knowledge-demo.json",
+      "docs/功能演示视频脚本.md",
+      "scripts/create-short-feature-video.py"
+    ],
+    "model_calls": 0,
+    "production_model_weights_changed": false,
+    "real_project_fact_approvals": 0,
+    "synthetic_review_project": "SYN-VIDEO-KNOWLEDGE-4e16d325-0559-4876-8934-b204da073dd4",
+    "next_runnable_task": "已交付完整与两分钟以内短版视频；新数据库可直接筛选、定位和导出。",
+    "short_video": {
+      "path": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\老旧小区改造工作台_2分钟内精华版.mp4",
+      "seconds": 102.021354,
+      "bytes": 5134252,
+      "sha256": "5f7b498eb450a8033278527eda72f953137907a67bd31d6e03745ab900e92477",
+      "passed": true,
+      "checks": {
+        "duration_under_120": true,
+        "format_h264_aac_1080p": true,
+        "complete_decode": true,
+        "visual_samples": [
+          {
+            "time_seconds": 5.0,
+            "file": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\preview-1.jpg"
+          },
+          {
+            "time_seconds": 14.0,
+            "file": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\preview-2.jpg"
+          },
+          {
+            "time_seconds": 68.0,
+            "file": "D:\\建工ai\\output\\video\\full-feature-20261014\\short\\preview-3.jpg"
+          }
+        ]
+      }
+    }
   }
 }
