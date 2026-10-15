@@ -1662,6 +1662,29 @@
       ],
       "definition_of_done": "目标项目实际部署、真实模型生成保存读回及页面六维证据/推理切换有证据，原失败轮与资料保留，授权合并完成。",
       "evidence_log": "research/test_results/user-round-map-workflow-20261015.json"
+    },
+    {
+      "id": "T-QIUSHI-MANUAL-DEMO-20261015",
+      "depends_on": [],
+      "goal": "优先保证求是村演示入口稳定，供人员手动交互，不自动点击、播放或推进。",
+      "status": "completed",
+      "write_scope": [
+        "apps/host/qiushi-demo.ts",
+        "apps/host/server.ts",
+        "packages/retrofit/qiushi-demo.ts",
+        "packages/retrofit/strategy.ts",
+        "data/demos/qiushi-validated-replay.json",
+        "apps/workspace/src/App.tsx",
+        "apps/workspace/src/components/StrategyOverview.tsx",
+        "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+        "apps/workspace/src/qiushi-demo-replay.css",
+        "tests/contracts/qiushi-demo-replay.test.ts",
+        "tests/contracts/public-decision-entry.test.ts"
+      ],
+      "definition_of_done": "独立固定公开资料和已校验真实模型输出，完整六维与分项、手动界面可进入；无自动模型生成；服务器部署读回及首屏无报错，原项目与失败轮保持。",
+      "evidence_log": "research/test_results/qiushi-stable-demo-campus-readback-20261015.json",
+      "deployment_commit": "d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf",
+      "verification": "host3/3, frontend32/32, isolated build0, campus exact readback, overview0alerts; no automated live UI walkthrough per user instruction"
     }
   ]
 }

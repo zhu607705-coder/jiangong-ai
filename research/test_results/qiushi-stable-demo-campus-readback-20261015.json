@@ -1,0 +1,102 @@
+{
+  "deployment_commit": "d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf",
+  "checked_at": "2026-10-15T15:18:38.779433+00:00",
+  "url": "http://10.70.223.113",
+  "http_methods": [
+    "GET"
+  ],
+  "provider_calls_in_this_acceptance": 0,
+  "bundle_sha256": "32c245dad319f5f9e33652351c88521caaf54ace06ed76148c0b5b3c48100d33",
+  "checks": {
+    "campus_collaboration_unchanged": true,
+    "demo_input_deep_equals_committed_bundle": true,
+    "independent_fixed_project": true,
+    "saved_packet_exactly_matches_bundle_except_documented_publication": true,
+    "completed_original_model_replay": true,
+    "replay_provenance_exact": true,
+    "failed_original_round_not_relabelled": true,
+    "source_raw_packet_sha_preserved": true,
+    "source_raw_structured_sha_preserved": true,
+    "exact_31_public_body_sources": true,
+    "packet_and_input_sources_exact_body": true,
+    "six_unique_reasoning_dimensions": true,
+    "both_paths_have_concrete_packages": true,
+    "no_nonexistent_parent_comparison": true,
+    "original_calls_and_workflow_preserved": true,
+    "no_uploaded_document_fabricated": true,
+    "no_new_model_research_round_fabricated": true,
+    "evidence_pipeline_31_real_sources": true,
+    "original_input_and_version_unchanged": true,
+    "all_original_failed_rounds_sha_unchanged": true,
+    "origin_source_round_remains_failed": true
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/session",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/DEMO-QIUSHI-20261015",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/DEMO-QIUSHI-20261015/renewal-strategy?demo=false",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/DEMO-QIUSHI-20261015/documents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/DEMO-QIUSHI-20261015/research-rounds",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/DEMO-QIUSHI-20261015/knowledge/pipeline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-e83ed15d-1739-46df-b1cb-dc3111afa399",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-e83ed15d-1739-46df-b1cb-dc3111afa399/research-rounds",
+      "status": 200
+    }
+  ],
+  "read_only_guard": {
+    "verification": "source_code_and_existing_contract_tests_only",
+    "http_write_probe": "not_performed",
+    "expected_write_rejection": "DEMO_REPLAY_READ_ONLY"
+  },
+  "status": "get_readback_verified",
+  "demo_id": "DEMO-QIUSHI-20261015",
+  "source_count": 31,
+  "model_calls_preserved": 15,
+  "original_failed_rounds_preserved": 6,
+  "packet_sha256_without_publication": "8869d9c43a41124fef049878389aaeb405ebe1a1ed16972b090a21e4c5898124",
+  "publication": {
+    "kind": "saved_snapshot",
+    "is_current": false,
+    "current_input_hash": "1bb45e27079338cabde805e0d4ed139ceebc69ed2e3f38605414c069888d384a",
+    "saved_at": "2026-10-15T15:04:47.382Z"
+  },
+  "reasoning_dimension_keys": [
+    "demand",
+    "supply",
+    "adaptation",
+    "implementation",
+    "operations",
+    "resources"
+  ],
+  "package_count": 5,
+  "original_input_sha256": "032cb6b920b5bf98d3e6eb4e7b9027755f4622144f320bd44af7893274f51cad"
+}

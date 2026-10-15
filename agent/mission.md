@@ -1,5 +1,9 @@
 # 项目任务
 
+## 2026-10-15 当前交付：求是村手动交互演示
+
+使用 `DEMO-QIUSHI-20261015` 独立固定公开资料与已校验真实模型输出，供使用者手动操作。已部署 d5a2fba，含31份原文、5个分项和完整六维推理；不运行自动点击、播放或流程推进。原项目保留实时研究入口，原资料和历史失败轮不改。读取接口与首屏已实测，证据见 `research/test_results/qiushi-stable-demo-campus-readback-20261015.json`。实时重新生成中尚未实施的模型侧引文绑定另列状态，不与演示回放混称。
+
 ## 2026-10-15 界面结构与原生研判更新
 
 最新页面归属见 `docs/界面结构与页面归属.md`：全局为 `map/projects/knowledge`；项目成功形成有效研判后为 `overview/evidence/assessment/scenarios/actions/results` 六个工作页；此前仅展示总览、资料与条件、改造研判，空结果深链回到研判。资料分 `files/profile/context`，研判分 `direction/current/cases`，方案分 `compare/detail`；单方案包含 `content/funding/operations/sensitivity`，任务分 `current/history`，成果分 `reports/history`。旧 `view=context` 进入 `evidence/context`，旧 `view=compare` 进入 `results/history`，保留其项目经验和版本变化含义。
