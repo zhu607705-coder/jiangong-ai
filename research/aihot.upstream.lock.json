@@ -43,7 +43,7 @@
     },
     {
       "path": "packages/intelligence/domain.ts",
-      "sha256": "0ad7409d68555db43b0bf9846420ddb2f739859339cd033aa7a5bff5eafaed68"
+      "sha256": "5bec0c9da51bcfc4eb771fc15e8c3a556cbf7aae685179de7387bbcef42b5cf5"
     },
     {
       "path": "packages/intelligence/pipeline.ts",
@@ -105,6 +105,18 @@
   ],
   "verification": "research/test_results/aihot-core.json",
   "local_patch_reviews": [
+    {
+      "reviewed_at": "2026-10-15",
+      "path": "packages/intelligence/domain.ts",
+      "previous_review_commit": "41d94edfe423d42bdb60c4f2610d78d4668300b2",
+      "changed_commit": "6ee45ebacfaf0f99b58e854ea9b0d106dde8c37d",
+      "previous_sha256": "0ad7409d68555db43b0bf9846420ddb2f739859339cd033aa7a5bff5eafaed68",
+      "sha256": "5bec0c9da51bcfc4eb771fc15e8c3a556cbf7aae685179de7387bbcef42b5cf5",
+      "scope": "Reviewed the sole change from the parent snapshot: queryScore parameter type Material becomes Pick<Material, 'title' | 'text'>. The function body is byte-identical after replacing this annotation; runtime scoring, upstream algorithm and license bytes are unchanged.",
+      "checks": [
+        "node --import tsx scripts/upstream-aihot-audit.ts"
+      ]
+    },
     {
       "reviewed_at": "2026-10-11",
       "path": "packages/intelligence/pipeline.ts",
