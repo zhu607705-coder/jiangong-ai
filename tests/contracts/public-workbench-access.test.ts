@@ -10,6 +10,8 @@ import MapWorkspace from '../../apps/workspace/src/maps/MapWorkspace'
 import IntelligencePanel from '../../apps/workspace/src/intelligence/IntelligencePanel'
 import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
 import type { Project } from '../../apps/workspace/src/api'
+import type { ResearchRound } from '../../packages/retrofit/research-rounds'
+import type { StrategyPacket } from '../../packages/retrofit/strategy'
 
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 const response = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } })
@@ -63,23 +65,39 @@ test('selecting an unstudied map point as a viewer does not create a screening c
   } finally { await act(async () => root.unmount()) }
 })
 
-test('the local administrator starts strategy generation explicitly after a cache miss', async () => {
+test('a writable local session starts one research run only after explicitly answering the internal-material question', async () => {
   const { container, root, dom } = setup()
-  const project = { id: 'local-project', context_version: 0, name: '本机项目', input: fixture } as unknown as Project
+  const project = { id: 'local-project', context_version: 0, name: '本机项目', input: { ...fixture, project_id: 'local-project' } } as unknown as Project
   const screening = projectRenewalModeInput(project.input)
-  const transport = vi.fn((url: string, init: RequestInit) => Promise.resolve(response(url.includes('renewal-strategy')
-    ? init.method === 'POST' ? { strategy: null, model_calls: [], sources: [], error: null } : null
-    : { screening, decision: null })))
+  const base = '/api/projects/local-project/research-rounds'
+  const draft: ResearchRound = { id: 'explicit-first-round', project_id: project.id, round_number: 1, context_version: 0, input_hash: 'first-round-input', parent_round_id: null, parent_input_hash: null, parent_context_version: null, first_round_id: 'explicit-first-round', first_input_hash: 'first-round-input', first_context_version: 0, origin: 'generated', status: 'draft', material_intake: 'none', allow_internal_ai: false, materials: [], missing_materials: [], result: null, error: null, created_at: '2026-10-15T08:00:00Z', updated_at: '2026-10-15T08:00:00Z' }
+  const failed: StrategyPacket = { project_id: project.id, context_version: 0, input_hash: draft.input_hash, created_at: draft.created_at, synthetic: project.input.synthetic, status: 'failed', strategy: null, sources: [], decision: null, model_calls: [], research: null, error: 'MODEL_NOT_CONFIGURED' }
+  const finished: ResearchRound = { ...draft, status: 'failed', result: failed, error: '测试响应：本轮未生成方案' }
+  let attempted = false
+  const transport = vi.fn((url: string, init: RequestInit) => {
+    if (url.includes('renewal-strategy')) return Promise.resolve(response(null))
+    if (url === base) return Promise.resolve(response(init.method === 'POST' ? { round: draft } : { rounds: attempted ? [finished] : [], materials: [], baseline_candidate: null }))
+    if (url === `${base}/${draft.id}/run`) { attempted = true; return Promise.resolve(response({ round: finished, result: failed })) }
+    if (url.endsWith('/renewal-mode')) return Promise.resolve(response({ screening, decision: null }))
+    throw new Error(`Unexpected request ${init.method} ${url}`)
+  })
   vi.stubGlobal('fetch', transport)
   try {
     await act(async () => root.render(createElement(StrategyOverview, { project, demoActive: false, onEvidence: vi.fn(), onInvestigate: vi.fn() })))
-    await vi.waitFor(() => expect(container.textContent).toContain('尚未保存本项目的整体更新方案'))
+    await vi.waitFor(() => expect(container.querySelector('.research-intake h3')?.textContent).toContain('有没有企业或项目内部资料'))
     expect(transport.mock.calls.filter(([, init]) => init.method === 'POST')).toHaveLength(0)
-    const start=[...container.querySelectorAll('button')].find(button=>button.textContent?.includes('开始研究'))!
+    expect(transport.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true)
+    const start = [...container.querySelectorAll<HTMLButtonElement>('.research-intake-actions button')].find(button => button.textContent === '暂不补充，先用现有公开资料开展首轮研判')!
+    await vi.waitFor(() => expect(start.disabled).toBe(false))
     await act(async()=>start.dispatchEvent(new dom.window.Event('click',{bubbles:true})))
-    await vi.waitFor(() => expect(transport.mock.calls.filter(([, init]) => init.method === 'POST')).toHaveLength(1))
-    expect(container.querySelector('.strategy-top button')?.hasAttribute('disabled')).toBe(false)
-    expect(transport.mock.calls.find(([, init]) => init.method === 'POST')?.[0]).toContain('/projects/local-project/renewal-strategy')
+    await vi.waitFor(() => expect(transport.mock.calls.filter(([url, init]) => url === `${base}/${draft.id}/run` && init.method === 'POST')).toHaveLength(1))
+    const writes = transport.mock.calls.filter(([, init]) => init.method === 'POST')
+    expect(writes.map(([url]) => url)).toEqual([base, `${base}/${draft.id}/run`])
+    expect(JSON.parse(String(writes[0][1].body))).toEqual({ expected_context_version: 0, material_intake: 'none', document_ids: [], allow_internal_ai: false })
+    expect(JSON.parse(String(writes[1][1].body))).toEqual({})
+    expect(new Headers(writes[1][1].headers).get('X-Requested-With')).toBe('haizhizi')
+    expect(transport.mock.calls.filter(([url]) => url.includes('renewal-strategy')).every(([, init]) => init.method === 'GET')).toBe(true)
+    await vi.waitFor(() => expect(container.querySelector(`[data-round-id="${draft.id}"]`)?.textContent).toContain('本轮未完成'))
   } finally { await act(async () => root.unmount()) }
 })
 
