@@ -1,0 +1,412 @@
+{
+  "checked_at": "2026-10-15T13:48:11.227296+08:00",
+  "url": "http://10.70.223.113",
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "progress": [
+    {
+      "stage": "sources",
+      "status": "running",
+      "message": "读取本项目原文与已保存的改造条件。"
+    },
+    {
+      "stage": "sources",
+      "status": "completed",
+      "message": "已读取 13 份对象依据，准备核对公开案例。",
+      "source_count": 13
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮：先查本项目的关键缺项。",
+      "source_count": 13,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮正在检索并整理公开来源。",
+      "source_count": 13,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 0 份公开来源，继续核对正文。",
+      "source_count": 13,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 0 份公开来源，继续核对正文。",
+      "source_count": 13,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 14,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 2 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 2 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 2 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 2 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮正在检索并整理公开来源。",
+      "source_count": 16,
+      "query_count": 0
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 1/2 轮已完成，累计保留 14 份可用资料。",
+      "source_count": 14,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮：补查杭州与上海的费用及实施案例。",
+      "source_count": 14,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮正在检索并整理公开来源。",
+      "source_count": 14,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 0 份公开来源，继续核对正文。",
+      "source_count": 14,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 0 份公开来源，继续核对正文。",
+      "source_count": 14,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 0 份公开来源，继续核对正文。",
+      "source_count": 14,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 1 份公开来源，继续核对正文。",
+      "source_count": 15,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 2 份公开来源，继续核对正文。",
+      "source_count": 16,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 17,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 17,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 3 份公开来源，继续核对正文。",
+      "source_count": 17,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 4 份公开来源，继续核对正文。",
+      "source_count": 18,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 5 份公开来源，继续核对正文。",
+      "source_count": 19,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 5 份公开来源，继续核对正文。",
+      "source_count": 19,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 5 份公开来源，继续核对正文。",
+      "source_count": 19,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 6 份公开来源，继续核对正文。",
+      "source_count": 20,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已取得 7 份公开来源，继续核对正文。",
+      "source_count": 21,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮正在检索并整理公开来源。",
+      "source_count": 21,
+      "query_count": 6
+    },
+    {
+      "stage": "research",
+      "status": "running",
+      "message": "第 2/2 轮已完成，累计保留 21 份可用资料。",
+      "source_count": 21,
+      "query_count": 12
+    },
+    {
+      "stage": "research",
+      "status": "completed",
+      "message": "已整理 24 份对象依据与对标资料。",
+      "source_count": 24,
+      "query_count": 12
+    },
+    {
+      "stage": "model",
+      "status": "running",
+      "message": "正在根据原文研究综合整治与原拆原建两条路径。",
+      "source_count": 24
+    },
+    {
+      "stage": "model",
+      "status": "completed",
+      "message": "已取得模型方案，开始核对原文引用与适用条件。"
+    },
+    {
+      "stage": "validation",
+      "status": "running",
+      "message": "核对两条路径、六个维度、引文原句与限制条件。"
+    },
+    {
+      "stage": "validation",
+      "status": "completed",
+      "message": "方案完整性、引用与已登记条件核验通过。"
+    },
+    {
+      "stage": "result",
+      "status": "completed",
+      "message": "整体更新方案已生成，正在保存本次结果。",
+      "source_count": 24
+    }
+  ],
+  "context_version": 14,
+  "http_status": 200,
+  "elapsed_seconds": 102.89,
+  "result": {
+    "status": "completed",
+    "created_at": "2026-10-15T05:48:10.002Z",
+    "error": null,
+    "diagnostic": null
+  },
+  "source_count": 24,
+  "model_calls": [
+    {
+      "stage": "renewal_strategy",
+      "error_code": null,
+      "duration_ms": 28392,
+      "input_tokens": 26621,
+      "output_tokens": 5374,
+      "finish_reason": "tool-calls",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash"
+    }
+  ],
+  "generated_strategy": true,
+  "headline": "浙大求是村更新研判：以综合整治为研究基线，重点推进屋面外墙、二次供水与加梯补建；原拆原建仅作逐栋鉴定后的比选路径"
+}

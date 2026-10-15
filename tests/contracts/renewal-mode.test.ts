@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { projectRenewalModeInput, modeAssessment, renewalQuestions, evaluateRenewalModeGate } from '../../packages/retrofit/renewal-mode'
+import { projectRenewalModeInput, modeAssessment, renewalQuestions, evaluateRenewalModeGate, renewalCommunitySources } from '../../packages/retrofit/renewal-mode'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
 import { evaluateDecision, decisionRequestBody } from '../../services/capabilities/decision-model'
 import type { DecisionChoice, ProjectInput, Fact } from '../../apps/host/generated/contracts'
@@ -88,6 +88,59 @@ describe('mode-first screening', () => {
     const input=projectRenewalModeInput(p)
     expect(input.evidence).toHaveLength(1)
     expect(input.conditions.find(row=>row.kind==='demolition_permitted')?.state).toBe('unknown')
+  })
+  it('admits object-scoped titles and exact object references without inserting titles into the quoted body', () => {
+    const p = project(), source = p.sources[0]
+    const attachment = { ...source, id: 'ATTACHMENT', title: '测试求是村某单元加装电梯征求意见附件', evidence_scope: 'object' as const,
+      untrusted_text: '估算总投资约54万元，建设资金来自市区补助及自筹。' }
+    const service = { ...source, id: 'SERVICE', title: '康养生活综合体启用', object_refs: ['project:MODE-TEST'],
+      untrusted_text: '邻里中心正式揭牌启用，包含阅读与长者休闲服务。' }
+    p.sources.push(attachment, service, { ...attachment, id: 'BACKGROUND', evidence_scope: 'background', untrusted_text: '这里是其他地区的参考包件。' })
+    const input = projectRenewalModeInput(p)
+    expect(input.evidence.find(row => row.source_id === attachment.id)?.quote).toBe(attachment.untrusted_text)
+    expect(input.evidence.find(row => row.source_id === attachment.id)?.title).toBe(attachment.title)
+    expect(input.evidence.find(row => row.source_id === service.id)?.quote).toBe(service.untrusted_text)
+    expect(input.evidence.some(row => row.source_id === 'BACKGROUND')).toBe(false)
+    expect(input.conditions.every(row => row.state === 'unknown')).toBe(true)
+  })
+  it('deduplicates content mirrors before the ten-source cap and prioritizes distinct object topics', () => {
+    const p = project(), source = p.sources[0]
+    const repeated = source.untrusted_text!
+    p.sources = Array.from({ length: 14 }, (_, index) => ({ ...source, id: `MIRROR-${index}`, url: `https://example.test/mirror-${index}`, untrusted_text: index % 2 ? repeated.replaceAll('。', '。\n') : repeated }))
+    const original = { ...source, id: 'OBJECT-ORIGINAL', evidence_scope: 'object' as const, url: 'https://example.test/original' }
+    const cost = { ...source, id: 'NEW-COST', evidence_scope: 'object' as const, title: '测试求是村专项预算草案', untrusted_text: '专项投资估算与居民自筹资金在草案中分别列明。' }
+    const service = { ...source, id: 'NEW-SERVICE', object_refs: ['project:MODE-TEST'], title: '邻里中心开放记录', untrusted_text: '长者休闲、文化活动与托育服务已在邻里中心设置。' }
+    p.sources.push(original, cost, service)
+    const input = projectRenewalModeInput(p)
+    expect(input.evidence.map(row => row.source_id)).toEqual(expect.arrayContaining([original.id, cost.id, service.id]))
+    expect(input.evidence.filter(row => row.quote.replace(/\s+/g, '') === repeated.replace(/\s+/g, ''))).toHaveLength(1)
+    expect(input.evidence).toHaveLength(3)
+    expect(input.evidence.length).toBeLessThanOrEqual(10)
+    p.sources.push({ ...original, id: 'UPDATED-VERSION', published_at: '2026-09-02', untrusted_text: repeated + '后续版本补充了专项资金和维护责任记录。' })
+    expect(projectRenewalModeInput(p).evidence.some(row => row.source_id === 'UPDATED-VERSION')).toBe(true)
+  })
+  it('keeps title-admitted excerpts behind the existing visibility, date and synthetic gates', () => {
+    const p = project(), source = { ...p.sources[0], evidence_scope: 'object' as const, untrusted_text: '专项草案中列有投资估算。' }
+    p.sources = [source, { ...source, id: 'PRIVATE-TITLE', visibility: 'internal', data_class: 'internal' },
+      { ...source, id: 'FUTURE-TITLE', published_at: '2026-10-10' }, { ...source, id: 'SYNTHETIC-TITLE', synthetic: true },
+      { ...source, id: 'METADATA-TITLE', content_status: 'metadata_only' }]
+    expect(projectRenewalModeInput(p).evidence.map(row => row.source_id)).toEqual([source.id])
+  })
+  it('retains community services only as area references after a literal object-affiliation statement, not isolated co-occurrence', () => {
+    const p = project(), source = p.sources[0]
+    p.sources[0] = { ...source, untrusted_text: '甲社区测试求是村已开展分项更新。' }
+    const area = { ...source, id: 'AREA-SERVICE', title: '邻里中心启用', evidence_scope: 'area' as const, object_refs: ['community:甲社区'], untrusted_text: '邻里中心正式揭牌启用，提供康养与文化活动。' }
+    p.sources.push(area, { ...area, id: 'AREA-UNRELATED', object_refs: ['community:乙社区'] },
+      { ...area, id: 'AREA-FUTURE', published_at: '2026-10-10' }, { ...area, id: 'AREA-PRIVATE', visibility: 'internal', data_class: 'internal' })
+    const input = projectRenewalModeInput(p)
+    expect(input.evidence.some(row => row.source_id === area.id)).toBe(false)
+    expect(renewalCommunitySources(p, input.evidence).map(row => row.id)).toEqual([area.id])
+    expect(renewalCommunitySources(p, input.evidence)[0].untrusted_text).toBe(area.untrusted_text)
+    p.sources[0].untrusted_text = '甲社区有服务设施，另有测试求是村的供水资料。'
+    expect(renewalCommunitySources(p, projectRenewalModeInput(p).evidence)).toEqual([])
+    p.sources[0].title = '甲社区测试求是村项目标题'
+    p.sources[0].untrusted_text = '测试求是村开展供水更新。'
+    expect(renewalCommunitySources(p, projectRenewalModeInput(p).evidence)).toEqual([])
   })
   it('retains separate counts, regions, investment and owner contributions in references', () => {
     const input = projectRenewalModeInput(project()), z = input.cases.find(row => row.name === '浙工新村')!

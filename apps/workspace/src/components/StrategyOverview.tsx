@@ -72,7 +72,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   const sourceCount=busy?progressSourceCount:result?.sources.length??progressSourceCount
   const latestCall=result?.model_calls.at(-1)
   const heading=(guardedRebuild?(modeGate.direction==='investigate'?'先核实结构处置与拆建前置条件':'本项目以综合整治为研究基线'):strategy?.headline)||(busy?(activity==='read'?'正在读取已保存方案':'正在研究整体更新方案'):error?(error.startsWith('研究连接')?'整体更新方案生成未完成':'更新方案读取失败'):stopped?'本轮研究已停止':failed?'整体更新方案生成失败':unavailable?'整体更新方案暂不可生成':'尚未保存本项目的整体更新方案')
-  const summaryParts=(strategy?.summary||'').replace(/\bunknown\b/g,'尚无对应记录').split(/(?<=[。！？])/).filter(Boolean)
+  const summaryParts=(strategy?.summary||'').replace(/\bunknown\b/g,'尚无对应记录').replace(/\bpreferred_mode\s*(?:取|为|=|[:：])\s*(comprehensive|rebuild|compare|investigate)\b/g,(_,mode:keyof typeof MODE_LABELS)=>`研究方式为${MODE_LABELS[mode]}`).split(/(?<=[。！？])/).filter(Boolean)
   const leadSummary=summaryParts.find(text=>/(建议|方向|主路径|主线|策略|比选)/.test(text))||summaryParts[0]||''
   const restSummary=summaryParts.filter(text=>text!==leadSummary).join('')
   const demo=useMemo(()=>buildStrategyDemo(path),[path])
@@ -87,7 +87,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
     <header className="strategy-top"><div><span>研判总览 / 方案总览</span><h2>整体更新策略</h2><p>{demoActive?'杭州样本社区 · 完整模拟':'基于本项目资料与公开案例'} · 综合整治与原拆原建对照</p></div><button className="secondary" disabled={busy||!canWrite} title={!canWrite?'管理员登录后可生成或更新方案':undefined} onClick={()=>void research(true,false)}><IconRefresh size={17}/>{canWrite&&!result?'开始研究':'重新检索与研判'}</button></header>
     {tab==='plan'&&<>
       <article ref={summaryAnchor} className={`strategy-summary${failed&&!busy?' is-failed':''}`}><div className="strategy-model-label">{strategy?(error?'上次已保存的整体更新方案':'已保存的整体更新方案'):busy?'方案研究 · 进行中':failed?'方案研究 · 生成失败':unavailable?'方案研究 · 暂不可生成':'方案研究 · 尚未生成'}{demoActive?' · 模拟':''}</div><h3>{heading}</h3><p>{guardedRebuild?modeGate.summary:leadSummary||(failureMessage&&!busy?'本轮尚未形成完整的方案总览，可继续查看项目原文、已取得资料和历史记录。':'先比较保留建筑的综合整治与原拆原建，再核对结构、规划、居民、资金和安置条件。')}</p>{!guardedRebuild&&restSummary&&<details className="strategy-summary-more"><summary>展开现况与完整说明</summary><p>{restSummary}</p></details>}
-        {strategy&&<div className="strategy-direction-label">{guardedRebuild?(modeGate.direction==='investigate'?'当前方向：先核实处置与拆建条件':'当前研究基线：综合整治'):`优先研究：${MODE_LABELS[strategy.preferred_mode]}`}</div>}
+        {strategy&&<div className="strategy-direction-label">{demoActive?`模拟研究方向：${MODE_LABELS[strategy.preferred_mode]}`:`当前研究方向：${MODE_LABELS[modeGate.direction]}`}</div>}
         {latestCall&&<div className="strategy-model-record">{latestCall.returned_model?`实际模型：${latestCall.returned_model}`:`请求模型：${latestCall.requested_model} · 未取得返回模型标识`} · {result!.model_calls.length} 条调用记录 · 最近一次耗时 {(latestCall.duration_ms/1000).toLocaleString('zh-CN',{maximumFractionDigits:1})} 秒 · {new Date(result!.created_at).toLocaleString('zh-CN')}</div>}
       </article>
     </>}

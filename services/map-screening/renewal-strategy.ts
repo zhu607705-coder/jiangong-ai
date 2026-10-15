@@ -6,7 +6,7 @@ import { collectSelectedEvidence } from '../capabilities/research'
 import { config } from '../../apps/host/config'
 import { buildCompleteCommunityDemo, buildStrategyDemo, renderCompleteDemoReport } from '../../packages/retrofit/complete-demo'
 import { STRATEGY_POLICY, validateStrategy, strategyFailure, strategyPromptSources, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
-import { projectRenewalModeInput, evaluateRenewalModeGate } from '../../packages/retrofit/renewal-mode'
+import { projectRenewalModeInput, evaluateRenewalModeGate, renewalCommunitySources } from '../../packages/retrofit/renewal-mode'
 import { renewalResearchRounds } from '../../packages/retrofit/renewal-research-plan'
 import { evaluateDecision } from '../capabilities/decision-model'
 
@@ -28,6 +28,11 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
   try {
     let sources: StrategySource[] = screening.evidence.map(source => ({ id: source.source_id, title: source.title, text: source.quote,
       url: source.url, published_at: source.published_at, role: 'current', locator: source.locator }))
+    for (const source of renewalCommunitySources(project, screening.evidence)) {
+      const community = source.object_refs!.filter(ref => ref.startsWith('community:')).map(ref => ref.slice('community:'.length)).join('、')
+      sources.push({ id: source.id, title: `${source.title}（社区范围背景：${community}；本小区覆盖与运营效果待核）`, text: source.untrusted_text!,
+        url: source.url || null, published_at: source.published_at || null, role: 'reference', locator: source.locator || `text:chars:1-${source.untrusted_text!.length}` })
+    }
     base.sources = sources
     progress({ stage: 'sources', status: 'completed', message: `已读取 ${sources.length} 份对象依据，准备核对公开案例。`, source_count: sources.length })
     live = await LiveSession.open('MAP-AI-STRATEGY-' + randomUUID(), budget)
@@ -84,7 +89,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     const promptSources = strategyPromptSources(sources), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
     const prompt = `为${synthetic ? '杭州样本社区的完整模拟演示' : project.scope.name}生成展开大屏首屏的方案总览。先给整体研究方向和概括，再写综合整治、原拆原建两条具体路径，最后给六维现况、改后目标及下一步调查。必须两条paths、六条dimensions且key不得重复。preferred_mode是初步优先研究模式，可为compare；不是施工或拆迁批准。Qwen分流可参考，但其低置信度不能机械替代你的独立研究。headline必须说明具体的更新策略与空间或工程重点；headline、summary不写source ID，引用统一放在rationale和evidence_refs；不要用“先补资料”“待判断”代替方案标题。可以提出有条件、可调整的研究方案，将工程批准所需缺项放在requirements和next_checks，不必等资料全部补齐才给出方案。
 当前拆建门控：${gate.summary}。仅当rebuild_allowed=true时preferred_mode才可为rebuild；必要性或可行性未通过时，以综合整治为研究基线；结构明确不可修但拆建条件未齐时为compare。不得以模型观点覆盖这项门控。${JSON.stringify({rebuild_allowed:gate.rebuild_allowed,direction:gate.direction})}
-当前对象原文与对标来源分开。只有role=current可支持本对象现况；reference仅用于提出方法与调查条件。不同文章、同名片区的数字不可拼成一个小区总量。历史供水方案的252户只属于29、30、31、48幢且是2023时点，不证明当前完成；47、54台电梯分别保留报道时点。老年人口比例可能为社区口径，不自动等于小区。原拆原建需逐栋鉴定、权属规划、居民决议、资金安置前提；没有对应专业材料就写调查动作，不能声称已具备。C级或房龄不能独立推出整片拆除。杭州和上海费用分别列，整体总投资与EPC合同额分别列，居民资产增值不算政府或运营方现金。
+当前对象原文与对标来源分开。只有role=current可支持本对象现况；reference仅用于提出方法与调查条件。不同文章、同名片区的数字不可拼成一个小区总量。历史供水方案的252户只属于29、30、31、48幢且是2023时点，不证明当前完成；47、54台电梯分别保留报道时点。老年人口比例可能为社区口径，不自动等于小区。原拆原建需逐栋鉴定、权属规划、居民决议、资金安置前提；没有对应专业材料就写调查动作，不能声称已具备。C级或房龄不能独立推出整片拆除。杭州和上海费用分别列，整体总投资与EPC合同额分别列，居民资产增值不算政府或运营方现金。已知局部金额须按具体对象和阶段列明，草案估算与计划资金来源不等于整体预算、承诺或到账；整体费用未覆盖不等于没有任何公开金额。
 ${synthetic ? '所有现况数字仅来自SIM-STRATEGY-BASE，明确完整模拟。可推演两条路径的差异，模拟整治工程1584万元不是拆建预算；拆建金额须另做全口径估算，不能造出已知投资额。' : '不编造人口、工程费用、改后真实成效。current_level是当前材料适配等级，缺少依据写unknown；comprehensive_level/rebuild_level是有前提的方案目标等级。low/medium/high对应研究展示1/3/5级，unknown留空，不是政府评分或满足法规概率。'}
 rationale写3到5个具体判断，每条source_id和quote必须为提供文本的连续原句或归档字段；引用不能混合文件。每条举措与六维描述使用evidence_refs。引用不等于支持：必要的限定写进正文。actions给对象、实际动作、先后或实施前提，不复制通用清单。summary不超过400字，各维字段不超过160字。只输出structured_output。
 <untrusted_sources>${JSON.stringify(promptSources)}</untrusted_sources>

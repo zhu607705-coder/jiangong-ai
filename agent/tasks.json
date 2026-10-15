@@ -1480,6 +1480,30 @@
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/evidence-navigation-server-20261015.json",
       "status": "completed_campus_http_browser_materials_mode_and_progress_verified"
+    },
+    {
+      "id": "T60",
+      "depends_on": [
+        "T59"
+      ],
+      "goal": "修复服务器模型出网、自动重连与实际方案生成",
+      "write_scope": [
+        "scripts/",
+        "docs/",
+        "packages/retrofit/",
+        "services/map-screening/",
+        "apps/workspace/src/components/",
+        "tests/contracts/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "definition_of_done": "回环代理和自动重连已实测；真实模型方案保存并通过引用校验；界面可读，电脑在线依赖明确。",
+      "upstream_verification_required": false,
+      "expected_artifacts": [
+        "research/test_results/server-model-egress-repair-20261015.json"
+      ],
+      "evidence_log": "research/test_results/server-model-egress-repair-20261015.json",
+      "status": "completed_actual_model_and_reconnect_verified"
     }
   ]
 }
