@@ -94,27 +94,60 @@ function conditionRows(facts: Fact[], sources: Source[], objectRef: string | nul
   })
 }
 
+const objectNames = (names: string[]) => [...new Set(names.flatMap(name => [name, ...name.split(/[\s·]+/), name.replace(/^(?:浙江大学|浙大)/, '')]).filter(name => (name.length >= 4 || name.length >= 3 && /(?:村|小区|社区)$/.test(name)) && (!/^[\u4e00-\u9fa5]{2,3}[市区省]$/.test(name) || /(?:小区|社区)$/.test(name))))]
+
+/** Keep community services as area background, using an explicit affiliation in an already-selected object's body. */
+export function renewalCommunitySources(input: ProjectInput, evidence: readonly ModeEvidence[]): Source[] {
+  if (input.synthetic) return []
+  const selected = new Set(evidence.map(row => row.source_id))
+  const bodies = input.sources.filter(source => selected.has(source.id)).map(source => source.untrusted_text || '')
+  const aliases = objectNames([input.scope.name, input.scope.map_anchor?.name || input.scope.name])
+  return input.sources.filter(source => source.evidence_scope === 'area' && readable(source, input.as_of, false) &&
+    source.object_refs?.some(ref => ref.startsWith('community:') && ref.length > 'community:'.length &&
+      aliases.some(alias => bodies.some(body => body.includes(ref.slice('community:'.length) + alias))))).slice(0, 3)
+}
+
 /** Literal object mentions are research evidence, never a structured safety/rights finding. */
-function excerpts(sources: Source[], names: string[], facts: Fact[]): ModeEvidence[] {
+function excerpts(sources: Source[], names: string[], facts: Fact[], objectRef: string | null): ModeEvidence[] {
   const explicit = new Set(facts.filter(f => f.epistemic_status === 'fact').map(f => f.source_id))
-  const namesToFind = [...new Set(names.flatMap(name => [name, ...name.split(/[\s·]+/), name.replace(/^(?:浙江大学|浙大)/, '')]).filter(name => (name.length >= 4 || name.length >= 3 && /(?:村|小区|社区)$/.test(name)) && (!/^[\u4e00-\u9fa5]{2,3}[市区省]$/.test(name) || /(?:小区|社区)$/.test(name))))]
-  const seen = new Set<string>()
-  return sources.flatMap(source => {
+  const namesToFind = objectNames(names)
+  const normalizeText = (text: string) => text.normalize('NFKC').replace(/\s+/g, '')
+  const candidates = sources.flatMap((source, order) => {
+    if (source.evidence_scope === 'area') return []
     const body = source.untrusted_text!
     const index = namesToFind.reduce((first, name) => { const hit = body.indexOf(name); return hit >= 0 && (first < 0 || hit < first) ? hit : first }, -1)
-    if (index < 0 && !explicit.has(source.id)) return []
+    const objectBound = !!objectRef && !!source.object_refs?.includes(objectRef)
+    const titleBound = source.evidence_scope === 'object' && namesToFind.some(name => normalizeText(source.title).includes(normalizeText(name)))
+    if (index < 0 && !explicit.has(source.id) && !objectBound && !titleBound) return []
     const start = Math.max(0, index - 120), end = Math.min(body.length, start + 1800), quote = body.slice(start, end)
-    if (seen.has(quote)) return []
-    seen.add(quote)
-    return [{ source_id: source.id, title: source.title, published_at: source.published_at!, locator: `text:chars:${start + 1}-${end}`, quote, url: source.url || null }]
-  }).slice(0, 10)
+    return [{ evidence: { source_id: source.id, title: source.title, published_at: source.published_at!, locator: `text:chars:${start + 1}-${end}`, quote, url: source.url || null },
+      body: normalizeText(body), quote: normalizeText(quote), priority: objectBound ? 3 : explicit.has(source.id) || titleBound ? 2 : 1, order }]
+  }).sort((a, b) => b.priority - a.priority || a.order - b.order)
+  // Keep the strongest object binding for equivalent mirrors, while retaining
+  // genuinely different excerpts/versions from the same URL.
+  const unique: typeof candidates = []
+  for (const candidate of candidates) {
+    if (unique.some(previous => previous.body === candidate.body || previous.quote === candidate.quote ||
+      previous.evidence.url && previous.evidence.url === candidate.evidence.url && previous.evidence.published_at === candidate.evidence.published_at &&
+      candidate.quote.length >= 48 && previous.quote.includes(candidate.quote))) continue
+    unique.push(candidate)
+  }
+  const topics = [ /费用|投资|造价|预算|合同|补助|自筹|出资|资金/, /邻里|养老|康养|托育|文体|公共服务|运营|维护/,
+    /结构|鉴定|危房|修缮|消防/, /权属|规划|拆建|重建|保护|用地/, /居民|业主|安置|腾退|回搬/, /供水|管线|电梯|停车|充电|雨污|屋面|外墙/ ]
+  const selected: typeof candidates = []
+  for (const topic of topics) {
+    const candidate = unique.find(row => !selected.includes(row) && topic.test(`${row.evidence.title}\n${row.evidence.quote}`))
+    if (candidate) selected.push(candidate)
+  }
+  for (const candidate of unique) if (selected.length < 10 && !selected.includes(candidate)) selected.push(candidate)
+  return selected.map(row => row.evidence)
 }
 
 function base(target: string, objectRef: string | null, asOf: string, synthetic: boolean, sources: Source[], facts: Fact[], projectId: string, names = [target]): RenewalModeInput {
   const current = sources.filter(source => readable(source, asOf, synthetic))
   const referenceAsOf = new Date().toISOString().slice(0, 10)
   return { policy_version: RENEWAL_MODE_POLICY, target, object_ref: objectRef, as_of: asOf, synthetic, reference_as_of: referenceAsOf,
-    conditions: conditionRows(facts, current, objectRef, projectId, asOf), evidence: excerpts(current, names, facts.filter(fact=>!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef}))), standards: MODE_STANDARD,
+    conditions: conditionRows(facts, current, objectRef, projectId, asOf), evidence: excerpts(current, names, facts.filter(fact=>!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef})), objectRef), standards: MODE_STANDARD,
     cases: benchmarks.cases.filter(row => row.published_at <= referenceAsOf), method_reference: benchmarks.method_reference }
 }
 
