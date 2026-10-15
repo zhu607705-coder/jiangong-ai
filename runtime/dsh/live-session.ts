@@ -30,7 +30,7 @@ declare module '@deepseek-ai/dsh-deepseek-llm-api-extensions' {
   }
 }
 
-type LiveCallScope = { stage: string; outputType: string;allowedTools?:readonly string[] }
+type LiveCallScope = { stage: string; outputType: string;allowedTools?:readonly string[];budgetError?:'RUN_MODEL_BUDGET_EXCEEDED'|'RUN_MODEL_STAGE_BUDGET_EXCEEDED' }
 
 /** Contribute through the installed adapter extension seam, without changing other requests. */
 export async function installRenewalStructuredToolChoice(ctx: Context, scope: AsyncLocalStorage<LiveCallScope>) {
@@ -54,8 +54,28 @@ export class LiveSession {
   readonly calls: ModelCall[] = []
   private parent!: AgentHandle
   private modelRequests = 0
+  private modelRequestsByFamily = new Map<string,number>()
   private stageScope = new AsyncLocalStorage<LiveCallScope>()
   private constructor(readonly runId: string, readonly signal: AbortSignal) {}
+
+  /** Count native tool continuations and retries, keeping synthesis capacity reserved. */
+  private reserveModelRequest() {
+    this.signal.throwIfAborted()
+    const scope=this.stageScope.getStore()
+    const fail=(code:NonNullable<LiveCallScope['budgetError']>):never=>{if(scope)scope.budgetError=code;throw new Error(code)}
+    if(this.runId.startsWith('MAP-AI-STRATEGY-')) {
+      const stage=scope?.stage||'',expert=/^renewal_research_expert_(\d+)_(\d+)_(?:building_delivery|cost_value|residents_operations)(?:_(?:format_retry|contract_retry))*$/.exec(stage)
+      const family=/^renewal_research_plan_\d+(?:_(?:format_retry|contract_retry))*$/.test(stage)?'planner'
+        :/^renewal_strategy(?:_(?:quote_repair|format_retry|contract_retry))*$/.test(stage)?'synthesis'
+        :expert?`expert:${expert[1]}:${expert[2]}`:null
+      if(!family)return fail('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+      const familyLimit=family==='planner'?2:4,used=this.modelRequestsByFamily.get(family)||0
+      if(used>=familyLimit||family.startsWith('expert:')&&!this.modelRequestsByFamily.has(family)&&[...this.modelRequestsByFamily.keys()].filter(key=>key.startsWith('expert:')).length>=3)fail('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+      if(this.modelRequests>=18)fail('RUN_MODEL_BUDGET_EXCEEDED')
+      this.modelRequestsByFamily.set(family,used+1)
+    } else if(this.modelRequests>=(this.runId.startsWith('MAP-AI-')?6:20))fail('RUN_MODEL_BUDGET_EXCEEDED')
+    this.modelRequests++
+  }
 
   static async open(runId: string, signal: AbortSignal): Promise<LiveSession> {
     const live = new LiveSession(runId, signal), ctx = live.ctx
@@ -71,8 +91,7 @@ export class LiveSession {
       await ctx.plugin(Subagents, { maxDepth: 1 }); await ctx.plugin(Spawn, { providerName: 'spawn' })
       await ctx.plugin(DeepSeek, { apiKeyEnv: 'DEEPSEEK_API_KEY' })
       ctx.on('llm/stream', async function* (request, next) {
-        const budget=live.runId.startsWith('MAP-AI-STRATEGY-') ? 12 : live.runId.startsWith('MAP-AI-') ? 6 : 20
-        if (++live.modelRequests > budget || live.signal.aborted) throw new Error('RUN_MODEL_BUDGET_EXCEEDED')
+        live.reserveModelRequest()
         const start = Date.now()
         const call: ModelCall = { stage: live.stageScope.getStore()?.stage || 'unknown', requested_model: request.model, returned_model: null, finish_reason: 'missing', input_tokens: 0, output_tokens: 0, duration_ms: 0, session_id: null }
         for await (const chunk of next()) {
@@ -117,7 +136,8 @@ export class LiveSession {
   }
 
   async call<T>(stage: string, prompt: string, outputType: string, allowedTools: string[] = [], candidateIds?: readonly string[], presentationPolicy: ModelPresentationPolicy = {},profile?:RenewalAgentProfile): Promise<{ value: T; sessionId: string }> {
-    return this.stageScope.run({ stage, outputType,allowedTools:[...allowedTools] }, async () => {
+    const scope:LiveCallScope={stage,outputType,allowedTools:[...allowedTools]}
+    return this.stageScope.run(scope, async () => {
     const child = await this.ctx.subagents.start('spawn', { parent: this.parent.agent, signal: this.signal, maxDepth: 1, label: stage,
       persona: persona + '\n' + INVESTMENT_BRIEF_SKILL+(profile?`\n\n角色任务（沿用上述边界）：${profile.role} · sha256 ${profile.sha256}\n${profile.content}`:''), toolFilter: { allow: allowedTools }, outputSchema: modelSchema(outputType, candidateIds, presentationPolicy) as unknown as SubagentStartRequest['outputSchema'],
       // Renewal work packages include object quotes and collection definitions in
@@ -127,6 +147,7 @@ export class LiveSession {
       const outcome = await child.result
       if (outcome.stopReason !== 'completed' || outcome.structured === undefined) {
         const failure = this.calls.filter(call => call.stage === stage).at(-1)
+        if(scope.budgetError)throw new Error(`LIVE_STAGE_FAILED:${stage}:${outcome.stopReason}:${scope.budgetError}`)
         if (outcome.stopReason === 'completed' && outcome.structured === undefined) throw new Error(`LIVE_STAGE_FAILED:${stage}:${outcome.stopReason}:NO_STRUCTURED_OUTPUT`)
         if (failure?.error_code === 'MALFORMED_RESPONSE' && !stage.includes('_format_retry')) {
           await child.dispose()

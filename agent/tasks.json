@@ -1641,6 +1641,27 @@
       "expected_artifacts": [
         "research/test_results/concrete-work-plan-source-metric-review-20261015.json"
       ]
+    },
+    {
+      "id": "T-MAP-DSH-20261015",
+      "depends_on": [],
+      "goal": "恢复真实地图、模式判断首屏与首次研判；接入原生DSH工具、并行、证据上下文压缩、RAG零命中推理及独立六维图。",
+      "status": "in_progress",
+      "write_scope": [
+        "apps/workspace",
+        "apps/host/renewal-mode.ts",
+        "runtime/dsh/live-session.ts",
+        "runtime/workflows/renewal-research.ts",
+        "runtime/agents/renewal",
+        "services/map-screening/renewal-strategy.ts",
+        "packages/contracts",
+        "packages/retrofit/strategy.ts",
+        "tests/contracts",
+        "docs/界面结构与页面归属.md",
+        "docs/DSH并行研判与推理情景.md"
+      ],
+      "definition_of_done": "目标项目实际部署、真实模型生成保存读回及页面六维证据/推理切换有证据，原失败轮与资料保留，授权合并完成。",
+      "evidence_log": "research/test_results/user-round-map-workflow-20261015.json"
     }
   ]
 }

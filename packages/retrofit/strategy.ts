@@ -27,7 +27,7 @@ export type StrategyWorkflowTrace = {
   synthesis_quote_candidate_chars?:number;synthesis_context_chars?:number;synthesis_profile?:{role:string;sha256:string}
 }
 
-export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_OUTPUT_TRUNCATED' | 'MODEL_STRUCTURED_OUTPUT_MISSING' | 'MODEL_SCHEMA_INVALID' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
+export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_OUTPUT_TRUNCATED' | 'MODEL_STRUCTURED_OUTPUT_MISSING' | 'MODEL_SCHEMA_INVALID' | 'MODEL_REQUEST_BUDGET_EXHAUSTED' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
   stage?: string; stop_reason?: string; provider_code?: string }
 export type StrategyProgress = { type: 'progress'; stage: 'sources' | 'research' | 'model' | 'validation' | 'result';
   status: 'running' | 'completed' | 'skipped' | 'failed'; message: string; source_count?: number; query_count?: number; round?: number; round_count?: number;workflow?:StrategyWorkflowProgress }
@@ -41,6 +41,7 @@ const diagnosticMessages: Record<StrategyDiagnostic['code'], string> = {
   MODEL_OUTPUT_TRUNCATED: '模型输出达到本轮长度上限，尚未交付完整的结构化方案。已取得资料保留。',
   MODEL_STRUCTURED_OUTPUT_MISSING: '模型未提交约定的结构化方案，本轮未发布方案。已取得资料保留。',
   MODEL_SCHEMA_INVALID: '模型已提交结构化结果，但字段未通过方案契约校验，本轮未发布方案。',
+  MODEL_REQUEST_BUDGET_EXHAUSTED: '本轮模型调用已达到研究预算上限，尚未形成完整方案。已取得资料和专家分析保留。',
   MODEL_RATE_LIMITED: '模型服务限制了请求频率，本轮方案生成未完成。',
   MODEL_AUTH_FAILED: '模型服务未通过身份验证，本轮方案生成未完成。',
   MODEL_TIMEOUT: '本轮方案研究超时，尚未生成完整方案。',
@@ -58,13 +59,15 @@ export function strategyFailure(error: unknown, calls: readonly ModelCall[], opt
   const message = error instanceof Error ? error.message : ''
   const parsed = /^LIVE_STAGE_FAILED:(renewal_strategy(?:_(?:quote_repair|format_retry|contract_retry))*):(completed|stop|error|aborted|max-tokens|failed)(?::([A-Z_]+))?/.exec(message)
   const call = parsed ? calls.filter(call => call.stage === parsed[1]).at(-1) : undefined
-  const rawCode = call?.error_code || parsed?.[3]
+  const explicitBudget=parsed?.[3]&&/^RUN_MODEL_(?:STAGE_)?BUDGET_EXCEEDED$/.test(parsed[3])?parsed[3]:undefined
+  const rawCode = explicitBudget || call?.error_code || parsed?.[3]
   const provider = rawCode && providerCodes.has(rawCode) ? rawCode : undefined
   let code: StrategyDiagnostic['code'] = 'STRATEGY_FAILED'
   if (message === 'MODEL_NOT_CONFIGURED') code = 'MODEL_NOT_CONFIGURED'
   else if (options.timedOut || provider === 'TIMEOUT') code = 'MODEL_TIMEOUT'
   else if (provider === 'AUTH' || provider === 'INVALID_CREDENTIAL') code = 'MODEL_AUTH_FAILED'
   else if (provider === 'RATE_LIMIT') code = 'MODEL_RATE_LIMITED'
+  else if (/^RUN_MODEL_(?:STAGE_)?BUDGET_EXCEEDED$/.test(rawCode||message)) code = 'MODEL_REQUEST_BUDGET_EXHAUSTED'
   else if (parsed?.[2] === 'max-tokens') code = 'MODEL_OUTPUT_TRUNCATED'
   else if (rawCode === 'NO_STRUCTURED_OUTPUT') code = 'MODEL_STRUCTURED_OUTPUT_MISSING'
   else if (/^LIVE_SCHEMA_FAILED:/.test(message) || error instanceof Error && error.name === 'ContractError') code = 'MODEL_SCHEMA_INVALID'

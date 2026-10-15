@@ -166,3 +166,61 @@ it('injects the allowlisted role Markdown through native persona and retains it 
     expect(request.toolFilter).toEqual({allow:[]})
   }
 })
+
+function budgetFixture(runId='MAP-AI-STRATEGY-isolated-budget',signal=new AbortController().signal) {
+  const Constructor=LiveSession as unknown as new(runId:string,signal:AbortSignal)=>LiveSession
+  const live=new Constructor(runId,signal);contexts.push(live.ctx)
+  const internal=live as unknown as {stageScope:AsyncLocalStorage<CallScope>;reserveModelRequest:()=>void;modelRequests:number}
+  const request=(stage:string)=>internal.stageScope.run({stage,outputType:'RenewalStrategy'},()=>internal.reserveModelRequest())
+  return {live,internal,request}
+}
+it('replays the failed production request sequence while reserving native synthesis and repair calls',()=>{
+  const {request,internal}=budgetFixture()
+  request('renewal_research_plan_1')
+  const building='renewal_research_expert_1_1_building_delivery',cost='renewal_research_expert_1_2_cost_value',residents='renewal_research_expert_1_3_residents_operations'
+  // The real failed run used 1 planner + 3 + 3 + 3 native requests, then
+  // 2 resident format-retry requests. A specialist now owns only four.
+  for(const stage of [building,residents,cost,building,residents,cost,building,cost,residents])request(stage)
+  request(residents+'_format_retry')
+  expect(()=>request(residents+'_format_retry')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+  expect(internal.modelRequests).toBe(11)
+  for(const stage of ['renewal_strategy','renewal_strategy_contract_retry','renewal_strategy_quote_repair','renewal_strategy_quote_repair_contract_retry'])expect(()=>request(stage)).not.toThrow()
+  expect(internal.modelRequests).toBe(15)
+})
+it('admits synthesis after twelve research requests and bounds every retry family without cross-task borrowing',()=>{
+  const {request,internal}=budgetFixture()
+  request('renewal_research_plan_7');request('renewal_research_plan_7_contract_retry')
+  const experts=['renewal_research_expert_7_1_building_delivery','renewal_research_expert_7_2_cost_value','renewal_research_expert_7_3_residents_operations']
+  for(const expert of experts.slice(0,2))for(let i=0;i<4;i++)request(expert)
+  request(experts[2]);request(experts[2])
+  expect(internal.modelRequests).toBe(12)
+  request('renewal_strategy');request('renewal_strategy_contract_retry')
+  request(experts[2]);request(experts[2]+'_format_retry')
+  expect(()=>request(experts[0]+'_format_retry')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+  expect(()=>request('renewal_research_expert_7_4_cost_value')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+  request('renewal_strategy_quote_repair');request('renewal_strategy_quote_repair_contract_retry')
+  expect(internal.modelRequests).toBe(18)
+  expect(()=>request('renewal_strategy')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+})
+it.each([['MAP-AI-unrelated',6],['OTHER-unrelated',20]] as const)('preserves the existing %s request limit', (runId,limit)=>{
+  const {request,internal}=budgetFixture(runId)
+  for(let i=0;i<limit;i++)request('other_stage')
+  expect(()=>request('other_stage')).toThrow('RUN_MODEL_BUDGET_EXCEEDED')
+  expect(internal.modelRequests).toBe(limit)
+})
+it('retains cancellation as cancellation instead of labelling it budget exhaustion',()=>{
+  const controller=new AbortController();controller.abort()
+  const {request,internal}=budgetFixture(undefined,controller.signal)
+  expect(()=>request('renewal_strategy')).toThrowError(expect.objectContaining({name:'AbortError'}))
+  expect(internal.modelRequests).toBe(0)
+})
+it('preserves the local stage-budget code when native DSH wraps the rejected request as UNKNOWN',async()=>{
+  const {live,start,dispose}=callFixture([])
+  Object.assign(live,{runId:'MAP-AI-STRATEGY-budget-wrapper',modelRequests:4,modelRequestsByFamily:new Map([['synthesis',4]])})
+  start.mockImplementation(async()=>{
+    try {(live as unknown as {reserveModelRequest:()=>void}).reserveModelRequest()} catch { /* Native turn/end retains UNKNOWN, not our exception type. */ }
+    return {id:'budget-rejected-child',result:Promise.resolve({stopReason:'error',diagnostic:'UNKNOWN'}),dispose}
+  })
+  await expect(live.call('renewal_strategy_quote_repair','fixture','RenewalStrategy')).rejects.toThrow('LIVE_STAGE_FAILED:renewal_strategy_quote_repair:error:RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+  expect(start).toHaveBeenCalledOnce()
+})
