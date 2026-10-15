@@ -34,6 +34,41 @@ describe('source-grounded DeepSeek decision brief', () => {
     expect(validateStrategy(proposal(), [source])).toBeTruthy()
     expect(() => validateStrategy(proposal(), [source], [], true)).toThrow('STRATEGY_DECISION_BRIEF_REQUIRED')
   })
+  it('repairs unconditional relocation claims including the not-needing-whole-relocation variants', async () => {
+    for(const claim of ['分项更新不需整体搬迁。','居民无需整体搬迁。','居民不用整体搬迁。']) {
+      const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput
+      const input=projectDecisionInput(project)
+      input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+      const mistaken={...proposal(),decision_brief:brief()}
+      mistaken.decision_brief.returns.social=claim
+      mistaken.dimensions.find(row=>row.key==='adaptation')!.comprehensive=claim
+      const repaired=structuredClone(mistaken)
+      repaired.decision_brief.returns.social='按施工组织核实是否搬迁，结合四幢供水安排控制居民影响。'
+      repaired.dimensions.find(row=>row.key==='adaptation')!.comprehensive='假设分栋实施不需整体搬迁，实际安排按施工组织确认。'
+      const call=vi.fn().mockResolvedValueOnce({value:mistaken}).mockResolvedValueOnce({value:repaired})
+      ports.open.mockResolvedValueOnce({calls:[],call,close:vi.fn(async()=>{})})
+      const result=await researchRenewalStrategy(project,0,input,'relocation-fixture',false,new AbortController().signal,null)
+      expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+      expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
+      expect(call.mock.calls[1][1]).toContain('STRATEGY_RELOCATION_ASSUMPTION_REQUIRED')
+      expect(result.strategy?.decision_brief?.returns.social).toBe(repaired.decision_brief.returns.social)
+    }
+  })
+  it('accepts same-sentence relocation assumptions while preserving source quotes and historical before text', async () => {
+    const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput
+    const input=projectDecisionInput(project),quote='原始资料记载居民不需整体搬迁，材料的适用范围仍须核对。'
+    input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote,url:null,published_at:source.published_at!,locator:source.locator}]
+    const value={...proposal(),decision_brief:brief(),round_review:{summary:'按当前原文复核居民影响。',changes:[{topic:'居民安排',before:'居民不需整体搬迁。',after:'按施工组织核实是否搬迁。',reason:'施工组织尚待核实。',evidence_refs:[source.id]}],missing_materials:[]}}
+    value.rationale[0].quote=quote
+    value.decision_brief.returns.social='在分栋实施的假设下，居民不需整体搬迁；具体安排按施工组织确认。'
+    value.dimensions.find(row=>row.key==='adaptation')!.comprehensive='居民无需整体搬迁仅作为待核前提，按施工组织核实后确定。'
+    const call=vi.fn().mockResolvedValue({value})
+    ports.open.mockResolvedValueOnce({calls:[],call,close:vi.fn(async()=>{})})
+    const result=await researchRenewalStrategy(project,0,input,'relocation-conditional-fixture',false,new AbortController().signal,null)
+    expect(result.status).toBe('completed');expect(call).toHaveBeenCalledOnce()
+    expect(result.strategy?.rationale[0].quote).toBe(quote)
+    expect(result.strategy?.round_review?.changes[0].before).toBe('居民不需整体搬迁。')
+  })
   it.each(['renewal', 'investment', 'returns'] as const)('requires known nonempty evidence for %s', section => {
     const value = { ...proposal(), decision_brief: brief() }
     value.decision_brief[section].evidence_refs = []

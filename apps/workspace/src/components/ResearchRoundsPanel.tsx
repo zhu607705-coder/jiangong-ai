@@ -70,13 +70,13 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
         <button disabled={!actionable} onClick={() => void useExisting()}>{baseline ? '暂不补充，查看已完成研判' : candidate ? '暂不补充，保留现有方案作为首轮' : '暂不补充，先用现有公开资料开展首轮研判'}</button>
       </div>
       {candidate && !baseline && <p>已找到本项目完成的方案，可直接采纳为首轮基线；不会重新调用模型。</p>}
-      {uploadOpen && (onUpload ? <InternalMaterialIntake onUpload={onUpload} disabled={busy || loading} synthetic={synthetic}/> : <button disabled={busy} onClick={() => onEvidence([])}>前往“资料与证据”上传文件</button>)}
+      {uploadOpen && (onUpload ? <InternalMaterialIntake onUpload={onUpload} disabled={busy || loading} synthetic={synthetic}/> : <button disabled={busy} onClick={() => onEvidence([])}>前往“逻辑与证据”上传文件</button>)}
       {!!additional.length && <section aria-label="本轮可补充的文件"><h4>{baseline ? '本轮使用的项目文件' : '可纳入首轮的项目文件'}</h4>{baseline && <p>沿用上一轮文件 {inheritedIds.length} 份，补充新增文件 {additional.length} 份；下方完整清单用于本轮分析。</p>}<ul className="research-material-list">{materials.map(material => <li key={`${material.document_id}:${material.version}`}><label><input type="checkbox" aria-label={`纳入${material.file_name}`} checked={selectedIds.includes(material.document_id)} disabled={busy || !readable(material) || inheritedIds.includes(material.document_id)} onChange={event => setSelection({ key: materialKey, ids: event.target.checked ? [...selectedIds, material.document_id] : selectedIds.filter(id => id !== material.document_id) })}/><div><strong>{material.file_name}{baseline ? inheritedIds.includes(material.document_id) ? ' · 沿用上一轮' : ' · 本轮新增' : ''}</strong><span>{materialLabel(material.material_category)} · {material.data_class === 'internal' ? '项目内部' : material.data_class === 'synthetic' ? '模拟资料' : '公开资料'} · 形成日期：{material.source_date ? `${material.source_date}（用户登记）` : '未登记'}</span><span>{readable(material) ? '已解析原文' : material.parse_status === 'ocr_required' ? '扫描页待 OCR，取得可读文本后可纳入' : '尚无可用原文'} · {material.locator}</span></div></label></li>)}</ul>
         {internalSelected && <label className="research-internal-consent"><input type="checkbox" aria-label="同意本轮使用所选项目内部资料进行AI分析" checked={consent} disabled={busy} onChange={event => setConsent(event.target.checked)}/><span>同意将本项目所选内部资料用于本轮 AI 分析。资料继续标记为项目内部，按本次研判范围使用。</span></label>}
         <div className="research-round-actions"><button disabled={!actionable || !selected.length || internalSelected && !consent} onClick={() => void onStart?.({ ...(baseline ? { parent_round_id: baseline.id } : {}), material_intake: 'provided', document_ids: selectedIds, allow_internal_ai: internalSelected && consent })}>{baseline ? `基于首轮＋新增资料开展第 ${nextNumber} 轮研判` : '纳入所选资料，开展首轮研判'}</button></div>
       </section>}
       {baseline && !additional.length && <p>下一轮从补充文件开始。可依据下方缺项上传资料，再明确启动补充研判。</p>}
-      <p>文件保留在本项目资料库，可回到“资料与证据”查看解析原文与来源定位。</p>
+      <p>文件保留在本项目资料库，可回到“逻辑与证据”查看解析原文与来源定位。</p>
     </section>}
     {children}
     {!!ordered.length && <section className="research-rounds" aria-label="研判轮次与变化"><header><span>首轮基线 → 新增资料 → 补充研判</span><h3>每轮结论和变化都保留</h3></header>

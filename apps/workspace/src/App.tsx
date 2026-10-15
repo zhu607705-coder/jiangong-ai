@@ -22,11 +22,11 @@ import {
 import WorkspaceFrame from "./components/WorkspaceFrame";
 import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
-import type { MapScreenContext, KnowledgeQuery } from '../../host/generated/contracts';
+import type { MapScreenContext, KnowledgeQuery, Source } from '../../host/generated/contracts';
 import { DecisionRoute } from './components/DecisionRoute';
 import { WaitingMotif } from './components/WaitingScene';
 import ImportedDataExplorer from './imports/ImportedDataExplorer';
-import EvidenceDecisionMap from './imports/EvidenceDecisionMap';
+import LogicEvidencePanel from './components/LogicEvidencePanel';
 import RagEvidenceSearch from './imports/RagEvidenceSearch';
 import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
 import type { RetrievalHit } from '../../../packages/experience/retrieval';
@@ -38,7 +38,7 @@ import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
 import StrategyOverview, { type StrategyDirectionSelection } from './components/StrategyOverview';
 import InternalMaterialIntake, { type MaterialUploadMetadata } from './components/InternalMaterialIntake';
-import ResearchRoundsPanel from './components/ResearchRoundsPanel';
+import DecisionComparison from './components/DecisionComparison';
 import type { ResearchRoundsResponse } from '../../../packages/retrofit/research-rounds';
 import { MODE_LABELS } from '../../../packages/retrofit/renewal-mode';
 import { currentDirectionText } from './components/strategy-direction-text';
@@ -177,7 +177,7 @@ function RegionView({ project }: { project: Project }) {
   );
 }
 
-function ResearchVersionHistory({ project, onEvidence }: { project: Project; onEvidence: (refs: string[]) => void }) {
+function ResearchVersionHistory({ project, selectedDirection, onEvidence, onSupplement }: { project: Project; selectedDirection: 'comprehensive' | 'rebuild' | null; onEvidence: (refs: string[], sourcePacket?: StrategyPacket) => void; onSupplement: () => void }) {
   const { canWrite } = useWorkbenchAccess();
   const key = `${project.id}:${project.context_version}`;
   const [retry, setRetry] = useState(0);
@@ -195,7 +195,7 @@ function ResearchVersionHistory({ project, onEvidence }: { project: Project; onE
   if (!canWrite) return <p className="research-round-notice">当前公开成果浏览不展示项目内部研判轮次。</p>;
   if (history.key !== key || history.status === 'loading') return <p role="status">正在读取已保存的研判轮次与变化…</p>;
   if (history.status === 'failed' || !history.data) return <p role="alert">研判轮次暂不可读。<button className="secondary" onClick={() => setRetry(value => value + 1)}>重新读取</button></p>;
-  return <ResearchRoundsPanel key={key} projectName={project.name} revision={project.context_version} rounds={history.data.rounds} synthetic={project.input.synthetic} historyOnly onEvidence={onEvidence}/>;
+  return <DecisionComparison key={key} rounds={history.data.rounds} materials={history.data.materials} candidate={history.data.baseline_candidate} selectedDirection={selectedDirection} onEvidence={onEvidence} onSupplement={onSupplement}/>;
 }
 
 export default function App() {
@@ -234,6 +234,7 @@ export default function App() {
   const directionIdentity = project ? `${project.id}:${project.context_version}:${demoSessionActive}` : '';
   const [directionSelection, setDirectionSelection] = useState<StrategyDirectionSelection | null>(null);
   const [directionPacket, setDirectionPacket] = useState<{ identity: string; packet: StrategyPacket } | null>(null);
+  const [materialRequest, setMaterialRequest] = useState(0);
   const currentDirection = directionSelection?.identity === directionIdentity ? directionSelection.mode : null;
   const currentDirectionPath = currentDirection && directionPacket?.identity === directionIdentity ? directionPacket.packet.strategy?.paths.find(path => path.mode === currentDirection) : null;
   const [sourceFocus, setSourceFocus] = useState<{ projectId: string; contextVersion: number; refs: string[]; token: number } | null>(null);
@@ -248,7 +249,15 @@ export default function App() {
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
     "offline",
   );
-  const displayedSources = [...new Map([...(packet?.sources || []), ...(project?.input.sources || [])].map(source => [source.id, source])).values()];
+  const [evidencePacket, setEvidencePacket] = useState<{ projectId: string; packet: StrategyPacket } | null>(null);
+  const currentStrategyPacket = directionPacket?.identity === directionIdentity ? directionPacket.packet : retrievalStrategy.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? retrievalStrategy.packet : null;
+  const strategySources: Source[] = (evidencePacket && evidencePacket.projectId === project?.id ? evidencePacket.packet : currentStrategyPacket)?.sources.map(source => ({
+    id: source.id, title: source.title, visibility: source.visibility || 'public', data_class: source.data_class || (project?.input.synthetic ? 'synthetic' : 'public'),
+    synthetic: project?.input.synthetic || false, untrusted_text: source.text, ...(source.url ? { url: source.url } : {}),
+    ...(source.published_at ? { published_at: source.published_at } : {}), locator: source.locator,
+    ...(source.document_version ? { hash: source.document_version } : {}), content_status: source.document_id ? 'uploaded' : 'excerpt',
+  })) || [];
+  const displayedSources = [...new Map([...(packet?.sources || []), ...strategySources, ...(project?.input.sources || [])].map(source => [source.id, source])).values()];
   const requestedRefs = sourceFocus?.projectId === project?.id && sourceFocus?.contextVersion === project?.context_version ? sourceFocus?.refs || [] : [];
   const focusedSourceIds = displayedSources.filter(source => requestedRefs.some(ref => ref === source.id || ref === `${project?.id}:${source.id}`)).map(source => source.id);
   const focusedSourceKey = focusedSourceIds.join('\u0000');
@@ -264,7 +273,8 @@ export default function App() {
   const running = run?.status === "running";
   const stale =
     !!packet && !!project && packet.context_version !== project.context_version;
-  function openEvidence(refs: string[] = []) {
+  function openEvidence(refs: string[] = [], sourcePacket?: StrategyPacket) {
+    setEvidencePacket(sourcePacket && sourcePacket.project_id === project?.id ? { projectId: sourcePacket.project_id, packet: sourcePacket } : null);
     setEvidenceLocation(null);
     setSourceTextFocus(null); setDecisionFocus(null);
     if (project) setSourceFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, refs: [...new Set(refs)], token: (previous?.token || 0) + 1 }));
@@ -305,7 +315,7 @@ export default function App() {
     });
     return () => { cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
   }, [tab, project?.id, focusedSourceKey, sourceFocus?.token, sourceTextResolved?.status]);
-  useEffect(() => { setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null); setDecisionFocus(null); }, [retrievalKey]);
+  useEffect(() => { setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null); setDecisionFocus(null); setEvidencePacket(null); }, [retrievalKey]);
   useEffect(() => { setDirectionSelection(null); setDirectionPacket(null); }, [directionIdentity]);
   useEffect(() => {
     const controller = new AbortController();
@@ -316,7 +326,10 @@ export default function App() {
       .catch(() => { if (!controller.signal.aborted) setRetrievalStrategy({ key: retrievalKey, status: 'unavailable', packet: null }); });
     return () => controller.abort();
   }, [retrievalKey]);
-  function decisionLocations(hit: RetrievalHit) { return project ? retrievalDecisionLocations(hit, project.id, retrievalStrategy.key === retrievalKey ? retrievalStrategy.packet : null, packet) : []; }
+  function decisionLocations(hit: RetrievalHit) {
+    if (!project) return [];
+    return retrievalDecisionLocations(hit, project.id, currentStrategyPacket, packet).filter(location => !currentDirection || (!location.mode || location.mode === currentDirection) && !!currentDirectionText(location.text, currentDirection));
+  }
   function featureLocations(question: string) { return retrievalFeatureLocations(question).filter(location => location.kind === 'investigations' || project?.input.business_profile === 'neighborhood'); }
   function navigateRetrievalDecision(location: RetrievalDecisionLocation | RetrievalFeatureLocation) {
     if (!project) return;
@@ -534,7 +547,7 @@ export default function App() {
     },
     {
       id: "evidence",
-      label: "资料与证据",
+      label: "逻辑与证据",
       detail: `${displayedSources.length} 份项目来源`,
       done: !!displayedSources.length,
     },
@@ -546,7 +559,7 @@ export default function App() {
     },
     {
       id: "compare",
-      label: "版本与变化",
+      label: "决策对比",
       detail: packet ? `研判版本 v${packet.revision}` : "等待首次研判",
       done: !!diff?.available,
     },
@@ -817,7 +830,7 @@ export default function App() {
               try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
             }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
           </div>}
-          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} />}
+          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} />}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "overview" && !completeDemoActive && !currentDirection && (
             <details className="overview-legacy" open={project.input.business_profile !== 'neighborhood'}><summary>完整研判、计算与运行记录</summary>
@@ -1230,16 +1243,15 @@ export default function App() {
               <div className="section-head">
                 <div>
                   <div className="kicker">EVIDENCE LIBRARY</div>
-                  <h2>资料与证据</h2>
+                  <h2>逻辑与证据</h2>
                 </div>
               </div>
               <p className="intro">
-                保留原始来源、资料类别与访问范围。当前上传支持
-                TXT、Markdown、CSV、PDF、Word、Excel（≤ 10
-                MB）。真实材料使用独立真实项目。
+                {currentDirection ? `${MODE_LABELS[currentDirection]}：查看本方向的判断标准、举措与原文依据。` : '把判断标准、方案举措和原文证据对应起来。选择方向后，按该方向查看。'}
               </p>
-              <InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/>
-              {project.input.business_profile === 'neighborhood' && <EvidenceDecisionMap projectId={project.id} revision={project.context_version} sourceIds={project.input.sources.map(source => source.id)} onEvidence={openEvidence} onOverview={() => setTab('overview')} />}
+              <details className="logic-source-library"><summary>补充项目内部资料</summary><InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/></details>
+              {project.input.business_profile === 'neighborhood' && <LogicEvidencePanel project={project} selectedDirection={currentDirection} strategyPacket={currentStrategyPacket} onEvidence={openEvidence} />}
+              <details className="logic-source-library" open={!!requestedRefs.length || !!evidenceLocation}><summary>检索与全部原始资料 · {displayedSources.length} 份来源</summary>
               <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} revision={project.context_version} onEvidence={openEvidence} onLocateHit={locateEvidence} decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState} featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision} />
               <ImportedDataExplorer
                 projectId={project.id}
@@ -1353,17 +1365,18 @@ export default function App() {
                   ))}
                 </>
               )}
+              </details>
             </section>
           )}
           {tab === 'compare' && completeDemoActive && <DemoPlanVersions key={`demo-versions-${project.id}`} project={project} onExplore={() => setTab('overview')} />}
           {tab === "compare" && !completeDemoActive && (
             <section className="content-panel">
               <div className="kicker">REVISION HISTORY</div>
-              <h2>看见判断为什么改变</h2>
+              <h2>决策对比</h2>
               <p className="intro">
-                {project.input.business_profile === 'neighborhood' ? '查看首轮基线、补充资料后的最新研判及具体变化。每轮报告和来源绑定当时的资料快照。' : '比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。'}
+                {project.input.business_profile === 'neighborhood' ? '首版建议 → 补齐关键资料 → 新一版决策。查看选择、举措与效果预期怎样改善。' : '比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。'}
               </p>
-              {project.input.business_profile === 'neighborhood' && <ResearchVersionHistory project={project} onEvidence={openEvidence}/>}
+              {project.input.business_profile === 'neighborhood' && <ResearchVersionHistory project={project} selectedDirection={currentDirection} onEvidence={openEvidence} onSupplement={() => { setMaterialRequest(value => value + 1); setTab('overview'); writeWorkbenchLink(project.id, 'overview'); }}/>}
               <details className="strategy-historical-investigations legacy-run-history" open={project.input.business_profile !== 'neighborhood'}><summary>早期运行版本记录</summary>
               {projectExtras.loading ? <p role="status">正在读取版本变化…</p> : projectExtras.diffError ? <p role="status">版本变化暂不可读。<button className="secondary" onClick={() => void action(async () => { await loadProject(project.id); })}>重试</button></p> : diff?.available ? (
                 <>
@@ -1419,7 +1432,7 @@ export default function App() {
                   <IconLayersIntersect size={28} />
                   <div>
                     <h3>需要两个已完成版本</h3>
-                    <p>完成初筛后添加一条企业经验，即可查看判断变化。</p>
+                    <p>此处保留早期运行记录；当前研判版本与补充资料带来的变化见上方决策对比。</p>
                   </div>
                 </div>
               )}

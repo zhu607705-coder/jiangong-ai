@@ -4,8 +4,8 @@
   "pdf": "D:\\建工ai\\docs\\老旧小区改造案例拆分与六维数据说明.pdf",
   "pages": 38,
   "source_commit": "f3457fd93cf079d33128f22e6845594cbceef468",
-  "pdf_sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
-  "source_sha256": "7aa8d44df5fc64fdd61ad6e8f0e0080163a873af8d7a4bb9dfe56d4bfe2d5824",
+  "pdf_sha256": "b1bdf0dcb7f683917e0d8b10dbdc8df385dc15a30329f13c83135cefec35b3db",
+  "source_sha256": "d979dcaa75ce44fd4ebb2b799bfde287630c5ebe2a8b5c4e0f06cfc4860c4e99",
   "compile_exit": 0,
   "build": "One final XeLaTex pass, exit 0; no reference rerun required.",
   "command": "xelatex -interaction=nonstopmode -halt-on-error -file-line-error -output-directory=output/documents/renewal-review/main docs/老旧小区改造案例拆分与六维数据说明.tex",
@@ -15,40 +15,46 @@
     "missing_character": 0,
     "latex_error": 0,
     "underfull": 1,
-    "underfull_note": "One retained appendix path-list underfull hbox; no overflow, missing glyphs, unresolved references or LaTeX errors."
+    "underfull_note": "One existing appendix path-list underfull hbox; no overfull box, missing glyph, unresolved reference or LaTeX error."
   },
   "page_map": {
-    "方向判断页直接呈现": [
-      1
+    "真实项目先确认": [
+      1,
+      25
     ],
-    "核心判断标准": [
-      1
+    "每轮明确选择内部材料": [
+      9
     ],
-    "本次API 综合研判建议": [
-      15
+    "上传时间与声明": [
+      9
     ],
-    "本次API综合研判建议": [],
+    "完整首轮保存": [
+      19
+    ],
+    "决策对比": [
+      19
+    ],
+    "逻辑与证据": [
+      19
+    ],
     "模式前置与方案总览的实现": [
       25
     ],
-    "decision_brief": [
+    "共享协作模式": [
       26
-    ],
-    "改造方向判断": [
-      25
     ]
   },
   "rendered_pages": [
     1,
     2,
-    3,
-    15,
+    9,
+    19,
     25,
     26
   ],
   "contacts": [
-    "D:\\建工ai\\output\\documents\\renewal-review\\main\\api-direction-contact-01.png",
-    "D:\\建工ai\\output\\documents\\renewal-review\\main\\api-direction-contact-02.png"
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\collaborative-rounds-contact-01.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\collaborative-rounds-contact-02.png"
   ],
   "measurement_evidence": "research/test_results/decision-value-campus-v14-20261015T074703394Z.json",
   "timing_input_sha256": "52d160c6b7b5fe7d29132276219501291070ce220f0d0065b9dd4212b73c665f",
@@ -63,28 +69,28 @@
     "packages/retrofit/renewal-mode.ts:evaluateRenewalModeGate",
     "packages/retrofit/decision-priorities.ts:compareGoalPriorities"
   ],
-  "validation_scope": "Narrow API-role prose, direction-selection workflow and one existing Qiushi summary; one final XeLaTex pass and pages 1,2,3,15,25,26 render check.",
+  "validation_scope": "Three owned documents only. Final TeX compile, affected-page render check and deployment Markdown contract wording. No model calls, new timing or code tests.",
   "visual_review": {
     "result": "passed",
     "pages": [
       1,
       2,
-      3,
-      15,
+      9,
+      19,
       25,
       26
     ],
-    "observed": "Actual API responsibility is explicit in the opening. Four-layer standards, weight/evaluation content, the existing Qiushi API recommendation and direction-first implementation flow remain readable with no clipping, overlap or missing glyphs. The first standards subsection continues normally across pages 1–2 with two text lines after its heading.",
-    "scope": "Six affected pages only; unchanged chapters, generated timing and application tests were not re-audited."
+    "observed": "Material intake is stated before first judgment; internal-material date/provenance text is legible. The preserved-baseline decision-comparison paragraph, direction-filtered logic/evidence name and shared-collaboration deployment paragraph render without overlap or clipping. The existing landscape-table page boundary is retained.",
+    "scope": "Six affected pages; no full-report re-audit."
   },
   "compile_logs": [
-    "output/documents/renewal-review/main/api-direction-final-compile.log"
+    "output/documents/renewal-review/main/collaborative-rounds-final-compile.log"
   ],
   "frozen": true,
-  "previous_pdf_sha256": "8bd6530fbf76cd0567403d1d089a8f75162e08db581ca1e4bc1d02a8c616f9d2",
-  "previous_source_sha256": "3c8b421d72006a7e8769e0b8f641432afefb34ac3f68d2d5c178d0be05b8612e",
-  "repository_head_at_build": "18dfd4872a69a2533ca7749b537165a4752cc755",
-  "revision": "Restore substantive API decision analysis and direction-first selected-path workflow; three original method paragraphs, the existing workflow paragraph and one existing Qiushi summary field only.",
+  "previous_pdf_sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
+  "previous_source_sha256": "7aa8d44df5fc64fdd61ad6e8f0e0080163a873af8d7a4bb9dfe56d4bfe2d5824",
+  "repository_head_at_build": "d36cac43214a783008f3002719e5b988dbd1fec3",
+  "revision": "Campus shared collaboration; project-material intake before first judgment; preserved first baseline and supplementary-material decision comparison; direction-filtered logic/evidence; one-screen operations summary.",
   "source_commit_note": "source_commit refers to the earlier retrieval self-test/code baseline; current repository HEAD and model readback are recorded separately.",
   "api_model_evidence": {
     "path": "research/test_results/direction-api-v5-readback-20261015.json",
@@ -98,5 +104,23 @@
     "timing_distinction": "0.494 seconds remains the prior retrieval-only automated self-test, not model generation time."
   },
   "timing_unchanged": true,
-  "human_time_saving_claim": false
+  "human_time_saving_claim": false,
+  "deployment_doc_sha256": "d980f3ce9c69874879a56205f62fef4da93dd165d87fcbc7c3435deb1093e7f8",
+  "collaborative_rounds_evidence": {
+    "path": "research\\test_results\\internal-rounds-live-20261015.json",
+    "sha256": "8d2088a901d4e46a51b94102e4c89ca1b8c49fcea30616afc05a38a7b57d023f",
+    "status": "live_rounds_completed_semantic_review_ready",
+    "data_kind": "fully_synthetic_selected_materials",
+    "execution_kind": "real_deployed_api_and_dsh_calls",
+    "synthetic_project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+    "original_project_unchanged": true,
+    "evidence_scope": "Two-round interface and stored-input/material participation; final semantic provider recheck is tracked by root and is not claimed passed here."
+  },
+  "utility_scope": "Information completeness and original-source-linked evaluation-dimension coverage; no accuracy, ROI or measured real-world benefit claim.",
+  "markdown_review": {
+    "path": "docs/服务器部署说明.md",
+    "checked": "Current collaboration flag/session/configuration command replace former administrator/read-only operating instructions; historical admin evidence is identified as historical; source categories do not imply personnel or enterprise access isolation.",
+    "diff_check_exit": 0
+  },
+  "provider_semantic_claim": "No claim that all model semantics are correct or scientific effectiveness is validated. Final provider recheck receipt can be linked after root completes it without changing report layout."
 }

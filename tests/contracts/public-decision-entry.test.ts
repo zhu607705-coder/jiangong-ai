@@ -88,10 +88,10 @@ test('the versions tab reloads saved research rounds and changes without startin
   for (let refresh = 0; refresh < 2; refresh++) {
     const app = await mountWorkbench('?project=WITH-PLAN&view=compare', false, undefined, history)
     try {
-      await vi.waitFor(() => expect(app.dom.document.querySelector('[data-round-id="ROUND-2"]')?.textContent).toContain(nextPacket.strategy!.headline))
-      expect(app.dom.document.querySelector('[data-round-id="ROUND-1"]')?.textContent).toContain(firstPacket.strategy!.headline)
-      expect(app.dom.document.querySelector('[aria-label="相对首轮的判断变化"]')?.textContent).toContain('补充的结构资料明确适用对象')
-      expect(app.dom.document.querySelector('[aria-label="下一轮建议补充资料"]')?.textContent).toContain('补充落实资金文件')
+      await vi.waitFor(() => expect(app.dom.document.querySelector('.decision-comparison')?.getAttribute('data-after-round')).toBe('ROUND-2'))
+      expect(app.dom.document.querySelector('.decision-comparison')?.getAttribute('data-before-round')).toBe('ROUND-1')
+      expect(app.dom.document.querySelector('.dc-change-reasons')?.textContent).toContain('补充的结构资料明确适用对象')
+      expect(app.dom.document.querySelector('[aria-label="仍需补充的资料"]')?.textContent).toContain('补充落实资金文件')
       expect(app.dom.document.querySelector('.research-intake')).toBeNull()
       expect(app.dom.document.querySelector('.research-round-actions')).toBeNull()
       expect(app.dom.document.querySelector('.legacy-run-history')?.hasAttribute('open')).toBe(false)
@@ -217,7 +217,7 @@ test('the selected direction alone determines subsequent plan text, assessment t
     expect(app.dom.document.querySelector('.strategy-assessment .dimension-readout')?.textContent).toContain('5')
     expect(app.dom.document.querySelector('.strategy-assessment')?.textContent).not.toContain('综合整治专属目标')
     const outerTab = (label: string) => [...app.dom.document.querySelectorAll<HTMLButtonElement>('.research-tabs button')].find(row => row.textContent === label)!
-    await act(async () => outerTab('资料与证据').click())
+    await act(async () => outerTab('逻辑与证据').click())
     await act(async () => outerTab('研判总览').click())
     await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-plan-detail>h3')?.textContent).toBe('拆建条件专项论证'))
     expect(app.dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('rebuild')

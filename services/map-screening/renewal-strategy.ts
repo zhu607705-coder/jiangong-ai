@@ -132,11 +132,14 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     const check = (value:RenewalStrategy) => {
       validateStrategy(value,promptSources,input.renewalMode!.conditions,true,!!round)
       if(round?.parent&&!value.round_review?.changes.length)throw new Error('STRATEGY_ROUND_COMPARISON_MISSING')
+      // Check authored conclusions, preserving original quotations and historical before-fields.
+      const analysis=[value.headline,value.summary,...value.rationale.map(row=>row.point),...Object.values(value.decision_brief!).flatMap(row=>Object.entries(row).filter(([key])=>key!=='evidence_refs').map(([,text])=>String(text))),
+        ...value.paths.flatMap(path=>[path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail]),...path.requirements]),...value.dimensions.flatMap(row=>[row.current,row.comprehensive,row.rebuild]),
+        value.round_review?.summary,...(value.round_review?.changes.flatMap(row=>[row.after,row.reason])||[])]
+      const relocationClaim=/(?:无需|不需要?|不用)(?:居民)?(?:整体)?搬迁/
+      const relocationCondition=/假设|前提|待核|待确认|需确认|若|如果|条件下|不能认定|尚未确认|施工组织.{0,8}(?:确认|核实)/
+      if(analysis.some(text=>text?.split(/[。！？!?\n]/).some(sentence=>relocationClaim.test(sentence.replace(/\s+/g,''))&&!relocationCondition.test(sentence))))throw new Error('STRATEGY_RELOCATION_ASSUMPTION_REQUIRED')
       if(synthetic&&round) {
-        // Check model-authored analysis, preserving original quotations and historical before-fields.
-        const analysis=[value.headline,value.summary,...value.rationale.map(row=>row.point),...Object.values(value.decision_brief!).flatMap(row=>Object.entries(row).filter(([key])=>key!=='evidence_refs').map(([,text])=>String(text))),
-          ...value.paths.flatMap(path=>[path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail])]),...value.dimensions.flatMap(row=>[row.current,row.comprehensive,row.rebuild]),
-          value.round_review?.summary,...(value.round_review?.changes.flatMap(row=>[row.after,row.reason])||[])]
         const claim=String.raw`真实(?:问卷(?:数据|调查|结果)|居民(?:调研|调查|访谈))`
         const denied=new RegExp(String.raw`(?:并非|不是|不属于|不能视为|不代表|尚无|未取得|未获得)\s*${claim}`,'g')
         if(analysis.some(text=>text&&new RegExp(claim).test(text.replace(denied,''))))throw new Error('STRATEGY_SYNTHETIC_IDENTITY_MISMATCH')
@@ -144,9 +147,9 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     }
     try { check(response.value) }
     catch (error) {
-      if(error instanceof Error&&/^(STRATEGY_CONSTRUCTION_GATE_UNMET|STRATEGY_PATH_DIRECTION_MIXED|STRATEGY_SYNTHETIC_IDENTITY_MISMATCH)$/.test(error.message)) console.warn(JSON.stringify({event:'renewal_strategy_quality_retry',project_id:project.project_id,code:error.message,stage:'validation'}))
+      if(error instanceof Error&&/^(STRATEGY_CONSTRUCTION_GATE_UNMET|STRATEGY_PATH_DIRECTION_MIXED|STRATEGY_SYNTHETIC_IDENTITY_MISMATCH|STRATEGY_RELOCATION_ASSUMPTION_REQUIRED)$/.test(error.message)) console.warn(JSON.stringify({event:'renewal_strategy_quality_retry',project_id:project.project_id,code:error.message,stage:'validation'}))
       progress({ stage: 'validation', status: 'running', message: '首次方案核验未通过，正在按同一来源修复。' })
-      response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair', prompt + '\n上一轮决策简报、引文或完整性校验失败：' + (error instanceof Error ? error.message : '') + '。补齐decision_brief三部分并核对各自evidence_refs，保留已有项目分析；quote逐字复制连续原句，按当前实施准入门修复相关选择。' + (synthetic&&round?'本轮模拟身份保持不变；将误称真实问卷或居民调研的分析改为模拟问卷统计，保留数值、优先级和方案取舍。':''), 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
+      response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair', prompt + '\n上一轮决策简报、引文或完整性校验失败：' + (error instanceof Error ? error.message : '') + '。补齐decision_brief三部分并核对各自evidence_refs，保留已有项目分析；quote逐字复制连续原句，按当前实施准入门修复相关选择。' + (error instanceof Error&&error.message==='STRATEGY_RELOCATION_ASSUMPTION_REQUIRED'?'缺少已确认的施工组织时，搬迁安排写为“按施工组织核实是否搬迁”，或在同一句中明确“不需整体搬迁”仅为方案假设及其前提；保留其他分析。':'') + (synthetic&&round?'本轮模拟身份保持不变；将误称真实问卷或居民调研的分析改为模拟问卷统计，保留数值、优先级和方案取舍。':''), 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
       check(response.value)
     }
     progress({ stage: 'validation', status: 'completed', message: '方案完整性、引用与已登记条件核验通过。' })
