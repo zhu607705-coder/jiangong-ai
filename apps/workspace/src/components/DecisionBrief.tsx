@@ -7,6 +7,7 @@ import './decision-brief.css'
 
 const number = (value: number) => value.toLocaleString('zh-CN', { maximumFractionDigits: 1 })
 const gradeLabels = { low: '低', medium: '中', high: '高', unknown: '待评价' }
+const firstSentence = (text: string) => text.trim().split(/(?<=[。！？])/)[0] || text
 
 export default function DecisionBrief({ result, gate, onEvidence, onPlan }: {
   result: StrategyPacket; gate: RenewalModeGate; onEvidence: (refs: string[]) => void; onPlan: () => void;
@@ -21,16 +22,31 @@ export default function DecisionBrief({ result, gate, onEvidence, onPlan }: {
   const path: 'comprehensive' | 'rebuild' = direction === 'rebuild' ? 'rebuild' : 'comprehensive'
   const resources = strategy.dimensions.find(row => row.key === 'resources')
   const social = strategy.dimensions.filter(row => ['demand', 'supply', 'operations'].includes(row.key))
-  const headline = direction === 'rebuild' ? '优先开展原拆原建论证' : direction === 'investigate' ? '先完成专项核查，明确更新路径' : '综合整治优先，按栋分期推进论证'
-  const actions = strategy.paths.find(row => row.mode === path)?.actions.slice(0, 3) || []
+  const selected = strategy.paths.find(row => row.mode === path), brief = strategy.decision_brief
+  const guarded = strategy.preferred_mode === 'rebuild' && !gate.rebuild_allowed || strategy.preferred_mode === 'comprehensive' && direction !== 'comprehensive'
+  const safeHeadline = direction === 'investigate' ? '先核查结构处置与实施条件' : selected?.title || MODE_LABELS[direction]
+  const headline = guarded ? safeHeadline : strategy.headline
+  const lead = guarded ? selected?.description || gate.summary : brief?.renewal.reason || strategy.summary || selected?.description || ''
+  const renewal = { conclusion: guarded ? safeHeadline : brief?.renewal.conclusion || selected?.title || firstSentence(strategy.summary), reason: guarded ? gate.summary : brief?.renewal.reason || selected?.description || strategy.rationale[0]?.point || strategy.summary,
+    refs: brief?.renewal.evidence_refs || selected?.actions.flatMap(action => action.evidence_refs) || strategy.rationale.map(row => row.source_id) }
+  const investment = { conclusion: guarded && brief?.investment.stage === 'construction' ? '先核查实施与资金条件，再确定工程投入' : brief?.investment.conclusion || firstSentence(resources?.[path] || resources?.current || selected?.requirements.join('；') || ''),
+    reason: brief?.investment.reason || resources?.current || selected?.description || '', refs: brief?.investment.evidence_refs || resources?.evidence_refs || [] }
+  const financial = brief?.returns.financial || resources?.[path] || resources?.current || '本次研判尚无对应财务测算说明。'
+  const socialReturn = brief?.returns.social || social.map(row => `${PRIORITY_DIMENSIONS.find(item => item.key === row.key)?.label || row.key}：${row[path]}`).join('；')
+  const returnsRefs = brief?.returns.evidence_refs || [...(resources?.evidence_refs || []), ...social.flatMap(row => row.evidence_refs)]
+  const references = (refs: string[]) => [...new Set(refs)].filter(id => sourceIds.has(id))
+  const latestCall = [...result.model_calls].reverse().find(call => call.stage === 'renewal_strategy') || result.model_calls.at(-1)
+  const unknown = gate.checks.filter(row => row.state === 'unknown').length, met = gate.checks.filter(row => row.state === 'met').length
   const label = (preference: string) => preference === 'unresolved' ? '补齐评价后排序' : preference === 'tie' ? '两方案偏好相近' : `${MODE_LABELS[preference as 'comprehensive' | 'rebuild']}适配更高`
   return <section className="decision-brief" aria-label="更新与投资决策摘要">
-    <header><span>辅助决策 · 先给判断，再看依据</span><h3>{headline}</h3><p>按实施条件确定路径，按资金与居民效果安排投入顺序。</p></header>
+    <header><span>AI 综合研判{guarded ? ' · 已应用程序核验' : ''}</span><h3>{headline}</h3><p>{lead}</p><div className="decision-ai-meta">{latestCall?.returned_model ? `模型：${latestCall.returned_model}` : latestCall?.requested_model ? `请求模型：${latestCall.requested_model}（返回标识未登记）` : '已保存研判 · 模型标识未登记'} · 本次方案关联 {result.sources.length} 份资料</div></header>
+    <aside className="decision-program-check" aria-label="程序核验方向"><div><strong>程序核验方向</strong><span>{MODE_LABELS[direction]}</span></div><p>拆建条件已满足 {met}/{gate.checks.length} · 待核 {unknown}</p><details><summary>核验说明与模型原始分析</summary><p>{gate.summary}</p><p>下一步：{gate.next_step}</p>{guarded && <div className="decision-original-analysis"><strong>原始模型分析</strong><h4>{strategy.headline}</h4><p>{strategy.summary}</p>{brief && <><p>{brief.renewal.conclusion}：{brief.renewal.reason}</p><p>{brief.investment.conclusion}：{brief.investment.reason}</p></>}</div>}</details></aside>
     <div className="decision-questions">
-      <article><span>01 要不要更新</span><h4>{direction === 'investigate' ? '优先启动专项核查' : '建议推进更新前期工作'}</h4><p>{direction === 'investigate' ? gate.next_step : `优先研究：${actions.map(action => action.title).join('、') || '本对象的分项改善与实施安排'}。`}</p><button onClick={onPlan}>查看具体举措 →</button></article>
-      <article><span>02 值不值得投入</span><h4>{direction === 'investigate' ? '先投入关键问题核实' : '先投分项论证，按成熟度分期'}</h4><p>把工程范围、资金来源、居民承担与维护费用列入同一方案，优先安排有需求、有实施路径的项目。</p><details><summary>费用与资金依据</summary><p>{resources?.current || '建立分项概算和资金安排表。'}</p>{!!resources?.evidence_refs.length && <button onClick={() => onEvidence(resources!.evidence_refs)}>查看资金原文</button>}</details></article>
-      <article><span>03 投入带来什么</span><h4>财务收支与社会改善分别比较</h4><p>财务看建设投入、经营收支和持续维护；社会看通行便利、供水可靠、服务覆盖与居民负担。</p><details><summary>本方案的具体改善目标</summary>{social.map(row => <div key={row.key}><strong>{PRIORITY_DIMENSIONS.find(item => item.key === row.key)?.label}</strong><p>{row[path]}</p><button onClick={() => onEvidence(row.evidence_refs)}>查看依据</button></div>)}</details></article>
+      <article><span>01 要不要更新</span><h4>{renewal.conclusion}</h4><p>{renewal.reason}</p>{!!references(renewal.refs).length && <button onClick={() => onEvidence(references(renewal.refs))}>查看更新判断依据</button>}<button onClick={onPlan}>选择研究方向 →</button></article>
+      <article><span>02 值不值得投入</span><h4>{investment.conclusion || '本次方案尚未给出投入结论'}</h4>{brief && <span className="decision-investment-stage">模型建议阶段：{({ preliminary: '前期论证投入', construction: '工程投入', hold: '暂缓投入' })[guarded && brief.investment.stage === 'construction' ? 'preliminary' : brief.investment.stage]}</span>}<p>{investment.reason}</p>{!!references(investment.refs).length && <button onClick={() => onEvidence(references(investment.refs))}>查看投入与资金依据</button>}</article>
+      <article><span>03 投入带来什么</span><dl className="decision-returns"><div><dt>财务收益与收支</dt><dd>{financial}</dd></div><div><dt>社会收益</dt><dd>{socialReturn || '本次研判尚无对应社会效果说明。'}</dd></div></dl>{!!references(returnsRefs).length && <button onClick={() => onEvidence(references(returnsRefs))}>查看收益与效果依据</button>}</article>
     </div>
+    {!!strategy.rationale.length && <section className="decision-ai-rationale strategy-rationale" aria-label="AI研判的主要依据"><h4>这项判断依据什么</h4>{strategy.rationale.slice(0, 3).map((row, index) => <article key={`${row.source_id}:${index}`}><p>{row.point}</p><details><summary>展开引用原文</summary><blockquote>{row.quote}</blockquote></details><button disabled={!sourceIds.has(row.source_id)} onClick={() => onEvidence([row.source_id])}>依据 {index + 1} · {result.sources.find(source => source.id === row.source_id)?.title || '来源暂不可读'} →</button></article>)}</section>}
     <p className="decision-principle"><strong>模型负责解释，程序负责判定。</strong>每个结论对应判断标准、原文依据和下一步行动。</p>
     <details className="decision-criteria">
       <summary><strong>判断标准与目标权重</strong><span>先检查实施条件，再比较方案适配</span></summary>
@@ -50,7 +66,7 @@ export default function DecisionBrief({ result, gate, onEvidence, onPlan }: {
               <p>{assessment.missing.length ? `${assessment.missing.length}项效果待评价` : '所选目标均已有评价'}</p>
             </article>
           })}
-          <p className="decision-current-action">当前行动：{headline}。</p>
+          <p className="decision-current-action">当前程序方向：{MODE_LABELS[direction]}。本次研究方向在下方明确选择。</p>
         </> : <p role="alert">请至少保留一项目标权重。</p>}</div></div>
       <details className="decision-score-detail"><summary>查看评分依据、贡献与敏感性</summary><p>沿用方案低／中／高适配等级，依次记20／60／100；按归一化权重加总。待评价维度保留20至100的可能范围，阴影表示其影响。实施条件由独立规则核验。</p>
         <div className="decision-table-scroll"><table><thead><tr><th>判断维度</th><th>权重</th><th>综合整治</th><th>原拆原建</th><th>原文</th></tr></thead><tbody>{PRIORITY_DIMENSIONS.map(row => {

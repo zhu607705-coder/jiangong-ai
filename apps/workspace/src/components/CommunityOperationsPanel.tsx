@@ -5,6 +5,8 @@ import { randomUUID } from '../uuid'
 import './community-operations.css'
 import { isOperationsOriginal } from '../../../../packages/operations/sources'
 import { simulateScenarioUsers, type CompleteCommunityDemo } from '../../../../packages/retrofit/complete-demo'
+import { markOperationsDirection, operationsSnapshotMatchesDirection } from './operations-direction'
+import type { StrategyDirection } from './strategy-direction-text'
 
 type ServiceField = 'capacity_per_slot' | 'available_slots' | 'demand_visits' | 'paid_share' | 'fee_per_visit' | 'variable_cost_per_visit'
 export type OperationsPreview = { label: string; input: OperationsInput; result: OperationsResult | null; error: string; savedId?: string }
@@ -254,8 +256,8 @@ function AnalysisBoundsEditor({ input, onChange }: { input: OperationsInput; onC
   </details>
 }
 
-export default function CommunityOperationsPanel({ project, completeDemo, onPreviews, analysisRevision = 0, onCalculationState }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void; analysisRevision?: number; onCalculationState?: (state: 'idle' | 'calculating' | 'error') => void }) {
-  const scope = `${project.id}:${project.context_version}`
+export default function CommunityOperationsPanel({ project, completeDemo, onPreviews, analysisRevision = 0, onCalculationState, direction }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void; analysisRevision?: number; onCalculationState?: (state: 'idle' | 'calculating' | 'error') => void; direction?: StrategyDirection }) {
+  const scope = `${project.id}:${project.context_version}:${direction||''}`
   const active = useRef({ scope, generation: 0 })
   if (active.current.scope !== scope) active.current = { scope, generation: active.current.generation + 1 }
   const controllers = useRef(new Set<AbortController>())
@@ -275,12 +277,16 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
   useEffect(() => { onCalculationState?.(busy === 'preview' ? 'calculating' : error || previews.some(p => p.error) ? 'error' : 'idle') }, [busy, error, previews, onCalculationState])
   useEffect(() => { onPreviews?.(previews) }, [previews, onPreviews])
   const base = `/projects/${encodeURIComponent(project.id)}/community-operations`
-  const workspace = loaded.scope === scope ? loaded.data : emptyWorkspace()
+  const allWorkspace = loaded.scope === scope ? loaded.data : emptyWorkspace()
+  const admitted = new Set(allWorkspace.scenarios.filter(snapshot => !direction || operationsSnapshotMatchesDirection(snapshot, direction, project.id, project.context_version)).map(snapshot => snapshot.id))
+  const workspace = direction ? { scenarios: allWorkspace.scenarios.filter(snapshot => admitted.has(snapshot.id)), observations: allWorkspace.observations.filter(row => admitted.has(row.snapshot_id)), comparisons: allWorkspace.comparisons.filter(row => admitted.has(row.snapshot_id)) } : allWorkspace
+  const historical = direction ? allWorkspace.scenarios.filter(snapshot => !admitted.has(snapshot.id)) : []
   const eligibleSources = project.input.sources.filter(isOperationsOriginal)
   const selectedSnapshot = workspace.scenarios.find(snapshot => snapshot.id === feedback.snapshotId)
 
   useEffect(() => {
     setPreviews([]); setFeedback(emptyFeedback()); setError(''); setNotice(''); setBusy(''); pending.current = false
+    if (direction && !completeDemo) setDraft(blankInput())
     return () => { controllers.current.forEach(controller => controller.abort()); controllers.current.clear(); active.current.generation += 1 }
   }, [scope])
 
@@ -365,7 +371,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
   useEffect(() => { if (completeDemo) void previewAll() }, [completeDemo?.id, scope, analysisRevision])
   async function saveSnapshot(preview: Preview, index: number) {
     await run(`save:${index}`, async (signal, current) => {
-      const snapshot = await api<OperationsSnapshot>(`${base}/scenarios`, { input: preview.input, expected_context_version: project.context_version }, signal)
+      const snapshot = await api<OperationsSnapshot>(`${base}/scenarios`, { input: direction ? markOperationsDirection(preview.input, direction) : preview.input, expected_context_version: project.context_version }, signal)
       if (!current()) return
       setPreviews(previous => previous.map((item, position) => position === index ? { ...item, savedId: snapshot.id } : item))
       setNotice(`已冻结“${snapshot.input.name}”。之后的调整会另存新快照。`)
@@ -411,6 +417,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
     <summary className="ops-summary"><span>社区运营与公共服务</span><small>比较月度使用、现金收支与财政投入</small></summary>
     {open && <div className="ops-body">
       <div className="ops-intro"><h3>{completeDemo ? "完整模拟月度报表 · 已自动填入并计算" : "把服务效果与运营账目放在一起看"}</h3><p>{completeDemo ? "三种情景使用同一核算接口；去重人数按明确的月均频次推算。参数、来源与区间已填入下方草稿。" : "填写设施、服务与现金项目，比较三种需求情景；冻结当前方案后，再用真实台账核对偏差。"}</p></div>
+      {direction && <p className="ops-notice">当前方向：{direction === 'comprehensive' ? '综合整治' : '原拆原建'}。只恢复同方向、同资料版本的已登记情景；未登记方向的既有中心记录保留为历史资料。本方向尚无基准时，请建立新的待设参数情景。</p>}
       {loaded.loading && <p className="ops-muted" role="status">正在读取本项目的运营记录…</p>}
       {loaded.error && <div className="ops-error" role="alert"><p>{loaded.error}</p><button type="button" className="ops-button" disabled={!!busy || loaded.loading} onClick={() => setReload(value => value + 1)}>重试读取记录</button></div>}
       {error && <p className="ops-error" role="alert">{error}</p>}
@@ -488,6 +495,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
           <InputEvidence input={snapshot.input} /><ScientificResults result={snapshot.result} /><ResultDetails result={snapshot.result} />
         </article>)}</div>
       </section>
+      {!!historical.length && <details className="ops-unscoped-history"><summary>历史运营记录 · {historical.length} 份未登记为当前方向和版本</summary>{historical.map(snapshot => <article className="ops-snapshot" key={snapshot.id}><h4>{snapshot.input.name}</h4><p>{snapshot.input.facility_name} · {snapshot.input.period} · 历史资料版本 {snapshot.context_version}</p><p>服务 {show(snapshot.result.metrics.served_visits)} 人次/月 · 支持后运营缺口 {show(snapshot.result.metrics.unfunded_gap)} 元/月</p><InputEvidence input={snapshot.input}/><ResultDetails result={snapshot.result}/><a className="ops-button" href={`/api${base}/scenarios/${encodeURIComponent(snapshot.id)}/report`} download>导出历史情景报告</a></article>)}</details>}
       <section className="ops-section" aria-label="真实运营反馈"><h3>4. 用真实运营记录核对预测</h3><p className="ops-muted">按同一设施、同一月份和目标居民范围核对。校准样本用于调整，独立检验样本用于检查调整后的表现。</p>
         <fieldset className="ops-feedback-form" disabled={!!busy}><legend className="sr-only">真实观测录入</legend><div className="ops-form-grid">
           <label className="ops-field ops-wide">对应冻结情景<select aria-label="对应冻结情景" value={feedback.snapshotId} onChange={event => setFeedback({ ...emptyFeedback(), snapshotId: event.target.value })}><option value="">选择已保存的情景</option>{workspace.scenarios.map(snapshot => <option key={snapshot.id} value={snapshot.id}>{snapshot.input.name} · {snapshot.input.facility_name} · {snapshot.input.period}</option>)}</select></label>

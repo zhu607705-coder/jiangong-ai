@@ -80,6 +80,9 @@ test('the real workbench opens a public source quote and navigates to its cited 
     expect(dom.document.querySelector('.source-focus-note')?.textContent).toContain('已高亮命中原文')
     await search()
     await click(button => button.textContent?.includes('现况评估 · 长效维护') || false)
+    await vi.waitFor(() => expect(dom.document.querySelector('[data-retrieval-awaiting-direction]')).not.toBeNull())
+    expect(dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('')
+    await click(button => button.getAttribute('data-direction-choice') === 'comprehensive')
     await vi.waitFor(() => {
       const target = dom.document.querySelector('.strategy-dimension-cards [data-retrieval-focused="true"]')
       expect(target?.textContent).toContain('已有托管费用记录')
