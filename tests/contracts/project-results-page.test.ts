@@ -117,9 +117,11 @@ function cardContaining(text: string): HTMLElement {
   return found!
 }
 function includesSavedTime(scope: HTMLElement, value: string) {
-  const recorded = [...scope.querySelectorAll('time')].some(time => time.getAttribute('datetime') === value)
-  const displayed = scope.textContent || ''
-  expect(recorded || displayed.includes(value) || displayed.includes(new Date(value).toLocaleString('zh-CN'))).toBe(true)
+  // Browsers normalize HTML attributes; linkedom preserves React's dateTime spelling.
+  const recorded = [...scope.querySelectorAll('time')].find(time => (time.getAttribute('datetime') ?? time.getAttribute('dateTime')) === value)
+  expect(recorded, `Expected a semantic time element retaining the original ISO timestamp ${value}`).toBeDefined()
+  const expectedDisplay = new Date(value).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
+  expect(recorded!.textContent).toBe(`${expectedDisplay}（北京时间）`)
 }
 function exportedPacket(value: unknown): unknown {
   if (!value || typeof value !== 'object') return undefined
@@ -159,6 +161,14 @@ test('without an explicit packet the default card uses the latest saved round at
   await render(null, project(), [round(first), round(latest, { id: 'ROUND-LATEST', round_number: 2 })])
   expect(container.querySelector('article[aria-label="已保存方案"]')?.textContent).toContain(latest.strategy!.headline)
   expect(container.querySelector('article[aria-label="研究轮次 1"]')?.textContent).toContain(first.strategy!.headline)
+})
+
+test('round and legacy dates preserve raw ISO values while displaying the Beijing calendar day across midnight', async () => {
+  const result = packet(), roundTime = '2026-10-14T20:30:00Z', legacyTime = '2026-10-01T18:05:06Z'
+  const old = legacy(); old.created_at = legacyTime
+  await render(result, project(), [round(result, { created_at: roundTime })], old)
+  includesSavedTime(container.querySelector<HTMLElement>('article[aria-label="研究轮次 1"]')!, roundTime)
+  includesSavedTime(container.querySelector<HTMLElement>('article[aria-label="旧版运行报告"]')!, legacyTime)
 })
 
 test('the empty state navigates to direction assessment without generating or fetching a result', async () => {

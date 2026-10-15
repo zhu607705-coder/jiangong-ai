@@ -1,0 +1,43 @@
+{
+  "schema_version": "navigation-ci-compatibility/1",
+  "status": "focused_regressions_passed",
+  "checked_at": "2026-10-15T12:42:57.009342+00:00",
+  "initial_ci": {
+    "run": 38735405872,
+    "test_files": 103,
+    "passed_tests": 1402,
+    "failed_tests": 4,
+    "failed_files": 3,
+    "log": ".cache/navigation-ci-intelligence-failed.log"
+  },
+  "changes": [
+    {
+      "file": "tests/contracts/project-results-page.test.ts",
+      "cause": "linkedom retains dateTime spelling; default host locale/timezone was an invalid fallback",
+      "verification": "Original ISO time semantics and explicit Asia/Shanghai display; 13/13 under UTC and America/Los_Angeles."
+    },
+    {
+      "file": "tests/contracts/public-workbench-access.test.ts",
+      "cause": "Old direct-research button was replaced by internal-material intake and explicit first-round action",
+      "verification": "No writes or model run before action; one draft POST plus one run POST; all four visitor guards retained."
+    },
+    {
+      "file": "tests/contracts/retrieval-workspace-navigation.test.ts",
+      "cause": "New shared evidence drawer replaces old full-page quote mark; current dimensions use direct assessment navigation",
+      "verification": "Version-bound citation highlighting, source/locator, honest unverified state, close/return, real dimension jump and evidence expansion."
+    }
+  ],
+  "focused_log": "research/test_results/navigation-ci-compatibility-focused-20261015.log",
+  "focused_result": {
+    "files": 3,
+    "tests_passed": 20,
+    "tests_failed": 0
+  },
+  "typescript": "npx tsc --noEmit exit 0 (agent run after final test edits)",
+  "product_code_changed": false,
+  "provider_calls": 0,
+  "project_data_changed": false,
+  "deployment": "1479db36e3152d5cc163c691de65d24bf67ec229 remains the verified product runtime; this follow-up changes tests and records only.",
+  "map_browser_script_review": "Exact selectors and creation contracts remain present; no speculative modification or extra browser run.",
+  "remote_ci": "Will rerun on follow-up push; focused success is not recorded as full CI success."
+}

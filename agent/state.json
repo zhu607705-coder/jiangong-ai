@@ -3333,6 +3333,13 @@
         "state": "entry_reachable_basemap_connection_timeout",
         "observed": "高德地图加载超时；地图搜索与框选未验证成功。该状态不作为通过。"
       }
-    ]
+    ],
+    "ci_compatibility_followup": {
+      "status": "focused_regressions_passed",
+      "artifact": "research/test_results/navigation-ci-compatibility-20261015.json",
+      "tests_passed": 20,
+      "product_code_changed": false,
+      "remote_ci": "pending_followup"
+    }
   }
 }
