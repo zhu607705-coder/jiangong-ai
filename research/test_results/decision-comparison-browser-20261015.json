@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-10-15",
+  "status": "passed_actual_deployed_browser",
+  "application_commit": "2cf5f857744081048743bbaa276c8b8ad3601f60",
+  "base_url": "http://10.70.223.113/",
+  "access": { "login_required": false, "visible_mode": "校园协作", "database_schema_entry_preserved": true },
+  "logic_evidence": {
+    "tab_label": "逻辑与证据",
+    "comprehensive_heading": "综合整治 · 判断逻辑与证据",
+    "comprehensive_opposite_action_count": 0,
+    "rebuild_heading": "原拆原建 · 判断逻辑与证据",
+    "rebuild_action_titles": ["取得拆建必要性的专项技术意见", "核对权属、规划与保护条件，明确适用程序", "按同口径测算全周期方案与居民出资承受力"],
+    "shared_original_source_text_preserved": true
+  },
+  "decision_comparison": {
+    "project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+    "data_kind": "fully_synthetic_demo_materials_with_real_provider_analysis",
+    "before_round": "ROUND-8723e49f-2070-45c4-9f16-31293d2f5d35",
+    "after_round": "ROUND-2eb0ba10-ffb3-4093-9f7f-dbbfe514e8a1",
+    "historic_round_selection_and_restoration": true,
+    "source_drawer_versions": ["第 1 轮 · 资料 v1", "第 4 轮 · 资料 v2"],
+    "source_drawer_original_quote_nodes": 3,
+    "source_count": [4, 5],
+    "current_dimensions_supported_by_object_text": [0, 1],
+    "unknown_current_dimensions": [6, 5],
+    "effect_metrics_meaning": "Information completeness of saved current-state analysis; not measured engineering returns or model accuracy.",
+    "screenshot": "output/playwright/internal-rounds/decision-comparison-final.png"
+  },
+  "operations": {
+    "data_kind": "complete_monthly_simulation",
+    "actual_native_viewport": { "width": 1614, "height": 884 },
+    "panel_bounds": { "left": 113.5, "right": 1553.5, "top": 270.171875, "bottom": 863.40625 },
+    "saved_comparison_bottom": 799.40625,
+    "horizontal_overflow": false,
+    "all_core_controls_charts_and_comparisons_in_view": true,
+    "verified_actions": ["save baseline", "increase demand and opening slots", "reduce subsidy", "save three alternatives", "open all-comparisons dialog", "restore baseline"],
+    "restored_parameters": { "demand": 1, "activity_slots": 30, "monthly_subsidy_yuan": 12000 },
+    "baseline_service_visits": 1630,
+    "increased_opening_service_visits": 2077,
+    "saved_comparison_service_difference": 447,
+    "monthly_balance_at_12000_subsidy_yuan": 3993,
+    "monthly_deficit_at_6000_subsidy_yuan": 2007,
+    "narrow_css_check": { "width": 390, "horizontal_overflow": false },
+    "viewport_overrides_cleared": true,
+    "screenshot": "output/playwright/internal-rounds/operations-final-desktop.png",
+    "earlier_size_trial_images": "Retained diagnostics; final acceptance uses the native 1614px screenshot and matching DOM bounds above."
+  },
+  "real_project": { "id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a", "context_version": 14, "source_count": 78, "fact_count": 0, "unchanged_by_synthetic_acceptance": true },
+  "model_execution_evidence": "research/test_results/internal-rounds-final-review-20261015.json",
+  "focused_integration_log": "research/test_results/decision-comparison-integration-20261015.log"
+}

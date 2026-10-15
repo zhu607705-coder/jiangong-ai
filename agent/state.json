@@ -3222,5 +3222,73 @@
     "accepted_flow": "AI direction judgement, explicit human choice, direction-scoped plan/assessment/operations/followups; no auto choice or cross-direction restoration.",
     "unresolved_questions": [],
     "next_runnable_task": null
+  },
+  "internal_material_research_rounds_20261015": {
+    "updated_at": "2026-10-15",
+    "status": "completed_deployed_real_provider_and_browser_verified",
+    "task": "T63",
+    "changed_files": [
+      "apps/host/research-rounds.ts",
+      "apps/host/server.ts",
+      "apps/host/admin-auth.ts",
+      "apps/host/public-project.ts",
+      "apps/workspace/src/components/ResearchRoundsPanel.tsx",
+      "apps/workspace/src/components/InternalMaterialIntake.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "packages/retrofit/research-rounds.ts",
+      "services/map-screening/renewal-strategy.ts"
+    ],
+    "accepted_flow": "Campus shared collaboration without administrator login; ask about internal material before judgement; preserve first round; select and authorize original files for subsequent DSH research with source-backed changes.",
+    "tests": [
+      "research/test_results/research-rounds-focused-20261015.log",
+      "npm run build"
+    ],
+    "live_status": "real_two_round_flow_completed_and_followup_semantic_repairs_verified_without_altering_original_rounds",
+    "unresolved_questions": [],
+    "next_runnable_task": null,
+    "deployed_commit": "2cf5f857744081048743bbaa276c8b8ad3601f60",
+    "artifacts": [
+      "research/test_results/internal-rounds-live-20261015.json",
+      "research/test_results/internal-rounds-recheck-20261015.json",
+      "research/test_results/internal-rounds-final-review-20261015.json",
+      "research/test_results/decision-comparison-browser-20261015.json"
+    ],
+    "actual_provider_scope": "Isolated, explicitly synthetic project; four stored research rounds, five DSH provider calls including the existing repair call. Not empirical resident research.",
+    "real_project_preserved": {
+      "id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "context_version": 14,
+      "sources": 78,
+      "facts": 0
+    },
+    "decision_comparison": {
+      "source_count": [
+        4,
+        5
+      ],
+      "current_dimensions_supported_by_object_text": [
+        0,
+        1
+      ],
+      "unknown_current_dimensions": [
+        6,
+        5
+      ],
+      "metric_scope": "current-state information completeness, not engineering returns or model accuracy"
+    },
+    "operations_native_browser": {
+      "width": 1614,
+      "height": 884,
+      "panel_bottom": 863.40625,
+      "comparison_bottom": 799.40625,
+      "horizontal_overflow": false,
+      "save_restore_all_three_compared": true
+    },
+    "documents": {
+      "pdf": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "pdf_sha256": "b1bdf0dcb7f683917e0d8b10dbdc8df385dc15a30329f13c83135cefec35b3db",
+      "pdf_pages": 38,
+      "word_sha256": "f3717d3f6ff629e2501a638afb97ad02839652838fd11106f2adc8d91a78400b",
+      "publication": "research/test_results/decision-criteria-report-delivery-20261015.json"
+    }
   }
 }

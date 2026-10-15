@@ -1,0 +1,371 @@
+{
+  "schema_version": "internal-rounds-recheck/1",
+  "status": "real_round_completed_with_remaining_relocation_wording_issue",
+  "started_at": "2026-10-15T09:40:43.720640+00:00",
+  "deployment_commit": "d36cac43214a783008f3002719e5b988dbd1fec3",
+  "base_url": "http://10.70.223.113",
+  "data_kind": "same_two_fully_synthetic_selected_materials",
+  "execution_kind": "one_new_real_deployed_dsh_round",
+  "project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+  "parent_round_id": "ROUND-8723e49f-2070-45c4-9f16-31293d2f5d35",
+  "selected_document_ids": [
+    "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+    "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+  ],
+  "artifact_directory": "D:\\建工ai\\.cache\\internal-rounds-recheck-20261015\\20261015T094043Z-e42aaf83",
+  "historical_measurement_files_before": {
+    "D:\\建工ai\\.cache\\verify-internal-rounds-live.py": "75bff685177d5c68f38d9682242ba01c21de0667b01551fa0fd3a9a1ebbf2f98",
+    "D:\\建工ai\\research\\test_results\\internal-rounds-live-20261015.json": "8d2088a901d4e46a51b94102e4c89ca1b8c49fcea30616afc05a38a7b57d023f"
+  },
+  "prior_wording_issues_preserved": [
+    {
+      "path": "round2.result.strategy.decision_brief.investment.reason",
+      "observed": "虽为真实问卷数据",
+      "issue": "Selected questionnaire is explicitly synthetic; the output should say simulated questionnaire rather than real survey.",
+      "suggested_correction": "虽为本轮模拟问卷数据"
+    },
+    {
+      "path": "round2.result.strategy.decision_brief.returns.social",
+      "observed": "满意度60%意味着约四成受访户对现有服务不满",
+      "issue": "Only 72 satisfied responses are specified; remaining responses were not classified as dissatisfied.",
+      "suggested_correction": "满意问卷占60%；其余48份的评价类别需进一步核对"
+    },
+    {
+      "path": "round2.result.strategy.decision_brief.returns.social",
+      "observed": "分项更新居民不需搬迁",
+      "issue": "No construction organization or relocation assessment was supplied, so no-relocation cannot be asserted.",
+      "suggested_correction": "优先研究减少搬迁干扰的分项更新，是否需要临时腾挪由施工组织核定"
+    }
+  ],
+  "paid_round_requests_attempted": 1,
+  "automatic_paid_retries": 0,
+  "checks": {
+    "automatic_collaborative_session": {
+      "passed": true,
+      "detail": ""
+    },
+    "same_isolated_project": {
+      "passed": true,
+      "detail": ""
+    },
+    "original_two_rounds_exist": {
+      "passed": true,
+      "detail": ""
+    },
+    "original_parent_complete": {
+      "passed": true,
+      "detail": ""
+    },
+    "same_documents_available": {
+      "passed": true,
+      "detail": ""
+    },
+    "synthetic_material_identity_preserved": {
+      "passed": true,
+      "detail": ""
+    },
+    "new_round_parent_is_original_first": {
+      "passed": true,
+      "detail": ""
+    },
+    "new_round_current_and_first_identity": {
+      "passed": true,
+      "detail": ""
+    },
+    "same_two_documents_explicit_consent": {
+      "passed": true,
+      "detail": ""
+    },
+    "ndjson_response": {
+      "passed": true,
+      "detail": ""
+    },
+    "terminal_received": {
+      "passed": true,
+      "detail": ""
+    },
+    "real_round_completed": {
+      "passed": true,
+      "detail": "{'packet': 'completed', 'round': 'completed', 'error': None, 'diagnostic': None}"
+    },
+    "actual_dsh_call_with_tokens": {
+      "passed": true,
+      "detail": ""
+    },
+    "synthetic_result_identity": {
+      "passed": true,
+      "detail": ""
+    },
+    "new_review_cites_survey": {
+      "passed": true,
+      "detail": ""
+    },
+    "simulation_identity_explicit": {
+      "passed": true,
+      "detail": ""
+    },
+    "no_claim_of_real_survey": {
+      "passed": true,
+      "detail": ""
+    },
+    "no_unclassified_remainder_as_dissatisfied": {
+      "passed": true,
+      "detail": ""
+    },
+    "relocation_conditioned_on_assessment": {
+      "passed": false,
+      "detail": "Initial detector omitted 整体/全部 variants; manual read found unconditional assertions. Saved packet is unchanged."
+    },
+    "survey_does_not_create_construction_admission": {
+      "passed": true,
+      "detail": ""
+    },
+    "all_original_round_payloads_preserved": {
+      "passed": true
+    },
+    "original_real_project_unchanged": {
+      "passed": true
+    },
+    "original_measurement_files_preserved": {
+      "passed": true
+    }
+  },
+  "original_real_project_before_sha256": "d946c16ecd5eb5f00aee2a81def01318f69418bd0719a2d7dab0f93b26df9d6a",
+  "historical_round_hashes_before": {
+    "ROUND-8723e49f-2070-45c4-9f16-31293d2f5d35": "b9e65c60c8cfd11e3d971d9f07c1f04d91321cb1fb6c143b403d59f841cd08f6",
+    "ROUND-91628de9-d675-4ce8-a895-49329d7ef91e": "8a8e9aba7bc828f0f1fe96cd0de66b48d6ab2ad6fd21d73b44d4a7ed077f8188"
+  },
+  "round_id": "ROUND-f73a4039-6881-4865-bd0e-0f32cd999150",
+  "round": {
+    "id": "ROUND-f73a4039-6881-4865-bd0e-0f32cd999150",
+    "round_number": 3,
+    "context_version": 2,
+    "input_hash": "bc4dfddb9c842535b3c7692477fb67dbdc9b9c7482d6744fab648eb035db638c",
+    "model_calls": [
+      {
+        "stage": "renewal_strategy",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 13698,
+        "output_tokens": 5397,
+        "duration_ms": 27511,
+        "session_id": "c36a85fc-abee-41aa-9a86-f48f5173651b",
+        "cache_read_tokens": 4096,
+        "cache_write_tokens": 0
+      }
+    ],
+    "packet_sha256": "3086974a0637b2c6beeaaff4561a3a81275f1ae116f9a211f1c9eacb82c31031"
+  },
+  "semantic_review": {
+    "automated_findings": {
+      "simulation_label_present": true,
+      "positive_real_survey_claims": [],
+      "dissatisfied_remainder_claims": [],
+      "unconditional_no_relocation_claims": []
+    },
+    "changes_citing_survey": [
+      {
+        "topic": "居民需求维度：由未知转为有观测",
+        "before": "上一轮判断：需求问卷未开展，老人儿童、居住困难与异议均无观测，需求维为unknown。",
+        "after": "本轮登记120份有效问卷，满意72/120、加梯75/120、助餐90/120，需求维现况列为low-medium，并以助餐与加梯作为分项取舍线索。",
+        "reason": "本轮所选调研文件首次提供明确分母的比例，属实质性新增信息，足以支持分项优先序讨论；但覆盖仅120/200户且明确不构成表决，故不升级为实施依据。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+        ]
+      },
+      {
+        "topic": "优先模式：由compare收紧为comprehensive",
+        "before": "上一轮preferred_mode=compare，两路并列，未选单一方向。",
+        "after": "本轮preferred_mode=comprehensive，优先研究保留建筑的分项更新；拆建仅在decision_brief与rationale中作条件性比较。",
+        "reason": "本轮需求侧证据显示服务类与居住改善类措施都有明确诉求基础，可在不腾退条件下分项组织；拆建侧本轮无任何新增依据，九项准入仍全为unknown。Qwen分流（comprehensive，置信0.65，evidence_basis=no_object_evidence）与本轮证据方向一致但不作为依据。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "topic": "前期投入对象：由泛化清单落到加梯与助餐两项专项核实",
+        "before": "上一轮投资落在逐栋鉴定、需求调查、分项预算、维护费用测算四项，未指定工程重点。",
+        "after": "本轮在前期核实中新增两项具体对象：加梯单元结构适配核查（含不可加装原因）与200㎡服务中心助餐运行方案及维护主体核查。",
+        "reason": "加梯与助餐是本次唯一有比例支撑的两项诉求，可直接转为调查与设计任务；同时两者均依赖结构或运行条件，须先核实而非先施工。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "topic": "资金与实施准入：维持preliminary并复核未通过",
+        "before": "上一轮判断：九项准入未知，开工、招标、交付状态保持未登记，投资阶段为preliminary。",
+        "after": "本轮复核维持：funding_secured、structure_repairable等仍为unknown，comprehensive与rebuild准入均未通过，stage仍为preliminary，不写资金到账或施工准备状态。",
+        "reason": "本轮所选调研文件明确未新增结构安全鉴定、财政资金到账、出资承诺、建设合同或全周期费用比选，无须改变准入判断。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      }
+    ],
+    "decision_brief": {
+      "renewal": {
+        "conclusion": "优先按分项更新方向研究：保留20幢住宅，工程重点为社区助餐服务落地、加装电梯专项、雨污管网、消防与适老无障碍，分栋分段实施。",
+        "reason": "本轮模拟问卷给出助餐90/120、加梯75/120的需求分布，服务与居住改善两类诉求都有观测，可在不腾退的前提下分项组织；拆建侧本轮无新增依据，九项准入全为未知，20幢建筑是否可保留尚未判定，整体重建缺少必要前提。需求比例只作分项取舍线索，不构成实施批准。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      "investment": {
+        "conclusion": "值得投入的是前期分项核实费用：逐栋安全鉴定、加梯单元结构适配与助餐运行方案核查、覆盖200户的意愿与出资调查、分项工程量与维护费用测算。",
+        "reason": "综合整治与拆建准入均未通过（funding_secured、structure_repairable等九项为unknown），工程与拆建均不满足开工条件。本轮新增需求数据提高了分项方向的判断质量，但120份问卷不含出资承诺，也无资金到账与全周期比选。先以有限费用换取三项可核材料，形成可比选方案后再评估是否进入工程准备；财政补助、业主出资分别记录，申请不等同到账。",
+        "stage": "preliminary",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      "returns": {
+        "financial": "政府侧投入限于鉴定、设计、调查与方案等前期费用，无到账记录；建设或运营主体投入与现金收入均无观测，服务中心无收入成本数据，助餐收费假设须由拟运行主体提出。居民负担须待意愿与支付能力调查及分项预算形成后测算，年度维护支出与续筹条件同样未知。本轮不含投资回报率所需的同口径收支数据，不计算回报率，资产变化与现金收益分别解释。历史案例的5.6亿元总投资与4.99亿元居民筹资属其他对象口径，不作本项目金额。",
+        "social": "受益对象为同一模拟社区200户600人，重点是助餐（90/120表达需求）、上下楼困难（75/120表达加梯需求）与老人儿童服务缺口；满意72/120说明服务仍有改善空间，但未说明的选项不作反对解释。分项更新不需整体搬迁，居民以施工干扰和分批周期为代价，实施期影响集中在受施工影响的单元与临街住户；助餐能否落地取决于服务中心运行主体与维护责任落实情况。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      }
+    },
+    "round_review": {
+      "summary": "本轮新增一份模拟居民调研（2026-10-10）：120份有效问卷覆盖120/200户（60%），满意72/120=60%，加梯需求75/120=62.5%，助餐需求90/120=75%；其余选项未说明。该数据把居民需求维度从unknown提升为有观测，但不构成表决或出资承诺。结构鉴定、规划许可、资金到账、全周期比选均无新增，九项准入仍为unknown。据此维持优先分项更新的判断，并把加梯与助餐明确为本阶段前期投入的具体对象；拆建路径保持条件性比较。",
+      "changes": [
+        {
+          "topic": "居民需求维度：由未知转为有观测",
+          "before": "上一轮判断：需求问卷未开展，老人儿童、居住困难与异议均无观测，需求维为unknown。",
+          "after": "本轮登记120份有效问卷，满意72/120、加梯75/120、助餐90/120，需求维现况列为low-medium，并以助餐与加梯作为分项取舍线索。",
+          "reason": "本轮所选调研文件首次提供明确分母的比例，属实质性新增信息，足以支持分项优先序讨论；但覆盖仅120/200户且明确不构成表决，故不升级为实施依据。",
+          "evidence_refs": [
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+          ]
+        },
+        {
+          "topic": "优先模式：由compare收紧为comprehensive",
+          "before": "上一轮preferred_mode=compare，两路并列，未选单一方向。",
+          "after": "本轮preferred_mode=comprehensive，优先研究保留建筑的分项更新；拆建仅在decision_brief与rationale中作条件性比较。",
+          "reason": "本轮需求侧证据显示服务类与居住改善类措施都有明确诉求基础，可在不腾退条件下分项组织；拆建侧本轮无任何新增依据，九项准入仍全为unknown。Qwen分流（comprehensive，置信0.65，evidence_basis=no_object_evidence）与本轮证据方向一致但不作为依据。",
+          "evidence_refs": [
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+            "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+          ]
+        },
+        {
+          "topic": "前期投入对象：由泛化清单落到加梯与助餐两项专项核实",
+          "before": "上一轮投资落在逐栋鉴定、需求调查、分项预算、维护费用测算四项，未指定工程重点。",
+          "after": "本轮在前期核实中新增两项具体对象：加梯单元结构适配核查（含不可加装原因）与200㎡服务中心助餐运行方案及维护主体核查。",
+          "reason": "加梯与助餐是本次唯一有比例支撑的两项诉求，可直接转为调查与设计任务；同时两者均依赖结构或运行条件，须先核实而非先施工。",
+          "evidence_refs": [
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+            "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+          ]
+        },
+        {
+          "topic": "资金与实施准入：维持preliminary并复核未通过",
+          "before": "上一轮判断：九项准入未知，开工、招标、交付状态保持未登记，投资阶段为preliminary。",
+          "after": "本轮复核维持：funding_secured、structure_repairable等仍为unknown，comprehensive与rebuild准入均未通过，stage仍为preliminary，不写资金到账或施工准备状态。",
+          "reason": "本轮所选调研文件明确未新增结构安全鉴定、财政资金到账、出资承诺、建设合同或全周期费用比选，无须改变准入判断。",
+          "evidence_refs": [
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+            "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+          ]
+        }
+      ],
+      "missing_materials": [
+        {
+          "topic": "逐栋结构鉴定与修缮可行意见",
+          "request": "上传20幢住宅逐栋安全鉴定报告、修缮可行技术意见及加梯单元的楼梯间、地下管线与消防适配结论。",
+          "reason": "决定可保留范围与可加装单元，是分项工程量与两条路径取舍的前置条件；缺失则加梯62.5%的意愿无法转为方案。",
+          "evidence_refs": [
+            "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+          ]
+        },
+        {
+          "topic": "覆盖200户的分项意愿与出资承受力记录",
+          "request": "上传扩样至200户的需求与支付意愿调查统计，含分项出资意愿、可承受金额、施工干扰与低层异议记录。",
+          "reason": "当前120份问卷不含出资承诺，无法测算居民负担与分项预算的分摊结构，也无法判断加梯等分项能否形成法定决议。",
+          "evidence_refs": [
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+          ]
+        },
+        {
+          "topic": "资金落实与全周期费用材料",
+          "request": "上传财政补助、业主出资、融资承诺的到账凭证或承诺文件，以及同一价格年、同一费用范围的分项改造费用测算与年度维护支出。",
+          "reason": "funding_secured与life_cycle_cost_compared是施工准入条件，缺失时无法判断投入规模、居民负担与是否可进入工程准备阶段。",
+          "evidence_refs": [
+            "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+          ]
+        },
+        {
+          "topic": "服务中心运行与维护责任材料",
+          "request": "上传200㎡社区服务中心的面积构成、可用空间照片或图纸、拟运行主体的服务量、成本与收费假设，以及现有物业或维护主体责任文件。",
+          "reason": "助餐75%的需求要落到服务方案，必须知道可用空间、运行成本与维护主体；当前无使用人次、收入与成本观测，无法评估可持续性。",
+          "evidence_refs": [
+            "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+            "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+          ]
+        }
+      ]
+    },
+    "review_scope": "Check simulation identity, unclassified survey remainder and conditional relocation without altering original output. Lead/agent still reads the new excerpts for semantic assessment.",
+    "automated_findings_after_offline_detector_correction": {
+      "simulation_label_present": true,
+      "positive_real_survey_claims": [],
+      "dissatisfied_remainder_claims": [],
+      "unconditional_no_relocation_claims": [
+        "逐栋鉴定后确定可修缮部位,组织管网、消防、屋面防水、适老无障碍与加梯专项工程,分栋分段施工、居民不需整体搬迁"
+      ]
+    },
+    "manual_review": {
+      "reviewed_at": "2026-10-15T09:42:22.018445+00:00",
+      "method": "Read complete decision brief, round comparison and all simulation/remainder/relocation passages of the actual saved packet. No additional API request.",
+      "simulation_identity": {
+        "passed": true,
+        "evidence": "本轮模拟问卷给出助餐90/120、加梯75/120的需求分布"
+      },
+      "unclassified_remainder": {
+        "passed": true,
+        "evidence": "其余选项未说明；满意72/120，未说明的选项不作反对解释"
+      },
+      "conditional_relocation": {
+        "passed": false,
+        "observations": [
+          {
+            "path": "strategy.decision_brief.returns.social",
+            "text": "分项更新不需整体搬迁",
+            "reason": "Still an unconditional project claim without construction/relocation assessment."
+          },
+          {
+            "path": "strategy.dimensions[key=adaptation].comprehensive",
+            "text": "分栋分段施工、居民不需整体搬迁",
+            "reason": "Still unconditional; unknown structures and staging do not establish this outcome."
+          }
+        ],
+        "acceptable_conditional_passages": [
+          "可在不腾退的前提下分项组织",
+          "施工以分栋分段、居民不需整体搬迁为前提"
+        ],
+        "recommended_wording": "优先研究减少搬迁干扰的分项更新；是否需要临时腾挪由鉴定与施工组织核定"
+      },
+      "all_three_resolved": false,
+      "no_automatic_paid_retry": true
+    },
+    "initial_regex_false_negative_corrected_offline": true
+  },
+  "historical_round_hashes_after": {
+    "ROUND-8723e49f-2070-45c4-9f16-31293d2f5d35": "b9e65c60c8cfd11e3d971d9f07c1f04d91321cb1fb6c143b403d59f841cd08f6",
+    "ROUND-91628de9-d675-4ce8-a895-49329d7ef91e": "8a8e9aba7bc828f0f1fe96cd0de66b48d6ab2ad6fd21d73b44d4a7ed077f8188"
+  },
+  "original_real_project_after_sha256": "d946c16ecd5eb5f00aee2a81def01318f69418bd0719a2d7dab0f93b26df9d6a",
+  "historical_measurement_files_after": {
+    "D:\\建工ai\\.cache\\verify-internal-rounds-live.py": "75bff685177d5c68f38d9682242ba01c21de0667b01551fa0fd3a9a1ebbf2f98",
+    "D:\\建工ai\\research\\test_results\\internal-rounds-live-20261015.json": "8d2088a901d4e46a51b94102e4c89ca1b8c49fcea30616afc05a38a7b57d023f"
+  },
+  "finished_at": "2026-10-15T09:41:12.166669+00:00",
+  "extra_provider_calls_after_run": 0
+}

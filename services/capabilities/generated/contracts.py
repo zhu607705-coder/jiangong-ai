@@ -1983,6 +1983,36 @@ class EvidenceRef8(RootModel[str]):
     root: str = Field(..., max_length=250)
 
 
+class Change(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    topic: str = Field(..., max_length=100, min_length=1)
+    before: str = Field(..., max_length=300, min_length=1)
+    after: str = Field(..., max_length=300, min_length=1)
+    reason: str = Field(..., max_length=400, min_length=1)
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8, min_length=1)
+
+
+class MissingMaterial(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    topic: str = Field(..., max_length=100, min_length=1)
+    request: str = Field(..., max_length=300, min_length=1)
+    reason: str = Field(..., max_length=400, min_length=1)
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8)
+
+
+class RoundReview(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    summary: str = Field(..., max_length=600, min_length=1)
+    changes: list[Change] = Field(..., max_length=8)
+    missing_materials: list[MissingMaterial] = Field(..., max_length=8)
+
+
 class Renewal(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -2127,6 +2157,7 @@ class RenewalStrategy(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
+    round_review: RoundReview | None = None
     decision_brief: DecisionBrief | None = None
     headline: str = Field(..., max_length=120)
     summary: str = Field(..., max_length=600)

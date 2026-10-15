@@ -63,7 +63,7 @@ export default function FloatingEvidenceSearch({ projectId, revision, projectNam
         </> : <div className="floating-evidence-choose"><h3>先选择一份项目资料库</h3><p>提问会在所选项目已导入的材料中查找。</p>{projects.length && onSelectProject ? <label>选择项目<select aria-label="选择悬浮检索项目" defaultValue="" onChange={event => { if (event.target.value) void selectProject(event.target.value) }}><option value="" disabled>请选择项目</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label> : onOpenMaterials ? <button type="button" onClick={browse}>进入资料库选择项目 →</button> : <p>打开项目后即可查询其资料。</p>}</div>}
         </>}
       </div>
-      {projectId && onOpenMaterials && <footer><button type="button" onClick={browse}>打开项目资料与证据 →</button><span>Esc 收起</span></footer>}
+      {projectId && onOpenMaterials && <footer><button type="button" onClick={browse}>打开逻辑与证据 →</button><span>Esc 收起</span></footer>}
     </div>}
     <button ref={triggerRef} type="button" className="floating-evidence-trigger" aria-haspopup="dialog" aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => setOpen(value => !value)}><span aria-hidden="true">⌕</span>{open ? '收起资料查询' : '直接问资料'}</button>
   </div>

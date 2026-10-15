@@ -2,6 +2,7 @@ param(
   [string]$RemoteHost = '10.70.223.113',
   [string]$RemoteUser = 'zhuhangcheng',
   [string]$AllowedClient = '10.194.110.116',
+  [switch]$CollaborativeWorkspace,
   [string]$KnownHostsFile = (Join-Path (Split-Path -Parent $PSScriptRoot) '.cache/haizhizi-known-hosts'),
   [string]$ExpectedHostFingerprint = 'SHA256:cSL1ZahVyJgkLnPl0aLtu3AIs9/wvvJDP+GdiAA/1mk'
 )
@@ -17,6 +18,7 @@ set -euo pipefail
 umask 077
 target_ip='10.70.223.113'
 allowed_client='__ALLOWED_CLIENT__'
+collaborative_workspace='__COLLABORATIVE_WORKSPACE__'
 base="$HOME/apps/haizhizi"
 test -f "$base/shared/server.env"
 ip -o -4 address show | grep -F " $target_ip/" >/dev/null
@@ -125,6 +127,24 @@ server {
     }
 }
 NGINX
+CANDIDATE="$candidate" ALLOWED_CLIENT="$allowed_client" COLLABORATIVE_WORKSPACE="$collaborative_workspace" python3 - <<'PY'
+import os,pathlib
+if os.environ['COLLABORATIVE_WORKSPACE']=='1':
+    path=pathlib.Path(os.environ['CANDIDATE'])
+    text=path.read_text()
+    client=os.environ['ALLOWED_CLIENT']
+    # Remove only the four known method/device gates in this project template.
+    # Proxy origin/forwarding, rate limits, upload limits and bind stay intact.
+    for methods,count in [('GET POST',1),('GET',3)]:
+        block=(f'        limit_except {methods} {{\n'
+               f'            allow {client};\n'
+               '            allow 127.0.0.1;\n'
+               '            deny all;\n'
+               '        }\n')
+        if text.count(block)!=count: raise RuntimeError('Unexpected ingress template; refusing to remove access gates.')
+        text=text.replace(block,'')
+    path.write_text(text)
+PY
 sudo -n install -m 0644 "$candidate" /etc/nginx/sites-available/haizhizi.conf
 sudo -n ln -sfn /etc/nginx/sites-available/haizhizi.conf /etc/nginx/sites-enabled/haizhizi.conf
 if ! sudo -n nginx -t; then
@@ -137,13 +157,16 @@ if ! sudo -n nginx -t; then
   echo 'Fresh nginx remains masked; the unrestricted default site is not automatically started.' >&2
   exit 1
 fi
-BASE_DIR="$base" python3 - <<'PY'
+BASE_DIR="$base" COLLABORATIVE_WORKSPACE="$collaborative_workspace" python3 - <<'PY'
 import os,pathlib,secrets
 path=pathlib.Path(os.environ['BASE_DIR'])/'shared'/'server.env'
 before=path.read_bytes()
-kept=''.join(line for line in before.decode('utf-8').splitlines(keepends=True) if not line.startswith(('TRUSTED_PUBLIC_ORIGIN=','PUBLIC_READ_ONLY=')))
+kept=''.join(line for line in before.decode('utf-8').splitlines(keepends=True) if not line.startswith(('TRUSTED_PUBLIC_ORIGIN=','PUBLIC_READ_ONLY=','COLLABORATIVE_WORKSPACE=')))
 if kept and not kept.endswith(('\r','\n')): kept+='\n'
-updated=kept+'TRUSTED_PUBLIC_ORIGIN=http://10.70.223.113\nPUBLIC_READ_ONLY=true\n'
+collaborative=os.environ['COLLABORATIVE_WORKSPACE']=='1'
+updated=(kept+'TRUSTED_PUBLIC_ORIGIN=http://10.70.223.113\n'
+         +f'PUBLIC_READ_ONLY={str(not collaborative).lower()}\n'
+         +f'COLLABORATIVE_WORKSPACE={str(collaborative).lower()}\n')
 temporary=path.with_name('.server.env.ingress-'+secrets.token_hex(8)+'.tmp')
 try:
     descriptor=os.open(temporary,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
@@ -166,14 +189,18 @@ else
 fi
 printf '\nIP_ACCESS_CONFIGURED\n'
 printf 'url=http://%s\nallowed_client=%s/32\nbackup=%s\nfresh_install=%s\n' "$target_ip" "$allowed_client" "$backup" "$fresh_install"
-printf 'public_reads=GET,HEAD and six inspected query POST paths\nwrite_device_restriction=%s/32 and 127.0.0.1\n' "$allowed_client"
+if [ "$collaborative_workspace" = 1 ]; then
+  printf 'access_mode=campus_collaborative\nlogin_required=false\nwrite_device_restriction=none_for_campus_reachable_clients\n'
+else
+  printf 'access_mode=public_read_only\npublic_reads=GET,HEAD and six inspected query POST paths\nwrite_device_restriction=%s/32 and 127.0.0.1\n' "$allowed_client"
+fi
 sudo -n nginx -v
 sudo -n systemctl is-active nginx.service
 ss -ltn | awk 'NR==1 || $4 ~ /:(80|443|4310|4311)$/'
 printf 'env_permissions='; stat -c '%a' "$base/shared/server.env"
-printf 'Application host was not restarted; deploy the public read-only host version before enabling the viewer session.\n'
+printf 'Application host was not restarted; deploy the matching access-mode host version before reading the new environment.\n'
 '@
-$remoteScript = $remoteScript.Replace('__ALLOWED_CLIENT__', $AllowedClient)
+$remoteScript = $remoteScript.Replace('__ALLOWED_CLIENT__', $AllowedClient).Replace('__COLLABORATIVE_WORKSPACE__', $(if ($CollaborativeWorkspace) { '1' } else { '0' }))
 $info = [Diagnostics.ProcessStartInfo]::new('ssh')
 foreach ($argument in @('-o','BatchMode=yes','-o','ConnectTimeout=10','-o','StrictHostKeyChecking=yes','-o',"UserKnownHostsFile=$KnownHostsFile","$RemoteUser@$RemoteHost",'bash -s')) { $info.ArgumentList.Add($argument) }
 $info.UseShellExecute=$false

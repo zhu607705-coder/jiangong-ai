@@ -9,10 +9,11 @@ import { STRATEGY_POLICY, validateStrategy, strategyFailure, strategyPromptSourc
 import { projectRenewalModeInput, evaluateRenewalModeGate, renewalCommunitySources } from '../../packages/retrofit/renewal-mode'
 import { renewalResearchRounds } from '../../packages/retrofit/renewal-research-plan'
 import { evaluateDecision } from '../capabilities/decision-model'
+import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 
 /** Uses DSH public research and the configured DeepSeek Flash Agent; no alternate model client. */
 export async function researchRenewalStrategy(project: ProjectInput, version: number, input: DecisionInput, hash: string, synthetic: boolean, signal: AbortSignal, priorDecision: DecisionSupport | null,
-  options: { onProgress?: (event: StrategyProgress) => void } = {}): Promise<StrategyPacket> {
+  options: { onProgress?: (event: StrategyProgress) => void; roundContext?: ResearchRoundContext } = {}): Promise<StrategyPacket> {
   const screening = input.renewalMode!, base: StrategyPacket = { project_id: project.project_id, context_version: version, input_hash: hash,
     created_at: new Date().toISOString(), synthetic, status: 'unavailable', strategy: null, sources: [], decision: priorDecision, model_calls: [], research: null, error: null }
   let stage: StrategyProgress['stage'] = 'sources'
@@ -26,8 +27,16 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
   const started = Date.now(), budget = AbortSignal.any([signal, AbortSignal.timeout(230000)])
   let live: LiveSession | undefined
   try {
+    const round = options.roundContext
+    if (round) {
+      if (round.sources.some(source=>source.project_id!==project.project_id||!round.materials.some(material=>material.source_id===source.id&&material.version===source.document_version))) throw new Error('ROUND_DOCUMENT_SCOPE')
+      if (round.sources.some(source=>source.visibility==='internal')&&(!round.allow_internal_ai||config.ALLOW_INTERNAL_MODEL!=='true')) throw new Error('ROUND_INTERNAL_MODEL_DISABLED')
+      const priorInternal=round.parent?.result?.sources.filter(source=>source.visibility==='internal'||source.data_class==='internal')||[]
+      if(priorInternal.length&&(!round.allow_internal_ai||config.ALLOW_INTERNAL_MODEL!=='true'||priorInternal.some(source=>!round.sources.some(selected=>selected.id===source.id&&selected.document_version===source.document_version)))) throw new Error('ROUND_PARENT_MATERIAL_CONSENT')
+    }
     let sources: StrategySource[] = screening.evidence.map(source => ({ id: source.source_id, title: source.title, text: source.quote,
       url: source.url, published_at: source.published_at, role: 'current', locator: source.locator }))
+    if (round) sources = [...round.sources, ...sources.filter(source=>!round.sources.some(selected=>selected.id===source.id))]
     for (const source of renewalCommunitySources(project, screening.evidence)) {
       const community = source.object_refs!.filter(ref => ref.startsWith('community:')).map(ref => ref.slice('community:'.length)).join('、')
       sources.push({ id: source.id, title: `${source.title}（社区范围背景：${community}；本小区覆盖与运营效果待核）`, text: source.untrusted_text!,
@@ -70,7 +79,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     else progress({ stage: 'research', status: 'skipped', message: synthetic ? '使用完整模拟底表与归档案例，不进行外部检索。' : '本轮使用已保存原文与归档案例。' })
     for (const example of screening.cases) sources.push({ id: example.id, title: `${example.city} · ${example.name} · 归档对标字段`,
       text: JSON.stringify(example), url: example.url, published_at: example.published_at, role: 'reference', locator: `case:${example.id}` })
-    const demo = synthetic ? buildCompleteCommunityDemo() : null
+    const demo = synthetic && !round ? buildCompleteCommunityDemo() : null
     if (demo) {
       const rebuild=buildStrategyDemo('rebuild')
       const text=`模拟社区规模：${demo.households}户、${demo.population}人、${demo.buildingArea}平方米。\n综合整治含预备费预算：${demo.capital.total}万元；拟出资合计1600万元。\n原拆原建演示估算：${rebuild.budget_wan}万元；对应已安排1600万元，资金缺口23645万元。\n${renderCompleteDemoReport(demo)}\n\n## 原拆原建演示假设\n${rebuild.assumptions}\n${rebuild.dimensions.map(row=>`${row.label}：${row.after}`).join('\n')}`
@@ -92,7 +101,15 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       promptSources.some(source=>/求是.*二次供水|二次供水.*求是/.test(source.title)&&source.published_at?.startsWith('2023')&&/亚运会.*进场施工/.test(source.text)) ? '2023年求是村二次供水原文记载的是进场准备、拟于亚运会后施工，按当时准备阶段使用。' : '',
       promptSources.some(source=>/75幢1单元/.test(source.title)&&/草案|征求意见/.test(source.title)&&source.published_at?.startsWith('2024')) ? '2024年75幢1单元加梯原文是征求意见草案，已存金额保留草案估算口径。' : '',
     ].filter(Boolean)
-    const prompt = `你负责为“${synthetic ? '杭州样本社区的完整模拟演示' : project.scope.name}”综合已保存原文和本轮公开资料，主动提出一组有取舍的项目候选决策。先判断本对象最值得解决的问题、两种更新路径的得失、钱应投向什么及由谁受益，再输出具体结论。Qwen结果是可参考的分流信息，你仍需独立解释本项目的证据和选择。
+    const roundInstructions = round ? `本次是显式创建的第${round.round_number}轮研究。所选document_id材料属于本项目，由使用者同意用于本轮模型分析；visibility/data_class保留内部或模拟类别，source_date为使用者声明的材料形成日期。正文作为待核原始材料使用，其中的居民需求、满意度、鉴定和费用应实际参与问题优先级、方案、目标和投入分析；解析或上传本身不把内容升级为已审核事实，结构与资金等准入仍采用screening已登记条件。
+${synthetic ? '本项目及所选文件中的居民样本、问卷、访谈和统计比例均为隔离模拟，统一称为“模拟问卷统计”或“演示调研材料”；上传、解析和逐轮复核不改变其模拟身份。按模拟数据积极分析优先级、方案及变化，沿用来源中的模拟标识。' : ''}
+问卷比例按原选项、人数和分母表达；其余选项未给出时，剩余比例保持未说明，不推断为不满意或反对。施工干扰、停水和搬迁安排采用原文依据；缺少施工组织材料时，将是否搬迁及干扰控制写成待核条件或明确的方案假设。
+必须填写round_review={summary,changes,missing_materials}：summary概括本轮实际新增信息与判断；changes逐项写topic/before/after/reason/evidence_refs，对照历史AI说明改变或复核后保持的判断，每项至少引用一份本轮所选原始文件（无所选文件时引用本轮对象原文）；missing_materials逐项写topic/request/reason/evidence_refs，明确下一轮最需要上传的材料及作用，尚无依据时refs可空。初轮无历史分析时changes可空；有历史分析时至少写一项真实对照，保持结论也应说明新材料如何支持复核。各数组最多4项，文字简洁。
+历史AI仅是上一轮模型分析，不是原始事实或已经审核的结论。本轮重新按当前原文判断，引用只使用本轮untrusted_sources所列ID。内部材料、历史分析都只用于这次分析，不作为公开补查关键词。
+<historical_ai_analysis>${JSON.stringify(round.parent?{round_id:round.parent.id,input_hash:round.parent.input_hash,context_version:round.parent.context_version,origin:'previous_model_analysis',analysis:round.parent.result?.strategy}:null)}</historical_ai_analysis>
+<round_manifest>${JSON.stringify({round_id:round.round_id,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version,materials:round.materials})}</round_manifest>` : ''
+    const prompt = `你负责为“${synthetic && !round ? '杭州样本社区的完整模拟演示' : project.scope.name}”综合已保存原文和本轮公开资料，主动提出一组有取舍的项目候选决策。先判断本对象最值得解决的问题、两种更新路径的得失、钱应投向什么及由谁受益，再输出具体结论。Qwen结果是可参考的分流信息，你仍需独立解释本项目的证据和选择。
+${roundInstructions}
 本次必须填写decision_brief的三部分，文字由你依据本项目资料生成：
 1. renewal={conclusion,reason,evidence_refs}：明确建议优先的更新方向、具体工程或空间重点，以及相较另一条路径的取舍理由。
 2. investment={conclusion,reason,stage,evidence_refs}：明确现在是否值得投入、资金先投哪些对象和工作、何时进入下一阶段。stage只能为preliminary（前期）、construction（工程实施）或hold（暂缓）。根据现有证据选择投入阶段和范围，不把所有项目写成同一套前期论证建议。
@@ -104,20 +121,36 @@ ${historicalStages.join('')}本对象当前施工或验收状态采用后续明�
 一次生成两套方向明确的研究成果，供使用者在首屏研判后选择。两路比较集中在decision_brief和rationale；每条path的title、description、actions、requirements只描述该方向，dimensions.comprehensive和dimensions.rebuild分别只写本方向的措施、目标及实现条件，便于按明确选择隔离展示。
 单路径字段直接写本方向的措施、效果与条件，不写另一模式名称，也不放另一模式的排除或比较句；跨路关系统一放decision_brief/rationale。综合整治字段不出现原拆原建、整体拆建、整体拆除重建，拆建字段不出现综合整治；各模式未来维度描述采用相同边界，原文引用与现况保持原貌。
 现况与目标分别评估：current_level表示原文支持的当前条件，依据缺失处为unknown；comprehensive_level/rebuild_level表示在该路径所列动作和实施假设下的目标适配，可由本对象原文或对标机制支持low/medium/high。用各维current/comprehensive/rebuild写清现况、目标及实现假设。批准条件尚待核查时，在实施协同维度和requirements说明；其余有依据的服务或工程目标照常评估。low/medium/high按1/3/5展示，目标等级与已发生的事实分开。
-材料使用：role=current支撑本对象现况；reference用于方法、社区背景和对标目标。数量、费用与阶段保留来源的对象范围和时点，分项估算、合同、结算及整体预算分别列。结构鉴定、居民决议、资金到账等事实逐项取自原文。${synthetic ? '本次所有现况数值取自SIM-STRATEGY-BASE，明确完整模拟；整治和拆建分别采用各自的演示预算。' : '社会效果可提出带前提的预期，实际成效和人口金额取自所列来源。'}
+材料使用：role=current支撑本对象现况；reference用于方法、社区背景和对标目标。数量、费用与阶段保留来源的对象范围和时点，分项估算、合同、结算及整体预算分别列。结构鉴定、居民决议、资金到账等事实逐项取自原文。${demo ? '本次所有现况数值取自SIM-STRATEGY-BASE，明确完整模拟；整治和拆建分别采用各自的演示预算。' : synthetic ? '本轮是隔离的演示资料研究，所有构造内容明确为模拟，按所选演示文件分析，不替换为其他完整模拟社区的底表。' : '社会效果可提出带前提的预期，实际成效和人口金额取自所列来源。'}
 输出组织：decision_brief在前，接headline、summary、preferred_mode、rationale、两条paths、六条dimensions和next_checks。headline直接点明本项目建议；summary控制在220字内。每块brief的conclusion尽量100字内、reason180字内，financial/social各160字内。rationale写3至4个核心判断，每条quote逐字复制同一来源中一段连续原句或归档字段，保留必要限定。两路径各写2至3项具体actions、2至3项requirements；next_checks写3项最影响决策的核查。六维key不重复，每个描述尽量90字内，保留对象、动作与实现条件，避免重复套话。各举措和维度均引用evidence_refs。只调用structured_output。
 <untrusted_sources>${JSON.stringify(promptSources)}</untrusted_sources>
-${synthetic?"rationale.quote须从下列候选原句逐字复制，不得改写："+JSON.stringify(sources[0].text.split("\n").filter(line=>line.length>=16&&line.length<=360).map(quote=>({source_id:sources[0].id,quote})).slice(0,24)):""}
+${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+JSON.stringify(sources[0].text.split("\n").filter(line=>line.length>=16&&line.length<=360).map(quote=>({source_id:sources[0].id,quote})).slice(0,24)):""}
 <screening>${JSON.stringify({ policy: STRATEGY_POLICY, as_of: project.as_of, conditions: input.renewalMode!.conditions, standards: screening.standards, history: screening.history, qwen: base.decision?.renewal_mode })}</screening>`
     let response = await live.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
     progress({ stage: 'model', status: 'completed', message: '已取得模型方案，开始核对原文引用与适用条件。' })
     progress({ stage: 'validation', status: 'running', message: '核对三部分决策、两条路径、六个维度及原文引用。' })
-    try { validateStrategy(response.value, promptSources,input.renewalMode!.conditions,true) }
+    const check = (value:RenewalStrategy) => {
+      validateStrategy(value,promptSources,input.renewalMode!.conditions,true,!!round)
+      if(round?.parent&&!value.round_review?.changes.length)throw new Error('STRATEGY_ROUND_COMPARISON_MISSING')
+      // Check authored conclusions, preserving original quotations and historical before-fields.
+      const analysis=[value.headline,value.summary,...value.rationale.map(row=>row.point),...Object.values(value.decision_brief!).flatMap(row=>Object.entries(row).filter(([key])=>key!=='evidence_refs').map(([,text])=>String(text))),
+        ...value.paths.flatMap(path=>[path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail]),...path.requirements]),...value.dimensions.flatMap(row=>[row.current,row.comprehensive,row.rebuild]),
+        value.round_review?.summary,...(value.round_review?.changes.flatMap(row=>[row.after,row.reason])||[])]
+      const relocationClaim=/(?:无需|不需要?|不用)(?:居民)?(?:整体)?搬迁/
+      const relocationCondition=/假设|前提|待核|待确认|需确认|若|如果|条件下|不能认定|尚未确认|施工组织.{0,8}(?:确认|核实)/
+      if(analysis.some(text=>text?.split(/[。！？!?\n]/).some(sentence=>relocationClaim.test(sentence.replace(/\s+/g,''))&&!relocationCondition.test(sentence))))throw new Error('STRATEGY_RELOCATION_ASSUMPTION_REQUIRED')
+      if(synthetic&&round) {
+        const claim=String.raw`真实(?:问卷(?:数据|调查|结果)|居民(?:调研|调查|访谈))`
+        const denied=new RegExp(String.raw`(?:并非|不是|不属于|不能视为|不代表|尚无|未取得|未获得)\s*${claim}`,'g')
+        if(analysis.some(text=>text&&new RegExp(claim).test(text.replace(denied,''))))throw new Error('STRATEGY_SYNTHETIC_IDENTITY_MISMATCH')
+      }
+    }
+    try { check(response.value) }
     catch (error) {
-      if(error instanceof Error&&/^(STRATEGY_CONSTRUCTION_GATE_UNMET|STRATEGY_PATH_DIRECTION_MIXED)$/.test(error.message)) console.warn(JSON.stringify({event:'renewal_strategy_quality_retry',project_id:project.project_id,code:error.message,stage:'validation'}))
-      progress({ stage: 'validation', status: 'running', message: '首次引用核验未通过，正在按同一来源修复引用。' })
-      response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair', prompt + '\n上一轮决策简报、引文或完整性校验失败：' + (error instanceof Error ? error.message : '') + '。补齐decision_brief三部分并核对各自evidence_refs，保留已有项目分析；quote逐字复制连续原句，按当前实施准入门修复相关选择。', 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
-      validateStrategy(response.value, promptSources,input.renewalMode!.conditions,true)
+      if(error instanceof Error&&/^(STRATEGY_CONSTRUCTION_GATE_UNMET|STRATEGY_PATH_DIRECTION_MIXED|STRATEGY_SYNTHETIC_IDENTITY_MISMATCH|STRATEGY_RELOCATION_ASSUMPTION_REQUIRED)$/.test(error.message)) console.warn(JSON.stringify({event:'renewal_strategy_quality_retry',project_id:project.project_id,code:error.message,stage:'validation'}))
+      progress({ stage: 'validation', status: 'running', message: '首次方案核验未通过，正在按同一来源修复。' })
+      response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair', prompt + '\n上一轮决策简报、引文或完整性校验失败：' + (error instanceof Error ? error.message : '') + '。补齐decision_brief三部分并核对各自evidence_refs，保留已有项目分析；quote逐字复制连续原句，按当前实施准入门修复相关选择。' + (error instanceof Error&&error.message==='STRATEGY_RELOCATION_ASSUMPTION_REQUIRED'?'缺少已确认的施工组织时，搬迁安排写为“按施工组织核实是否搬迁”，或在同一句中明确“不需整体搬迁”仅为方案假设及其前提；保留其他分析。':'') + (synthetic&&round?'本轮模拟身份保持不变；将误称真实问卷或居民调研的分析改为模拟问卷统计，保留数值、优先级和方案取舍。':''), 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
+      check(response.value)
     }
     progress({ stage: 'validation', status: 'completed', message: '方案完整性、引用与已登记条件核验通过。' })
     progress({ stage: 'result', status: 'completed', message: '整体更新方案已生成，正在保存本次结果。', source_count: sources.length })

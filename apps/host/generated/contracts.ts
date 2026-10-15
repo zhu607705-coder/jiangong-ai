@@ -1927,6 +1927,35 @@ export interface OperationsWorkspace {
  * via the `definition` "RenewalStrategy".
  */
 export interface RenewalStrategy {
+  round_review?: {
+    summary: string;
+    /**
+     * @maxItems 8
+     */
+    changes: {
+      topic: string;
+      before: string;
+      after: string;
+      reason: string;
+      /**
+       * @minItems 1
+       * @maxItems 8
+       */
+      evidence_refs: string[];
+    }[];
+    /**
+     * @maxItems 8
+     */
+    missing_materials: {
+      topic: string;
+      request: string;
+      reason: string;
+      /**
+       * @maxItems 8
+       */
+      evidence_refs: string[];
+    }[];
+  };
   decision_brief?: {
     renewal: {
       conclusion: string;

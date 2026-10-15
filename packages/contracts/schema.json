@@ -6355,6 +6355,43 @@
     "RenewalStrategy": {
       "type": "object",
       "properties": {
+        "round_review": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string", "minLength": 1, "maxLength": 600 },
+            "changes": {
+              "type": "array", "maxItems": 8,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "topic": { "type": "string", "minLength": 1, "maxLength": 100 },
+                  "before": { "type": "string", "minLength": 1, "maxLength": 300 },
+                  "after": { "type": "string", "minLength": 1, "maxLength": 300 },
+                  "reason": { "type": "string", "minLength": 1, "maxLength": 400 },
+                  "evidence_refs": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+                },
+                "required": ["topic", "before", "after", "reason", "evidence_refs"],
+                "additionalProperties": false
+              }
+            },
+            "missing_materials": {
+              "type": "array", "maxItems": 8,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "topic": { "type": "string", "minLength": 1, "maxLength": 100 },
+                  "request": { "type": "string", "minLength": 1, "maxLength": 300 },
+                  "reason": { "type": "string", "minLength": 1, "maxLength": 400 },
+                  "evidence_refs": { "type": "array", "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+                },
+                "required": ["topic", "request", "reason", "evidence_refs"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["summary", "changes", "missing_materials"],
+          "additionalProperties": false
+        },
         "decision_brief": {
           "type": "object",
           "properties": {

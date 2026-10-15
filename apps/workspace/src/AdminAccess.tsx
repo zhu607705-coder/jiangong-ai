@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT } from './api'
 import './admin-access.css'
 
-type Authentication = { enabled: false; role: 'admin' } | { enabled: true; role: 'admin'; username: string; expires_at: string } | { enabled: true; role: 'viewer'; public_read_only: true; expires_at: null }
+type Authentication = { enabled: false; role: 'admin'; collaborative_workspace?: boolean; public_read_only?: false } | { enabled: true; role: 'admin'; username: string; expires_at: string } | { enabled: true; role: 'viewer'; public_read_only: true; expires_at: null }
 export type AdminSession = { authentication: Authentication }
 export type WorkbenchAccess = { role: 'admin' | 'viewer'; canWrite: boolean }
 // Components rendered outside the entry gate retain the existing local-workspace behavior.
@@ -17,13 +17,15 @@ export class AdminAccessError extends Error {
 function parseSession(value: unknown): AdminSession {
   const authentication = (value as AdminSession | null)?.authentication
   if (authentication?.enabled === true && authentication.role === 'viewer' && authentication.public_read_only === true && authentication.expires_at === null) return { authentication }
-  if (authentication?.role === 'admin' && authentication.enabled === false) return { authentication }
+  if (authentication?.role === 'admin' && authentication.enabled === false
+    && (authentication.collaborative_workspace === undefined || typeof authentication.collaborative_workspace === 'boolean')
+    && (authentication.public_read_only === undefined || authentication.public_read_only === false)) return { authentication }
   if (authentication?.role === 'admin' && authentication.enabled === true && typeof authentication.username === 'string' && authentication.username.trim() && typeof authentication.expires_at === 'string') {
     const expires = Date.parse(authentication.expires_at)
     if (Number.isFinite(expires) && expires > Date.now()) return { authentication }
     throw new AdminAccessError(401, 'ADMIN_LOGIN_REQUIRED', '登录已过期，请重新登录。')
   }
-  throw new AdminAccessError(502, 'INVALID_SESSION_RESPONSE', '无法确认管理员会话，请刷新重试。')
+  throw new AdminAccessError(502, 'INVALID_SESSION_RESPONSE', '无法确认工作台会话，请刷新重试。')
 }
 
 async function authRequest(path: string, body?: unknown, signal?: AbortSignal): Promise<unknown> {
@@ -58,12 +60,18 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
   const [logoutError, setLogoutError] = useState('')
   const generation = useRef(0)
   const authentication = useRef<Authentication | null>(null)
+  const reconnect = useCallback(() => {
+    generation.current++
+    setPassword(''); setBusy(false); setLogoutError('')
+    setRetry(value => value + 1)
+  }, [])
   const lock = useCallback((message: string) => {
+    if (authentication.current?.enabled === false) { reconnect(); return }
     generation.current++
     setPassword(''); setBusy(false); setState({ phase: 'locked', message })
     // The server returns its independent login shell after a protected session ends.
     if (authentication.current) window.location.reload()
-  }, [])
+  }, [reconnect])
 
   useEffect(() => {
     const controller = new AbortController(), attempt = ++generation.current
@@ -74,19 +82,24 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
       setState({ phase: 'ready', session })
     }).catch(error => {
       if (controller.signal.aborted || attempt !== generation.current) return
-      setState(error instanceof AdminAccessError && error.status === 401
-        ? { phase: 'locked', message: '' } : { phase: 'error', message: error instanceof Error ? error.message : '连接工作台失败，请重试。' })
+      const unauthenticated = error instanceof AdminAccessError && error.status === 401
+      setState(unauthenticated && authentication.current?.enabled !== false
+        ? { phase: 'locked', message: '' }
+        : { phase: 'error', message: unauthenticated ? '工作台会话已失效，请重新连接。' : error instanceof Error ? error.message : '连接工作台失败，请重试。' })
     })
     return () => { controller.abort(); generation.current++ }
   }, [retry])
 
   useEffect(() => {
     const expired = () => lock('管理员会话已失效，请重新登录。')
-    const loginRequested = () => window.location.assign('/admin/login')
+    const loginRequested = () => {
+      if (authentication.current?.enabled === true) window.location.assign('/admin/login')
+      else reconnect()
+    }
     window.addEventListener(ADMIN_LOGIN_REQUIRED_EVENT, expired)
     window.addEventListener(ADMIN_LOGIN_REQUESTED_EVENT, loginRequested)
     return () => { window.removeEventListener(ADMIN_LOGIN_REQUIRED_EVENT, expired); window.removeEventListener(ADMIN_LOGIN_REQUESTED_EVENT, loginRequested) }
-  }, [lock])
+  }, [lock, reconnect])
 
   useEffect(() => {
     if (state.phase !== 'ready' || !state.session.authentication.enabled || state.session.authentication.role !== 'admin') return
@@ -131,8 +144,23 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
   if (state.phase === 'ready') {
     const auth = state.session.authentication
     const content = <WorkbenchAccessContext.Provider value={{ role: auth.role, canWrite: auth.role === 'admin' }}>{children}</WorkbenchAccessContext.Provider>
-    if (!auth.enabled) return content
-    return <div className="admin-session-shell"><header className="admin-session-bar" aria-label={auth.role === 'viewer' ? '公开浏览权限' : '管理员会话'}><span><span className="admin-session-dot" />{auth.role === 'viewer' ? '公开浏览 · 只读' : <>管理员 <strong>{auth.username}</strong></>}</span><div><a className="admin-public-decisions" href="/?view=published">查看公开决策方案</a><a className="admin-session-report" href={`/deliverables/${encodeURIComponent('求是村_旧改深度调研与行动计划.pdf')}`} target="_blank" rel="noreferrer">求是村报告</a>{auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <><a href="/api/admin/database-schema">数据库结构</a>{logoutError && <span role="alert">{logoutError}</span>}<button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button></>}</div></header><div className="admin-workspace">{content}</div></div>
+    const collaborative = !auth.enabled && auth.collaborative_workspace === true
+    if (!auth.enabled && !collaborative) return content
+    return <div className="admin-session-shell">
+      <header className={`admin-session-bar${collaborative ? ' campus-session-bar' : ''}`} aria-label={collaborative ? '校园协作工作台' : auth.role === 'viewer' ? '公开浏览权限' : '管理员会话'}>
+        <span><span className="admin-session-dot" />{collaborative ? '校园协作' : auth.role === 'viewer' ? '公开浏览 · 只读' : auth.enabled ? <>管理员 <strong>{auth.username}</strong></> : null}</span>
+        <div>
+          <a className="admin-public-decisions" href="/?view=published">{collaborative ? '查看决策方案' : '查看公开决策方案'}</a>
+          <a className="admin-session-report" href={`/deliverables/${encodeURIComponent('求是村_旧改深度调研与行动计划.pdf')}`} target="_blank" rel="noreferrer">求是村报告</a>
+          {(collaborative || auth.role === 'admin') && <a href="/api/admin/database-schema">数据库结构</a>}
+          {!collaborative && (auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <>
+            {logoutError && <span role="alert">{logoutError}</span>}
+            <button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button>
+          </>)}
+        </div>
+      </header>
+      <div className="admin-workspace">{content}</div>
+    </div>
   }
 
   return <main className="admin-access-screen"><section className="admin-access-card" aria-labelledby="admin-access-title">

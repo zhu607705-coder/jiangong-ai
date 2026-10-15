@@ -13,6 +13,7 @@ import { validate } from '../../packages/contracts/validate'
 import { researchRenewalStrategy } from '../../services/map-screening/renewal-strategy'
 import { STRATEGY_POLICY, type StrategyPacket, type StrategyStreamEvent } from '../../packages/retrofit/strategy'
 import { listPublishedStrategies, readPublishedStrategy } from './strategy-publication'
+import { ResearchRoundsService, ResearchRoundError, registerResearchRoundRoutes } from './research-rounds'
 
 export type ModeContextLoader = (id: string, signal: AbortSignal) => Promise<DecisionInput>
 const bodySchema = z.object({ expected_context_version: z.number().int().nonnegative().optional(), refresh: z.boolean().optional() }).strict()
@@ -128,4 +129,17 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
     }
     finally {if(key)running.delete(key)}
   })
+  const researchRounds = new ResearchRoundsService(store,requireProject,async(project,hash,signal,roundContext,onProgress)=>{
+    const key='round:'+project.id
+    if(running.has(key)||running.size>=2) throw new ResearchRoundError(409,'ROUND_CAPACITY','已有方案研究正在进行，请稍后创建新的研究轮次。')
+    running.add(key)
+    try {
+      // Public projection is deliberately independent from the selected internal material manifest.
+      const {input}=await prepareMode(projectDecisionInput(project.input),library)
+      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext})
+    } finally {running.delete(key)}
+  })
+  await researchRounds.initialize()
+  registerResearchRoundRoutes(app,researchRounds,requireProject,requestSignal)
+  return researchRounds
 }

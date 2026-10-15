@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result 704ms
+ ✓ tests/contracts/research-rounds.test.ts > uses internal document text in AI while public web queries exclude it and unselected/other-project files 378ms
+ ✓ tests/contracts/research-rounds.test.ts > requires config plus per-round consent and disallows parent-internal laundering or cross-project documents 413ms
+ ✓ tests/contracts/research-rounds.test.ts > explicitly adopts a same-project older saved baseline without fabricating its input or prior intake 368ms
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"d5463df4ba68be4ec15551145bba0fcdbf092c43ea4cb1d87f7f6cccc0aff960","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent 412ms
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"91add4f7e8e3e8d559aa6afc0e1eb9c7e3e854b169cc2970b74b365b7c9eac7c","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent 401ms
+stderr | tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis
+{"event":"renewal_strategy_quality_retry","project_id":"P-ROUND-DEMO","code":"STRATEGY_SYNTHETIC_IDENTITY_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis 365ms
+ ✓ tests/contracts/research-rounds.test.ts > keeps survey denominators and construction-organization uncertainty in the round prompt 334ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  17:38:30
+   Duration  4.05s (transform 253ms, setup 0ms, import 553ms, tests 3.38s, environment 0ms)
+
