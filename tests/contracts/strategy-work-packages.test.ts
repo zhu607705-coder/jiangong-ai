@@ -3,7 +3,7 @@ import fixture from '../../fixtures/inputs/01_auto.json'
 import type { ProjectInput, RenewalStrategy } from '../../apps/host/generated/contracts'
 import { config } from '../../apps/host/config'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
-import { validateStrategy, strategyPromptSources, STRATEGY_PROMPT_SOURCE_CHARS, type StrategySource } from '../../packages/retrofit/strategy'
+import { validateStrategy, strategyPromptSources, STRATEGY_PROMPT_SOURCE_CHARS, type StrategySource, type StrategyPacket, type StrategyProgress } from '../../packages/retrofit/strategy'
 import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
 
 const ports=vi.hoisted(()=>({open:vi.fn()}))
@@ -111,4 +111,28 @@ it('reserves a bounded prompt excerpt for concrete archive references without en
   expect(selected.some(row=>row.role==='current')).toBe(true)
   expect(selected.find(row=>row.id===archive.id)!.text.length).toBeLessThanOrEqual(2000)
   expect(selected.reduce((sum,row)=>sum+row.text.length,0)).toBeLessThanOrEqual(STRATEGY_PROMPT_SOURCE_CHARS)
+})
+it('reuses saved public research and its trace without web calls, deduplicating sources and excluding internal material',async()=>{
+  Object.assign(config,{searchConfigured:true})
+  const project={...structuredClone(fixture),synthetic:false,business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const acquired:StrategySource={...source,id:'ACQUIRED',text:'本小区给水管网更新方案已公开征求意见，涉及252户。',url:'https://example.org/saved-public',visibility:'public',data_class:'public',locator:'public:excerpt'}
+  const archive:StrategySource={...source,id:'ARCHIVE',role:'reference',text:'归档案例采用雨污分流与给水管改造。'}
+  const internal:StrategySource={...source,id:'INTERNAL',text:'PRIVATE-SENTINEL-731内部正文',visibility:'internal',data_class:'internal',document_id:'DOC-PRIVATE'}
+  const registryInternal:StrategySource={...source,id:'REGISTRY-INTERNAL',text:'PRIVATE-SENTINEL-992未带metadata的内部正文'}
+  project.sources.push({id:registryInternal.id,title:'内部原文件',visibility:'internal',data_class:'internal',synthetic:false,untrusted_text:registryInternal.text})
+  const saved:Pick<StrategyPacket,'sources'|'research'>={sources:[source,acquired,archive,internal,registryInternal],research:{status:'partial',queries:['本小区供水方案'],source_ids:[acquired.id,internal.id,registryInternal.id],warnings:['原轮次部分网页未取得全文'],reused:false}}
+  const completed=withConcreteWorkPlan(strategy(),acquired);completed.rationale=[{point:'复用本对象公开原文。',source_id:acquired.id,quote:acquired.text}]
+  const call=vi.fn().mockResolvedValue({value:completed}),runReadCapability=vi.fn().mockRejectedValue(new Error('Retry must not call web tools'))
+  ports.open.mockResolvedValue({calls:[],call,runReadCapability,close:vi.fn(async()=>{})})
+  const progress:StrategyProgress[]=[],before=JSON.stringify(saved)
+  const result=await researchRenewalStrategy(project,0,input,'same-hash-retry',false,new AbortController().signal,null,{savedResearch:saved,referenceSources:[archive],onProgress:event=>progress.push(event)})
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledOnce();expect(runReadCapability).not.toHaveBeenCalled();expect(fetch).not.toHaveBeenCalled()
+  expect(result.sources.filter(row=>row.id===acquired.id)).toHaveLength(1)
+  expect(result.sources.filter(row=>row.id===archive.id)).toHaveLength(1)
+  expect(result.research).toEqual({...saved.research,source_ids:[acquired.id],reused:true})
+  expect(call.mock.calls[0][1]).toContain(acquired.text);expect(call.mock.calls[0][1]).not.toMatch(/PRIVATE-SENTINEL/)
+  expect(result.strategy?.paths[0].work_packages?.[0].source_id).toBe(acquired.id)
+  expect(progress.some(event=>event.stage==='research'&&event.status==='completed'&&event.message.includes('复用同资料版本'))).toBe(true)
+  expect(JSON.stringify(saved)).toBe(before)
 })

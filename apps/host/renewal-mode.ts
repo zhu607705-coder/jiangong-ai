@@ -128,7 +128,10 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const prior = (await store.db.query<{payload:DecisionSupport}>('SELECT payload FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3',[config.ownerId,project.id,modeHash])).rows[0]?.payload||null
       streaming = req.headers.accept?.includes('application/x-ndjson') || false
       if (streaming) { res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Accel-Buffering', 'no'); res.flushHeaders() }
-      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of)})
+      const savedResearch = cached?.status==='failed' && cached.project_id===project.id && cached.context_version===project.context_version && cached.input_hash===hash && cached.synthetic===(query.demo==='true')
+        && Date.now()-Date.parse(cached.created_at)<20*60_000 && cached.model_calls.some(call=>call.finish_reason==='max-tokens') && cached.research?.queries.length
+        && cached.sources.length && cached.sources.every(source=>source.visibility!=='internal'&&source.data_class!=='internal') ? {sources:cached.sources,research:cached.research} : undefined
+      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch})
       signal.throwIfAborted()
       if ((await requireProject(project.id)).context_version!==project.context_version) {
         if (streaming) { emit({type:'error',message:'研究期间资料已变化，请刷新后重新研究。'}); res.end(); return }

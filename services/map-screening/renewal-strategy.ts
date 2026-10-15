@@ -13,7 +13,7 @@ import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 
 /** Uses DSH public research and the configured DeepSeek Flash Agent; no alternate model client. */
 export async function researchRenewalStrategy(project: ProjectInput, version: number, input: DecisionInput, hash: string, synthetic: boolean, signal: AbortSignal, priorDecision: DecisionSupport | null,
-  options: { onProgress?: (event: StrategyProgress) => void; roundContext?: ResearchRoundContext; referenceSources?: readonly StrategySource[] } = {}): Promise<StrategyPacket> {
+  options: { onProgress?: (event: StrategyProgress) => void; roundContext?: ResearchRoundContext; referenceSources?: readonly StrategySource[]; savedResearch?: Pick<StrategyPacket,'sources'|'research'> } = {}): Promise<StrategyPacket> {
   const screening = input.renewalMode!, base: StrategyPacket = { project_id: project.project_id, context_version: version, input_hash: hash,
     created_at: new Date().toISOString(), synthetic, status: 'unavailable', strategy: null, sources: [], decision: priorDecision, model_calls: [], research: null, error: null }
   let stage: StrategyProgress['stage'] = 'sources'
@@ -48,10 +48,22 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       if(!sources.some(row=>row.id===source.id))sources.push({...source,role:'reference'})
       if(sources.find(row=>row.id===source.id)?.role==='reference')workReferenceIds.push(source.id)
     }
+    if(options.savedResearch) {
+      // The host binds this opt-in retry to the same hash/version. Only its public research is reusable.
+      const restrictedIds=new Set(project.sources.filter(source=>source.visibility==='internal'||source.data_class==='internal'||source.synthetic).map(source=>source.id))
+      const deniedIds=new Set<string>()
+      for(const source of options.savedResearch.sources) {
+        if(source.visibility==='internal'||source.data_class==='internal'||source.data_class==='synthetic'||source.data_class==='semi_synthetic'||source.document_id||restrictedIds.has(source.id)||source.project_id&&source.project_id!==project.project_id||source.locator.startsWith('synthetic:')||source.id.startsWith('SIM-')) {deniedIds.add(source.id);continue}
+        if(!source.text.trim()||sources.some(row=>row.id===source.id||!!row.url&&row.url===source.url&&row.text===source.text))continue
+        sources.push({...source})
+      }
+      base.research=options.savedResearch.research?{...structuredClone(options.savedResearch.research),source_ids:options.savedResearch.research.source_ids.filter(id=>!deniedIds.has(id)),reused:true}:null
+    }
     base.sources = sources
     progress({ stage: 'sources', status: 'completed', message: `已读取 ${sources.length} 份对象依据，准备核对公开案例。`, source_count: sources.length })
     live = await LiveSession.open('MAP-AI-STRATEGY-' + randomUUID(), budget)
-    if (!synthetic && config.searchConfigured) {
+    if(options.savedResearch) progress({stage:'research',status:'completed',message:'复用同资料版本已取得的公开来源与检索记录，本轮只重新生成方案。',source_count:sources.length,query_count:base.research?.queries.length||0})
+    else if (!synthetic && config.searchConfigured) {
       const name = project.scope.map_anchor?.name || project.scope.name
       const rounds = renewalResearchRounds(name, screening.conditions)
       base.research = { status: 'success', queries: [], source_ids: [], warnings: [], reused: true }
@@ -83,7 +95,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       }
     }
     else progress({ stage: 'research', status: 'skipped', message: synthetic ? '使用完整模拟底表与归档案例，不进行外部检索。' : '本轮使用已保存原文与归档案例。' })
-    for (const example of screening.cases) sources.push({ id: example.id, title: `${example.city} · ${example.name} · 归档对标字段`,
+    for (const example of screening.cases) if(!sources.some(source=>source.id===example.id))sources.push({ id: example.id, title: `${example.city} · ${example.name} · 归档对标字段`,
       text: JSON.stringify(example), url: example.url, published_at: example.published_at, role: 'reference', locator: `case:${example.id}` })
     const demo = synthetic && !round ? buildCompleteCommunityDemo() : null
     if (demo) {
@@ -98,7 +110,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
           evidence:[{source_id:'SIM-STRATEGY-BASE',title:sources[0].title,published_at:'2026-10-13',locator:sources[0].locator,quote:sources[0].text,url:null}] } }
     }
     base.sources = sources
-    if (!synthetic && config.searchConfigured) progress({ stage: 'research', status: 'completed', message: `已整理 ${sources.length} 份对象依据与对标资料。`, source_count: sources.length, query_count: base.research?.queries.length || 0 })
+    if (!synthetic && config.searchConfigured && !options.savedResearch) progress({ stage: 'research', status: 'completed', message: `已整理 ${sources.length} 份对象依据与对标资料。`, source_count: sources.length, query_count: base.research?.queries.length || 0 })
     progress({ stage: 'model', status: 'running', message: '正在综合原文，提出更新取舍、投入阶段与财务及社会效果建议。', source_count: sources.length })
     if (!base.decision && config.decisionEnabled) base.decision = await live.runReadCapability('renewal_research_route', toolSignal => evaluateDecision(input, toolSignal))
     const promptSources = strategyPromptSources(sources,workReferenceIds), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
