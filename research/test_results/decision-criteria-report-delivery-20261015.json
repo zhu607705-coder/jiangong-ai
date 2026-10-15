@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-15T08:38:51.2758010Z",
+  "source": "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+  "sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
+  "anonymous_readback_sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
+  "public_url": "http://10.70.223.113/deliverables/%E8%80%81%E6%97%A7%E5%B0%8F%E5%8C%BA%E6%94%B9%E9%80%A0%E6%A1%88%E4%BE%8B%E6%8B%86%E5%88%86%E4%B8%8E%E5%85%AD%E7%BB%B4%E6%95%B0%E6%8D%AE%E8%AF%B4%E6%98%8E.pdf",
+  "pages": 38,
+  "bytes": 589974,
+  "storage": "shared/deliverables; symlinked into the current release",
+  "existing_qiushi_13_page_report": "preserved",
+  "application_restart": false
+}

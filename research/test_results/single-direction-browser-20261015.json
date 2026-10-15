@@ -1,0 +1,43 @@
+{
+  "url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+  "role": "viewer",
+  "checks": {
+    "comprehensive": {
+      "selected": "comprehensive",
+      "header": "综合整治 · 方案总览",
+      "oppositeVisible": false,
+      "title": "综合整治·分项更新路径：以保留建筑为前提，逐栋核实后按分项打包实施",
+      "assessment": {
+        "mode": "comprehensive",
+        "dimensions": 6,
+        "oppositeVisible": false
+      }
+    },
+    "returnFromEvidence": "comprehensive",
+    "rebuild": {
+      "selected": "rebuild",
+      "header": "原拆原建 · 方案总览",
+      "oppositeVisible": false,
+      "title": "原拆原建·整体重建路径（对照）：仅当逐栋鉴定确认不可修复且拆建与决议条件齐备后成立",
+      "assessment": {
+        "mode": "rebuild",
+        "dimensions": 6,
+        "oppositeVisible": false
+      },
+      "operations": {
+        "heading": "当前方向：原拆原建",
+        "oppositeVisible": false
+      }
+    },
+    "finalDefault": {
+      "page": "改造方向判断",
+      "selected": "",
+      "planEnabled": false
+    }
+  },
+  "screenshots": [
+    "output/playwright/single-direction/direction-judgment.png",
+    "output/playwright/single-direction/direction-choice.png",
+    "output/playwright/single-direction/rebuild-assessment.png"
+  ]
+}

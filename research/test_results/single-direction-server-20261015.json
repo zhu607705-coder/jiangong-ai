@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-10-15T08:47:09.022772+00:00",
+  "anonymous_role": "viewer",
+  "public_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+  "public_index_count": 2,
+  "selected_project": {
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "project_name": "浙大求是村 · 片区研究",
+    "context_version": 14,
+    "strategy_context_version": 14,
+    "created_at": "2026-10-15T08:31:52.674Z",
+    "headline": "求是村建议以综合整治优先研究：先逐栋鉴定+分项更新（二次供水、加梯、适老、管网），拆建因结构不可修与拆建条件均未核实暂作比选",
+    "status": "completed",
+    "synthetic": false,
+    "is_current": true,
+    "input_hash": "f83eda2e5c9724b6fe1dcb9ed28fc2fad65e481779481fa2dfa344ff1e31a476"
+  },
+  "detail": {
+    "status": "completed",
+    "context_version": 14,
+    "paths": 2,
+    "dimensions": 6,
+    "source_count": 28,
+    "next_checks": 3,
+    "publication": {
+      "kind": "current",
+      "is_current": true,
+      "current_input_hash": "f83eda2e5c9724b6fe1dcb9ed28fc2fad65e481779481fa2dfa344ff1e31a476",
+      "saved_at": "2026-10-15T08:31:52.674Z"
+    }
+  },
+  "same_name_empty_project": {
+    "project_id": "P-e417e04f-784d-4f93-af75-8c75964710e8",
+    "result": null
+  },
+  "anonymous_post_denied": {
+    "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/renewal-strategy?demo=false": 403,
+    "/api/projects/public-decisions": 403
+  },
+  "new_model_generation_requested": false
+}

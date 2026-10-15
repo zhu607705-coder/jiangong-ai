@@ -3123,5 +3123,104 @@
     "new_model_generation_requested": false,
     "unresolved_questions": [],
     "next_runnable_task": null
+  },
+  "decision_criteria_direction_workflow_20261015": {
+    "status": "completed_live_api_single_direction_public_browser_documents_verified",
+    "updated_at": "2026-10-15",
+    "application_commit": "341b995d0788b41d2ccb7ce6e0c2708aea5432ba",
+    "evidence": "research/test_results/decision-criteria-direction-completion-20261015.json",
+    "public_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+    "changed_files": [
+      "packages/contracts/schema.json",
+      "packages/retrofit/strategy.ts",
+      "packages/retrofit/decision-priorities.ts",
+      "apps/host/renewal-mode.ts",
+      "apps/host/strategy-publication.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "packages/experience/retrieval.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "apps/workspace/src/components/DecisionBrief.tsx",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+      "apps/workspace/src/components/CompleteCommunityDemo.tsx",
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "scripts/measure-decision-value.ps1"
+    ],
+    "real_api": {
+      "generation": "research/test_results/direction-api-v5-live-generation-20261015.json",
+      "readback": "research/test_results/direction-api-v5-readback-20261015.json",
+      "elapsed_seconds": 183.89,
+      "source_count": 28,
+      "model_calls": [
+        {
+          "stage": "renewal_strategy",
+          "requested_model": "deepseek-flash",
+          "returned_model": "deepseek-flash",
+          "duration_ms": 29717,
+          "input_tokens": 33639,
+          "output_tokens": 4701,
+          "finish_reason": "tool-calls"
+        },
+        {
+          "stage": "renewal_strategy",
+          "requested_model": "deepseek-flash",
+          "returned_model": "deepseek-flash",
+          "duration_ms": 20599,
+          "input_tokens": 40126,
+          "output_tokens": 4641,
+          "finish_reason": "tool-calls"
+        },
+        {
+          "stage": "renewal_strategy_quote_repair",
+          "requested_model": "deepseek-flash",
+          "returned_model": "deepseek-flash",
+          "duration_ms": 30221,
+          "input_tokens": 33698,
+          "output_tokens": 4942,
+          "finish_reason": "tool-calls"
+        },
+        {
+          "stage": "renewal_strategy_quote_repair",
+          "requested_model": "deepseek-flash",
+          "returned_model": "deepseek-flash",
+          "duration_ms": 18533,
+          "input_tokens": 39541,
+          "output_tokens": 4966,
+          "finish_reason": "tool-calls"
+        }
+      ],
+      "preferred_mode": "comprehensive",
+      "investment_stage": "preliminary",
+      "literal_quotes_verified": 4,
+      "initial_quality_defect_and_repair": "research/test_results/direction-api-stage-review-20261015.json"
+    },
+    "automatic_retrieval_selftest": {
+      "evidence": "research/test_results/decision-value-campus-v14-20261015T074703394Z.json",
+      "fixed_questions": 4,
+      "registered_checks": 12,
+      "before_traceable": 8,
+      "after_traceable": 12,
+      "batch_ms": 387.621,
+      "automatic_check_ms": 494.44,
+      "human_time_saving_claim": false
+    },
+    "documents": {
+      "pdf": {
+        "path": "D:\\建工ai\\docs\\老旧小区改造案例拆分与六维数据说明.pdf",
+        "sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
+        "pages": 38,
+        "qa": "output/documents/renewal-review/main/decision-standards-qa-20261015.json",
+        "public_delivery": "research/test_results/decision-criteria-report-delivery-20261015.json"
+      },
+      "word": {
+        "path": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+        "sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+        "qa": "research/test_results/decision-criteria-word-20261015.json"
+      }
+    },
+    "accepted_flow": "AI direction judgement, explicit human choice, direction-scoped plan/assessment/operations/followups; no auto choice or cross-direction restoration.",
+    "unresolved_questions": [],
+    "next_runnable_task": null
   }
 }
