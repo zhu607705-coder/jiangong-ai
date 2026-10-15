@@ -50,7 +50,7 @@ describe('admin access protocol and entry gate', () => {
       expect(dom.document.body.textContent).toContain('saved project')
       if (label) expect(dom.document.querySelector('.admin-session-bar')?.textContent).toContain(label)
       else expect(dom.document.querySelector('.admin-session-bar')).toBeNull()
-      if (canWrite === 'false') expect(dom.document.querySelector('a')?.getAttribute('href')).toBe('/admin/login')
+      if (canWrite === 'false') expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '管理员登录')?.getAttribute('href')).toBe('/admin/login')
     } finally { await act(async () => root.unmount()) }
   })
 
