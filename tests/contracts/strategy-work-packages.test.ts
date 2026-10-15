@@ -83,8 +83,11 @@ it('keeps source quantities, unknowns and explicit scenarios distinct and never 
   expect(check(value)).toBe(value)
   row.unit='台';expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
   Object.assign(row,{quantity:12,unit:'米',quantity_basis:'scenario'})
-  expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_SCENARIO_REQUIRED')
-  row.preconditions.push('情景假设：先以12米试验段比较施工和维护条件。')
+  // The structured basis already labels the scenario; prose needs no password words.
+  expect(check(value)).toBe(value)
+  row.quantity=null;expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  row.quantity=12;row.unit='';expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  row.unit='米';row.target_basis='scenario';row.scope='本小区对象与户数未定，须由社区名册核定后确定改造规模。'
   expect(check(value)).toBe(value)
   const archive:StrategySource={...source,id:'ARCHIVE',title:'浙江另一案例道路排水改造',text:'该案例道路、排水与绿化改造，道路总面积32545平方米。',locator:'案例ZJ-001/改造内容',role:'reference'}
   Object.assign(row,{source_id:archive.id,quote:archive.text,locator:archive.locator,quantity:32545,unit:'㎡',quantity_basis:'source',evidence_refs:[archive.id]})

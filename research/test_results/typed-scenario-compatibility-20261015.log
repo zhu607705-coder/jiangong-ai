@@ -1,0 +1,22 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+stderr | tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH","stage":"validation"}
+
+stderr | tests/contracts/strategy-work-packages.test.ts > projects invented comparisons out of a parentless later attempt while retaining the existing work-plan repair
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-work-packages.test.ts > keeps real-parent comparisons subject to their original object evidence gate
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"current","diagnostic":{"code":"STRATEGY_EVIDENCE_INVALID"},"source_count":5,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+················
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  23:17:15
+   Duration  773ms (transform 271ms, setup 0ms, import 597ms, tests 59ms, environment 0ms)
+
