@@ -112,3 +112,17 @@ test('a same-project saved snapshot is openly readable and labelled with its sav
     expect(app.dom.document.querySelector('.strategy-summary h3')?.textContent).toBe(published.headline)
   } finally { await app.cleanup() }
 })
+
+test('goal preferences are interactive for visitors and keep the rule-based action independent', async () => {
+  const app = await mountWorkbench('?project=WITH-PLAN&view=overview')
+  try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.decision-brief h3')?.textContent).toContain('综合整治优先'))
+    const initialAction = app.dom.document.querySelector('.decision-current-action')?.textContent
+    const preset = [...app.dom.document.querySelectorAll<HTMLButtonElement>('.decision-presets button')].find(button => button.textContent === '财政承受优先')!
+    await act(async () => preset.click())
+    expect(app.dom.document.querySelector<HTMLInputElement>('[aria-label="资金交付目标权重"]')?.value).toBe('5')
+    expect(preset.getAttribute('aria-pressed')).toBe('true')
+    expect(app.dom.document.querySelector('.decision-current-action')?.textContent).toBe(initialAction)
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})

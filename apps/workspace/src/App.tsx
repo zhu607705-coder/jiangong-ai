@@ -749,7 +749,7 @@ export default function App() {
               </span>
             </div>
           )}
-          {project.input.business_profile === 'neighborhood' && <div className="full-demo-mode-toolbar">
+          {project.input.business_profile === 'neighborhood' && <div className={`full-demo-mode-toolbar${demoSessionActive ? '' : ' is-real-project'}`}>
             <p>{completeDemoActive ? '全量模拟：六维现况、改造方案、月度运营和模拟台账均有完整数值与推算依据；支持版本对比与下一步调查。' : demoSessionActive ? '当前查看真实项目的材料与证据。模拟方案、版本对比和调查演示可通过顶部标签返回。' : '可查看真实项目资料，或打开全量模拟数据，演示政府工作人员掌握完整资料后的报表。'}</p>
             <button className="secondary" type="button" onClick={() => {
               const next = demoSessionActive ? null : project.id;

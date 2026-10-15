@@ -104,6 +104,24 @@ function scopePriority(candidate: RetrievalCandidate, projectTerms: string[]): n
   return candidate.source.evidence_scope === 'object' ? 0 : candidate.source.evidence_scope === 'area' ? 1 : 2
 }
 
+type BuildingLocation = { building: string; unit: string | null; literal: string }
+const locationNumerals = '零〇一二两三四五六七八九十百千'
+function locationNumber(value: string): string {
+  if (/^\d+$/.test(value)) return String(Number(value))
+  const digits: Record<string, number> = { 零: 0, 〇: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 }
+  if (!/[十百千]/.test(value)) return String(Number([...value].map(char => digits[char]).join('')))
+  let total = 0, digit = 0
+  for (const char of value) {
+    const unit = ({ 十: 10, 百: 100, 千: 1000 } as Record<string, number>)[char]
+    if (unit) { total += (digit || 1) * unit; digit = 0 } else digit = digits[char]
+  }
+  return String(total + digit)
+}
+function buildingLocations(text: string): BuildingLocation[] {
+  const pattern = new RegExp(`(?<![\\d${locationNumerals}])第?([\\d${locationNumerals}]{1,12})\\s*(?:幢|栋|号楼)(?:\\s*[-—/·]?\\s*的?第?([\\d${locationNumerals}]{1,12})\\s*单元)?`, 'gu')
+  return [...text.normalize('NFKC').matchAll(pattern)].map(match => ({ building: locationNumber(match[1]), unit: match[2] ? locationNumber(match[2]) : null, literal: match[0] }))
+}
+
 const annotationIdentity = (link: RagMeasureLink) => JSON.stringify([link.card_id, link.card_revision, link.review_status,
   link.measure_key, link.measure_name, link.kind, link.phase, link.stage, link.object_ref, link.field_key, link.value, link.evidence.quote])
 
@@ -297,15 +315,30 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
   const prepared = prepareRetrievalCandidates(project, bundle, originals, request)
   const query = expandRetrievalQuery(request.question)
   const topics = retrievalTopics(request.question), terms = retrievalTerms(project, query, topics.explicit)
-  const relevant = prepared.candidates.filter(candidate => topics.matches(candidate.text)
-    && (topics.explicit || terms.some(term => candidate.text.toLowerCase().includes(term))))
   // Named objects may be segmented into single Han characters. Require a continuous three-character name overlap,
   // rather than promoting every source which merely shares an institution/city word such as a two-character prefix.
   const names = [project.name, project.input.scope.name]
   const projectTerms = names.flatMap(name => [...name.matchAll(/\p{Script=Han}{3,}/gu)].flatMap(([run]) =>
     run === '片区研究' || run === '项目研究' ? [] : Array.from({ length: run.length - 2 }, (_, index) => run.slice(index, index + 3))))
   projectTerms.push(...searchTokens(names.join(' ')).filter(term => !/\p{Script=Han}/u.test(term) && term.length >= 3))
-  const priority = (candidate: RetrievalCandidate) => scopePriority(candidate, projectTerms)
+  const locations = buildingLocations(request.question)
+  const locationTokens = new Set(locations.flatMap(location => searchTokens(location.literal)))
+  const attributeTerms = terms.filter(term => !locationTokens.has(term) && !/^[\d零〇一二两三四五六七八九十百千]+$/.test(term) && !['单元', '楼栋', '楼幢', '号楼'].includes(term))
+  const projectNames = unique(names.flatMap(name => [name.split(/[·|｜]/)[0].trim(), name.split(/[·|｜]/)[0].trim().replace(/^(?:浙江大学|浙大)/, '')]).filter(name => name.length >= 3))
+  const locationMatch = (candidate: RetrievalCandidate) => {
+    if (!locations.length) return false
+    const refs = candidate.source.object_refs || [], metadata = `${candidate.source.title} ${refs.join(' ')}`
+    if (!refs.includes(`project:${project.id}`) && (!projectNames.some(name => metadata.includes(name)) || refs.some(ref => ref.startsWith('project:')))) return false
+    // Parse fields independently: a building in a title and an unrelated unit in a body cannot be spliced together.
+    const recorded = [...buildingLocations(candidate.source.title), ...buildingLocations(candidate.text)]
+    return locations.some(wanted => recorded.some(actual => actual.building === wanted.building && (wanted.unit === null || actual.unit === wanted.unit)))
+  }
+  const relevant = prepared.candidates.filter(candidate => {
+    const text = candidate.text.toLowerCase(), bodyTerms = locations.length ? attributeTerms : terms
+    return topics.matches(candidate.text) && (topics.explicit || bodyTerms.some(term => text.includes(term)))
+      || locationMatch(candidate) && attributeTerms.some(term => text.includes(term))
+  })
+  const priority = (candidate: RetrievalCandidate) => locationMatch(candidate) ? -1 : scopePriority(candidate, projectTerms)
   let rankCalls = 0
   const rank = async (candidates: RetrievalCandidate[]): Promise<RetrievalHit[]> => {
     rankCalls++
@@ -318,13 +351,14 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
       seen.add(match.source_id)
       return [{ ...candidate, score: match.score, match_reasons: [...candidate.match_reasons,
         '明确主题先核正文，计数单位不替代设施主题；通过后仍由现有BM25排序',
+        ...(priority(candidate) === -1 ? ['问题中的楼幢、单元与同一项目来源的完整定位对应；正文支持所问属性，优先查找但不改变原文阶段或审核状态'] : []),
         priority(candidate) === 0 ? '来源登记为对象范围，且来源标题或对象标识与当前项目匹配，优先查找'
           : priority(candidate) === 1 ? '来源登记为社区范围，且来源标题或对象标识与当前项目匹配，随后查找' : '地区、外部案例或范围待核资料作为参考保留'] }]
     }).slice(0, 5)
   }
   const finalists: RetrievalHit[] = []
   let batched = false
-  for (const scope of [0, 1, 2]) {
+  for (const scope of [-1, 0, 1, 2]) {
     const initial = batches(relevant.filter(candidate => priority(candidate) === scope))
     batched ||= initial.length > 1
     let scoped: RetrievalHit[] = []
@@ -347,7 +381,7 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
       source_texts: prepared.sourceTexts, eligible_source_texts: prepared.candidates.filter(candidate => candidate.evidence_kind === 'source_text').length }, skipped: prepared.skipped,
     method: batched ? 'metadata_gated_batched_bm25' : 'metadata_gated_bm25',
     score_meaning: 'BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。',
-    ranking_note: '明确主题须在正文命中；计数单位仅补纯数量问题。按来源范围优先查找匹配本项目的对象、社区资料，再查地区和案例参考；每档仍用同一BM25，档间分数不直接比较。'
+    ranking_note: '明确主题须在正文命中；同项目完整楼幢及单元定位允许标题绑定对象、正文分别支持所问属性并优先查找，计数单位不代替属性。同一来源内定位完整后，按来源范围查找对象、社区及地区案例参考；每档仍用同一BM25，档间分数不直接比较。'
       + (batched ? '大档按材料交错分批，每批最多1000片段及约1MB文本，候选再由同一BM25复排。' : '无正文主题词重合时保留无命中。'),
     content_role: 'untrusted_source_material', fact_writes: 0 }
 }

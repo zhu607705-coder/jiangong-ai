@@ -16,12 +16,17 @@ test('a cached model demolition preference cannot replace the current evidence g
   const screening = input()
   const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: screening, decision: oldRebuild })))
   expect(document.querySelector('.renewal-direction>strong')?.textContent).toBe('综合整治优先研究')
-  expect(document.querySelector('.renewal-gate-result')?.textContent).toContain('当前未推荐拆建')
+  expect(document.querySelector('.renewal-main-reason')?.textContent).toContain('逐栋核实结构')
+  expect(document.querySelector('.renewal-next')?.textContent).toContain('逐栋安全鉴定')
+  expect(document.querySelector('.renewal-gate')?.tagName).toBe('DETAILS')
+  expect(document.querySelector('.renewal-gate')?.hasAttribute('open')).toBe(false)
+  expect(document.querySelector('.renewal-gate>summary')?.textContent).toContain('已满足 0/9')
+  expect(document.querySelector('.renewal-gate>summary')?.textContent).toContain('待核 9')
   expect(document.querySelectorAll('.renewal-gate li[data-state="unknown"]').length).toBe(9)
   const audit = document.querySelector('.renewal-model-audit')!
   expect(audit.hasAttribute('open')).toBe(false)
   expect(audit.textContent).toContain('原始模型偏好：原拆原建')
-  expect(document.querySelector('.renewal-baseline-note')?.textContent).toContain('逐栋鉴定')
+  expect(document.querySelector('.renewal-baseline-note')).toBeNull()
 })
 
 test('confirmed unsafe-to-repair conditions show investigation and retain source references, rather than recommending renovation', () => {
@@ -35,7 +40,36 @@ test('confirmed unsafe-to-repair conditions show investigation and retain source
   expect(document.querySelector('.renewal-gate li[data-state="met"]')?.textContent).toContain('已触发')
   expect(document.querySelector('.renewal-gate')?.textContent).toContain('SAFETY-REPORT')
   expect(document.querySelector('.renewal-gate')?.textContent).toContain('专业鉴定第 4 页')
-  expect(document.querySelector('.renewal-direction>p')?.textContent).toContain('修缮不可行')
+  expect(document.querySelector('.renewal-main-reason')?.textContent).toContain('修缮不可行')
+})
+
+test('the condition summary counts actual satisfied, unknown, unmet and conflicting checks independently', () => {
+  const screening = input()
+  const set = (kind: string, value: boolean | null, state: 'supported' | 'restricted' | 'conflict') => Object.assign(screening.conditions.find(row => row.kind === kind)!, { value, state, source_ids: ['CONDITION-SOURCE'], locators: ['条件记录第3页'] })
+  set('structure_repairable', false, 'restricted')
+  set('rights_clear', true, 'supported')
+  set('funding_secured', false, 'restricted')
+  set('demolition_permitted', null, 'conflict')
+  const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: screening })))
+  const summary = document.querySelector('.renewal-gate>summary')?.textContent
+  expect(summary).toContain('已满足 2/9'); expect(summary).toContain('待核 5')
+  expect(summary).toContain('未满足 1'); expect(summary).toContain('冲突 1')
+  expect(document.querySelectorAll('.renewal-gate li[data-state="unknown"]')).toHaveLength(5)
+  expect(document.querySelector('.renewal-gate')?.textContent).toContain('条件记录第3页')
+})
+
+test('model restrictions remain auditable while the visible brief leads with the recommendation and next action', () => {
+  const reason = '原始模型输出中的限制与待核原因。'
+  const decision = structuredClone(oldRebuild)
+  decision.renewal_mode!.reasons = [reason]
+  const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: input(), decision })))
+  expect(document.querySelector('.renewal-decision-brief')?.textContent).not.toContain(reason)
+  expect(document.querySelector('.renewal-direction>.renewal-restriction')).toBeNull()
+  expect(document.querySelector('.renewal-model-audit')?.hasAttribute('open')).toBe(false)
+  expect(document.querySelector('.renewal-model-audit .renewal-restriction')?.textContent).toBe(reason)
+  expect(document.querySelector('.renewal-gate')?.textContent).toContain('在同一范围和价格年')
+  expect(document.querySelector('.renewal-gate')?.textContent).toContain('形成两方案费用—效果表')
+  expect(document.querySelector('.renewal-gate')?.textContent).not.toContain('不构造统一费用比值')
 })
 
 test('researched costs distinguish the local elevator draft from subsidy rules and cross-region control prices', () => {

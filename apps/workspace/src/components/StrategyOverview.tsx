@@ -13,6 +13,7 @@ import DecisionDashboard from './DecisionDashboard'
 import CompleteCommunityDemo from './CompleteCommunityDemo'
 import CommunityOperationsPanel from './CommunityOperationsPanel'
 import RenewalModePanel from '../maps/RenewalModePanel'
+import DecisionBrief from './DecisionBrief'
 import './strategy-overview.css'
 
 const levels = { low: 1, medium: 3, high: 5, unknown: null }
@@ -88,13 +89,16 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   const openSource=(refs:string[])=>{setSourceIds(refs);const local=refs.filter(id=>project.input.sources.some(source=>source.id===id));if(local.length&&tab==='assessment')onEvidence(local)}
   return <section className="strategy-overview" aria-label="更新方案总览">
     <header className="strategy-top"><div><span>研判总览 / 方案总览</span><h2>整体更新策略</h2><p>{demoActive?'杭州样本社区 · 完整模拟':'基于本项目资料与公开案例'} · 综合整治与原拆原建对照</p></div><button className="secondary" disabled={busy||!canWrite} title={!canWrite?'管理员登录后可生成或更新方案':undefined} onClick={()=>void research(true,false)}><IconRefresh size={17}/>{canWrite&&!result?'开始研究':'重新检索与研判'}</button></header>
-    {tab==='plan'&&<>
-      <article ref={summaryAnchor} className={`strategy-summary${failed&&!busy?' is-failed':''}`}><div className="strategy-model-label">{strategy?(error?'上次已保存的整体更新方案':'已保存的整体更新方案'):busy?'方案研究 · 进行中':failed?'方案研究 · 生成失败':unavailable?'方案研究 · 暂不可生成':'方案研究 · 尚未生成'}{demoActive?' · 模拟':''}</div><h3>{heading}</h3><p>{guardedRebuild?modeGate.summary:leadSummary||(failureMessage&&!busy?'本轮尚未形成完整的方案总览，可继续查看项目原文、已取得资料和历史记录。':'先比较保留建筑的综合整治与原拆原建，再核对结构、规划、居民、资金和安置条件。')}</p>{!guardedRebuild&&restSummary&&<details className="strategy-summary-more"><summary>展开现况与完整说明</summary><p>{restSummary}</p></details>}
+    {tab==='plan'&&<section ref={summaryAnchor}>
+      {strategy&&result&&!demoActive&&<DecisionBrief key={result.input_hash} result={result} gate={modeGate} onEvidence={openSource} onPlan={()=>{setPath(modeGate.direction==='rebuild'?'rebuild':'comprehensive');contentAnchor.current?.scrollIntoView({block:'start',behavior:'smooth'})}}/>}
+      <details className="strategy-research-summary" open={!strategy||demoActive}><summary>完整研究摘要与模型记录</summary>
+      <article className={`strategy-summary${failed&&!busy?' is-failed':''}`}><div className="strategy-model-label">{strategy?(error?'上次已保存的整体更新方案':'已保存的整体更新方案'):busy?'方案研究 · 进行中':failed?'方案研究 · 生成失败':unavailable?'方案研究 · 暂不可生成':'方案研究 · 尚未生成'}{demoActive?' · 模拟':''}</div><h3>{heading}</h3><p>{guardedRebuild?modeGate.summary:leadSummary||(failureMessage&&!busy?'本轮尚未形成完整的方案总览，可继续查看项目原文、已取得资料和历史记录。':'先比较保留建筑的综合整治与原拆原建，再核对结构、规划、居民、资金和安置条件。')}</p>{!guardedRebuild&&restSummary&&<details className="strategy-summary-more"><summary>展开现况与完整说明</summary><p>{restSummary}</p></details>}
         {strategy&&<div className="strategy-direction-label">{demoActive?`模拟研究方向：${MODE_LABELS[strategy.preferred_mode]}`:`当前研究方向：${MODE_LABELS[modeGate.direction]}`}</div>}
         {latestCall&&<div className="strategy-model-record">{latestCall.returned_model?`实际模型：${latestCall.returned_model}`:`请求模型：${latestCall.requested_model} · 未取得返回模型标识`} · {result!.model_calls.length} 条调用记录 · 最近一次耗时 {(latestCall.duration_ms/1000).toLocaleString('zh-CN',{maximumFractionDigits:1})} 秒 · {new Date(result!.created_at).toLocaleString('zh-CN')}</div>}
       </article>
+      </details>
       {strategy && !demoActive && result?.publication?.kind === 'saved_snapshot' && <aside className="strategy-saved-snapshot" aria-label="已保存方案版本"><strong>本项目已保存的完整方案 · 资料 v{result.context_version}</strong><p>保存于 {new Date(result.publication.saved_at).toLocaleString('zh-CN')}。当前研判参数或参考资料已更新；以下保留该次方案、原文依据和六维说明，可公开阅读。</p></aside>}
-    </>}
+    </section>}
     <nav className="strategy-subnav" aria-label="研判总览子页面">{([['plan','方案总览'],['assessment','现况与改后评估'],['operations','社区运营推演']] as const).map(([id,label])=><button key={id} aria-current={tab===id?'page':undefined} onClick={()=>setTab(id)}>{label}</button>)}</nav>
     <div className="strategy-logic" aria-label="整体研判逻辑"><button onClick={()=>setTab('plan')}>01 方案方向</button><IconArrowRight size={15}/><button onClick={()=>{setTab('assessment');setPhase('before')}}>02 现况依据</button><IconArrowRight size={15}/><button onClick={()=>setTab('plan')}>03 模式比选</button><IconArrowRight size={15}/><button onClick={()=>{setTab('assessment');setPhase('after')}}>04 改后目标</button><IconArrowRight size={15}/><button onClick={()=>setTab('operations')}>05 运营验证</button></div>
     <div ref={contentAnchor} className="strategy-content-anchor"/>

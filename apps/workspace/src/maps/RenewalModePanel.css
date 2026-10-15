@@ -8,8 +8,9 @@
 .renewal-mode-panel p{margin:8px 0;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
 .renewal-direction.is-rebuild{background:#f7f3eb;border-color:#aa793b}
 .renewal-direction.is-rebuild>strong{color:#815626}
-.renewal-mode-panel .renewal-baseline-note{color:#4d675e;font-size:14px}
+.renewal-decision-brief{margin:12px 0 0}.renewal-decision-brief>div{margin-top:12px}.renewal-decision-brief dt{font-size:15px;color:#2d6b5c;font-weight:650}.renewal-decision-brief dd{margin:5px 0 0;font-size:16px;line-height:1.75;color:#344f45}
 .renewal-gate{margin-top:13px;padding:12px;background:#fff;border:1px solid #d9e5df;border-radius:8px}
+.renewal-gate>summary{display:flex;align-items:center;gap:9px;flex-wrap:wrap;list-style:none;color:#285c4d}.renewal-gate>summary::-webkit-details-marker{display:none}.renewal-gate>summary>strong{font-size:16px}.renewal-gate>summary>svg{margin-left:auto;flex-shrink:0;transition:transform .15s}.renewal-gate[open]>summary>svg{transform:rotate(180deg)}.renewal-gate-counts{display:flex;flex-wrap:wrap;gap:5px 10px;color:#62786c;font-size:14px;line-height:1.7}.renewal-gate-counts>span:first-child{color:#286a50;font-weight:600}.renewal-gate[open]>summary{padding-bottom:12px;border-bottom:1px solid #e0e9e3;margin-bottom:12px}
 .renewal-gate h4{margin:0;font-size:16px;color:#285c4d}
 .renewal-mode-panel .renewal-gate>p{font-size:14px;color:#536b60}
 .renewal-gate-group h5{margin:14px 0 6px;font-size:14px;color:#305e50}
@@ -23,15 +24,15 @@
 .renewal-gate summary,.renewal-model-audit summary{cursor:pointer}
 .renewal-mode-panel .renewal-gate details p,.renewal-mode-panel .renewal-gate .renewal-gate-source{font-size:13px;margin:5px 0}
 .renewal-mode-panel .renewal-gate-result{border-top:1px solid #dfe8e2;padding-top:9px;font-weight:600}
-.renewal-model-audit{margin-top:10px;font-size:13px;color:#687b70}
-.renewal-mode-panel .renewal-model-audit p{font-size:13px}
+.renewal-model-audit{margin-top:10px;font-size:14px;color:#687b70}
+.renewal-mode-panel .renewal-model-audit p{font-size:14px}
 .renewal-next{padding-top:9px;border-top:1px solid #d5e5de}
 .renewal-next>span{display:block;color:#2d6b5c;font-weight:650;margin-bottom:3px}
 .renewal-judge-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
 .renewal-mode-panel button{font:inherit;cursor:pointer}
 .renewal-judge-actions button,.renewal-investigate{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #afcfc3;border-radius:7px;background:white;color:#245d50;padding:7px 10px;font-size:14px}
 .renewal-judge-actions button:first-child{background:#267764;border-color:#267764;color:white}
-.renewal-mode-panel button:disabled{cursor:wait;opacity:.65}
+.renewal-mode-panel button:disabled{cursor:not-allowed;opacity:.65}
 .renewal-stop{margin-top:8px;border:0;background:transparent;color:#526a63;text-decoration:underline}
 .renewal-meta{margin-top:9px;color:#526c61;font-size:13px}
 .renewal-mode-panel .renewal-error,.renewal-mode-panel .renewal-restriction{color:#955034}

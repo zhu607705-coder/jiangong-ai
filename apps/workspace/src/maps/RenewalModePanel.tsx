@@ -45,7 +45,8 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
   const screening = packet?.screening || input, result = packet?.decision || decision, mode = result?.renewal_mode
   const gate = evaluateRenewalModeGate(screening)
   const direction = gate.rebuild_allowed ? mode?.direction === 'rebuild' ? 'rebuild' : 'investigate' : gate.direction
-  const directionSummary = direction === 'investigate' && gate.rebuild_allowed ? '拆建必要性与实施前提已登记满足，继续复核方案与取证后确定优先研究方向。' : gate.summary
+  const directionSummary = direction === 'investigate' && gate.rebuild_allowed ? '拆建必要性与实施条件已有依据，下一步复核方案和费用—效果比较，明确优先路径。' : gate.summary
+  const conditionCounts = { met: gate.checks.filter(row => row.state === 'met').length, unknown: gate.checks.filter(row => row.state === 'unknown').length, unmet: gate.checks.filter(row => row.state === 'unmet').length, conflict: gate.checks.filter(row => row.state === 'conflict').length }
   const agent=(strategy||cachedStrategy)?.status==='completed'&&!(strategy||cachedStrategy)?.synthetic?(strategy||cachedStrategy)?.strategy:null
   const example = screening.cases.find(row => row.id === caseId) || screening.cases[0]
   const evidence = screening.evidence.filter(row => mode?.source_ids.includes(row.source_id))
@@ -68,12 +69,12 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
   return <section className="renewal-mode-panel" aria-label="改造模式判定">
     <header><span className="renewal-step">先判模式</span><h3>改造模式判定</h3><span className="renewal-stage">{screening.synthetic ? '模拟初筛' : '证据条件初筛'}</span></header>
     <div className={`renewal-direction is-${direction}`}>
-      <strong>{direction === 'comprehensive' ? '综合整治优先研究' : direction === 'rebuild' ? '原拆原建优先论证' : MODE_LABELS.investigate}</strong>
-      <p>{directionSummary}</p>
-      <p className="renewal-baseline-note">综合整治作为研究与比选基线；是否可以安全施工，仍由逐栋鉴定和实施条件决定。</p>
-      <section className="renewal-gate" aria-label="原拆原建推荐门槛">
+      <strong>{direction === 'comprehensive' ? '综合整治优先研究' : direction === 'rebuild' ? '原拆原建优先论证' : gate.rebuild_allowed ? '先完成两方案取舍' : MODE_LABELS.investigate}</strong>
+      <dl className="renewal-decision-brief"><div className="renewal-main-reason"><dt>主要原因</dt><dd>{directionSummary.replace(/^综合整治优先研究[：，]\s*/, '')}</dd></div><div className="renewal-next"><dt>下一步</dt><dd>{gate.next_step}</dd></div></dl>
+      <details className="renewal-gate" aria-label="判定标准与条件">
+        <summary><strong>判定标准与条件</strong><span className="renewal-gate-counts"><span>拆建条件已满足 {conditionCounts.met}/{gate.checks.length}</span><span>待核 {conditionCounts.unknown}</span>{conditionCounts.unmet > 0 && <span>未满足 {conditionCounts.unmet}</span>}{conditionCounts.conflict > 0 && <span>冲突 {conditionCounts.conflict}</span>}</span><IconChevronDown size={17} aria-hidden="true"/></summary>
         <h4>何时切换为原拆原建优先论证</h4>
-        <p>项目初筛门槛：必要性触发与实施前提须同时具备；未知项逐项保留。功能重构或经济必要性需另有专项论证，不能直接套用案例比例或模型偏好。</p>
+        <p>先核实本对象拆建必要性和八项实施前提，再比较投入与使用效果。待核项保留为未知，逐项列明所需材料。</p>
         {(['necessity','feasibility'] as const).map(group => <div className="renewal-gate-group" key={group}>
           <h5>{group === 'necessity' ? '1. 本对象拆建必要性' : '2. 拆建实施可行前提'}</h5>
           <ul>{gate.checks.filter(row => row.group === group).map(row => <li key={row.kind} data-state={row.state}>
@@ -84,17 +85,15 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
             </details>
           </li>)}</ul>
         </div>)}
-        <p className="renewal-gate-result">{gate.rebuild_allowed ? '项目初筛门已满足，继续核对两方案费用和效果结论并履行属地程序。' : '当前未推荐拆建：必要性触发或实施前提尚未全部得到本对象证据支持。'}</p>
-      </section>
-      {mode?.reasons.map(reason => <p className="renewal-restriction" key={reason}>{reason}</p>)}
-      <p className="renewal-next"><span>优先调查</span>{gate.next_step}</p>
-      {(mode || agent) && <details className="renewal-model-audit"><summary>查看模型原始输出与历史方案</summary><p>模型偏好作为待核记录，当前研究方向由上方条件初筛决定。</p>{mode && <p>原始模型偏好：{MODE_LABELS[mode.model_choice.choice as keyof typeof MODE_LABELS] || mode.model_choice.choice}</p>}{agent && <p>历史方案偏好：{MODE_LABELS[agent.preferred_mode]}。{!compact && agent.headline}</p>}</details>}
+        <p className="renewal-gate-result">{gate.rebuild_allowed ? '九项条件已满足，进入两方案费用—效果取舍和属地前期论证。' : '按以上状态补齐或核实条件，形成可比较的两方案费用—效果表。'}</p>
+      </details>
+      {(mode || agent) && <details className="renewal-model-audit"><summary>查看判定过程与模型记录</summary><p>当前建议按本对象条件形成，以下保留模型原始输出和历史方案记录。</p>{mode && <p>原始模型偏好：{MODE_LABELS[mode.model_choice.choice as keyof typeof MODE_LABELS] || mode.model_choice.choice}</p>}{mode?.reasons.map(reason => <p className="renewal-restriction" key={reason}>{reason}</p>)}{agent && <p>历史方案偏好：{MODE_LABELS[agent.preferred_mode]}。{!compact && agent.headline}</p>}</details>}
       <div className="renewal-judge-actions">
-        <button onClick={() => void judge()} disabled={running||!canWrite} title={!canWrite?'管理员登录后可生成模式初判':undefined}><IconSparkles size={17}/>{running ? 'decision 正在判定…' : mode ? '更新模式初判' : '判定改造模式'}</button>
+        <button onClick={() => void judge()} disabled={running||!canWrite} title={!canWrite?'管理员登录后可生成模式初判':undefined}><IconSparkles size={17}/>{running ? '正在判定改造模式…' : mode ? '更新模式初判' : '判定改造模式'}</button>
         {mode && <button onClick={() => { setTab('standards'); setOpenStandard(mode.priority_constraint.choice) }}>查看判定条件</button>}
       </div>
       {running && <button className="renewal-stop" onClick={() => { requestController.current?.abort(); setRunning(false) }}>停止本次判定</button>}
-      {mode && <div className="renewal-meta">decision 初判 · 对象资料截至 {screening.as_of.slice(0, 10)}</div>}
+      {mode && <div className="renewal-meta">模式初判 · 对象资料截至 {screening.as_of.slice(0, 10)}</div>}
       {(error || result && result.status !== 'completed') && <p className="renewal-error" role="alert">{error || decisionErrorMessage(result?.error_code || '')}</p>}
     </div>
     <div className="renewal-tabs" role="tablist" aria-label="模式判定内容">
@@ -109,10 +108,10 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
         <dl className="renewal-path-data">
           {screening.standards.map(row => <div key={row.key}><dt>{row.label}</dt><dd>{row[path]}</dd></div>)}
         </dl>
-        <p className="renewal-combination">可按楼栋组合：主体综合整治，特定楼栋另做拆建论证；年龄或单项费用不能单独决定模式。</p>
+        <p className="renewal-combination">按楼栋组织两条路径：分别列出修缮或拆建范围、居民影响、投入和长期使用效果。</p>
       </>}
       {tab === 'standards' && <>
-        <p className="renewal-standard-intro">项目初筛标准 v2 · 综合整治为保守研究基线；达到拆建必要性与实施前提后再切换。两方案的费用、效果与逐栋条件继续分别核对。</p>
+        <p className="renewal-standard-intro">项目初筛标准 v2 · 逐栋核实结构和实施条件，按同一范围、价格年与使用目标比较两方案投入及效果。</p>
         {screening.standards.map(row => {
           const rows = row.kinds.map(kind => condition(kind)).filter(Boolean)
           const status = rows.some(item => item?.state === 'conflict') ? '存在分歧' : rows.some(item => item?.state === 'restricted') ? '有限制记录' : rows.every(item => item?.state === 'supported') ? '已有条件记录' : '安排专项核查'
