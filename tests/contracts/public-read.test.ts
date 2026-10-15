@@ -4,17 +4,14 @@ import { isPublicReadRequest } from '../../apps/host/public-read'
 describe('explicit public read and temporary calculation policy', () => {
   it.each([
     '/', '/assets/history-records.js', '/deliverables/方案.pdf', '/api/projects', '/api/projects/public-decisions',
-    '/api/projects/P-one', '/api/projects/P-one/knowledge/pipeline',
-    '/api/projects/P-one/community-operations', '/api/projects/P-one/construction-costs/export',
+    '/api/projects/P-one', '/api/projects/P-one/construction-costs/export',
     '/api/projects/P-one/renewal-strategy', '/api/maps/screening/analysis/MAPCTX-one',
-    '/api/maps/screening/renewal-mode/MAPCTX-one', '/api/runs/RUN-one/events',
+    '/api/maps/screening/renewal-mode/MAPCTX-one',
   ])('allows published GET/HEAD: %s', path => {
     expect(isPublicReadRequest('GET', path)).toBe(true)
     expect(isPublicReadRequest('HEAD', path)).toBe(true)
   })
   it.each([
-    '/api/projects/P-one/knowledge/retrieve', '/api/projects/P-one/knowledge/chunks',
-    '/api/projects/P-one/knowledge/groups', '/api/projects/P-one/experiences/knowledge-match',
     '/api/projects/P-one/community-operations/preview', '/api/maps/geometry/wgs84',
   ])('allows inspected temporary query POST: %s', path => expect(isPublicReadRequest('POST', path)).toBe(true))
   it.each([
@@ -25,6 +22,18 @@ describe('explicit public read and temporary calculation policy', () => {
     ['POST','/api/maps/screening/context'], ['POST','/api/maps/config'], ['POST','/api/intelligence/sync'],
     ['GET','/api/ready'], ['GET','/api/intelligence/status'], ['GET','/api/runs/RUN-one/trace'],
     ['GET','/server.env'], ['GET','/assets/%2e%2e%2fserver.env'],
+    ['GET','/api/projects/P-one/documents'], ['HEAD','/api/projects/P-one/documents'],
+    ['GET','/api/projects/P-one/knowledge/pipeline'], ['GET','/api/projects/P-one/revision-diff'],
+    ['GET','/api/projects/P-one/followups'], ['GET','/api/projects/P-one/experiences'],
+    ['GET','/api/projects/P-one/knowledge/skills/S-one/export'],
+    ['GET','/api/projects/P-one/knowledge/policies/POL-one/history'],
+    ['GET','/api/projects/P-one/community-operations'], ['GET','/api/projects/P-one/community-operations/scenarios/S-one/report'],
+    ['GET','/api/experiences/search'], ['GET','/api/runs/RUN-one'],
+    ['GET','/api/runs/RUN-one/events'], ['GET','/api/runs/RUN-one/decision-packet'], ['GET','/api/runs/RUN-one/report'],
+    ['POST','/api/projects/P-one/knowledge/retrieve'], ['POST','/api/projects/P-one/knowledge/chunks'],
+    ['POST','/api/projects/P-one/knowledge/groups'], ['POST','/api/projects/P-one/experiences/knowledge-match'],
+    ['GET','/api/projects/P-one/research-rounds'], ['POST','/api/projects/P-one/research-rounds'],
+    ['POST','/api/projects/P-one/research-rounds/ROUND-one/run'],
     ['DELETE','/api/projects/P-one'], ['OPTIONS','/api/projects'],
   ])('does not grant admin operation %s %s', (method,path) => expect(isPublicReadRequest(method,path)).toBe(false))
 })

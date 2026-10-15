@@ -13,9 +13,9 @@ afterEach(async () => {
   for (const access of accesses.splice(0)) access.close()
   await Promise.all(servers.splice(0).map(server => new Promise<void>(resolve => { server.close(() => resolve()); server.closeAllConnections() })))
 })
-function access(hashValue = hash, publicReadOnly = false) { const value = new AdminAccess('fixture-admin', hashValue, 300, publicReadOnly); accesses.push(value); return value }
-async function service(hashValue = hash, publicReadOnly = false) {
-  const auth = access(hashValue, publicReadOnly), app = express(); app.use(express.json())
+function access(hashValue = hash, publicReadOnly = false, collaborativeWorkspace = false) { const value = new AdminAccess('fixture-admin', hashValue, 300, publicReadOnly, collaborativeWorkspace); accesses.push(value); return value }
+async function service(hashValue = hash, publicReadOnly = false, collaborativeWorkspace = false) {
+  const auth = access(hashValue, publicReadOnly, collaborativeWorkspace), app = express(); app.use(express.json())
   app.get('/health', (_request,response)=>response.json({ok:true}))
   registerAdminRoutes(app, auth, () => ({ user: { id: 'local-operator' } }), () => '<html>Independent login shell</html>')
   app.get('/api/protected', (_request,response)=>response.json({private:true}))
@@ -91,6 +91,30 @@ describe('single administrator server boundary', () => {
     expect(session.status).toBe(200);expect((await session.json()).authentication.enabled).toBe(false)
     expect((await request('/api/protected',{headers:{Cookie:cookieOf(session)}})).status).toBe(200)
   })
+  it('enables campus collaboration without login even when old administrator credentials are retained', async () => {
+    const {auth,request,login}=await service(hash,true,true)
+    expect(auth.enabled).toBe(false);expect(auth.publicReadOnly).toBe(false)
+    const session=await request('/api/session')
+    expect(session.status).toBe(200)
+    const metadata=await session.json(),cookie=cookieOf(session)
+    expect(metadata.authentication).toMatchObject({enabled:false,role:'admin',public_read_only:false,collaborative_workspace:true})
+    expect(auth.identity(cookie)).not.toBeNull()
+    expect(JSON.stringify(metadata)).not.toContain(hash)
+    for(const path of ['/api/write','/api/projects','/api/projects/p/renewal-strategy']) {
+      expect((await request(path,{method:'POST',headers:{Cookie:cookie,'X-Requested-With':'haizhizi'}})).status).toBe(200)
+    }
+    expect((await request('/assets/history.js')).status).toBe(200)
+    const oldEntry=await request('/admin/login',{redirect:'manual'})
+    expect(oldEntry.status).toBe(303);expect(oldEntry.headers.get('location')).toBe('/')
+    expect((await login()).status).toBe(403)
+  })
+  it('keeps the previous private administrator mode available when collaboration is disabled again', async () => {
+    const collaborative=access(hash,true,true)
+    expect(await collaborative.login('fixture-admin',password)).toBeNull()
+    const restored=access(hash,false,false)
+    expect(restored.enabled).toBe(true)
+    expect(await restored.login('fixture-admin',password)).toMatch(/^[a-f0-9]{64}$/)
+  })
   it('allows published reads as a viewer without issuing an administrator cookie', async () => {
     const {request,login}=await service(hash,true)
     const session=await request('/api/session')
@@ -98,7 +122,7 @@ describe('single administrator server boundary', () => {
     expect((await session.json()).authentication).toMatchObject({enabled:true,role:'viewer',expires_at:null})
     expect((await request('/api/projects')).status).toBe(200)
     expect((await request('/assets/history.js')).status).toBe(200)
-    expect((await request('/api/projects/p/knowledge/retrieve',{method:'POST'})).status).toBe(200)
+    expect((await request('/api/projects/p/knowledge/retrieve',{method:'POST'})).status).toBe(403)
     expect((await request('/api/projects',{method:'POST'})).status).toBe(403)
     expect((await request('/api/projects/p/renewal-strategy',{method:'POST'})).status).toBe(403)
     expect(await (await request('/admin/login')).text()).toContain('Independent login shell')

@@ -10,6 +10,7 @@ import { renderAdminLoginPage } from '../../apps/host/admin-login-page'
 
 const authenticated = () => ({ authentication: { enabled: true, role: 'admin', username: 'example-admin', expires_at: new Date(Date.now() + 60_000).toISOString() } })
 const viewer = () => ({ authentication: { enabled: true, role: 'viewer', public_read_only: true, expires_at: null } })
+const campus = () => ({ authentication: { enabled: false, role: 'admin', public_read_only: false, collaborative_workspace: true } })
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 afterEach(() => vi.unstubAllGlobals())
 
@@ -34,24 +35,101 @@ describe('admin access protocol and entry gate', () => {
     expect(await fetchAdminSession()).toEqual(viewer())
   })
 
+  it('accepts the explicit campus collaboration contract without credentials or a session expiry', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(campus())))
+    expect(await fetchAdminSession()).toEqual(campus())
+  })
+
   it.each([
     [viewer(), '公开浏览 · 只读', 'false'],
     [authenticated(), '管理员', 'true'],
     [{ authentication: { enabled: false, role: 'admin' } }, '', 'true'],
+    [{ authentication: { enabled: false, role: 'admin', collaborative_workspace: false } }, '', 'true'],
+    [campus(), '校园协作', 'true'],
   ])('mounts the workbench with the matching viewer, administrator or local context (%s)', async (session, label, canWrite) => {
     const dom = parseHTML('<html><body><div id="root"></div></body></html>')
     vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(session)))
     const root = createRoot(dom.document.getElementById('root')!)
-    function Business() { const access = useWorkbenchAccess(); return createElement('p', { 'data-can-write': String(access.canWrite) }, 'saved project') }
+    function Business() { const access = useWorkbenchAccess(); return createElement('button', { 'data-can-write': String(access.canWrite), 'data-role': access.role, disabled: !access.canWrite }, 'saved project') }
     try {
       await act(async () => root.render(createElement(AdminAccess, { children: createElement(Business) })))
       await vi.waitFor(() => expect(dom.document.querySelector('[data-can-write]')?.getAttribute('data-can-write')).toBe(canWrite))
       expect(dom.document.body.textContent).toContain('saved project')
+      expect(dom.document.querySelector('[data-can-write]')?.hasAttribute('disabled')).toBe(canWrite === 'false')
       if (label) expect(dom.document.querySelector('.admin-session-bar')?.textContent).toContain(label)
       else expect(dom.document.querySelector('.admin-session-bar')).toBeNull()
       if (canWrite === 'false') expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '管理员登录')?.getAttribute('href')).toBe('/admin/login')
-      if (label) expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '查看公开决策方案')?.getAttribute('href')).toBe('/?view=published')
+      if (label) expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === (label === '校园协作' ? '查看决策方案' : '查看公开决策方案'))?.getAttribute('href')).toBe('/?view=published')
+      if (label === '校园协作') {
+        expect(dom.document.querySelector('[data-role]')?.getAttribute('data-role')).toBe('admin')
+        expect(dom.document.querySelector('header')?.getAttribute('aria-label')).toBe('校园协作工作台')
+        expect(dom.document.querySelector('.admin-session-report')?.getAttribute('href')).toContain('/deliverables/')
+        expect(dom.document.body.textContent).not.toMatch(/管理员|只读|退出登录/)
+        expect([...dom.document.querySelectorAll('a')].some(link => link.getAttribute('href')?.startsWith('/admin/') || link.getAttribute('href')?.startsWith('/api/admin/'))).toBe(false)
+      }
+    } finally { await act(async () => root.unmount()) }
+  })
+
+  it.each([
+    [campus(), ADMIN_LOGIN_REQUIRED_EVENT],
+    [campus(), ADMIN_LOGIN_REQUESTED_EVENT],
+    [{ authentication: { enabled: false, role: 'admin' } }, ADMIN_LOGIN_REQUIRED_EVENT],
+  ])('renews a non-login workbench session instead of requesting administrator login (%s, %s)', async (session, eventName) => {
+    const dom = parseHTML('<html><body><div id="root"></div></body></html>')
+    const navigation = { assign: vi.fn(), reload: vi.fn() }
+    Object.defineProperty(dom.window, 'location', { configurable: true, value: navigation })
+    vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+    vi.stubGlobal('Event', dom.window.Event)
+    const transport = vi.fn().mockImplementation(async (url: string) => url === '/api/session' ? response(session) : response({ code: 'ADMIN_LOGIN_REQUIRED' }, 401))
+    vi.stubGlobal('fetch', transport)
+    const root = createRoot(dom.document.getElementById('root')!)
+    function Business() { return createElement('p', { 'data-can-write': String(useWorkbenchAccess().canWrite) }, 'editable project') }
+    try {
+      await act(async () => root.render(createElement(AdminAccess, { children: createElement(Business) })))
+      await vi.waitFor(() => expect(dom.document.querySelector('[data-can-write]')?.getAttribute('data-can-write')).toBe('true'))
+      await act(async () => {
+        if (eventName === ADMIN_LOGIN_REQUIRED_EVENT) await expect(api('/expired-cookie-test')).rejects.toThrow('401')
+        else dom.window.dispatchEvent(new dom.window.Event(eventName))
+      })
+      await vi.waitFor(() => expect(transport.mock.calls.filter(([url]) => url === '/api/session')).toHaveLength(2))
+      await vi.waitFor(() => expect(dom.document.querySelector('[data-can-write]')?.getAttribute('data-can-write')).toBe('true'))
+      expect(navigation.assign).not.toHaveBeenCalled(); expect(navigation.reload).not.toHaveBeenCalled()
+      expect(dom.document.querySelector('form')).toBeNull()
+      expect(transport.mock.calls.some(([url]) => String(url).startsWith('/api/auth/'))).toBe(false)
+    } finally { await act(async () => root.unmount()) }
+  })
+
+  it('keeps a failed campus re-handshake on a connection error instead of an administrator lock screen', async () => {
+    const dom = parseHTML('<html><body><div id="root"></div></body></html>')
+    const navigation = { assign: vi.fn(), reload: vi.fn() }
+    Object.defineProperty(dom.window, 'location', { configurable: true, value: navigation })
+    vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(response(campus())).mockResolvedValueOnce(response({ code: 'SESSION_EXPIRED' }, 401)))
+    const root = createRoot(dom.document.getElementById('root')!)
+    try {
+      await act(async () => root.render(createElement(AdminAccess, { children: createElement('p', null, 'workspace') })))
+      await vi.waitFor(() => expect(dom.document.querySelector('.campus-session-bar')).not.toBeNull())
+      await act(async () => { dom.window.dispatchEvent(new dom.window.Event(ADMIN_LOGIN_REQUIRED_EVENT)) })
+      await vi.waitFor(() => expect(dom.document.body.textContent).toContain('工作台会话已失效，请重新连接'))
+      expect(dom.document.querySelector('form')).toBeNull()
+      expect(dom.document.body.textContent).not.toContain('管理员')
+      expect(navigation.assign).not.toHaveBeenCalled(); expect(navigation.reload).not.toHaveBeenCalled()
+    } finally { await act(async () => root.unmount()) }
+  })
+
+  it.each([viewer(), authenticated()])('retains administrator login navigation for a private-mode session (%s)', async session => {
+    const dom = parseHTML('<html><body><div id="root"></div></body></html>')
+    const navigation = { assign: vi.fn(), reload: vi.fn() }
+    Object.defineProperty(dom.window, 'location', { configurable: true, value: navigation })
+    vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(session)))
+    const root = createRoot(dom.document.getElementById('root')!)
+    try {
+      await act(async () => root.render(createElement(AdminAccess, { children: createElement('p', null, 'workspace') })))
+      await vi.waitFor(() => expect(dom.document.querySelector('.admin-session-bar')).not.toBeNull())
+      await act(async () => { dom.window.dispatchEvent(new dom.window.Event(ADMIN_LOGIN_REQUESTED_EVENT)) })
+      expect(navigation.assign).toHaveBeenCalledWith('/admin/login')
     } finally { await act(async () => root.unmount()) }
   })
 
@@ -72,6 +150,8 @@ describe('admin access protocol and entry gate', () => {
 
   it.each([
     [{}, 'INVALID_SESSION_RESPONSE'],
+    [{ authentication: { enabled: false, role: 'admin', collaborative_workspace: 'true' } }, 'INVALID_SESSION_RESPONSE'],
+    [{ authentication: { enabled: false, role: 'admin', collaborative_workspace: true, public_read_only: true } }, 'INVALID_SESSION_RESPONSE'],
     [{ authentication: { enabled: true, role: 'admin', username: 'example-admin', expires_at: 'not-a-date' } }, 'ADMIN_LOGIN_REQUIRED'],
     [{ authentication: { enabled: true, role: 'admin', username: 'example-admin', expires_at: '2000-01-01T00:00:00Z' } }, 'ADMIN_LOGIN_REQUIRED'],
   ])('does not open the application for an invalid session (%s)', async (body, code) => {

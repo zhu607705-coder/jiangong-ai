@@ -3222,5 +3222,29 @@
     "accepted_flow": "AI direction judgement, explicit human choice, direction-scoped plan/assessment/operations/followups; no auto choice or cross-direction restoration.",
     "unresolved_questions": [],
     "next_runnable_task": null
+  },
+  "internal_material_research_rounds_20261015": {
+    "updated_at": "2026-10-15",
+    "status": "implemented_focused_checks_and_build_passed_live_deployment_pending",
+    "task": "T63",
+    "changed_files": [
+      "apps/host/research-rounds.ts",
+      "apps/host/server.ts",
+      "apps/host/admin-auth.ts",
+      "apps/host/public-project.ts",
+      "apps/workspace/src/components/ResearchRoundsPanel.tsx",
+      "apps/workspace/src/components/InternalMaterialIntake.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "packages/retrofit/research-rounds.ts",
+      "services/map-screening/renewal-strategy.ts"
+    ],
+    "accepted_flow": "Campus shared collaboration without administrator login; ask about internal material before judgement; preserve first round; select and authorize original files for subsequent DSH research with source-backed changes.",
+    "tests": [
+      "research/test_results/research-rounds-focused-20261015.log",
+      "npm run build"
+    ],
+    "live_status": "pending",
+    "unresolved_questions": [],
+    "next_runnable_task": "Deploy matching campus collaboration ingress and host, verify real model analysis on two isolated synthetic rounds, inspect browser, publish updated documents."
   }
 }

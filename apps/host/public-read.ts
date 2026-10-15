@@ -6,16 +6,14 @@ const readPaths = [
   /^\/deliverables\/[^/]+\.(?:pdf|md|docx)$/i,
   /^\/api\/projects\/?$/i,
   /^\/api\/projects\/public-decisions\/?$/i,
-  new RegExp(`^${project}(?:/(?:revision-diff|documents|followups|experiences|renewal-mode|renewal-strategy|knowledge/pipeline|construction-costs(?:/export)?|community-operations(?:/scenarios/[^/]+/report)?))?/?$`, 'i'),
-  new RegExp(`^${project}/knowledge/(?:skills/[^/]+/export|(?:skills|policies)/[^/]+/history)/?$`, 'i'),
-  /^\/api\/runs\/[^/]+(?:\/(?:decision-packet|report|events))?\/?$/i,
-  /^\/api\/experiences\/search\/?$/i,
+  // Project input uses its public projection. Only separately published strategy/mode and public cost material remain readable.
+  new RegExp(`^${project}(?:/(?:renewal-mode|renewal-strategy|construction-costs(?:/export)?))?/?$`, 'i'),
   /^\/api\/intelligence\/(?:search|projects|items\/[^/]+)\/?$/i,
   /^\/api\/maps\/(?:config|data|screening\/profiles|screening\/renewal-mode\/[^/]+|screening\/analysis\/[^/]+)\/?$/i,
   /^\/_AMapService\/.+$/i,
 ]
 const queryPaths = [
-  new RegExp(`^${project}/(?:knowledge/(?:retrieve|chunks|groups)|community-operations/preview|experiences/knowledge-match)/?$`, 'i'),
+  new RegExp(`^${project}/community-operations/preview/?$`, 'i'),
   /^\/api\/maps\/geometry\/wgs84\/?$/i,
 ]
 export function isPublicReadRequest(method: string, path: string): boolean {

@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result 734ms
+ ✓ tests/contracts/research-rounds.test.ts > uses internal document text in AI while public web queries exclude it and unselected/other-project files 431ms
+ ✓ tests/contracts/research-rounds.test.ts > requires config plus per-round consent and disallows parent-internal laundering or cross-project documents 487ms
+ ✓ tests/contracts/research-rounds.test.ts > explicitly adopts a same-project older saved baseline without fabricating its input or prior intake 395ms
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"b02e7a69944e8382fdbbe079cb5ac171005c6d1385e780014d9caa0c317ad6f2","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent 431ms
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"91add4f7e8e3e8d559aa6afc0e1eb9c7e3e854b169cc2970b74b365b7c9eac7c","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent 414ms
+ ✓ tests/contracts/strategy-stream-api.test.ts > streams actual progress and one terminal packet, preserving the normal JSON API 39ms
+ ✓ tests/contracts/strategy-stream-api.test.ts > returns a cached read without starting research, including clients that prefer streams 8ms
+ ✓ tests/contracts/strategy-stream-api.test.ts > ends an obsolete streamed run with a Chinese error and does not save it 4ms
+ ✓ tests/contracts/strategy-stream-api.test.ts > reports a failed refresh without replacing a completed cached result 33ms
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"fixture-hash","diagnostic":{"code":"MODEL_OUTPUT_INVALID"},"source_count":4,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps old strategies compatible while requiring the brief for new research 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for renewal 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for investment 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for returns 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > rejects empty decisions and invalid investment stages while retaining the quote check 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts conditional target levels without manufacturing current facts or bypassing the rebuild gate 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > returns the model-authored project decisions and repairs an omitted brief through the same DSH call seam 4ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires cited object funding and repairability before admitting construction investment 1ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs a historical preparation mistaken for construction while preserving the proposed route and measures 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps cross-route comparisons out of individual paths and future targets without censoring the global brief or current text 0ms
+
+ Test Files  3 passed (3)
+      Tests  21 passed (21)
+   Start at  17:29:23
+   Duration  4.55s (transform 302ms, setup 0ms, import 1.20s, tests 2.99s, environment 0ms)
+

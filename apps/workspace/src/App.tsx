@@ -16,7 +16,6 @@ import {
   IconRefresh,
   IconShieldCheck,
   IconSparkles,
-  IconUpload,
   IconX,
   IconAlertTriangle,
 } from "@tabler/icons-react";
@@ -38,6 +37,7 @@ import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } fr
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
 import StrategyOverview, { type StrategyDirectionSelection } from './components/StrategyOverview';
+import InternalMaterialIntake, { type MaterialUploadMetadata } from './components/InternalMaterialIntake';
 import { MODE_LABELS } from '../../../packages/retrofit/renewal-mode';
 import { currentDirectionText } from './components/strategy-direction-text';
 import StrategyInvestigations from './components/StrategyInvestigations';
@@ -445,6 +445,31 @@ export default function App() {
       setBusy(false);
     }
   }
+  async function uploadMaterial(file: File, metadata?: MaterialUploadMetadata) {
+    if (!project || busy || !canWrite) return;
+    const projectId = project.id;
+    await action(async () => {
+      const form = new FormData();
+      // Multipart filename headers may use a different charset than UTF-8 fields.
+      form.append("original_file_name", file.name);
+      form.append("file", file);
+      form.append("synthetic", String(project.input.synthetic));
+      if (metadata) {
+        form.append("material_category", metadata.material_category);
+        if (metadata.source_date) form.append("source_date", metadata.source_date);
+      }
+      const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/documents`, {
+        method: "POST", credentials: "same-origin",
+        headers: { "X-Requested-With": "haizhizi" }, body: form,
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.detail || "材料上传未完成。");
+      await loadProject(projectId);
+      setNotice(result.parser_result?.status === "ocr_required"
+        ? "原文件已保存，扫描页尚需 OCR；未把空文本当作已解析证据。"
+        : "材料已保存为本项目内部资料，可在补充研判中纳入分析。");
+    });
+  }
   async function startRun(p: Project, mode: "automatic" | "enterprise", knowledgeQuery?: KnowledgeQuery) {
     if (!canWrite) return;
     const created = await api<{ id: string; revision: number; status: string }>(
@@ -769,7 +794,7 @@ export default function App() {
               try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
             }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
           </div>}
-          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} />}
+          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} />}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "overview" && !completeDemoActive && !currentDirection && (
             <details className="overview-legacy" open={project.input.business_profile !== 'neighborhood'}><summary>完整研判、计算与运行记录</summary>
@@ -1184,50 +1209,13 @@ export default function App() {
                   <div className="kicker">EVIDENCE LIBRARY</div>
                   <h2>资料与证据</h2>
                 </div>
-                <label
-                  className={`secondary upload-button ${busy ? "disabled" : ""}`}
-                >
-                  <IconUpload size={16} />
-                  上传材料
-                  <input
-                    type="file"
-                    accept=".md,.txt,.csv,.pdf,.docx,.xlsx"
-                    disabled={busy || project.input.synthetic || !canWrite}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      void action(async () => {
-                        const form = new FormData();
-                        // Multipart filename headers may use a different charset than UTF-8 fields.
-                        form.append("original_file_name", file.name);
-                        form.append("file", file);
-                        const response = await fetch(
-                          `/api/projects/${project.id}/documents`,
-                          {
-                            method: "POST",
-                            headers: { "X-Requested-With": "haizhizi" },
-                            body: form,
-                          },
-                        );
-                        const result = await response.json();
-                        if (!response.ok) throw new Error(result.detail);
-                        await loadProject(project.id);
-                        setNotice(
-                          result.parser_result?.status === "ocr_required"
-                            ? "原文件已保存，扫描页尚需 OCR；未把空文本当作已解析证据。"
-                            : "材料已在本地解析保存，尚未将正文自动认定为事实或组织约束。",
-                        );
-                      });
-                      e.target.value = "";
-                    }}
-                  />
-                </label>
               </div>
               <p className="intro">
                 保留原始来源、资料类别与访问范围。当前上传支持
                 TXT、Markdown、CSV、PDF、Word、Excel（≤ 10
                 MB）。真实材料使用独立真实项目。
               </p>
+              <InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/>
               {project.input.business_profile === 'neighborhood' && <EvidenceDecisionMap projectId={project.id} revision={project.context_version} sourceIds={project.input.sources.map(source => source.id)} onEvidence={openEvidence} onOverview={() => setTab('overview')} />}
               <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} revision={project.context_version} onEvidence={openEvidence} onLocateHit={locateEvidence} decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState} featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision} />
               <ImportedDataExplorer

@@ -13,12 +13,16 @@ type LoginFailure = { count: number; until: number }
 /** Session ownership remains the existing local operator; the login name is an authentication identity. */
 export class AdminAccess {
   readonly enabled: boolean
+  readonly publicReadOnly: boolean
   private readonly localToken = randomBytes(32).toString('hex')
   private readonly sessions = new Map<string, Session>()
   private failure: LoginFailure = { count: 0, until: 0 }
-  constructor(readonly username: string, private readonly passwordHash: string, readonly ttlSeconds = 28800, readonly publicReadOnly = false) {
-    this.enabled = !!passwordHash
-    if (this.enabled && !HASH_PATTERN.test(passwordHash)) throw new Error('ADMIN_PASSWORD_HASH must be a scrypt password hash.')
+  constructor(readonly username: string, private readonly passwordHash: string, readonly ttlSeconds = 28800, publicReadOnly = false, readonly collaborativeWorkspace = false) {
+    // An explicit campus collaboration deployment reuses the local session
+    // handshake. Stored administrator credentials remain intact for rollback.
+    this.enabled = !!passwordHash && !collaborativeWorkspace
+    this.publicReadOnly = publicReadOnly && !collaborativeWorkspace
+    if (passwordHash && !HASH_PATTERN.test(passwordHash)) throw new Error('ADMIN_PASSWORD_HASH must be a scrypt password hash.')
   }
   private cookie(header?: string): string | null {
     const matches = (header || '').split(';').map(item => item.trim()).filter(item => item.startsWith(`${COOKIE}=`))
@@ -77,7 +81,7 @@ export class AdminAccess {
 }
 
 export function registerAdminRoutes(app: Express, access: AdminAccess, metadata: () => Record<string, unknown>, renderLogin: () => string) {
-  const sessionBody = (header?: string) => ({ ...metadata(), authentication: { enabled: access.enabled, role: 'admin', public_read_only: access.publicReadOnly, ...access.identity(header) } })
+  const sessionBody = (header?: string) => ({ ...metadata(), authentication: { enabled: access.enabled, role: 'admin', public_read_only: access.publicReadOnly, collaborative_workspace: access.collaborativeWorkspace, ...access.identity(header) } })
   const unauthorized = (response: Response) => response.status(401).json({ code: 'ADMIN_LOGIN_REQUIRED', detail: '请使用管理员账号登录工作台。', authentication: { enabled: true } })
   const csrf = (request: Request, response: Response) => {
     if (request.headers['x-requested-with'] === 'haizhizi') return true
@@ -93,12 +97,12 @@ export function registerAdminRoutes(app: Express, access: AdminAccess, metadata:
     response.json(sessionBody(request.headers.cookie))
   })
   app.get('/admin/login', (request,response) => {
-    if (access.identity(request.headers.cookie)) response.redirect(303, '/')
+    if (!access.enabled || access.identity(request.headers.cookie)) response.redirect(303, '/')
     else response.type('html').send(renderLogin())
   })
   app.post('/api/auth/login', async (request, response, next) => {
     if (!csrf(request, response)) return
-    if (!access.enabled) { response.status(403).json({ code: 'ADMIN_LOGIN_DISABLED', detail: '当前为本机工作模式。' }); return }
+    if (!access.enabled) { response.status(403).json({ code: 'ADMIN_LOGIN_DISABLED', detail: access.collaborativeWorkspace ? '当前为校园协作模式，无需管理员登录。' : '当前为本机工作模式。' }); return }
     const retry = access.retryAfter()
     if (retry) { response.setHeader('Retry-After', retry); response.status(429).json({ code: 'LOGIN_RATE_LIMITED', detail: '登录尝试过多，请稍后再试。' }); return }
     try {
@@ -115,7 +119,7 @@ export function registerAdminRoutes(app: Express, access: AdminAccess, metadata:
     access.logout(request.headers.cookie); response.clearCookie(COOKIE, cookieOptions); response.json({ ok: true })
   })
   app.use((request, response, next) => {
-    if (!access.enabled) { next(); return }
+    if (!access.enabled) { response.locals.workbenchRole = 'admin'; next(); return }
     if (!access.identity(request.headers.cookie)) {
       if (access.canReadPublic(request.method, request.path)) { response.locals.workbenchRole = 'viewer'; next(); return }
       if (access.publicReadOnly) response.status(403).json({ code: 'ADMIN_REQUIRED', detail: '此操作需要管理员登录。', login_url: '/admin/login' })

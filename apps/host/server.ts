@@ -22,10 +22,12 @@ import { registerExperience } from './experience'
 import { registerCommunityOperations } from './community-operations'
 import { registerConstructionCosts } from './construction-costs'
 import { registerRenewalMode } from './renewal-mode'
+import { parseResearchMaterialMetadata } from './research-rounds'
 import { ExperienceError } from '../../packages/experience/domain'
 import { AdminAccess, registerAdminRoutes } from './admin-auth'
 import { renderAdminLoginPage } from './admin-login-page'
 import { describeWorkbenchDatabase } from './database-schema'
+import { publicProjectInput } from './public-project'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -34,7 +36,7 @@ await store.db.query("UPDATE runs SET status='failed',error_code='INTERRUPTED_RE
 const app = express()
 const amapSettings = new AmapSettings(config.dataDir)
 await amapSettings.load()
-const adminAccess = new AdminAccess(config.ADMIN_USERNAME, config.ADMIN_PASSWORD_HASH, config.ADMIN_SESSION_TTL_SECONDS, config.PUBLIC_READ_ONLY === 'true')
+const adminAccess = new AdminAccess(config.ADMIN_USERNAME, config.ADMIN_PASSWORD_HASH, config.ADMIN_SESSION_TTL_SECONDS, config.PUBLIC_READ_ONLY === 'true', config.collaborativeWorkspace)
 const controllers = new Map<string, AbortController>()
 const active = new Set<Promise<void>>()
 const { allowedHosts, allowedOrigins } = config.requestOrigins
@@ -50,7 +52,7 @@ app.use((req, res, next) => {
 })
 app.use(express.json({ limit: '4mb' }))
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'haizhizi-host' }))
-registerAdminRoutes(app, adminAccess, () => ({ user: { id: config.ownerId, label: adminAccess.enabled ? `管理员 ${config.ADMIN_USERNAME}` : '本地项目负责人' }, deployment: adminAccess.enabled ? 'single_admin_server' : 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
+registerAdminRoutes(app, adminAccess, () => ({ user: { id: config.ownerId, label: config.collaborativeWorkspace ? '校园协作用户' : adminAccess.enabled ? `管理员 ${config.ADMIN_USERNAME}` : '本地项目负责人' }, deployment: config.collaborativeWorkspace ? 'campus_collaborative' : adminAccess.enabled ? 'single_admin_server' : 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
   decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL} }), renderAdminLoginPage)
 app.use(['/api', '/_AMapService'], (req, res, next) => {
   if (!adminAccess.identity(req.headers.cookie) && res.locals.workbenchRole !== 'viewer') return next(new ApiError(401, 'SESSION_REQUIRED', '会话已更新，请刷新页面'))
@@ -63,7 +65,7 @@ await registerCommunityOperations(app,store,requireProject)
 const costLibrary = await registerConstructionCosts(app,store,requireProject)
 registerAmap(app, amapSettings)
 const mapScreening = registerMapScreening(app, amapSettings, store)
-await registerRenewalMode(app,store,requireProject,costLibrary,(id,signal)=>mapScreening.modeInput(id,signal))
+const researchRounds = await registerRenewalMode(app,store,requireProject,costLibrary,(id,signal)=>mapScreening.modeInput(id,signal))
 app.get('/api/ready', async (_req, res) => {
   let capability = false
   try { capability = (await fetch(`${config.capabilityUrl}/health`, { signal: AbortSignal.timeout(1500) })).ok } catch { /* explicit unavailable status below */ }
@@ -95,7 +97,10 @@ function launchRun(run: RunRecord) {
   const task = executeRun(store, run, controller.signal).finally(() => { clearTimeout(timeout); controllers.delete(run.id); active.delete(task) })
   active.add(task)
 }
-app.get('/api/projects', async (_req, res) => res.json(await store.projects(config.ownerId)))
+app.get('/api/projects', async (_req, res) => {
+  const projects = await store.projects(config.ownerId)
+  res.json(res.locals.workbenchRole === 'viewer' ? projects.map(project => ({ ...project, input: publicProjectInput(project.input) })) : projects)
+})
 app.post('/api/projects', async (req, res) => {
   const body = z.object({ fixture: z.enum(['01_auto', '02_enterprise', '03_missing', '04_conflict', '05_injection']).optional(), input: z.unknown().optional(), name: z.string().trim().min(1).max(120).optional() }).strict().parse(req.body)
   if (Boolean(body.fixture) === Boolean(body.input)) throw new ApiError(422, 'INPUT_REQUIRED', '请选择样例或提供项目输入')
@@ -107,7 +112,11 @@ app.post('/api/projects', async (req, res) => {
   await store.db.query('INSERT INTO projects(id,owner_id,name,input) VALUES($1,$2,$3,$4)', [input.project_id, config.ownerId, body.name || input.scope.name, JSON.stringify(input)])
   res.status(201).json(await requireProject(input.project_id))
 })
-app.get('/api/projects/:id', async (req, res) => { res.json({ ...await requireProject(req.params.id), runs: (await store.runs(req.params.id)).map(({ snapshot, ...run }) => run) }) })
+app.get('/api/projects/:id', async (req, res) => {
+  const project = await requireProject(req.params.id)
+  if (res.locals.workbenchRole === 'viewer') return res.json({ ...project, input: publicProjectInput(project.input), runs: [] })
+  res.json({ ...project, runs: (await store.runs(req.params.id)).map(({ snapshot, ...run }) => run) })
+})
 app.post('/api/projects/:id/map-anchor', async(req,res)=>{
   const project=await requireProject(String(req.params.id))
   const body=z.object({anchor:z.unknown(),expected_version:z.number().int().min(0)}).strict().parse(req.body)
@@ -216,16 +225,21 @@ app.post('/api/projects/:id/documents', upload.single('file'), async (req, res) 
   const fileName = uploadFileName(file.originalname, req.body.original_file_name)
   const extension = extname(fileName).toLowerCase()
   if (!['.md', '.txt', '.csv', '.pdf', '.docx', '.xlsx'].includes(extension)) throw new ApiError(415, 'UNSUPPORTED_FORMAT', '支持 TXT、Markdown、CSV、PDF、DOCX、XLSX')
+  const materialMetadata = parseResearchMaterialMetadata(req.body)
   const hash = createHash('sha256').update(file.buffer).digest('hex')
   const existing = (await store.db.query('SELECT id,file_name,parser_result FROM documents WHERE project_id=$1 AND sha256=$2', [project.id, hash])).rows[0]
-  if (existing) return res.json(existing)
+  if (existing) {
+    await researchRounds.recordMaterialMetadata(project, String(existing.id), materialMetadata)
+    return res.json(existing)
+  }
   const directory = join(config.dataDir, 'blobs', project.id); await mkdir(directory, { recursive: true })
   const id = `DOC-${randomUUID()}`, blob = `${id}${extension}`, path = join(directory, blob)
   await writeFile(path, file.buffer, { flag: 'wx' })
+  let committed = false
   try {
     const parsed = await parseDocument({ documentId: id, fileName, filePath: path, projectRoot: process.cwd(), allowedBasePath: directory, mime: file.mimetype, type: 'workspace_material' })
     const isSynthetic = req.body.synthetic === 'true'
-    const source = { id, title: fileName, data_class: isSynthetic ? 'synthetic' as const : 'internal' as const, visibility: 'internal' as const, synthetic: isSynthetic, untrusted_text: parsed.text.slice(0, 100000), hash, locator: `document:${id}`, content_status: 'uploaded' as const, parse_status: parsed.status as 'extracted' | 'empty' | 'ocr_required' }
+    const source = { id, title: fileName, data_class: isSynthetic ? 'synthetic' as const : 'internal' as const, visibility: 'internal' as const, synthetic: isSynthetic, untrusted_text: parsed.text.slice(0, 100000), hash, locator: `document:${id}`, content_status: 'uploaded' as const, parse_status: parsed.status as 'extracted' | 'empty' | 'ocr_required', retrieved_at: new Date().toISOString() }
     const updatedInput = structuredClone(project.input)
     if (updatedInput.synthetic !== isSynthetic) {
       // Uploading real material must not silently relabel the synthetic facts as real.
@@ -239,8 +253,10 @@ app.post('/api/projects/:id/documents', upload.single('file'), async (req, res) 
       if (!update.rows.length) throw new ApiError(409, 'CONTEXT_VERSION_CONFLICT', '项目资料已变化，请刷新并重试')
       await db.query('INSERT INTO documents(id,project_id,file_name,blob_name,sha256,parser_result) VALUES($1,$2,$3,$4,$5,$6)', [id, project.id, fileName, blob, hash, JSON.stringify(parsed)])
     })
+    committed = true
+    await researchRounds.recordMaterialMetadata(await requireProject(project.id), id, materialMetadata)
     res.status(201).json({ id, file_name: fileName, parser_result: parsed })
-  } catch (error) { await unlink(path); throw error }
+  } catch (error) { if (!committed) await unlink(path); throw error }
 })
 app.get('/api/projects/:id/documents', async (req, res) => { await requireProject(req.params.id); res.json((await store.db.query('SELECT id,file_name,parser_result,created_at FROM documents WHERE project_id=$1', [req.params.id])).rows) })
 app.post('/api/projects/:id/followups', async (req, res) => {

@@ -2,7 +2,9 @@ import type { ModelCall, RenewalStrategy, DecisionSupport, ResearchTrace } from 
 import { evaluateRenewalModeGate, type ModeCondition } from './renewal-mode'
 
 export const STRATEGY_POLICY = 'renewal-strategy-overview-v5'
-export type StrategySource = { id: string; title: string; text: string; url: string | null; published_at: string | null; role: 'current' | 'reference'; locator: string }
+export type StrategySource = { id: string; title: string; text: string; url: string | null; published_at: string | null; role: 'current' | 'reference'; locator: string;
+  visibility?: 'public' | 'internal'; data_class?: 'public' | 'internal' | 'synthetic' | 'semi_synthetic'; document_id?: string; document_version?: string; project_id?: string;
+  material_category?: import('./research-rounds').ResearchMaterialCategory; source_date?: string | null }
 export type StrategyPublication = { kind: 'current' | 'saved_snapshot'; is_current: boolean; current_input_hash: string; saved_at: string }
 export type PublicStrategyIndexItem = { project_id: string; project_name: string; context_version: number; strategy_context_version: number; created_at: string; headline: string; status: 'completed'; synthetic: false; is_current: boolean; input_hash: string }
 export type PublicStrategyIndexResponse = { items: PublicStrategyIndexItem[] }
@@ -44,8 +46,8 @@ export function strategyFailure(error: unknown, calls: readonly ModelCall[], opt
   else if (options.timedOut || provider === 'TIMEOUT') code = 'MODEL_TIMEOUT'
   else if (provider === 'AUTH' || provider === 'INVALID_CREDENTIAL') code = 'MODEL_AUTH_FAILED'
   else if (provider === 'RATE_LIMIT') code = 'MODEL_RATE_LIMITED'
-  else if (provider === 'MALFORMED_RESPONSE' || provider === 'EMPTY_RESPONSE' || parsed?.[2] === 'max-tokens' || error instanceof Error && error.name === 'ContractError' || /^STRATEGY_(INCOMPLETE|DECISION_BRIEF_REQUIRED|BRIEF_INCOMPLETE|PATH_DIRECTION_MIXED)$/.test(message)) code = 'MODEL_OUTPUT_INVALID'
-  else if (/^STRATEGY_(QUOTE_MISMATCH|SOURCE_MISMATCH|OBJECT_EVIDENCE_MISSING|MODE_RESTRICTED|REBUILD_GATE_UNMET|BRIEF_EVIDENCE_MISSING|CONSTRUCTION_GATE_UNMET)$/.test(message)) code = 'STRATEGY_EVIDENCE_INVALID'
+  else if (provider === 'MALFORMED_RESPONSE' || provider === 'EMPTY_RESPONSE' || parsed?.[2] === 'max-tokens' || error instanceof Error && error.name === 'ContractError' || /^STRATEGY_(INCOMPLETE|DECISION_BRIEF_REQUIRED|BRIEF_INCOMPLETE|PATH_DIRECTION_MIXED|ROUND_REVIEW_REQUIRED|ROUND_REVIEW_INCOMPLETE|ROUND_COMPARISON_MISSING)$/.test(message)) code = 'MODEL_OUTPUT_INVALID'
+  else if (/^STRATEGY_(QUOTE_MISMATCH|SOURCE_MISMATCH|OBJECT_EVIDENCE_MISSING|MODE_RESTRICTED|REBUILD_GATE_UNMET|BRIEF_EVIDENCE_MISSING|CONSTRUCTION_GATE_UNMET|ROUND_CHANGE_EVIDENCE_MISSING)$/.test(message)) code = 'STRATEGY_EVIDENCE_INVALID'
   else if (provider) code = 'MODEL_PROVIDER_FAILED'
   else if (options.stage === 'research') code = 'RESEARCH_FAILED'
   const diagnostic: StrategyDiagnostic = { code, ...(parsed ? { stage: parsed[1], stop_reason: parsed[2] } : {}), ...(provider ? { provider_code: provider } : {}) }
@@ -77,12 +79,13 @@ export const STRATEGY_PROMPT_SOURCE_CHARS = 36000
 /** Keep all acquired sources in the packet; only contiguous, relevant excerpts enter the model prompt. */
 export function strategyPromptSources(sources: readonly StrategySource[]): StrategySource[] {
   const terms = /结构|鉴定|权属|规划|居民|安置|资金|投资|成本|造价|维护|维修|运营|拆|修缮|供水|电梯/
-  const ordered = sources.map((source, index) => ({ source, index })).sort((a, b) => Number(b.source.role === 'current') - Number(a.source.role === 'current') || Number(terms.test(b.source.text)) - Number(terms.test(a.source.text)) || a.index - b.index)
+  const ordered = sources.map((source, index) => ({ source, index })).sort((a, b) => Number(!!b.source.document_id) - Number(!!a.source.document_id) || Number(b.source.role === 'current') - Number(a.source.role === 'current') || Number(terms.test(b.source.text)) - Number(terms.test(a.source.text)) || a.index - b.index)
   const selected: StrategySource[] = []; let remaining = STRATEGY_PROMPT_SOURCE_CHARS
   for (const { source } of ordered) {
     if (remaining < 300) break
     const match = source.text.search(terms), start = source.role === 'current' || match < 0 ? 0 : Math.max(0, match - 400)
-    const text = source.text.slice(start, start + Math.min(remaining, source.role === 'current' ? 5000 : 3000))
+    const documentLimit = Math.min(5000, Math.floor(18000 / Math.max(1, sources.filter(row=>row.document_id).length)))
+    const text = source.text.slice(start, start + Math.min(remaining, source.document_id ? documentLimit : source.role === 'current' ? 5000 : 3000))
     if (!text.trim()) continue
     selected.push({ ...source, text }); remaining -= text.length
   }
@@ -98,7 +101,7 @@ export function strategyConstructionAllowed(mode: RenewalStrategy['preferred_mod
   if (mode==='rebuild') return gate.rebuild_allowed&&gate.checks.every(row=>citedAtObject(row.kind,row.kind!=='structure_repairable'))
   return mode==='comprehensive'&&gate.checks.find(row=>row.kind==='structure_repairable')?.state==='unmet'&&citedAtObject('structure_repairable',true)
 }
-export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false) {
+export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false, requireRoundReview = false) {
   if (value.paths.length !== 2 || new Set(value.paths.map(path => path.mode)).size !== 2 || value.dimensions.length !== 6 || new Set(value.dimensions.map(row => row.key)).size !== 6) throw new Error('STRATEGY_INCOMPLETE')
   const ids = new Set(sources.map(source => source.id))
   for (const row of value.rationale) {
@@ -124,6 +127,17 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
     const path = value.paths.find(path=>path.mode===mode)!
     const text = [path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail]),...path.requirements,...value.dimensions.map(dimension=>dimension[mode])].map(literal).join('\n')
     if ((mode==='comprehensive'?/原拆原建|整体拆建|整体拆除重建/:/综合整治/).test(text)) throw new Error('STRATEGY_PATH_DIRECTION_MIXED')
+  }
+  const review = value.round_review
+  if (requireRoundReview && !review) throw new Error('STRATEGY_ROUND_REVIEW_REQUIRED')
+  if (review) {
+    if (!review.summary?.trim()) throw new Error('STRATEGY_ROUND_REVIEW_INCOMPLETE')
+    for (const change of review.changes) {
+      const selectedDocuments=sources.filter(source=>source.document_id)
+      if (![change.topic,change.before,change.after,change.reason].every(text=>typeof text==='string'&&text.trim()) || !change.evidence_refs.some(id=>(selectedDocuments.length?selectedDocuments:sources.filter(source=>source.role==='current')).some(source=>source.id===id))) throw new Error('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+    }
+    for (const item of review.missing_materials) if (![item.topic,item.request,item.reason].every(text=>typeof text==='string'&&text.trim())) throw new Error('STRATEGY_ROUND_REVIEW_INCOMPLETE')
+    for (const item of [...review.changes,...review.missing_materials]) if (item.evidence_refs.some(id=>!ids.has(id))) throw new Error('STRATEGY_SOURCE_MISMATCH')
   }
   return value
 }

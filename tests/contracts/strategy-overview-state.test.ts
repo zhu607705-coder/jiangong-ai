@@ -1,11 +1,13 @@
 import { afterEach, expect, test, vi } from 'vitest'
 import { act, createElement } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Simulate } from 'react-dom/test-utils'
 import { parseHTML } from 'linkedom'
 import fixture from '../../fixtures/inputs/01_auto.json'
 import { WorkbenchAccessContext } from '../../apps/workspace/src/AdminAccess'
 import StrategyOverview from '../../apps/workspace/src/components/StrategyOverview'
 import type { Project } from '../../apps/workspace/src/api'
+import type { ResearchRound, ResearchMaterial } from '../../packages/retrofit/research-rounds'
 
 vi.mock('../../apps/workspace/src/maps/RenewalModePanel', () => ({ default: () => null }))
 vi.mock('../../apps/workspace/src/components/CompleteCommunityDemo', () => ({ default: () => null }))
@@ -16,11 +18,13 @@ const failed = { project_id: project.id, context_version: 0, input_hash: 'hash',
   research: { queries: ['测试项目 综合整治'] }, error: 'LIVE_STAGE_FAILED:renewal_strategy:error',
   model_calls: [{ stage: 'renewal_strategy', requested_model: 'deepseek-flash', returned_model: null, error_code: 'TRANSPORT', finish_reason: 'error', input_tokens: 0, output_tokens: 0, duration_ms: 10500 }] }
 const response = (value: unknown) => new Response(JSON.stringify(value), { headers: { 'Content-Type': 'application/json' } })
+function testRound(id:string,number:number,result:unknown=null):ResearchRound{return{id,project_id:project.id,round_number:number,context_version:project.context_version,input_hash:'hash',parent_round_id:number>1?'first':null,parent_input_hash:number>1?'hash':null,parent_context_version:number>1?0:null,first_round_id:'first',first_input_hash:'hash',first_context_version:0,origin:'generated',status:result?'completed':'draft',material_intake:'none',allow_internal_ai:false,materials:[],missing_materials:[],result:result as ResearchRound['result'],error:null,created_at:'2026-10-15T03:30:51.777Z',updated_at:'2026-10-15T03:30:51.777Z'}}
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 async function render(value: unknown) {
   const dom = parseHTML('<html><body><div id="root"></div></body></html>')
   vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+  vi.stubGlobal('requestAnimationFrame',(callback:FrameRequestCallback)=>setTimeout(()=>callback(0),0));vi.stubGlobal('cancelAnimationFrame',clearTimeout);dom.window.HTMLElement.prototype.scrollIntoView=vi.fn()
   const container = dom.document.getElementById('root')!, root = createRoot(container)
   const transport = vi.fn(() => Promise.resolve(response(value)))
   vi.stubGlobal('fetch', transport)
@@ -68,18 +72,16 @@ test('arbitrary transport errors cannot expose raw provider URLs or keys in the 
   } finally { await act(async () => root.unmount()) }
 })
 
-test('an administrator sees real streamed stages and can stop without any fake percentage or automatic call', async () => {
+test('a collaborator sees real streamed round stages and can stop without any fake percentage or automatic call', async () => {
   const { container, root, transport } = await render(null)
   let stream!: ReadableStreamDefaultController<Uint8Array>
   const encoder=new TextEncoder()
-  transport.mockImplementation((...args: unknown[]) => Promise.resolve((args[1] as RequestInit)?.method==='POST'
-    ? new Response(new ReadableStream<Uint8Array>({start(controller){stream=controller}}),{headers:{'Content-Type':'application/x-ndjson'}})
-    : response(null)))
+  transport.mockImplementation((...args: unknown[]) => {const path=String(args[0]),method=(args[1] as RequestInit)?.method;return Promise.resolve(path.endsWith('/research-rounds')?(method==='POST'?response({round:testRound('first',1)}):response({rounds:[],materials:[],baseline_candidate:null})):method==='POST'?new Response(new ReadableStream<Uint8Array>({start(controller){stream=controller}}),{headers:{'Content-Type':'application/x-ndjson'}}):response(null))})
   try {
     await act(async()=>root.render(createElement(StrategyOverview,{project,demoActive:false,onEvidence:vi.fn(),onInvestigate:vi.fn()})))
-    await vi.waitFor(()=>expect(container.querySelector('.strategy-top button')?.textContent).toContain('开始研究'))
+    await vi.waitFor(()=>expect(container.querySelector('.research-intake [role=status]')).toBeNull())
     expect(transport.mock.calls.every(call=>(call as unknown as [string,RequestInit])[1].method==='GET')).toBe(true)
-    await act(async()=>container.querySelector<HTMLButtonElement>('.strategy-top button')!.click())
+    await act(async()=>container.querySelector<HTMLButtonElement>('.research-intake-actions button:nth-child(2)')!.click())
     await vi.waitFor(()=>expect(stream).toBeDefined())
     await act(async()=>{
       for(const event of [
@@ -115,10 +117,13 @@ test('a failed refresh retains the last completed strategy and labels it as the 
   const saved={...failed,status:'completed',strategy,error:null}
   const {container,root,transport}=await render(saved)
   try{
-    transport.mockImplementation((...args:unknown[])=>Promise.resolve(response((args[1] as RequestInit)?.method==='POST'?failed:saved)))
+    const material:ResearchMaterial={document_id:'NEW',project_id:project.id,file_name:'新增调查.txt',source_id:'NEW',version:'hash',material_category:'resident_needs',source_date:null,source_date_origin:'unrecorded',data_class:'internal',visibility:'internal',parse_status:'extracted',locator:'document:NEW',added_in_round:true}
+    transport.mockImplementation((...args:unknown[])=>{const path=String(args[0]),method=(args[1] as RequestInit)?.method;return Promise.resolve(response(path.endsWith('/research-rounds')?(method==='POST'?{round:testRound('second',2)}:{rounds:[testRound('first',1,saved)],materials:[material],baseline_candidate:null}):method==='POST'?{result:failed,round:{...testRound('second',2,failed),status:'failed'}}:saved))})
     await act(async()=>root.render(createElement(StrategyOverview,{project,demoActive:false,onEvidence:vi.fn(),onInvestigate:vi.fn()})))
     await vi.waitFor(()=>expect(container.querySelector('.strategy-summary h3')?.textContent).toBe(strategy.headline))
-    await act(async()=>container.querySelector<HTMLButtonElement>('.strategy-top button')!.click())
+    await vi.waitFor(()=>expect(container.querySelector('.research-intake [role=status]')).toBeNull())
+    await act(async()=>Simulate.change(container.querySelector<HTMLInputElement>('.research-internal-consent input')!,{target:{checked:true}} as never))
+    await act(async()=>container.querySelector<HTMLButtonElement>('.research-round-actions button')!.click())
     await vi.waitFor(()=>expect(container.querySelector('[role=alert]')?.textContent).toContain('本轮更新失败，展示上次已保存方案'))
     expect(container.querySelector('.strategy-summary h3')?.textContent).toBe(strategy.headline)
     expect(container.querySelector('.strategy-model-label')?.textContent).toBe('上次已保存的整体更新方案')

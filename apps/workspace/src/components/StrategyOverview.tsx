@@ -4,6 +4,7 @@ import { api, ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT, type Proj
 import { useWorkbenchAccess } from '../AdminAccess'
 import type { DecisionDashboard as Dashboard, DecisionPacket } from '../../../host/generated/contracts'
 import { strategyFailureMessage, strategyStageLabel, strategyCallStatus, type StrategyPacket, type StrategyProgress, type StrategyStreamEvent, type PublicStrategyIndexItem } from '../../../../packages/retrofit/strategy'
+import type { ResearchRound, ResearchRoundsResponse, ResearchRoundStreamEvent, CreateResearchRoundRequest } from '../../../../packages/retrofit/research-rounds'
 import { publicDecisionHref } from '../public-decisions'
 import { consumeStream } from '../maps/screening-stream'
 import { MODE_LABELS, projectRenewalModeInput, evaluateRenewalModeGate } from '../../../../packages/retrofit/renewal-mode'
@@ -14,6 +15,8 @@ import CompleteCommunityDemo from './CompleteCommunityDemo'
 import CommunityOperationsPanel from './CommunityOperationsPanel'
 import RenewalModePanel from '../maps/RenewalModePanel'
 import DecisionBrief from './DecisionBrief'
+import ResearchRoundsPanel, { type RoundSubmission } from './ResearchRoundsPanel'
+import type { MaterialUploadMetadata } from './InternalMaterialIntake'
 import { currentDirectionText } from './strategy-direction-text'
 import './strategy-overview.css'
 
@@ -21,28 +24,107 @@ const levels = { low: 1, medium: 3, high: 5, unknown: null }
 const dimensions = { demand:'居民需求', supply:'公共服务', adaptation:'居住工程', implementation:'实施协同', operations:'长效维护', resources:'资金交付' }
 const researchSteps = [{ stage: 'sources', label: '读取项目资料' }, { stage: 'research', label: '检索与整理来源' }, { stage: 'model', label: '研究两条更新路径' }, { stage: 'validation', label: '核对原文与条件' }, { stage: 'result', label: '形成完整方案' }] as const
 export type StrategyDirectionSelection = { identity: string; mode: 'comprehensive' | 'rebuild' }
-export default function StrategyOverview({ project, demoActive, onEvidence, onInvestigate, packet, publishedPlans = [], onOpenPublishedPlan, directionSelection, onDirectionSelect, onStrategyResult }: {
+export default function StrategyOverview({ project, demoActive, onEvidence, onInvestigate, packet, publishedPlans = [], onOpenPublishedPlan, directionSelection, onDirectionSelect, onStrategyResult, onUploadMaterial, materialBusy = false }: {
   project:Project; demoActive:boolean; onEvidence:(refs:string[])=>void; onInvestigate:()=>void; packet?:DecisionPacket|null;
   publishedPlans?: PublicStrategyIndexItem[]; onOpenPublishedPlan?: (projectId:string)=>void|Promise<void>;
   directionSelection?: StrategyDirectionSelection | null; onDirectionSelect?: (mode: 'comprehensive' | 'rebuild') => void;
   onStrategyResult?: (result: StrategyPacket) => void;
+  onUploadMaterial?: (file: File, metadata: MaterialUploadMetadata) => Promise<void>; materialBusy?: boolean;
 }) {
   const { canWrite } = useWorkbenchAccess()
   const [tab,setTab] = useState<'direction'|'plan'|'assessment'|'operations'>(directionSelection?.identity===`${project.id}:${project.context_version}:${demoActive}`?'plan':'direction'),[localSelection,setLocalSelection] = useState<StrategyDirectionSelection|null>(null),[phase,setPhase] = useState<'before'|'after'>('before')
   const [result,setResult] = useState<StrategyPacket|null>(null),[activity,setActivity] = useState<'read'|'research'|null>(null),[error,setError] = useState(''),[sourceIds,setSourceIds] = useState<string[]>([])
   const [progress,setProgress] = useState<StrategyProgress[]>([]),[startedAt,setStartedAt] = useState(0),[elapsed,setElapsed] = useState(0),[stopped,setStopped] = useState(false)
-  const busy = activity !== null
+  const [roundState,setRoundState] = useState<{key:string;loading:boolean;error:string;data:ResearchRoundsResponse}>({key:'',loading:false,error:'',data:{rounds:[],materials:[],baseline_candidate:null}})
+  const [roundMutation,setRoundMutation] = useState(false)
+  const [archivedSources,setArchivedSources]=useState<StrategyPacket['sources']|null>(null)
+  const roundFlow=canWrite&&!demoActive
+  const busy = activity !== null || roundMutation || materialBusy
   const controller = useRef<AbortController|null>(null), identity = `${project.id}:${project.context_version}:${demoActive}`
   const selection=directionSelection===undefined?localSelection:directionSelection
   const path=selection?.identity===identity?selection.mode:null
   const visibleTab=path?tab:'direction'
   const choiceAnchor=useRef<HTMLElement|null>(null)
+  const intakeAnchor=useRef<HTMLDivElement|null>(null),briefAnchor=useRef<HTMLDivElement|null>(null)
   const contentAnchor=useRef<HTMLDivElement|null>(null),summaryAnchor=useRef<HTMLElement|null>(null),previousTab=useRef(tab)
   useEffect(()=>{if(previousTab.current===visibleTab)return;previousTab.current=visibleTab;const frame=requestAnimationFrame(()=>(visibleTab==='direction'?summaryAnchor.current:contentAnchor.current)?.scrollIntoView({block:'start',behavior:'smooth'}));return()=>cancelAnimationFrame(frame)},[visibleTab])
   const resultCallback=useRef(onStrategyResult);resultCallback.current=onStrategyResult
+  const roundResult=useRef<{key:string;result:StrategyPacket}|null>(null)
   useEffect(()=>{if(result?.status==='completed'&&result.strategy)resultCallback.current?.(result)},[result])
   const currentIdentity = useRef(identity); currentIdentity.current=identity
   const endpoint = `/projects/${encodeURIComponent(project.id)}/renewal-strategy?demo=${demoActive}`
+  const roundsEndpoint = `/projects/${encodeURIComponent(project.id)}/research-rounds`
+  const rounds = roundState.key===identity?roundState.data:{rounds:[],materials:[],baseline_candidate:null}
+  async function readRounds(signal?:AbortSignal) {
+    const key=identity
+    setRoundState(previous=>({...previous,key,loading:true,error:''}))
+    try {
+      const data=await api<ResearchRoundsResponse>(roundsEndpoint,undefined,signal)
+      if(!data||!Array.isArray(data.rounds)||!Array.isArray(data.materials))throw new Error('INVALID_ROUNDS')
+      if(!signal?.aborted&&currentIdentity.current===key){
+        setRoundState({key,loading:false,error:'',data})
+        const saved=data.rounds.filter(round=>round.status==='completed'&&round.result?.status==='completed'&&round.result.strategy&&round.result.project_id===project.id&&round.result.context_version===project.context_version&&round.result.synthetic===(demoActive||project.input.synthetic)).sort((a,b)=>a.round_number-b.round_number).at(-1)?.result
+        if(saved){roundResult.current={key,result:saved};setResult(saved)}
+      }
+    } catch {
+      if(!signal?.aborted&&currentIdentity.current===key)setRoundState(previous=>({...previous,key,loading:false,error:'研判轮次暂时无法读取，请重试；已有方案仍可查看。'}))
+    }
+  }
+  function keepRound(round:ResearchRound) {
+    setRoundState(previous=>previous.key!==identity?previous:{...previous,data:{...previous.data,rounds:[...previous.data.rounds.filter(row=>row.id!==round.id),round]}})
+    const saved=round.result
+    if(round.status==='completed'&&saved?.status==='completed'&&saved.strategy&&saved.project_id===project.id&&saved.context_version===project.context_version&&saved.synthetic===(demoActive||project.input.synthetic)){roundResult.current={key:identity,result:saved};setResult(saved)}
+  }
+  async function adoptCandidate(candidate:StrategyPacket):Promise<ResearchRound|null> {
+    if(!roundFlow||busy)return null
+    const key=identity;setRoundMutation(true);setError('')
+    try {
+      const next=await api<{round:ResearchRound}>(`${roundsEndpoint}/adopt`,{expected_context_version:project.context_version,input_hash:candidate.input_hash})
+      if(currentIdentity.current!==key)return null
+      keepRound(next.round);return next.round
+    } catch { if(currentIdentity.current===key)setError('首轮基线保存未完成，原有方案仍保留，请重试。');return null }
+    finally {if(currentIdentity.current===key)setRoundMutation(false)}
+  }
+  async function startRound(submission:RoundSubmission) {
+    if(!roundFlow||busy||roundState.loading||roundState.error)return
+    const key=identity
+    let parent=rounds.rounds.filter(round=>round.status==='completed'&&round.result?.strategy).sort((a,b)=>a.round_number-b.round_number).at(-1)
+    const candidate=rounds.baseline_candidate||(result?.status==='completed'&&result.strategy?result:null)
+    if(!parent&&candidate){const adopted=await adoptCandidate(candidate);if(!adopted)return;parent=adopted}
+    if(currentIdentity.current!==key)return
+    controller.current?.abort();const abort=new AbortController();controller.current=abort
+    setActivity('research');setProgress([]);setElapsed(0);setStartedAt(Date.now());setError('');setStopped(false)
+    try {
+      const input:CreateResearchRoundRequest={...submission,expected_context_version:project.context_version,...(parent?{parent_round_id:parent.id}:{})}
+      const created=await api<{round:ResearchRound}>(roundsEndpoint,input,abort.signal)
+      if(abort.signal.aborted||currentIdentity.current!==key)return
+      keepRound(created.round)
+      const response=await fetch(`/api${roundsEndpoint}/${encodeURIComponent(created.round.id)}/run`,{method:'POST',credentials:'same-origin',signal:abort.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:'{}'})
+      if(!response.ok)throw new Error('ROUND_REQUEST_FAILED')
+      let next:StrategyPacket|null=null
+      const accept=(event:ResearchRoundStreamEvent)=>{
+        if(abort.signal.aborted||currentIdentity.current!==key)return
+        if(event.type==='progress')setProgress(current=>[...current.filter(previous=>previous.stage!==event.stage),event])
+        else if(event.type==='complete'){next=event.result;keepRound(event.round)}
+        else {if(event.round)keepRound(event.round);throw new Error('ROUND_REQUEST_FAILED')}
+      }
+      if(response.headers.get('content-type')?.includes('application/json')) {
+        const saved=await response.json() as {round:ResearchRound;result?:StrategyPacket}
+        const savedResult=saved.result||saved.round.result
+        if(!savedResult)throw new Error('ROUND_RESULT_MISSING')
+        accept({type:'complete',result:savedResult,round:saved.round})
+      } else await consumeStream<ResearchRoundStreamEvent>(response,abort.signal,accept)
+      if(!abort.signal.aborted&&currentIdentity.current===key&&next) {
+        const completed=next as StrategyPacket
+        if(completed.status!=='completed'&&result?.status==='completed'&&result.strategy)setError(`本轮更新失败，展示上次已保存方案。${strategyFailureMessage(completed)}`)
+        else {if(completed.status==='completed'&&completed.strategy)roundResult.current={key,result:completed};setResult(completed)}
+      }
+    } catch {
+      if(!abort.signal.aborted&&currentIdentity.current===key)setError('本轮补充研判未完成，首轮基线与已上传文件仍保留。可重新读取轮次后继续。')
+    } finally {
+      if(!abort.signal.aborted&&currentIdentity.current===key){setActivity(null);void readRounds()}
+    }
+  }
   async function research(refresh=false, restore=true) {
     controller.current?.abort(); const abort=new AbortController(), key=identity;controller.current=abort
     setActivity(refresh?'research':'read');setError('');setStopped(false)
@@ -68,12 +150,12 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       }
       if(!abort.signal.aborted&&currentIdentity.current===key){
         if(next&&next.status!=='completed'&&result?.status==='completed'&&result.strategy)setError(`本轮更新失败，展示上次已保存方案。${strategyFailureMessage(next)}`)
-        else setResult(next)
+        else setResult(roundResult.current?.key===key?roundResult.current.result:next)
       }
     }catch{if(!abort.signal.aborted&&currentIdentity.current===key)setError(refresh?'研究连接未完成，请检查工作台连接后查看已保存结果。':'更新方案读取失败，请检查工作台连接后重试。')}
     finally{if(!abort.signal.aborted&&currentIdentity.current===key)setActivity(null)}
   }
-  useEffect(()=>{setResult(null);setTab(directionSelection?.identity===identity?'plan':'direction');setLocalSelection(null);setPhase('before');setSourceIds([]);setProgress([]);void research();return()=>controller.current?.abort()},[identity,canWrite])
+  useEffect(()=>{const readAbort=new AbortController();roundResult.current=null;setResult(null);setTab(directionSelection?.identity===identity?'plan':'direction');setLocalSelection(null);setPhase('before');setSourceIds([]);setArchivedSources(null);setProgress([]);setRoundMutation(false);void research();if(roundFlow)void readRounds(readAbort.signal);return()=>{controller.current?.abort();readAbort.abort()}},[identity,canWrite])
   useEffect(()=>{if(activity!=='research')return;const timer=setInterval(()=>setElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);return()=>clearInterval(timer)},[activity,startedAt])
   const resultMatches=!!result&&result.project_id===project.id&&result.context_version===project.context_version&&result.synthetic===(demoActive||project.input.synthetic)
   const strategy=resultMatches&&result?.status==='completed'?result.strategy:null, selected=strategy?.paths.find(row=>row.mode===path)
@@ -98,14 +180,18 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   }
   const current=dashboard(false),after=dashboard(true)
   const otherPublishedPlans = publishedPlans.filter(item => item.project_id !== project.id)
-  const openSource=(refs:string[])=>{setSourceIds(refs);const local=refs.filter(id=>project.input.sources.some(source=>source.id===id));if(local.length&&visibleTab==='assessment')onEvidence(local)}
+  const openSource=(refs:string[])=>{setArchivedSources(null);setSourceIds(refs);const local=refs.filter(id=>project.input.sources.some(source=>source.id===id));if(local.length&&visibleTab==='assessment')onEvidence(local)}
+  const openRoundEvidence=(refs:string[])=>{const packet=[...rounds.rounds].reverse().find(round=>round.result?.sources.some(source=>refs.includes(source.id)))?.result;setArchivedSources(packet?.sources||null);setSourceIds(refs)}
   function chooseDirection(mode:'comprehensive'|'rebuild'){setLocalSelection({identity,mode});onDirectionSelect?.(mode);setSourceIds([]);setPhase('before');setTab('plan')}
+  const directionMain=<div ref={briefAnchor}>
+    {strategy&&result&&!demoActive&&<DecisionBrief key={result.input_hash} result={result} gate={modeGate} onEvidence={refs=>{setArchivedSources(null);openSource(refs)}} onPlan={()=>choiceAnchor.current?.scrollIntoView({block:'center',behavior:'smooth'})}/>}
+    <section ref={choiceAnchor} className="strategy-direction-selection" aria-label="选择本次研究方向"><h3>选择本次研究方向</h3><p>结合上方分析与判定标准，明确选择后查看该方向的方案、指标和改后效果。研究方向可返回本页调整。</p><div>{(['comprehensive','rebuild'] as const).map(mode=><button key={mode} data-direction-choice={mode} aria-pressed={path===mode} disabled={busy||!strategy&&!demoActive} onClick={()=>chooseDirection(mode)}><strong>选择{MODE_LABELS[mode]}</strong><span>{strategy?.paths.find(row=>row.mode===mode)?.title||`${MODE_LABELS[mode]} · 模拟研究`}</span></button>)}</div></section>
+  </div>
   return <section className="strategy-overview" aria-label="更新方案总览" data-selected-direction={path||''} data-direction-identity={identity}>
-    <header className="strategy-top"><div><span>研判总览</span><h2>{visibleTab==='direction'?'改造方向判断':`${MODE_LABELS[path!]} · ${visibleTab==='plan'?'方案总览':visibleTab==='assessment'?'现况与改后评估':'社区运营推演'}`}</h2><p>{visibleTab==='direction'?'先看 AI 分析和判断标准，再明确选择本次研究方向。':`当前研究方向：${MODE_LABELS[path!]} · ${project.name}`}</p></div>{visibleTab==='direction'?<button className="secondary" disabled={busy||!canWrite} title={!canWrite?'管理员登录后可生成或更新方案':undefined} onClick={()=>void research(true,false)}><IconRefresh size={17}/>{canWrite&&!result?'开始研究':'重新检索与研判'}</button>:<button className="secondary" onClick={()=>{setSourceIds([]);setTab('direction')}}>返回方向判断</button>}</header>
+    <header className="strategy-top"><div><span>研判总览</span><h2>{visibleTab==='direction'?'改造方向判断':`${MODE_LABELS[path!]} · ${visibleTab==='plan'?'方案总览':visibleTab==='assessment'?'现况与改后评估':'社区运营推演'}`}</h2><p>{visibleTab==='direction'?'先补充项目资料，看 AI 分析和判断标准，再明确选择本次研究方向。':`当前研究方向：${MODE_LABELS[path!]} · ${project.name}`}</p></div>{visibleTab==='direction'?<button className="secondary" disabled={busy||!canWrite} title={!canWrite?'当前为公开成果浏览':undefined} onClick={()=>roundFlow?intakeAnchor.current?.scrollIntoView({block:'start',behavior:'smooth'}):void research(true,false)}><IconRefresh size={17}/>{roundFlow?'补充资料与分轮研判':canWrite&&!result?'开始研究':'重新检索与研判'}</button>:<button className="secondary" onClick={()=>{setSourceIds([]);setTab('direction')}}>返回方向判断</button>}</header>
     <nav className="strategy-subnav" aria-label="研判总览子页面">{([['direction','改造方向判断'],['plan','方案总览'],['assessment','现况与改后评估'],['operations','社区运营推演']] as const).map(([id,label])=><button key={id} disabled={id!=='direction'&&!path} aria-current={visibleTab===id?'page':undefined} onClick={()=>{setSourceIds([]);setTab(id)}}>{label}</button>)}</nav>
     {visibleTab==='direction'&&<section ref={summaryAnchor}>
-      {strategy&&result&&!demoActive&&<DecisionBrief key={result.input_hash} result={result} gate={modeGate} onEvidence={openSource} onPlan={()=>choiceAnchor.current?.scrollIntoView({block:'center',behavior:'smooth'})}/>}
-      <section ref={choiceAnchor} className="strategy-direction-selection" aria-label="选择本次研究方向"><h3>选择本次研究方向</h3><p>结合上方分析与判定标准，明确选择后查看该方向的方案、指标和改后效果。研究方向可返回本页调整。</p><div>{(['comprehensive','rebuild'] as const).map(mode=><button key={mode} data-direction-choice={mode} aria-pressed={path===mode} disabled={busy||!strategy&&!demoActive} onClick={()=>chooseDirection(mode)}><strong>选择{MODE_LABELS[mode]}</strong><span>{strategy?.paths.find(row=>row.mode===mode)?.title||`${MODE_LABELS[mode]} · 模拟研究`}</span></button>)}</div></section>
+      {roundFlow?<div ref={intakeAnchor}><ResearchRoundsPanel projectName={project.name} revision={project.context_version} synthetic={project.input.synthetic} rounds={rounds.rounds} materials={rounds.materials} candidate={rounds.baseline_candidate||(result?.status==='completed'&&result.strategy?result:null)} busy={busy} loading={roundState.key!==identity||roundState.loading} error={roundState.key===identity?roundState.error:''} sourceCounts={{public:project.input.sources.filter(source=>source.data_class==='public').length,internal:project.input.sources.filter(source=>source.data_class==='internal').length,synthetic:project.input.sources.filter(source=>source.synthetic).length}} onAdopt={async candidate=>{await adoptCandidate(candidate)}} onStart={startRound} onUpload={onUploadMaterial} onReadCurrent={()=>(strategy?briefAnchor.current:intakeAnchor.current?.querySelector('.research-rounds'))?.scrollIntoView({block:'start',behavior:'smooth'})} onEvidence={openRoundEvidence} onReload={()=>void readRounds()}>{directionMain}</ResearchRoundsPanel></div>:directionMain}
       <details className="strategy-research-summary" open={!strategy||demoActive}><summary>完整研究摘要与模型记录</summary>
       <article className={`strategy-summary${failed&&!busy?' is-failed':''}`}><div className="strategy-model-label">{strategy?(error?'上次已保存的整体更新方案':'已保存的整体更新方案'):busy?'方案研究 · 进行中':failed?'方案研究 · 生成失败':unavailable?'方案研究 · 暂不可生成':'方案研究 · 尚未生成'}{demoActive?' · 模拟':''}</div><h3>{heading}</h3><p>{guardedRebuild?modeGate.summary:leadSummary||(failureMessage&&!busy?'本轮尚未形成完整的方案总览，可继续查看项目原文、已取得资料和历史记录。':'先比较保留建筑的综合整治与原拆原建，再核对结构、规划、居民、资金和安置条件。')}</p>{!guardedRebuild&&restSummary&&<details className="strategy-summary-more"><summary>展开现况与完整说明</summary><p>{restSummary}</p></details>}
         {strategy&&<div className="strategy-direction-label">{demoActive?`模拟研究方向：${MODE_LABELS[strategy.preferred_mode]}`:`当前研究方向：${MODE_LABELS[modeGate.direction]}`}</div>}
@@ -122,9 +208,9 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       <ol>{researchSteps.map((step,index)=>{const event=[...progress].reverse().find(event=>event.stage===step.stage),state=stopped&&event?.status==='running'?'stopped':event?.status||'pending';return <li key={step.stage} data-state={state}><span className="strategy-step-number">{event?.status==='completed'?'✓':String(index+1).padStart(2,'0')}</span><div><strong>{step.label}</strong><span>{({running:'进行中',completed:'已完成',skipped:'本轮跳过',failed:'未完成',pending:'等待前一步',stopped:'已停止'} as Record<string,string>)[state]}</span></div></li>})}</ol>
       <div className="strategy-progress-summary"><strong>{stopped?'本次研究已停止，已显示的资料与历史方案仍保留。':lastProgress?.message||'研究请求已提交，等待服务返回实际阶段。'}</strong><p>已完成 {completedSteps} 个环节 · 已整理 {sourceCount} 份资料{busy?` · 已等待 ${elapsed} 秒`:''}</p></div>
     </section>}
-    {failureMessage&&!busy&&<div className="strategy-error" role="alert"><div><strong>{failureMessage}</strong><p>{result?.sources.length?`已保留 ${result.sources.length} 份来源资料`:'项目原文与历史记录仍可查看'}{result?.research?.queries.length?`及 ${result.research.queries.length} 项检索记录`:''}。</p></div><div className="strategy-error-actions">{!!result?.sources.length&&<button onClick={()=>setSourceIds(result.sources.map(source=>source.id))}>查看已取得资料</button>}{canWrite&&<button onClick={()=>void research(true,false)}>重新研究</button>}</div></div>}
+    {failureMessage&&!busy&&<div className="strategy-error" role="alert"><div><strong>{failureMessage}</strong><p>{result?.sources.length?`已保留 ${result.sources.length} 份来源资料`:'项目原文与历史记录仍可查看'}{result?.research?.queries.length?`及 ${result.research.queries.length} 项检索记录`:''}。</p></div><div className="strategy-error-actions">{!!result?.sources.length&&<button onClick={()=>openSource(result.sources.map(source=>source.id))}>查看已取得资料</button>}{canWrite&&<button onClick={()=>roundFlow?intakeAnchor.current?.scrollIntoView({block:'start',behavior:'smooth'}):void research(true,false)}>{roundFlow?'返回资料补充与轮次':'重新研究'}</button>}</div></div>}
     {visibleTab==='direction'&&<>
-      {!strategy&&!busy&&<div className="strategy-empty-project"><p>当前项目“{project.name}” · 资料 v{project.context_version} 尚无已保存的完整方案。</p>{canWrite&&<p>可点击“开始研究”或“重新检索与研判”，根据本项目资料生成具体路径。</p>}{!!otherPublishedPlans.length&&<section className="strategy-published-alternatives" aria-label="其他项目的公开方案"><h3>可以直接阅读这些已公开方案</h3><p>以下成果属于标注的来源项目；打开后切换到该项目，不作为当前项目的分析结论。</p>{otherPublishedPlans.map(item=><a href={publicDecisionHref(item.project_id)} key={item.project_id} onClick={onOpenPublishedPlan?event=>{event.preventDefault();void onOpenPublishedPlan(item.project_id)}:undefined}><strong>{item.headline}</strong><span>来源项目：{item.project_name} · 资料 v{item.strategy_context_version}</span><span>查看完整方案、依据与六维评估 →</span></a>)}</section>}</div>}
+      {!strategy&&!busy&&<div className="strategy-empty-project"><p>当前项目“{project.name}” · 资料 v{project.context_version} 尚无已保存的完整方案。</p>{canWrite&&<p>可先回答内部资料询问，再使用现有资料或补充文件开展本轮研判。</p>}{!!otherPublishedPlans.length&&<section className="strategy-published-alternatives" aria-label="其他项目的公开方案"><h3>可以直接阅读这些已公开方案</h3><p>以下成果属于标注的来源项目；打开后切换到该项目，不作为当前项目的分析结论。</p>{otherPublishedPlans.map(item=><a href={publicDecisionHref(item.project_id)} key={item.project_id} onClick={onOpenPublishedPlan?event=>{event.preventDefault();void onOpenPublishedPlan(item.project_id)}:undefined}><strong>{item.headline}</strong><span>来源项目：{item.project_name} · 资料 v{item.strategy_context_version}</span><span>查看完整方案、依据与六维评估 →</span></a>)}</section>}</div>}
       {!demoActive&&<RenewalModePanel strategy={result} endpoint={`/projects/${encodeURIComponent(project.id)}/renewal-mode`} contextVersion={project.context_version} input={modeInput} decision={result?.decision}/>}
     </>}
     {visibleTab==='plan'&&path&&<div className="strategy-plan-layout"><main className="strategy-plan-detail">
@@ -138,7 +224,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       <div className="strategy-dimension-cards">{demoActive?demo.dimensions.map(row=><article key={row.key}><h4>{row.label}</h4><p><strong>现况：</strong>{row.before}</p><p><strong>{MODE_LABELS[path]}：</strong>{row.after}</p></article>):strategy?.dimensions.map(row=><article key={row.key}><h4>{dimensions[row.key]}</h4><p><strong>现况：</strong>{pathText(row.current)||'本项现况说明待完善。'}</p><p><strong>{MODE_LABELS[path]}：</strong>{pathText(row[path])||'本方向目标说明待完善。'}</p><button onClick={()=>openSource(row.evidence_refs)}>对应原文</button></article>)}</div>
     </section>}
     {visibleTab==='operations'&&path&&<section className="strategy-current-operations" aria-label={`${MODE_LABELS[path]}运营推演`}><h3>当前方向：{MODE_LABELS[path]}</h3>{demoActive?<><p>本演示沿用共同的社区服务假设，建设预算与改后目标按当前所选方向测算。</p><CompleteCommunityDemo key={`${identity}:${path}`} project={project} operationsOnly direction={path}/></>:<CommunityOperationsPanel key={`${identity}:${path}`} project={project} direction={path}/>}</section>}
-    {!!sourceIds.length&&<section className="strategy-source-detail" aria-label="方案对应依据"><header><h3>方案对应依据</h3><button onClick={()=>setSourceIds([])}>收起</button></header>{sourceIds.map(id=>{const source=result?.sources.find(row=>row.id===id);return source?<article key={id}><strong>{source.title}</strong><p>{source.role==='current'?'本对象资料':'独立对标参考'} · {source.published_at?.slice(0,10)||'发布日期未登记'} · {source.locator}</p><blockquote>{source.text}</blockquote>{source.url&&/^https?:\/\//.test(source.url)&&<a href={source.url} target="_blank" rel="noreferrer">打开来源 ↗</a>}</article>:<p key={id}>{id} · 见模拟底表与上方公式。</p>})}</section>}
+    {!!sourceIds.length&&<section className="strategy-source-detail" aria-label="方案对应依据"><header><h3>{archivedSources?'历史轮次对应依据':'方案对应依据'}</h3><button onClick={()=>setSourceIds([])}>收起</button></header>{sourceIds.map(id=>{const source=(archivedSources||result?.sources)?.find(row=>row.id===id);return source?<article key={id}><strong>{source.title}</strong><p>{source.role==='current'?'本对象资料':'独立对标参考'} · {source.published_at?.slice(0,10)||'发布日期未登记'} · {source.locator}</p><blockquote>{source.text}</blockquote>{source.url&&/^https?:\/\//.test(source.url)&&<a href={source.url} target="_blank" rel="noreferrer">打开来源 ↗</a>}</article>:<p key={id}>{id} · {demoActive?'见模拟底表与上方公式。':'该轮来源暂不可读，可在原始报告中核对来源记录。'}</p>})}</section>}
     {visibleTab==='direction'&&(result?.research||!!result?.model_calls.length)&&<details className="strategy-search-record"><summary>查看实际检索与模型调用记录</summary>{guardedRebuild&&<p>历史模型原始方向：{MODE_LABELS[strategy!.preferred_mode]}；当前展示已应用九项拆建条件门控。</p>}{result?.research?.queries.map(query=><p key={query}>{query}</p>)}{result?.research?.warnings?.map((warning,index)=><p key={`warning-${index}`}>检索缺口：{warning.startsWith('为保留')?'本轮补查尚未执行，相关条件仍待核。':warning.includes('未取得可用正文')?'部分检索主题未取得可用正文，相关条件仍待核。':'部分来源未完整取得或尚待核实。'}</p>)}{result?.model_calls.map((call,index)=><p key={index}>{strategyStageLabel(call.stage)} · {call.returned_model||call.requested_model} · {strategyCallStatus(call.finish_reason)} · 耗时 {(call.duration_ms/1000).toLocaleString('zh-CN',{maximumFractionDigits:1})} 秒 · 已记录用量：输入{call.input_tokens} / 输出{call.output_tokens} tokens</p>)}</details>}
   </section>
 }

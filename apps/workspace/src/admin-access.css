@@ -11,7 +11,7 @@
 .admin-access-status { font-size:16px; color:#4b655e; }
 .admin-access-submit { width:100%; min-height:48px; border:0; border-radius:9px; background:#286b65; color:#fff; padding:11px 18px; font:inherit; font-weight:600; cursor:pointer; }
 .admin-access-submit:hover:not(:disabled) { background:#205a55; }
-.admin-access-card input:focus-visible,.admin-access-card button:focus-visible,.admin-session-bar button:focus-visible { outline:3px solid #86b4a6; outline-offset:3px; }
+.admin-access-card input:focus-visible,.admin-access-card button:focus-visible,.admin-session-bar button:focus-visible,.admin-session-bar a:focus-visible { outline:3px solid #86b4a6; outline-offset:3px; }
 .admin-session-bar { position:fixed; inset:0 0 auto; z-index:300; height:44px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 20px; background:#eaf3ee; border-bottom:1px solid #cbded4; color:#35594f; font-size:14px; }
 .admin-session-bar>span,.admin-session-bar>div { display:flex; align-items:center; gap:10px; }
 .admin-session-bar strong { font-weight:600; }
@@ -19,6 +19,9 @@
 .admin-session-bar button,.admin-session-bar a { display:inline-flex; align-items:center; min-height:32px; padding:3px 12px; border:1px solid #b9d1c5; border-radius:7px; background:#fff; color:#286b65; font:inherit; cursor:pointer; text-decoration:none; }
 .admin-session-bar [role=alert] { color:#a43d36; font-size:13px; }
 .admin-session-bar .admin-public-decisions { background:#286b65; border-color:#286b65; color:#fff; font-weight:600; }
+.admin-session-bar.campus-session-bar { background:#eff6f3; font-size:15px; }
+.campus-session-bar>span,.campus-session-bar a { white-space:nowrap; }
 @media(max-width:560px) { .admin-session-bar .admin-session-report { display:none; }.admin-session-bar .admin-public-decisions { padding-inline:7px; font-size:12px; } }
 .admin-workspace { position:fixed; inset:44px 0 0; transform:translateZ(0); overflow:hidden; }
 @media(max-width:560px) { .admin-access-card { padding:28px 24px; }.admin-session-bar { padding:0 10px; font-size:13px; }.admin-session-bar>span,.admin-session-bar>div { gap:6px; }.admin-session-bar [role=alert] { position:absolute; top:44px; right:10px; padding:6px 10px; background:#fff; border:1px solid #e0c8c2; border-radius:6px; } }
+@media(max-width:560px) { .admin-session-bar.campus-session-bar { font-size:14px; } }

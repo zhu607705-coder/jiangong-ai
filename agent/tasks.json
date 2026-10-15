@@ -1550,6 +1550,30 @@
         "research/test_results/decision-criteria-direction-completion-20261015.json"
       ],
       "evidence_log": "research/test_results/decision-criteria-direction-completion-20261015.json"
+    },
+    {
+      "id": "T63",
+      "depends_on": [
+        "T62"
+      ],
+      "goal": "校园共享协作与内部材料导入、首轮基线和补充研判变化",
+      "status": "implemented_focused_checks_and_build_passed_live_deployment_pending",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "services/map-screening/",
+        "scripts/",
+        "docs/",
+        "tests/contracts/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "definition_of_done": "校园用户无管理员登录限制；内部文件使用原上传解析并按轮次选择；真实API两轮保留首轮、文件版本和判断变化；页面、部署及说明一致。",
+      "upstream_verification_required": false,
+      "expected_artifacts": [
+        "research/test_results/internal-rounds-live-20261015.json"
+      ],
+      "evidence_log": "research/test_results/internal-rounds-live-20261015.json"
     }
   ]
 }
