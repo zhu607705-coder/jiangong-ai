@@ -1,0 +1,236 @@
+{
+  "files": [
+    {
+      "file": "apps\\workspace\\src\\admin-access.css",
+      "colors": 34,
+      "fontSizes": 5
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\community-analysis-visuals.css",
+      "colors": 79,
+      "fontSizes": 43
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\community-demo-workflow.css",
+      "colors": 36,
+      "fontSizes": 4
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\community-operations-playground.css",
+      "colors": 97,
+      "fontSizes": 9
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\community-operations.css",
+      "colors": 82,
+      "fontSizes": 20
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\complete-community-demo.css",
+      "colors": 41,
+      "fontSizes": 20
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\concrete-work-plan.css",
+      "colors": 57,
+      "fontSizes": 5
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\construction-cost-library.css",
+      "colors": 33,
+      "fontSizes": 16
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\cost-neural-preview.css",
+      "colors": 27,
+      "fontSizes": 3
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\decision-brief.css",
+      "colors": 56,
+      "fontSizes": 9
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\decision-comparison.css",
+      "colors": 83,
+      "fontSizes": 12
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\experience-library.css",
+      "colors": 82,
+      "fontSizes": 32
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\global-knowledge-catalog.css",
+      "colors": 51,
+      "fontSizes": 5
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\GlobalWorkspace.css",
+      "colors": 51,
+      "fontSizes": 1
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\ImportedRenewalDatabase.css",
+      "colors": 31,
+      "fontSizes": 3
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\knowledge-agent-report.css",
+      "colors": 59,
+      "fontSizes": 28
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\knowledge-pipeline-panel.css",
+      "colors": 73,
+      "fontSizes": 30
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\knowledge-workbench.css",
+      "colors": 69,
+      "fontSizes": 31
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\LogicEvidencePanel.css",
+      "colors": 32,
+      "fontSizes": 0
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\neighborhood.css",
+      "colors": 17,
+      "fontSizes": 11
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\ProjectEvidenceDrawer.css",
+      "colors": 34,
+      "fontSizes": 10
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\ProjectLocationMap.css",
+      "colors": 10,
+      "fontSizes": 3
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\ProjectOverview.css",
+      "colors": 39,
+      "fontSizes": 19
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\ProjectResultsPage.css",
+      "colors": 37,
+      "fontSizes": 0
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\ProjectTasksPage.css",
+      "colors": 62,
+      "fontSizes": 4
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\research-reasoning-notes.css",
+      "colors": 17,
+      "fontSizes": 0
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\research-rounds.css",
+      "colors": 34,
+      "fontSizes": 1
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\single-scheme-workspace.css",
+      "colors": 38,
+      "fontSizes": 8
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\strategy-current-assessment.css",
+      "colors": 17,
+      "fontSizes": 0
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\strategy-overview.css",
+      "colors": 157,
+      "fontSizes": 10
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\strategy-research-progress.css",
+      "colors": 49,
+      "fontSizes": 1
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\WaitingScene.css",
+      "colors": 36,
+      "fontSizes": 4
+    },
+    {
+      "file": "apps\\workspace\\src\\components\\WorkspaceFrame.css",
+      "colors": 24,
+      "fontSizes": 4
+    },
+    {
+      "file": "apps\\workspace\\src\\imports\\cross-document-measures.css",
+      "colors": 45,
+      "fontSizes": 10
+    },
+    {
+      "file": "apps\\workspace\\src\\imports\\document-evidence-lineage.css",
+      "colors": 26,
+      "fontSizes": 7
+    },
+    {
+      "file": "apps\\workspace\\src\\imports\\evidence-decision-map.css",
+      "colors": 20,
+      "fontSizes": 4
+    },
+    {
+      "file": "apps\\workspace\\src\\imports\\floating-evidence-search.css",
+      "colors": 25,
+      "fontSizes": 8
+    },
+    {
+      "file": "apps\\workspace\\src\\imports\\import-graph.css",
+      "colors": 104,
+      "fontSizes": 33
+    },
+    {
+      "file": "apps\\workspace\\src\\imports\\rag-evidence-search.css",
+      "colors": 35,
+      "fontSizes": 3
+    },
+    {
+      "file": "apps\\workspace\\src\\intelligence\\intelligence.css",
+      "colors": 23,
+      "fontSizes": 4
+    },
+    {
+      "file": "apps\\workspace\\src\\maps\\area-selection.css",
+      "colors": 1,
+      "fontSizes": 1
+    },
+    {
+      "file": "apps\\workspace\\src\\maps\\map.css",
+      "colors": 387,
+      "fontSizes": 187
+    },
+    {
+      "file": "apps\\workspace\\src\\maps\\RenewalModePanel.css",
+      "colors": 101,
+      "fontSizes": 31
+    },
+    {
+      "file": "apps\\workspace\\src\\qiushi-demo-replay.css",
+      "colors": 8,
+      "fontSizes": 0
+    },
+    {
+      "file": "apps\\workspace\\src\\style.css",
+      "colors": 229,
+      "fontSizes": 126
+    },
+    {
+      "file": "apps\\workspace\\src\\workspace-navigation.css",
+      "colors": 23,
+      "fontSizes": 1
+    }
+  ],
+  "colors": 2671,
+  "fontSizes": 766
+}

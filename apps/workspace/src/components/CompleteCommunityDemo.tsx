@@ -10,7 +10,7 @@ import { AnimatedNumber, useAnalysisMotion } from './analysis-motion'
 import type { StrategyDirection } from './strategy-direction-text'
 import './complete-community-demo.css'
 
-const analysisColors = { blue: '#236b70', secondary: '#5890ba', teal: '#439b82', red: '#cb6352', violet: '#8176a8', gold: '#e2ac59', ink: '#263f43', muted: '#52676a', reference: '#d6dfdf' }
+const analysisColors = { blue: '#2363e4', secondary: '#3796d2', teal: '#0aa68b', red: '#d95263', violet: '#8171ce', gold: '#df941f', ink: 'var(--color-ink)', muted: 'var(--color-muted)', reference: 'var(--color-line)' }
 const money = (value: number) => value.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
 const percent = (value: number) => (value * 100).toFixed(1) + '%'
 function download(name: string, text: string, type: string) {

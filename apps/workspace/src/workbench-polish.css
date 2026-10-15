@@ -1,0 +1,75 @@
+/* Shared visual hierarchy; the project navigation and evidence flow stay intact. */
+:root { background: var(--color-canvas); }
+body { color: var(--color-ink); background: var(--color-canvas); }
+h1, h2, h3, h4 { color: var(--color-ink); }
+h3 { font-size: 18px; }
+button, a, input, select, textarea { accent-color: var(--color-primary); }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+input, select, textarea { color: var(--color-ink); }
+input::placeholder, textarea::placeholder { color: var(--color-faint); opacity: 1; }
+button:disabled { opacity: .62; }
+
+.admin-session-bar, .admin-session-bar.campus-session-bar {
+  background: var(--color-surface);
+  border-bottom-color: var(--color-line);
+  color: var(--color-muted);
+}
+.admin-session-dot { background: var(--color-success-accent); }
+.admin-session-bar .admin-public-decisions { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.map-shell.workspace-frame .research-drawer { bottom: 0; background: var(--color-canvas); }
+.map-shell.workspace-frame .workspace-frame-header { min-height: 64px; padding: 10px 26px; border-bottom: 1px solid var(--color-line); }
+.workspace-project-sidebar { background: var(--color-surface); }
+.workspace-project-sidebar nav button { border-radius: 10px; }
+.workspace-project-sidebar nav button[aria-current=page] { border-color: var(--color-primary-line); box-shadow: inset 3px 0 var(--color-primary); }
+.map-shell.workspace-frame .research-drawer .workspace-columns>main { max-width: 1560px; padding: 26px 30px 36px; }
+.project-overview { max-width: none; --overview-line: var(--color-line); }
+.project-overview-grid-layout { gap: 20px; }
+.map-shell.workspace-frame :is(.project-overview-card, .content-panel, .strategy-summary, .strategy-plan-detail, .project-tasks-panel, .project-results-panel) {
+  background: var(--color-surface);
+  border-color: var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.project-overview-card>header h2 { display: flex; align-items: center; gap: 10px; font-size: 19px; }
+.project-overview-card>header h2::before { content: ''; width: 4px; height: 18px; border-radius: 2px; background: var(--color-primary); flex-shrink: 0; }
+.project-overview-hero { border-left-color: var(--color-primary); }
+.project-overview-hero h2 { font-size: clamp(23px, 1.65vw, 27px); line-height: 1.55; }
+.project-overview-hero--ready .project-overview-status>span:first-child { background: var(--color-success-soft); color: var(--color-success); }
+.project-overview-hero--failed .project-overview-status>span:first-child { background: var(--color-danger-soft); color: var(--color-danger); }
+.project-overview-result-meta { border-color: var(--color-line); }
+.project-overview-primary, .map-primary, .screening-control-row .screening-start { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); }
+.project-overview .project-overview-primary:hover, .map-shell .map-primary:hover, .screening-control-row .screening-start:hover { background: var(--color-primary-hover); color: var(--color-on-primary); }
+.project-location-map { border-radius: 12px; }
+.workspace-section-nav, .strategy-subnav, .ssw-tabs { border-bottom-color: var(--color-line); }
+.workspace-section-nav button:hover, .strategy-subnav button:hover { background: var(--color-primary-soft); color: var(--color-primary); }
+.workspace-section-nav button[aria-current=page], .strategy-subnav button[aria-current=page] { color: var(--color-primary); border-color: var(--color-primary); }
+.strategy-overview .strategy-subnav { background: var(--color-canvas); }
+.strategy-progress, .strategy-research-progress { background: var(--color-surface-soft); border-color: var(--color-primary-line); box-shadow: var(--shadow-card); }
+.strategy-progress li[data-state=running] { background: var(--color-primary-soft); color: var(--color-primary); border-color: var(--color-primary-line); box-shadow: inset 0 0 0 1px var(--color-primary-line); }
+.strategy-progress li[data-state=completed] { background: var(--color-success-soft); color: var(--color-success); border-color: var(--color-success-line); }
+.strategy-progress li[data-state=failed], .strategy-error { background: var(--color-danger-soft); color: var(--color-danger); border-color: var(--color-danger-line); }
+.strategy-assessment-switch button[aria-pressed=true] { color: var(--color-primary); }
+.strategy-current--reasoning .decision-dashboard { background: var(--color-surface); }
+.strategy-current--reasoning .decision-dashboard .radar-area { fill: color-mix(in srgb, var(--chart-violet) 15%, transparent); stroke: var(--chart-violet); }
+.strategy-current--reasoning .decision-dashboard .radar-point { fill: var(--chart-violet); }
+.strategy-current--reasoning .decision-dashboard .dimension-meter .filled { background: var(--chart-violet); }
+.qiushi-demo-replay { border-color: var(--color-primary-line); background: var(--color-primary-soft); color: var(--color-ink); }
+.qiushi-demo-replay>a { color: var(--color-primary); }
+.workspace-utility-drawer, .project-evidence-drawer { box-shadow: var(--shadow-popover); }
+.workspace-utility-drawer { background: var(--color-surface); }
+.floating-evidence-trigger { background: var(--color-primary); color: var(--color-on-primary); box-shadow: 0 5px 20px #2363e433; }
+.floating-evidence-trigger:hover { background: var(--color-primary-hover); }
+.radar-area { fill: color-mix(in srgb, var(--chart-blue) 16%, transparent); stroke: var(--chart-blue); }
+.radar-point { fill: var(--chart-blue); }
+.dimension-meter .filled { background: var(--chart-blue); }
+
+@media (max-width: 760px) {
+  .map-shell.workspace-frame .workspace-frame-header { min-height: 58px; padding: 10px 14px; }
+  .map-shell.workspace-frame .research-drawer .workspace-columns>main { padding: 20px 16px 30px; }
+  .project-overview-grid-layout { gap: 14px; }
+  .project-overview-hero h2 { font-size: 23px; }
+  .workspace-project-sidebar nav button[aria-current=page] { box-shadow: inset 0 -3px var(--color-primary); }
+}

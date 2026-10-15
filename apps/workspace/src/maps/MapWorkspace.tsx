@@ -236,7 +236,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       if (!alive || !map.current || !sdk.current) return
       if (!location) { setNotice(project.input.synthetic ? '合成项目没有真实地理位置；地图保持自由浏览。' : '此项目还没有地图定位。可搜索并选中具体地点。'); return }
       const overlay = location.polygon
-        ? new sdk.current.Polygon({ path: location.points, fillColor: '#5bdfc1', fillOpacity: 0.10, strokeColor: '#74ebd4', strokeWeight: 2, strokeStyle: 'dashed', bubble: false })
+        ? new sdk.current.Polygon({ path: location.points, fillColor: '#2363e4', fillOpacity: 0.10, strokeColor: '#75a7f5', strokeWeight: 2, strokeStyle: 'dashed', bubble: false })
         : new sdk.current.Marker({ position: location.points[0], title: project.name })
       projectOverlays.current = [overlay]; map.current.add(overlay)
       overlay.on('click', () => onOpenProject(project.id))

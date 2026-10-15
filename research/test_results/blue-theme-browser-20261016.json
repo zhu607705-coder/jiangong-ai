@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "page": "http://10.70.223.113/?project=DEMO-QIUSHI-20261015&view=overview",
+  "review": "passive overview only; no automatic business walkthrough",
+  "root_font_px": 16,
+  "primary_button": {
+    "background": "rgb(35, 99, 228)",
+    "foreground": "rgb(255, 255, 255)",
+    "font_size_px": 16
+  },
+  "card": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgb(23, 47, 83)",
+    "radius_px": 18
+  },
+  "alerts": 0,
+  "horizontal_page_overflow": false,
+  "screenshot": "output/playwright/blue-theme/qiushi-blue-overview-20261016.png"
+}

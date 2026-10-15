@@ -73,7 +73,7 @@ function LocatedMap({ project, location }: ProjectLocationMapProps & { location:
           window.clearTimeout(timeout); timeout = undefined; setPhase('ready')
         })
         overlay = mapped.polygon
-          ? new sdk.Polygon({ path: mapped.points, fillColor: '#57927a', fillOpacity: .16, strokeColor: '#35745b', strokeWeight: 2, strokeStyle: project.input.scope.legal_parcel_confirmed ? 'solid' : 'dashed', bubble: true })
+          ? new sdk.Polygon({ path: mapped.points, fillColor: '#2363e4', fillOpacity: .16, strokeColor: '#1b4fa8', strokeWeight: 2, strokeStyle: project.input.scope.legal_parcel_confirmed ? 'solid' : 'dashed', bubble: true })
           : new sdk.Marker({ position: mapped.points[0], title: project.name, clickable: false })
         instance.add(overlay)
         fit()

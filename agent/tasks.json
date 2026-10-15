@@ -1685,6 +1685,23 @@
       "evidence_log": "research/test_results/qiushi-stable-demo-campus-readback-20261015.json",
       "deployment_commit": "d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf",
       "verification": "host3/3, frontend32/32, isolated build0, campus exact readback, overview0alerts; no automated live UI walkthrough per user instruction"
+    },
+    {
+      "id": "T-BLUE-WORKBENCH-20261016",
+      "depends_on": [],
+      "goal": "参照用户图片统一全站蓝白色板，修复文字可读性、卡片层级、焦点、按钮对比度和页面底部空带。",
+      "status": "completed",
+      "write_scope": [
+        "apps/workspace/src/*.css",
+        "apps/workspace/src/components/*.css",
+        "apps/workspace/src/maps/*.css",
+        "apps/workspace/src/imports/*.css",
+        "apps/workspace/src/intelligence/intelligence.css",
+        "main.tsx and explicit chart/map color literals"
+      ],
+      "definition_of_done": "共享色板替代旧零散颜色，隔离构建通过，主要色对对比合格；UI-only部署不覆盖后台热修，求是村首屏新样式可见且无alert或页面溢出。",
+      "evidence_log": "research/test_results/blue-theme-deployment-20261016.json",
+      "ui_proof": "output/playwright/blue-theme/qiushi-blue-overview-20261016.png"
     }
   ]
 }
