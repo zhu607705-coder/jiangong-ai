@@ -164,7 +164,7 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
   }
 
   return <main className="admin-access-screen"><section className="admin-access-card" aria-labelledby="admin-access-title">
-    <div className="admin-access-brand"><span aria-hidden="true">海</span><p>海之子 · 建工 AI</p></div>
+    <div className="admin-access-brand"><span aria-hidden="true">旧</span><p>旧区新生 · 建工 AI</p></div>
     <h1 id="admin-access-title">{state.phase === 'checking' ? '正在连接工作台' : state.phase === 'error' ? '暂时无法连接' : '管理员登录'}</h1>
     <p className="admin-access-intro">老旧小区改造研判工作台</p>
     {state.phase === 'checking' ? <p className="admin-access-status" role="status">正在确认访问权限…</p> : state.phase === 'error' ? <><p className="admin-access-message" role="alert">{state.message}</p><button className="admin-access-submit" type="button" onClick={() => setRetry(value => value + 1)}>重新连接</button></> : <form onSubmit={event => void submit(event)}>

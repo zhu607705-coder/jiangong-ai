@@ -60,7 +60,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
       <span className="atlas-avatar" title="共享项目工作台">项</span>
     </nav>
     {!surfaceOpen && <header className="atlas-global-header" {...inactiveProps}>
-      <div className="atlas-wordmark"><strong>海之子</strong></div>
+      <div className="atlas-wordmark"><strong>旧区新生</strong></div>
       <button className="atlas-project-switch glass-panel" aria-expanded={projectsOpen} onClick={() => setProjectsOpen(v => !v)}><IconFolder size={17} /><span>{project?.name || '项目空间'}</span><IconChevronDown size={15} /></button>
     </header>}
     {projectsOpen && <section className="atlas-project-menu glass-panel" aria-label="项目空间列表" {...inactiveProps}>
@@ -76,7 +76,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
         <button onClick={() => navigate('map')}><IconArrowLeft size={18} />返回地图</button>
         <nav className="workspace-frame-breadcrumbs" aria-label="当前位置">
           {projectOpen ? <><button onClick={() => navigate('projects')}>项目空间</button><span>/</span>{projectSwitch}<span>/</span><strong>{structured ? pageLabel : stages.find(stage => stage.id === tab)?.label || '项目研究'}</strong></>
-            : <><span>海之子</span><span>/</span><strong>{globalLabel}</strong></>}
+            : <><span>旧区新生</span><span>/</span><strong>{globalLabel}</strong></>}
         </nav>
         {projectOpen && <div className="workspace-frame-mode">{modeControl}</div>}
       </header>
