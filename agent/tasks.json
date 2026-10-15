@@ -1557,7 +1557,7 @@
         "T62"
       ],
       "goal": "校园共享协作与内部材料导入、首轮基线和补充研判变化",
-      "status": "implemented_focused_checks_and_build_passed_live_deployment_pending",
+      "status": "completed_deployed_real_provider_and_browser_verified",
       "write_scope": [
         "apps/",
         "packages/",
@@ -1573,7 +1573,28 @@
       "expected_artifacts": [
         "research/test_results/internal-rounds-live-20261015.json"
       ],
-      "evidence_log": "research/test_results/internal-rounds-live-20261015.json"
+      "evidence_log": "research/test_results/internal-rounds-final-review-20261015.json"
+    },
+    {
+      "id": "T64",
+      "depends_on": [
+        "T63"
+      ],
+      "goal": "突出前后决策对比、选向逻辑与证据，以及同屏交互运营面板",
+      "status": "completed_deployed_actual_browser_verified",
+      "write_scope": [
+        "apps/workspace/",
+        "tests/contracts/",
+        "docs/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "definition_of_done": "前后真实轮次可选择并展开各自原文；信息完备度按现况及本对象原文计算；选向后仅展示对应逻辑；实际桌面核心运营表图完整同屏并可保存恢复。",
+      "upstream_verification_required": false,
+      "expected_artifacts": [
+        "research/test_results/decision-comparison-browser-20261015.json"
+      ],
+      "evidence_log": "research/test_results/decision-comparison-browser-20261015.json"
     }
   ]
 }
