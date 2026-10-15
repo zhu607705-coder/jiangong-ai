@@ -1,0 +1,203 @@
+{
+  "schema": "server-model-egress-repair/1",
+  "checked_at": "2026-10-15T05:55:39.015901+00:00",
+  "root_cause": "VM IPv4 public TCP connections time out; IPv6 controls work; official API has no AAAA. It was not an application credential rejection.",
+  "repair": {
+    "server_proxy": "127.0.0.1:17897",
+    "local_existing_proxy": "127.0.0.1:7897",
+    "transport": "SSH reverse forwarding with verified host key; server loopback listener only; no agent forwarding",
+    "application_config": "Only shared/server.env HTTP(S) proxy and local bypass entries; original credentials preserved; private rollback backup retained",
+    "restarted": "haizhizi-host.service only",
+    "tls_certificate_verification": "enabled"
+  },
+  "maintenance": {
+    "task": "Haizhizi.ModelEgress",
+    "state": "Running",
+    "controller_pid": 83572,
+    "previous_ssh_pid": 42664,
+    "reconnected_ssh_pid": 73020,
+    "fixed_forward": "127.0.0.1:17897 -> 127.0.0.1:7897",
+    "checked_at": "2026-10-15T05:37:36.4974747Z"
+  },
+  "maintenance_launcher": "Windows system PowerShell, current logged-on user, passwordless Interactive logon task; not a Codex cache executable",
+  "after_reconnect": {
+    "proxy_endpoint_http": 401,
+    "curl_exit": 0,
+    "listener": "127.0.0.1:17897"
+  },
+  "deployment": {
+    "application_commit": "6caae15f2798cfab9abdf87dc97706364dc329ba",
+    "release": "/home/zhuhangcheng/apps/haizhizi/releases/6caae15f2798cfab9abdf87dc97706364dc329ba-evidence-r2",
+    "source_archive_sha256": "112f885248047964cac2b8bf85a125d518fc29333c4b3936802bca39729fae16",
+    "ui_archive_sha256": "32cecc1e8c35cd62530e67808116d68cc2d7f7058ecbfff01643eba2c1ae9643",
+    "dependencies": "Unchanged lockfiles verified; reuse prior installed node_modules and venv",
+    "persistent_data": "Existing shared/data unchanged by release switch",
+    "restart": "host only; unchanged Python capability worker retained",
+    "url": "http://10.70.223.113/",
+    "checked_at": "2026-10-15T05:53:53.9005559Z"
+  },
+  "initial_real_generation": {
+    "checked_at": "2026-10-15T13:30:38.668991+08:00",
+    "elapsed_seconds": 124.84,
+    "result": {
+      "status": "completed",
+      "created_at": "2026-10-15T05:30:37.546Z",
+      "error": null,
+      "diagnostic": null
+    },
+    "source_count": 13,
+    "model_calls": [
+      {
+        "stage": "renewal_strategy",
+        "error_code": null,
+        "duration_ms": 11672,
+        "input_tokens": 15357,
+        "output_tokens": 2358,
+        "finish_reason": "tool-calls",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash"
+      },
+      {
+        "stage": "renewal_strategy",
+        "error_code": null,
+        "duration_ms": 12227,
+        "input_tokens": 17858,
+        "output_tokens": 3093,
+        "finish_reason": "tool-calls",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash"
+      },
+      {
+        "stage": "renewal_strategy",
+        "error_code": null,
+        "duration_ms": 17393,
+        "input_tokens": 21094,
+        "output_tokens": 4782,
+        "finish_reason": "tool-calls",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash"
+      }
+    ],
+    "generated_strategy": true
+  },
+  "final_real_generation": {
+    "checked_at": "2026-10-15T13:48:11.227296+08:00",
+    "elapsed_seconds": 102.89,
+    "result": {
+      "status": "completed",
+      "created_at": "2026-10-15T05:48:10.002Z",
+      "error": null,
+      "diagnostic": null
+    },
+    "source_count": 24,
+    "model_calls": [
+      {
+        "stage": "renewal_strategy",
+        "error_code": null,
+        "duration_ms": 28392,
+        "input_tokens": 26621,
+        "output_tokens": 5374,
+        "finish_reason": "tool-calls",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash"
+      }
+    ],
+    "generated_strategy": true,
+    "headline": "浙大求是村更新研判：以综合整治为研究基线，重点推进屋面外墙、二次供水与加梯补建；原拆原建仅作逐栋鉴定后的比选路径"
+  },
+  "scope_quality_readback": {
+    "status": "completed",
+    "preferred_mode": "compare",
+    "source_count": 24,
+    "paths": 2,
+    "dimensions": 6,
+    "next_checks": 5,
+    "resources_current": "已知局部金额两笔：求是村75幢1单元加梯估算总投资约54万元（资金来自市区补助及自筹，属决策草案口径）；求是南村老旧小区提升改造监理项目预算13.8384万元，资金来源区级国有投资。两者对象与阶段不同，本小区整体费用、分项单价与已到账资金均未核实。",
+    "local_budget_sources": [
+      {
+        "id": "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+        "url": "https://www.hzxh.gov.cn/api-gateway/jpaas-web-server/front/document/file-download?fileUrl=/cms_files/jcms1/web1838/site/attach/0/7189c231fdf6439fbc9db35e125e1352.doc",
+        "role": "current",
+        "text": "估算总投资约54万元，建设资金来自市区补助及自筹。",
+        "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+        "locator": "text:chars:1-25",
+        "published_at": "2024-09-18T00:00:00.000Z"
+      }
+    ],
+    "research": {
+      "reused": false,
+      "status": "partial",
+      "queries": [
+        "浙大求是村 房屋安全鉴定 修缮 重建 保护要求 site:gov.cn",
+        "浙大求是村 更新 权属 规划条件 拆除重建 审批 site:gov.cn",
+        "浙大求是村 居民意见 筹资 安置 过渡 回搬 site:gov.cn",
+        "浙大求是村 改造 预算 中标 合同 资金来源 居民出资 site:gov.cn",
+        "浙大求是村 综合整治 原拆原建 全周期费用 修缮成本 重建成本 site:gov.cn",
+        "浙大求是村 电梯 供水 停车 社区服务 运营 维护费用 site:gov.cn",
+        "杭州 浙工新村 自主更新 总投资 居民出资 过渡 安置 site:gov.cn",
+        "杭州 老旧小区 综合整治 拆除重建 全生命周期 费用 比选 site:gov.cn",
+        "上海 凤南一村 拆除重建 总投资 建筑面积 居民出资 site:shanghai.gov.cn",
+        "上海 蕃瓜弄小区 原拆原建 资金 临时安置 回搬 site:shanghai.gov.cn",
+        "上海 旧住房 综合修缮 拆除重建 评估 居民意愿 资金平衡 site:shanghai.gov.cn",
+        "浙大求是村 改造 工程造价 运营 维修 费用 site:edu.cn"
+      ],
+      "warnings": [
+        "SOURCE_FETCH_FAILED:PUB-4d1735b8859915c9",
+        "SOURCE_BODY_TRUNCATED:PUB-0d4f620368d52bb7",
+        "SOURCE_FETCH_FAILED:PUB-9e5736487b81aeb9",
+        "SOURCE_FETCH_FAILED:PUB-235853eb17720b70",
+        "SOURCE_FETCH_FAILED:PUB-968a4de54ab63ab4",
+        "SOURCE_FETCH_FAILED:PUB-306000f11466dfa0",
+        "SOURCE_FETCH_FAILED:PUB-037069d930115e02",
+        "SOURCE_FETCH_FAILED:PUB-efdfb3e9b0c4f84f",
+        "SOURCE_FETCH_FAILED:PUB-7701ba8d236c631f",
+        "SOURCE_FETCH_FAILED:PUB-b777c2a56f4487f5",
+        "SOURCE_FETCH_FAILED:PUB-4039fc1098d86acf"
+      ],
+      "source_ids": [
+        "PUB-ec5a9d244b1e0bf6",
+        "PUB-16c64d454a5024c2",
+        "PUB-0d4f620368d52bb7",
+        "PUB-4d1735b8859915c9",
+        "PUB-9e5736487b81aeb9",
+        "PUB-235853eb17720b70",
+        "PUB-968a4de54ab63ab4",
+        "PUB-306000f11466dfa0",
+        "PUB-037069d930115e02",
+        "PUB-efdfb3e9b0c4f84f",
+        "PUB-7701ba8d236c631f",
+        "PUB-af0615434805b8a9",
+        "PUB-b777c2a56f4487f5",
+        "PUB-4039fc1098d86acf",
+        "PUB-d77a47f628facc42",
+        "PUB-62fc38dfe56bfeba",
+        "PUB-ef3ee89b0e627c85",
+        "PUB-3ac6e5eac1a8c4bf",
+        "PUB-e0574d28e221f21e",
+        "PUB-a63cd753fa94df7b"
+      ]
+    }
+  },
+  "browser": {
+    "actual_server": true,
+    "latest_strategy_visible": true,
+    "chinese_summary": true,
+    "current_direction": "综合整治",
+    "image": "output/playwright/model-recovery/strategy-completed-final.png"
+  },
+  "checks": {
+    "source_admission_and_strategy_contracts": "19 passed",
+    "production_build": "passed; research/test_results/server-model-egress-build-20261015.log",
+    "scheduled_task": "Running",
+    "forced_own_ssh_child_reconnection": "passed in approximately 15 seconds",
+    "real_generation_and_public_cache_readback": "completed; 2 paths, 6 dimensions, 5 next checks"
+  },
+  "remaining_dependencies": [
+    "Operator PC, logged-on account, existing proxy and campus SSH access must stay available.",
+    "The VM IPv4 public egress itself remains unresolved; a standalone authorized egress is the long-term replacement.",
+    "Some public page fetches failed; warnings remain in the research trace."
+  ],
+  "models_retrained": false,
+  "new_model_client": false,
+  "project_fact_writes": 0
+}
