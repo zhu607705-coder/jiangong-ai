@@ -1,0 +1,117 @@
+{
+  "schema_version": "navigation-adaptation-browser/1",
+  "status": "completed_deployed_actual_browser_verified",
+  "checked_at": "2026-10-15T12:31:03.505158+00:00",
+  "application_commit": "1479db36e3152d5cc163c691de65d24bf67ec229",
+  "deployment": {
+    "application_commit": "1479db36e3152d5cc163c691de65d24bf67ec229",
+    "release": "/home/zhuhangcheng/apps/haizhizi/releases/1479db36e3152d5cc163c691de65d24bf67ec229-evidence-r2",
+    "source_archive_sha256": "c70d5a39a175be1343110bc3199846ff9e9fe6666acb6f4fca42f041c5c4a134",
+    "ui_archive_sha256": "3a07be69640b4f536647a29dff782e190bf214122aea3a9fbead65db37487a04",
+    "dependencies": "Unchanged lockfiles verified; reuse prior installed node_modules and venv",
+    "persistent_data": "Existing shared/data unchanged by release switch",
+    "restart": "host only; unchanged Python capability worker retained",
+    "url": "http://10.70.223.113/",
+    "checked_at": "2026-10-15T12:29:19.4850908Z"
+  },
+  "actual_browser": "Codex in-app browser 2, existing user tab 6; native AX actions and read-only DOM observations",
+  "viewport": {
+    "width": 1864,
+    "height": 884
+  },
+  "project": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "context_version": 14,
+  "final_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=scenarios&section=detail&pane=content&scheme=comprehensive&baseline=14",
+  "checks": {
+    "global_entries": [
+      "地图探索",
+      "项目空间",
+      "案例与规则"
+    ],
+    "six_project_pages_opened": [
+      "项目总览",
+      "资料与条件",
+      "改造研判",
+      "方案与测算",
+      "调查任务",
+      "成果与版本"
+    ],
+    "project_space_published_separate_tab": true,
+    "global_cost_library": {
+      "normalized_records": 20,
+      "notices": 24,
+      "imported_workbook_main_rows": 1277
+    },
+    "legacy_view_compare": {
+      "project": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+      "destination": "成果与版本 / 版本变化",
+      "actual_rounds": 4,
+      "scheme_comparison_rendered": false
+    },
+    "single_scheme_panes": [
+      "内容与效果",
+      "建设与资金",
+      "社区运营",
+      "敏感性与核验"
+    ],
+    "operations_real_page": {
+      "outer_tag": "SECTION",
+      "core_body_visible": true,
+      "total_business_fold": false
+    },
+    "evidence_drawer_close": {
+      "same_url": true,
+      "scroll_before": 627,
+      "scroll_after": 627
+    },
+    "scheme_deep_link_reload": {
+      "selected_direction": "comprehensive",
+      "pane": "content",
+      "version": 14,
+      "actual_work_rows": 3
+    },
+    "concrete_objects": [
+      "29幢、30幢、31幢、48幢（二次供水改造范围）",
+      "求是村75幢1单元",
+      "求是村高龄、空巢老人住户（含90年代建成的老户型单元）"
+    ],
+    "work_table_horizontal_overflow": false,
+    "three_internal_metrics_present": true,
+    "unlinked_meals_metric": {
+      "visible_project_collection_section": true,
+      "no_false_household_retrofit_link": true
+    },
+    "tasks_actual": {
+      "count": 6,
+      "work_direction": "comprehensive",
+      "meal_detail_opened": true,
+      "collection_unit_period_denominator_visible": true
+    },
+    "task_drawer_focus_return": "actual meal task button",
+    "browser_back_to_scheme": {
+      "before_scroll": 0,
+      "after_scroll": 0,
+      "same_url": true,
+      "work_rows_after": 3
+    },
+    "settings_and_demo_entry_reachable": true
+  },
+  "existing_external_limitations": [
+    {
+      "surface": "地图探索",
+      "state": "entry_reachable_basemap_connection_timeout",
+      "observed": "高德地图加载超时；地图搜索与框选未验证成功。该状态不作为通过。"
+    }
+  ],
+  "source_metric_review": "research/test_results/concrete-work-plan-source-metric-review-20261015.json",
+  "real_generation": "research/test_results/concrete-work-plan-final-live-20261015.json",
+  "screenshots": [
+    "output/playwright/navigation-adaptation/qiushi-concrete-plan.png",
+    "output/playwright/navigation-adaptation/internal-meal-investigation.png"
+  ],
+  "prior_failures_preserved": [
+    "research/test_results/concrete-work-plan-live-20261015.json",
+    "research/test_results/concrete-work-plan-v6-output-fix-20261015.json"
+  ],
+  "scope": "Page responsibilities, routes, source-bound work packages and collection definitions; no change to six-dimension calculations, finance formulas or neural-network training."
+}

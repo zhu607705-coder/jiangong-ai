@@ -1602,7 +1602,7 @@
         "T64"
       ],
       "goal": "三大全局入口与六个项目工作页、方案分区和就地证据",
-      "status": "implemented_build_passed_deployment_and_actual_browser_pending",
+      "status": "completed_deployed_actual_browser_verified",
       "write_scope": [
         "apps/",
         "packages/",
@@ -1625,7 +1625,7 @@
         "T65"
       ],
       "goal": "具体对象与改造分项方案、单列内部调查数据采集",
-      "status": "implemented_build_passed_deployment_and_actual_browser_pending",
+      "status": "completed_deployed_actual_browser_verified",
       "write_scope": [
         "apps/",
         "packages/",
@@ -1635,11 +1635,11 @@
         "agent/",
         "research/test_results/"
       ],
-      "definition_of_done": "保持原计算与来源版本；新入口可达且旧链接兼容；实际浏览器和必要API结果可回查。",
+      "definition_of_done": "真实P052生成具体对象与改造分项；引用与数量通过原校验，采集口径已复核且可见；原始输出和历史轮次保留，页面实际显示新成果。",
       "upstream_verification_required": false,
-      "evidence_log": "research/test_results/concrete-work-plan-live-20261015.json",
+      "evidence_log": "research/test_results/concrete-work-plan-source-metric-review-20261015.json",
       "expected_artifacts": [
-        "research/test_results/concrete-work-plan-live-20261015.json"
+        "research/test_results/concrete-work-plan-source-metric-review-20261015.json"
       ]
     }
   ]

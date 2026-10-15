@@ -3292,8 +3292,8 @@
     }
   },
   "navigation_concrete_scheme_20261015": {
-    "updated_at": "2026-10-15",
-    "status": "implemented_build_passed_deployment_and_actual_browser_pending",
+    "updated_at": "2026-10-15T12:31:03.505158+00:00",
+    "status": "completed_deployed_actual_browser_verified",
     "tasks": [
       "T65",
       "T66"
@@ -3304,10 +3304,35 @@
     "backend_policy": "renewal-strategy-overview-v6",
     "tests": [
       "research/test_results/navigation-concrete-scheme-integration-20261015.log",
-      "research/test_results/navigation-adaptation-build-20261015.log",
-      "research/test_results/strategy-v6-work-packages-focused-20261015.log"
+      "research/test_results/strategy-v6-real-repair-focused-20261015.log",
+      "research/test_results/strategy-current-result-order-20261015.json",
+      "research/test_results/public-decision-hydration-focused-20261015.log",
+      "research/test_results/navigation-scroll-return-build-20261015.log"
     ],
     "unresolved_questions": [],
-    "next_runnable_task": "Deploy matching source/UI, inspect actual page and legacy link navigation, execute one permitted real P052 v6 research and inspect concrete interventions."
+    "next_runnable_task": "No required work remains for the navigation adaptation and concrete-scheme request.",
+    "application_commit": "1479db36e3152d5cc163c691de65d24bf67ec229",
+    "final_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=scenarios&section=detail&pane=content&scheme=comprehensive&baseline=14",
+    "evidence": [
+      "research/test_results/navigation-adaptation-browser-20261015.json",
+      "research/test_results/concrete-work-plan-final-live-20261015.json",
+      "research/test_results/concrete-work-plan-source-metric-review-20261015.json"
+    ],
+    "real_plan": {
+      "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "context_version": 14,
+      "input_hash": "ef08ce832162384c84894236eb7d02dfdbd10264d5f03529650573908e75c5a8",
+      "comprehensive_work_packages": 3,
+      "rebuild_work_packages": 3,
+      "input_and_history_unchanged": true,
+      "source_metric_review_changes": 14
+    },
+    "existing_external_limitations": [
+      {
+        "surface": "地图探索",
+        "state": "entry_reachable_basemap_connection_timeout",
+        "observed": "高德地图加载超时；地图搜索与框选未验证成功。该状态不作为通过。"
+      }
+    ]
   }
 }
