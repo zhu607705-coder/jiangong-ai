@@ -1,0 +1,192 @@
+{
+  "schema_version": "server-ip-access/1",
+  "target": "zhuhangcheng@10.70.223.113",
+  "ingress_url": "http://10.70.223.113",
+  "status": "public_ingress_configured_backend_viewer_deployment_pending",
+  "allowed_sources": [
+    "Any campus-network client that can reach 10.70.223.113 for GET/HEAD and six inspected query POST paths"
+  ],
+  "deny_other_sources": false,
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/nginx-backups/20261015T022218Z",
+  "default_site": {
+    "package_conffile_md5_matched": true,
+    "auto_start_prevented_during_package_install": true,
+    "package_ownership_checked": true,
+    "enabled_symlink_backed_up_and_removed": true
+  },
+  "nginx_config_test": "passed",
+  "upstream": "http://127.0.0.1:4310",
+  "host_and_origin_preserved": true,
+  "untrusted_forwarded_headers_overwritten_or_removed": true,
+  "streaming": {
+    "read_timeout_seconds": 300,
+    "response_buffering": false,
+    "send_timeout_seconds": 300,
+    "request_buffering": false
+  },
+  "client_max_body_size_mib": 12,
+  "host_restarted_by_ingress_script": false,
+  "global_proxy_dns_ufw_changed": false,
+  "remote": {
+    "checked_at": "2026-10-15T10:24:02.672864+08:00",
+    "allowed_loopback_source": {
+      "http_status": 403,
+      "content_type": "application/json; charset=utf-8",
+      "application_error_code": null,
+      "detail": "仅支持本地工作台访问"
+    },
+    "denied_server_source_with_spoofed_xff": {
+      "http_status": 403,
+      "content_type": "text/html"
+    },
+    "trusted_public_origin": "http://10.70.223.113",
+    "env_permissions": "0o600",
+    "nginx_version": "nginx version: nginx/1.24.0 (Ubuntu)",
+    "nginx_active": "active",
+    "listeners": "State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\nLISTEN 0      4096      127.0.0.54:53        0.0.0.0:*          \nLISTEN 0      2048       127.0.0.1:4311      0.0.0.0:*          \nLISTEN 0      511        127.0.0.1:4310      0.0.0.0:*          \nLISTEN 0      511    10.70.223.113:80        0.0.0.0:*          \nLISTEN 0      4096   127.0.0.53%lo:53        0.0.0.0:*          \nLISTEN 0      4096         0.0.0.0:22        0.0.0.0:*          \nLISTEN 0      4096            [::]:22           [::]:*          \n",
+    "ufw": "Status: inactive"
+  },
+  "deepseek_calls": 0,
+  "browser_validation": "pending_primary_agent",
+  "operator_direct_http": {
+    "http_status": 403,
+    "network_and_allowlist": "passed",
+    "bound_wlan_http_status": 403,
+    "source_ip_seen_by_nginx": "10.194.110.116",
+    "application_integration": "pending_lead_trusted_host_deployment",
+    "checked_at": "2026-10-15T02:24:16.7068772Z",
+    "meta_tun_route_preserved_operator_source": true,
+    "application_code": "INVALID_HOST"
+  },
+  "public_read_ingress": {
+    "policy": "campus_get_head_and_six_inspected_post_queries",
+    "applied": true,
+    "nginx_config_test": "passed",
+    "backup": "/home/zhuhangcheng/apps/haizhizi/shared/nginx-backups/20261015T025916Z",
+    "write_device_allowlist": [
+      "10.194.110.116/32",
+      "127.0.0.1/32"
+    ],
+    "api_rate_limit_per_second": 10,
+    "api_rate_limit_burst": 40,
+    "host_restarted": false,
+    "backend_public_mode": "pending_lead_source_deployment",
+    "probe": {
+      "checked_at": "2026-10-15T11:00:57.458889+08:00",
+      "source_ip_for_negative_device_probe": "10.70.223.113",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/",
+          "status": 200,
+          "content_type": "text/html; charset=utf-8"
+        },
+        {
+          "method": "HEAD",
+          "path": "/",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8"
+        },
+        {
+          "method": "GET",
+          "path": "/api/session",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/knowledge/retrieve",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/knowledge/chunks",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/knowledge/groups",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/community-operations/preview",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/experiences/knowledge-match",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/maps/geometry/wgs84",
+          "status": 401,
+          "content_type": "application/json; charset=utf-8",
+          "application_code": "ADMIN_LOGIN_REQUIRED"
+        },
+        {
+          "method": "POST",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+          "status": 403,
+          "content_type": "text/html"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+          "status": 403,
+          "content_type": "text/html"
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+          "status": 403,
+          "content_type": "text/html"
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+          "status": 403,
+          "content_type": "text/html"
+        }
+      ],
+      "configured_public_environment": {
+        "TRUSTED_PUBLIC_ORIGIN": "http://10.70.223.113",
+        "PUBLIC_READ_ONLY": "true"
+      },
+      "env_permissions": "0o600",
+      "nginx_active": "active"
+    }
+  },
+  "write_allowed_sources": [
+    "10.194.110.116/32",
+    "127.0.0.1/32"
+  ],
+  "deny_other_write_sources": true,
+  "current_backup": "/home/zhuhangcheng/apps/haizhizi/shared/nginx-backups/20261015T025916Z",
+  "final_integration": {
+    "status": "verified_public_read_admin_write",
+    "application_commit": "7905d1c9cac754938380b321daeb68d9416e22a1",
+    "source_not_admin_device": {
+      "read_role": "viewer",
+      "public_projects": 16,
+      "public_query": 200,
+      "fact_writes": 0,
+      "spoofed_write": 403,
+      "write_denial": "nginx"
+    },
+    "http_evidence": "research/test_results/server-public-admin-verification-20261015.json",
+    "browser": "public and admin roles actually observed"
+  }
+}

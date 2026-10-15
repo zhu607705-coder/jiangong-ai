@@ -2213,9 +2213,169 @@
     ],
     "unresolved_questions": [
       "Human paired decision-quality/efficiency evaluation is designed but not yet collected.",
-      "DeepSeek server egress is externally blocked; reverse-proxy action was rejected by automatic review and awaits explicit user response.",
-      "No approved engineering scope, final investment budget or completed settlement-model validation is inferred."
+      "No approved engineering scope, final investment budget or completed settlement-model validation is inferred.",
+      "DeepSeek provider work is deferred at user request; no reverse proxy is planned."
     ],
-    "next_runnable_task": "After authorized egress is available, verify DeepSeek using the existing runtime and source/citation gates."
+    "next_runnable_task": null
+  },
+  "server_public_admin_and_database_20261015": {
+    "status": "completed_campus_public_read_admin_auth_schema_and_runtime_verified",
+    "updated_at": "2026-10-15",
+    "changed_files": [
+      ".env.example",
+      "apps/host/admin-auth.ts",
+      "apps/host/admin-login-page.ts",
+      "apps/host/config.ts",
+      "apps/host/database-schema.ts",
+      "apps/host/map-screening.ts",
+      "apps/host/public-read.ts",
+      "apps/host/request-origin.ts",
+      "apps/host/server.ts",
+      "apps/workspace/src/AdminAccess.tsx",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/admin-access.css",
+      "apps/workspace/src/api.ts",
+      "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "apps/workspace/src/intelligence/IntelligencePanel.tsx",
+      "apps/workspace/src/main.tsx",
+      "apps/workspace/src/maps/MapWorkspace.tsx",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/maps/RenewalModePanel.tsx",
+      "apps/workspace/src/uuid.ts",
+      "docs/工作台数据库架构.md",
+      "docs/服务器部署说明.md",
+      "research/test_results/server-runtime-files-20261015.json",
+      "scripts/check-server-public-access.ps1",
+      "scripts/configure-server-ip-access.ps1",
+      "scripts/deploy-haizhizi-server.ps1",
+      "scripts/provision-server-admin.ps1",
+      "scripts/sync-workbench-files.ps1",
+      "services/map-screening/service.ts",
+      "tests/contracts/admin-access.test.ts",
+      "tests/contracts/admin-auth.test.ts",
+      "tests/contracts/database-schema.test.ts",
+      "tests/contracts/document-evidence-focus.test.ts",
+      "tests/contracts/map-screening.test.ts",
+      "tests/contracts/public-read.test.ts",
+      "tests/contracts/public-workbench-access.test.ts",
+      "tests/contracts/request-origin.test.ts",
+      "tests/contracts/workspace-uuid.test.ts",
+      "tests/e2e/test_http.py"
+    ],
+    "server": {
+      "url": "http://10.70.223.113/",
+      "admin_login": "http://10.70.223.113/admin/login",
+      "username": "zhuhangcheng",
+      "credential_file": ".cache/server-admin-credentials.txt (git ignored, Windows owner ACL)",
+      "application_commit": "7905d1c9cac754938380b321daeb68d9416e22a1",
+      "release": "/home/zhuhangcheng/apps/haizhizi/releases/7905d1c9cac754938380b321daeb68d9416e22a1-public",
+      "visibility": "campus public reads and six temporary query POSTs; persistent writes/model calls require admin plus approved device source",
+      "nginx": "10.70.223.113:80",
+      "services": "4310/4311 remain loopback"
+    },
+    "verification": {
+      "schema": "server-public-administrator-verification/1",
+      "checked_at": "2026-10-15T03:14:32.9471945Z",
+      "url": "http://10.70.223.113",
+      "checks": {
+        "public_root": 200,
+        "viewer_session": 200,
+        "public_projects": 200,
+        "anonymous_project_write": 403,
+        "anonymous_model_generation": 403,
+        "anonymous_database_schema": 403,
+        "public_original_retrieval": 200,
+        "untrusted_origin": 403,
+        "untrusted_host": 403,
+        "administrator_login": 200,
+        "administrator_ready": 200,
+        "administrator_csrf_guard": 403,
+        "administrator_database_schema": 200,
+        "public_qiushi_report": 200,
+        "administrator_logout": 200,
+        "revoked_administrator_cookie": 403,
+        "revoked_cookie_write": 403
+      },
+      "public_project_count": 16,
+      "original_retrieval_hits": 5,
+      "database_counts": {
+        "projects": 16,
+        "documents": 21,
+        "experience_cards": 28
+      },
+      "database_tables": 29,
+      "database_sequences": 4,
+      "database_schema_issues": [],
+      "schema_sha256": "ef32f52c33e6711aa9be99dbce38a495f6a20f78e244ef462f31a1c84d82fa33",
+      "mutation_scope": "No project records changed; only login/logout. Data retrieval and schema export are read-only.",
+      "provider_calls": "No DeepSeek or Qwen generation invoked."
+    },
+    "schema": {
+      "tables": 29,
+      "sequences": 4,
+      "issues": 0,
+      "empty_database_roundtrip": "29 tables restored, zero project rows",
+      "directory": "/home/zhuhangcheng/apps/haizhizi/shared/database-schema",
+      "sql_sha256": "ef32f52c33e6711aa9be99dbce38a495f6a20f78e244ef462f31a1c84d82fa33"
+    },
+    "runtime_files": {
+      "directories": [
+        "map-screening",
+        "sessions",
+        "corpus",
+        "intelligence"
+      ],
+      "files": 750,
+      "bytes": 45194704,
+      "added": 750,
+      "identical": 0,
+      "conflicts": 0,
+      "overwritten": 0
+    },
+    "focused_checks": {
+      "public_backend_policy_and_auth": "43 passed",
+      "frontend_public_and_admin": "30 passed",
+      "schema_roundtrip_unit": "3 passed",
+      "saved_map_read_only": "1 passed / 33 not selected",
+      "post_review_intelligence_and_api": "2 passed / 21 not selected",
+      "local_host_security_http": "1 passed",
+      "document_focus_async": "5 passed",
+      "typescript_vite_build": "passed"
+    },
+    "browser": {
+      "public": "viewer without login; 16 projects, real original retrieval and intelligence search visible",
+      "admin": "authenticated zhuhangcheng, database structure download link visible",
+      "images": [
+        "output/playwright/server-public-access/public-rag.jpg",
+        "output/playwright/server-public-access/administrator.jpg"
+      ]
+    },
+    "security_review": {
+      "scope": "application role/authorization boundary, static data, streaming revocation, source guard and schema export",
+      "confirmed_regressions_fixed": [
+        "deployment anonymous probe after auth",
+        "public intelligence page requesting admin status and forcing login"
+      ],
+      "managed_report": "C:/Users/123/.codex/state/plugins/codex-security/scans/-ai/artifacts-29c08f4e6d8aa52138866ce42647c9d5a67dc634028de21b97779f178c89d881/hardening/campus-admin-access.md"
+    },
+    "artifact_refs": [
+      "docs/工作台数据库架构.md",
+      "docs/服务器部署说明.md",
+      "research/test_results/server-public-admin-verification-20261015.json",
+      "research/test_results/server-runtime-files-20261015.json",
+      "research/test_results/server-ip-access-20261015.json"
+    ],
+    "decisions": [
+      "Public GETs are inspected by behavior; only six pure-query POSTs are allowed without admin.",
+      "Anonymous/public viewers never receive owner/admin credentials.",
+      "Keep default local mode compatible; publish only the existing workbench scope.",
+      "DeepSeek provider work explicitly deferred by user, no reverse proxy planned."
+    ],
+    "unresolved_questions": [
+      "Current campus HTTP transport is not HTTPS; application authorization does not provide link encryption.",
+      "DeepSeek generation remains deferred at user request."
+    ],
+    "next_runnable_task": null
   }
 }

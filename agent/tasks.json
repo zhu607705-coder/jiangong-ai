@@ -1431,6 +1431,30 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/server-deployment-20261015.json"
+    },
+    {
+      "id": "T58",
+      "depends_on": [
+        "T57"
+      ],
+      "goal": "校园网公开只读、管理员防篡改、数据库结构与相关文件部署",
+      "status": "completed_target_http_browser_schema_and_files_verified",
+      "expected_artifacts": [
+        "research/test_results/server-public-admin-verification-20261015.json",
+        "docs/工作台数据库架构.md"
+      ],
+      "definition_of_done": "校园访客读取成功、写入和模型调用受限；管理员登录/退出和CSRF、实际结构SQL、迁移文件与真实页面有证据。",
+      "write_scope": [
+        "apps/",
+        "services/",
+        "scripts/",
+        "tests/",
+        "docs/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/server-public-admin-verification-20261015.json"
     }
   ]
 }

@@ -46,7 +46,9 @@ if (($login.Content | ConvertFrom-Json).authentication.role -ne 'admin') { throw
 $cookie = [string]$login.Headers['Set-Cookie']
 if ($cookie -notmatch 'HttpOnly' -or $cookie -notmatch 'SameSite=Strict') { throw 'Expected session cookie protections are missing.' }
 Assert-Status (Request-Server '/api/ready' 'GET' $null $adminSession) 200 'administrator_ready'
-Assert-Status (Request-Server '/api/projects' 'POST' @{} $adminSession) 403 'administrator_csrf_guard'
+$csrfSession = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+$csrfSession.Cookies = $adminSession.Cookies
+Assert-Status (Request-Server '/api/projects' 'POST' @{} $csrfSession) 403 'administrator_csrf_guard'
 $schemaResponse = Request-Server '/api/admin/database-schema' 'GET' $null $adminSession
 Assert-Status $schemaResponse 200 'administrator_database_schema'
 $schema = $schemaResponse.Content | ConvertFrom-Json
