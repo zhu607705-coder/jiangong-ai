@@ -14,6 +14,10 @@ describe('source-grounded strategy',()=>{
   it('prevents a verified physical restriction being hidden by a preferred-mode explanation',()=>{
     expect(()=>validateStrategy(strategy(),[source],[{kind:'structure_repairable',value:false,state:'restricted',source_ids:['CURRENT'],locators:['line:1']}])).toThrow('STRATEGY_MODE_RESTRICTED')
   })
+  it('rejects a preferred rebuild direction when its necessity and feasibility gate has not passed',()=>{
+    const value=strategy();value.preferred_mode='rebuild'
+    expect(()=>validateStrategy(value,[source],[])).toThrow('STRATEGY_REBUILD_GATE_UNMET')
+  })
   it('keeps both simulations on the same baseline and accounts for construction, demolition, relocation and reserve',()=>{
     const repair=buildStrategyDemo('comprehensive'),rebuild=buildStrategyDemo('rebuild')
     expect(rebuild.before).toEqual(repair.before)

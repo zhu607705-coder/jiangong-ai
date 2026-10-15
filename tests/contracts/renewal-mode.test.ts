@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { projectRenewalModeInput, modeAssessment, renewalQuestions } from '../../packages/retrofit/renewal-mode'
+import { projectRenewalModeInput, modeAssessment, renewalQuestions, evaluateRenewalModeGate } from '../../packages/retrofit/renewal-mode'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
 import { evaluateDecision, decisionRequestBody } from '../../services/capabilities/decision-model'
 import type { DecisionChoice, ProjectInput, Fact } from '../../apps/host/generated/contracts'
@@ -25,7 +25,7 @@ describe('mode-first screening', () => {
   it('keeps missing engineering findings unknown while allowing a sourced initial direction; C-grade is not a demolition rule', () => {
     const input = projectRenewalModeInput(project()), result = assess(input)
     expect(input.conditions.every(row => row.value === null && row.state === 'unknown')).toBe(true)
-    expect(result.direction).toBe('comprehensive'); expect(result.status).toBe('preliminary')
+    expect(result.direction).toBe('comprehensive'); expect(result.status).toBe('uncertain')
     expect(result.source_ids).toEqual(['CURRENT']); expect(result.next_step).toContain('逐栋安全鉴定')
   })
   it('excludes private, future, unrelated and synthetic records from a real object and rejects cross-object condition transfer', () => {
@@ -44,6 +44,44 @@ describe('mode-first screening', () => {
     expect(assess(input, 'rebuild').direction).toBe('investigate')
     p.facts.push(fact('structure_repairable', true, { id: 'conflicting' }))
     expect(assess(projectRenewalModeInput(p), 'compare').reasons.join()).toContain('分歧')
+  })
+  it('keeps a high-confidence demolition preference behind the current-object evidence gate', () => {
+    const input = projectRenewalModeInput(project()), result = assess(input, 'rebuild')
+    const gate = evaluateRenewalModeGate(input)
+    expect(gate.baseline).toBe('comprehensive')
+    expect(gate.direction).toBe('comprehensive'); expect(gate.rebuild_allowed).toBe(false)
+    expect(gate.checks.every(row => row.state === 'unknown')).toBe(true)
+    expect(result.direction).toBe('comprehensive')
+    expect(result.summary).toContain('优先研究')
+    expect(result.reasons.join()).toContain('未知')
+    expect(input.conditions.every(row => row.value === null)).toBe(true)
+  })
+  it('requires confirmed necessity and every feasibility condition, retaining the failed item and source', () => {
+    const p = project()
+    p.facts = ['structure_repairable','demolition_permitted','rights_clear','rebuild_planning_confirmed','resident_resolution_valid','relocation_ready','funding_secured','life_cycle_cost_compared','maintenance_entity_confirmed']
+      .map(kind => fact(kind, kind !== 'structure_repairable'))
+    const complete = projectRenewalModeInput(p)
+    expect(evaluateRenewalModeGate(complete).rebuild_allowed).toBe(true)
+    expect(assess(complete, 'rebuild').direction).toBe('rebuild')
+    for (const kind of ['demolition_permitted','rights_clear','rebuild_planning_confirmed','resident_resolution_valid','relocation_ready','funding_secured','life_cycle_cost_compared','maintenance_entity_confirmed']) {
+      const missing = projectRenewalModeInput({ ...p, facts: p.facts.filter(row => row.kind !== kind) })
+      expect(evaluateRenewalModeGate(missing).rebuild_allowed, kind).toBe(false)
+      expect(assess(missing, 'rebuild').direction, kind).toBe('investigate')
+    }
+    p.facts.find(row => row.kind === 'funding_secured')!.value = false
+    const unmet = evaluateRenewalModeGate(projectRenewalModeInput(p)).checks.find(row => row.kind === 'funding_secured')!
+    expect(unmet.state).toBe('unmet'); expect(unmet.source_ids).toEqual(['CURRENT']); expect(unmet.locators).toEqual(['line:1'])
+  })
+  it('does not infer demolition necessity from a cost comparison, a missing citation, or model confidence', () => {
+    const p = project(); p.facts = [fact('structure_repairable', true), fact('life_cycle_cost_compared', true)]
+    const input = projectRenewalModeInput(p), gate = evaluateRenewalModeGate(input)
+    expect(gate.checks.find(row => row.kind === 'structure_repairable')?.state).toBe('unmet')
+    expect(gate.rebuild_allowed).toBe(false); expect(assess(input, 'rebuild').direction).toBe('comprehensive')
+    const unbound = structuredClone(input)
+    unbound.conditions.find(row => row.kind === 'structure_repairable')!.value = false
+    unbound.conditions.find(row => row.kind === 'structure_repairable')!.state = 'restricted'
+    unbound.conditions.find(row => row.kind === 'structure_repairable')!.source_ids = []
+    expect(evaluateRenewalModeGate(unbound).checks.find(row => row.kind === 'structure_repairable')?.state).toBe('unknown')
   })
   it('retains expired source text for historical reading but does not admit it as a current hard condition',()=>{
     const p=project();p.sources[0].expires_at='2026-09-30';p.facts=[fact('demolition_permitted',true)]

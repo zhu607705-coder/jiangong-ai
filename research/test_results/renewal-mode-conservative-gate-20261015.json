@@ -1,0 +1,68 @@
+{
+  "task": "Conservative evidence-bound renewal mode gate",
+  "date": "2026-10-15",
+  "policy": "renewal-mode-first-v4",
+  "gate": "renewal-mode-gate-v1",
+  "tests": [
+    {
+      "command": "npx vitest run tests/contracts/renewal-mode.test.ts",
+      "stage": "before implementation",
+      "test_files": 1,
+      "passed": 7,
+      "failed": 4,
+      "observed": "Three new gate tests failed because the helper was absent; the missing-engineering-findings test failed because the prior result was preliminary rather than uncertain."
+    },
+    {
+      "command": "npx vitest run tests/contracts/renewal-mode.test.ts tests/contracts/public-workbench-access.test.ts",
+      "stage": "gate and panel implementation",
+      "test_files": 2,
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "command": "npx vitest run tests/contracts/renewal-mode.test.ts tests/contracts/renewal-mode-panel.test.ts tests/contracts/neighborhood-alignment.test.ts tests/contracts/decision-model.test.ts",
+      "stage": "final focused regression",
+      "test_files": 4,
+      "passed": 69,
+      "failed": 0,
+      "duration_seconds": 1.91
+    }
+  ],
+  "typecheck": { "command": "npx tsc --noEmit", "diagnostics": [] },
+  "researched_cost_ui_followup": {
+    "dataset": "data/public_cases/renewal-evidence-search-20261015.json",
+    "component": "apps/workspace/src/maps/RenewalResearchEvidence.tsx",
+    "selected_sources": ["PUB-QS75-DRAFT-2024", "PUB-HZ-OLD-2022-10", "PUB-SH-QP-20240315", "PUB-NDRC-FEAS-2023"],
+    "command": "npx vitest run tests/contracts/renewal-mode-panel.test.ts",
+    "test_files": 1,
+    "passed": 3,
+    "failed": 0,
+    "last_run_start_local": "12:01:05",
+    "typecheck_exit_code": 0,
+    "typecheck_diagnostics": [],
+    "dataset_modified_by_this_worker": false,
+    "facts_added": 0,
+    "notes": [
+      "The 54 wan yuan figure remains the 2024 draft estimate for one elevator in Building 75, Unit 1, not an estate-wide estimate or secured funding.",
+      "The Hangzhou 400 yuan per square metre basis ceiling and 50 percent Xihu municipal subsidy share remain conditional policy references and exclude elevator and secondary-water-supply inputs.",
+      "The Shanghai Qingpu 520 yuan per square metre figure remains a regional subsidy control price, not an actual settlement or a Hangzhou estimate.",
+      "Local object material is labelled as such only for the exact real subject project; other project views retain it as reference material."
+    ]
+  },
+  "checks": [
+    "A high-confidence demolition preference with unknown object conditions retains the comprehensive-renovation research baseline.",
+    "Confirmed structural repair infeasibility with incomplete demolition prerequisites requires investigation.",
+    "Every feasibility prerequisite requires a current object-bound condition and source/locator references.",
+    "A cost-comparison record alone does not establish demolition necessity or economic superiority.",
+    "Historical model preferences cannot override the panel headline and remain in closed audit details."
+  ],
+  "scope": {
+    "live_model_calls": 0,
+    "external_network_calls": 0,
+    "production_deployment_verified": false,
+    "browser_render_verified": false,
+    "schema_changed": false,
+    "evidence_contract_changed": false,
+    "commit_created": false
+  }
+}

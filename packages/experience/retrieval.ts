@@ -3,6 +3,8 @@ import type { Source } from '../../apps/host/generated/contracts'
 import type { ProjectRecord } from '../../apps/host/store'
 import type { ParsedDocument } from './document-slices'
 import type { RagDocumentExport, RagExportBundle, RagMeasureLink } from './rag-export'
+import { documentDataKind } from './rag-export'
+import { searchTokens } from '../intelligence/domain'
 
 export type RetrievalSourceKind = 'public_original' | 'ai_draft' | 'synthetic' | 'internal_material' | 'unknown'
 export type RetrievalRequest = {
@@ -14,6 +16,8 @@ export type RetrievalSkip = { document_id: string; locator?: string; code: strin
 type RagChunk = RagDocumentExport['chunks'][number]
 export type RetrievalCandidate = {
   id: string; document_id: string; version: string; locator: string; text: string; file_name: string;
+  evidence_kind?: 'document_chunk' | 'source_text'; content_status?: Source['content_status'];
+  version_origin?: 'registered_hash' | 'text_sha256'; source_aliases?: string[];
   alias_locators: string[];
   source: Source; source_kind: RetrievalSourceKind; source_date: string | null;
   measure_links: RagMeasureLink[]; matched_measure_links: RagMeasureLink[];
@@ -24,14 +28,15 @@ export type RetrievalHit = RetrievalCandidate & { score: number }
 export type RetrievalQueryExpansion = { matched_terms: string[]; added_term: string; reason: string }
 export type RetrievalResponse = {
   project_id: string; question: string; rank_query: string; query_expansions: RetrievalQueryExpansion[]; as_of: string | null; hits: RetrievalHit[];
-  candidate_counts: { documents: number; parsed_chunks: number; eligible_chunks: number; ranked_chunks: number; batches: number; unresolved_references: number };
+  candidate_counts: { documents: number; parsed_chunks: number; eligible_chunks: number; ranked_chunks: number; batches: number; unresolved_references: number;
+    source_texts?: number; eligible_source_texts?: number };
   skipped: RetrievalSkip[]; method: 'metadata_gated_bm25' | 'metadata_gated_batched_bm25';
   score_meaning: string; ranking_note: string; content_role: 'untrusted_source_material'; fact_writes: 0;
 }
 export type RankMatch = { source_id: string; score: number }
 export type RetrievalRanker = (project: ProjectRecord['input'], query: string) => Promise<{ matches: RankMatch[] }>
 
-const sourceKind = (document: RagDocumentExport): RetrievalSourceKind => ({
+const sourceKind = (document: Pick<RagDocumentExport, 'data_kind'>): RetrievalSourceKind => ({
   public_original: 'public_original', ai_research_draft: 'ai_draft', synthetic_example: 'synthetic',
   internal_material: 'internal_material', unknown: 'unknown',
 } as const)[document.data_kind]
@@ -45,18 +50,37 @@ const sameSource = (source: Source, documentId: string, hash: string) => source.
   && (source.id === documentId || source.locator === `document:${documentId}`)
   && (!source.locator || source.locator === `document:${documentId}`)
 
-/** Three explicit wording bridges used by the current community documents; original questions and source text stay intact. */
+/** Explicit wording bridges used by community documents; original questions and source text stay intact. */
 export function expandRetrievalQuery(question: string): { rank_query: string; query_expansions: RetrievalQueryExpansion[] } {
   const rules = [
     { terms: ['楼栋', '楼幢'], added_term: '幢', reason: '楼栋数量在工程材料中常用“幢”记录，补充其原文计数单位。' },
     { terms: ['户数', '住户'], added_term: '户', reason: '住户数量在工程材料中常用“户”记录，补充其原文计数单位。' },
     { terms: ['排除'], added_term: '不纳入', reason: '排除范围在工程材料中可能写作“不纳入”，补充这一明确措辞。' },
+    { terms: ['加梯'], added_term: '电梯', reason: '“加梯”在原文中也写作“加装电梯”，补充同一设施名称。' },
+    { terms: ['花多少钱', '要多少钱', '花费多少'], added_term: '费用 投资 预算', reason: '日常费用问法对应工程材料中的费用、投资和预算词汇；仅扩展查找措辞，不推断金额。' },
+    { terms: ['老人', '老年人', '长者'], added_term: '养老 老年 社区服务 邻里', reason: '老人的日常活动可能记在养老、老年、社区服务或邻里材料中；仅扩展查找词汇，不认定设施已适用。' },
+    { terms: ['停车难', '找不到车位', '车位不够', '车位不足'], added_term: '停车 车位 泊位', reason: '停车困难在材料中可能用停车、车位或泊位记录；保留原问题并补充相应设施词汇。' },
   ]
   const query_expansions = rules.flatMap(rule => {
     const matched_terms = rule.terms.filter(term => question.includes(term))
     return matched_terms.length ? [{ matched_terms, added_term: rule.added_term, reason: rule.reason }] : []
   })
   return { rank_query: query_expansions.length ? `${question}\n${query_expansions.map(item => item.added_term).join(' ')}` : question, query_expansions }
+}
+
+const questionWords = new Set('有 有哪些 哪些 什么 怎么 如何 多少 什么时候 是否 有没有 能否 可否 请问 一下 关于 为什么 为何 怎样 哪里 资料 原文 查询 检索 查找 找到 查到 提供 说明 介绍 大概 大约 平时 去哪 去哪儿'.split(' '))
+const genericWords = new Set('项目 小区 社区 居民 工程 改造 更新 当前 现在 需要 涉及 有关 相关 依据 措施 管理 方案 安排 情况 进展 步骤 确定 案例 中心 服务 活动 办法'.split(' '))
+/** Body-only overlap gates BM25's existing common-word/punctuation matches; this is not a second ranking system. */
+function retrievalTerms(project: ProjectRecord, query: ReturnType<typeof expandRetrievalQuery>): string[] {
+  const context = new Set(searchTokens(`${project.name} ${project.input.scope.name}`))
+  const terms = searchTokens(query.rank_query).filter(term => !questionWords.has(term) && !/^\p{Script=Han}$/u.test(term))
+  const specific = terms.filter(term => !genericWords.has(term) && !context.has(term))
+  // Only traced expansion rules can admit a single-character counting unit; ordinary question characters stay excluded.
+  const expanded = query.query_expansions.flatMap(expansion => expansion.added_term.split(/\s+/))
+    .filter(term => term.length > 1 || term === '户' || term === '幢')
+  // Intl's word segmentation can split these construction compounds into single characters; retain their exact phrase.
+  const phrases = ['原拆原建', '拆除重建', '二次供水', '邻里中心'].filter(term => query.rank_query.includes(term))
+  return unique([...phrases, ...expanded, ...(specific.length ? specific : phrases.length || expanded.length ? [] : terms)])
 }
 
 const annotationIdentity = (link: RagMeasureLink) => JSON.stringify([link.card_id, link.card_revision, link.review_status,
@@ -86,6 +110,72 @@ function collapseTextMirrors(candidates: RetrievalCandidate[], bundle: RagExport
     }
   }
   return candidates.filter(candidate => !removed.has(candidate.id))
+}
+
+/** Saved Source bodies belong to the current input even when no upload/document row was created. */
+function prepareSourceTexts(project: ProjectRecord, bundle: RagExportBundle, originals: ParsedDocument[], request: RetrievalRequest, skipped: RetrievalSkip[]) {
+  const candidates: RetrievalCandidate[] = []
+  if (bundle.project_id !== project.id || project.input.project_id !== project.id) return { candidates, sourceTexts: 0 }
+  const documentIds = new Set([...bundle.documents.map(document => document.document_id), ...originals.map(document => document.id)])
+  let sourceTexts = 0
+  for (const source of project.input.sources) {
+    // An uploaded document must pass the document/version gates above, never fall back through its source registration.
+    if (bundle.documents.some(document => document.source?.id === source.id)
+      || documentIds.has(source.id) || documentIds.has(source.id.replace(/^PUBLIC-DOCUMENT-/, ''))
+      || source.locator?.startsWith('document:') && documentIds.has(source.locator.slice('document:'.length))) continue
+    const skip = (code: string, reason: string) => skipped.push({ document_id: source.id, locator: source.locator, code, reason })
+    const text = source.untrusted_text
+    if (!text?.trim() || !['full_text', 'excerpt'].includes(source.content_status || '') || source.parse_status === 'empty' || source.parse_status === 'ocr_required') {
+      skip('SOURCE_TEXT_UNAVAILABLE', '该来源未保存可用正文或摘录；仅有标题、链接或解析状态不能代替原文。'); continue
+    }
+    sourceTexts++
+    // Reuse the same declared-AI/public/synthetic classification as uploaded material; this creates no document or parser state.
+    const classification = documentDataKind({ id: source.id, fileName: source.title, hash: source.hash || null,
+      format: 'source', status: 'extracted', parser: 'saved_source', createdAt: source.retrieved_at || null,
+      segments: [], tables: [], notes: [], issues: [] }, source)
+    const kind = sourceKind({ data_kind: classification.kind })
+    if (source.visibility !== 'public' || kind === 'internal_material' || kind === 'unknown') {
+      skip('SOURCE_NOT_PUBLIC', '补充检索仅纳入当前项目已登记的公开来源正文；内部材料继续走原有文档权限。'); continue
+    }
+    if (!request.include_ai && (kind === 'ai_draft' || kind === 'synthetic')) {
+      skip('GENERATED_SOURCE_EXCLUDED', '默认检索排除AI草稿与模拟示例，可显式开启原文浏览。'); continue
+    }
+    if (request.source_kind && request.source_kind !== kind) { skip('SOURCE_KIND_FILTER', '来源类别不符合本次筛选。'); continue }
+    const sourceDate = source.date_status === 'verified' ? validDate(source.published_at) : null
+    if (request.as_of && !sourceDate) { skip('SOURCE_DATE_UNKNOWN', '来源正文时点未核实，上传或采集日期不替代正文时点。'); continue }
+    if (request.as_of && sourceDate! > request.as_of) { skip('SOURCE_AFTER_AS_OF', '来源正文晚于本次研判时点。'); continue }
+    const expires = validDate(source.expires_at)
+    if (request.as_of && expires && expires < request.as_of) { skip('SOURCE_EXPIRED', '来源已超过登记有效期。'); continue }
+    if (request.measure_key || request.object_ref || request.stage || request.review_status) {
+      skip('SOURCE_ANNOTATION_UNAVAILABLE', '来源正文没有同版本举措审核引用，不能据标题或范围标签满足举措、对象、阶段及审核筛选。'); continue
+    }
+    if (text.length > 100000) { skip('CHUNK_TOO_LARGE', '来源正文超过现有检索契约的100000字上限，本次未截断或伪造定位。'); continue }
+    const version = source.hash || createHash('sha256').update(text).digest('hex'), locator = source.locator || 'source:text'
+    const contentStatus = source.body_truncated || source.records_truncated ? 'excerpt' : source.content_status
+    const { untrusted_text: _sourceBody, public_records: _sourceRecords, ...metadata } = source
+    candidates.push({ id: `RAG-${createHash('sha256').update(JSON.stringify([project.id, 'source_text', source.id, version, locator])).digest('hex')}`,
+      evidence_kind: 'source_text', content_status: contentStatus, version_origin: source.hash ? 'registered_hash' : 'text_sha256', source_aliases: [],
+      document_id: source.id, file_name: source.title, version, locator, text, alias_locators: [],
+      source: structuredClone(metadata), source_kind: kind, source_date: sourceDate,
+      measure_links: [], matched_measure_links: [], measure_mentions: [], stages: [], objects: unique(source.object_refs || []), review_statuses: [],
+      match_reasons: ['当前项目已保存的公开来源正文；来源范围和正文/摘录状态沿用登记，不等同上传文件或审核事实',
+        ...(source.hash ? ['版本使用已登记来源哈希'] : ['未登记来源哈希，版本使用本次已保存正文快照SHA-256，不代表已核对远端原件']),
+        ...(!source.locator ? ['未登记页行定位，source:text仅指该来源当前已保存全文'] : []),
+        ...(request.as_of ? [`正文时点${sourceDate}不晚于${request.as_of}`] : [])] })
+  }
+  // Imported project snapshots may attach the exact same public body repeatedly. Keep all source IDs as navigable aliases.
+  const mirrors = new Map<string, RetrievalCandidate>()
+  for (const candidate of candidates.sort((a, b) => a.source.id.length - b.source.id.length || a.source.id.localeCompare(b.source.id))) {
+    const source = candidate.source
+    const key = JSON.stringify([source.url || source.id, candidate.version, candidate.text, candidate.content_status,
+      source.evidence_scope, source.object_refs, source.date_status, candidate.source_date, source.expires_at, source.body_truncated, source.records_truncated])
+    const previous = mirrors.get(key)
+    if (!previous) { mirrors.set(key, candidate); continue }
+    previous.source_aliases!.push(candidate.source.id)
+    skipped.push({ document_id: source.id, locator: candidate.locator, code: 'SOURCE_TEXT_MIRROR',
+      reason: `同URL、正文、版本与来源范围的已保存镜像合并为${previous.source.id}，原来源ID保留为可定位别名。` })
+  }
+  return { candidates: [...mirrors.values()], sourceTexts }
 }
 
 /** All permission, source/version and metadata gates run before any ranking call. */
@@ -141,6 +231,7 @@ export function prepareRetrievalCandidates(project: ProjectRecord, bundle: RagEx
       if (literalMatch && !matched.length) reasons.push('原文逐字提及该举措，尚无对应审核引用')
       const { untrusted_text: _sourceBody, public_records: _sourceRecords, ...sourceMetadata } = source
       candidates.push({ id: `RAG-${createHash('sha256').update(JSON.stringify([project.id, document.document_id, document.version, chunk.locator])).digest('hex')}`,
+        evidence_kind: 'document_chunk', content_status: source.content_status, version_origin: 'registered_hash',
         document_id: document.document_id, version: document.version, locator: chunk.locator, alias_locators: [], text: chunk.text,
         file_name: document.file_name, source: structuredClone(sourceMetadata), source_kind: kind, source_date: sourceDate,
         measure_links: links, matched_measure_links: annotationFilter ? matched : links, measure_mentions: mentions,
@@ -148,7 +239,8 @@ export function prepareRetrievalCandidates(project: ProjectRecord, bundle: RagEx
         review_statuses: unique(links.map(link => link.review_status)), match_reasons: reasons })
     }
   }
-  return { candidates: collapseTextMirrors(candidates, bundle, skipped), skipped, parsedChunks }
+  const sources = prepareSourceTexts(project, bundle, originals, request, skipped)
+  return { candidates: [...collapseTextMirrors(candidates, bundle, skipped), ...sources.candidates], skipped, parsedChunks, sourceTexts: sources.sourceTexts }
 }
 
 const virtualSource = (candidate: RetrievalCandidate): Source => ({ id: candidate.id, title: candidate.file_name,
@@ -183,6 +275,8 @@ function batches(candidates: RetrievalCandidate[]): RetrievalCandidate[][] {
 export async function retrieveProjectEvidence(project: ProjectRecord, bundle: RagExportBundle, originals: ParsedDocument[], request: RetrievalRequest, ranker: RetrievalRanker): Promise<RetrievalResponse> {
   const prepared = prepareRetrievalCandidates(project, bundle, originals, request)
   const query = expandRetrievalQuery(request.question)
+  const terms = retrievalTerms(project, query)
+  const relevant = prepared.candidates.filter(candidate => terms.some(term => candidate.text.toLowerCase().includes(term)))
   let rankCalls = 0
   const rank = async (candidates: RetrievalCandidate[]): Promise<RetrievalHit[]> => {
     rankCalls++
@@ -193,10 +287,10 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
       const candidate = byId.get(match.source_id)
       if (!candidate || !Number.isFinite(match.score) || seen.has(match.source_id)) return []
       seen.add(match.source_id)
-      return [{ ...candidate, score: match.score, match_reasons: [...candidate.match_reasons, '现有BM25依据问题与原文词项重合排序；分数表示文本相关程度'] }]
+      return [{ ...candidate, score: match.score, match_reasons: [...candidate.match_reasons, '问题实词在原文正文中重合后，现有BM25排序；文件名、标点及通用问句词不单独构成命中'] }]
     }).slice(0, 5)
   }
-  const initial = batches(prepared.candidates)
+  const initial = batches(relevant)
   let finalists: RetrievalHit[] = []
   for (const batch of initial) finalists.push(...await rank(batch))
   // Batch scores are not comparable. Re-rank the pooled candidates with the same capability instead of sorting those scores together.
@@ -210,10 +304,11 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
   }
   return { project_id: project.id, question: request.question, ...query, as_of: request.as_of || null,
     hits: finalists.slice(0, request.limit || 5), candidate_counts: { documents: bundle.documents.length,
-      parsed_chunks: prepared.parsedChunks, eligible_chunks: prepared.candidates.length, ranked_chunks: prepared.candidates.length,
-      batches: rankCalls, unresolved_references: bundle.unresolved_references.length }, skipped: prepared.skipped,
+      parsed_chunks: prepared.parsedChunks, eligible_chunks: prepared.candidates.length, ranked_chunks: relevant.length,
+      batches: rankCalls, unresolved_references: bundle.unresolved_references.length,
+      source_texts: prepared.sourceTexts, eligible_source_texts: prepared.candidates.filter(candidate => candidate.evidence_kind === 'source_text').length }, skipped: prepared.skipped,
     method: initial.length > 1 ? 'metadata_gated_batched_bm25' : 'metadata_gated_bm25',
     score_meaning: 'BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。',
-    ranking_note: initial.length > 1 ? '按文档交错分批召回，每批最多1000片段及约1MB文本；各批前5候选再用同一BM25复排，批次分数不直接比较。' : '在权限、来源版本和元数据筛选后，直接复用现有BM25原文检索。',
+    ranking_note: initial.length > 1 ? '在来源与原文实词重合检查后，按材料交错分批召回，每批最多1000片段及约1MB文本；各批前5候选再用同一BM25复排，批次分数不直接比较。' : '在权限、来源版本、元数据及原文实词重合检查后，直接复用现有BM25；无正文主题词重合时保留无命中。',
     content_role: 'untrusted_source_material', fact_writes: 0 }
 }

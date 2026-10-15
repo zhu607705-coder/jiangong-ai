@@ -2448,5 +2448,198 @@
       "DeepSeek generation remains deferred at user request."
     ],
     "next_runnable_task": null
+  },
+  "evidence_retrieval_mode_progress_20261015": {
+    "status": "implemented_build_verified_pending_server",
+    "updated_at": "2026-10-15",
+    "scope": "Chinese strategy diagnostics, actual-stage progress, same-project multi-topic original retrieval and precise navigation, conservative renewal gate, researched funding evidence",
+    "changed_files": [
+      "apps/host/renewal-mode.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "apps/workspace/src/components/strategy-overview.css",
+      "apps/workspace/src/imports/FloatingEvidenceSearch.tsx",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "apps/workspace/src/imports/floating-evidence-search.css",
+      "apps/workspace/src/imports/rag-evidence-search.css",
+      "apps/workspace/src/maps/RenewalModePanel.css",
+      "apps/workspace/src/maps/RenewalModePanel.tsx",
+      "packages/experience/retrieval.ts",
+      "packages/retrofit/renewal-mode.ts",
+      "packages/retrofit/strategy.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "tests/contracts/floating-evidence-search.test.ts",
+      "tests/contracts/public-workbench-access.test.ts",
+      "tests/contracts/rag-retrieval.test.ts",
+      "tests/contracts/renewal-mode.test.ts",
+      "tests/contracts/renewal-strategy.test.ts"
+    ],
+    "implementation": {
+      "retrieval": "Existing BM25 now receives current-project saved Sources as well as uploaded documents; body terms and transparent vocabulary expansions; source/version/AI/review gates retained.",
+      "navigation": "Exact source/version/literal focus plus actual citation links; separate intent-labelled cost/mode/assessment/investigation feature entries.",
+      "mode": "Comprehensive renewal research baseline; confirmed irreparability requires specialist disposition; rebuilding requires all nine cited current-object conditions.",
+      "strategy": "Chinese whitelist diagnostics, no automatic paid generation, real NDJSON phases, bounded two-round existing search and preservation of last successful cache.",
+      "funding": "12 actually opened public sources, project-local elevator draft and separately labelled policy/case references; no facts promoted."
+    },
+    "source_import": {
+      "checked_at": "2026-10-15T03:59:43.4040164Z",
+      "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "source_file": "data/public_cases/renewal-evidence-search-20261015.json",
+      "source_file_sha256": "9ec24c3e08f631ac94282734526e044a7f121f6bac4535317e723b3f97067228",
+      "source_file_final_metadata_sha256": "1c12fe951ae128fcd0c9b20a001e4160dfbc65ca6cbbb6c4e34ecedb560e8ca8",
+      "post_import_change": "Only project-as-of metadata was added; the 12 imported Source objects were unchanged.",
+      "context_version_before": 2,
+      "context_version_after": 14,
+      "source_count_before": 66,
+      "source_count_after": 78,
+      "fact_count": 0,
+      "fact_writes": 0,
+      "provider_calls": 0,
+      "items": [
+        {
+          "source_id": "PUB-HZ-OLD-2022-10",
+          "title": "杭州市人民政府办公厅关于全面推进城镇老旧小区改造工作的实施意见（杭政办函〔2022〕10号）",
+          "url": "https://zfgb.hangzhou.gov.cn/10/105220253/t117220253054/518761.shtml",
+          "material_id": "ID-da94f0e0ce44a34e1c1be8e2",
+          "version": "6b8380628188db37f1fb4e466a554746a5d86e3d2ad706bd20f18c1e265084ef",
+          "created": false,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-6b8380628188:PUB-HZ-OLD-2022-10"
+        },
+        {
+          "source_id": "PUB-NDRC-FEAS-2023",
+          "title": "政府投资项目可行性研究报告编写通用大纲（2023年版）",
+          "url": "https://www.ndrc.gov.cn/xxgk/zcfb/ghxwj/202304/P020230407401908422756.pdf",
+          "material_id": "ID-aa1503007d42b99840d53265",
+          "version": "7be9a435d74a5d90715753a0b5480cf8875a2c492733a1f26a5ddd193908adc6",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-7be9a435d74a:PUB-NDRC-FEAS-2023"
+        },
+        {
+          "source_id": "PUB-HZ-MAINT-353",
+          "title": "杭州市物业专项维修资金管理办法（市政府令第353号）",
+          "url": "https://zfgb.hangzhou.gov.cn/9/111220253/t125220253114/529870.shtml",
+          "material_id": "ID-8448d7f6cae6aaaeaf5177ed",
+          "version": "8624b6aa1f338a97e4e2c9f9c5017633f57ee9b6c382e2653249d155ddc44d50",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-8624b6aa1f33:PUB-HZ-MAINT-353"
+        },
+        {
+          "source_id": "PUB-QS75-DRAFT-2024",
+          "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+          "url": "https://www.hzxh.gov.cn/api-gateway/jpaas-web-server/front/document/file-download?fileUrl=/cms_files/jcms1/web1838/site/attach/0/7189c231fdf6439fbc9db35e125e1352.doc",
+          "material_id": "ID-6830646647034e8b5677c438",
+          "version": "8463257afc80701c5106cbf4590533fd4491382f4f7cfaad9954cd8654bc4f8d",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-8463257afc80:PUB-QS75-DRAFT-2024"
+        },
+        {
+          "source_id": "PUB-QS-ELEV-20260829",
+          "title": "累计加装电梯54台 “求是有约”议事平台让老旧小区“梯”升幸福感",
+          "url": "https://hznews.hangzhou.com.cn/chengshi/content/2026-08/29/content_9292666.htm",
+          "material_id": "ID-0446a77889998b539521cb57",
+          "version": "8983987af2bb456247d10bd01a50d1c899e7e599d818537af71294ae529e35c8",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-8983987af2bb:PUB-QS-ELEV-20260829"
+        },
+        {
+          "source_id": "PUB-ZG-START-20231201",
+          "title": "全省首个！正式开工！效果图来啦→",
+          "url": "https://www.gongshu.gov.cn/art/2023/12/1/art_1229322176_59077771.html",
+          "material_id": "ID-4233a15ab5fad0e521319711",
+          "version": "74570f69fa9c1e89bf534fcba63fcb135c2f7a759a322471fe968dfb39a2ddf0",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-74570f69fa9c:PUB-ZG-START-20231201"
+        },
+        {
+          "source_id": "PUB-ZG-FUND-20261012",
+          "title": "杭州浙工新村：居民“自主更新”的旧改探索",
+          "url": "https://www.hzzx.gov.cn/cshz/content/2026-10/12/content_9334536.htm",
+          "material_id": "ID-7415ed575a84a3cb213c5229",
+          "version": "60fc52631c37f00a3aaa51d6809cb31a3cd2503bfbc87242f70a4980b1a0a7da",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-60fc52631c37:PUB-ZG-FUND-20261012"
+        },
+        {
+          "source_id": "PUB-ZG-EPC-20231208",
+          "title": "浙工新村城市危旧房有机更新（试点）项目设计-采购-施工（EPC）总承包合同订立信息",
+          "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20231208/f1b82e1a-5290-40cd-ac88-1bf59dfab2b6.html",
+          "material_id": "ID-8b10af289f173a6c2cbc8bae",
+          "version": "c4bb671c5e9e3a08e09d07d296fa68af6670f0590bfea2e9553711051a3bdd3c",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-c4bb671c5e9e:PUB-ZG-EPC-20231208"
+        },
+        {
+          "source_id": "PUB-SH-QP-20240315",
+          "title": "关于印发《青浦区老旧小区综合改造实施方案》的通知（青房管〔2024〕1号）",
+          "url": "https://www.shanghai.gov.cn/nw12344/20240315/84ddcd7bfed140c7bd3a038c55ed2a4d.html",
+          "material_id": "ID-500979f16a361cdddd363e98",
+          "version": "9b0886d72783a42f12ca9c1ba6baf73b97a057e946d022c5aeaf97a2b6739a4a",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-9b0886d72783:PUB-SH-QP-20240315"
+        },
+        {
+          "source_id": "PUB-SH-MODE-2023-1",
+          "title": "上海市旧住房成套改造和拆除重建实施管理办法（试行）（沪房规范〔2023〕1号）",
+          "url": "https://shcm.gov.cn/shcm/a33f54e2-e8ba-41e9-a3f5-526380e4c695/238dea4b-dc22-4a6a-8919-c3cb0cb37ed4/%E6%B2%AA%E6%88%BF%E8%A7%84%E8%8C%83%EF%BC%882023%EF%BC%891%E5%8F%B7.pdf",
+          "material_id": "ID-cfb9d8647013d57a712949e4",
+          "version": "cb6e0012829a20a08b849ca8f3b8226fb48b16c09c51b06835ea16964461a00d",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-cb6e0012829a:PUB-SH-MODE-2023-1"
+        },
+        {
+          "source_id": "PUB-SH-EXT-2024-12",
+          "title": "上海市房屋管理局关于延长部分规范性文件有效期的通知（沪房规范〔2024〕12号）",
+          "url": "https://fgj.sh.gov.cn/gfxwj/20250122/ae461fc811a34841b80a6e74033d87ff.html",
+          "material_id": "ID-347149de71d462f325a269de",
+          "version": "b0a75aaa18c03f6d61674a39a15deaafcdd8e0665a41b27fa70c50bb49212efa",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-b0a75aaa18c0:PUB-SH-EXT-2024-12"
+        },
+        {
+          "source_id": "PUB-SH-ST-2024-BOND",
+          "title": "地方政府新增专项债券项目信息披露模板——2024年上海市政府专项债券（十期）",
+          "url": "https://czj.sh.gov.cn/cmsres/4e/4eb674e27da64b12affd57c124001afb/d5e6a467bdb236c0c68e4b9f6e2cea3b.pdf",
+          "material_id": "ID-faccb4773b16addac964338d",
+          "version": "88ffb8b2578469add2d3d4f85936c303c21f508a84df173d1f32985d1e5721bd",
+          "created": true,
+          "attachment_status": "attached",
+          "attached_source_id": "INTEL-88ffb8b25784:PUB-SH-ST-2024-BOND"
+        }
+      ]
+    },
+    "verification": {
+      "production_build": "passed; research/test_results/evidence-navigation-build-20261015.log",
+      "retrieval_contracts": "26 passed; actual TS/Python BM25 and independent count-unit reproduction",
+      "frontend_navigation": "21 passed including real App component source focus and assessment jump",
+      "strategy_diagnostics_progress": "39 passed; refresh preservation latest file 7 passed; offline browser provider_calls 0",
+      "stream_api": "4 passed; progress, cache read, stale result rejection, failed refresh retention",
+      "mode_gate": "69 passed plus cost-evidence component checks; research/test_results/renewal-mode-conservative-gate-20261015.json"
+    },
+    "decisions": [
+      "No additional model generation or proxy; public-source intake/attach reuses existing authorized API.",
+      "Public original snippets are materials, not verified project conditions.",
+      "Approximate progress shows actual stages and elapsed time without invented percentages."
+    ],
+    "unresolved_questions": [
+      "Server HEAD to api.deepseek.com timed out (HTTP000/exit28); model service connectivity not restored by this patch."
+    ],
+    "artifact_refs": [
+      "data/public_cases/renewal-evidence-search-20261015.json",
+      "docs/research/更新模式与费用补充检索_20261015.md",
+      "research/test_results/renewal-research-import-20261015.json",
+      "output/playwright/strategy-progress/verification.json"
+    ],
+    "next_runnable_task": "Deploy committed application and read back actual campus HTTP/UI."
   }
 }

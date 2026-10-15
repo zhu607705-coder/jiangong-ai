@@ -31,6 +31,8 @@ import EvidenceDecisionMap from './imports/EvidenceDecisionMap';
 import RagEvidenceSearch from './imports/RagEvidenceSearch';
 import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
 import type { RetrievalHit } from '../../../packages/experience/retrieval';
+import type { StrategyPacket } from '../../../packages/retrofit/strategy';
+import { findRetrievalDecisionElement, findRetrievalFeatureElement, focusRetrievalElement, retrievalDecisionLocations, retrievalFeatureLocations, retrievalSourceIds, sourceHitFocus, type RetrievalDecisionLocation, type RetrievalFeatureLocation, type SourceHitFocusResult } from './imports/retrieval-navigation';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
@@ -202,17 +204,26 @@ export default function App() {
   });
   const demoSessionActive = !!project && project.id === completeDemoProject;
   const completeDemoActive = demoSessionActive && ['overview', 'compare', 'actions'].includes(tab);
-  const [sourceFocus, setSourceFocus] = useState<{ projectId: string; refs: string[] } | null>(null);
+  const [sourceFocus, setSourceFocus] = useState<{ projectId: string; contextVersion: number; refs: string[]; token: number } | null>(null);
+  const [sourceTextFocus, setSourceTextFocus] = useState<{ projectId: string; contextVersion: number; sourceId: string; hit: RetrievalHit } | null>(null);
+  const [sourceTextCheck, setSourceTextCheck] = useState<{ key: string; result: SourceHitFocusResult | null }>({ key: '', result: null });
+  const [retrievalStrategy, setRetrievalStrategy] = useState<{ key: string; status: 'loading' | 'ready' | 'unavailable'; packet: StrategyPacket | null }>({ key: '', status: 'loading', packet: null });
+  const [decisionFocus, setDecisionFocus] = useState<{ projectId: string; contextVersion: number; location: RetrievalDecisionLocation | RetrievalFeatureLocation; token: number } | null>(null);
   const [askEvidenceRequest, setAskEvidenceRequest] = useState(0);
-  const [evidenceLocation, setEvidenceLocation] = useState<{ projectId: string; documentId: string; version: string; locator: string; quote: string; token: number } | null>(null);
+  const [evidenceLocation, setEvidenceLocation] = useState<{ projectId: string; contextVersion: number; documentId: string; version: string; locator: string; quote: string; token: number } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
   const [executionMode, setExecutionMode] = useState<"offline" | "live">(
     "offline",
   );
-  const displayedSources = [...new Map([...(project?.input.sources || []), ...(packet?.sources || [])].map(source => [source.id, source])).values()];
-  const requestedRefs = sourceFocus?.projectId === project?.id ? sourceFocus?.refs || [] : [];
+  const displayedSources = [...new Map([...(packet?.sources || []), ...(project?.input.sources || [])].map(source => [source.id, source])).values()];
+  const requestedRefs = sourceFocus?.projectId === project?.id && sourceFocus?.contextVersion === project?.context_version ? sourceFocus?.refs || [] : [];
   const focusedSourceIds = displayedSources.filter(source => requestedRefs.some(ref => ref === source.id || ref === `${project?.id}:${source.id}`)).map(source => source.id);
   const focusedSourceKey = focusedSourceIds.join('\u0000');
+  const focusedSource = sourceTextFocus && sourceTextFocus.projectId === project?.id && sourceTextFocus.contextVersion === project?.context_version ? displayedSources.find(source => source.id === sourceTextFocus.sourceId) : undefined;
+  const sourceCheckKey = focusedSource && sourceTextFocus ? `${project?.id}:${project?.context_version}:${sourceTextFocus.hit.id}:${sourceFocus?.token}` : '';
+  const sourceTextResolved = sourceTextCheck.key === sourceCheckKey ? sourceTextCheck.result : null;
+  const retrievalKey = `${project?.id || ''}:${project?.context_version ?? ''}`;
+  const decisionLinksState = retrievalStrategy.key === retrievalKey ? retrievalStrategy.status : 'loading';
   const brief = packet ? buildDecisionBrief(packet) : null;
   const packetSources = new Map((packet?.sources || []).map(source => [source.id, source] as const));
   const eventSource = useRef<EventSource | null>(null);
@@ -222,29 +233,80 @@ export default function App() {
     !!packet && !!project && packet.context_version !== project.context_version;
   function openEvidence(refs: string[] = []) {
     setEvidenceLocation(null);
-    if (project) setSourceFocus({ projectId: project.id, refs: [...new Set(refs)] });
+    setSourceTextFocus(null); setDecisionFocus(null);
+    if (project) setSourceFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, refs: [...new Set(refs)], token: (previous?.token || 0) + 1 }));
     setTab('evidence');
     setDetailsOpen(true);
   }
   function locateEvidence(hit: RetrievalHit) {
     if (!project) return;
-    setSourceFocus(null);
-    setEvidenceLocation(previous => ({ projectId: project.id, documentId: hit.document_id,
-      version: hit.version, locator: hit.locator, quote: hit.text, token: (previous?.token || 0) + 1 }));
+    setDecisionFocus(null);
+    if (hit.evidence_kind === 'source_text' || !hit.evidence_kind && hit.source.locator !== `document:${hit.document_id}`) {
+      const ids = retrievalSourceIds(hit);
+      const source = displayedSources.find(row => ids.some(id => id === row.id || id === `${project.id}:${row.id}`));
+      openEvidence(source ? [source.id] : ids);
+      if (source) setSourceTextFocus({ projectId: project.id, contextVersion: project.context_version, sourceId: source.id, hit });
+    } else {
+      setSourceFocus(null); setSourceTextFocus(null);
+      setEvidenceLocation(previous => ({ projectId: project.id, contextVersion: project.context_version, documentId: hit.document_id,
+        version: hit.version, locator: hit.locator, quote: hit.text, token: (previous?.token || 0) + 1 }));
+    }
     setTab('evidence');
     setDetailsOpen(true);
   }
   useEffect(() => {
+    let current = true;
+    setSourceTextCheck({ key: '', result: null });
+    if (focusedSource && sourceTextFocus) void sourceHitFocus(focusedSource, sourceTextFocus.hit).then(result => { if (current) setSourceTextCheck({ key: sourceCheckKey, result }); });
+    return () => { current = false; };
+  }, [focusedSource, sourceCheckKey]);
+  useEffect(() => {
     if (tab !== 'evidence' || !focusedSourceIds.length) return;
+    let focused: HTMLElement | null = null;
     const frame = requestAnimationFrame(() => {
       const target = document.getElementById(`project-source-${encodeURIComponent(focusedSourceIds[0])}`);
       const original = target?.querySelector('details');
       if (original) original.open = true;
-      target?.scrollIntoView({ block: 'center' });
-      target?.focus({ preventScroll: true });
+      const quote = target?.querySelector<HTMLElement>('[data-retrieval-source-hit]');
+      if (quote || target) { focused = (quote || target)!; focusRetrievalElement(focused); }
     });
-    return () => cancelAnimationFrame(frame);
-  }, [tab, project?.id, focusedSourceKey]);
+    return () => { cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
+  }, [tab, project?.id, focusedSourceKey, sourceFocus?.token, sourceTextResolved?.status]);
+  useEffect(() => { setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null); setDecisionFocus(null); }, [retrievalKey]);
+  useEffect(() => {
+    const controller = new AbortController();
+    setRetrievalStrategy({ key: retrievalKey, status: 'loading', packet: null });
+    if (!project || project.input.business_profile !== 'neighborhood') { setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: null }); return; }
+    void api<StrategyPacket | null>(`/projects/${encodeURIComponent(project.id)}/renewal-strategy?demo=false`, undefined, controller.signal)
+      .then(value => { if (!controller.signal.aborted) setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: value?.context_version === project.context_version ? value : null }); })
+      .catch(() => { if (!controller.signal.aborted) setRetrievalStrategy({ key: retrievalKey, status: 'unavailable', packet: null }); });
+    return () => controller.abort();
+  }, [retrievalKey]);
+  function decisionLocations(hit: RetrievalHit) { return project ? retrievalDecisionLocations(hit, project.id, retrievalStrategy.key === retrievalKey ? retrievalStrategy.packet : null, packet) : []; }
+  function featureLocations(question: string) { return retrievalFeatureLocations(question).filter(location => location.kind === 'investigations' || project?.input.business_profile === 'neighborhood'); }
+  function navigateRetrievalDecision(location: RetrievalDecisionLocation | RetrievalFeatureLocation) {
+    if (!project) return;
+    setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null);
+    setCompleteDemoProject(null);
+    try { localStorage.removeItem('hzz-complete-demo-project'); } catch {}
+    setDecisionFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, location, token: (previous?.token || 0) + 1 }));
+    setTab(location.tab); setDetailsOpen(true);
+  }
+  useEffect(() => {
+    if (!decisionFocus || decisionFocus.projectId !== project?.id || decisionFocus.contextVersion !== project?.context_version || tab !== decisionFocus.location.tab) return;
+    let frame = 0, focused: HTMLElement | null = null;
+    const attempt = () => {
+      const target = 'detail' in decisionFocus.location ? findRetrievalFeatureElement(document, decisionFocus.location) : findRetrievalDecisionElement(document, decisionFocus.location);
+      if (!target) return;
+      observer.disconnect(); clearTimeout(timeout); focused = target; focusRetrievalElement(target);
+      setNotice(`已定位：${decisionFocus.location.label}`);
+    };
+    const observer = new MutationObserver(() => { cancelAnimationFrame(frame); frame = requestAnimationFrame(attempt); });
+    const timeout = setTimeout(() => { observer.disconnect(); cancelAnimationFrame(frame); setNotice('已打开对应页面，该引用条目暂未读取，请重试定位。'); }, 10000);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    attempt();
+    return () => { observer.disconnect(); clearTimeout(timeout); cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
+  }, [project?.id, project?.context_version, tab, decisionFocus?.token]);
   async function loadProject(id: string) {
     const version = ++projectLoadVersion.current;
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
@@ -1127,11 +1189,11 @@ export default function App() {
                 MB）。真实材料使用独立真实项目。
               </p>
               {project.input.business_profile === 'neighborhood' && <EvidenceDecisionMap projectId={project.id} revision={project.context_version} sourceIds={project.input.sources.map(source => source.id)} onEvidence={openEvidence} onOverview={() => setTab('overview')} />}
-              <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} onEvidence={openEvidence} onLocateHit={locateEvidence} />
+              <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} revision={project.context_version} onEvidence={openEvidence} onLocateHit={locateEvidence} decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState} featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision} />
               <ImportedDataExplorer
                 projectId={project.id}
                 projectName={project.name}
-                focusLocation={evidenceLocation?.projectId === project.id ? evidenceLocation : undefined}
+                focusLocation={evidenceLocation?.projectId === project.id && evidenceLocation.contextVersion === project.context_version ? evidenceLocation : undefined}
                 revision={project.context_version}
                 sources={project.input.sources}
                 researchSources={packet?.sources || []}
@@ -1143,7 +1205,8 @@ export default function App() {
               <div className="source-list">
                 {!!requestedRefs.length && <div className="source-focus-note" role="status">
                   <span>{focusedSourceIds.length ? `已定位 ${focusedSourceIds.length} 份相关依据，首份原文已展开。` : '当前版本没有找到所引来源，请核对研判版本与资料记录。'}</span>
-                  <button className="secondary" onClick={() => setSourceFocus(null)}>取消定位</button>
+                  {sourceTextFocus && <span>{sourceTextResolved?.status === 'matched' ? `已高亮命中原文 · ${sourceTextFocus.hit.locator}` : sourceTextResolved?.status === 'version-mismatch' ? '检索与当前来源版本不同，未高亮其他版本的正文。' : sourceTextResolved?.status === 'version-unverified' ? '已打开来源，当前版本尚不能核验，未高亮其他正文。' : sourceTextResolved?.status === 'quote-mismatch' ? '已打开对应来源，当前正文未找到连续一致的命中片段。' : '正在核验命中原文版本…'}</span>}
+                  <button className="secondary" onClick={() => { setSourceFocus(null); setSourceTextFocus(null); }}>取消定位</button>
                 </div>}
                 {displayedSources.map((source) => (
                   <article className={`source-row${focusedSourceIds.includes(source.id) ? ' is-focused' : ''}`} id={`project-source-${encodeURIComponent(source.id)}`} tabIndex={-1} key={source.id}>
@@ -1186,7 +1249,7 @@ export default function App() {
                       {source.untrusted_text && (
                         <details>
                           <summary>查看材料原文</summary>
-                          <pre>{source.untrusted_text}</pre>
+                          <pre>{source.id === focusedSource?.id && sourceTextResolved?.status === 'matched' ? <>{sourceTextResolved.before}<mark tabIndex={-1} data-retrieval-source-hit="true">{sourceTextResolved.quote}</mark>{sourceTextResolved.after}</> : source.untrusted_text}</pre>
                         </details>
                       )}
                     </div>
@@ -1312,7 +1375,7 @@ export default function App() {
           {tab === 'actions' && completeDemoActive && <DemoInvestigationPanel key={`demo-investigations-${project.id}`} project={project} />}
           {tab === 'actions' && !completeDemoActive && project.input.business_profile === 'neighborhood' && <StrategyInvestigations project={project} onEvidence={openEvidence} />}
           {tab === "actions" && !completeDemoActive && (
-            <section className="content-panel">
+            <section className="content-panel" data-retrieval-investigations="true">
               <div className="kicker">NEXT ACTIONS</div>
               <h2>优先调查，最可能改变判断的事</h2>
               <p className="intro">
@@ -1369,8 +1432,10 @@ export default function App() {
         </>
       )}
       {!loading && !loadingTarget && !createOpen && createPortal(<FloatingEvidenceSearch
-        projectId={project?.id} projectName={project?.name} projects={projects}
+        projectId={project?.id} revision={project?.context_version} projectName={project?.name} projects={projects}
         openRequest={askEvidenceRequest} onEvidence={openEvidence} onLocateHit={locateEvidence}
+        decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState}
+        featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision}
         onOpenMaterials={() => openEvidence()}
         onSelectProject={id => action(async () => { await loadProject(id); })}
       />, document.body)}
