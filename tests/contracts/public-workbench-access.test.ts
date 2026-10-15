@@ -7,6 +7,7 @@ import { WorkbenchAccessContext } from '../../apps/workspace/src/AdminAccess'
 import StrategyOverview from '../../apps/workspace/src/components/StrategyOverview'
 import PreliminaryCard from '../../apps/workspace/src/maps/PreliminaryCard'
 import MapWorkspace from '../../apps/workspace/src/maps/MapWorkspace'
+import IntelligencePanel from '../../apps/workspace/src/intelligence/IntelligencePanel'
 import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
 import type { Project } from '../../apps/workspace/src/api'
 
@@ -18,6 +19,19 @@ function setup() {
   const container = dom.document.getElementById('root')!, root = createRoot(container)
   return { dom, container, root }
 }
+
+test('a public visitor searches intelligence without requesting administrator status or management tabs', async () => {
+  const { container, root } = setup()
+  const transport = vi.fn(() => Promise.resolve(response({ items: [], truncated: false })))
+  vi.stubGlobal('fetch', transport)
+  try {
+    await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(IntelligencePanel, { onOpenProject: vi.fn() }))))
+    await vi.waitFor(() => expect(container.textContent).toContain('当前没有匹配资料'))
+    expect(transport.mock.calls.every(call => !(call as unknown as [string])[0].includes('/intelligence/status'))).toBe(true)
+    expect([...container.querySelectorAll('.intel-tabs button')].map(button => button.textContent)).toEqual(['检索'])
+    expect(container.textContent).not.toContain('管理信源')
+  } finally { await act(async () => root.unmount()) }
+})
 
 test('a viewer restores saved strategy data without starting model research after a cache miss', async () => {
   const { container, root } = setup()

@@ -11,7 +11,7 @@ async function request<T>(path: string, body?: unknown, signal?: AbortSignal): P
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
     if (response.status === 401 && typeof window !== 'undefined') window.dispatchEvent(new Event(ADMIN_LOGIN_REQUIRED_EVENT))
-    if (response.status === 403 && error.code === 'ADMIN_REQUIRED' && typeof window !== 'undefined') window.dispatchEvent(new Event(ADMIN_LOGIN_REQUESTED_EVENT))
+    if (response.status === 403 && error.code === 'ADMIN_REQUIRED' && body !== undefined && typeof window !== 'undefined') window.dispatchEvent(new Event(ADMIN_LOGIN_REQUESTED_EVENT))
     if (response.status === 403 && error.code === 'ADMIN_REQUIRED') throw new Error('此操作需要管理员登录，公开浏览为只读模式。')
     throw new Error(error.detail || `请求失败 (${response.status})`)
   }
