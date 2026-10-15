@@ -38,6 +38,8 @@ import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
 import StrategyOverview, { type StrategyDirectionSelection } from './components/StrategyOverview';
 import InternalMaterialIntake, { type MaterialUploadMetadata } from './components/InternalMaterialIntake';
+import ResearchRoundsPanel from './components/ResearchRoundsPanel';
+import type { ResearchRoundsResponse } from '../../../packages/retrofit/research-rounds';
 import { MODE_LABELS } from '../../../packages/retrofit/renewal-mode';
 import { currentDirectionText } from './components/strategy-direction-text';
 import StrategyInvestigations from './components/StrategyInvestigations';
@@ -173,6 +175,27 @@ function RegionView({ project }: { project: Project }) {
       </span>
     </div>
   );
+}
+
+function ResearchVersionHistory({ project, onEvidence }: { project: Project; onEvidence: (refs: string[]) => void }) {
+  const { canWrite } = useWorkbenchAccess();
+  const key = `${project.id}:${project.context_version}`;
+  const [retry, setRetry] = useState(0);
+  const [history, setHistory] = useState<{ key: string; status: 'loading' | 'ready' | 'failed'; data: ResearchRoundsResponse | null }>({ key: '', status: 'loading', data: null });
+  useEffect(() => {
+    if (!canWrite) return;
+    const abort = new AbortController();
+    setHistory({ key, status: 'loading', data: null });
+    void api<ResearchRoundsResponse>(`/projects/${encodeURIComponent(project.id)}/research-rounds`, undefined, abort.signal).then(data => {
+      if (!Array.isArray(data.rounds) || !Array.isArray(data.materials)) throw new Error('INVALID_ROUNDS');
+      if (!abort.signal.aborted) setHistory({ key, status: 'ready', data: { ...data, rounds: data.rounds.filter(round => round.project_id === project.id) } });
+    }).catch(() => { if (!abort.signal.aborted) setHistory({ key, status: 'failed', data: null }); });
+    return () => abort.abort();
+  }, [key, canWrite, retry]);
+  if (!canWrite) return <p className="research-round-notice">当前公开成果浏览不展示项目内部研判轮次。</p>;
+  if (history.key !== key || history.status === 'loading') return <p role="status">正在读取已保存的研判轮次与变化…</p>;
+  if (history.status === 'failed' || !history.data) return <p role="alert">研判轮次暂不可读。<button className="secondary" onClick={() => setRetry(value => value + 1)}>重新读取</button></p>;
+  return <ResearchRoundsPanel key={key} projectName={project.name} revision={project.context_version} rounds={history.data.rounds} synthetic={project.input.synthetic} historyOnly onEvidence={onEvidence}/>;
 }
 
 export default function App() {
@@ -1338,8 +1361,10 @@ export default function App() {
               <div className="kicker">REVISION HISTORY</div>
               <h2>看见判断为什么改变</h2>
               <p className="intro">
-                比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。
+                {project.input.business_profile === 'neighborhood' ? '查看首轮基线、补充资料后的最新研判及具体变化。每轮报告和来源绑定当时的资料快照。' : '比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。'}
               </p>
+              {project.input.business_profile === 'neighborhood' && <ResearchVersionHistory project={project} onEvidence={openEvidence}/>}
+              <details className="strategy-historical-investigations legacy-run-history" open={project.input.business_profile !== 'neighborhood'}><summary>早期运行版本记录</summary>
               {projectExtras.loading ? <p role="status">正在读取版本变化…</p> : projectExtras.diffError ? <p role="status">版本变化暂不可读。<button className="secondary" onClick={() => void action(async () => { await loadProject(project.id); })}>重试</button></p> : diff?.available ? (
                 <>
                   <div className="revision-summary">
@@ -1398,6 +1423,7 @@ export default function App() {
                   </div>
                 </div>
               )}
+              </details>
             </section>
           )}
           {tab === 'actions' && project.input.business_profile === 'neighborhood' && <section className="content-panel strategy-current-investigations" data-retrieval-investigations="true" aria-label="当前方向调查与条件"><header><h2>{currentDirection ? `${MODE_LABELS[currentDirection]} · 调查与实施条件` : '先明确本次研究方向'}</h2><button className="secondary" onClick={() => setTab('overview')}>返回方案页面</button></header>{currentDirection && currentDirectionPath ? <><h3>当前方向的实施前提</h3>{currentDirectionPath.requirements.map(text => currentDirectionText(text, currentDirection)).filter(Boolean).map((text, index) => <article key={index}><h4>条件 {index + 1}</h4><p>{text}</p></article>)}<h3>当前方向的研究与行动</h3>{currentDirectionPath.actions.filter(action => currentDirectionText(action.title, currentDirection) || currentDirectionText(action.detail, currentDirection)).map(action => <article key={action.title}><h4>{currentDirectionText(action.title, currentDirection) || '本方向专项核实'}</h4><p>{currentDirectionText(action.detail, currentDirection)}</p>{!!action.evidence_refs.length && <button className="text-button" onClick={() => openEvidence(action.evidence_refs)}>查看本项依据</button>}</article>)}</> : <p>在“改造方向判断”中明确选择后，这里只显示该方向的研究任务和实施前提。</p>}</section>}

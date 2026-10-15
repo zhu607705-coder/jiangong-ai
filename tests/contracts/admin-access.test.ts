@@ -66,7 +66,8 @@ describe('admin access protocol and entry gate', () => {
         expect(dom.document.querySelector('header')?.getAttribute('aria-label')).toBe('校园协作工作台')
         expect(dom.document.querySelector('.admin-session-report')?.getAttribute('href')).toContain('/deliverables/')
         expect(dom.document.body.textContent).not.toMatch(/管理员|只读|退出登录/)
-        expect([...dom.document.querySelectorAll('a')].some(link => link.getAttribute('href')?.startsWith('/admin/') || link.getAttribute('href')?.startsWith('/api/admin/'))).toBe(false)
+        expect([...dom.document.querySelectorAll('a')].some(link => link.getAttribute('href')?.startsWith('/admin/'))).toBe(false)
+        expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '数据库结构')?.getAttribute('href')).toBe('/api/admin/database-schema')
       }
     } finally { await act(async () => root.unmount()) }
   })

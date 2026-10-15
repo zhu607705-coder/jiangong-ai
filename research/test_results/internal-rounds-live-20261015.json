@@ -1,0 +1,519 @@
+{
+  "schema_version": "internal-rounds-live/1",
+  "status": "live_rounds_completed_semantic_review_ready",
+  "started_at": "2026-10-15T09:34:21.875730+00:00",
+  "base_url": "http://10.70.223.113",
+  "data_kind": "fully_synthetic_selected_materials",
+  "execution_kind": "real_deployed_api_and_dsh_calls",
+  "purpose": "isolated workflow acceptance; not real resident research or engineering validation",
+  "original_project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "synthetic_project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+  "artifact_directory": "D:\\建工ai\\.cache\\internal-rounds-live-20261015\\20261015T093421Z-acc1e3ad",
+  "paid_round_requests_attempted": 2,
+  "automatic_paid_retries": 0,
+  "checks": {
+    "automatic_collaborative_session": {
+      "passed": true,
+      "detail": ""
+    },
+    "model_configured": {
+      "passed": true,
+      "detail": ""
+    },
+    "clean_isolated_project_created": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-baseline.md_parsed": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-baseline.md_raw_document_hash": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-baseline.md_metadata": {
+      "passed": true,
+      "detail": ""
+    },
+    "first_round_manifest": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_ndjson_content_type": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_terminal_received": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_real_success": {
+      "passed": true,
+      "detail": "{'round_status': 'completed', 'packet_status': 'completed', 'error': None, 'diagnostic': None}"
+    },
+    "round1_packet_matches_round": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_actual_dsh_call_and_tokens": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_isolated_live_packet": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_snapshot_identity": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_source_mapping_DOC-c49195ea-91b9-4d57-9945-d47c8aebb607": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1_no_construction_without_registered_conditions": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-survey.md_parsed": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-survey.md_raw_document_hash": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-survey.md_metadata": {
+      "passed": true,
+      "detail": ""
+    },
+    "first_round_retained_after_upload": {
+      "passed": true,
+      "detail": ""
+    },
+    "second_current_snapshot_differs": {
+      "passed": true,
+      "detail": ""
+    },
+    "second_parent_snapshot_identity": {
+      "passed": true,
+      "detail": ""
+    },
+    "first_snapshot_identity_preserved": {
+      "passed": true,
+      "detail": ""
+    },
+    "cumulative_manifest_has_new_survey": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_ndjson_content_type": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_terminal_received": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_real_success": {
+      "passed": true,
+      "detail": "{'round_status': 'completed', 'packet_status': 'completed', 'error': None, 'diagnostic': None}"
+    },
+    "round2_packet_matches_round": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_actual_dsh_call_and_tokens": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_isolated_live_packet": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_snapshot_identity": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_source_mapping_DOC-c49195ea-91b9-4d57-9945-d47c8aebb607": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_source_mapping_DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2_no_construction_without_registered_conditions": {
+      "passed": true,
+      "detail": ""
+    },
+    "first_round_unchanged_after_second_model": {
+      "passed": true,
+      "detail": ""
+    },
+    "survey_not_backfilled_into_first_snapshot": {
+      "passed": true,
+      "detail": ""
+    },
+    "second_review_cites_new_survey": {
+      "passed": true,
+      "detail": ""
+    },
+    "survey_values_in_review_explanation": {
+      "passed": true,
+      "detail": "At least one correct survey fraction/percentage must appear in the new-document change, not only in a copied source quote."
+    },
+    "new_survey_has_recommendation_or_assessment_landing": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-replay_ndjson_content_type": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-replay_terminal_received": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-replay_real_success": {
+      "passed": true,
+      "detail": "{'round_status': 'completed', 'packet_status': 'completed', 'error': None, 'diagnostic': None}"
+    },
+    "round1-replay_packet_matches_round": {
+      "passed": true,
+      "detail": ""
+    },
+    "round1-replay_no_new_call_or_snapshot_change": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-replay_ndjson_content_type": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-replay_terminal_received": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-replay_real_success": {
+      "passed": true,
+      "detail": "{'round_status': 'completed', 'packet_status': 'completed', 'error': None, 'diagnostic': None}"
+    },
+    "round2-replay_packet_matches_round": {
+      "passed": true,
+      "detail": ""
+    },
+    "round2-replay_no_new_call_or_snapshot_change": {
+      "passed": true,
+      "detail": ""
+    },
+    "exactly_two_isolated_rounds": {
+      "passed": true,
+      "detail": ""
+    },
+    "original_real_project_unchanged": {
+      "passed": true,
+      "detail": "Only isolated-project mutation URLs are used. A difference requires checking concurrent changes; it is never silently accepted."
+    }
+  },
+  "rounds": [
+    {
+      "id": "ROUND-8723e49f-2070-45c4-9f16-31293d2f5d35",
+      "round_number": 1,
+      "context_version": 1,
+      "input_hash": "3a6fd8191c566e67dce52f6ba7b93c40dffc32d6d0e234dfde8dee5727bb1bfd",
+      "status": "completed",
+      "materials": [
+        {
+          "locator": "document:DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "version": "f80f9d1ecc859f003656023160511cb7f45aad08fab03864255b961a01c4a39e",
+          "file_name": "模拟基础资料_20261001.md",
+          "source_id": "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "data_class": "synthetic",
+          "project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+          "visibility": "internal",
+          "document_id": "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "source_date": "2026-10-01",
+          "parse_status": "extracted",
+          "added_in_round": true,
+          "material_category": "other",
+          "source_date_origin": "user_declared"
+        }
+      ],
+      "model_calls": [
+        {
+          "stage": "renewal_strategy",
+          "requested_model": "deepseek-flash",
+          "returned_model": "deepseek-flash",
+          "finish_reason": "tool-calls",
+          "input_tokens": 8877,
+          "output_tokens": 4017,
+          "duration_ms": 22430,
+          "session_id": "a475ca26-e1c2-4f62-9580-99137b3d0c73",
+          "cache_read_tokens": 1408,
+          "cache_write_tokens": 0
+        }
+      ],
+      "packet_sha256": "9e04aa0fd4dd39037c6482876ac78465c380dfb158bfd1eaaf7e0c464b4b6eb8"
+    },
+    {
+      "id": "ROUND-91628de9-d675-4ce8-a895-49329d7ef91e",
+      "round_number": 2,
+      "context_version": 2,
+      "input_hash": "bc4dfddb9c842535b3c7692477fb67dbdc9b9c7482d6744fab648eb035db638c",
+      "status": "completed",
+      "materials": [
+        {
+          "locator": "document:DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "version": "f80f9d1ecc859f003656023160511cb7f45aad08fab03864255b961a01c4a39e",
+          "file_name": "模拟基础资料_20261001.md",
+          "source_id": "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "data_class": "synthetic",
+          "project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+          "visibility": "internal",
+          "document_id": "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "source_date": "2026-10-01",
+          "parse_status": "extracted",
+          "added_in_round": false,
+          "material_category": "other",
+          "source_date_origin": "user_declared"
+        },
+        {
+          "locator": "document:DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "version": "fa354414a819f27df6f3e8ee36db0d614c77a83ebd6ee04d55c56e82337fa8e1",
+          "file_name": "模拟居民调研_20261010.md",
+          "source_id": "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "data_class": "synthetic",
+          "project_id": "SYN-INTERNAL-ROUNDS-946ff7c1dab441e5a6b64a74",
+          "visibility": "internal",
+          "document_id": "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "source_date": "2026-10-10",
+          "parse_status": "extracted",
+          "added_in_round": true,
+          "material_category": "resident_satisfaction",
+          "source_date_origin": "user_declared"
+        }
+      ],
+      "model_calls": [
+        {
+          "stage": "renewal_strategy",
+          "requested_model": "deepseek-flash",
+          "returned_model": "deepseek-flash",
+          "finish_reason": "tool-calls",
+          "input_tokens": 13574,
+          "output_tokens": 5102,
+          "duration_ms": 25105,
+          "session_id": "4391d19d-68e7-4827-95a2-3b9bb4777ecf",
+          "cache_read_tokens": 1664,
+          "cache_write_tokens": 0
+        }
+      ],
+      "packet_sha256": "3fd52b1d7a5aa726bf30bee6bedd63a8d10f7a4b770da70edf72054b80013cd2"
+    }
+  ],
+  "semantic_review": {
+    "status": "substantive_new_material_participation_confirmed_with_wording_issues",
+    "new_document_id": "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+    "new_source_id": "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+    "summary": "本轮新增《模拟居民调研_20261010》，首次取得本对象居民侧数据：120份有效问卷覆盖120/200户=60%，满意度72/120=60%，加梯需求75/120=62.5%，助餐需求90/120=75%，并明确不替代业主表决。据此把需求维从unknown上调为medium，把助餐与加梯写为分项优先序的本对象依据；同时复核首轮结论：方向仍为compare、投资仍落在preliminary，因为结构鉴定、资金到账与全周期比选本轮均无新增，screening九项准入全为unknown，综合整治与拆建门均不通过。",
+    "changes_citing_new_document": [
+      {
+        "topic": "居民需求维度与分项优先序",
+        "before": "首轮：200户600人规模已登记，但需求问卷未开展，老人儿童、居住困难与异议均无观测，需求维current_level=unknown。",
+        "after": "本轮：0需求维current_level上调为medium；以助餐75%、加梯62.5%、满意度60%（分母120份）作为分项措施取舍的第一条本对象依据。",
+        "reason": "新增调研提供120份有效问卷并被登记，是本对象首个居民侧证据；但覆盖率仅60%且不构成表决，故只用于优先序参考与核查方向，不用于出资或施工判断。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+        ]
+      },
+      {
+        "topic": "投资阶段与实施准入门",
+        "before": "首轮：投资落在前期分项，工程实施与拆建均不满足准入，理由为九项准入全为未知。",
+        "after": "本轮：复核后保持preliminary；本轮未新增结构鉴定、资金到账与全周期比选，综合整治与拆建门仍为false，不因问卷而进入construction。",
+        "reason": "问卷数据属意愿而非资金或结构依据，screening中structure_repairable、funding_secured、life_cycle_cost_compared仍为unknown，准入条件未变。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "topic": "方向选择与模型分流复核",
+        "before": "首轮：分流给出综合整治0.65且evidence_basis为no_object_evidence，首轮据此定为compare。",
+        "after": "本轮：仍选compare，但综合整治的优先研究地位现在有了居民侧数据支撑，不再仅靠模型信号。",
+        "reason": "居民诉求指向服务与配套分项，与保留建筑的分项更新组织方式相符；拆建仍缺不可修复与权属规划依据，故维持条件化比较。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      }
+    ],
+    "quantitative_signals_in_new_document_changes": {
+      "satisfaction_60_percent": true,
+      "elevator_62_5_percent": true,
+      "meal_75_percent": true
+    },
+    "recommendations_citing_new_document": [
+      {
+        "title": "补足200户覆盖的意愿与出资台账",
+        "detail": "在120份问卷基础上补做调查至覆盖200户，逐单元登记加梯异议、助餐使用意愿与出资承受力，明确样本与全体户数的差异口径。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+        ]
+      },
+      {
+        "key": "demand",
+        "current": "120/200户有效问卷，覆盖率60%；满意度60%，加梯需求62.5%，助餐需求75%；未构成业主表决。",
+        "current_level": "medium",
+        "comprehensive": "以助餐与加梯诉求为基础补足覆盖率，逐单元登记异议与出资承受力，支撑分项优先序。",
+        "comprehensive_level": "medium",
+        "rebuild": "同一调查需增加腾退、过渡与回搬承受力记录，形成分户意向台账。",
+        "rebuild_level": "low",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "key": "supply",
+        "current": "社区服务中心200㎡空间可用，使用人次、收入、成本与满意度均无运行观测；助餐需求占受访75%。",
+        "current_level": "unknown",
+        "comprehensive": "以助餐与适老服务为切口核查服务中心运行条件与步行可达性，补足服务缺口。",
+        "comprehensive_level": "medium",
+        "rebuild": "新建方案下重新配置配套服务空间与养老床位等设施，规模以规划确认为准。",
+        "rebuild_level": "low",
+        "evidence_refs": [
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "MODE-SH-PENGYI-20250701"
+        ]
+      },
+      {
+        "key": "adaptation",
+        "current": "20幢住宅无逐栋结构鉴定、可修复结论、消防与管网资料；62.5%受访户提出加梯需求但结构可行性未知。",
+        "current_level": "unknown",
+        "comprehensive": "按鉴定结论分栋确定可修缮与可加梯部位，组织管网、消防、屋面与适老无障碍分项工程并评估施工影响。",
+        "comprehensive_level": "medium",
+        "rebuild": "须先取得不可修复专项依据，再研究拆除范围、保护要求与新建工程组织。",
+        "rebuild_level": "low",
+        "evidence_refs": [
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+        ]
+      },
+      {
+        "key": "implementation",
+        "current": "未登记结构鉴定、规划许可与居民正式表决；120份问卷不替代业主表决，施工与开工状态无记录。",
+        "current_level": "unknown",
+        "comprehensive": "由产权单位与属地部门牵头，逐单元组织加梯协商，同步落实分项许可与施工期居民安排。",
+        "comprehensive_level": "medium",
+        "rebuild": "须先完成权属规划核对、有效业主决议与腾退回搬方案，实施主体另行确认。",
+        "rebuild_level": "low",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "title": "助餐与适老服务先行需求核实",
+        "detail": "以90/120户助餐需求为线索，补做覆盖200户的登记调查，核查服务中心200㎡可用条件、实际服务量与运行成本，形成服务缺口清单。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+        ]
+      },
+      {
+        "title": "加梯方案与分户意愿台账",
+        "detail": "针对75/120户加梯诉求，逐单元核查结构承载、管线迁改与出资分担，登记反对与低层住户异议，形成影响施工顺序的分户台账。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae"
+        ]
+      },
+      {
+        "conclusion": "优先按综合整治方向研究：保留20幢建筑，先做助餐与适老服务、加装电梯、管网消防分项核实，不整体拆除。",
+        "reason": "首份居民侧数据支持服务与配套需求（助餐75%、加梯62.5%、满意度60%），且200㎡服务中心可低投入改善；拆建方向缺少不可修复结论、权属规划确认、有效业主决议与资金峰值，九项准入全为未知，工程与拆建门均不通过，故先走可分批、居民不搬迁的分项路径。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "conclusion": "现阶段只投前期分项核实：逐栋安全鉴定、加梯与助餐方案核实、分项工程量预算、维护责任与费用测算。",
+        "reason": "无资金到账、无全周期比选、无结构可修复结论，施工与拆建准入均未通过；助餐75%与加梯62.5%虽为真实问卷数据但分母仅120户、不构成表决，只能支撑核查方向而非开工。建议待逐栋鉴定出具可修缮范围、预算形成并标注已落实出资后，再评估是否申请进入工程实施阶段。",
+        "stage": "preliminary",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607"
+        ]
+      },
+      {
+        "financial": "政府侧投入现为鉴定、调查与方案设计等前期费用，无到账记录；建设或运营主体投入、服务中心现金收入与成本均无观测。居民出资须待逐栋鉴定加梯方案与分项预算形成后按户测算，年度维护支出与续筹条件未知，不计算回报率。对标案例548户、总投资5.6亿元与居民筹资4.99亿元属另一项目口径，不迁移至本项目。",
+        "social": "受益对象为200户600人。120份问卷显示助餐诉求90户、加梯诉求75户，满意度60%意味着约四成受访户对现有服务不满。分项更新居民不需搬迁，可优先改善就餐与上下楼条件；代价是分批施工的周期长、逐单元协调成本高，加梯受低层异议与结构条件制约，服务中心服务能否落地取决于运行与维护责任落实。",
+        "evidence_refs": [
+          "DOC-fb6c6b31-2a31-44e9-9102-5b6323e57aae",
+          "DOC-c49195ea-91b9-4d57-9945-d47c8aebb607",
+          "MODE-ZHEGONG-20261012"
+        ]
+      }
+    ],
+    "source_values": {
+      "valid_questionnaires": 120,
+      "households": 200,
+      "satisfied": {
+        "numerator": 72,
+        "denominator": 120,
+        "percent": 60
+      },
+      "elevator_demand": {
+        "numerator": 75,
+        "denominator": 120,
+        "percent": 62.5
+      },
+      "meal_demand": {
+        "numerator": 90,
+        "denominator": 120,
+        "percent": 75
+      }
+    },
+    "not_a_formal_all_household_vote": true,
+    "automatic_limits": "IDs, versions and numeric appearances are checked; excerpts are retained for semantic assessment, without forcing a preferred mode or stock action wording.",
+    "reviewed_at": "2026-10-15T09:36:31.813440+00:00",
+    "review_method": "Read round1 demand assessment and round2 changes, linked actions/dimensions and brief. No additional provider calls.",
+    "substantive_findings": [
+      "Round1 demand current_level unknown; round2 medium with 120/200 coverage and correct 60%,62.5%,75% values.",
+      "Round2 adds meal-service prioritization, unit-level elevator checks, and remaining-household willingness work, citing the new document.",
+      "Investment remains preliminary because survey does not establish structural feasibility or secured funds; no preferred-mode change was forced."
+    ],
+    "wording_issues": [
+      {
+        "path": "round2.result.strategy.decision_brief.investment.reason",
+        "observed": "虽为真实问卷数据",
+        "issue": "Selected questionnaire is explicitly synthetic; the output should say simulated questionnaire rather than real survey.",
+        "suggested_correction": "虽为本轮模拟问卷数据"
+      },
+      {
+        "path": "round2.result.strategy.decision_brief.returns.social",
+        "observed": "满意度60%意味着约四成受访户对现有服务不满",
+        "issue": "Only 72 satisfied responses are specified; remaining responses were not classified as dissatisfied.",
+        "suggested_correction": "满意问卷占60%；其余48份的评价类别需进一步核对"
+      },
+      {
+        "path": "round2.result.strategy.decision_brief.returns.social",
+        "observed": "分项更新居民不需搬迁",
+        "issue": "No construction organization or relocation assessment was supplied, so no-relocation cannot be asserted.",
+        "suggested_correction": "优先研究减少搬迁干扰的分项更新，是否需要临时腾挪由施工组织核定"
+      }
+    ]
+  },
+  "original_before_sha256": "d946c16ecd5eb5f00aee2a81def01318f69418bd0719a2d7dab0f93b26df9d6a",
+  "original_after_sha256": "d946c16ecd5eb5f00aee2a81def01318f69418bd0719a2d7dab0f93b26df9d6a",
+  "finished_at": "2026-10-15T09:35:11.230951+00:00",
+  "deployment_commit": "96769ef2e7d4dc4ae23bd7db7eb335634a3c7d41",
+  "functional_acceptance": "passed",
+  "provider_summary": {
+    "dsh_calls": 2,
+    "input_tokens": 22451,
+    "output_tokens": 9119,
+    "model_duration_ms": 47535,
+    "extra_provider_calls_for_semantic_review": 0
+  }
+}

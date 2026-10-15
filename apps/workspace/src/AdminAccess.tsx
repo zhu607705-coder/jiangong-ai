@@ -152,8 +152,8 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
         <div>
           <a className="admin-public-decisions" href="/?view=published">{collaborative ? '查看决策方案' : '查看公开决策方案'}</a>
           <a className="admin-session-report" href={`/deliverables/${encodeURIComponent('求是村_旧改深度调研与行动计划.pdf')}`} target="_blank" rel="noreferrer">求是村报告</a>
+          {(collaborative || auth.role === 'admin') && <a href="/api/admin/database-schema">数据库结构</a>}
           {!collaborative && (auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <>
-            <a href="/api/admin/database-schema">数据库结构</a>
             {logoutError && <span role="alert">{logoutError}</span>}
             <button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button>
           </>)}

@@ -12,6 +12,7 @@ import { initialWorkbenchProject, publicDecisionHref, readWorkbenchLink } from '
 import { projectRenewalModeInput, evaluateRenewalModeGate } from '../../packages/retrofit/renewal-mode'
 import type { Project } from '../../apps/workspace/src/api'
 import type { PublicStrategyIndexItem, StrategyPacket } from '../../packages/retrofit/strategy'
+import type { ResearchRound, ResearchRoundsResponse } from '../../packages/retrofit/research-rounds'
 
 const apiMock = vi.hoisted(() => vi.fn())
 vi.mock('../../apps/workspace/src/api', () => ({ api: apiMock, ADMIN_LOGIN_REQUIRED_EVENT: 'test-expired', ADMIN_LOGIN_REQUESTED_EVENT: 'test-login' }))
@@ -46,7 +47,7 @@ test('public defaults select a completed project by ID, while an explicit same-n
   expect(readWorkbenchLink(publicDecisionHref('P/测试').split('?')[1]).projectId).toBe('P/测试')
 })
 
-async function mountWorkbench(search = '', snapshot = false, override?: StrategyPacket) {
+async function mountWorkbench(search = '', snapshot = false, override?: StrategyPacket, roundHistory?: ResearchRoundsResponse) {
   const dom = parseHTML('<html><body><div id="root"></div></body></html>')
   const location = { href: `http://example.test/${search}`, search }, storage = new Map([['hzz_project', emptyProject.id], ['hzz-complete-demo-project', savedProject.id]])
   const history = { replaceState: vi.fn((_state: unknown, _unused: string, path: string) => { const url = new URL(path, 'http://example.test'); location.href = url.href; location.search = url.search }) }
@@ -62,6 +63,7 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
     if (path === `/projects/${savedProject.id}`) return Promise.resolve(savedProject)
     if (path.endsWith('/revision-diff')) return Promise.resolve({ available: false, changes: [] })
     if (path.endsWith('/followups') || path.endsWith('/documents')) return Promise.resolve([])
+    if (path.endsWith('/research-rounds')) return Promise.resolve(roundHistory || { rounds: [], materials: [], baseline_candidate: null })
     if (path.endsWith('/knowledge/groups')) return Promise.resolve({ groups: [], documents: [] })
     if (path.endsWith('/knowledge/pipeline')) return Promise.resolve({ cards: [] })
     if (path.includes('/renewal-strategy')) return Promise.resolve(path.includes(savedProject.id) ? packet : null)
@@ -72,9 +74,32 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
   const focusBefore = dom.window.HTMLElement.prototype.focus, scrollBefore = dom.window.HTMLElement.prototype.scrollIntoView
   dom.window.HTMLElement.prototype.focus = vi.fn(); dom.window.HTMLElement.prototype.scrollIntoView = vi.fn()
   const root = createRoot(dom.document.getElementById('root')!)
-  await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(App))))
+  await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: roundHistory ? { role: 'admin', canWrite: true } : { role: 'viewer', canWrite: false } }, createElement(App))))
   return { dom, location, root, cleanup: async () => { await act(async () => root.unmount()); dom.window.HTMLElement.prototype.focus = focusBefore; dom.window.HTMLElement.prototype.scrollIntoView = scrollBefore } }
 }
+
+test('the versions tab reloads saved research rounds and changes without starting any write or model request', async () => {
+  const firstPacket = structuredClone(saved), nextPacket = structuredClone(saved)
+  firstPacket.context_version = 13; firstPacket.input_hash = 'first-hash'; firstPacket.strategy!.headline = '首轮：结构资料待补后再分项更新'
+  nextPacket.strategy!.headline = '第二轮：根据鉴定调整工程范围'
+  nextPacket.strategy!.round_review = { summary: '新增鉴定明确了楼栋范围。', changes: [{ topic: '工程范围', before: '逐栋待核', after: '按新增鉴定先实施两栋', reason: '补充的结构资料明确适用对象。', evidence_refs: ['OBJECT'] }], missing_materials: [{ topic: '资金', request: '补充落实资金文件', reason: '明确实际可用额度。', evidence_refs: ['OBJECT'] }] }
+  const makeRound = (id: string, number: number, result: StrategyPacket): ResearchRound => ({ id, project_id: savedProject.id, round_number: number, context_version: result.context_version, input_hash: result.input_hash, parent_round_id: number === 2 ? 'ROUND-1' : null, parent_input_hash: number === 2 ? firstPacket.input_hash : null, parent_context_version: number === 2 ? 13 : null, first_round_id: 'ROUND-1', first_input_hash: firstPacket.input_hash, first_context_version: 13, origin: 'generated', status: 'completed', material_intake: 'none', allow_internal_ai: false, materials: [], missing_materials: result.strategy!.round_review?.missing_materials || [], result, error: null, created_at: result.created_at, updated_at: result.created_at })
+  const history: ResearchRoundsResponse = { rounds: [makeRound('ROUND-1', 1, firstPacket), makeRound('ROUND-2', 2, nextPacket)], materials: [], baseline_candidate: null }
+  for (let refresh = 0; refresh < 2; refresh++) {
+    const app = await mountWorkbench('?project=WITH-PLAN&view=compare', false, undefined, history)
+    try {
+      await vi.waitFor(() => expect(app.dom.document.querySelector('[data-round-id="ROUND-2"]')?.textContent).toContain(nextPacket.strategy!.headline))
+      expect(app.dom.document.querySelector('[data-round-id="ROUND-1"]')?.textContent).toContain(firstPacket.strategy!.headline)
+      expect(app.dom.document.querySelector('[aria-label="相对首轮的判断变化"]')?.textContent).toContain('补充的结构资料明确适用对象')
+      expect(app.dom.document.querySelector('[aria-label="下一轮建议补充资料"]')?.textContent).toContain('补充落实资金文件')
+      expect(app.dom.document.querySelector('.research-intake')).toBeNull()
+      expect(app.dom.document.querySelector('.research-round-actions')).toBeNull()
+      expect(app.dom.document.querySelector('.legacy-run-history')?.hasAttribute('open')).toBe(false)
+      expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+    } finally { await app.cleanup() }
+  }
+  expect(apiMock.mock.calls.filter(([path]) => path === '/projects/WITH-PLAN/research-rounds')).toHaveLength(2)
+})
 
 test('anonymous entry opens a real completed plan, including both paths, citations and all six dimensions', async () => {
   const app = await mountWorkbench()

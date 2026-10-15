@@ -158,3 +158,32 @@ it('keeps a failed first attempt and permits a new baseline attempt without inve
   expect(retry).toMatchObject({round_number:2,status:'completed',parent_round_id:null,first_round_id:retry.id})
   expect((await service.list(p)).rounds.map(round=>round.status)).toEqual(['failed','completed'])
 })
+it('repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis',async()=>{
+  let p=await project(undefined,true)
+  p=await document(p.id,'DOC-NEEDS','演示资料：模拟问卷中助餐需求比例75%，加梯需求比例62.5%，并非真实问卷数据。')
+  const first=await run(await createRound(p,['DOC-NEEDS']))
+  const selected=first.result!.sources.find(source=>source.id==='DOC-NEEDS')!
+  const mistaken=proposal(selected,true)
+  mistaken.decision_brief!.investment.reason='助餐75%与加梯62.5%虽为真实问卷数据，仍需核对分项预算。'
+  const repaired=structuredClone(mistaken)
+  repaired.decision_brief!.investment.reason='模拟问卷中助餐75%高于加梯62.5%，优先核查助餐运营和供水分项预算。'
+  const call=vi.fn().mockResolvedValueOnce({value:mistaken}).mockResolvedValueOnce({value:repaired})
+  ports.open.mockResolvedValueOnce({calls:[],close:async()=>{},call})
+  const second=await run(await createRound(p,['DOC-NEEDS'],first))
+  expect(second.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[0][1]).toContain('居民样本、问卷、访谈和统计比例均为隔离模拟')
+  expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
+  expect(call.mock.calls[1][1]).toContain('STRATEGY_SYNTHETIC_IDENTITY_MISMATCH')
+  expect(second.result?.strategy?.decision_brief?.investment.reason).toBe(repaired.decision_brief!.investment.reason)
+  expect(second.result?.strategy?.rationale[0].quote).toBe(selected.text)
+  expect(second.result?.strategy?.round_review?.changes[0].evidence_refs).toContain('DOC-NEEDS')
+})
+it('keeps survey denominators and construction-organization uncertainty in the round prompt',async()=>{
+  let p=await project(undefined,true)
+  p=await document(p.id,'DOC-SURVEY','演示资料：满意选项72人，问卷总数120份，其他选项人数未提供；本文件未提供施工组织或搬迁安排。')
+  await run(await createRound(p,['DOC-SURVEY']))
+  expect(ports.prompts[0]).toContain('满意选项72人，问卷总数120份')
+  expect(ports.prompts[0]).toContain('问卷比例按原选项、人数和分母表达')
+  expect(ports.prompts[0]).toContain('剩余比例保持未说明，不推断为不满意或反对')
+  expect(ports.prompts[0]).toContain('缺少施工组织材料时，将是否搬迁及干扰控制写成待核条件或明确的方案假设')
+})
