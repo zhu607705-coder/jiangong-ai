@@ -1,0 +1,282 @@
+{
+  "status": "exact_payload_review_applied_and_live_get_readback_passed",
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "context_version": 14,
+  "input_hash": "ef08ce832162384c84894236eb7d02dfdbd10264d5f03529650573908e75c5a8",
+  "original_packet_sha256": "744c8522bf2a4515ccb71728ce3e4ebc6addaf8fdc5459bd617e2ecb2f9eb410",
+  "reviewed_packet_sha256": "71e6de532eb0c423e15a052199b4780e9cc65f4b1d672d4939a5fc674bc6ea9b",
+  "project_input_sha256_before": "5147b6cb81714ec0ed95abb1563deaf92d53eed2ff6f4de59f41a57497749dd1",
+  "project_input_sha256_after": "5147b6cb81714ec0ed95abb1563deaf92d53eed2ff6f4de59f41a57497749dd1",
+  "rounds_before_sha256": "235941d094a8dec394e87742c3743c2373e15e5ffa672f4d195f4ce897b13a6e",
+  "rounds_after_sha256": "235941d094a8dec394e87742c3743c2373e15e5ffa672f4d195f4ce897b13a6e",
+  "round_count": 7,
+  "project_sources": 78,
+  "project_facts": 0,
+  "changes": [
+    {
+      "path": "/strategy/decision_brief/returns/social",
+      "before": "受益人群为29至48幢252户用水住户、75幢1单元上下楼困难居民及高龄空巢老人；代价是施工期临时停水、开挖与加梯施工干扰，需过渡安置与事前告知，效果以改造后用水与出行体验评价核实。",
+      "after": "受益人群为29、30、31、48幢共252户用水住户、75幢1单元上下楼困难居民及高龄空巢老人；代价是施工期临时停水、开挖与加梯施工干扰，需过渡安置与事前告知，效果以改造后用水与出行体验评价核实。",
+      "reason": "原文是离散四幢，不是29至48幢的连续范围。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/0/collection_method",
+      "before": "社区入户与线上问卷，幸福度自评10分制单题、满意度5级单题，剔除无效与重复答卷后按有效答卷统计",
+      "after": "拟在29、30、31、48幢及75幢1单元范围内，每户邀请1名常住成年人作答；幸福度仍用10分制单题、满意度仍用5级单题；核验重复与无效答卷，分别统计有效答卷人数与样本覆盖户数。",
+      "reason": "每户一人，分清受访者与覆盖住户；保留原幸福度和满意度题目。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/0/denominator",
+      "before": "有效答卷人数，分母为29、30、31、48幢252户及75幢1单元住户实际回收有效卷",
+      "after": "幸福度均值、满意度各级占比均以该题有效答卷人数为分母；另列样本覆盖户数/应调查户数，逐幢单元登记，每户最多1份有效卷。",
+      "reason": "量表分母为有效答卷人数，样本覆盖率另按户数计算。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/1/metric",
+      "before": "乘梯次数、运行台数与有效运行日",
+      "after": "设备运行趟次、乘客人次及可用率（分别统计）",
+      "reason": "设备运行与乘客使用不是同一计数。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/1/collection_method",
+      "before": "调取电梯运行记录与物业维保台账，按台逐日汇总乘梯次数并标记停梯日，另计单台服务住户覆盖数",
+      "after": "拟调取既有电梯设备日志逐台逐日统计运行趟次；乘客人次通过同窗口人工抽样单独记录，登记抽样时段与人数，不以设备趟次替代人次。拟加梯单元投用后再按同窗口复测；停梯时长另记。",
+      "reason": "设备日志供趟次，人工抽样供人次；拟建电梯不冒用既有利用率。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/1/unit",
+      "before": "次／台／有效运行日；另记服务住户覆盖户数",
+      "after": "设备趟次（趟/台·日）、乘客人次（人次/抽样时段）、可用率（%）",
+      "reason": "把趟次、人次及停梯可用率分开呈现。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/1/period",
+      "before": "连续3个月运行日，剔除检修停梯日",
+      "after": "既有电梯连续30个自然日（含周末）；拟加梯单元投用后连续30个自然日按同一窗口复测，登记每日观察起止时段。",
+      "reason": "既有对标与投用后监测使用同一含周末窗口。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/1/denominator",
+      "before": "纳入统计的电梯运行台数与有效运行日总数",
+      "after": "设备趟次强度以Σ逐台有效运行台日为分母；人工抽样人次只按实际抽样时段报告，不外推整月；可用率以计划运行时长为分母，停梯时长另列。",
+      "reason": "有效运行台日核算强度，抽样人次保留实际时间范围，停梯单独核可用率。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/2/metric",
+      "before": "助老送餐去重就餐人数（人）与用餐人次（人次）",
+      "after": "实际到餐人次、日去重人数与窗口内分月去重人数",
+      "reason": "人次、日人数与分月人数分别统计，不把28日直接当自然月。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/2/collection_method",
+      "before": "以物业与社区助餐台账按餐次、按日期登记，同一人同日多餐按人次计、当日去重计人数；订餐数与实际到餐分别记录",
+      "after": "拟先确认服务本小区的实际供餐点、承办主体和台账可得性，再按日期、餐次登记实际到餐人次及订餐/取消情况；以匿名个体标识分别计算日去重与窗口内分月去重人数；无供餐服务或无台账时登记缺项，不补造数值。",
+      "reason": "先核真实服务及数据来源，再分别登记去重人数与到餐人次。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/2/unit",
+      "before": "人（去重）与人次",
+      "after": "人次、人（日/分月去重）、人次/餐、餐次、开放日",
+      "reason": "总量、平均每餐与去重人数保持独立口径。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/2/period",
+      "before": "连续4周工作日午餐、晚餐，按月汇总",
+      "after": "连续28个自然日（含周末），逐日记录实际开放餐次和停业日；跨月分别汇总，不将28日窗口直接视为完整自然月或外推全年。",
+      "reason": "纳入周末、停业日与实际开放餐次，限制时间外推。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/2/denominator",
+      "before": "登记就餐的老年居民人数与开放餐次数",
+      "after": "平均到餐人次/餐以实际开放餐次数为分母，日均量以实际开放日数为分母；老年覆盖率以已核目标老年居民人数为分母。日去重和窗口内分月去重人数分别列，不外推全年。",
+      "reason": "各统计量按餐次、开放日或目标人群分别定义分母。"
+    },
+    {
+      "path": "/strategy/internal_data_requests/2/related_package_ids",
+      "before": [
+        "WP-C3"
+      ],
+      "after": [],
+      "reason": "WP-C3为入户适老化，不是助餐设施；不制造直接工程关联。"
+    }
+  ],
+  "review": {
+    "kind": "source_and_metric_review",
+    "reviewed_at": "2026-10-15T12:23:19.428Z",
+    "original_packet_sha256": "744c8522bf2a4515ccb71728ce3e4ebc6addaf8fdc5459bd617e2ecb2f9eb410",
+    "changes": [
+      {
+        "path": "/strategy/decision_brief/returns/social",
+        "before": "受益人群为29至48幢252户用水住户、75幢1单元上下楼困难居民及高龄空巢老人；代价是施工期临时停水、开挖与加梯施工干扰，需过渡安置与事前告知，效果以改造后用水与出行体验评价核实。",
+        "after": "受益人群为29、30、31、48幢共252户用水住户、75幢1单元上下楼困难居民及高龄空巢老人；代价是施工期临时停水、开挖与加梯施工干扰，需过渡安置与事前告知，效果以改造后用水与出行体验评价核实。",
+        "reason": "原文是离散四幢，不是29至48幢的连续范围。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/0/collection_method",
+        "before": "社区入户与线上问卷，幸福度自评10分制单题、满意度5级单题，剔除无效与重复答卷后按有效答卷统计",
+        "after": "拟在29、30、31、48幢及75幢1单元范围内，每户邀请1名常住成年人作答；幸福度仍用10分制单题、满意度仍用5级单题；核验重复与无效答卷，分别统计有效答卷人数与样本覆盖户数。",
+        "reason": "每户一人，分清受访者与覆盖住户；保留原幸福度和满意度题目。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/0/denominator",
+        "before": "有效答卷人数，分母为29、30、31、48幢252户及75幢1单元住户实际回收有效卷",
+        "after": "幸福度均值、满意度各级占比均以该题有效答卷人数为分母；另列样本覆盖户数/应调查户数，逐幢单元登记，每户最多1份有效卷。",
+        "reason": "量表分母为有效答卷人数，样本覆盖率另按户数计算。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/1/metric",
+        "before": "乘梯次数、运行台数与有效运行日",
+        "after": "设备运行趟次、乘客人次及可用率（分别统计）",
+        "reason": "设备运行与乘客使用不是同一计数。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/1/collection_method",
+        "before": "调取电梯运行记录与物业维保台账，按台逐日汇总乘梯次数并标记停梯日，另计单台服务住户覆盖数",
+        "after": "拟调取既有电梯设备日志逐台逐日统计运行趟次；乘客人次通过同窗口人工抽样单独记录，登记抽样时段与人数，不以设备趟次替代人次。拟加梯单元投用后再按同窗口复测；停梯时长另记。",
+        "reason": "设备日志供趟次，人工抽样供人次；拟建电梯不冒用既有利用率。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/1/unit",
+        "before": "次／台／有效运行日；另记服务住户覆盖户数",
+        "after": "设备趟次（趟/台·日）、乘客人次（人次/抽样时段）、可用率（%）",
+        "reason": "把趟次、人次及停梯可用率分开呈现。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/1/period",
+        "before": "连续3个月运行日，剔除检修停梯日",
+        "after": "既有电梯连续30个自然日（含周末）；拟加梯单元投用后连续30个自然日按同一窗口复测，登记每日观察起止时段。",
+        "reason": "既有对标与投用后监测使用同一含周末窗口。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/1/denominator",
+        "before": "纳入统计的电梯运行台数与有效运行日总数",
+        "after": "设备趟次强度以Σ逐台有效运行台日为分母；人工抽样人次只按实际抽样时段报告，不外推整月；可用率以计划运行时长为分母，停梯时长另列。",
+        "reason": "有效运行台日核算强度，抽样人次保留实际时间范围，停梯单独核可用率。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/2/metric",
+        "before": "助老送餐去重就餐人数（人）与用餐人次（人次）",
+        "after": "实际到餐人次、日去重人数与窗口内分月去重人数",
+        "reason": "人次、日人数与分月人数分别统计，不把28日直接当自然月。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/2/collection_method",
+        "before": "以物业与社区助餐台账按餐次、按日期登记，同一人同日多餐按人次计、当日去重计人数；订餐数与实际到餐分别记录",
+        "after": "拟先确认服务本小区的实际供餐点、承办主体和台账可得性，再按日期、餐次登记实际到餐人次及订餐/取消情况；以匿名个体标识分别计算日去重与窗口内分月去重人数；无供餐服务或无台账时登记缺项，不补造数值。",
+        "reason": "先核真实服务及数据来源，再分别登记去重人数与到餐人次。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/2/unit",
+        "before": "人（去重）与人次",
+        "after": "人次、人（日/分月去重）、人次/餐、餐次、开放日",
+        "reason": "总量、平均每餐与去重人数保持独立口径。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/2/period",
+        "before": "连续4周工作日午餐、晚餐，按月汇总",
+        "after": "连续28个自然日（含周末），逐日记录实际开放餐次和停业日；跨月分别汇总，不将28日窗口直接视为完整自然月或外推全年。",
+        "reason": "纳入周末、停业日与实际开放餐次，限制时间外推。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/2/denominator",
+        "before": "登记就餐的老年居民人数与开放餐次数",
+        "after": "平均到餐人次/餐以实际开放餐次数为分母，日均量以实际开放日数为分母；老年覆盖率以已核目标老年居民人数为分母。日去重和窗口内分月去重人数分别列，不外推全年。",
+        "reason": "各统计量按餐次、开放日或目标人群分别定义分母。"
+      },
+      {
+        "path": "/strategy/internal_data_requests/2/related_package_ids",
+        "before": [
+          "WP-C3"
+        ],
+        "after": [],
+        "reason": "WP-C3为入户适老化，不是助餐设施；不制造直接工程关联。"
+      }
+    ]
+  },
+  "validators": {
+    "schema": "RenewalStrategy",
+    "requireBrief": true,
+    "requireWorkPlan": true,
+    "before_passed": true,
+    "after_passed": true
+  },
+  "unchanged": [
+    "project_input",
+    "sources",
+    "facts",
+    "context_version",
+    "old_rounds",
+    "model_calls",
+    "packet_created_at",
+    "source_quotes",
+    "saved_row_created_at"
+  ],
+  "provider_calls": 0,
+  "applied_at": "2026-10-15T12:25:28.408Z",
+  "schema_version": "concrete-source-metric-review/1",
+  "operation": {
+    "status": "server_review_applied_host_restored",
+    "remote_audit_directory": "/home/zhuhangcheng/apps/haizhizi/shared/reviews/concrete-source-metric-review-20261015T122529Z",
+    "local_audit_directory": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\server-audit",
+    "script_sha256": "a5d02ba4802f8d3c8793d09a12d1307ea922eede48f37764cedb5ea5c40f9cee",
+    "plan_file_sha256": "8e8d66d627a1f2b4b2aee6cf82807eac9df2d67d8a953addce4736a85d0e4609",
+    "executed_at": "2026-10-15T12:25:35.0073845Z",
+    "provider_calls": 0
+  },
+  "published_readback": {
+    "input_hash": "ef08ce832162384c84894236eb7d02dfdbd10264d5f03529650573908e75c5a8",
+    "payload_sha256": "71e6de532eb0c423e15a052199b4780e9cc65f4b1d672d4939a5fc674bc6ea9b",
+    "review_kind": "source_and_metric_review",
+    "reviewed_at": "2026-10-15T12:23:19.428Z",
+    "review_change_count": 14,
+    "publication": {
+      "kind": "current",
+      "is_current": true,
+      "current_input_hash": "ef08ce832162384c84894236eb7d02dfdbd10264d5f03529650573908e75c5a8",
+      "saved_at": "2026-10-15T12:15:35.597Z"
+    },
+    "artifact": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\published-packet-after-review.json"
+  },
+  "project_after": {
+    "context_version": 14,
+    "sources": 78,
+    "facts": 0,
+    "input_hash": "5147b6cb81714ec0ed95abb1563deaf92d53eed2ff6f4de59f41a57497749dd1"
+  },
+  "session_collaborative": true,
+  "local_files": {
+    "script": "D:\\建工ai\\.cache\\review-concrete-work-plan-v6.mjs",
+    "orchestrator": "D:\\建工ai\\.cache\\apply-concrete-work-plan-review.ps1",
+    "original_packet": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\original-packet.json",
+    "reviewed_packet": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\reviewed-packet.json",
+    "delta": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\field-delta.json",
+    "plan": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\review-plan.json",
+    "server_audit": "D:\\建工ai\\.cache\\concrete-work-plan-source-metric-review-20261015\\server-audit"
+  },
+  "independent_metric_review": {
+    "reviewer": "/root/server_readiness/runtime_files_sync",
+    "status": "passed_within_three_collection_plan_scope",
+    "provider_calls": 0
+  },
+  "review_identity": "Coding-agent source/metric review of a previously generated packet; not new model generation, human on-site approval or measured effect.",
+  "readback_requests": [
+    {
+      "method": "GET",
+      "path": "/api/session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/renewal-strategy"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a"
+    },
+    {
+      "method": "GET",
+      "path": "/api/intelligence/projects"
+    }
+  ],
+  "additional_model_requests": 0,
+  "finished_at": "2026-10-15T12:26:18.674245+00:00"
+}

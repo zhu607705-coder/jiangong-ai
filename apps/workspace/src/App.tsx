@@ -295,8 +295,10 @@ export default function App() {
   }
   useEffect(() => {
     const node = scrollContainer.current; if (!node) return;
-    const frame = requestAnimationFrame(() => { node.scrollTop = scrollPositions.current.get(navigationKey) || 0; });
-    const remember = () => scrollPositions.current.set(navigationKey, node.scrollTop);
+    const position = scrollPositions.current.get(navigationKey) || 0;
+    let restoring = true;
+    const frame = requestAnimationFrame(() => { node.scrollTop = position; restoring = false; });
+    const remember = () => { if (!restoring) scrollPositions.current.set(navigationKey, node.scrollTop); };
     node.addEventListener('scroll',remember,{passive:true});
     return () => { cancelAnimationFrame(frame); node.removeEventListener('scroll',remember); };
   }, [navigationKey]);
