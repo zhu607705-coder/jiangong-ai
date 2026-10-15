@@ -11,18 +11,18 @@ dist/index.html                                      0.50 kB │ gzip:   0.38 kB
 dist/assets/KnowledgeAgentReport-BEXqNCLJ.css        5.92 kB │ gzip:   1.60 kB
 dist/assets/KnowledgeWorkbench-D4D_8JCF.css          7.40 kB │ gzip:   1.96 kB
 dist/assets/KnowledgePipelinePanel-DAYazxsR.css      7.88 kB │ gzip:   2.06 kB
-dist/assets/index-DsWl8N1A.css                     199.88 kB │ gzip:  39.15 kB
-dist/assets/index-jk6nmzss.js                        5.29 kB │ gzip:   1.79 kB
+dist/assets/index-Dk4sWhqw.css                     199.95 kB │ gzip:  39.17 kB
+dist/assets/index-CbpWDXTb.js                        5.29 kB │ gzip:   1.79 kB
 dist/assets/correction-report-BUMXvzL5.js            7.30 kB │ gzip:   3.56 kB
-dist/assets/KnowledgeAgentReport-BwGFnhqN.js        10.51 kB │ gzip:   3.58 kB
-dist/assets/KnowledgeWorkbench-CDUANK7a.js          17.59 kB │ gzip:   6.82 kB
-dist/assets/KnowledgePipelinePanel-B7DsKSJ8.js      33.60 kB │ gzip:  10.68 kB
-dist/assets/validate-C8NS1V_L.js                   208.54 kB │ gzip:  53.72 kB
-dist/assets/index-Z2xVm6ML.js                      707.22 kB │ gzip: 228.11 kB
+dist/assets/KnowledgeAgentReport-wXsI5-N2.js        10.51 kB │ gzip:   3.58 kB
+dist/assets/KnowledgeWorkbench-DeAv4wdU.js          17.59 kB │ gzip:   6.82 kB
+dist/assets/KnowledgePipelinePanel-DJSO8M1f.js      33.60 kB │ gzip:  10.68 kB
+dist/assets/validate-Cy6eAwfi.js                   208.54 kB │ gzip:  53.72 kB
+dist/assets/index-BmpsgiEk.js                      707.26 kB │ gzip: 228.13 kB
 dist/assets/history-records-B99qh1CF.js          6,854.12 kB │ gzip: 584.74 kB
 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 4.23s
+✓ built in 4.21s

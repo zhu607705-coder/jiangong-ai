@@ -1,4 +1,5 @@
 .strategy-overview{margin:16px 0 24px;font-size:16px;color:#273e38;line-height:1.75}
+.strategy-plan-layout.is-awaiting-strategy{grid-template-columns:minmax(0,1fr)}
 .strategy-assessment{--analysis-muted:#84917d;--analysis-red:#b5aa98;--analysis-blue:#4c8664}.strategy-assessment[data-mode=rebuild]{--analysis-blue:#ac7c3d}.strategy-assessment .radar-reference{fill:none;stroke:#a69783;stroke-width:1.3;stroke-dasharray:3 3}.strategy-assessment .radar-scale{fill:#85907c;font-size:8px}.strategy-assessment .radar-area{fill:color-mix(in srgb,var(--analysis-blue) 16%,transparent);stroke:var(--analysis-blue);stroke-width:1.4}.strategy-assessment .radar-point{fill:var(--analysis-blue)}
 .strategy-overview .strategy-subnav{position:sticky;top:0;z-index:3;background:#f6f8f5}.strategy-content-anchor{scroll-margin-top:76px}.strategy-summary{scroll-margin-top:14px}
 .strategy-overview .strategy-top{margin:10px 0;align-items:center}.strategy-overview .strategy-top h2{font-size:21px;margin:3px 0}.strategy-overview .strategy-top p{font-size:15px;margin:3px 0}.strategy-overview .strategy-top>div>span{display:none}

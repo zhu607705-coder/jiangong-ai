@@ -70,17 +70,38 @@ export function expandRetrievalQuery(question: string): { rank_query: string; qu
 
 const questionWords = new Set('有 有哪些 哪些 什么 怎么 如何 多少 什么时候 是否 有没有 能否 可否 请问 一下 关于 为什么 为何 怎样 哪里 资料 原文 查询 检索 查找 找到 查到 提供 说明 介绍 大概 大约 平时 去哪 去哪儿'.split(' '))
 const genericWords = new Set('项目 小区 社区 居民 工程 改造 更新 当前 现在 需要 涉及 有关 相关 依据 措施 管理 方案 安排 情况 进展 步骤 确定 案例 中心 服务 活动 办法'.split(' '))
+const subjectTopics = [
+  ['二次供水', '供水', '自来水', '给水', '泵房', '水泵', '水压', '水表'],
+  ['电梯', '加梯'], ['停车', '车位', '泊位', '泊车'],
+  ['原拆原建', '拆除重建', '拆建', '重建', '自主更新'],
+  ['养老', '老人', '老年', '长者', '康养', '助老', '邻里', '社区服务'],
+]
+const financialTerms = ['费用', '投资', '预算', '成本', '造价', '资金', '补助', '补贴', '融资', '自筹', '估算', '支出']
+function retrievalTopics(question: string) {
+  const subjects = subjectTopics.filter(terms => terms.some(term => question.includes(term)))
+  const financial = [...financialTerms, '多少钱', '花费'].some(term => question.includes(term))
+  return { explicit: subjects.length > 0 || financial,
+    matches: (text: string) => (!subjects.length || subjects.some(terms => terms.some(term => text.includes(term))))
+      && (!financial || financialTerms.some(term => text.includes(term))) }
+}
 /** Body-only overlap gates BM25's existing common-word/punctuation matches; this is not a second ranking system. */
-function retrievalTerms(project: ProjectRecord, query: ReturnType<typeof expandRetrievalQuery>): string[] {
+function retrievalTerms(project: ProjectRecord, query: ReturnType<typeof expandRetrievalQuery>, explicitTopic: boolean): string[] {
   const context = new Set(searchTokens(`${project.name} ${project.input.scope.name}`))
   const terms = searchTokens(query.rank_query).filter(term => !questionWords.has(term) && !/^\p{Script=Han}$/u.test(term))
   const specific = terms.filter(term => !genericWords.has(term) && !context.has(term))
   // Only traced expansion rules can admit a single-character counting unit; ordinary question characters stay excluded.
   const expanded = query.query_expansions.flatMap(expansion => expansion.added_term.split(/\s+/))
-    .filter(term => term.length > 1 || term === '户' || term === '幢')
+    .filter(term => term.length > 1 || !explicitTopic && (term === '户' || term === '幢'))
   // Intl's word segmentation can split these construction compounds into single characters; retain their exact phrase.
   const phrases = ['原拆原建', '拆除重建', '二次供水', '邻里中心'].filter(term => query.rank_query.includes(term))
   return unique([...phrases, ...expanded, ...(specific.length ? specific : phrases.length || expanded.length ? [] : terms)])
+}
+
+/** Scope labels only gain priority when their recorded object/title matches this project; foreign cases remain references. */
+function scopePriority(candidate: RetrievalCandidate, projectTerms: string[]): number {
+  const metadata = `${candidate.source.title} ${(candidate.source.object_refs || []).join(' ')}`.toLowerCase()
+  if (!projectTerms.some(term => metadata.includes(term))) return 2
+  return candidate.source.evidence_scope === 'object' ? 0 : candidate.source.evidence_scope === 'area' ? 1 : 2
 }
 
 const annotationIdentity = (link: RagMeasureLink) => JSON.stringify([link.card_id, link.card_revision, link.review_status,
@@ -275,8 +296,16 @@ function batches(candidates: RetrievalCandidate[]): RetrievalCandidate[][] {
 export async function retrieveProjectEvidence(project: ProjectRecord, bundle: RagExportBundle, originals: ParsedDocument[], request: RetrievalRequest, ranker: RetrievalRanker): Promise<RetrievalResponse> {
   const prepared = prepareRetrievalCandidates(project, bundle, originals, request)
   const query = expandRetrievalQuery(request.question)
-  const terms = retrievalTerms(project, query)
-  const relevant = prepared.candidates.filter(candidate => terms.some(term => candidate.text.toLowerCase().includes(term)))
+  const topics = retrievalTopics(request.question), terms = retrievalTerms(project, query, topics.explicit)
+  const relevant = prepared.candidates.filter(candidate => topics.matches(candidate.text)
+    && (topics.explicit || terms.some(term => candidate.text.toLowerCase().includes(term))))
+  // Named objects may be segmented into single Han characters. Require a continuous three-character name overlap,
+  // rather than promoting every source which merely shares an institution/city word such as a two-character prefix.
+  const names = [project.name, project.input.scope.name]
+  const projectTerms = names.flatMap(name => [...name.matchAll(/\p{Script=Han}{3,}/gu)].flatMap(([run]) =>
+    run === '片区研究' || run === '项目研究' ? [] : Array.from({ length: run.length - 2 }, (_, index) => run.slice(index, index + 3))))
+  projectTerms.push(...searchTokens(names.join(' ')).filter(term => !/\p{Script=Han}/u.test(term) && term.length >= 3))
+  const priority = (candidate: RetrievalCandidate) => scopePriority(candidate, projectTerms)
   let rankCalls = 0
   const rank = async (candidates: RetrievalCandidate[]): Promise<RetrievalHit[]> => {
     rankCalls++
@@ -287,28 +316,38 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
       const candidate = byId.get(match.source_id)
       if (!candidate || !Number.isFinite(match.score) || seen.has(match.source_id)) return []
       seen.add(match.source_id)
-      return [{ ...candidate, score: match.score, match_reasons: [...candidate.match_reasons, '问题实词在原文正文中重合后，现有BM25排序；文件名、标点及通用问句词不单独构成命中'] }]
+      return [{ ...candidate, score: match.score, match_reasons: [...candidate.match_reasons,
+        '明确主题先核正文，计数单位不替代设施主题；通过后仍由现有BM25排序',
+        priority(candidate) === 0 ? '来源登记为对象范围，且来源标题或对象标识与当前项目匹配，优先查找'
+          : priority(candidate) === 1 ? '来源登记为社区范围，且来源标题或对象标识与当前项目匹配，随后查找' : '地区、外部案例或范围待核资料作为参考保留'] }]
     }).slice(0, 5)
   }
-  const initial = batches(relevant)
-  let finalists: RetrievalHit[] = []
-  for (const batch of initial) finalists.push(...await rank(batch))
-  // Batch scores are not comparable. Re-rank the pooled candidates with the same capability instead of sorting those scores together.
-  if (initial.length > 1) {
-    while (finalists.length > 1000) {
-      const next: RetrievalHit[] = []
-      for (let start = 0; start < finalists.length; start += 1000) next.push(...await rank(finalists.slice(start, start + 1000)))
-      finalists = next
+  const finalists: RetrievalHit[] = []
+  let batched = false
+  for (const scope of [0, 1, 2]) {
+    const initial = batches(relevant.filter(candidate => priority(candidate) === scope))
+    batched ||= initial.length > 1
+    let scoped: RetrievalHit[] = []
+    for (const batch of initial) scoped.push(...await rank(batch))
+    // Batch scores are not comparable. Re-rank within each scope using the same BM25 capability.
+    if (initial.length > 1) {
+      while (scoped.length > 1000) {
+        const next: RetrievalHit[] = []
+        for (let start = 0; start < scoped.length; start += 1000) next.push(...await rank(scoped.slice(start, start + 1000)))
+        scoped = next
+      }
+      if (scoped.length) scoped = await rank(scoped)
     }
-    if (finalists.length) finalists = await rank(finalists)
+    finalists.push(...scoped)
   }
   return { project_id: project.id, question: request.question, ...query, as_of: request.as_of || null,
     hits: finalists.slice(0, request.limit || 5), candidate_counts: { documents: bundle.documents.length,
       parsed_chunks: prepared.parsedChunks, eligible_chunks: prepared.candidates.length, ranked_chunks: relevant.length,
       batches: rankCalls, unresolved_references: bundle.unresolved_references.length,
       source_texts: prepared.sourceTexts, eligible_source_texts: prepared.candidates.filter(candidate => candidate.evidence_kind === 'source_text').length }, skipped: prepared.skipped,
-    method: initial.length > 1 ? 'metadata_gated_batched_bm25' : 'metadata_gated_bm25',
+    method: batched ? 'metadata_gated_batched_bm25' : 'metadata_gated_bm25',
     score_meaning: 'BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。',
-    ranking_note: initial.length > 1 ? '在来源与原文实词重合检查后，按材料交错分批召回，每批最多1000片段及约1MB文本；各批前5候选再用同一BM25复排，批次分数不直接比较。' : '在权限、来源版本、元数据及原文实词重合检查后，直接复用现有BM25；无正文主题词重合时保留无命中。',
+    ranking_note: '明确主题须在正文命中；计数单位仅补纯数量问题。按来源范围优先查找匹配本项目的对象、社区资料，再查地区和案例参考；每档仍用同一BM25，档间分数不直接比较。'
+      + (batched ? '大档按材料交错分批，每批最多1000片段及约1MB文本，候选再由同一BM25复排。' : '无正文主题词重合时保留无命中。'),
     content_role: 'untrusted_source_material', fact_writes: 0 }
 }

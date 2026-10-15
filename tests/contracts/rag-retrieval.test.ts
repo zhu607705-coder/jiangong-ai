@@ -409,4 +409,36 @@ describe('saved public source text in the same project retrieval', () => {
       expect(JSON.stringify(sources)).toBe(before)
     }
   })
+
+  it('requires an explicit facility topic in the body instead of letting counting units or another topic satisfy it', async () => {
+    const sources = [original('WATER', '二次供水涉及29、30、31、48幢，共计252户。'),
+      original('LIFT', '加装电梯涉及12户，费用另行核定。'), original('PARK', '停车设施涉及3幢居民楼。'),
+      original('REBUILD', '拆除重建涉及548户。'), original('OTHER', '浙工新村改造涉及548户、12幢。')]
+    const ranker: RetrievalRanker = async input => ({ matches: input.sources.map(source => ({ source_id: source.id, score: 1 })) })
+    for (const [question, id] of [['二次供水涉及哪些楼栋？', 'WATER'], ['二次供水涉及多少住户？', 'WATER'],
+      ['电梯涉及多少住户？', 'LIFT'], ['停车涉及哪些楼栋？', 'PARK'], ['原拆原建涉及多少住户？', 'REBUILD']]) {
+      const response = await retrieveProjectEvidence(project(sources), bundle([], sources), [], { question }, ranker)
+      expect(response.hits.map(hit => hit.source.id)).toEqual([id])
+      expect(response.candidate_counts.ranked_chunks).toBe(1)
+    }
+  })
+
+  it('prioritizes matching object and community scope with the same BM25 without promoting a different project or background score', async () => {
+    const local = original('LOCAL', '本项目估算总投资120万元。', { title: '求是村加装电梯草案', evidence_scope: 'object' })
+    const community = original('COMMUNITY', '社区养老服务已有场所。', { title: '社区服务资料', evidence_scope: 'area', object_refs: ['community:浙大求是社区'] })
+    const reference = original('REFERENCE', '养老场所费用及投资预算参考。', { title: '外地区域案例', evidence_scope: 'background' })
+    const foreign = original('FOREIGN', '本项目投资及养老场所参考。', { title: '浙工新村方案', evidence_scope: 'object' })
+    const sources = [reference, foreign, local, community]
+    const current = { ...project(sources), name: '浙大求是村 · 片区研究', input: { ...input('RAG-A', sources), scope: { ...input('RAG-A').scope, name: '浙大求是村' } } }
+    const ranker: RetrievalRanker = async input => ({ matches: [...input.sources].reverse().map(source => ({ source_id: source.id,
+      score: source.untrusted_text!.includes('参考') ? 100 : 1 })) })
+    const cost = await retrieveProjectEvidence(current, bundle([], sources), [], { question: '改造大概要花多少钱？' }, ranker)
+    expect(cost.hits[0].source.id).toBe('LOCAL')
+    expect(cost.hits[0].score).toBe(1)
+    expect(cost.hits.some(hit => hit.source.id === 'FOREIGN')).toBe(true)
+    const activity = await retrieveProjectEvidence(current, bundle([], sources), [], { question: '老人平时去哪活动？' }, ranker)
+    expect(activity.hits[0].source.id).toBe('COMMUNITY')
+    expect(activity.hits[0].score).toBe(1)
+    expect(activity.ranking_note).toContain('来源范围')
+  })
 })
