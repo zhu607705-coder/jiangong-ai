@@ -73,6 +73,15 @@
 .complete-community-demo--operations .full-demo-heading { gap:14px; }
 .complete-community-demo--operations .full-demo-heading h2 { font-size:20px; margin:0; line-height:1.4; }
 .complete-community-demo--operations .full-demo-actions { min-width:0; margin:0; }
+.complete-community-demo--operations .full-demo-heading h2 { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+.complete-community-demo--operations .analysis-hero-card { background:transparent!important; border:0!important; box-shadow:none; }
+.complete-community-demo--operations .analysis-hero-card button { background:#fff; color:#285c4a; border-color:#c0d8cb; }
+.complete-community-demo--operations .analysis-hero-card button:hover { background:#eaf4ee; }
+@media(min-width:1250px) {
+  .complete-community-demo--operations { position:relative; }
+  .complete-community-demo--operations .full-demo-heading { position:absolute; right:0; top:-44px; padding:0; margin:0; display:block; width:auto; }
+  .complete-community-demo--operations .full-demo-actions { flex-wrap:nowrap; }
+}
 .playground-comparison-backdrop { position:fixed; inset:0; z-index:150; background:#183c37a6; display:grid; place-items:center; padding:28px; }
 .playground-comparison-dialog { width:min(1200px,100%); max-height:calc(100dvh - 56px); overflow:auto; padding:25px; border:1px solid #c6dacf; border-radius:14px; background:#fff; box-shadow:0 24px 90px #092b344d; }
 .playground-comparison-dialog > header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:20px; }
