@@ -77,7 +77,7 @@ const subjectTopics = [
   ['养老', '老人', '老年', '长者', '康养', '助老', '邻里', '社区服务'],
 ]
 const financialTerms = ['费用', '投资', '预算', '成本', '造价', '资金', '补助', '补贴', '融资', '自筹', '估算', '支出']
-function retrievalTopics(question: string) {
+export function retrievalTopics(question: string) {
   const subjects = subjectTopics.filter(terms => terms.some(term => question.includes(term)))
   const financial = [...financialTerms, '多少钱', '花费'].some(term => question.includes(term))
   return { explicit: subjects.length > 0 || financial,

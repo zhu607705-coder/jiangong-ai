@@ -4,6 +4,79 @@
   "title": "ProjectInput",
   "$ref": "#/definitions/ProjectInput",
   "definitions": {
+    "RenewalResearchPlan": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "summary": { "type": "string", "minLength": 1, "maxLength": 400 },
+        "tasks": { "type": "array", "maxItems": 3, "items": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "id": { "type": "string", "minLength": 1, "maxLength": 40 },
+            "role": { "type": "string", "enum": ["building_delivery", "cost_value", "residents_operations"] },
+            "question": { "type": "string", "minLength": 1, "maxLength": 280 },
+            "source_ids": { "type": "array", "minItems": 1, "maxItems": 10, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 250 } }
+          },
+          "required": ["id", "role", "question", "source_ids"]
+        } }
+      },
+      "required": ["summary", "tasks"]
+    },
+    "RenewalResearchNote": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "task_id": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 600 },
+        "observations": { "type": "array", "maxItems": 4, "items": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "source_id": { "type": "string", "minLength": 1, "maxLength": 250 },
+            "quote": { "type": "string", "minLength": 8, "maxLength": 280 },
+            "locator": { "type": "string", "minLength": 1, "maxLength": 300 },
+            "inference": { "type": "string", "minLength": 1, "maxLength": 300 }
+          },
+          "required": ["source_id", "quote", "locator", "inference"]
+        } },
+        "missing_data": { "type": "array", "maxItems": 4, "items": { "type": "string", "minLength": 1, "maxLength": 240 } },
+        "reasoned_proposals": { "type": "array", "maxItems": 3, "items": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "kind": { "type": "string", "enum": ["logical_inference", "scenario"] },
+            "premises": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string", "minLength": 1, "maxLength": 240 } },
+            "assumptions": { "type": "array", "maxItems": 3, "items": { "type": "string", "minLength": 1, "maxLength": 240 } },
+            "conclusion": { "type": "string", "minLength": 1, "maxLength": 300 },
+            "verification": { "type": "string", "minLength": 1, "maxLength": 240 },
+            "evidence_refs": { "type": "array", "maxItems": 4, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 250 } },
+            "parameters": { "type": "array", "maxItems": 4, "items": {
+              "type": "object", "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+                "value": { "type": "number" },
+                "unit": { "type": "string", "minLength": 1, "maxLength": 40 },
+                "low": { "type": "number" }, "high": { "type": "number" },
+                "basis": { "type": "string", "minLength": 1, "maxLength": 200 }
+              },
+              "required": ["name", "value", "unit", "low", "high", "basis"]
+            } }
+          },
+          "required": ["kind", "premises", "assumptions", "conclusion", "verification", "evidence_refs"]
+        } }
+      },
+      "required": ["task_id", "summary", "observations", "missing_data"]
+    },
+    "RenewalReasonedDimension": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string", "enum": ["demand", "supply", "adaptation", "implementation", "operations", "resources"] },
+        "level": { "type": "string", "enum": ["low", "medium", "high"] },
+        "basis": { "type": "string", "enum": ["logical_inference", "scenario_assumption"] },
+        "premises": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string", "minLength": 1, "maxLength": 180 } },
+        "assumptions": { "type": "array", "maxItems": 3, "items": { "type": "string", "minLength": 1, "maxLength": 180 } },
+        "reason": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "verification": { "type": "string", "minLength": 1, "maxLength": 180 },
+        "evidence_refs": { "type": "array", "maxItems": 4, "items": { "type": "string", "minLength": 1, "maxLength": 250 } }
+      },
+      "required": ["key", "level", "basis", "premises", "assumptions", "reason", "verification", "evidence_refs"]
+    },
     "RenewalWorkPackage": {
       "type": "object", "additionalProperties": false,
       "properties": {
@@ -6392,6 +6465,7 @@
     "RenewalStrategy": {
       "type": "object",
       "properties": {
+        "reasoning_dimensions": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "$ref": "#/definitions/RenewalReasonedDimension" } },
         "internal_data_requests": { "type": "array", "maxItems": 6, "items": { "$ref": "#/definitions/RenewalInternalDataRequest" } },
         "round_review": {
           "type": "object",

@@ -1,0 +1,81 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > lets the planner select zero experts and actually replaces long bodies with original windows 26ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > overlaps three DSH child calls with distinct stages and only task-scoped native source tools 20ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects cross-task citations and rewritten quotes while retaining the successful expert and raw evidence 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > enforces source-ID enum, a two-read budget, and removal of the real native tools after settlement 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > paginates a large source within the complete serialized output cap 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps distant quotes as separate original windows and includes expert-note overhead in compression counts 5ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > drains every started child before cancellation removes shared tool registrations 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps a zero-hit local query as a successful conditional scenario without invented observations or facts 5ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects a real tail quote when only the head was returned 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > allows explicit logical inference after zero hits without forcing a numerical scenario or quote 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > does not mark a no-hit note complete when it supplies neither observations nor reasoned proposals 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > uses existing lexical query expansion and keeps Unicode query windows in exact UTF-16 coordinates 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps count units from substituting for an explicit facility topic: {"query":"电梯户数","text":"本小区共有252户居民。","matched":false} 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps count units from substituting for an explicit facility topic: {"query":"户数","text":"本小区共有252户居民。","matched":true} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps count units from substituting for an explicit facility topic: {"query":"电梯户数","text":"本小区共有252户，已登记电梯2台。","matched":true} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > does not count an unsuccessful UTF-16 page read as completed retrieval 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects foreign proposal evidence while allowing explicitly empty references 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects unread proposal evidence while allowing explicitly empty references 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":3,"value":2,"high":4} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":1,"value":5,"high":4} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":4,"value":3,"high":2} 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":1,"value":null,"high":4} 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":1,"value":null,"high":4} 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > accepts an exact scenario range but requires assumptions and an actual retrieval attempt 6ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"offset":-1} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"offset":1.5} 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"limit":0} 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"limit":18001} 2ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"query":"查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查"} 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > sends forced structured_output in the real adapter HTTP body for a non-thinking RenewalStrategy request 20ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > forces a sole structured_output for RenewalResearchPlan without enabling thinking 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > forces a sole structured_output for RenewalResearchNote without enabling thinking 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > allows only the declared source-reader and structured tools for specialist notes 6ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another output 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no call scope 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another sole tool 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for additional tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for thinking enabled 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps simultaneous renewal and other-output request scopes separate through serialization 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > marks completed plain text as NO_STRUCTURED_OUTPUT without parsing it or retrying 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the existing max-tokens failure marker 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps one contract correction and exposes its final schema failure with the original cause 39ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > injects the allowlisted role Markdown through native persona and retains it through the existing contract correction 3ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > replays the failed production request sequence while reserving native synthesis and repair calls 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > admits synthesis after twelve research requests and bounds every retry family without cross-task borrowing 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the existing MAP-AI-unrelated request limit 0ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the existing OTHER-unrelated request limit 0ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > retains cancellation as cancellation instead of labelling it budget exhaustion 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the local stage-budget code when native DSH wraps the rejected request as UNKNOWN 0ms
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500}
+
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > explains an existing truncated TRANSPORT failure without exposing raw messages 2ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the RATE_LIMIT failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the AUTH failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the TIMEOUT failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the MALFORMED_RESPONSE failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > never forwards an arbitrary exception or unrecognized provider code 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > distinguishes output exhaustion, missing structured delivery and a typed schema failure 1ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > explains native request-budget exhaustion separately from model formatting or provider failures 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails 6ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails 1ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion 2ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > keeps model source excerpts bounded and contiguous while leaving original material intact 1ms
+
+ Test Files  3 passed (3)
+      Tests  63 passed (63)
+   Start at  22:09:48
+   Duration  1.85s (transform 401ms, setup 0ms, import 1.23s, tests 237ms, environment 0ms)
+

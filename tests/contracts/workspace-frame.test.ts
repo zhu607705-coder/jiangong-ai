@@ -55,6 +55,32 @@ test('all six project pages are parallel visible navigation without lifecycle di
   expect(onTab).not.toHaveBeenCalled()
   expect(container.querySelector('.research-tabs')).toBeNull()
 })
+
+test('available project pages omit unavailable business entries while retaining global navigation, settings and the active page', async () => {
+  await render({ ...props(), availableProjectPages: ['overview', 'evidence', 'assessment'] })
+  const nav = container.querySelector('nav[aria-label="项目工作区"]')!
+  expect([...nav.querySelectorAll('button')].map(button => button.textContent)).toEqual(['项目总览', '资料与条件', '改造研判'])
+  expect(nav.querySelectorAll('button[disabled]')).toHaveLength(0)
+  for (const id of ['scenarios', 'actions', 'results']) expect(nav.querySelector(`[data-project-page="${id}"]`)).toBeNull()
+  expect(nav.querySelector('[aria-current="page"]')?.getAttribute('data-project-page')).toBe('assessment')
+  expect(container.querySelector('[aria-label="当前位置"] strong')?.textContent).toBe('改造研判')
+  await act(async () => (nav.querySelector('[data-project-page="evidence"]') as HTMLButtonElement).click())
+  expect(onProjectPage).toHaveBeenCalledWith('evidence')
+  for (const label of ['地图探索', '项目空间', '案例与规则', '管理与设置']) expect(container.querySelector(`.atlas-dock [aria-label="${label}"]`)).not.toBeNull()
+  await act(async () => (container.querySelector('.atlas-dock [aria-label="管理与设置"]') as HTMLButtonElement).click())
+  expect(onSettings).toHaveBeenCalledOnce()
+})
+
+test('project availability can expand to all six pages without remounting the map or changing navigation semantics', async () => {
+  await render({ ...props(), availableProjectPages: ['overview', 'evidence', 'assessment'] })
+  expect(container.querySelectorAll('[data-project-page]')).toHaveLength(3)
+  await render({ ...props(), activeProjectPage: 'scenarios', availableProjectPages: ['overview', 'evidence', 'assessment', 'scenarios', 'actions', 'results'] })
+  expect(container.querySelectorAll('[data-project-page]')).toHaveLength(6)
+  expect(container.querySelector('[data-project-page="scenarios"]')?.getAttribute('aria-current')).toBe('page')
+  await act(async () => (container.querySelector('[data-project-page="results"]') as HTMLButtonElement).click())
+  expect(onProjectPage).toHaveBeenCalledWith('results')
+  expect(mounted).toBe(1); expect(unmounted).toBe(0)
+})
 test('global content isolates project work without unmounting the map or interrupting project state', async () => {
   await render(props('map')); expect(mounted).toBe(1)
   await render(props('projects'))

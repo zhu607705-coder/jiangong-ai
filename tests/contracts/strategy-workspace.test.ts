@@ -7,8 +7,9 @@ import StrategyOverview, { type StrategyDirectionSelection, type StrategyWorkspa
 import { WorkbenchAccessContext } from '../../apps/workspace/src/AdminAccess'
 import type { Project } from '../../apps/workspace/src/api'
 import type { StrategyPacket } from '../../packages/retrofit/strategy'
+import type { ResearchRound } from '../../packages/retrofit/research-rounds'
+import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
 
-vi.mock('../../apps/workspace/src/maps/RenewalModePanel', () => ({ default: () => null }))
 vi.mock('../../apps/workspace/src/components/CommunityOperationsPanel', () => ({ default: ({ direction }: { direction: string }) => createElement('div', { 'data-operations-mode': direction }, '本方向月度运营') }))
 vi.mock('../../apps/workspace/src/components/CompleteCommunityDemo', () => ({ default: ({ direction, operationsOnly }: { direction: string; operationsOnly: boolean }) => createElement('div', { 'data-demo-operations-mode': direction, 'data-operations-only': String(operationsOnly) }, '本方向模拟运营') }))
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
@@ -19,22 +20,23 @@ const saved: StrategyPacket = { project_id: project.id, context_version: 4, inpu
     paths: [{ mode: 'comprehensive', title: '保留建筑分项改善', description: '按楼栋更新设施，保持范围可核对。', actions: [{ title: '逐栋核实管网', detail: '按本项目原文核定分项工程。', evidence_refs: ['OBJECT'] }], requirements: ['取得结构鉴定'] }, { mode: 'rebuild', title: '原拆原建专项论证', description: '重建与安置前提专项核对。', actions: [{ title: '原拆原建居民安置调查', detail: '逐项核实原拆原建安置条件。', evidence_refs: ['OBJECT'] }], requirements: ['落实安置资料'] }],
     dimensions: (['demand', 'supply', 'adaptation', 'implementation', 'operations', 'resources'] as const).map(key => ({ key, current: `现况-${key}`, current_level: 'medium', comprehensive: `分项改善目标-${key}`, comprehensive_level: 'medium', rebuild: `原拆原建目标-${key}`, rebuild_level: 'high', evidence_refs: ['OBJECT'] })), next_checks: [{ title: '结构资料', detail: '补充结构鉴定', evidence_refs: ['OBJECT'] }] } }
 
-async function mount(initial: { page: 'assessment' | 'scheme'; section: string; pane?: SchemePane; scheme?: 'comprehensive' | 'rebuild' }, value: StrategyPacket | null = saved) {
+async function mount(initial: { page: 'assessment' | 'scheme'; section: string; pane?: SchemePane; scheme?: 'comprehensive' | 'rebuild' }, value: StrategyPacket | null = saved, options: { collaborative?: boolean; rounds?: ResearchRound[] } = {}) {
   const dom = parseHTML('<html><body><div id="root"></div></body></html>')
   for (const [key, val] of Object.entries({ window: dom.window, document: dom.document, IS_REACT_ACT_ENVIRONMENT: true, requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(() => callback(0), 0), cancelAnimationFrame: clearTimeout })) vi.stubGlobal(key, val)
   dom.window.HTMLElement.prototype.scrollIntoView = vi.fn()
-  const transport = vi.fn(async (path: string | URL | Request, _init?: RequestInit) => { if (String(path).includes('/renewal-strategy')) return new Response(JSON.stringify(value), { headers: { 'Content-Type': 'application/json' } }); throw new Error(`Unexpected request ${path}`) })
+  const json = (value: unknown) => new Response(JSON.stringify(value), { headers: { 'Content-Type': 'application/json' } })
+  const transport = vi.fn(async (path: string | URL | Request, _init?: RequestInit) => { if (String(path).includes('/renewal-strategy')) return json(value); if (String(path).endsWith('/renewal-mode')) return json({ screening: projectRenewalModeInput(project.input), decision: null }); if (String(path).endsWith('/research-rounds')) return json({ rounds: options.rounds || [], materials: [], baseline_candidate: null }); throw new Error(`Unexpected request ${path}`) })
   vi.stubGlobal('fetch', transport)
-  const navigate = vi.fn(), evidence = vi.fn(), choose = vi.fn()
+  const navigate = vi.fn(), evidence = vi.fn(), choose = vi.fn(), reported = vi.fn<(result: StrategyPacket | null) => void>()
   function Harness() {
     const [location, setLocation] = useState(initial), [selection, setSelection] = useState<StrategyDirectionSelection | null>(null)
     const onNavigate = (target: StrategyWorkspaceNavigation) => { navigate(target); if (target.view === 'assessment' || target.view === 'scenarios') setLocation({ page: target.view === 'assessment' ? 'assessment' : 'scheme', section: target.section || 'direction', pane: target.pane, scheme: target.scheme }) }
-    return createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(StrategyOverview, { project, demoActive: false, workspacePage: location.page, section: location.section, pane: location.pane, schemeDirection: location.scheme, directionSelection: selection, onDirectionSelect: mode => { choose(mode); setSelection({ identity: 'WS:4:false', mode }) }, onNavigate, onEvidence: evidence, onInvestigate: vi.fn() }))
+    return createElement(WorkbenchAccessContext.Provider, { value: { role: options.collaborative ? 'admin' : 'viewer', canWrite: !!options.collaborative } }, createElement(StrategyOverview, { project, demoActive: false, workspacePage: location.page, section: location.section, pane: location.pane, schemeDirection: location.scheme, directionSelection: selection, onDirectionSelect: mode => { choose(mode); setSelection({ identity: 'WS:4:false', mode }) }, onNavigate, onEvidence: evidence, onStrategyResult: reported, onInvestigate: vi.fn() }))
   }
   const container = dom.document.getElementById('root')!, root = createRoot(container)
   await act(async () => root.render(createElement(Harness)))
   await vi.waitFor(() => expect(container.querySelector('[role=status]')).toBeNull())
-  return { container, root, transport, navigate, evidence, choose, cleanup: () => act(async () => root.unmount()) }
+  return { container, root, transport, navigate, evidence, choose, reported, cleanup: () => act(async () => root.unmount()) }
 }
 
 test('current assessment is directly accessible without a mode and does not mount scheme or operations businesses', async () => {
@@ -47,7 +49,7 @@ test('current assessment is directly accessible without a mode and does not moun
     expect(app.container.querySelector('[data-operations-mode]')).toBeNull()
     expect([...app.container.querySelectorAll<HTMLButtonElement>('.strategy-subnav button')].every(button => !button.disabled)).toBe(true)
     expect(app.choose).not.toHaveBeenCalled()
-    expect(app.transport.mock.calls).toHaveLength(1)
+    expect(app.transport.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true)
   } finally { await app.cleanup() }
 })
 
@@ -80,13 +82,64 @@ test('scheme comparison always opens both candidates and an explicit click chang
   } finally { await app.cleanup() }
 })
 
-test('unselected single-scheme detail has two live entrances even before a complete strategy is saved', async () => {
-  const app = await mount({ page: 'scheme', section: 'detail' }, null)
+test('mode screening precedes the AI summary, manual direction and internal intake without claiming AI completion', async () => {
+  const app = await mount({ page: 'assessment', section: 'direction' }, saved, { collaborative: true })
   try {
-    expect(app.container.querySelectorAll('.strategy-scheme-entries [data-open-scheme]')).toHaveLength(2)
-    await act(async () => app.container.querySelector<HTMLButtonElement>('[data-open-scheme=comprehensive]')!.click())
-    expect(app.navigate).toHaveBeenCalledWith({ view: 'scenarios', section: 'detail', pane: 'content', scheme: 'comprehensive' })
-    expect(app.transport.mock.calls.every(([, init]) => !(init as RequestInit | undefined)?.method || (init as RequestInit).method === 'GET')).toBe(true)
+    await act(async () => app.container.querySelector<HTMLButtonElement>('.strategy-top>button')!.click())
+    const order = [...app.container.querySelectorAll('.renewal-mode-panel,.decision-brief,.strategy-direction-selection,.research-intake')]
+    expect(order[0].classList.contains('renewal-mode-panel')).toBe(true)
+    expect(order[1].classList.contains('decision-brief')).toBe(true)
+    expect(order[2].classList.contains('strategy-direction-selection')).toBe(true)
+    expect(order[3].classList.contains('research-intake')).toBe(true)
+    expect(app.container.querySelector('.renewal-stage')?.textContent).toBe('证据条件初筛')
+    expect(app.reported).toHaveBeenCalledWith(saved)
+    expect(app.reported.mock.calls.some(([result]) => result === null)).toBe(false)
+  } finally { await app.cleanup() }
+})
+
+test.each([
+  { page: 'assessment', section: 'current' },
+  { page: 'assessment', section: 'cases' },
+  { page: 'scheme', section: 'detail', scheme: 'comprehensive' },
+] as const)('without a completed result $page/$section keeps screening and intake while omitting empty dependent businesses', async location => {
+  const app = await mount(location, null, { collaborative: true })
+  try {
+    expect(app.container.querySelector('.renewal-mode-panel')).not.toBeNull()
+    expect(app.container.querySelector('.renewal-stage')?.textContent).toBe('证据条件初筛')
+    expect(app.container.querySelectorAll('.renewal-gate [data-state=unknown]').length).toBeGreaterThan(0)
+    expect(app.container.querySelector('.research-intake')).not.toBeNull()
+    expect(app.container.querySelector('.decision-brief,.strategy-direction-selection,.strategy-current-assessment,.strategy-related-cases,.scheme-comparison,.single-scheme-workspace,.strategy-scheme-entries')).toBeNull()
+    expect(app.container.textContent).not.toMatch(/旧版建议|尚无本版本完整方案|尚无对应现况评价/)
+    expect(app.reported).toHaveBeenCalledWith(null)
+    expect(app.transport.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+test('a failed result shows Chinese recovery actions after screening and never publishes a stray strategy', async () => {
+  const failure: StrategyPacket = { ...saved, status: 'failed', strategy: null, error: 'LIVE_STAGE_FAILED:renewal_strategy:error:TRANSPORT' }
+  const app = await mount({ page: 'assessment', section: 'cases' }, failure, { collaborative: true })
+  try {
+    const order = [...app.container.querySelectorAll('.renewal-mode-panel,.strategy-error,.research-intake')]
+    expect(order[0].classList.contains('renewal-mode-panel')).toBe(true)
+    expect(app.container.querySelector('.strategy-error')?.textContent).toContain('无法连接模型服务')
+    expect(app.container.querySelector('.strategy-error')?.textContent).toContain('未生成整体更新方案')
+    expect(app.container.querySelector('.strategy-error')?.textContent).toContain('重新读取已保存成果')
+    expect(app.container.textContent).not.toContain('LIVE_STAGE_FAILED')
+    expect(app.container.querySelector('.strategy-current-assessment,.strategy-related-cases,.single-scheme-workspace,.decision-brief')).toBeNull()
+    expect(app.reported).toHaveBeenCalledWith(null)
+  } finally { await app.cleanup() }
+})
+
+test('a completed saved result remains visible and available when another current read failed', async () => {
+  const failure: StrategyPacket = { ...saved, status: 'failed', strategy: null, error: 'LIVE_STAGE_FAILED:renewal_strategy:error:TRANSPORT' }
+  const record: ResearchRound = { id: 'SAVED-OLD', project_id: project.id, round_number: 1, context_version: project.context_version, input_hash: saved.input_hash, parent_round_id: null, parent_input_hash: null, parent_context_version: null, first_round_id: 'SAVED-OLD', first_input_hash: saved.input_hash, first_context_version: saved.context_version, origin: 'adopted_history', status: 'completed', material_intake: 'not_recorded', allow_internal_ai: false, materials: [], missing_materials: [], result: saved, error: null, created_at: saved.created_at, updated_at: saved.created_at }
+  const app = await mount({ page: 'assessment', section: 'direction' }, failure, { collaborative: true, rounds: [record] })
+  try {
+    expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(saved.strategy!.headline)
+    expect(app.container.querySelector('.strategy-direction-selection')).not.toBeNull()
+    expect([...app.container.querySelectorAll<HTMLButtonElement>('.strategy-subnav button')].some(button => button.textContent === '六维现况')).toBe(true)
+    expect(app.reported).toHaveBeenCalledWith(saved)
+    expect(app.reported.mock.calls.some(([result]) => result === null)).toBe(false)
   } finally { await app.cleanup() }
 })
 

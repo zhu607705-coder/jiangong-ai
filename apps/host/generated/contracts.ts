@@ -237,6 +237,103 @@ export interface KnowledgeQuery {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalResearchPlan".
+ */
+export interface RenewalResearchPlan {
+  summary: string;
+  /**
+   * @maxItems 3
+   */
+  tasks: {
+    id: string;
+    role: "building_delivery" | "cost_value" | "residents_operations";
+    question: string;
+    /**
+     * @minItems 1
+     * @maxItems 10
+     */
+    source_ids: string[];
+  }[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalResearchNote".
+ */
+export interface RenewalResearchNote {
+  task_id: string;
+  summary: string;
+  /**
+   * @maxItems 4
+   */
+  observations: {
+    source_id: string;
+    quote: string;
+    locator: string;
+    inference: string;
+  }[];
+  /**
+   * @maxItems 4
+   */
+  missing_data: string[];
+  /**
+   * @maxItems 3
+   */
+  reasoned_proposals?: {
+    kind: "logical_inference" | "scenario";
+    /**
+     * @minItems 1
+     * @maxItems 3
+     */
+    premises: string[];
+    /**
+     * @maxItems 3
+     */
+    assumptions: string[];
+    conclusion: string;
+    verification: string;
+    /**
+     * @maxItems 4
+     */
+    evidence_refs: string[];
+    /**
+     * @maxItems 4
+     */
+    parameters?: {
+      name: string;
+      value: number;
+      unit: string;
+      low: number;
+      high: number;
+      basis: string;
+    }[];
+  }[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalReasonedDimension".
+ */
+export interface RenewalReasonedDimension {
+  key: "demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources";
+  level: "low" | "medium" | "high";
+  basis: "logical_inference" | "scenario_assumption";
+  /**
+   * @minItems 1
+   * @maxItems 3
+   */
+  premises: string[];
+  /**
+   * @maxItems 3
+   */
+  assumptions: string[];
+  reason: string;
+  verification: string;
+  /**
+   * @maxItems 4
+   */
+  evidence_refs: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "RenewalWorkPackage".
  */
 export interface RenewalWorkPackage {
@@ -1977,6 +2074,11 @@ export interface OperationsWorkspace {
  * via the `definition` "RenewalStrategy".
  */
 export interface RenewalStrategy {
+  /**
+   * @minItems 6
+   * @maxItems 6
+   */
+  reasoning_dimensions?: RenewalReasonedDimension[];
   /**
    * @maxItems 6
    */

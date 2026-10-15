@@ -6,6 +6,14 @@ import fixture from '../../fixtures/inputs/01_auto.json'
 import type { Project } from '../../apps/workspace/src/api'
 import type { StrategyPacket } from '../../packages/retrofit/strategy'
 import type { ResearchRound } from '../../packages/retrofit/research-rounds'
+const locationMap=vi.hoisted(()=>({render:vi.fn()}))
+vi.mock('../../apps/workspace/src/components/ProjectLocationMap',async()=>{
+  const {createElement}=await import('react')
+  return {default:({project}:{project:Project})=>{
+    locationMap.render(project)
+    return createElement('div',{'data-project-location-id':project.id,'data-map-anchor':JSON.stringify(project.input.scope.map_anchor??null)})
+  }}
+})
 import ProjectOverview, { projectOverviewState, type ProjectOverviewProps } from '../../apps/workspace/src/components/ProjectOverview'
 
 let root:Root,container:HTMLElement
@@ -32,9 +40,9 @@ beforeEach(()=>{
   vi.stubGlobal('window',window);vi.stubGlobal('document',window.document);vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true)
   vi.stubGlobal('fetch',vi.fn().mockRejectedValue(new Error('Overview must not fetch or run models')))
   container=window.document.getElementById('root') as unknown as HTMLElement;root=createRoot(container)
-  onNavigate.mockReset();onEvidence.mockReset()
+  onNavigate.mockReset();onEvidence.mockReset();locationMap.render.mockReset()
 })
-afterEach(async()=>{await act(async()=>root.unmount());vi.unstubAllGlobals()})
+afterEach(async()=>{await act(async()=>root.unmount());expect(fetch).not.toHaveBeenCalled();vi.unstubAllGlobals()})
 async function render(overrides:Partial<ProjectOverviewProps>={}) {await act(async()=>root.render(createElement(ProjectOverview,{project:project(),currentStrategyPacket:packet(),currentDirection:'rebuild',onNavigate,onEvidence,...overrides})))}
 async function click(text:string) {const button=[...container.querySelectorAll('button')].find(button=>button.textContent?.includes(text));expect(button).toBeTruthy();await act(async()=>button!.click())}
 
@@ -45,14 +53,31 @@ test('keeps the actual API recommendation independent from the user direction an
   expect(container.querySelector('.project-overview-directions')?.textContent).toContain('系统建议：先核查')
   expect(container.querySelector('.project-overview-directions')?.textContent).toContain('当前工作方向：原拆原建')
   expect(container.querySelectorAll('.project-overview-investigations li')).toHaveLength(3)
-  expect(container.querySelector('svg[aria-label="项目已登记研究范围轮廓"] polygon')).not.toBeNull()
+  expect(container.querySelector('.project-overview-result-meta')?.textContent).toContain('资料 v4')
+  expect(container.querySelector('.project-overview-work')).not.toBeNull()
+  expect(container.querySelector('[data-project-location-id]')?.getAttribute('data-project-location-id')).toBe(p.id)
+  expect(locationMap.render.mock.calls.at(-1)?.[0]).toBe(p)
   await click('查看判断依据')
   expect(onEvidence).toHaveBeenCalledWith(['SOURCE'],result);expect(onNavigate).not.toHaveBeenCalled()
   await render({project:p,currentStrategyPacket:result,currentDirection:'comprehensive'})
   expect(container.querySelector('#project-overview-recommendation')?.textContent).toBe(result.strategy?.decision_brief?.renewal.conclusion)
   expect(JSON.stringify({p,result})).toBe(frozen);expect(fetch).not.toHaveBeenCalled()
 })
-test('routes missing conditions, candidate comparison and object geometry to their actual work pages',async()=>{
+test('passes the current GCJ-02 map anchor through to the location map when no object geometry is registered',async()=>{
+  const p=project()
+  p.input.scope.geometry=null
+  p.input.scope.map_anchor={provider:'amap',coordinate_encoding:'GCJ-02',longitude:120.113682,latitude:30.260481,name:'本项目地图锚点',poi_id:'POI-CURRENT',address:'当前对象地址'}
+  const frozen=JSON.stringify(p)
+  await render({project:p})
+  const map=container.querySelector('[data-project-location-id]')
+  expect(map?.getAttribute('data-project-location-id')).toBe(p.id)
+  expect(JSON.parse(map!.getAttribute('data-map-anchor')!)).toEqual(p.input.scope.map_anchor)
+  expect(locationMap.render.mock.calls.at(-1)?.[0]).toBe(p)
+  expect(locationMap.render.mock.calls.at(-1)?.[0].input.scope.geometry).toBeNull()
+  expect(JSON.stringify(p)).toBe(frozen)
+})
+
+test('routes missing conditions, candidate comparison and object location to their actual work pages',async()=>{
   await render();await click('查看关键核查项');expect(onNavigate).toHaveBeenLastCalledWith('actions','current')
   const p=project()
   p.input.facts=(['structure_repairable','funding_secured'] as const).map(kind=>({id:kind,kind,value:true,unit:null,source_id:'SOURCE',object_ref:'project:P-OVERVIEW',locator:'line:8',observed_at:'2026-10-01',epistemic_status:'fact'}))
@@ -86,9 +111,30 @@ test('does not borrow another project or simulation and gives a truthful empty-m
   await render({project:p,currentStrategyPacket:other,latestSavedRound:round(other)})
   expect(container.querySelector('#project-overview-recommendation')?.textContent).toBe('先补充本项目的研究资料')
   expect(container.textContent).not.toContain('四幢供水')
+  expect(container.querySelector('.project-overview-status')).toBeNull()
+  expect(container.querySelector('.project-overview-result-meta')).toBeNull()
+  expect(container.querySelector('.project-overview-investigations')).toBeNull()
+  expect(container.querySelector('.project-overview-work')).toBeNull()
+  expect(container.querySelector('[data-project-location-id]')?.getAttribute('data-project-location-id')).toBe(p.id)
   await click('补充项目资料');expect(onNavigate).toHaveBeenLastCalledWith('evidence','materials')
   const simulated={...packet(),synthetic:true}
   expect(projectOverviewState({project:p,currentStrategyPacket:simulated}).packet).toBeNull()
   const current=packet(),historic={...packet(),context_version:3}
   expect(projectOverviewState({project:project(),currentStrategyPacket:historic,latestSavedRound:round(current)}).packet).toBe(current)
+})
+
+test('a failed first study keeps one clear recovery notice and its run-details entry without empty result cards',async()=>{
+  const failed={...packet(),status:'failed' as const,strategy:null,error:'raw provider failure'}
+  await render({currentStrategyPacket:failed,latestSavedRound:null})
+  expect(container.querySelector('[data-overview-state]')?.getAttribute('data-overview-state')).toBe('failed')
+  const notices=container.querySelectorAll('.project-overview-notice')
+  expect(notices).toHaveLength(1)
+  expect(notices[0].textContent).toMatch(/本轮.*(?:未完成|未形成完整结论)/)
+  expect(container.textContent).not.toContain('raw provider failure')
+  expect(container.querySelector('.project-overview-result-meta')).toBeNull()
+  expect(container.querySelector('.project-overview-investigations')).toBeNull()
+  expect(container.querySelector('.project-overview-work')).toBeNull()
+  expect(container.querySelector('[data-project-location-id]')?.getAttribute('data-project-location-id')).toBe('P-OVERVIEW')
+  await click('查看运行详情')
+  expect(onNavigate).toHaveBeenLastCalledWith('results','runs')
 })

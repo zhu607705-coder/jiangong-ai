@@ -3,15 +3,13 @@ import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react'
 import { IconCube, IconMap2, IconFolder, IconBook2, IconPlus, IconSettings, IconArrowLeft, IconChevronDown, IconX, IconArrowUpRight } from '@tabler/icons-react'
 import type { Stage } from './LifecycleSpine'
 import type { Project } from '../api'
+import { PROJECT_PAGES, type ProjectPage } from '../public-decisions'
 import WaitingScene from './WaitingScene'
 import './WorkspaceFrame.css'
 
 export type WorkspaceGlobalView = 'map' | 'projects' | 'knowledge' | 'project'
-export type WorkspaceProjectPage = 'overview' | 'evidence' | 'assessment' | 'scenarios' | 'actions' | 'results'
-export const WORKSPACE_PROJECT_PAGES: { id: WorkspaceProjectPage; label: string }[] = [
-  { id: 'overview', label: '项目总览' }, { id: 'evidence', label: '资料与条件' }, { id: 'assessment', label: '改造研判' },
-  { id: 'scenarios', label: '方案与测算' }, { id: 'actions', label: '调查任务' }, { id: 'results', label: '成果与版本' },
-]
+export type WorkspaceProjectPage = ProjectPage
+export const WORKSPACE_PROJECT_PAGES = PROJECT_PAGES
 
 export type WorkspaceFrameProps = {
   project: Project | null; projects: Project[]; stages: Stage[]; tab: string;
@@ -20,18 +18,20 @@ export type WorkspaceFrameProps = {
   detailsOpen: boolean; bootLoading: boolean; onMap: () => void; onSettings: () => void; error: string; onDismissError: () => void;
   globalView?: WorkspaceGlobalView; onGlobalView?: (view: WorkspaceGlobalView) => void; globalContent?: ReactNode;
   activeProjectPage?: WorkspaceProjectPage; onProjectPage?: (page: WorkspaceProjectPage) => void;
+  availableProjectPages?: ProjectPage[];
   scrollContainerRef?: Ref<HTMLDivElement>;
 }
 
 export default function WorkspaceFrame({ project, projects, stages, tab, onTab, onProject, onCreate, children, rail,
   modeControl, mapView, detailsOpen, bootLoading, onMap, onSettings, error, onDismissError,
-  globalView, onGlobalView, globalContent, activeProjectPage = 'overview', onProjectPage, scrollContainerRef }: WorkspaceFrameProps) {
+  globalView, onGlobalView, globalContent, activeProjectPage = 'overview', onProjectPage, availableProjectPages, scrollContainerRef }: WorkspaceFrameProps) {
   const [projectsOpen, setProjectsOpen] = useState(false)
   const researchMain = useRef<HTMLElement>(null)
   const view = globalView || (detailsOpen ? 'project' : 'map')
   const surfaceOpen = view !== 'map', projectOpen = view === 'project'
   const structured = globalView !== undefined || onGlobalView !== undefined || onProjectPage !== undefined
   const pageLabel = WORKSPACE_PROJECT_PAGES.find(page => page.id === activeProjectPage)?.label || '项目总览'
+  const projectPages = availableProjectPages === undefined ? WORKSPACE_PROJECT_PAGES : WORKSPACE_PROJECT_PAGES.filter(page => availableProjectPages.includes(page.id))
   const globalLabel = view === 'knowledge' ? '案例与规则' : '项目空间'
   const navigate = (next: WorkspaceGlobalView) => {
     setProjectsOpen(false)
@@ -60,7 +60,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
       <span className="atlas-avatar" title="共享项目工作台">项</span>
     </nav>
     {!surfaceOpen && <header className="atlas-global-header" {...inactiveProps}>
-      <div className="atlas-wordmark"><strong>海之子</strong></div>
+      <div className="atlas-wordmark"><strong>旧区新生</strong></div>
       <button className="atlas-project-switch glass-panel" aria-expanded={projectsOpen} onClick={() => setProjectsOpen(v => !v)}><IconFolder size={17} /><span>{project?.name || '项目空间'}</span><IconChevronDown size={15} /></button>
     </header>}
     {projectsOpen && <section className="atlas-project-menu glass-panel" aria-label="项目空间列表" {...inactiveProps}>
@@ -76,7 +76,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
         <button onClick={() => navigate('map')}><IconArrowLeft size={18} />返回地图</button>
         <nav className="workspace-frame-breadcrumbs" aria-label="当前位置">
           {projectOpen ? <><button onClick={() => navigate('projects')}>项目空间</button><span>/</span>{projectSwitch}<span>/</span><strong>{structured ? pageLabel : stages.find(stage => stage.id === tab)?.label || '项目研究'}</strong></>
-            : <><span>海之子</span><span>/</span><strong>{globalLabel}</strong></>}
+            : <><span>旧区新生</span><span>/</span><strong>{globalLabel}</strong></>}
         </nav>
         {projectOpen && <div className="workspace-frame-mode">{modeControl}</div>}
       </header>
@@ -84,7 +84,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
       <div className="workspace-frame-layout">
         {projectOpen && structured && <aside className="workspace-project-sidebar">
           <div className="workspace-project-identity"><strong>{project?.name || '当前项目'}</strong>{project && <span>资料 v{project.context_version}</span>}</div>
-          <nav aria-label="项目工作区">{WORKSPACE_PROJECT_PAGES.map(page => <button key={page.id} type="button" data-project-page={page.id}
+          <nav aria-label="项目工作区">{projectPages.map(page => <button key={page.id} type="button" data-project-page={page.id}
             aria-current={activeProjectPage === page.id ? 'page' : undefined} onClick={() => onProjectPage ? onProjectPage(page.id) : onTab(page.id)}>{page.label}</button>)}</nav>
         </aside>}
         <div className="research-drawer-scroll" ref={scrollContainerRef}><div className="workspace-columns"><main ref={researchMain} tabIndex={-1} aria-label={projectOpen ? '项目主调研' : `${globalLabel}主内容`}>

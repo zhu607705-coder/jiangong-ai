@@ -29,6 +29,8 @@ export async function loadAmap(configuration: MapConfiguration): Promise<AmapSdk
     return loader.load({ key: configuration.js_key, version: configuration.sdk_version,
       plugins: ['AMap.PlaceSearch', 'AMap.Geocoder', 'AMap.Scale'] })
   })()
+  const pending = sdkPromise
+  void pending.catch(() => { if (sdkPromise === pending) sdkPromise = undefined })
   return sdkPromise
 }
 

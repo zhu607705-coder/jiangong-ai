@@ -1,0 +1,120 @@
+{
+  "status": "offline_validated_replay_bundle_ready",
+  "artifact": "D:\\建工ai\\data\\demos\\qiushi-validated-replay.json",
+  "artifact_sha256": "32c245dad319f5f9e33652351c88521caaf54ace06ed76148c0b5b3c48100d33",
+  "artifact_bytes": 350960,
+  "source_files": {
+    "origin": {
+      "path": "D:\\建工ai\\.cache\\qiushi-demo-origin-project.json",
+      "before_sha256": "fefac3bd045d56c14e98604d70a72dfe6a9513a4f9c480038637c12a9c8bc59c",
+      "after_sha256": "fefac3bd045d56c14e98604d70a72dfe6a9513a4f9c480038637c12a9c8bc59c",
+      "unchanged": true
+    },
+    "packet": {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015\\packet.json",
+      "before_sha256": "344e5ad8dc6345c273f0dcab79f534aca00ade2eb7c376c487c94bfdbbe6b8fe",
+      "after_sha256": "344e5ad8dc6345c273f0dcab79f534aca00ade2eb7c376c487c94bfdbbe6b8fe",
+      "unchanged": true
+    },
+    "structured": {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015\\repair-structured-2.json",
+      "before_sha256": "8a876afcb1af0c77f752dc4913141de65df69582d3bbbb06fbfefa413861e5d5",
+      "after_sha256": "8a876afcb1af0c77f752dc4913141de65df69582d3bbbb06fbfefa413861e5d5",
+      "unchanged": true
+    },
+    "native": {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015\\native-run\\05d33076-50ab-4385-916d-ca3b63d34b4c\\session.v4.jsonl",
+      "before_sha256": "3cd6073b6d71d15bfec33e0a70bcf00d2443f152b824e885d39487e8809c9431",
+      "after_sha256": "3cd6073b6d71d15bfec33e0a70bcf00d2443f152b824e885d39487e8809c9431",
+      "unchanged": true
+    }
+  },
+  "validator_commit": "65e6431bc272164f3e01d268ae6ed0a032286274",
+  "validation_policy": "renewal-strategy-overview-v7;canonical+validateStrategy(true,true,true,true);validator_ref=65e6431bc272164f3e01d268ae6ed0a032286274",
+  "source_count": 31,
+  "original_facts_count": 0,
+  "original_context_rules_count": 0,
+  "undated_source_count": 2,
+  "removed_nonexistent_parent_comparisons": 4,
+  "original_failed_packet_preserved": true,
+  "original_model_call_count": 15,
+  "original_workflow_preserved": true,
+  "rationale_count": 4,
+  "work_package_count": 5,
+  "reasoning_dimension_count": 6,
+  "current_conditions": [
+    {
+      "kind": "structure_repairable",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "demolition_permitted",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "rights_clear",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "rebuild_planning_confirmed",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "resident_resolution_valid",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "relocation_ready",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "funding_secured",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "life_cycle_cost_compared",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    },
+    {
+      "kind": "maintenance_entity_confirmed",
+      "value": null,
+      "state": "unknown",
+      "source_ids": [],
+      "locators": []
+    }
+  ],
+  "schema_and_all_business_gates": "passed",
+  "server_writes": 0,
+  "service_operations": 0,
+  "provider_calls": 0,
+  "identity": "Independent fixed public model replay; not success of the original failed research round.",
+  "validated_at": "2026-10-15T15:04:47.382Z",
+  "additional_service_gate": {
+    "analysis_fields_checked": 111,
+    "unconditioned_relocation_claims": 0
+  }
+}

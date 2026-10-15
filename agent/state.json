@@ -3341,5 +3341,150 @@
       "product_code_changed": false,
       "remote_ci": "pending_followup"
     }
+  },
+  "map_dynamic_research_20261015": {
+    "updated_at": "2026-10-15T15:24:46.361986+00:00",
+    "status": "manual_demo_delivered_live_generation_not_claimed",
+    "branch": "codex/map-preview-research-recovery",
+    "base_commit": "d98846c49dfb384dfe07e5e45849ea56f532cfbf",
+    "objectives": [
+      "Real overview map from existing GCJ-02 anchor; initialize only visible containers",
+      "Mode decision first; hide empty result-dependent project pages until valid saved output",
+      "Force native structured_output and distinguish text truncation from JSON/schema failures",
+      "Native DSH planner and at most three parallel specialists; source-window context compression",
+      "Fixed allowlist role AGENTS.md loaded into native subagent persona",
+      "Scoped RAG chunk query and paging; no-hit logical/scenario proposals distinct from facts",
+      "Six complete inferred/scenario dimensions separate from factual unknown levels"
+    ],
+    "target_project": "P-e83ed15d-1739-46df-b1cb-dc3111afa399",
+    "target_context_version": 0,
+    "original_failed_round": "ROUND-3b67cf84-6ef4-49e8-abf3-feb1b1650988",
+    "confirmed_failure": "Only plain <analysis> text, no structured tool call; output hit 12000 tokens; not a returned JSON AJV failure.",
+    "frozen_failure": ".cache/user-first-round-failure-20261015/20261015T125208Z/manifest.json",
+    "actual_consent": {
+      "material_intake": "none",
+      "allow_internal_ai": false,
+      "document_ids": []
+    },
+    "implemented_candidates": {
+      "map_and_overview": "implemented; real overview and global Qiushi maps visibly rendered",
+      "mode_visibility_and_progress": "implemented; mode first, actual native phase events, partial branch states",
+      "available_nav_loader": "implemented; only3 pages without saved result,6 with valid saved result",
+      "structured_protocol": "implemented native adapter tool choice, owned schema validation and safe Chinese diagnostics",
+      "native_parallel_module": "implemented native planner/0–3 specialists/RAG paging/reasoned fallback/evidence windows; actual source/quote traces preserved",
+      "agent_profiles": "implemented fixed allowlist AGENTS.md persona injection and fingerprints",
+      "manual_demo": "independent validated actual model replay, local interactions, read-only inputs, no automated walkthrough"
+    },
+    "contracts": [
+      "RenewalResearchPlan",
+      "RenewalResearchNote with optional reasoned_proposals"
+    ],
+    "scope_guards": [
+      "Original quote/locator/scope/mode/funding validation retained",
+      "No runtime coding-agent shell/file/network inheritance",
+      "Notes and scenario assumptions are not original sources",
+      "Only selected internal manifest, with actual consent; no internal material in web search queries"
+    ],
+    "budget": "Strategy600s, host610s, nginx650s; planner2 + 3 experts*4 + synthesis4 =18 native requests; other MAP remains6",
+    "deployment_helper": ".cache/deploy-map-workflow.ps1",
+    "recovery_script": ".cache/recover-user-round-map-workflow.py",
+    "unrelated_working_changes": [
+      "AGENTS.md shared operating note",
+      "agent/state.json other project nodes",
+      "apps/host/admin-login-page.ts branding",
+      "packages/corpus/corpus.ts ledger branding",
+      "scripts/dev.ts branding",
+      "scripts/render-qiushi-decision-report.py branding"
+    ],
+    "release_rule": "Stage only owned changes; corpus signature hunk separately from unrelated branding. Build UI from scoped committed worktree and pass explicit UiRoot; do not ship unrelated dirty branding.",
+    "next_runnable_task": null,
+    "implementation_commit": "6ee45ebacfaf0f99b58e854ea9b0d106dde8c37d",
+    "documentation_commit": "22c9497",
+    "build_log": "research/test_results/map-workflow-release-build-20261015.log",
+    "deployment_receipt": ".cache/map-workflow-deployment.json",
+    "verification": {
+      "focused_integration": "7 files, 93 passed",
+      "production_build": "isolated worktree exit0",
+      "real_maps": "overview preview and global map both rendered actual Qiushi AMap tiles",
+      "empty_navigation": "only overview/evidence/assessment before saved success",
+      "mode_order": "mode panel first",
+      "recovery": "ROUND-121c8813-f61c-4236-837e-e5ae2378089a cancelled after25.752s before planner, result=null; transport diagnosis, no automatic retry",
+      "screenshots": "output/playwright/map-dynamic-research/"
+    },
+    "native_browser_attempt": {
+      "round_id": "ROUND-f1583cc8-21f6-4d13-a7fb-d610f536eb1a",
+      "elapsed_seconds": 116,
+      "terminal": "saved failed StrategyPacket",
+      "actual_tasks": 3,
+      "completed_experts": 2,
+      "reasoned_fallback_experts": 1,
+      "source_count": 31,
+      "context_before_chars": 39559,
+      "context_after_chars": 33677,
+      "failure_cause": "native synthesis turn/end RUN_MODEL_BUDGET_EXCEEDED; all12 shared requests used by planner/read/answer/format repair",
+      "native_failure_archive": ".cache/user-round-map-workflow-failure-20261015/",
+      "project_input_preserved": true
+    },
+    "budget_fix_commit": "c52871fd78173c8d81bb3a9835935c7aca25f316",
+    "budget_fix_validation": {
+      "focused": "3files63/63",
+      "typecheck": "exit0",
+      "isolated_build": "exit0",
+      "build_log": "research/test_results/map-workflow-budget-release-build-20261015.log"
+    },
+    "active_browser_round": "new independent tab9 normal request started after65e6431 deploy",
+    "active_browser_tab": "9 (independent, fixed target project)",
+    "native_progress": {
+      "source_count": 31,
+      "planned_experts": 3,
+      "completed_experts": 3,
+      "failed_experts": 0,
+      "context_before_chars": 41153,
+      "context_after_chars": 37604,
+      "phase": "synthesis"
+    },
+    "cancelled_rounds_preserved": [
+      "ROUND-121c8813-f61c-4236-837e-e5ae2378089a",
+      "ROUND-6c4a4331-98e6-415f-a625-320196eb55b5"
+    ],
+    "application_commit": "65e6431bc272164f3e01d268ae6ed0a032286274",
+    "parentless_round_fix": {
+      "cause": "Attempt number was interpreted as a historical baseline despite parent=null; native final review generated nonexistent changes.",
+      "change": "Owned no-parent result projection changes=[] and explicit prompt; real parent comparisons unchanged.",
+      "frozen_final_replay": "Full canonical+business validator passed after only clearing no-parent changes; original failed/raw unchanged.",
+      "tests": "2files24/24 plus isolated production build exit0",
+      "replay_log": "research/test_results/renewal-parentless-round-frozen-replay-20261015.log"
+    },
+    "latest_priority": "Human-operated stable Qiushi demonstration; no automatic clicking/playback/advancement",
+    "stable_demo_commit": "d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf",
+    "stable_demo": {
+      "project_id": "DEMO-QIUSHI-20261015",
+      "source_project_id": "P-e83ed15d-1739-46df-b1cb-dc3111afa399",
+      "source_round_id": "ROUND-7914918d-7112-49a1-a84b-017475d50bc4",
+      "artifact": "data/demos/qiushi-validated-replay.json",
+      "artifact_sha256": "32c245dad319f5f9e33652351c88521caaf54ace06ed76148c0b5b3c48100d33",
+      "origin": "Actual final native model output, independently validated replay; original failed round remains failed",
+      "transformation": "Clear nonexistent parent comparison only; project association mapped to independent demo",
+      "sources": 31,
+      "reasoning_dimensions": 6,
+      "work_packages": 5,
+      "host_checks": "3/3 actual PGlite readback/immutability/guard tests",
+      "ui_checks": "32/32 six pages/four scheme workspaces/evidence/six-dim/preview, no model or persistent write",
+      "build": "isolated d5a2fba npm run build exit0",
+      "runtime": "GET saved snapshot, fixed read-only inputs; evidence/chunks/operations preview remain allowed",
+      "deployed": true,
+      "deployment_commit": "d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf",
+      "url": "http://10.70.223.113/?project=DEMO-QIUSHI-20261015&view=overview",
+      "campus_readback": "research/test_results/qiushi-stable-demo-campus-readback-20261015.json",
+      "browser_proof": "output/playwright/map-dynamic-research/qiushi-manual-demo-overview.png",
+      "browser_scope": "Opened overview only after user specified manual demonstration; complete cached recommendation and map rendered, six navigation pages visible, 0 alerts. No automated walkthrough performed.",
+      "existing_projects_preserved": 28,
+      "only_new_project": "DEMO-QIUSHI-20261015",
+      "original_source_count": 300,
+      "original_failed_rounds_preserved": 6
+    },
+    "live_generation_pending": "Native DSH tool forcing/parallel research/context window compression/role files/request reservation are implemented and exercised. Real final full generation had quotation/shape failures. Proposed quote_ref binding/required shape improvement has not been implemented; it is not claimed as delivered or live-verified.",
+    "remaining_outside_current_manual_demo": "If live re-generation improvements are requested, resume from actual frozen failure ROUND-e9c0df6d-a6df-454c-84e4-7256cc289195; do not use more paid retries before deterministic model-facing citation binding is implemented.",
+    "preserved_live_compatibility": "Stable d5 includes the already-live typed scenario basis hotfix OPS-434S; textual keyword gate remains removed."
   }
 }

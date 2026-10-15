@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  20:54:31
+   Duration  500ms (transform 71ms, setup 0ms, import 335ms, tests 40ms, environment 0ms)
+

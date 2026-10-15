@@ -3,11 +3,13 @@ import fixture from '../../fixtures/inputs/01_auto.json'
 import type { ProjectInput, RenewalStrategy } from '../../apps/host/generated/contracts'
 import { config } from '../../apps/host/config'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
-import { validateStrategy, strategyPromptSources, STRATEGY_PROMPT_SOURCE_CHARS, type StrategySource, type StrategyPacket, type StrategyProgress } from '../../packages/retrofit/strategy'
-import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
+import { validateStrategy, strategyPromptSources, strategyModelReferences, STRATEGY_PROMPT_SOURCE_CHARS, type StrategySource, type StrategyPacket, type StrategyProgress } from '../../packages/retrofit/strategy'
+import { withConcreteWorkPlan, withReasoningDimensions } from './fixtures/strategy-work-plan'
+import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 
-const ports=vi.hoisted(()=>({open:vi.fn()}))
+const ports=vi.hoisted(()=>({open:vi.fn(),workflow:vi.fn()}))
 vi.mock('../../runtime/dsh/live-session',()=>({LiveSession:{open:ports.open}}))
+vi.mock('../../runtime/workflows/renewal-research',()=>({runRenewalResearch:ports.workflow}))
 import { researchRenewalStrategy } from '../../services/map-screening/renewal-strategy'
 const source:StrategySource={id:'OBJECT',title:'本对象供水范围',text:'本小区29、30、31、48幢供水设施已开展方案核查，涉及252户。',url:null,published_at:'2023-08-18',role:'current',locator:'原文第1段'}
 function strategy():RenewalStrategy {
@@ -32,6 +34,29 @@ it('requires concrete tables only for new research while keeping legacy records 
   expect(candidate.decision_brief?.investment.stage).toBe('preliminary')
   expect(candidate.paths[0].work_packages?.[0].intervention).toBe('更换老化给水立管')
   expect(JSON.stringify(candidate)).toBe(frozen)
+})
+it('requires six separate reasoning dimensions only for the workflow and allows explicit inference without retrieved evidence',()=>{
+  const legacy=strategy()
+  expect(check(legacy)).toBe(legacy)
+  expect(()=>validateStrategy(legacy,[source],[],true,false,true,true)).toThrow('STRATEGY_REASONING_DIMENSIONS_REQUIRED')
+  const value=withReasoningDimensions(strategy()),before=JSON.stringify(value)
+  expect(validateStrategy(value,[source],[],true,false,true,true)).toBe(value)
+  expect(value.dimensions.every(row=>row.current_level==='unknown')).toBe(true)
+  expect(JSON.stringify(value)).toBe(before)
+  value.reasoning_dimensions![1].key=value.reasoning_dimensions![0].key
+  expect(()=>check(value)).toThrow('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
+})
+it('requires declared scenario assumptions and scoped reasoning references while preserving construction and mode gates',()=>{
+  const value=withReasoningDimensions(strategy()),row=value.reasoning_dimensions![0]
+  row.basis='scenario_assumption'
+  expect(()=>check(value)).toThrow('STRATEGY_REASONING_ASSUMPTIONS_REQUIRED')
+  row.assumptions=['假设居民参与分项服务。'];row.evidence_refs=['OTHER-PROJECT']
+  expect(()=>check(value)).toThrow('STRATEGY_SOURCE_MISMATCH')
+  row.evidence_refs=[source.id];expect(check(value)).toBe(value)
+  value.decision_brief!.investment.stage='construction'
+  expect(()=>check(value)).toThrow('STRATEGY_CONSTRUCTION_GATE_UNMET')
+  value.decision_brief!.investment.stage='preliminary';value.preferred_mode='rebuild'
+  expect(()=>check(value)).toThrow('STRATEGY_REBUILD_GATE_UNMET')
 })
 it('rejects survey-only pseudo works even when they mention a construction keyword',()=>{
   for(const intervention of ['登记管网问题','开展加装电梯可行性调查','编制更换管网方案','对给水管网开展调查并登记问题']) {
@@ -58,8 +83,11 @@ it('keeps source quantities, unknowns and explicit scenarios distinct and never 
   expect(check(value)).toBe(value)
   row.unit='台';expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
   Object.assign(row,{quantity:12,unit:'米',quantity_basis:'scenario'})
-  expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_SCENARIO_REQUIRED')
-  row.preconditions.push('情景假设：先以12米试验段比较施工和维护条件。')
+  // The structured basis already labels the scenario; prose needs no password words.
+  expect(check(value)).toBe(value)
+  row.quantity=null;expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  row.quantity=12;row.unit='';expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  row.unit='米';row.target_basis='scenario';row.scope='本小区对象与户数未定，须由社区名册核定后确定改造规模。'
   expect(check(value)).toBe(value)
   const archive:StrategySource={...source,id:'ARCHIVE',title:'浙江另一案例道路排水改造',text:'该案例道路、排水与绿化改造，道路总面积32545平方米。',locator:'案例ZJ-001/改造内容',role:'reference'}
   Object.assign(row,{source_id:archive.id,quote:archive.text,locator:archive.locator,quantity:32545,unit:'㎡',quantity_basis:'source',evidence_refs:[archive.id]})
@@ -150,15 +178,124 @@ it('projects unrequested round history away and repairs the actual failed JSON u
   expect(result.strategy?.round_review).toBeUndefined()
   expect(call.mock.calls[0][1]).toContain('未输入历史首轮或上一轮分析，不输出round_review')
   const repair=call.mock.calls[1][1] as string,previous=JSON.parse(repair.match(/<previous_strategy_output>(.*?)<\/previous_strategy_output>/s)![1])
+  const modelSources=JSON.parse((call.mock.calls[0][1] as string).match(/<untrusted_sources>(.*?)<\/untrusted_sources>/s)![1]) as StrategySource[]
+  const alias=modelSources.find(row=>row.text===source.text)!.id
   expect(repair).toContain('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
   expect(previous.paths[0].work_packages[0].quote).toBe(mistaken.paths[0].work_packages![0].quote)
   expect(previous.round_review).toBeUndefined()
   const workChecks=JSON.parse(repair.match(/<work_package_validation>(.*?)<\/work_package_validation>/s)![1])
-  expect(workChecks.find((work:{id:string})=>work.id===mistaken.paths[0].work_packages![0].id)).toMatchObject({source_id:source.id,quote:mistaken.paths[0].work_packages![0].quote,error_code:'STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH'})
+  expect(workChecks.find((work:{id:string})=>work.id===mistaken.paths[0].work_packages![0].id)).toMatchObject({source_id:alias,quote:mistaken.paths[0].work_packages![0].quote,error_code:'STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH'})
   expect(repair).toContain('幸福度自评');expect(repair).toContain('业主同意率另作程序意愿指标')
   expect(repair).toContain('去重就餐人数（人）和用餐人次（人次）');expect(repair).toContain('运行台数与有效运行日')
   expect(repair).toContain('当前完成状态保持待核')
   const choices=JSON.parse(repair.match(/<repair_quote_candidates>(.*?)<\/repair_quote_candidates>/s)![1])
-  expect(choices.some((row:{source_id:string;quotes:string[]})=>row.source_id===source.id&&row.quotes.includes(source.text))).toBe(true)
+  expect(choices.some((row:{source_id:string;quotes:string[]})=>row.source_id===alias&&row.quotes.includes(source.text))).toBe(true)
   expect(JSON.stringify(mistaken)).toBe(original);expect(fetch).not.toHaveBeenCalled()
+})
+it('projects invented comparisons out of a parentless later attempt while retaining the existing work-plan repair',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const reference:StrategySource={...source,id:'COMMUNITY',role:'reference',title:'演示社区范围运营背景'}
+  const repaired=withReasoningDimensions(strategy())
+  repaired.round_review={summary:'本次形成对象分项方案与运营待核口径。',changes:[{topic:'社区运营',before:'无历史记录。',after:'按本轮社区资料形成候选措施。',reason:'社区资料用于运营机制参考。',evidence_refs:[reference.id]}],missing_materials:[{topic:'维保',request:'补充本对象维保协议。',reason:'核实责任与实际费用。',evidence_refs:[]}]}
+  const initial=structuredClone(repaired);for(const path of initial.paths)delete path.work_packages
+  const frozen=JSON.stringify({initial,repaired})
+  expect(()=>validateStrategy(repaired,[source,reference],[],true,true,true,true)).toThrow('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  const call=vi.fn().mockResolvedValueOnce({value:initial}).mockResolvedValueOnce({value:repaired})
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const roundContext:ResearchRoundContext={round_id:'ROUND-ATTEMPT-5',round_number:5,parent:null,allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-ATTEMPT-5',first_input_hash:'current',first_context_version:0}
+  const result=await researchRenewalStrategy(project,0,input,'current',false,new AbortController().signal,null,{roundContext,referenceSources:[reference]})
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[0][1]).toContain('第5次研究尝试');expect(call.mock.calls[0][1]).toContain('未选择历史AI分析作为对照')
+  const repairPrompt=call.mock.calls[1][1] as string
+  expect(repairPrompt).toContain('STRATEGY_WORK_PACKAGES_REQUIRED')
+  expect(repairPrompt).not.toContain('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  expect(result.strategy?.round_review).toEqual({...repaired.round_review,changes:[]})
+  expect(result.strategy?.paths).toEqual(repaired.paths)
+  expect(result.strategy?.reasoning_dimensions).toHaveLength(6)
+  expect(validateStrategy(result.strategy!,result.sources,[],true,true,true,true)).toBe(result.strategy)
+  expect(JSON.stringify({initial,repaired})).toBe(frozen);expect(fetch).not.toHaveBeenCalled()
+})
+it('keeps real-parent comparisons subject to their original object evidence gate',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const reference:StrategySource={...source,id:'COMMUNITY',role:'reference',title:'演示社区范围运营背景'}
+  const value=strategy();value.round_review={summary:'对照已有历史分析。',changes:[{topic:'社区运营',before:'已有分项候选。',after:'按社区资料调整运营。',reason:'社区背景不等于本对象新增依据。',evidence_refs:[reference.id]}],missing_materials:[]}
+  const call=vi.fn().mockResolvedValue({value});ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const parent:StrategyPacket={project_id:project.project_id,context_version:0,input_hash:'prior',created_at:'2026-10-15T00:00:00Z',synthetic:false,status:'completed',strategy:strategy(),sources:[source],decision:null,model_calls:[],research:null,error:null}
+  const roundContext:ResearchRoundContext={round_id:'ROUND-WITH-PARENT',round_number:6,parent:{id:'ROUND-PRIOR',input_hash:'prior',context_version:0,result:parent},allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-PRIOR',first_input_hash:'prior',first_context_version:0}
+  const result=await researchRenewalStrategy(project,0,input,'current',false,new AbortController().signal,null,{roundContext,referenceSources:[reference]})
+  expect(result.status).toBe('failed');expect(result.diagnostic?.code).toBe('STRATEGY_EVIDENCE_INVALID')
+  expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[1][1]).toContain('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  expect(value.round_review.changes).toHaveLength(1);expect(fetch).not.toHaveBeenCalled()
+})
+it('round-trips scoped reference fields without changing quotes, locators or work identities and rejects unknown IDs',()=>{
+  const value=strategy(),refs=strategyModelReferences([source]),before=JSON.stringify(value)
+  const short=refs.encodeKnown(value)
+  expect(short.rationale[0].source_id).toBe(refs.ids[0])
+  expect(short.paths[0].work_packages![0].source_id).toBe(refs.ids[0])
+  expect(short.internal_data_requests![0].evidence_refs).toEqual([refs.ids[0]])
+  expect(short.paths[0].work_packages![0].id).toBe(value.paths[0].work_packages![0].id)
+  expect(short.internal_data_requests![0].related_package_ids).toEqual(value.internal_data_requests![0].related_package_ids)
+  expect(short.rationale[0].quote).toBe(source.text);expect(short.paths[0].work_packages![0].locator).toBe(source.locator)
+  expect(refs.restore(short)).toEqual(value);expect(JSON.stringify(value)).toBe(before)
+  short.decision_brief!.renewal.evidence_refs=['s999']
+  expect(()=>refs.restore(short)).toThrow('STRATEGY_SOURCE_MISMATCH')
+  short.decision_brief!.renewal.evidence_refs=['OTHER-PROJECT:SOURCE']
+  expect(()=>refs.restore(short)).toThrow('STRATEGY_SOURCE_MISMATCH')
+  const collision=strategyModelReferences([{...source,id:'s1'}])
+  expect(collision.ids).not.toContain('s1');expect(collision.restore({source_id:collision.ids[0]})).toEqual({source_id:'s1'})
+})
+it('uses short source enums for the model and restores actual IDs before all existing business checks',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const call=vi.fn().mockImplementation(async(_stage:string,prompt:string,_type:string,_tools:unknown,_ids:unknown,presentation:{evidenceIds:string[]})=>{
+    const modelSources=JSON.parse(prompt.match(/<untrusted_sources>(.*?)<\/untrusted_sources>/s)![1]) as StrategySource[]
+    expect(presentation.evidenceIds).toEqual(modelSources.map(row=>row.id));expect(presentation.evidenceIds).not.toContain(source.id)
+    const value=strategyModelReferences([source]).encodeKnown(strategy())
+    expect(value.rationale[0].source_id).toBe(modelSources.find(row=>row.text===source.text)!.id)
+    return {value}
+  })
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const result=await researchRenewalStrategy(project,0,input,'short-id-fixture',false,new AbortController().signal,null)
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledOnce()
+  expect(result.strategy?.rationale[0].source_id).toBe(source.id)
+  expect(result.strategy?.paths[0].work_packages?.[0].source_id).toBe(source.id)
+  expect(result.sources.some(row=>row.id==='s1')).toBe(false)
+  expect(result.strategy?.decision_brief?.investment.stage).toBe('preliminary')
+  expect(fetch).not.toHaveBeenCalled()
+})
+it('uses the production workflow opt-in and replaces synthesis raw bodies with validated windows and scoped notes',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  const raw='LONG_BODY_SENTINEL'.repeat(1800)+'。'+source.text
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:raw,url:null,published_at:source.published_at!,locator:source.locator}]
+  ports.workflow.mockImplementation(async(_live,allSources:StrategySource[],options:{onProgress:(event:unknown)=>void})=>{
+    expect(allSources.find(row=>row.id===source.id)?.text).toBe(raw)
+    options.onProgress({stage:'planning',status:'completed',message:'已确定本轮分工',workflow:{phase:'planning',tasks:[]}})
+    const catalog=allSources.map(({id,text,...fields})=>({...fields,source_id:id,characters:text.length}))
+    const contextValue={source_catalog:catalog,evidence_windows:[{...catalog.find(row=>row.source_id===source.id),source_id:source.id,start_char:raw.length-source.text.length,end_char:raw.length,text:source.text}],untrusted_research_plan:null,untrusted_expert_notes:[],failed_tasks:[]}
+    const context=JSON.stringify(contextValue)
+    return {notes:[],contextValue,context,trace:{planner_status:'completed',plan:null,tasks:[],input_characters:JSON.stringify(allSources).length,source_characters:allSources.reduce((n,row)=>n+row.text.length,0),retained_source_characters:source.text.length,output_characters:context.length,compression:'reduced',method:'evidence_windows_and_untrusted_notes'}}
+  })
+  const call=vi.fn().mockResolvedValueOnce({value:strategy()}).mockResolvedValueOnce({value:withReasoningDimensions(strategy())})
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const events:StrategyProgress[]=[]
+  const result=await researchRenewalStrategy(project,0,input,'workflow-fixture',false,new AbortController().signal,null,{researchWorkflow:true,onProgress:event=>events.push(event)})
+  expect(result.status).toBe('completed');expect(ports.workflow).toHaveBeenCalledOnce()
+  const prompt=call.mock.calls[0][1] as string,catalog=JSON.parse(prompt.match(/<untrusted_sources>(.*?)<\/untrusted_sources>/s)![1])
+  expect(catalog.every((row:object)=>!('text' in row))).toBe(true)
+  expect(prompt).not.toContain('LONG_BODY_SENTINEL');expect(prompt).toContain(source.text)
+  expect(prompt).toContain('reasoning_dimensions完整六项');expect(result.strategy?.reasoning_dimensions).toHaveLength(6)
+  expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
+  expect(call.mock.calls[1][1]).toContain('STRATEGY_REASONING_DIMENSIONS_REQUIRED')
+  expect(result.sources.find(row=>row.id===source.id)?.text).toBe(raw)
+  expect(result.workflow?.synthesis_context_chars).toBeLessThan(result.workflow!.input_characters)
+  expect(result.workflow?.synthesis_quote_candidate_chars).toBeGreaterThan(0)
+  expect(result.workflow?.synthesis_profile?.role).toBe('synthesis')
+  expect(call.mock.calls[0][6]).toMatchObject({role:'synthesis'})
+  expect(events.some(event=>event.workflow?.phase==='planning')).toBe(true)
+  expect(events.some(event=>event.workflow?.phase==='synthesis'&&event.status==='running')).toBe(true)
+  expect(fetch).not.toHaveBeenCalled()
 })

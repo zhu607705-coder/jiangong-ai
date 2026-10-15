@@ -39,6 +39,26 @@ describe('safe strategy failure diagnostics', () => {
     expect(result.diagnostic.code).toBe('STRATEGY_FAILED')
     expect(JSON.stringify(result)).not.toMatch(/sk-private|SK_PRIVATE|provider\.invalid/)
   })
+  it('distinguishes output exhaustion, missing structured delivery and a typed schema failure',()=>{
+    const exhausted=strategyFailure(new Error('LIVE_STAGE_FAILED:renewal_strategy:max-tokens:no structured result'),[])
+    expect(exhausted.diagnostic).toMatchObject({code:'MODEL_OUTPUT_TRUNCATED',stop_reason:'max-tokens'})
+    expect(exhausted.error).toContain('长度上限')
+    const absent=strategyFailure(new Error('LIVE_STAGE_FAILED:renewal_strategy:stop:NO_STRUCTURED_OUTPUT'),[])
+    expect(absent.diagnostic.code).toBe('MODEL_STRUCTURED_OUTPUT_MISSING');expect(absent.error).toContain('未提交')
+    const typed=strategyFailure(new Error('LIVE_SCHEMA_FAILED:renewal_strategy_contract_retry'),[])
+    expect(typed.diagnostic.code).toBe('MODEL_SCHEMA_INVALID');expect(typed.error).toContain('字段')
+    expect(strategyFailureMessage({diagnostic:exhausted.diagnostic})).toContain('长度上限')
+    expect(strategyFailureMessage({diagnostic:{code:'MODEL_OUTPUT_INVALID',stop_reason:'max-tokens'}})).toContain('长度上限')
+  })
+  it('explains native request-budget exhaustion separately from model formatting or provider failures',()=>{
+    for(const code of ['RUN_MODEL_BUDGET_EXCEEDED','RUN_MODEL_STAGE_BUDGET_EXCEEDED']) {
+      const result=strategyFailure(new Error(`LIVE_STAGE_FAILED:renewal_strategy:error:${code}`),[{...call,error_code:'MALFORMED_RESPONSE'}])
+      expect(result.diagnostic).toEqual({code:'MODEL_REQUEST_BUDGET_EXHAUSTED',stage:'renewal_strategy',stop_reason:'error'})
+      expect(result.error).toContain('研究预算上限');expect(result.error).toContain('专家分析保留')
+      expect(strategyFailureMessage({diagnostic:result.diagnostic})).toBe(result.error)
+      expect(strategyFailure(new Error(code),[]).diagnostic.code).toBe('MODEL_REQUEST_BUDGET_EXHAUSTED')
+    }
+  })
   it('retains acquired sources, research records and usage when the model transport fails', async () => {
     const project = { ...structuredClone(fixture), business_profile: 'neighborhood' } as ProjectInput
     const input = projectDecisionInput(project)

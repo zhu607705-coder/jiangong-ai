@@ -1,7 +1,7 @@
-import type { ModelCall, RenewalStrategy, DecisionSupport, ResearchTrace } from '../../apps/host/generated/contracts'
+import type { ModelCall, RenewalStrategy, DecisionSupport, ResearchTrace, RenewalResearchPlan, RenewalResearchNote } from '../../apps/host/generated/contracts'
 import { evaluateRenewalModeGate, type ModeCondition } from './renewal-mode'
 
-export const STRATEGY_POLICY = 'renewal-strategy-overview-v6'
+export const STRATEGY_POLICY = 'renewal-strategy-overview-v7'
 export type StrategySource = { id: string; title: string; text: string; url: string | null; published_at: string | null; role: 'current' | 'reference'; locator: string;
   visibility?: 'public' | 'internal'; data_class?: 'public' | 'internal' | 'synthetic' | 'semi_synthetic'; document_id?: string; document_version?: string; project_id?: string;
   material_category?: import('./research-rounds').ResearchMaterialCategory; source_date?: string | null }
@@ -10,13 +10,30 @@ export type PublicStrategyIndexItem = { project_id: string; project_name: string
 export type PublicStrategyIndexResponse = { items: PublicStrategyIndexItem[] }
 export type StrategyReview = { kind: 'source_and_metric_review'; reviewed_at: string; original_packet_sha256: string;
   changes: { path: string; before: unknown; after: unknown; reason: string }[] }
+export type StrategyDemoReplay = { kind: 'validated_model_replay'; source_project_id: string; source_round_id: string;
+  source_packet_sha256: string; source_structured_sha256: string; model_generated_at: string; validated_at: string;
+  transformation: 'clear_nonexistent_parent_comparison'; validation_policy: string }
 export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';
-  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview }
+  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
 
-export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
+export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compression'|'synthesis';
+  tasks?:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];status:'pending'|'running'|'completed'|'failed';source_count:number;summary?:string}[];
+  context_before_chars?:number;context_after_chars?:number }
+export type StrategyWorkflowTrace = {
+  planner_status:'completed'|'failed'|'not_applicable';planner_error?:string;plan:RenewalResearchPlan|null;
+  planner_profile?:{role:string;sha256:string};
+  tasks:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];source_ids:string[];status:'completed'|'failed';error_code?:string;profile?:{role:string;sha256:string};
+    retrieval?:{calls:number;query_matches:number;read_windows:{source_id:string;start_char:number;end_char:number;characters:number;query?:string|null;matched:boolean}[]};
+    reasoning?:'direct_evidence'|'mixed'|'reasoned_fallback'|'not_produced'}[];
+  input_characters:number;source_characters:number;retained_source_characters:number;output_characters:number;
+  compression:'reduced'|'retained';method:'evidence_windows_and_untrusted_notes';notes?:RenewalResearchNote[];
+  synthesis_quote_candidate_chars?:number;synthesis_context_chars?:number;synthesis_profile?:{role:string;sha256:string}
+}
+
+export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_OUTPUT_TRUNCATED' | 'MODEL_STRUCTURED_OUTPUT_MISSING' | 'MODEL_SCHEMA_INVALID' | 'MODEL_REQUEST_BUDGET_EXHAUSTED' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
   stage?: string; stop_reason?: string; provider_code?: string }
 export type StrategyProgress = { type: 'progress'; stage: 'sources' | 'research' | 'model' | 'validation' | 'result';
-  status: 'running' | 'completed' | 'skipped' | 'failed'; message: string; source_count?: number; query_count?: number; round?: number; round_count?: number }
+  status: 'running' | 'completed' | 'skipped' | 'failed'; message: string; source_count?: number; query_count?: number; round?: number; round_count?: number;workflow?:StrategyWorkflowProgress }
 export type StrategyStreamEvent = StrategyProgress | { type: 'complete'; result: StrategyPacket } | { type: 'error'; message: string }
 
 const providerCodes = new Set(['TRANSPORT', 'SERVER', 'TIMEOUT', 'AUTH', 'INVALID_CREDENTIAL', 'RATE_LIMIT', 'MALFORMED_RESPONSE', 'EMPTY_RESPONSE', 'BAD_REQUEST', 'NO_ADAPTER', 'MODEL_ERROR'])
@@ -24,6 +41,10 @@ const diagnosticMessages: Record<StrategyDiagnostic['code'], string> = {
   MODEL_NOT_CONFIGURED: '尚未配置模型服务，暂不能生成整体更新方案。',
   MODEL_PROVIDER_FAILED: '模型服务未完成本轮请求，整体更新方案生成失败。',
   MODEL_OUTPUT_INVALID: '模型返回内容未通过方案格式校验，本轮未发布方案。',
+  MODEL_OUTPUT_TRUNCATED: '模型输出达到本轮长度上限，尚未交付完整的结构化方案。已取得资料保留。',
+  MODEL_STRUCTURED_OUTPUT_MISSING: '模型未提交约定的结构化方案，本轮未发布方案。已取得资料保留。',
+  MODEL_SCHEMA_INVALID: '模型已提交结构化结果，但字段未通过方案契约校验，本轮未发布方案。',
+  MODEL_REQUEST_BUDGET_EXHAUSTED: '本轮模型调用已达到研究预算上限，尚未形成完整方案。已取得资料和专家分析保留。',
   MODEL_RATE_LIMITED: '模型服务限制了请求频率，本轮方案生成未完成。',
   MODEL_AUTH_FAILED: '模型服务未通过身份验证，本轮方案生成未完成。',
   MODEL_TIMEOUT: '本轮方案研究超时，尚未生成完整方案。',
@@ -39,16 +60,21 @@ const providerMessages: Record<string, string> = {
 /** Only fixed codes cross the runtime boundary; provider messages and URLs never enter the product error. */
 export function strategyFailure(error: unknown, calls: readonly ModelCall[], options: { stage?: StrategyProgress['stage']; timedOut?: boolean } = {}): { error: string; diagnostic: StrategyDiagnostic } {
   const message = error instanceof Error ? error.message : ''
-  const parsed = /^LIVE_STAGE_FAILED:(renewal_strategy(?:_(?:quote_repair|format_retry|contract_retry))*):(completed|error|aborted|max-tokens|failed)(?::([A-Z_]+))?/.exec(message)
+  const parsed = /^LIVE_STAGE_FAILED:(renewal_strategy(?:_(?:quote_repair|format_retry|contract_retry))*):(completed|stop|error|aborted|max-tokens|failed)(?::([A-Z_]+))?/.exec(message)
   const call = parsed ? calls.filter(call => call.stage === parsed[1]).at(-1) : undefined
-  const rawCode = call?.error_code || parsed?.[3]
+  const explicitBudget=parsed?.[3]&&/^RUN_MODEL_(?:STAGE_)?BUDGET_EXCEEDED$/.test(parsed[3])?parsed[3]:undefined
+  const rawCode = explicitBudget || call?.error_code || parsed?.[3]
   const provider = rawCode && providerCodes.has(rawCode) ? rawCode : undefined
   let code: StrategyDiagnostic['code'] = 'STRATEGY_FAILED'
   if (message === 'MODEL_NOT_CONFIGURED') code = 'MODEL_NOT_CONFIGURED'
   else if (options.timedOut || provider === 'TIMEOUT') code = 'MODEL_TIMEOUT'
   else if (provider === 'AUTH' || provider === 'INVALID_CREDENTIAL') code = 'MODEL_AUTH_FAILED'
   else if (provider === 'RATE_LIMIT') code = 'MODEL_RATE_LIMITED'
-  else if (provider === 'MALFORMED_RESPONSE' || provider === 'EMPTY_RESPONSE' || parsed?.[2] === 'max-tokens' || error instanceof Error && error.name === 'ContractError' || /^STRATEGY_(INCOMPLETE|DECISION_BRIEF_REQUIRED|BRIEF_INCOMPLETE|PATH_DIRECTION_MIXED|ROUND_REVIEW_REQUIRED|ROUND_REVIEW_INCOMPLETE|ROUND_COMPARISON_MISSING|WORK_PACKAGES_REQUIRED|WORK_PACKAGE_INCOMPLETE|WORK_PACKAGE_TASK_ONLY|INTERNAL_DATA_REQUESTS_REQUIRED|INTERNAL_DATA_REQUEST_INCOMPLETE)$/.test(message)) code = 'MODEL_OUTPUT_INVALID'
+  else if (/^RUN_MODEL_(?:STAGE_)?BUDGET_EXCEEDED$/.test(rawCode||message)) code = 'MODEL_REQUEST_BUDGET_EXHAUSTED'
+  else if (parsed?.[2] === 'max-tokens') code = 'MODEL_OUTPUT_TRUNCATED'
+  else if (rawCode === 'NO_STRUCTURED_OUTPUT') code = 'MODEL_STRUCTURED_OUTPUT_MISSING'
+  else if (/^LIVE_SCHEMA_FAILED:/.test(message) || error instanceof Error && error.name === 'ContractError') code = 'MODEL_SCHEMA_INVALID'
+  else if (provider === 'MALFORMED_RESPONSE' || provider === 'EMPTY_RESPONSE' || /^STRATEGY_(INCOMPLETE|DECISION_BRIEF_REQUIRED|BRIEF_INCOMPLETE|PATH_DIRECTION_MIXED|ROUND_REVIEW_REQUIRED|ROUND_REVIEW_INCOMPLETE|ROUND_COMPARISON_MISSING|WORK_PACKAGES_REQUIRED|WORK_PACKAGE_INCOMPLETE|WORK_PACKAGE_TASK_ONLY|INTERNAL_DATA_REQUESTS_REQUIRED|INTERNAL_DATA_REQUEST_INCOMPLETE|REASONING_DIMENSIONS_REQUIRED|REASONING_DIMENSIONS_INCOMPLETE|REASONING_ASSUMPTIONS_REQUIRED)$/.test(message)) code = 'MODEL_OUTPUT_INVALID'
   else if (/^STRATEGY_(QUOTE_MISMATCH|SOURCE_MISMATCH|OBJECT_EVIDENCE_MISSING|MODE_RESTRICTED|REBUILD_GATE_UNMET|BRIEF_EVIDENCE_MISSING|CONSTRUCTION_GATE_UNMET|ROUND_CHANGE_EVIDENCE_MISSING|WORK_PACKAGE_QUOTE_MISMATCH|WORK_PACKAGE_LOCATOR_MISMATCH|WORK_PACKAGE_TARGET_SCOPE|WORK_PACKAGE_QUANTITY_MISMATCH|WORK_PACKAGE_SCENARIO_REQUIRED|INTERNAL_DATA_PACKAGE_MISMATCH|SYNTHETIC_IDENTITY_MISMATCH|RELOCATION_ASSUMPTION_REQUIRED)$/.test(message)) code = 'STRATEGY_EVIDENCE_INVALID'
   else if (provider) code = 'MODEL_PROVIDER_FAILED'
   else if (options.stage === 'research') code = 'RESEARCH_FAILED'
@@ -59,6 +85,8 @@ export function strategyFailure(error: unknown, calls: readonly ModelCall[], opt
 
 /** Old cached failures have no diagnostic field; recover only known categories from their call records. */
 export function strategyFailureMessage(packet: { diagnostic?: StrategyDiagnostic; error?: string | null; model_calls?: readonly ModelCall[]; status?: string }): string {
+  const lastCall=packet.model_calls?.filter(call=>call.stage.startsWith('renewal_strategy')).at(-1)
+  if(packet.diagnostic?.stop_reason==='max-tokens'||lastCall?.finish_reason==='max-tokens')return diagnosticMessages.MODEL_OUTPUT_TRUNCATED
   if (packet.diagnostic && Object.hasOwn(diagnosticMessages, packet.diagnostic.code)) {
     const provider = packet.diagnostic.provider_code
     return packet.diagnostic.code === 'MODEL_PROVIDER_FAILED' && provider && Object.hasOwn(providerMessages, provider) ? providerMessages[provider] : diagnosticMessages[packet.diagnostic.code]
@@ -96,6 +124,41 @@ export function strategyPromptSources(sources: readonly StrategySource[], workRe
 }
 
 const literal = (value: string) => value.normalize('NFKC').replace(/\s+/g, '')
+
+/** Reuses the owned-clone scoped-ID pattern in packages/experience/service.ts. */
+export function strategyModelReferences(sources:readonly StrategySource[]) {
+  const originalIds=new Set(sources.map(source=>source.id))
+  let prefix='s'
+  while(sources.some((_,index)=>originalIds.has(`${prefix}${index+1}`)))prefix='_'+prefix
+  const originalByAlias=new Map(sources.map((source,index)=>[`${prefix}${index+1}`,source.id]))
+  const aliasByOriginal=new Map([...originalByAlias].map(([alias,id])=>[id,alias]))
+  function transform<T>(value:T,restore:boolean,strict:boolean):T {
+    const clone=structuredClone(value)
+    const ref=(id:unknown):unknown=>{
+      if(typeof id!=='string') {if(strict)throw new Error('STRATEGY_SOURCE_MISMATCH');return id}
+      const mapped=restore?originalByAlias.get(id)||(originalIds.has(id)?id:undefined):aliasByOriginal.get(id)||(originalByAlias.has(id)?id:undefined)
+      if(mapped===undefined&&strict)throw new Error('STRATEGY_SOURCE_MISMATCH')
+      return mapped??id
+    }
+    const visit=(node:unknown)=>{
+      if(!node||typeof node!=='object')return
+      if(Array.isArray(node)) {node.forEach(visit);return}
+      for(const [key,item] of Object.entries(node)) {
+        if(key==='source_id')(node as Record<string,unknown>)[key]=ref(item)
+        else if((key==='evidence_refs'||key==='source_ids')&&Array.isArray(item))(node as Record<string,unknown>)[key]=item.map(ref)
+        else visit(item)
+      }
+    }
+    visit(clone);return clone
+  }
+  return {
+    ids:[...originalByAlias.keys()],
+    sources:sources.map(source=>({...source,id:aliasByOriginal.get(source.id)!})),
+    encodeKnown:<T>(value:T)=>transform(value,false,false),
+    restore:<T>(value:T)=>transform(value,true,true),
+    restoreKnown:<T>(value:T)=>transform(value,true,false),
+  }
+}
 /** Current workbench investment-stage admission, separate from statutory or professional approval. */
 export function strategyConstructionAllowed(mode: RenewalStrategy['preferred_mode'], conditions: ModeCondition[], sources: readonly StrategySource[]): boolean {
   const gate = evaluateRenewalModeGate({conditions}), currentIds = new Set(sources.filter(source=>source.role==='current').map(source=>source.id))
@@ -104,9 +167,19 @@ export function strategyConstructionAllowed(mode: RenewalStrategy['preferred_mod
   if (mode==='rebuild') return gate.rebuild_allowed&&gate.checks.every(row=>citedAtObject(row.kind,row.kind!=='structure_repairable'))
   return mode==='comprehensive'&&gate.checks.find(row=>row.kind==='structure_repairable')?.state==='unmet'&&citedAtObject('structure_repairable',true)
 }
-export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false, requireRoundReview = false, requireWorkPlan = false) {
+export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false, requireRoundReview = false, requireWorkPlan = false, requireReasoningDimensions = false) {
   if (value.paths.length !== 2 || new Set(value.paths.map(path => path.mode)).size !== 2 || value.dimensions.length !== 6 || new Set(value.dimensions.map(row => row.key)).size !== 6) throw new Error('STRATEGY_INCOMPLETE')
   const ids = new Set(sources.map(source => source.id))
+  const reasoned=value.reasoning_dimensions,dimensionKeys=['demand','supply','adaptation','implementation','operations','resources']
+  if(requireReasoningDimensions&&!reasoned)throw new Error('STRATEGY_REASONING_DIMENSIONS_REQUIRED')
+  if(reasoned) {
+    if(reasoned.length!==6||new Set(reasoned.map(row=>row.key)).size!==6||reasoned.some(row=>!dimensionKeys.includes(row.key)))throw new Error('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
+    for(const row of reasoned) {
+      if(!['low','medium','high'].includes(row.level)||!['logical_inference','scenario_assumption'].includes(row.basis)||!Array.isArray(row.premises)||!row.premises.length||row.premises.some(text=>!text.trim())||!Array.isArray(row.assumptions)||row.assumptions.some(text=>!text.trim())||!row.reason?.trim()||!row.verification?.trim())throw new Error('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
+      if(row.basis==='scenario_assumption'&&!row.assumptions.length)throw new Error('STRATEGY_REASONING_ASSUMPTIONS_REQUIRED')
+      if(!Array.isArray(row.evidence_refs)||row.evidence_refs.some(id=>!ids.has(id)))throw new Error('STRATEGY_SOURCE_MISMATCH')
+    }
+  }
   for (const row of value.rationale) {
     const source = sources.find(source => source.id === row.source_id)
     if (!source || row.quote.trim().length < 8 || !literal(source.text).includes(literal(row.quote))) throw new Error('STRATEGY_QUOTE_MISMATCH')
@@ -162,9 +235,8 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
         /^(?:对|针对)[^，。；,]{1,40}(?:开展|进行|组织)(?:调查|调研|鉴定|登记|核实|核查|勘察|测绘|协商|论证|评估)/,
       ]
       if(taskPatterns.some(pattern=>pattern.test(action)))throw new Error('STRATEGY_WORK_PACKAGE_TASK_ONLY')
-      const scenarioText=[work.scope,...work.preconditions].join('；')
       if(!['source','scenario','unknown'].includes(work.quantity_basis)||work.quantity_basis==='unknown'&&work.quantity!==null||work.quantity_basis!=='unknown'&&(work.quantity===null||!Number.isFinite(work.quantity)||work.quantity<0||!work.unit?.trim()))throw new Error('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
-      if((work.quantity_basis==='scenario'||work.target_basis==='scenario')&&!/情景|假设|模拟/.test(scenarioText))throw new Error('STRATEGY_WORK_PACKAGE_SCENARIO_REQUIRED')
+      // Typed basis fields identify scenarios; their wording is not an admission condition.
       if(work.quantity_basis==='source') {
         const quantity=String(work.quantity).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
         const unit=work.unit!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/平方米|平米|㎡|m²|m2/gi,'(?:平方米|平米|㎡|m²|m2)')

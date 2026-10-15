@@ -1,0 +1,819 @@
+{
+  "generated_at": "2026-10-15T14:33:41.091Z",
+  "scope": "Offline replay of frozen production round 5. No provider, network, project write, raw edit or validator change.",
+  "round_id": "ROUND-7914918d-7112-49a1-a84b-017475d50bc4",
+  "project_id": "P-e83ed15d-1739-46df-b1cb-dc3111afa399",
+  "parent_round_id": null,
+  "material_count": 0,
+  "methods": {
+    "runtime_command": "node --import tsx --input-type=module (PowerShell single-quoted here-string; no script file created)",
+    "modules": [
+      "packages/contracts/validate.ts:validate",
+      "packages/retrofit/strategy.ts:strategyModelReferences",
+      "packages/retrofit/strategy.ts:validateStrategy"
+    ],
+    "steps": [
+      "Read native session.v4.jsonl and parse the stated structured_output tool/call arguments; verify equality with the independent structured JSON files.",
+      "Build aliases from the same ordered packet.sources (workflow path uses the full source list). Restore only declared source-reference fields using strategyModelReferences.restore.",
+      "Extract <screening> JSON from each actual frozen prompt and restore known source IDs. Use its nine original unknown conditions.",
+      "Run canonical validate(RenewalStrategy,value), then validateStrategy(value,sources,conditions,true,true,true,true).",
+      "For the specified parentless diagnostic only, structuredClone the restored value and assign round_review.changes=[]; repeat exactly the same canonical and full business validation. Do not save this projected value into any result.",
+      "For final per-work inspection, keep the projected global content and one original work item, omit internal_data_requests only to avoid deliberate dangling links, and call the existing validator with requireWorkPlan=false; all quote/locator/quantity and other work gates remain active.",
+      "Hash every evidence and validator input before and after replay."
+    ],
+    "validateStrategy_arguments": {
+      "requireBrief": true,
+      "requireRoundReview": true,
+      "requireWorkPlan": true,
+      "requireReasoningDimensions": true
+    },
+    "projection_is_not_production_completion": true
+  },
+  "source_count": 31,
+  "source_role_counts": {
+    "current": 10,
+    "reference": 21
+  },
+  "files": [
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/packet.json",
+      "sha256": "344e5ad8dc6345c273f0dcab79f534aca00ade2eb7c376c487c94bfdbbe6b8fe",
+      "after_sha256": "344e5ad8dc6345c273f0dcab79f534aca00ade2eb7c376c487c94bfdbbe6b8fe",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/round.json",
+      "sha256": "1993723b10a7220723ac82742bf8b584430650b8990255fb1bc36511f5084c07",
+      "after_sha256": "1993723b10a7220723ac82742bf8b584430650b8990255fb1bc36511f5084c07",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/native-run/599ecafb-5416-4270-aa6e-679eaea2c204/session.v4.jsonl",
+      "sha256": "c18b1284937171bca3e27e51d7a743a9c80947b5bb720874346c3db81d430bdb",
+      "after_sha256": "c18b1284937171bca3e27e51d7a743a9c80947b5bb720874346c3db81d430bdb",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/initial-structured-1.json",
+      "sha256": "570a40600cc929ca10a3dccea61760e5bf24730a83db611d5cbc0a42215af528",
+      "after_sha256": "570a40600cc929ca10a3dccea61760e5bf24730a83db611d5cbc0a42215af528",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/native-run/05d33076-50ab-4385-916d-ca3b63d34b4c/session.v4.jsonl",
+      "sha256": "3cd6073b6d71d15bfec33e0a70bcf00d2443f152b824e885d39487e8809c9431",
+      "after_sha256": "3cd6073b6d71d15bfec33e0a70bcf00d2443f152b824e885d39487e8809c9431",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/repair-structured-1.json",
+      "sha256": "9765f7f43dbcc1b82c173874b4f805c5de2628693a14ba7a4873797b28fc2b74",
+      "after_sha256": "9765f7f43dbcc1b82c173874b4f805c5de2628693a14ba7a4873797b28fc2b74",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/repair-structured-2.json",
+      "sha256": "8a876afcb1af0c77f752dc4913141de65df69582d3bbbb06fbfefa413861e5d5",
+      "after_sha256": "8a876afcb1af0c77f752dc4913141de65df69582d3bbbb06fbfefa413861e5d5",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\packages\\retrofit\\strategy.ts",
+      "sha256": "e305d3fd68631e4e813d4e50de0d6bb6f3052cd0b070fe6155c7ef7e3b3dd664",
+      "after_sha256": "e305d3fd68631e4e813d4e50de0d6bb6f3052cd0b070fe6155c7ef7e3b3dd664",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\packages\\contracts\\schema.json",
+      "sha256": "17d74f80c1b5702827a9aa2d7568302ccb736c3f027e382cd63e74d50b8a9479",
+      "after_sha256": "17d74f80c1b5702827a9aa2d7568302ccb736c3f027e382cd63e74d50b8a9479",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\建工ai\\packages\\contracts\\validate.ts",
+      "sha256": "064513fa12f6ec673cfc199fcd3e47c926b29d3273b355fc0b0672f329f38956",
+      "after_sha256": "064513fa12f6ec673cfc199fcd3e47c926b29d3273b355fc0b0672f329f38956",
+      "unchanged": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "initial",
+      "raw_path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/native-run/599ecafb-5416-4270-aa6e-679eaea2c204/session.v4.jsonl",
+      "native_event_seq": 11,
+      "structured_path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/initial-structured-1.json",
+      "standalone_matches_native_arguments": true,
+      "original_structured_json_sha256": "49733daa2e105907d2bcd528a5b8e1dcdb1ce24325da99e5e087cda2a7c20f14",
+      "conditions": [
+        {
+          "kind": "structure_repairable",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "demolition_permitted",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "rights_clear",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "rebuild_planning_confirmed",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "resident_resolution_valid",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "relocation_ready",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "funding_secured",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "life_cycle_cost_compared",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "maintenance_entity_confirmed",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        }
+      ],
+      "original": {
+        "canonical": true,
+        "business_validator": false,
+        "error": "STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING"
+      },
+      "owned_clone_projection": {
+        "only_change": "round_review.changes=[]",
+        "result": {
+          "canonical": true,
+          "business_validator": false,
+          "error": "STRATEGY_WORK_PACKAGES_REQUIRED"
+        }
+      },
+      "counts": {
+        "rationale": 5,
+        "work_packages": [
+          {
+            "mode": "comprehensive",
+            "count": 0
+          },
+          {
+            "mode": "rebuild",
+            "count": 0
+          }
+        ],
+        "internal_data_request_keys": [
+          "resident_wellbeing",
+          "elevator_usage",
+          "meal_attendance"
+        ],
+        "reasoning_dimensions": 6
+      },
+      "round_changes": [
+        {
+          "topic": "更新方向与路径取舍",
+          "refs": [
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s9",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "投入阶段判断",
+          "refs": [
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s10",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "工程量与资金口径",
+          "refs": [
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "维保与服务运营",
+          "refs": [
+            {
+              "alias": "s11",
+              "known": true,
+              "role": "reference"
+            },
+            {
+              "alias": "s13",
+              "known": true,
+              "role": "reference"
+            },
+            {
+              "alias": "s12",
+              "known": true,
+              "role": "reference"
+            }
+          ]
+        }
+      ],
+      "source_restoration_did_not_mutate_original": true,
+      "additional_inspection": {
+        "work_requirement_disabled": {
+          "canonical": true,
+          "business_validator": false,
+          "error": "STRATEGY_INTERNAL_DATA_PACKAGE_MISMATCH"
+        },
+        "initial_request_links": [
+          {
+            "key": "resident_wellbeing",
+            "related_package_ids": [
+              "C1",
+              "R1"
+            ]
+          },
+          {
+            "key": "elevator_usage",
+            "related_package_ids": [
+              "C1"
+            ]
+          },
+          {
+            "key": "meal_attendance",
+            "related_package_ids": [
+              "C3"
+            ]
+          }
+        ],
+        "explanation": "Both paths omit work_packages. Internal requests refer to C1/R1/C3, so those links are dangling until concrete packages are supplied; disabling only the work-table presence requirement does not make the initial output valid."
+      }
+    },
+    {
+      "name": "repair_first_native_attempt",
+      "raw_path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/native-run/05d33076-50ab-4385-916d-ca3b63d34b4c/session.v4.jsonl",
+      "native_event_seq": 11,
+      "structured_path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/repair-structured-1.json",
+      "standalone_matches_native_arguments": true,
+      "original_structured_json_sha256": "a61250abdce9e66bc461c2c9bb604cc18acf1fb9b7a024e7733c4f2c24a4d0eb",
+      "conditions": [
+        {
+          "kind": "structure_repairable",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "demolition_permitted",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "rights_clear",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "rebuild_planning_confirmed",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "resident_resolution_valid",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "relocation_ready",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "funding_secured",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "life_cycle_cost_compared",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "maintenance_entity_confirmed",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        }
+      ],
+      "original": {
+        "canonical": false,
+        "business_validator": null,
+        "error": "data must NOT have additional properties; data/round_review must have required property 'missing_materials'"
+      },
+      "owned_clone_projection": {
+        "only_change": "round_review.changes=[]",
+        "result": {
+          "canonical": false,
+          "business_validator": null,
+          "error": "data must NOT have additional properties; data/round_review must have required property 'missing_materials'"
+        }
+      },
+      "counts": {
+        "rationale": 4,
+        "work_packages": [
+          {
+            "mode": "comprehensive",
+            "count": 3
+          },
+          {
+            "mode": "rebuild",
+            "count": 2
+          }
+        ],
+        "internal_data_request_keys": [
+          "resident_wellbeing",
+          "elevator_usage",
+          "meal_attendance"
+        ],
+        "reasoning_dimensions": 6
+      },
+      "round_changes": [
+        {
+          "topic": "更新方向与路径取舍",
+          "refs": [
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s9",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "投入阶段判断",
+          "refs": [
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s10",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "工程量与金额口径",
+          "refs": [
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s9",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "维保与服务运营",
+          "refs": [
+            {
+              "alias": "s11",
+              "known": true,
+              "role": "reference"
+            },
+            {
+              "alias": "s13",
+              "known": true,
+              "role": "reference"
+            },
+            {
+              "alias": "s12",
+              "known": true,
+              "role": "reference"
+            }
+          ]
+        }
+      ],
+      "source_restoration_did_not_mutate_original": true
+    },
+    {
+      "name": "repair_final_native_attempt",
+      "raw_path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/native-run/05d33076-50ab-4385-916d-ca3b63d34b4c/session.v4.jsonl",
+      "native_event_seq": 16,
+      "structured_path": "D:\\建工ai\\.cache\\browser-round-map-workflow-isolated-20261015/repair-structured-2.json",
+      "standalone_matches_native_arguments": true,
+      "original_structured_json_sha256": "a8955f90bff61b91efc7ab016cffffa2fc2c2286da743fd938f7a39ab84242a7",
+      "conditions": [
+        {
+          "kind": "structure_repairable",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "demolition_permitted",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "rights_clear",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "rebuild_planning_confirmed",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "resident_resolution_valid",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "relocation_ready",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "funding_secured",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "life_cycle_cost_compared",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        },
+        {
+          "kind": "maintenance_entity_confirmed",
+          "value": null,
+          "state": "unknown",
+          "source_ids": [],
+          "locators": []
+        }
+      ],
+      "original": {
+        "canonical": true,
+        "business_validator": false,
+        "error": "STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING"
+      },
+      "owned_clone_projection": {
+        "only_change": "round_review.changes=[]",
+        "result": {
+          "canonical": true,
+          "business_validator": true,
+          "error": null
+        }
+      },
+      "counts": {
+        "rationale": 4,
+        "work_packages": [
+          {
+            "mode": "comprehensive",
+            "count": 3
+          },
+          {
+            "mode": "rebuild",
+            "count": 2
+          }
+        ],
+        "internal_data_request_keys": [
+          "resident_wellbeing",
+          "elevator_usage",
+          "meal_attendance"
+        ],
+        "reasoning_dimensions": 6
+      },
+      "round_changes": [
+        {
+          "topic": "更新方向与路径取舍",
+          "refs": [
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s9",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "投入阶段判断",
+          "refs": [
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s10",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "工程量与金额口径",
+          "refs": [
+            {
+              "alias": "s4",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s1",
+              "known": true,
+              "role": "current"
+            },
+            {
+              "alias": "s9",
+              "known": true,
+              "role": "current"
+            }
+          ]
+        },
+        {
+          "topic": "维保与服务运营",
+          "refs": [
+            {
+              "alias": "s11",
+              "known": true,
+              "role": "reference"
+            },
+            {
+              "alias": "s13",
+              "known": true,
+              "role": "reference"
+            },
+            {
+              "alias": "s12",
+              "known": true,
+              "role": "reference"
+            }
+          ]
+        }
+      ],
+      "source_restoration_did_not_mutate_original": true,
+      "rationale_checks": [
+        {
+          "index": 0,
+          "source_alias": "s4",
+          "source_known": true,
+          "source_role": "current",
+          "quote_sha256": "6568daae1c0bb3a661819a036dbf7c67dff190ad416c3aa23ad680bb78648d9a",
+          "raw_contiguous": true,
+          "existing_normalized_gate": true
+        },
+        {
+          "index": 1,
+          "source_alias": "s9",
+          "source_known": true,
+          "source_role": "current",
+          "quote_sha256": "54da0d6e209db0dafae199054efa59ae98470b7e08509cd38ecdc780800ebbed",
+          "raw_contiguous": true,
+          "existing_normalized_gate": true
+        },
+        {
+          "index": 2,
+          "source_alias": "s1",
+          "source_known": true,
+          "source_role": "current",
+          "quote_sha256": "55656d082712e60eb1f5520c173c1582726edbf29deab80107a39e1b336426c7",
+          "raw_contiguous": true,
+          "existing_normalized_gate": true
+        },
+        {
+          "index": 3,
+          "source_alias": "s11",
+          "source_known": true,
+          "source_role": "reference",
+          "quote_sha256": "8fbf573da63f252d6f2c1780b2306b9e21dabaadcd8fc84abae780a0c3ea6c8e",
+          "raw_contiguous": true,
+          "existing_normalized_gate": true
+        }
+      ],
+      "work_checks": [
+        {
+          "mode": "comprehensive",
+          "id": "C1",
+          "source_alias": "s4",
+          "source_known": true,
+          "source_role": "current",
+          "quote_sha256": "6568daae1c0bb3a661819a036dbf7c67dff190ad416c3aa23ad680bb78648d9a",
+          "quote_contiguous": true,
+          "locator_exact": true,
+          "quantity": 252,
+          "unit": "户",
+          "quantity_basis": "source",
+          "existing_validator_with_only_this_work_and_unchanged_other_fields": {
+            "passed": true,
+            "error": null
+          }
+        },
+        {
+          "mode": "comprehensive",
+          "id": "C2",
+          "source_alias": "s9",
+          "source_known": true,
+          "source_role": "current",
+          "quote_sha256": "54da0d6e209db0dafae199054efa59ae98470b7e08509cd38ecdc780800ebbed",
+          "quote_contiguous": true,
+          "locator_exact": true,
+          "quantity": 1,
+          "unit": "部",
+          "quantity_basis": "scenario",
+          "existing_validator_with_only_this_work_and_unchanged_other_fields": {
+            "passed": true,
+            "error": null
+          }
+        },
+        {
+          "mode": "comprehensive",
+          "id": "C3",
+          "source_alias": "s2",
+          "source_known": true,
+          "source_role": "current",
+          "quote_sha256": "d6a1d0360fc99b4da001022f16e0aaf20b37c682fb893f56625cb47409e3b46b",
+          "quote_contiguous": true,
+          "locator_exact": true,
+          "quantity": null,
+          "unit": null,
+          "quantity_basis": "unknown",
+          "existing_validator_with_only_this_work_and_unchanged_other_fields": {
+            "passed": true,
+            "error": null
+          }
+        },
+        {
+          "mode": "rebuild",
+          "id": "R1",
+          "source_alias": "s23",
+          "source_known": true,
+          "source_role": "reference",
+          "quote_sha256": "b42df621d4ddc5f5b59ee91c4e726abd914e869124423a83b34f6df63e4e01dc",
+          "quote_contiguous": true,
+          "locator_exact": true,
+          "quantity": null,
+          "unit": null,
+          "quantity_basis": "unknown",
+          "existing_validator_with_only_this_work_and_unchanged_other_fields": {
+            "passed": true,
+            "error": null
+          }
+        },
+        {
+          "mode": "rebuild",
+          "id": "R2",
+          "source_alias": "s23",
+          "source_known": true,
+          "source_role": "reference",
+          "quote_sha256": "1f3b97482342a0ba51a43777487aa129769ee4304d70952f2cb165255df47a54",
+          "quote_contiguous": true,
+          "locator_exact": true,
+          "quantity": null,
+          "unit": null,
+          "quantity_basis": "unknown",
+          "existing_validator_with_only_this_work_and_unchanged_other_fields": {
+            "passed": true,
+            "error": null
+          }
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "initial": "Original fails STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING. Removing only parentless changes exposes missing work_packages; existing internal-data links are also dangling because the packages are absent.",
+    "repair_first_native_attempt": "Native schema rejected additional properties and missing round_review.missing_materials.",
+    "repair_final": "Original canonical passes but business validation fails STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING. Only changes=[] on an owned clone yields canonical plus the full original validator passing; all 4 rationale and 5 work quote/location checks pass. This is an offline diagnostic, not a rewritten production result."
+  }
+}

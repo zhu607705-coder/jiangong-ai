@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { randomUUID } from './uuid';
-import { useWorkbenchAccess } from './AdminAccess';
+import { useWorkbenchAccess, WorkbenchAccessContext } from './AdminAccess';
+import { isQiushiDemoProject, QIUSHI_SOURCE_PROJECT_ID } from '../../../packages/retrofit/qiushi-demo';
 import {
   IconArrowRight,
   IconArrowUpRight,
@@ -27,6 +28,7 @@ import ProjectEvidenceDrawer, { type ProjectEvidenceReference } from './componen
 import ProjectTasksPage from './components/ProjectTasksPage';
 import ProjectResultsPage from './components/ProjectResultsPage';
 import './workspace-navigation.css';
+import './qiushi-demo-replay.css';
 import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext, KnowledgeQuery, Source } from '../../host/generated/contracts';
@@ -184,7 +186,7 @@ function RegionView({ project }: { project: Project }) {
   );
 }
 
-function ResearchVersionHistory({ project, selectedDirection, onEvidence, onSupplement }: { project: Project; selectedDirection: 'comprehensive' | 'rebuild' | null; onEvidence: (refs: string[], sourcePacket?: StrategyPacket) => void; onSupplement: () => void }) {
+function ResearchVersionHistory({ project, selectedDirection, onEvidence, onSupplement, replayPacket }: { project: Project; selectedDirection: 'comprehensive' | 'rebuild' | null; onEvidence: (refs: string[], sourcePacket?: StrategyPacket) => void; onSupplement: () => void; replayPacket?:StrategyPacket|null }) {
   const { canWrite } = useWorkbenchAccess();
   const key = `${project.id}:${project.context_version}`;
   const [retry, setRetry] = useState(0);
@@ -199,6 +201,7 @@ function ResearchVersionHistory({ project, selectedDirection, onEvidence, onSupp
     }).catch(() => { if (!abort.signal.aborted) setHistory({ key, status: 'failed', data: null }); });
     return () => abort.abort();
   }, [key, canWrite, retry]);
+  if (isQiushiDemoProject(project.id)) return <section className="qiushi-replay-version"><h3>当前保存快照与关键缺项</h3><p>{replayPacket?.strategy?.headline || '正在读取已校验的保存方案'}</p><p>固定演示资料基线 v{project.context_version} · {replayPacket?.sources.length ?? project.input.sources.length} 份固定来源</p>{replayPacket?.strategy && <><h4>下一步需要补齐</h4><ul>{replayPacket.strategy.next_checks.map((check,index)=><li key={index}><strong>{check.title}</strong><p>{check.detail}</p>{!!check.evidence_refs.length&&<button className="text-button" onClick={()=>onEvidence(check.evidence_refs,replayPacket)}>查看本项依据 →</button>}</li>)}</ul></>}<p>在成果管理中查看和导出这份方案，进入实时研究可继续形成新一版研判。</p><a href={publicDecisionHref(QIUSHI_SOURCE_PROJECT_ID)}>进入实时研究 →</a></section>;
   if (!canWrite) return <p className="research-round-notice">当前公开成果浏览不展示项目内部研判轮次。</p>;
   if (history.key !== key || history.status === 'loading') return <p role="status">正在读取已保存的研判轮次与变化…</p>;
   if (history.status === 'failed' || !history.data) return <p role="alert">研判轮次暂不可读。<button className="secondary" onClick={() => setRetry(value => value + 1)}>重新读取</button></p>;
@@ -206,7 +209,7 @@ function ResearchVersionHistory({ project, selectedDirection, onEvidence, onSupp
 }
 
 export default function App() {
-  const { canWrite } = useWorkbenchAccess();
+  const access = useWorkbenchAccess();
   const [publicDecisions, setPublicDecisions] = useState<{ status: 'loading' | 'ready' | 'unavailable'; items: PublicStrategyIndexResponse['items'] }>({ status: 'loading', items: [] });
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [globalView, setGlobalView] = useState<WorkspaceGlobalView>('map');
@@ -221,6 +224,8 @@ export default function App() {
   const [mapEvidence, setMapEvidence] = useState<MapScreenContext | null>(null);
   const [projects, setProjects] = useState<Project[]>([]),
     [project, setProject] = useState<Project | null>(null);
+  const replay = isQiushiDemoProject(project?.id);
+  const canWrite = access.canWrite && !replay;
   const [tab, setTab] = useState("overview"),
     [packet, setPacket] = useState<DecisionPacket | null>(null);
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
@@ -243,7 +248,7 @@ export default function App() {
   const [completeDemoProject, setCompleteDemoProject] = useState<string | null>(() => {
     try { return localStorage.getItem('hzz-complete-demo-project'); } catch { return null; }
   });
-  const demoSessionActive = !!project && project.id === completeDemoProject;
+  const demoSessionActive = !!project && !replay && project.id === completeDemoProject;
   const completeDemoActive = demoSessionActive && !['evidence','context'].includes(tab);
   const location = resolveProjectLocation(tab, routeSection);
   const knowledgeSection = ['cases','rules','costs'].includes(routeSection || '') ? routeSection as 'cases'|'rules'|'costs' : 'cases';
@@ -274,10 +279,14 @@ export default function App() {
   const researchRecords = roundIndex.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? roundIndex.data : null;
   const latestSavedRound = researchRecords?.rounds.filter(round => round.status === 'completed' && round.result?.strategy).sort((a,b) => b.round_number-a.round_number)[0] || null;
   const overviewStrategy = currentStrategyPacket || latestSavedRound?.result || researchRecords?.baseline_candidate || null;
+  const hasSavedNeighborhoodResult = completeDemoActive || [overviewStrategy, ...(researchRecords?.rounds.map(round => round.result) || [])].some(result =>
+    result?.status === 'completed' && !!result.strategy && result.project_id === project?.id && result.synthetic === project?.input.synthetic);
+  const availableProjectPages = project?.input.business_profile === 'neighborhood' && !hasSavedNeighborhoodResult
+    ? ['overview', 'evidence', 'assessment'] as ProjectPage[] : PROJECT_PAGES.map(page => page.id);
   const navigationKey = `${project?.id || ''}:${globalView}:${tab}:${location.section}:${routePane}:${currentDirection || ''}:${completeDemoActive}`;
   function rememberPosition() { if (scrollContainer.current) scrollPositions.current.set(navigationKey, scrollContainer.current.scrollTop); }
   function navigateProject(page: ProjectPage | 'map' | 'knowledge', section?: string, pane?: string, scheme?: 'comprehensive'|'rebuild') {
-    if (page === 'map') { navigateGlobal('map'); return; }
+    if (page === 'map') { setMapFocus(value => value + 1); navigateGlobal('map'); return; }
     if (page === 'knowledge') { setRouteSection(section || 'cases'); navigateGlobal('knowledge', section); return; }
     if (page === 'results' && section === 'runs') { setRunDetailsOpen(true); return; }
     rememberPosition();
@@ -302,6 +311,12 @@ export default function App() {
     node.addEventListener('scroll',remember,{passive:true});
     return () => { cancelAnimationFrame(frame); node.removeEventListener('scroll',remember); };
   }, [navigationKey]);
+  useEffect(() => {
+    if (project?.input.business_profile !== 'neighborhood' || hasSavedNeighborhoodResult || retrievalStrategy.key !== `${project.id}:${project.context_version}` || retrievalStrategy.status === 'loading') return;
+    if (!['scenarios', 'actions', 'results', 'compare'].includes(tab)) return;
+    setTab('assessment'); setRouteSection('direction'); setRoutePane('content');
+    writeWorkbenchLink(project.id, 'assessment', { section: 'direction' });
+  }, [project?.id, project?.context_version, hasSavedNeighborhoodResult, retrievalStrategy.key, retrievalStrategy.status, tab]);
   const strategySources: Source[] = (evidencePacket && evidencePacket.projectId === project?.id ? evidencePacket.packet : currentStrategyPacket)?.sources.map(source => ({
     id: source.id, title: source.title, visibility: source.visibility || 'public', data_class: source.data_class || (project?.input.synthetic ? 'synthetic' : 'public'),
     synthetic: project?.input.synthetic || false, untrusted_text: source.text, ...(source.url ? { url: source.url } : {}),
@@ -446,6 +461,7 @@ export default function App() {
     setPacket(p.runs?.find((r) => r.decision)?.decision || null);
     setDiff(null);
     setFollowups([]);
+    if (isQiushiDemoProject(p.id)) { setProjectExtras({ loading: false, diffError: false, followupsError: false }); return p; }
     setProjectExtras({ loading: true, diffError: false, followupsError: false });
     void Promise.allSettled([
       api<Diff>(`/projects/${encodeURIComponent(id)}/revision-diff`),
@@ -608,7 +624,7 @@ export default function App() {
     setTab("overview");
   }
   async function createFixture(fixture = "01_auto") {
-    if (!canWrite) return;
+    if (!access.canWrite) return;
     const p = await api<Project>("/projects", {
       fixture,
       name:
@@ -746,7 +762,7 @@ export default function App() {
 
     </>
   );
-  const modeSelector = (<select
+  const modeSelector = replay ? <span className="qiushi-replay-mode">已保存方案回放</span> : (<select
           className="mode-select"
           aria-label="执行方式"
           value={completeDemoActive ? 'demo' : executionMode}
@@ -767,8 +783,9 @@ export default function App() {
       onGlobalView={view => navigateGlobal(view)}
       activeProjectPage={location.page}
       onProjectPage={page => navigateProject(page)}
+      availableProjectPages={availableProjectPages}
       scrollContainerRef={scrollContainer}
-      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={() => setCreateOpen(true)} canCreate={canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
+      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={() => setCreateOpen(true)} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
       project={project}
       projects={projects}
       stages={stages}
@@ -787,8 +804,8 @@ export default function App() {
           } finally { setLoadingTarget(null); }
         })
       }
-      onCreate={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
-      mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+      onCreate={() => { if (!access.canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
+      mapView={<MapWorkspace ready={!loading && globalView === 'map'} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
       onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setRouteSection(undefined); setDetailsOpen(true); setGlobalView('project'); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
@@ -807,8 +824,10 @@ export default function App() {
       error={error}
       onDismissError={() => setError('')}
       rail={rail}
-      modeControl={<span className="workspace-provenance">{project?.input.synthetic || completeDemoActive ? '模拟资料' : '项目资料'} · v{project?.context_version || 0}<button className="text-button" onClick={()=>setRunDetailsOpen(true)}>运行详情</button></span>}
+      modeControl={<span className="workspace-provenance">{replay ? '已保存方案回放' : project?.input.synthetic || completeDemoActive ? '模拟资料' : '项目资料'} · v{project?.context_version || 0}<button className="text-button" onClick={()=>setRunDetailsOpen(true)}>{replay?'回放记录':'运行详情'}</button></span>}
     >
+      <WorkbenchAccessContext.Provider value={replay ? { ...access, canWrite: false } : access}>
+      {replay && <aside className="qiushi-demo-replay" aria-label="求是村演示回放"><div><strong>求是村演示回放 · 已校验方案与固定资料</strong><p>查看已保存的实际模型方案、六维判断与原文依据；参数推演保存在本机情景中。</p></div><a href={publicDecisionHref(QIUSHI_SOURCE_PROJECT_ID)}>进入实时研究 →</a></aside>}
       {error && (
         <div className="feedback error" role="alert">
           <IconAlertTriangle size={18} />
@@ -878,7 +897,7 @@ export default function App() {
           {(project.input.synthetic || completeDemoActive) && <p className="workspace-data-badge">模拟资料 · {completeDemoActive ? '杭州样本社区演示情景' : project.input.scope.name}</p>}
           {['evidence','actions','results'].includes(location.page) && <nav className="workspace-section-nav" aria-label="页面工作区">{(location.page==='evidence'?[['files','资料与证据'],['profile','对象档案'],['context','项目经验与约束']]:location.page==='actions'?[['current','当前调查'],['history','历史记录']]:[['reports','成果管理'],['history','版本变化']]).map(([section,label])=><button key={section} aria-current={location.section===section?'page':undefined} onClick={()=>navigateProject(location.page,section)}>{label}</button>)}</nav>}
           {tab === 'overview' && <ProjectOverview project={project} currentStrategyPacket={overviewStrategy} latestSavedRound={latestSavedRound} currentDirection={currentDirection} stale={!!overviewStrategy && overviewStrategy.context_version!==project.context_version} failed={run?.status==='failed'||researchRecords?.rounds.at(-1)?.status==='failed'} loading={retrievalStrategy.status==='loading'} onNavigate={navigateProject} onEvidence={openEvidence}/>}
-          {project.input.business_profile === 'neighborhood' && <div hidden={tab !== 'assessment' && tab !== 'scenarios'}><StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => navigateProject('actions','current')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} workspacePage={strategySurface.current.workspacePage} section={strategySurface.current.section} pane={strategySurface.current.pane} schemeDirection={currentDirection} onNavigate={target=>navigateProject(target.view as ProjectPage|'knowledge',target.section,target.pane,target.scheme)} /></div>}
+          {project.input.business_profile === 'neighborhood' && <div hidden={tab !== 'assessment' && tab !== 'scenarios'}><StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => navigateProject('actions','current')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket(next ? { identity: directionIdentity, packet: next } : null)} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} workspacePage={strategySurface.current.workspacePage} section={strategySurface.current.section} pane={strategySurface.current.pane} schemeDirection={currentDirection} onNavigate={target=>navigateProject(target.view as ProjectPage|'knowledge',target.section,target.pane,target.scheme)} /></div>}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "assessment" && !(["neighborhood"].includes(project.input.business_profile || "")) && !completeDemoActive && (
             <section className="legacy-assessment-workspace"><h2>工程研判与路径计算</h2>
@@ -1173,9 +1192,10 @@ export default function App() {
               <p className="intro">
                 {project.input.purpose === 'case_library_archive' ? '按单项举措保存真实来源、方法、实施记录和适用边界，复核后供具体项目检索。' : '记录本项目的事实、组织条件、偏好和线索。更新后复用未变化证据，只重评受影响的部分。'}
               </p>
-              <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} currentProject={project.input} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()}
-                onKnowledgeRun={project.input.purpose === 'case_library_archive' ? undefined : query => { if (!busy && !running) void action(() => startRun(project, 'enterprise', query)); }} />
+              {!replay && <ExperienceLibrary key={project.id} projectId={project.id} revision={project.context_version} synthetic={project.input.synthetic} asOf={project.input.as_of} currentProject={project.input} onProjectUpdated={() => loadProject(project.id).then(()=>{})} onOpenMaterials={() => openEvidence()}
+                onKnowledgeRun={project.input.purpose === 'case_library_archive' ? undefined : query => { if (!busy && !running) void action(() => startRun(project, 'enterprise', query)); }} />}
               <div hidden={project.input.purpose === 'case_library_archive'}>
+              {!replay && <>
               <label className="field-label" htmlFor="experience">
                 本项目意见（不作为历史实施结果）
               </label>
@@ -1220,6 +1240,7 @@ export default function App() {
               <div className="note-line">
                 已配置模型时，合成经验使用模型进行结构化分类。真实内部原话默认本地处理，未经配置许可不外发；所有规则仅限本项目。
               </div>
+              </>}
               <h3 className="subheading">
                 已纳入的项目经验{" "}
                 <span className="count">
@@ -1254,7 +1275,7 @@ export default function App() {
                           仅本项目 · 来源 {rule.source_id.slice(0, 18)}
                         </small>
                       </div>
-                      <button
+                      {canWrite && <button
                         className="text-button"
                         disabled={busy || running}
                         onClick={() =>
@@ -1274,13 +1295,13 @@ export default function App() {
                         }
                       >
                         撤销
-                      </button>
+                      </button>}
                     </article>
                   ))}
               </div>
               {!project.input.context_rules.length && (
                 <p className="empty-text">
-                  还没有项目经验。你可以直接用自然语言补充。
+                  {replay ? '本演示的判断标准见改造研判中的判定条件，原始资料可随时查阅。' : '还没有项目经验。你可以直接用自然语言补充。'}
                 </p>
               )}
               </div>
@@ -1298,7 +1319,7 @@ export default function App() {
               <p className="intro">
                 维护本项目的原始资料、内部调查与来源记录。判断依据可在各工作页就地打开。
               </p>
-              <InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/>
+              {!replay && <InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/>}
               <section className="project-material-library"><h3>检索与原始资料 · {displayedSources.length} 份来源</h3>
               <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} revision={project.context_version} onEvidence={openEvidence} onLocateHit={locateEvidence} decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState} featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision} />
               <ImportedDataExplorer
@@ -1425,8 +1446,8 @@ export default function App() {
               <p className="intro">
                 {project.input.business_profile === 'neighborhood' ? '首版建议 → 补齐关键资料 → 新一版决策。查看选择、举措与效果预期怎样改善。' : '比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。'}
               </p>
-              {project.input.business_profile === 'neighborhood' && <ResearchVersionHistory project={project} selectedDirection={currentDirection} onEvidence={openEvidence} onSupplement={() => { setMaterialRequest(value => value + 1); setTab('overview'); writeWorkbenchLink(project.id, 'overview'); }}/>}
-              <details className="strategy-historical-investigations legacy-run-history" open={project.input.business_profile !== 'neighborhood'}><summary>早期运行版本记录</summary>
+              {project.input.business_profile === 'neighborhood' && <ResearchVersionHistory project={project} selectedDirection={currentDirection} replayPacket={overviewStrategy} onEvidence={openEvidence} onSupplement={() => { setMaterialRequest(value => value + 1); setTab('overview'); writeWorkbenchLink(project.id, 'overview'); }}/>}
+              {!replay && <details className="strategy-historical-investigations legacy-run-history" open={project.input.business_profile !== 'neighborhood'}><summary>早期运行版本记录</summary>
               {projectExtras.loading ? <p role="status">正在读取版本变化…</p> : projectExtras.diffError ? <p role="status">版本变化暂不可读。<button className="secondary" onClick={() => void action(async () => { await loadProject(project.id); })}>重试</button></p> : diff?.available ? (
                 <>
                   <div className="revision-summary">
@@ -1485,7 +1506,7 @@ export default function App() {
                   </div>
                 </div>
               )}
-              </details>
+              </details>}
             </section>
           )}
           {tab === 'actions' && project.input.business_profile === 'neighborhood' && <ProjectTasksPage project={project} packet={overviewStrategy} rounds={researchRecords?.rounds} direction={currentDirection} section={location.section==='history'?'history':'current'} onEvidence={openEvidence} onSupplement={()=>navigateProject('evidence','files')}/>}
@@ -1556,8 +1577,8 @@ export default function App() {
       />, document.body)}
       {project && <ProjectEvidenceDrawer open={evidenceDrawer?.projectId===project.id} project={project} packet={evidenceDrawer?.packet} refs={evidenceDrawer?.refs||[]} onClose={()=>setEvidenceDrawer(null)} onOpenMaterials={id=>{const saved=evidenceDrawer?.packet;setEvidenceDrawer(null);openMaterials(id?[id]:[],saved||undefined);}}/>}
       {(settingsOpen || runDetailsOpen) && createPortal(<div className="workspace-utility-backdrop" onClick={()=>{setSettingsOpen(false);setRunDetailsOpen(false);}}><aside className="workspace-utility-drawer" role="dialog" aria-modal="true" aria-label={settingsOpen?'设置':'运行详情'} onClick={event=>event.stopPropagation()}><header><h2>{settingsOpen?'设置':'运行详情'}</h2><button autoFocus aria-label="关闭详情" onClick={()=>{setSettingsOpen(false);setRunDetailsOpen(false);}}>×</button></header>{settingsOpen?<>
-        <section><h3>计算与运行</h3><label>执行方式{modeSelector}</label><p>模型服务：{modelAvailable?'已配置':'尚未配置'}</p><button className="secondary" onClick={()=>{setSettingsOpen(false);navigateGlobal('map');setMapSettings(value=>value+1);}}>地图连接设置</button></section>
-        {project?.input.business_profile==='neighborhood'&&<section><h3>演示情景</h3><p>演示输入单独标记，用于展示完整参数下的方案和运营测算。</p><button className="secondary" onClick={()=>{const next=demoSessionActive?null:project.id;setCompleteDemoProject(next);setDirectionSelection(null);setSettingsOpen(false);setTab('scenarios');setRouteSection('compare');setGlobalView('project');setDetailsOpen(true);try{if(next)localStorage.setItem('hzz-complete-demo-project',next);else localStorage.removeItem('hzz-complete-demo-project');}catch{}}}>{demoSessionActive?'返回项目资料':'打开完整模拟情景'}</button></section>}
+        <section><h3>计算与运行</h3><label>执行方式{modeSelector}</label>{!replay&&<p>模型服务：{modelAvailable?'已配置':'尚未配置'}</p>}<button className="secondary" onClick={()=>{setSettingsOpen(false);navigateGlobal('map');setMapSettings(value=>value+1);}}>地图连接设置</button></section>
+        {!replay&&project?.input.business_profile==='neighborhood'&&<section><h3>演示情景</h3><p>演示输入单独标记，用于展示完整参数下的方案和运营测算。</p><button className="secondary" onClick={()=>{const next=demoSessionActive?null:project.id;setCompleteDemoProject(next);setDirectionSelection(null);setSettingsOpen(false);setTab('scenarios');setRouteSection('compare');setGlobalView('project');setDetailsOpen(true);try{if(next)localStorage.setItem('hzz-complete-demo-project',next);else localStorage.removeItem('hzz-complete-demo-project');}catch{}}}>{demoSessionActive?'返回项目资料':'打开完整模拟情景'}</button></section>}
       </>:<><section><h3>{project?.name||'当前项目'}</h3><p>资料基线 v{project?.context_version||0}</p>{run?.status==='failed'&&<p role="alert">本轮运行未完成：{run.error_code||'请查看已保存阶段'}</p>}{overviewStrategy?.error&&<p role="alert">{overviewStrategy.error}</p>}<p>{running?'研究进行中':overviewStrategy?.status==='completed'?'已有完整保存成果':'当前尚无完整保存成果'}</p>{overviewStrategy?.model_calls.map((call,index)=><article key={index}><strong>{call.stage} · {call.returned_model||call.requested_model}</strong><p>耗时 {(call.duration_ms/1000).toFixed(1)} 秒 · 输入 {call.input_tokens} / 输出 {call.output_tokens} tokens</p></article>)}</section><section><h3>已保存运行与阶段</h3>{rail}</section></>}</aside></div>,document.body)}
       {createOpen && createPortal(
         <div className="modal-backdrop" onClick={() => setCreateOpen(false)}>
@@ -1695,6 +1716,7 @@ export default function App() {
           </section>
         </div>, document.body
       )}
+      </WorkbenchAccessContext.Provider>
     </WorkspaceFrame>
   );
 }

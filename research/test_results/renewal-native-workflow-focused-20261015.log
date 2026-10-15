@@ -1,0 +1,177 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result 1476ms
+ ✓ tests/contracts/research-rounds.test.ts > uses internal document text in AI while public web queries exclude it and unselected/other-project files 615ms
+ ✓ tests/contracts/research-rounds.test.ts > requires config plus per-round consent and disallows parent-internal laundering or cross-project documents 562ms
+ ✓ tests/contracts/research-rounds.test.ts > explicitly adopts a same-project older saved baseline without fabricating its input or prior intake 531ms
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"bf4079ed4847901a9534c4edb49c5e3d30a3bf3d87cc8bf63732bc0197b93156","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent 482ms
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"d04e51671869d19452b302989efba4710ec700cf51d6818b49305c72212a878d","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent 475ms
+stderr | tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis
+{"event":"renewal_strategy_quality_retry","project_id":"P-ROUND-DEMO","code":"STRATEGY_SYNTHETIC_IDENTITY_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis 533ms
+ ✓ tests/contracts/research-rounds.test.ts > keeps survey denominators and construction-organization uncertainty in the round prompt 482ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > lets the planner select zero experts and actually replaces long bodies with original windows 31ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > overlaps three DSH child calls with distinct stages and only task-scoped native source tools 23ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects cross-task citations and rewritten quotes while retaining the successful expert and raw evidence 6ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > enforces source-ID enum, a two-read budget, and removal of the real native tools after settlement 7ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > paginates a large source within the complete serialized output cap 5ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps distant quotes as separate original windows and includes expert-note overhead in compression counts 7ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest 6ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > drains every started child before cancellation removes shared tool registrations 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps a zero-hit local query as a successful conditional scenario without invented observations or facts 6ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects a real tail quote when only the head was returned 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > allows explicit logical inference after zero hits without forcing a numerical scenario or quote 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > does not mark a no-hit note complete when it supplies neither observations nor reasoned proposals 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > uses existing lexical query expansion and keeps Unicode query windows in exact UTF-16 coordinates 5ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps count units from substituting for an explicit facility topic: {"query":"电梯户数","text":"本小区共有252户居民。","matched":false} 5ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps count units from substituting for an explicit facility topic: {"query":"户数","text":"本小区共有252户居民。","matched":true} 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > keeps count units from substituting for an explicit facility topic: {"query":"电梯户数","text":"本小区共有252户，已登记电梯2台。","matched":true} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > does not count an unsuccessful UTF-16 page read as completed retrieval 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects foreign proposal evidence while allowing explicitly empty references 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects unread proposal evidence while allowing explicitly empty references 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":3,"value":2,"high":4} 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":1,"value":5,"high":4} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":4,"value":3,"high":2} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":1,"value":null,"high":4} 3ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > rejects invalid scenario parameter ranges: {"low":1,"value":null,"high":4} 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > accepts an exact scenario range but requires assumptions and an actual retrieval attempt 10ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"offset":-1} 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"offset":1.5} 4ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"limit":0} 6ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"limit":18001} 7ms
+ ✓ tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > validates host page bounds: {"query":"查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查查"} 4ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > sends forced structured_output in the real adapter HTTP body for a non-thinking RenewalStrategy request 20ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > forces a sole structured_output for RenewalResearchPlan without enabling thinking 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > forces a sole structured_output for RenewalResearchNote without enabling thinking 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > allows only the declared source-reader and structured tools for specialist notes 5ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another output 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no call scope 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another sole tool 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for additional tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for thinking enabled 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps simultaneous renewal and other-output request scopes separate through serialization 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > marks completed plain text as NO_STRUCTURED_OUTPUT without parsing it or retrying 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the existing max-tokens failure marker 3ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps one contract correction and exposes its final schema failure with the original cause 44ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > injects the allowlisted role Markdown through native persona and retains it through the existing contract correction 5ms
+stderr | tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires concrete tables only for new research while keeping legacy records and preliminary construction candidates 3ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires six separate reasoning dimensions only for the workflow and allows explicit inference without retrieved evidence 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires declared scenario assumptions and scoped reasoning references while preserving construction and mode gates 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > rejects survey-only pseudo works even when they mention a construction keyword 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > binds each work package to its actual source locator and a literal continuous quote 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > keeps source quantities, unknowns and explicit scenarios distinct and never transfers a reference project quantity 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires three separate internal-data definitions with usable collection denominators and actual package links 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope 45ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reserves a bounded prompt excerpt for concrete archive references without enlarging the existing source budget 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reuses saved public research and its trace without web calls, deduplicating sources and excluding internal material 3ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices 3ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > round-trips scoped reference fields without changing quotes, locators or work identities and rejects unknown IDs 2ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses short source enums for the model and restores actual IDs before all existing business checks 2ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses the production workflow opt-in and replaces synthesis raw bodies with validated windows and scoped notes 5ms
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"fixture-hash","diagnostic":{"code":"MODEL_OUTPUT_INVALID"},"source_count":4,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps old strategies compatible while requiring the brief for new research 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants 49ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts same-sentence relocation assumptions while preserving source quotes and historical before text 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for renewal 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for investment 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for returns 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > rejects empty decisions and invalid investment stages while retaining the quote check 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts conditional target levels without manufacturing current facts or bypassing the rebuild gate 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > returns the model-authored project decisions and repairs an omitted brief through the same DSH call seam 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires cited object funding and repairability before admitting construction investment 1ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs a historical preparation mistaken for construction while preserving the proposed route and measures 3ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps cross-route comparisons out of individual paths and future targets without censoring the global brief or current text 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > resolves known fact citations to their source without accepting invented references 27ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > keeps an authorized project ban binding even when the model calls it a fact candidate 3ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > detaches frozen DSH output before enforcing project constraints 5ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > presents supported DSH schemas while keeping canonical validation separate 3ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > makes brief limits visible to DSH and still rejects overlong output instead of truncating it 8ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > removes optional factor extraction when no project-level sources exist without weakening required fields 1ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > closes brief citations over supplied source IDs rather than casebook IDs or invented fields 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > limits comparison references to candidates that were actually generated 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > constrains deferred baseline actions at the model schema boundary 1ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > does not mistake uncertainty language for a safety guarantee 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > rejects invented references and never accepts model-authored metric values 2ms
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500}
+
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > explains an existing truncated TRANSPORT failure without exposing raw messages 2ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the RATE_LIMIT failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the AUTH failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the TIMEOUT failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the MALFORMED_RESPONSE failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > never forwards an arbitrary exception or unrecognized provider code 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > distinguishes output exhaustion, missing structured delivery and a typed schema failure 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails 5ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails 1ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion 2ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > keeps model source excerpts bounded and contiguous while leaving original material intact 2ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > loads the common and planner Markdown from only the host allowlist 3ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > loads the common and building_delivery Markdown from only the host allowlist 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > loads the common and cost_value Markdown from only the host allowlist 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > loads the common and residents_operations Markdown from only the host allowlist 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > loads the common and synthesis Markdown from only the host allowlist 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input undefined before any filesystem access 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input null before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input 0 before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input {} before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "planner" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "planner" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "__proto__" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "constructor" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "toString" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "../AGENTS.md" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "./planner/AGENTS.md" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "planner/../../AGENTS.md" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "planner%2f..%2fAGENTS.md" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "Planner" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "D:\\建工ai\\AGENTS.md" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "/etc/passwd" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > rejects role input "https://example.com/AGENTS.md" before any filesystem access 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > does not coerce untrusted role objects into a file selector 0ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > has stable fingerprints for the same content and distinct fingerprints per role 3ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > guides planner through bounded RAG, facts, inference and adjustable scenarios 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > guides building_delivery through bounded RAG, facts, inference and adjustable scenarios 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > guides cost_value through bounded RAG, facts, inference and adjustable scenarios 1ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > guides residents_operations through bounded RAG, facts, inference and adjustable scenarios 3ms
+ ✓ tests/contracts/renewal-agent-profiles.test.ts > guides synthesis through bounded RAG, facts, inference and adjustable scenarios 0ms
+
+ Test Files  8 passed (8)
+      Tests  132 passed (132)
+   Start at  21:34:45
+   Duration  11.17s (transform 1.57s, setup 0ms, import 4.26s, tests 5.65s, environment 0ms)
+

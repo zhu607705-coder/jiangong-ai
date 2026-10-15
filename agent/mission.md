@@ -1,10 +1,17 @@
 # 项目任务
 
-## 2026-10-15 本轮界面结构覆盖（候选，待真实页面验收）
+## 2026-10-15 当前交付：求是村手动交互演示
 
-最新页面归属见 `docs/界面结构与页面归属.md`：全局为 `map/projects/knowledge`；项目内为 `overview/evidence/assessment/scenarios/actions/results` 六个常驻工作页。资料分 `files/profile/context`，研判分 `direction/current/cases`，方案分 `compare/detail`；单方案包含 `content/funding/operations/sensitivity`，任务分 `current/history`，成果分 `reports/history`。旧 `view=context` 进入 `evidence/context`，旧 `view=compare` 进入 `results/history`，保留其项目经验和版本变化含义。
+使用 `DEMO-QIUSHI-20261015` 独立固定公开资料与已校验真实模型输出，供使用者手动操作。已部署 d5a2fba，含31份原文、5个分项和完整六维推理；不运行自动点击、播放或流程推进。原项目保留实时研究入口，原资料和历史失败轮不改。读取接口与首屏已实测，证据见 `research/test_results/qiushi-stable-demo-campus-readback-20261015.json`。实时重新生成中尚未实施的模型侧引文绑定另列状态，不与演示回放混称。
 
-系统建议与人工工作方向分别保留，项目页可自由跳转，不以资料补充或选向把导航锁成向导。运行详情与局部证据使用抽屉；内部资料补充、真实 DSH 综合研判、决策版本对比及运营迁入上述对应页面，复用真实后端与原六维计算。前版结构稿仅作布局参考，示例状态不构成实际结果。当前为候选实现，完成状态待 root 实页验收后更新。
+## 2026-10-15 界面结构与原生研判更新
+
+最新页面归属见 `docs/界面结构与页面归属.md`：全局为 `map/projects/knowledge`；项目成功形成有效研判后为 `overview/evidence/assessment/scenarios/actions/results` 六个工作页；此前仅展示总览、资料与条件、改造研判，空结果深链回到研判。资料分 `files/profile/context`，研判分 `direction/current/cases`，方案分 `compare/detail`；单方案包含 `content/funding/operations/sensitivity`，任务分 `current/history`，成果分 `reports/history`。旧 `view=context` 进入 `evidence/context`，旧 `view=compare` 进入 `results/history`，保留其项目经验和版本变化含义。
+
+系统建议与人工工作方向分别保留，项目页可自由跳转，不以资料补充或选向把导航锁成向导。运行详情与局部证据使用抽屉；内部资料补充、真实 DSH 综合研判、决策版本对比及运营迁入上述对应页面，复用真实后端与原六维计算。前版结构稿仅作布局参考，示例状态不构成实际结果。本轮已部署并实页确认求是村位置预览与全局底图、模式判断首位和空结果导航。原生 DSH 分工、只读分页检索、证据上下文压缩与六维推理情景已实现；实际模型恢复验收仍在进行，状态见 agent/state.json 的 map_dynamic_research_20261015。
+
+
+本轮采用现有 DSH 原生子 Agent，动态安排最多三个专业任务，并从固定角色 AGENTS.md 加载职责。RAG 无命中保留空观察，继续给出有前提的推理或情景估算。现况六维与推理情景分别保存与展示；后者必须六项完整且说明依据和核实方法，前者未知值不补造。
 
 以下保留既有任务与业务政策；与本轮界面归属、导航顺序冲突的旧界面描述以上述覆盖为准，既有数据、证据、业务判定及运行时约束继续适用。
 
