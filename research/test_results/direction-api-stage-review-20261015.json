@@ -1,0 +1,11 @@
+{
+  "status": "confirmed_quality_defect_before_fix",
+  "evidence": "research/test_results/direction-decision-api-readback-20261015.json",
+  "generation": "research/test_results/decision-brief-live-generation-20261015.json",
+  "issue": "The first structured brief labelled investment as construction and described historical preparation as work already commenced.",
+  "source_stage": "The supplied 2023 water report records preparation for entry; the 2024 elevator material is a consultation draft.",
+  "current_project_conditions": "No admitted current object-level funding or structural feasibility confirmation was registered.",
+  "required_behavior": "Retain the route and concrete actions while proposing an evidence-supported preliminary investment stage; keep later implementation conditional.",
+  "repair": "v5 adds funding and applicable structural admission, validates published snapshots, and retains only one mode in each path's text.",
+  "raw_record_preserved": true
+}

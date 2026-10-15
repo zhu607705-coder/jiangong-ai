@@ -1,12 +1,17 @@
 import type { RenewalStrategy } from './generated/contracts'
 import type { Store, ProjectRecord } from './store'
 import { validate } from '../../packages/contracts/validate'
-import type { StrategyPacket, PublicStrategyIndexItem } from '../../packages/retrofit/strategy'
+import { validateStrategy, type StrategyPacket, type PublicStrategyIndexItem } from '../../packages/retrofit/strategy'
+import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
 
 type SavedRow = { payload: StrategyPacket; saved_at: string | Date }
 function completedFor(packet: StrategyPacket, project: ProjectRecord, synthetic: boolean): boolean {
   if (!packet || packet.status !== 'completed' || packet.project_id !== project.id || packet.context_version !== project.context_version || packet.synthetic !== synthetic || !packet.strategy) return false
-  try { validate<RenewalStrategy>('RenewalStrategy', packet.strategy); return true } catch { return false }
+  try {
+    validate<RenewalStrategy>('RenewalStrategy', packet.strategy)
+    validateStrategy(packet.strategy, packet.sources, projectRenewalModeInput(project.input).conditions, !!packet.strategy.decision_brief)
+    return true
+  } catch { return false }
 }
 function savedAt(row: SavedRow): string {
   const date = new Date(row.saved_at || row.payload.created_at)

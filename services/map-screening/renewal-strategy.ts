@@ -5,7 +5,7 @@ import { LiveSession } from '../../runtime/dsh/live-session'
 import { collectSelectedEvidence } from '../capabilities/research'
 import { config } from '../../apps/host/config'
 import { buildCompleteCommunityDemo, buildStrategyDemo, renderCompleteDemoReport } from '../../packages/retrofit/complete-demo'
-import { STRATEGY_POLICY, validateStrategy, strategyFailure, strategyPromptSources, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
+import { STRATEGY_POLICY, validateStrategy, strategyFailure, strategyPromptSources, strategyConstructionAllowed, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
 import { projectRenewalModeInput, evaluateRenewalModeGate, renewalCommunitySources } from '../../packages/retrofit/renewal-mode'
 import { renewalResearchRounds } from '../../packages/retrofit/renewal-research-plan'
 import { evaluateDecision } from '../capabilities/decision-model'
@@ -23,7 +23,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     progress({ stage: 'result', status: 'failed', message: failure.error })
     return { ...base, ...failure }
   }
-  const started = Date.now(), budget = AbortSignal.any([signal, AbortSignal.timeout(135000)])
+  const started = Date.now(), budget = AbortSignal.any([signal, AbortSignal.timeout(230000)])
   let live: LiveSession | undefined
   try {
     let sources: StrategySource[] = screening.evidence.map(source => ({ id: source.source_id, title: source.title, text: source.quote,
@@ -87,14 +87,22 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     progress({ stage: 'model', status: 'running', message: '正在综合原文，提出更新取舍、投入阶段与财务及社会效果建议。', source_count: sources.length })
     if (!base.decision && config.decisionEnabled) base.decision = await live.runReadCapability('renewal_research_route', toolSignal => evaluateDecision(input, toolSignal))
     const promptSources = strategyPromptSources(sources), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
+    const constructionAdmission = { comprehensive: strategyConstructionAllowed('comprehensive',input.renewalMode!.conditions,promptSources), rebuild: strategyConstructionAllowed('rebuild',input.renewalMode!.conditions,promptSources) }
+    const historicalStages = synthetic ? [] : [
+      promptSources.some(source=>/求是.*二次供水|二次供水.*求是/.test(source.title)&&source.published_at?.startsWith('2023')&&/亚运会.*进场施工/.test(source.text)) ? '2023年求是村二次供水原文记载的是进场准备、拟于亚运会后施工，按当时准备阶段使用。' : '',
+      promptSources.some(source=>/75幢1单元/.test(source.title)&&/草案|征求意见/.test(source.title)&&source.published_at?.startsWith('2024')) ? '2024年75幢1单元加梯原文是征求意见草案，已存金额保留草案估算口径。' : '',
+    ].filter(Boolean)
     const prompt = `你负责为“${synthetic ? '杭州样本社区的完整模拟演示' : project.scope.name}”综合已保存原文和本轮公开资料，主动提出一组有取舍的项目候选决策。先判断本对象最值得解决的问题、两种更新路径的得失、钱应投向什么及由谁受益，再输出具体结论。Qwen结果是可参考的分流信息，你仍需独立解释本项目的证据和选择。
 本次必须填写decision_brief的三部分，文字由你依据本项目资料生成：
 1. renewal={conclusion,reason,evidence_refs}：明确建议优先的更新方向、具体工程或空间重点，以及相较另一条路径的取舍理由。
 2. investment={conclusion,reason,stage,evidence_refs}：明确现在是否值得投入、资金先投哪些对象和工作、何时进入下一阶段。stage只能为preliminary（前期）、construction（工程实施）或hold（暂缓）。根据现有证据选择投入阶段和范围，不把所有项目写成同一套前期论证建议。
+当前工作台对construction投资建议采用以下系统准入：本对象有来源及定位支持的资金落实条件；综合整治另有结构可修复的有效条件，拆建采用完整拆建门。当前准入结果${JSON.stringify(constructionAdmission)}。通过后才建议进入对应工程实施；尚未通过时，仍提出具体的鉴定、设计、预算、居民协商或分项核实投入，明确投入对象与下一阶段触发条件。专业审批继续按原适用程序完成。
+${historicalStages.join('')}本对象当前施工或验收状态采用后续明确记录确认；仅有上述历史准备或草案时，投资建议落在具体前期或分项核实，开工、招标和交付准备状态保持原文所载阶段。
 3. returns={financial,social,evidence_refs}：financial按政府/建设或运营主体/居民区分投入、补助、可实现现金收入及持续维护支出；social说明居民服务、工程条件、影响人群与实施代价。把已知局部金额、金额阶段和承担主体用起来，给出具体的价值判断；只有完整、同口径的收支数据才计算回报率，资产变化与现金收益分别解释。
 三部分每块evidence_refs至少一个，均引用本轮提供的source id。结论是本阶段供人比较和调整的建议；技术审批、资金承诺和施工准入由已登记条件约束，缺项写入对应路径的requirements和next_checks。
 实施准入门：${gate.summary} ${JSON.stringify({rebuild_allowed:gate.rebuild_allowed,direction:gate.direction})}。preferred_mode在comprehensive/rebuild/compare中选择；仅rebuild_allowed=true可选rebuild，结构已明确不可修而拆建条件未齐时选compare。仍应在两条paths中提出可比较的方案和条件化目标。
 一次生成两套方向明确的研究成果，供使用者在首屏研判后选择。两路比较集中在decision_brief和rationale；每条path的title、description、actions、requirements只描述该方向，dimensions.comprehensive和dimensions.rebuild分别只写本方向的措施、目标及实现条件，便于按明确选择隔离展示。
+单路径字段直接写本方向的措施、效果与条件，不写另一模式名称，也不放另一模式的排除或比较句；跨路关系统一放decision_brief/rationale。综合整治字段不出现原拆原建、整体拆建、整体拆除重建，拆建字段不出现综合整治；各模式未来维度描述采用相同边界，原文引用与现况保持原貌。
 现况与目标分别评估：current_level表示原文支持的当前条件，依据缺失处为unknown；comprehensive_level/rebuild_level表示在该路径所列动作和实施假设下的目标适配，可由本对象原文或对标机制支持low/medium/high。用各维current/comprehensive/rebuild写清现况、目标及实现假设。批准条件尚待核查时，在实施协同维度和requirements说明；其余有依据的服务或工程目标照常评估。low/medium/high按1/3/5展示，目标等级与已发生的事实分开。
 材料使用：role=current支撑本对象现况；reference用于方法、社区背景和对标目标。数量、费用与阶段保留来源的对象范围和时点，分项估算、合同、结算及整体预算分别列。结构鉴定、居民决议、资金到账等事实逐项取自原文。${synthetic ? '本次所有现况数值取自SIM-STRATEGY-BASE，明确完整模拟；整治和拆建分别采用各自的演示预算。' : '社会效果可提出带前提的预期，实际成效和人口金额取自所列来源。'}
 输出组织：decision_brief在前，接headline、summary、preferred_mode、rationale、两条paths、六条dimensions和next_checks。headline直接点明本项目建议；summary控制在220字内。每块brief的conclusion尽量100字内、reason180字内，financial/social各160字内。rationale写3至4个核心判断，每条quote逐字复制同一来源中一段连续原句或归档字段，保留必要限定。两路径各写2至3项具体actions、2至3项requirements；next_checks写3项最影响决策的核查。六维key不重复，每个描述尽量90字内，保留对象、动作与实现条件，避免重复套话。各举措和维度均引用evidence_refs。只调用structured_output。
@@ -106,6 +114,7 @@ ${synthetic?"rationale.quote须从下列候选原句逐字复制，不得改写�
     progress({ stage: 'validation', status: 'running', message: '核对三部分决策、两条路径、六个维度及原文引用。' })
     try { validateStrategy(response.value, promptSources,input.renewalMode!.conditions,true) }
     catch (error) {
+      if(error instanceof Error&&/^(STRATEGY_CONSTRUCTION_GATE_UNMET|STRATEGY_PATH_DIRECTION_MIXED)$/.test(error.message)) console.warn(JSON.stringify({event:'renewal_strategy_quality_retry',project_id:project.project_id,code:error.message,stage:'validation'}))
       progress({ stage: 'validation', status: 'running', message: '首次引用核验未通过，正在按同一来源修复引用。' })
       response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair', prompt + '\n上一轮决策简报、引文或完整性校验失败：' + (error instanceof Error ? error.message : '') + '。补齐decision_brief三部分并核对各自evidence_refs，保留已有项目分析；quote逐字复制连续原句，按当前实施准入门修复相关选择。', 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
       validateStrategy(response.value, promptSources,input.renewalMode!.conditions,true)

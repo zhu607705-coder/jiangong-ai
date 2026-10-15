@@ -20,7 +20,7 @@ function requestSignal(req: Request, res: Response) {
   const controller = new AbortController()
   req.once('aborted', () => controller.abort())
   res.once('close', () => { if (!res.writableEnded) controller.abort() })
-  return AbortSignal.any([controller.signal, AbortSignal.timeout(145000)])
+  return AbortSignal.any([controller.signal, AbortSignal.timeout(240000)])
 }
 
 async function prepareMode(input: DecisionInput, library: ConstructionCostLibrary, history?: ModeHistory) {
@@ -100,7 +100,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const {input,hash:modeHash} = await prepareMode(projectDecisionInput(project.input),library)
       const hash = strategyHash(modeHash,project.context_version,query.demo)
       const cached = (await store.db.query<{payload:StrategyPacket}>('SELECT payload FROM renewal_strategy_assessments WHERE owner_id=$1 AND project_id=$2 AND input_hash=$3',[config.ownerId,project.id,hash])).rows[0]?.payload
-      if (method==='get') { res.json(await readPublishedStrategy(store,project,hash,query.demo==='true')||cached||null); return }
+      if (method==='get') { res.json(await readPublishedStrategy(store,project,hash,query.demo==='true')||(cached?.status==='completed'?null:cached)||null); return }
       if (cached&&!body.refresh) { res.json(cached); return }
       key='strategy:'+project.id+':'+hash
       if (running.has(key)||running.size>=2) {key=undefined;return res.status(409).json({detail:'方案研究正在进行，请稍后查看。'})}

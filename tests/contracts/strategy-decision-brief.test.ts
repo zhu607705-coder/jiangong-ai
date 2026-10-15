@@ -4,6 +4,7 @@ import type { ProjectInput, RenewalStrategy } from '../../apps/host/generated/co
 import { config } from '../../apps/host/config'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
 import { STRATEGY_POLICY, validateStrategy, type StrategySource } from '../../packages/retrofit/strategy'
+import type { ModeCondition } from '../../packages/retrofit/renewal-mode'
 
 const ports = vi.hoisted(() => ({ open: vi.fn() }))
 vi.mock('../../runtime/dsh/live-session', () => ({ LiveSession: { open: ports.open } }))
@@ -29,7 +30,7 @@ afterEach(() => { Object.assign(config, initial); vi.restoreAllMocks() })
 
 describe('source-grounded DeepSeek decision brief', () => {
   it('keeps old strategies compatible while requiring the brief for new research', () => {
-    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v4')
+    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v5')
     expect(validateStrategy(proposal(), [source])).toBeTruthy()
     expect(() => validateStrategy(proposal(), [source], [], true)).toThrow('STRATEGY_DECISION_BRIEF_REQUIRED')
   })
@@ -83,5 +84,45 @@ describe('source-grounded DeepSeek decision brief', () => {
     expect(result).toMatchObject({ status: 'failed', strategy: null, diagnostic: { code: 'MODEL_OUTPUT_INVALID' } })
     expect(result.error).not.toContain('STRATEGY_DECISION_BRIEF_REQUIRED')
     expect(fetch).not.toHaveBeenCalled()
+  })
+  it('requires cited object funding and repairability before admitting construction investment',()=>{
+    const value={...proposal(),decision_brief:brief()};value.decision_brief.investment.stage='construction' as 'preliminary'
+    expect(()=>validateStrategy(value,[source],[],true)).toThrow('STRATEGY_CONSTRUCTION_GATE_UNMET')
+    const verified:StrategySource={...source,id:'VERIFIED',title:'本对象已核实条件',text:'本对象建设资金已落实，专业鉴定确认结构可修复。',published_at:'2026-10-15'}
+    const conditions:ModeCondition[]=['funding_secured','structure_repairable'].map(kind=>({kind,value:true,state:'supported',source_ids:[verified.id],locators:['line:1']}))
+    expect(validateStrategy(value,[source,verified],conditions,true).decision_brief?.investment.stage).toBe('construction')
+    expect(()=>validateStrategy(value,[source,{...verified,role:'reference'}],conditions,true)).toThrow('STRATEGY_CONSTRUCTION_GATE_UNMET')
+    expect(()=>validateStrategy(value,[source,verified],conditions.map(row=>({...row,locators:[]})),true)).toThrow('STRATEGY_CONSTRUCTION_GATE_UNMET')
+  })
+  it('repairs a historical preparation mistaken for construction while preserving the proposed route and measures',async()=>{
+    const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+    input.renewalMode!.conditions=[]
+    input.renewalMode!.evidence=[{source_id:source.id,title:'浙大求是社区推进二次供水改造',quote:source.text+'有关工作人员表示，亚运会召开之后将进场施工。',url:null,published_at:'2023-08-18',locator:source.locator},
+      {source_id:'DRAFT',title:'求是村75幢1单元电梯草案',quote:'估算总投资约54万元，建设资金来自市区补助及自筹。',url:null,published_at:'2024-09-18',locator:'投资章节'}]
+    const mistaken={...proposal(),decision_brief:brief()};mistaken.decision_brief.investment.stage='construction' as 'preliminary';mistaken.decision_brief.investment.reason='已开工，属可招标可交付口径。'
+    const corrected={...proposal(),decision_brief:brief()}
+    const call=vi.fn().mockResolvedValueOnce({value:mistaken,sessionId:'MOCK-STALE-STAGE'}).mockResolvedValueOnce({value:corrected,sessionId:'MOCK-CORRECTED-STAGE'})
+    ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+    const log=vi.spyOn(console,'warn').mockImplementation(()=>{})
+    const result=await researchRenewalStrategy(project,0,input,'fixture-hash',false,new AbortController().signal,null)
+    expect(result.status).toBe('completed');expect(result.strategy?.decision_brief?.investment.stage).toBe('preliminary')
+    expect(result.strategy?.headline).toBe(corrected.headline);expect(result.strategy?.paths).toEqual(corrected.paths)
+    expect(call.mock.calls[0][1]).toContain('2023年求是村二次供水原文记载的是进场准备')
+    expect(call.mock.calls[0][1]).toContain('2024年75幢1单元加梯原文是征求意见草案')
+    expect(call.mock.calls[1][1]).toContain('STRATEGY_CONSTRUCTION_GATE_UNMET')
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('STRATEGY_CONSTRUCTION_GATE_UNMET'))
+    expect(fetch).not.toHaveBeenCalled()
+  })
+  it('keeps cross-route comparisons out of individual paths and future targets without censoring the global brief or current text',()=>{
+    const value={...proposal(),decision_brief:brief()}
+    value.paths[0].description='整体拆建不进入本路径。'
+    expect(()=>validateStrategy(value,[source],[],true)).toThrow('STRATEGY_PATH_DIRECTION_MIXED')
+    value.paths[0].description='按四幢范围更新供水设施。';value.paths[1].requirements=['不具备时转做综合整治。']
+    expect(()=>validateStrategy(value,[source],[],true)).toThrow('STRATEGY_PATH_DIRECTION_MIXED')
+    value.paths[1].requirements=['核实建设与过渡条件。'];value.dimensions[0].comprehensive='与原拆原建相比改善需求适配。'
+    expect(()=>validateStrategy(value,[source],[],true)).toThrow('STRATEGY_PATH_DIRECTION_MIXED')
+    value.dimensions[0].comprehensive='按本方向设施配置改善需求适配。';value.dimensions[0].current='原文将综合整治和原拆原建并列作研究线索。'
+    value.decision_brief.renewal.reason='综合整治与原拆原建的整体取舍集中在本段解释。'
+    expect(validateStrategy(value,[source],[],true)).toBe(value)
   })
 })

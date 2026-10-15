@@ -73,6 +73,19 @@ describe('owner and version bound published strategies', () => {
     await save(target, packet(target, 'invalid-strategy', { strategy: {} as RenewalStrategy }))
     expect(await readPublishedStrategy(store, target, 'current-hash', false)).toBeNull()
   })
+  it('keeps a valid older result readable instead of publishing an unsupported construction-stage brief', async () => {
+    const target = await project(), legacy = packet(target, 'older-complete')
+    await save(target, legacy, owner, '2026-10-15T05:00:00Z')
+    const unsafe = packet(target, 'current-hash')
+    unsafe.strategy!.decision_brief = {
+      renewal: { conclusion: '研究分项综合整治', reason: '依据原文安排分项任务', evidence_refs: ['SOURCE'] },
+      investment: { conclusion: '直接进入工程投入', reason: '将历史准备误当作本期实施', stage: 'construction', evidence_refs: ['SOURCE'] },
+      returns: { financial: '核对分项资金', social: '比较服务改善', evidence_refs: ['SOURCE'] },
+    }
+    await save(target, unsafe, owner, '2026-10-15T06:00:00Z')
+    expect((await readPublishedStrategy(store, target, 'current-hash', false))?.input_hash).toBe('older-complete')
+    expect((await listPublishedStrategies(store, owner, async () => 'current-hash'))[0].input_hash).toBe('older-complete')
+  })
   it('indexes only real completed current-version workbench projects without copying conclusions', async () => {
     const target = await project(), sibling = await project(), otherOwner = await project(undefined, 'other-owner'), synthetic = await project(undefined, owner, 0, true)
     await save(target, packet(target, 'current-hash'))

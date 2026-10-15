@@ -71,7 +71,14 @@ it('ends an obsolete streamed run with a Chinese error and does not save it', as
 })
 
 it('reports a failed refresh without replacing a completed cached result', async () => {
-  cache = { ...result, status: 'completed', error: null }
+  const quote = '已保存的本对象原文仍可用于核查。'
+  cache = { ...result, status: 'completed', error: null,
+    sources: [{ id: 'OBJECT', title: '本对象原文', text: quote, url: null, published_at: null, role: 'current', locator: 'line:1' }],
+    strategy: { headline: '已保存的分项更新研究', summary: '保留完整方案及对应原文。', preferred_mode: 'comprehensive',
+      rationale: [{ point: '保留对象材料', source_id: 'OBJECT', quote }],
+      paths: (['comprehensive','rebuild'] as const).map(mode => ({ mode, title: '研究路径', description: '按对象核查条件。', actions: [], requirements: [] })),
+      dimensions: (['demand','supply','adaptation','implementation','operations','resources'] as const).map(key => ({ key, current: '原文现况', current_level: 'unknown', comprehensive: '分项目标', comprehensive_level: 'unknown', rebuild: '条件化目标', rebuild_level: 'unknown', evidence_refs: ['OBJECT'] })),
+      next_checks: [] } }
   const response = await fetch(origin + '/api/projects/P-STREAM/renewal-strategy', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/x-ndjson' }, body: JSON.stringify({ refresh: true }) })
   const events = (await response.text()).trim().split('\n').map(line => JSON.parse(line))
   expect(events.at(-1).result.status).toBe('failed')
