@@ -5,7 +5,7 @@ import type { RetrievalDecisionLocation, RetrievalFeatureLocation } from './retr
 import './floating-evidence-search.css'
 
 type Props = {
-  projectId?: string | null; revision?: number; projectName?: string; projects?: { id: string; name: string }[];
+  projectId?: string | null; revision?: number; projectName?: string; pageContext?: string; projects?: { id: string; name: string }[];
   onSelectProject?: (id: string) => void | Promise<void>; onEvidence?: (refs: string[]) => void;
   onLocateHit?: (hit: RetrievalHit) => void; onOpenMaterials?: () => void; openRequest?: number;
   decisionLocations?: (hit: RetrievalHit) => RetrievalDecisionLocation[]; onNavigateDecision?: (location: RetrievalDecisionLocation) => void;
@@ -14,7 +14,7 @@ type Props = {
 }
 
 /** A view of the existing project retrieval; no separate index, search client or material writes. */
-export default function FloatingEvidenceSearch({ projectId, revision, projectName, projects = [], onSelectProject, onEvidence, onLocateHit, onOpenMaterials, openRequest = 0, decisionLocations, onNavigateDecision, decisionLinksState, featureLocations, onNavigateFeature }: Props) {
+export default function FloatingEvidenceSearch({ projectId, revision, projectName, pageContext, projects = [], onSelectProject, onEvidence, onLocateHit, onOpenMaterials, openRequest = 0, decisionLocations, onNavigateDecision, decisionLinksState, featureLocations, onNavigateFeature }: Props) {
   const [open, setOpen] = useState(false)
   const [selectingProject, setSelectingProject] = useState(false), [selectionError, setSelectionError] = useState('')
   const id = useId(), triggerRef = useRef<HTMLButtonElement>(null), panelRef = useRef<HTMLDivElement>(null)
@@ -57,7 +57,7 @@ export default function FloatingEvidenceSearch({ projectId, revision, projectNam
         {selectionError && <p role="alert">{selectionError}</p>}
         {selectingProject ? <p role="status">正在读取所选项目资料…</p> : <>
         {projectId ? <>
-          <p className="floating-evidence-description">用一句话查找本项目文件与已收集来源，定位原文，查看它与方案、评估和调查的实际引用关系。</p>
+          <p className="floating-evidence-description">{pageContext && <strong>当前位置：{pageContext}。 </strong>}用一句话查找本项目文件与已收集来源，定位原文，查看它与方案、评估和调查的实际引用关系。</p>
           {!!projects.length && onSelectProject && <label className="floating-evidence-project">查找项目<select aria-label="悬浮检索项目" value={projectId} onChange={event => void selectProject(event.target.value)}>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>}
           <RagEvidenceSearch key={projectId} projectId={projectId} revision={revision} variant="floating" onLocateHit={hasNavigator ? locate : undefined} decisionLocations={decisionLocations} decisionLinksState={decisionLinksState} onNavigateDecision={onNavigateDecision ? location => { setOpen(false); onNavigateDecision(location) } : undefined} featureLocations={featureLocations} onNavigateFeature={onNavigateFeature ? location => { setOpen(false); onNavigateFeature(location) } : undefined} />
         </> : <div className="floating-evidence-choose"><h3>先选择一份项目资料库</h3><p>提问会在所选项目已导入的材料中查找。</p>{projects.length && onSelectProject ? <label>选择项目<select aria-label="选择悬浮检索项目" defaultValue="" onChange={event => { if (event.target.value) void selectProject(event.target.value) }}><option value="" disabled>请选择项目</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label> : onOpenMaterials ? <button type="button" onClick={browse}>进入资料库选择项目 →</button> : <p>打开项目后即可查询其资料。</p>}</div>}

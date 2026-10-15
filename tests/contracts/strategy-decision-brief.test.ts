@@ -5,6 +5,8 @@ import { config } from '../../apps/host/config'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
 import { STRATEGY_POLICY, validateStrategy, type StrategySource } from '../../packages/retrofit/strategy'
 import type { ModeCondition } from '../../packages/retrofit/renewal-mode'
+import type { ResearchRoundContext } from '../../apps/host/research-rounds'
+import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
 
 const ports = vi.hoisted(() => ({ open: vi.fn() }))
 vi.mock('../../runtime/dsh/live-session', () => ({ LiveSession: { open: ports.open } }))
@@ -12,12 +14,12 @@ import { researchRenewalStrategy } from '../../services/map-screening/renewal-st
 
 const source: StrategySource = { id: 'CURRENT', title: '对象供水记录', text: '本小区29、30、31、48幢供水设施已开展方案核查，涉及252户。', url: null, published_at: '2023-08-18', role: 'current', locator: 'line:1' }
 function proposal(): RenewalStrategy {
-  return { headline: '按四幢供水范围优先研究管网改善与居民协同', summary: '优先组织供水分项改善，把施工范围、资金分担和持续维护同时落实。', preferred_mode: 'comprehensive',
+  return withConcreteWorkPlan({ headline: '按四幢供水范围优先研究管网改善与居民协同', summary: '优先组织供水分项改善，把施工范围、资金分担和持续维护同时落实。', preferred_mode: 'comprehensive',
     rationale: [{ point: '供水改善有明确的四幢对象范围。', source_id: source.id, quote: source.text }],
     paths: (['comprehensive', 'rebuild'] as const).map(mode => ({ mode, title: mode === 'comprehensive' ? '四幢供水改善优先' : '整片拆建条件比较', description: '围绕本对象明确工程动作与实施前提。', actions: [{ title: '核对四幢管线与计量方案', detail: '先核查现场管线并与四幢居民确认停水及施工安排。', evidence_refs: [source.id] }], requirements: ['按对象核实技术与资金条件。'] })),
     dimensions: (['demand', 'supply', 'adaptation', 'implementation', 'operations', 'resources'] as const).map(key => ({ key, current: '已登记四幢供水改善线索，现况待专项核查。', current_level: 'unknown', comprehensive: '在更新管线和落实维护责任的假设下研究可靠供水目标。', comprehensive_level: 'medium', rebuild: '将整体替换设施作为比较目标，实施前提另列。', rebuild_level: 'medium', evidence_refs: [source.id] })),
     next_checks: [{ title: '核查施工与维护衔接', detail: '核对四幢施工方案、居民安排及维护责任。', evidence_refs: [source.id] }],
-  }
+  },source)
 }
 function brief() {
   return { renewal: { conclusion: '以四幢供水改善为本轮优先候选，整片拆建保留作条件比较。', reason: '本对象已有明确供水范围，分项改善与现有居住状态衔接更直接。', evidence_refs: [source.id] },
@@ -30,8 +32,9 @@ afterEach(() => { Object.assign(config, initial); vi.restoreAllMocks() })
 
 describe('source-grounded DeepSeek decision brief', () => {
   it('keeps old strategies compatible while requiring the brief for new research', () => {
-    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v5')
-    expect(validateStrategy(proposal(), [source])).toBeTruthy()
+    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v6')
+    const legacy=proposal();for(const path of legacy.paths)delete path.work_packages;delete legacy.internal_data_requests
+    expect(validateStrategy(legacy, [source])).toBeTruthy()
     expect(() => validateStrategy(proposal(), [source], [], true)).toThrow('STRATEGY_DECISION_BRIEF_REQUIRED')
   })
   it('repairs unconditional relocation claims including the not-needing-whole-relocation variants', async () => {
@@ -60,11 +63,14 @@ describe('source-grounded DeepSeek decision brief', () => {
     input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote,url:null,published_at:source.published_at!,locator:source.locator}]
     const value={...proposal(),decision_brief:brief(),round_review:{summary:'按当前原文复核居民影响。',changes:[{topic:'居民安排',before:'居民不需整体搬迁。',after:'按施工组织核实是否搬迁。',reason:'施工组织尚待核实。',evidence_refs:[source.id]}],missing_materials:[]}}
     value.rationale[0].quote=quote
+    for(const path of value.paths)for(const work of path.work_packages||[])work.quote=quote
     value.decision_brief.returns.social='在分栋实施的假设下，居民不需整体搬迁；具体安排按施工组织确认。'
     value.dimensions.find(row=>row.key==='adaptation')!.comprehensive='居民无需整体搬迁仅作为待核前提，按施工组织核实后确定。'
     const call=vi.fn().mockResolvedValue({value})
     ports.open.mockResolvedValueOnce({calls:[],call,close:vi.fn(async()=>{})})
-    const result=await researchRenewalStrategy(project,0,input,'relocation-conditional-fixture',false,new AbortController().signal,null)
+    const roundContext:ResearchRoundContext={round_id:'ROUND-CURRENT',round_number:2,allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-PRIOR',first_input_hash:'prior',first_context_version:0,
+      parent:{id:'ROUND-PRIOR',input_hash:'prior',context_version:0,result:{project_id:project.project_id,context_version:0,input_hash:'prior',created_at:'2026-10-15T00:00:00Z',synthetic:false,status:'completed',strategy:value,sources:[source],decision:null,model_calls:[],research:null,error:null}}}
+    const result=await researchRenewalStrategy(project,0,input,'relocation-conditional-fixture',false,new AbortController().signal,null,{roundContext})
     expect(result.status).toBe('completed');expect(call).toHaveBeenCalledOnce()
     expect(result.strategy?.rationale[0].quote).toBe(quote)
     expect(result.strategy?.round_review?.changes[0].before).toBe('居民不需整体搬迁。')

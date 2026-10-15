@@ -3290,5 +3290,49 @@
       "word_sha256": "f3717d3f6ff629e2501a638afb97ad02839652838fd11106f2adc8d91a78400b",
       "publication": "research/test_results/decision-criteria-report-delivery-20261015.json"
     }
+  },
+  "navigation_concrete_scheme_20261015": {
+    "updated_at": "2026-10-15T12:31:03.505158+00:00",
+    "status": "completed_deployed_actual_browser_verified",
+    "tasks": [
+      "T65",
+      "T66"
+    ],
+    "scope": "Three global entry points, six project pages, shared evidence and process drawers, concrete source-bound work packages with separate internal survey requests.",
+    "source_reference": "D:/海之子_界面逻辑结构稿.html",
+    "workbook_reference": "data/imports/renewal-database-20261014/history-records.json",
+    "backend_policy": "renewal-strategy-overview-v6",
+    "tests": [
+      "research/test_results/navigation-concrete-scheme-integration-20261015.log",
+      "research/test_results/strategy-v6-real-repair-focused-20261015.log",
+      "research/test_results/strategy-current-result-order-20261015.json",
+      "research/test_results/public-decision-hydration-focused-20261015.log",
+      "research/test_results/navigation-scroll-return-build-20261015.log"
+    ],
+    "unresolved_questions": [],
+    "next_runnable_task": "No required work remains for the navigation adaptation and concrete-scheme request.",
+    "application_commit": "1479db36e3152d5cc163c691de65d24bf67ec229",
+    "final_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=scenarios&section=detail&pane=content&scheme=comprehensive&baseline=14",
+    "evidence": [
+      "research/test_results/navigation-adaptation-browser-20261015.json",
+      "research/test_results/concrete-work-plan-final-live-20261015.json",
+      "research/test_results/concrete-work-plan-source-metric-review-20261015.json"
+    ],
+    "real_plan": {
+      "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "context_version": 14,
+      "input_hash": "ef08ce832162384c84894236eb7d02dfdbd10264d5f03529650573908e75c5a8",
+      "comprehensive_work_packages": 3,
+      "rebuild_work_packages": 3,
+      "input_and_history_unchanged": true,
+      "source_metric_review_changes": 14
+    },
+    "existing_external_limitations": [
+      {
+        "surface": "地图探索",
+        "state": "entry_reachable_basemap_connection_timeout",
+        "observed": "高德地图加载超时；地图搜索与框选未验证成功。该状态不作为通过。"
+      }
+    ]
   }
 }

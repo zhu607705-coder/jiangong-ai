@@ -1,0 +1,20 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+stderr | tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires concrete tables only for new research while keeping legacy records and preliminary construction candidates 3ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > rejects survey-only pseudo works even when they mention a construction keyword 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > binds each work package to its actual source locator and a literal continuous quote 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > keeps source quantities, unknowns and explicit scenarios distinct and never transfers a reference project quantity 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires three separate internal-data definitions with usable collection denominators and actual package links 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope 4ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reserves a bounded prompt excerpt for concrete archive references without enlarging the existing source budget 0ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reuses saved public research and its trace without web calls, deduplicating sources and excluding internal material 1ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  19:58:10
+   Duration  718ms (transform 256ms, setup 0ms, import 578ms, tests 13ms, environment 0ms)
+

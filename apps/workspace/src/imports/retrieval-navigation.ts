@@ -3,11 +3,11 @@ import type { RetrievalHit } from '../../../../packages/experience/retrieval'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 
 export type RetrievalDecisionLocation = {
-  id: string; label: string; relation: string; tab: 'overview' | 'actions';
+  id: string; label: string; relation: string; tab: 'overview' | 'actions' | 'assessment' | 'scenarios';
   kind: 'rationale' | 'action' | 'dimension' | 'investigation' | 'scenario' | 'followup';
   text: string; mode?: 'comprehensive' | 'rebuild';
 }
-export type RetrievalFeatureLocation = { id: string; label: string; detail: string; tab: 'overview' | 'actions'; kind: 'cost-library' | 'mode-panel' | 'assessment' | 'investigations' }
+export type RetrievalFeatureLocation = { id: string; label: string; detail: string; tab: 'overview' | 'actions' | 'assessment' | 'scenarios'; kind: 'cost-library' | 'mode-panel' | 'assessment' | 'investigations' }
 export function retrievalFeatureLocations(question: string): RetrievalFeatureLocation[] {
   const locations: RetrievalFeatureLocation[] = []
   if (/造价|预算|资金|费用|投资|合同价|中标价|成本|多少钱|花钱|花费/.test(question)) locations.push({ id: 'cost-library', kind: 'cost-library', tab: 'overview', label: '查看历史造价参考', detail: '按问题中的造价、费用或资金事项打开工程库，分价格阶段核对；不是本项目预算结论。' })
@@ -91,6 +91,11 @@ export function focusRetrievalElement(element: HTMLElement) {
 /** Open the real component's existing tabs; return a target only after it is present. */
 export function findRetrievalDecisionElement(root: ParentNode, location: RetrievalDecisionLocation): HTMLElement | null {
   const text = (element: Element) => (element.textContent || '').replace(/\s+/g, ' ').trim()
+  const controlled = [...root.querySelectorAll('.strategy-workspace')].find(element=>!element.closest('[hidden]'))
+  if (controlled && ['rationale','action','dimension'].includes(location.kind)) {
+    const selector = location.kind==='rationale'?'.decision-rationale article,.strategy-rationale article':location.kind==='dimension'?'.strategy-current-assessment article,.dimension-readout button':'.scheme-action-list article,.concrete-work-plan tbody tr,.single-scheme-workspace article'
+    return [...controlled.querySelectorAll<HTMLElement>(selector)].find(element=>text(element).includes(location.text)) || controlled.querySelector<HTMLElement>(location.kind==='action'?'.concrete-work-plan,.single-scheme-workspace':location.kind==='dimension'?'.strategy-current-assessment':'.decision-brief')
+  }
   if (['rationale', 'action', 'dimension'].includes(location.kind)) {
     const strategy = root.querySelector('.strategy-overview')
     if (!strategy) return null
@@ -113,6 +118,9 @@ export function findRetrievalDecisionElement(root: ParentNode, location: Retriev
 
 /** These are transparent feature shortcuts, separate from evidence-backed decision links. */
 export function findRetrievalFeatureElement(root: ParentNode, location: RetrievalFeatureLocation): HTMLElement | null {
+  if (location.kind==='assessment') { const current=root.querySelector<HTMLElement>('.strategy-current-assessment'); if(current)return current }
+  if (location.kind==='mode-panel') { const current=root.querySelector<HTMLElement>('.strategy-workspace .renewal-mode-panel,.strategy-workspace .renewal-mode'); if(current)return current }
+  if (location.kind==='investigations') { const current=root.querySelector<HTMLElement>('.project-tasks-page');if(current)return current }
   if (location.kind === 'cost-library') {
     const library = root.querySelector<HTMLElement>('.construction-cost-library'), toggle = library?.querySelector<HTMLButtonElement>('.cost-library-toggle')
     if (toggle?.getAttribute('aria-expanded') === 'false') { toggle.click(); return null }

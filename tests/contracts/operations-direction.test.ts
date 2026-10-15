@@ -5,6 +5,7 @@ import { parseHTML } from 'linkedom'
 import { readFileSync } from 'node:fs'
 import fixture from '../../fixtures/inputs/01_auto.json'
 import CommunityOperationsPanel from '../../apps/workspace/src/components/CommunityOperationsPanel'
+import SingleSchemeWorkspace from '../../apps/workspace/src/components/SingleSchemeWorkspace'
 import CompleteCommunityDemo, { operationsOnlyDemoData } from '../../apps/workspace/src/components/CompleteCommunityDemo'
 import { markOperationsDirection, operationsSnapshotMatchesDirection } from '../../apps/workspace/src/components/operations-direction'
 import { currentDirectionText } from '../../apps/workspace/src/components/strategy-direction-text'
@@ -44,6 +45,7 @@ test('the real operations panel only offers same-direction snapshots for restora
   const root = createRoot(dom.document.getElementById('root')!)
   try {
     await act(async () => root.render(createElement(CommunityOperationsPanel, { project, direction: 'rebuild' })))
+    expect(apiMock).not.toHaveBeenCalled()
     const panel = dom.document.querySelector('details.community-operations') as unknown as HTMLDetailsElement
     await act(async () => { panel.open = true; panel.dispatchEvent(new dom.window.Event('toggle')) })
     await vi.waitFor(() => expect(dom.document.querySelectorAll('.ops-history-list>.ops-snapshot')).toHaveLength(1))
@@ -54,6 +56,29 @@ test('the real operations panel only offers same-direction snapshots for restora
     expect(dom.document.querySelectorAll('.ops-unscoped-history .ops-snapshot-actions')).toHaveLength(0)
     expect(dom.document.querySelector('.ops-unscoped-history')?.textContent).toContain('未登记方向的原中心')
   } finally { await act(async () => root.unmount()) }
+})
+
+test('the real single-scheme operations page displays its body immediately, loads saved records, and aborts the read on unmount', async () => {
+  const dom = parseHTML('<html><body><div id="root"></div></body></html>')
+  vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+  const project = { id: 'P-OPS', name: '独立运营页面', context_version: 3, input: { ...fixture, synthetic: false, sources: [] } } as unknown as Project
+  apiMock.mockResolvedValue({ scenarios: [snapshot('本方向冻结运营', markOperationsDirection(input, 'rebuild').scope_note)], observations: [], comparisons: [] })
+  const root = createRoot(dom.document.getElementById('root')!)
+  let readSignal: AbortSignal | undefined
+  try {
+    await act(async () => root.render(createElement(SingleSchemeWorkspace, { project, result: null, mode: 'rebuild', demoActive: false, pane: 'operations', onNavigate: vi.fn(), onEvidence: vi.fn() })))
+    await vi.waitFor(() => expect(dom.document.querySelector('.ops-history-list')?.textContent).toContain('本方向冻结运营'))
+    expect(dom.document.querySelector('section.community-operations--standalone>.ops-body')).not.toBeNull()
+    expect(dom.document.querySelector('details.community-operations')).toBeNull()
+    expect(dom.document.querySelector('[aria-label="运营情景比较"]')).not.toBeNull()
+    expect(dom.document.querySelector('details.ops-demo-parameters')).not.toBeNull()
+    expect(apiMock).toHaveBeenCalledOnce()
+    expect(apiMock.mock.calls[0][0]).toBe('/projects/P-OPS/community-operations')
+    expect(apiMock.mock.calls[0][1]).toBeUndefined()
+    readSignal = apiMock.mock.calls[0][2] as AbortSignal
+    expect(readSignal.aborted).toBe(false)
+  } finally { await act(async () => root.unmount()) }
+  expect(readSignal?.aborted).toBe(true)
 })
 
 test('demolition simulation operations omit capital and six-dimensional targets, and local comparisons are isolated by direction', async () => {

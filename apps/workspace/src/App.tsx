@@ -19,7 +19,14 @@ import {
   IconX,
   IconAlertTriangle,
 } from "@tabler/icons-react";
-import WorkspaceFrame from "./components/WorkspaceFrame";
+import WorkspaceFrame, { type WorkspaceGlobalView } from "./components/WorkspaceFrame";
+import { GlobalProjects, GlobalKnowledge } from './components/GlobalWorkspace';
+import GlobalKnowledgeCatalog from './components/GlobalKnowledgeCatalog';
+import ProjectOverview from './components/ProjectOverview';
+import ProjectEvidenceDrawer, { type ProjectEvidenceReference } from './components/ProjectEvidenceDrawer';
+import ProjectTasksPage from './components/ProjectTasksPage';
+import ProjectResultsPage from './components/ProjectResultsPage';
+import './workspace-navigation.css';
 import MapWorkspace from "./maps/MapWorkspace";
 import { toProjectAnchor } from "./maps/amap-client";
 import type { MapScreenContext, KnowledgeQuery, Source } from '../../host/generated/contracts';
@@ -31,7 +38,7 @@ import RagEvidenceSearch from './imports/RagEvidenceSearch';
 import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
 import type { RetrievalHit } from '../../../packages/experience/retrieval';
 import type { StrategyPacket, PublicStrategyIndexResponse } from '../../../packages/retrofit/strategy';
-import { initialWorkbenchProject, publicDecisionHref, writeWorkbenchLink, type WorkbenchView } from './public-decisions';
+import { initialWorkbenchProject, publicDecisionHref, readWorkbenchLink, resolveProjectLocation, PROJECT_PAGES, writeWorkbenchLink, type WorkbenchView, type ProjectPage, type SchemePane } from './public-decisions';
 import { findRetrievalDecisionElement, findRetrievalFeatureElement, focusRetrievalElement, retrievalDecisionLocations, retrievalFeatureLocations, retrievalSourceIds, sourceHitFocus, type RetrievalDecisionLocation, type RetrievalFeatureLocation, type SourceHitFocusResult } from './imports/retrieval-navigation';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
@@ -202,6 +209,13 @@ export default function App() {
   const { canWrite } = useWorkbenchAccess();
   const [publicDecisions, setPublicDecisions] = useState<{ status: 'loading' | 'ready' | 'unavailable'; items: PublicStrategyIndexResponse['items'] }>({ status: 'loading', items: [] });
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [globalView, setGlobalView] = useState<WorkspaceGlobalView>('map');
+  const initialRoute = useRef(readWorkbenchLink(window.location?.search || ''));
+  const [routeSection, setRouteSection] = useState<string | undefined>(initialRoute.current.section);
+  const [routePane, setRoutePane] = useState<SchemePane>(initialRoute.current.pane || 'content');
+  const [settingsOpen, setSettingsOpen] = useState(false), [runDetailsOpen, setRunDetailsOpen] = useState(false);
+  const scrollContainer = useRef<HTMLDivElement>(null), scrollPositions = useRef(new Map<string,number>());
+  const restoringScroll = useRef<number | null>(null);
   const [mapFocus, setMapFocus] = useState(0), [mapSettings, setMapSettings] = useState(0);
   const [mapAnchor, setMapAnchor] = useState<ProjectInput['scope']['map_anchor']>();
   const [mapEvidence, setMapEvidence] = useState<MapScreenContext | null>(null);
@@ -230,17 +244,23 @@ export default function App() {
     try { return localStorage.getItem('hzz-complete-demo-project'); } catch { return null; }
   });
   const demoSessionActive = !!project && project.id === completeDemoProject;
-  const completeDemoActive = demoSessionActive && ['overview', 'compare', 'actions'].includes(tab);
+  const completeDemoActive = demoSessionActive && !['evidence','context'].includes(tab);
+  const location = resolveProjectLocation(tab, routeSection);
+  const knowledgeSection = ['cases','rules','costs'].includes(routeSection || '') ? routeSection as 'cases'|'rules'|'costs' : 'cases';
   const directionIdentity = project ? `${project.id}:${project.context_version}:${demoSessionActive}` : '';
   const [directionSelection, setDirectionSelection] = useState<StrategyDirectionSelection | null>(null);
   const [directionPacket, setDirectionPacket] = useState<{ identity: string; packet: StrategyPacket } | null>(null);
   const [materialRequest, setMaterialRequest] = useState(0);
+  const strategySurface = useRef<{workspacePage:'assessment'|'scheme';section:string;pane:SchemePane}>({workspacePage:'assessment',section:'direction',pane:'content'});
+  if (tab === 'assessment' || tab === 'scenarios') strategySurface.current = {workspacePage:tab === 'scenarios'?'scheme':'assessment',section:location.section,pane:routePane};
   const currentDirection = directionSelection?.identity === directionIdentity ? directionSelection.mode : null;
   const currentDirectionPath = currentDirection && directionPacket?.identity === directionIdentity ? directionPacket.packet.strategy?.paths.find(path => path.mode === currentDirection) : null;
   const [sourceFocus, setSourceFocus] = useState<{ projectId: string; contextVersion: number; refs: string[]; token: number } | null>(null);
   const [sourceTextFocus, setSourceTextFocus] = useState<{ projectId: string; contextVersion: number; sourceId: string; hit: RetrievalHit } | null>(null);
   const [sourceTextCheck, setSourceTextCheck] = useState<{ key: string; result: SourceHitFocusResult | null }>({ key: '', result: null });
   const [retrievalStrategy, setRetrievalStrategy] = useState<{ key: string; status: 'loading' | 'ready' | 'unavailable'; packet: StrategyPacket | null }>({ key: '', status: 'loading', packet: null });
+  const [roundIndex, setRoundIndex] = useState<{key:string;data:ResearchRoundsResponse|null}>({key:'',data:null});
+  const [evidenceDrawer, setEvidenceDrawer] = useState<{ projectId:string; packet:StrategyPacket|null; refs:ProjectEvidenceReference[] }|null>(null);
   const [decisionFocus, setDecisionFocus] = useState<{ projectId: string; contextVersion: number; location: RetrievalDecisionLocation | RetrievalFeatureLocation; token: number } | null>(null);
   const completedDecisionFocus = useRef<number | null>(null);
   const [askEvidenceRequest, setAskEvidenceRequest] = useState(0);
@@ -251,6 +271,37 @@ export default function App() {
   );
   const [evidencePacket, setEvidencePacket] = useState<{ projectId: string; packet: StrategyPacket } | null>(null);
   const currentStrategyPacket = directionPacket?.identity === directionIdentity ? directionPacket.packet : retrievalStrategy.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? retrievalStrategy.packet : null;
+  const researchRecords = roundIndex.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? roundIndex.data : null;
+  const latestSavedRound = researchRecords?.rounds.filter(round => round.status === 'completed' && round.result?.strategy).sort((a,b) => b.round_number-a.round_number)[0] || null;
+  const overviewStrategy = currentStrategyPacket || latestSavedRound?.result || researchRecords?.baseline_candidate || null;
+  const navigationKey = `${project?.id || ''}:${globalView}:${tab}:${location.section}:${routePane}:${currentDirection || ''}:${completeDemoActive}`;
+  function rememberPosition() { if (scrollContainer.current) scrollPositions.current.set(navigationKey, scrollContainer.current.scrollTop); }
+  function navigateProject(page: ProjectPage | 'map' | 'knowledge', section?: string, pane?: string, scheme?: 'comprehensive'|'rebuild') {
+    if (page === 'map') { navigateGlobal('map'); return; }
+    if (page === 'knowledge') { setRouteSection(section || 'cases'); navigateGlobal('knowledge', section); return; }
+    if (page === 'results' && section === 'runs') { setRunDetailsOpen(true); return; }
+    rememberPosition();
+    const normalized = section === 'baseline' ? 'current' : section === 'materials' ? 'files' : section;
+    const view: WorkbenchView = page === 'results' && normalized === 'history' ? 'compare' : page === 'evidence' && normalized === 'context' ? 'context' : page;
+    setTab(view); setRouteSection(normalized); setRoutePane((['content','funding','operations','sensitivity'].includes(pane || '') ? pane : 'content') as SchemePane);
+    setDetailsOpen(true); setGlobalView('project');
+    if (scheme && project) setDirectionSelection({ identity: directionIdentity, mode: scheme });
+    if (project) writeWorkbenchLink(project.id, view, { section: normalized, pane: page === 'scenarios' ? (pane || 'content') as SchemePane : undefined, scheme: page === 'scenarios' ? scheme || currentDirection || undefined : undefined, baseline: page === 'scenarios' ? project.context_version : undefined, push: true });
+  }
+  function navigateGlobal(view: WorkspaceGlobalView, section?: string) {
+    rememberPosition(); setGlobalView(view); setDetailsOpen(view === 'project');
+    if (view === 'knowledge' || view === 'projects') setRouteSection(section || (view === 'knowledge'?'cases':'projects'));
+    if (project) writeWorkbenchLink(project.id, view === 'project' ? tab as WorkbenchView : view, {section: view === 'knowledge' ? section || 'cases' : view==='projects'?section||'projects':undefined, push:true});
+  }
+  useEffect(() => {
+    const node = scrollContainer.current; if (!node) return;
+    const position = scrollPositions.current.get(navigationKey) || 0;
+    let restoring = true;
+    const frame = requestAnimationFrame(() => { node.scrollTop = position; restoring = false; });
+    const remember = () => { if (!restoring) scrollPositions.current.set(navigationKey, node.scrollTop); };
+    node.addEventListener('scroll',remember,{passive:true});
+    return () => { cancelAnimationFrame(frame); node.removeEventListener('scroll',remember); };
+  }, [navigationKey]);
   const strategySources: Source[] = (evidencePacket && evidencePacket.projectId === project?.id ? evidencePacket.packet : currentStrategyPacket)?.sources.map(source => ({
     id: source.id, title: source.title, visibility: source.visibility || 'public', data_class: source.data_class || (project?.input.synthetic ? 'synthetic' : 'public'),
     synthetic: project?.input.synthetic || false, untrusted_text: source.text, ...(source.url ? { url: source.url } : {}),
@@ -274,28 +325,24 @@ export default function App() {
   const stale =
     !!packet && !!project && packet.context_version !== project.context_version;
   function openEvidence(refs: string[] = [], sourcePacket?: StrategyPacket) {
+    if (refs.length) {
+      if (project) setEvidenceDrawer({projectId:project.id,packet:sourcePacket?.project_id === project.id ? sourcePacket : currentStrategyPacket,refs});
+      return;
+    }
+    openMaterials();
+  }
+  function openMaterials(refs: string[] = [], sourcePacket?: StrategyPacket) {
     setEvidencePacket(sourcePacket && sourcePacket.project_id === project?.id ? { projectId: sourcePacket.project_id, packet: sourcePacket } : null);
     setEvidenceLocation(null);
     setSourceTextFocus(null); setDecisionFocus(null);
     if (project) setSourceFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, refs: [...new Set(refs)], token: (previous?.token || 0) + 1 }));
-    setTab('evidence');
-    setDetailsOpen(true);
+    navigateProject('evidence','files');
   }
   function locateEvidence(hit: RetrievalHit) {
     if (!project) return;
-    setDecisionFocus(null);
-    if (hit.evidence_kind === 'source_text' || !hit.evidence_kind && hit.source.locator !== `document:${hit.document_id}`) {
-      const ids = retrievalSourceIds(hit);
-      const source = displayedSources.find(row => ids.some(id => id === row.id || id === `${project.id}:${row.id}`));
-      openEvidence(source ? [source.id] : ids);
-      if (source) setSourceTextFocus({ projectId: project.id, contextVersion: project.context_version, sourceId: source.id, hit });
-    } else {
-      setSourceFocus(null); setSourceTextFocus(null);
-      setEvidenceLocation(previous => ({ projectId: project.id, contextVersion: project.context_version, documentId: hit.document_id,
-        version: hit.version, locator: hit.locator, quote: hit.text, token: (previous?.token || 0) + 1 }));
-    }
-    setTab('evidence');
-    setDetailsOpen(true);
+    const referenceId = retrievalSourceIds(hit).find(id => displayedSources.some(source => id === source.id || id === `${project.id}:${source.id}`)) || hit.document_id || hit.source.id;
+    setEvidenceDrawer({projectId:project.id,packet:currentStrategyPacket,refs:[{source_id:referenceId,quote:hit.text,locator:hit.locator,version:hit.version}]});
+    return;
   }
   useEffect(() => {
     let current = true;
@@ -316,16 +363,43 @@ export default function App() {
     return () => { cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
   }, [tab, project?.id, focusedSourceKey, sourceFocus?.token, sourceTextResolved?.status]);
   useEffect(() => { setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null); setDecisionFocus(null); setEvidencePacket(null); }, [retrievalKey]);
-  useEffect(() => { setDirectionSelection(null); setDirectionPacket(null); }, [directionIdentity]);
+  useEffect(() => { setEvidenceDrawer(null); }, [project?.id]);
+  useEffect(() => {
+    setDirectionSelection(current => current?.identity === directionIdentity ? current : null);
+    setDirectionPacket(current => current?.identity === directionIdentity ? current : null);
+  }, [directionIdentity]);
+  useEffect(() => {
+    const back = () => { void (async()=>{
+      rememberPosition(); const link=readWorkbenchLink(window.location.search);
+      if (link.projectId && link.projectId!==project?.id) await loadProject(link.projectId);
+      setTab(link.view && !['map','projects','knowledge'].includes(link.view)?link.view:'overview');setRouteSection(link.section);setRoutePane(link.pane||'content');
+      setGlobalView(link.publicDirectory||link.view==='projects'?'projects':link.view==='knowledge'?'knowledge':link.view==='map'?'map':'project');setDetailsOpen(link.view!=='map');
+      if (link.scheme && project?.id===link.projectId && (link.baseline===undefined||link.baseline===project.context_version)) setDirectionSelection({identity:directionIdentity,mode:link.scheme});
+    })().catch(()=>setError('该历史页面暂时无法打开，请从项目空间重新选择。')); };
+    window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);
+  },[project?.id,project?.context_version,navigationKey]);
+  useEffect(()=>{
+    if(!settingsOpen&&!runDetailsOpen)return;
+    const previous=document.activeElement as HTMLElement|null;
+    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'&&!event.defaultPrevented){setSettingsOpen(false);setRunDetailsOpen(false);}};
+    window.addEventListener('keydown',escape);return()=>{window.removeEventListener('keydown',escape);previous?.focus?.({preventScroll:true});};
+  },[settingsOpen,runDetailsOpen]);
   useEffect(() => {
     const controller = new AbortController();
     setRetrievalStrategy({ key: retrievalKey, status: 'loading', packet: null });
     if (!project || project.input.business_profile !== 'neighborhood') { setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: null }); return; }
-    void api<StrategyPacket | null>(`/projects/${encodeURIComponent(project.id)}/renewal-strategy?demo=false`, undefined, controller.signal)
-      .then(value => { if (!controller.signal.aborted) setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: value?.context_version === project.context_version ? value : null }); })
+    const projectId = project.id, version = project.context_version;
+    void Promise.all([api<StrategyPacket | null>(`/projects/${encodeURIComponent(projectId)}/renewal-strategy?demo=false`, undefined, controller.signal),
+      canWrite ? api<ResearchRoundsResponse>(`/projects/${encodeURIComponent(projectId)}/research-rounds`,undefined,controller.signal).catch(()=>null) : Promise.resolve(null)])
+      .then(([value,records]) => { if (!controller.signal.aborted) {
+        const valid = records && Array.isArray(records.rounds) ? records : null;
+        setRoundIndex({key:retrievalKey,data:valid});
+        const latest = valid?.rounds.filter(round => round.project_id === projectId && round.context_version === version && round.status === 'completed' && round.result?.strategy).sort((a,b)=>b.round_number-a.round_number)[0]?.result;
+        setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: latest || (value?.context_version === version ? value : null) });
+      } })
       .catch(() => { if (!controller.signal.aborted) setRetrievalStrategy({ key: retrievalKey, status: 'unavailable', packet: null }); });
     return () => controller.abort();
-  }, [retrievalKey]);
+  }, [retrievalKey,canWrite,directionPacket?.packet.input_hash]);
   function decisionLocations(hit: RetrievalHit) {
     if (!project) return [];
     return retrievalDecisionLocations(hit, project.id, currentStrategyPacket, packet).filter(location => !currentDirection || (!location.mode || location.mode === currentDirection) && !!currentDirectionText(location.text, currentDirection));
@@ -337,8 +411,12 @@ export default function App() {
     setCompleteDemoProject(null);
     completedDecisionFocus.current = null;
     try { localStorage.removeItem('hzz-complete-demo-project'); } catch {}
-    setDecisionFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, location, token: (previous?.token || 0) + 1 }));
-    setTab(location.tab); setDetailsOpen(true);
+    if (location.kind==='cost-library') { setDecisionFocus(null);navigateGlobal('knowledge','costs');return; }
+    const view = ['investigation','followup','investigations'].includes(location.kind)?'actions':location.kind==='action'?'scenarios':'assessment';
+    const section = view==='actions'?'current':view==='scenarios'?'detail':location.kind==='dimension'||location.kind==='assessment'?'current':'direction';
+    const mapped = {...location,tab:view} as RetrievalDecisionLocation|RetrievalFeatureLocation;
+    setDecisionFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, location:mapped, token: (previous?.token || 0) + 1 }));
+    navigateProject(view,section,view==='scenarios'?'content':undefined,'mode' in location ? location.mode : undefined);
   }
   useEffect(() => {
     if (!decisionFocus) { completedDecisionFocus.current=null; return; }
@@ -412,7 +490,11 @@ export default function App() {
           if (initial.showOverview) { setCompleteDemoProject(null); try { localStorage.removeItem('hzz-complete-demo-project'); } catch {} }
           await loadProject(initial.selected.id);
           if (!alive) return;
-          if (initial.showOverview) { setTab(initial.view === 'map' ? 'overview' : initial.view); setDetailsOpen(true); setCompleteDemoProject(null); writeWorkbenchLink(initial.selected.id, initial.view); }
+          const link = readWorkbenchLink(window.location?.search || '');
+          if (link.publicDirectory || link.view === 'projects') { setGlobalView('projects'); setRouteSection(link.publicDirectory?'published':link.section); setDetailsOpen(false); }
+          else if (link.view === 'knowledge') { setGlobalView('knowledge'); setDetailsOpen(false); }
+          else if (initial.showOverview) { setTab(initial.view === 'map' ? 'overview' : initial.view); setDetailsOpen(true); setGlobalView('project'); setCompleteDemoProject(null); writeWorkbenchLink(initial.selected.id, initial.view, link); }
+          if (link.scheme && (link.baseline === undefined || link.baseline === initial.selected.context_version)) setDirectionSelection({identity:`${initial.selected.id}:${initial.selected.context_version}:false`,mode:link.scheme});
           if (initial.unavailableProject) setNotice('分享链接中的项目当前不可读取，已打开其他可读项目，请核对来源项目。');
         }
       } catch (e) {
@@ -431,7 +513,7 @@ export default function App() {
     setLoadingTarget(projectId);
     try {
       const selected = await loadProject(projectId);
-      setCompleteDemoProject(null); setTab('overview'); setDetailsOpen(true); setMapFocus(value => value + 1);
+      setCompleteDemoProject(null); setTab('overview'); setRouteSection(undefined); setDetailsOpen(true); setGlobalView('project'); setMapFocus(value => value + 1);
       try { localStorage.removeItem('hzz-complete-demo-project'); } catch {}
       writeWorkbenchLink(selected.id, 'overview');
     } catch (error) { setError(error instanceof Error ? error.message : '公开方案暂时无法读取。'); }
@@ -538,7 +620,7 @@ export default function App() {
     setTab("overview");
     setDetailsOpen(true);
   }
-  const stages = [
+  const legacyStages = [
     {
       id: "overview",
       label: "研判总览",
@@ -570,6 +652,7 @@ export default function App() {
       done: followups.length > 0,
     },
   ];
+  const stages = PROJECT_PAGES.map(page => ({id:page.id,label:page.label,detail:'',done:false}));
   const metrics = packet?.metrics || [];
   const vacancy = metrics.find((m) => m.key === "vacancy_ratio"),
     gfa = metrics.find((m) => m.key === "gfa_m2");
@@ -663,47 +746,7 @@ export default function App() {
 
     </>
   );
-  return (
-    <WorkspaceFrame
-      project={project}
-      projects={projects}
-      stages={stages}
-      tab={tab}
-      onTab={value => { setTab(value); if (project) writeWorkbenchLink(project.id, value as WorkbenchView); }}
-      onProject={(id) =>
-        void action(async () => {
-          setLoadingTarget(id);
-          try {
-            const selected = await loadProject(id);
-            setTab(selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
-            setMapFocus(v => v + 1);
-            setDetailsOpen(true);
-            writeWorkbenchLink(selected.id, selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
-          } finally { setLoadingTarget(null); }
-        })
-      }
-      onCreate={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
-      mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
-        onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
-        onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
-      onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
-        onCreateFromPlace={(place, context) => {
-          const clean=context?publicMapContext(context):null
-          const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
-          setMapAnchor(toProjectAnchor({...place,name:publicName||'地图选点'}));setMapEvidence(clean)
-          setProjectName(publicName?`${publicName} · 片区研究`.slice(0,120):'地图选点研究')
-          setRegionName([...new Set([clean?.city||place.city,publicName].filter(Boolean))].join(' ').slice(0,120))
-          setGeometryText('');setCreateOpen(true)
-        }} />}
-      detailsOpen={detailsOpen}
-      bootLoading={loading || !!loadingTarget}
-      onMap={() => { setDetailsOpen(false); if (project) writeWorkbenchLink(project.id, 'map'); }}
-      onSettings={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setDetailsOpen(false); setMapSettings(v => v + 1); }}
-      error={error}
-      onDismissError={() => setError('')}
-      rail={rail}
-      modeControl={
-        <select
+  const modeSelector = (<select
           className="mode-select"
           aria-label="执行方式"
           value={completeDemoActive ? 'demo' : executionMode}
@@ -717,8 +760,54 @@ export default function App() {
             真实模型研判
           </option>
           <option value="offline">离线工程验证</option>
-        </select>
+        </select>);
+  return (
+    <WorkspaceFrame
+      globalView={globalView}
+      onGlobalView={view => navigateGlobal(view)}
+      activeProjectPage={location.page}
+      onProjectPage={page => navigateProject(page)}
+      scrollContainerRef={scrollContainer}
+      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={() => setCreateOpen(true)} canCreate={canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
+      project={project}
+      projects={projects}
+      stages={stages}
+      tab={tab}
+      onTab={value => navigateProject(resolveProjectLocation(value).page,resolveProjectLocation(value).section)}
+      onProject={(id) =>
+        void action(async () => {
+          setLoadingTarget(id);
+          try {
+            const selected = await loadProject(id);
+            setTab(selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
+            setMapFocus(v => v + 1);
+            setDetailsOpen(true);
+            setGlobalView('project'); setRouteSection(undefined);
+            writeWorkbenchLink(selected.id, selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
+          } finally { setLoadingTarget(null); }
+        })
       }
+      onCreate={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
+      mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+        onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
+        onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
+      onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setRouteSection(undefined); setDetailsOpen(true); setGlobalView('project'); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
+        onCreateFromPlace={(place, context) => {
+          const clean=context?publicMapContext(context):null
+          const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
+          setMapAnchor(toProjectAnchor({...place,name:publicName||'地图选点'}));setMapEvidence(clean)
+          setProjectName(publicName?`${publicName} · 片区研究`.slice(0,120):'地图选点研究')
+          setRegionName([...new Set([clean?.city||place.city,publicName].filter(Boolean))].join(' ').slice(0,120))
+          setGeometryText('');setCreateOpen(true)
+        }} />}
+      detailsOpen={detailsOpen}
+      bootLoading={loading || !!loadingTarget}
+      onMap={() => navigateGlobal('map')}
+      onSettings={() => setSettingsOpen(true)}
+      error={error}
+      onDismissError={() => setError('')}
+      rail={rail}
+      modeControl={<span className="workspace-provenance">{project?.input.synthetic || completeDemoActive ? '模拟资料' : '项目资料'} · v{project?.context_version || 0}<button className="text-button" onClick={()=>setRunDetailsOpen(true)}>运行详情</button></span>}
     >
       {error && (
         <div className="feedback error" role="alert">
@@ -785,55 +874,14 @@ export default function App() {
         </section>
       ) : (
         <>
-          {tab === 'overview' && !completeDemoActive && <section className="public-decisions-entry" aria-label="公开决策方案入口"><header><div><h2>公开决策方案</h2><p>无需管理员登录，可阅读已完成的方案、原文依据与六维评估。</p></div>{publicDecisions.items.some(item => item.project_id === project.id) && <a href={publicDecisionHref(project.id)}>本方案分享链接 ↗</a>}</header>{publicDecisions.status === 'loading' ? <p role="status">正在读取公开方案目录…</p> : publicDecisions.status === 'unavailable' ? <p>公开目录暂未读取，当前项目已有方案仍可继续查看。</p> : <details open={!publicDecisions.items.some(item => item.project_id === project.id)}><summary>选择已保存的真实方案 · {publicDecisions.items.length} 个项目</summary><div className="public-decision-projects">{publicDecisions.items.map(item => <a key={item.project_id} href={publicDecisionHref(item.project_id)} aria-current={item.project_id === project.id ? 'page' : undefined} onClick={event => { event.preventDefault(); void openPublicDecision(item.project_id); }}><strong>{item.headline}</strong><span>来源项目：{item.project_name} · 资料 v{item.strategy_context_version}</span><span>{new Date(item.created_at).toLocaleString('zh-CN')} · {item.is_current ? '当前方案' : '已保存快照'}</span><span>查看完整方案 →</span></a>)}</div>{!publicDecisions.items.length && <p>当前目录尚无已保存的真实完整方案。</p>}</details>}</section>}
-          <div className={`page-heading${completeDemoActive ? " is-complete-demo" : ""}`}>
-            <div>
-              <div className="eyebrow">
-                <span className="project-type">
-                  {completeDemoActive ? '完整模拟演示' : project.input.purpose === 'case_library_archive' ? '案例与规则归档' : project.input.synthetic ? "显式合成示范" : "真实项目资料"}
-                </span>
-                <span>项目空间 / {project.id.slice(0, 10)}</span>
-              </div>
-              <h1>{completeDemoActive ? `杭州样本社区 · ${tab === 'compare' ? '版本变化' : tab === 'actions' ? '下一步调查' : '方案总览'}` : project.name}</h1>
-              <p>
-                {project.input.purpose === 'case_library_archive' ? '公开材料归档' : '改造需求与前期策划'} <span>·</span>{" "}
-                {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
-              </p>
-            </div>
-            <button className="secondary" disabled={!canWrite} onClick={() => setCreateOpen(true)}>
-              <IconPlus size={16} />
-              新建项目
-            </button>
-          </div>
-          {project.input.synthetic && (
-            <div className="scope-note">
-              <IconShieldCheck size={17} />
-              <span>
-                本项目和材料均为合成样例，用于验证工程流程，不对应真实宗地或企业。
-              </span>
-            </div>
-          )}
-          {stale && (
-            <div className="feedback notice">
-              <IconRefresh size={17} />
-              <span>
-                项目资料已变化，当前展示 v{packet?.revision}{" "}
-                的历史结果。重新研判后生成新版本。
-              </span>
-            </div>
-          )}
-          {project.input.business_profile === 'neighborhood' && <div className={`full-demo-mode-toolbar${demoSessionActive ? '' : ' is-real-project'}`}>
-            <p>{completeDemoActive ? '全量模拟：六维现况、改造方案、月度运营和模拟台账均有完整数值与推算依据；支持版本对比与下一步调查。' : demoSessionActive ? '当前查看真实项目的材料与证据。模拟方案、版本对比和调查演示可通过顶部标签返回。' : '可查看真实项目资料，或打开全量模拟数据，演示政府工作人员掌握完整资料后的报表。'}</p>
-            <button className="secondary" type="button" onClick={() => {
-              const next = demoSessionActive ? null : project.id;
-              setCompleteDemoProject(next); setTab('overview');
-              try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
-            }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
-          </div>}
-          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} />}
+          {!['overview','assessment','scenarios'].includes(location.page) && <header className="workspace-page-heading"><span>{project.name} · 资料 v{project.context_version}</span><h1>{PROJECT_PAGES.find(page=>page.id===location.page)?.label}</h1></header>}
+          {(project.input.synthetic || completeDemoActive) && <p className="workspace-data-badge">模拟资料 · {completeDemoActive ? '杭州样本社区演示情景' : project.input.scope.name}</p>}
+          {['evidence','actions','results'].includes(location.page) && <nav className="workspace-section-nav" aria-label="页面工作区">{(location.page==='evidence'?[['files','资料与证据'],['profile','对象档案'],['context','项目经验与约束']]:location.page==='actions'?[['current','当前调查'],['history','历史记录']]:[['reports','成果管理'],['history','版本变化']]).map(([section,label])=><button key={section} aria-current={location.section===section?'page':undefined} onClick={()=>navigateProject(location.page,section)}>{label}</button>)}</nav>}
+          {tab === 'overview' && <ProjectOverview project={project} currentStrategyPacket={overviewStrategy} latestSavedRound={latestSavedRound} currentDirection={currentDirection} stale={!!overviewStrategy && overviewStrategy.context_version!==project.context_version} failed={run?.status==='failed'||researchRecords?.rounds.at(-1)?.status==='failed'} loading={retrievalStrategy.status==='loading'} onNavigate={navigateProject} onEvidence={openEvidence}/>}
+          {project.input.business_profile === 'neighborhood' && <div hidden={tab !== 'assessment' && tab !== 'scenarios'}><StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => navigateProject('actions','current')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} workspacePage={strategySurface.current.workspacePage} section={strategySurface.current.section} pane={strategySurface.current.pane} schemeDirection={currentDirection} onNavigate={target=>navigateProject(target.view as ProjectPage|'knowledge',target.section,target.pane,target.scheme)} /></div>}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
-          {tab === "overview" && !completeDemoActive && !currentDirection && (
-            <details className="overview-legacy" open={project.input.business_profile !== 'neighborhood'}><summary>完整研判、计算与运行记录</summary>
+          {tab === "assessment" && !(["neighborhood"].includes(project.input.business_profile || "")) && !completeDemoActive && (
+            <section className="legacy-assessment-workspace"><h2>工程研判与路径计算</h2>
               {run?.status === "failed" && (
                 <div className="feedback notice">
                   <span>
@@ -1116,7 +1164,7 @@ export default function App() {
                   </a>
                 </div>
               )}
-            </details>
+            </section>
           )}
           {tab === "context" && (
             <section className="content-panel">
@@ -1238,20 +1286,20 @@ export default function App() {
               </div>
             </section>
           )}
-          {tab === "evidence" && (
+          {tab === 'evidence' && location.section === 'profile' && <section className="content-panel project-object-profile"><h2>研究对象档案</h2><div className="project-object-grid"><RegionView project={project}/><dl><dt>研究对象</dt><dd>{project.input.scope.name}</dd><dt>项目 ID</dt><dd>{project.id}</dd><dt>资料基线</dt><dd>v{project.context_version} · {project.input.as_of}</dd><dt>范围状态</dt><dd>{project.input.scope.geometry?'已有范围坐标':'范围尚未登记'} · {project.input.scope.legal_parcel_confirmed?'已确认宗地范围':'研究范围'}</dd></dl></div><h3>本对象已登记事实</h3>{project.input.facts.length ? <div className="table-scroll"><table className="data-table"><thead><tr><th>项目</th><th>登记值</th><th>来源</th></tr></thead><tbody>{project.input.facts.map(fact=><tr key={fact.id}><td>{factLabel[fact.kind]||fact.kind}</td><td>{show(fact.value)}</td><td><button className="text-button" onClick={()=>openEvidence([fact.source_id])}>查看原文</button></td></tr>)}</tbody></table></div>:<p>对象材料保存在资料页；当前未录入已确认事实。</p>}<button className="secondary" onClick={()=>navigateProject('evidence','files')}>维护资料与证据</button></section>}
+          {tab === "evidence" && location.section !== 'profile' && (
             <section className="content-panel">
               <div className="section-head">
                 <div>
                   <div className="kicker">EVIDENCE LIBRARY</div>
-                  <h2>逻辑与证据</h2>
+                  <h2>资料与证据</h2>
                 </div>
               </div>
               <p className="intro">
-                {currentDirection ? `${MODE_LABELS[currentDirection]}：查看本方向的判断标准、举措与原文依据。` : '把判断标准、方案举措和原文证据对应起来。选择方向后，按该方向查看。'}
+                维护本项目的原始资料、内部调查与来源记录。判断依据可在各工作页就地打开。
               </p>
-              <details className="logic-source-library"><summary>补充项目内部资料</summary><InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/></details>
-              {project.input.business_profile === 'neighborhood' && <LogicEvidencePanel project={project} selectedDirection={currentDirection} strategyPacket={currentStrategyPacket} onEvidence={openEvidence} />}
-              <details className="logic-source-library" open={!!requestedRefs.length || !!evidenceLocation}><summary>检索与全部原始资料 · {displayedSources.length} 份来源</summary>
+              <InternalMaterialIntake compact onUpload={uploadMaterial} disabled={busy || !canWrite} synthetic={project.input.synthetic}/>
+              <section className="project-material-library"><h3>检索与原始资料 · {displayedSources.length} 份来源</h3>
               <RagEvidenceSearch key={`rag-search-${project.id}`} projectId={project.id} revision={project.context_version} onEvidence={openEvidence} onLocateHit={locateEvidence} decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState} featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision} />
               <ImportedDataExplorer
                 projectId={project.id}
@@ -1365,14 +1413,15 @@ export default function App() {
                   ))}
                 </>
               )}
-              </details>
+              </section>
             </section>
           )}
+          {tab === 'results' && <ProjectResultsPage project={project} packet={overviewStrategy} rounds={researchRecords?.rounds} legacyPacket={packet} onNavigate={navigateProject} onRunDetails={()=>setRunDetailsOpen(true)}/>}
           {tab === 'compare' && completeDemoActive && <DemoPlanVersions key={`demo-versions-${project.id}`} project={project} onExplore={() => setTab('overview')} />}
           {tab === "compare" && !completeDemoActive && (
             <section className="content-panel">
               <div className="kicker">REVISION HISTORY</div>
-              <h2>决策对比</h2>
+              <h2>版本变化</h2>
               <p className="intro">
                 {project.input.business_profile === 'neighborhood' ? '首版建议 → 补齐关键资料 → 新一版决策。查看选择、举措与效果预期怎样改善。' : '比较最近两个已完成版本。旧报告绑定当时的资料快照，不被后续经验覆盖。'}
               </p>
@@ -1439,9 +1488,8 @@ export default function App() {
               </details>
             </section>
           )}
-          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <section className="content-panel strategy-current-investigations" data-retrieval-investigations="true" aria-label="当前方向调查与条件"><header><h2>{currentDirection ? `${MODE_LABELS[currentDirection]} · 调查与实施条件` : '先明确本次研究方向'}</h2><button className="secondary" onClick={() => setTab('overview')}>返回方案页面</button></header>{currentDirection && currentDirectionPath ? <><h3>当前方向的实施前提</h3>{currentDirectionPath.requirements.map(text => currentDirectionText(text, currentDirection)).filter(Boolean).map((text, index) => <article key={index}><h4>条件 {index + 1}</h4><p>{text}</p></article>)}<h3>当前方向的研究与行动</h3>{currentDirectionPath.actions.filter(action => currentDirectionText(action.title, currentDirection) || currentDirectionText(action.detail, currentDirection)).map(action => <article key={action.title}><h4>{currentDirectionText(action.title, currentDirection) || '本方向专项核实'}</h4><p>{currentDirectionText(action.detail, currentDirection)}</p>{!!action.evidence_refs.length && <button className="text-button" onClick={() => openEvidence(action.evidence_refs)}>查看本项依据</button>}</article>)}</> : <p>在“改造方向判断”中明确选择后，这里只显示该方向的研究任务和实施前提。</p>}</section>}
-          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <details className="strategy-historical-investigations"><summary>历史研判调查记录 · 不作为本次所选方向的任务</summary>{completeDemoActive ? <DemoInvestigationPanel key={`demo-investigations-${project.id}`} project={project} /> : <StrategyInvestigations project={project} onEvidence={openEvidence} />}</details>}
-          {tab === "actions" && !completeDemoActive && (
+          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <ProjectTasksPage project={project} packet={overviewStrategy} rounds={researchRecords?.rounds} direction={currentDirection} section={location.section==='history'?'history':'current'} onEvidence={openEvidence} onSupplement={()=>navigateProject('evidence','files')}/>}
+          {tab === "actions" && !(["neighborhood"].includes(project.input.business_profile || "")) && !completeDemoActive && (
             <details className="strategy-historical-investigations" open={project.input.business_profile !== 'neighborhood'}><summary>历史调查建议与已保存清单</summary><section className="content-panel">
               <div className="kicker">NEXT ACTIONS</div>
               <h2>优先调查，最可能改变判断的事</h2>
@@ -1499,13 +1547,18 @@ export default function App() {
         </>
       )}
       {!loading && !loadingTarget && !createOpen && createPortal(<FloatingEvidenceSearch
-        projectId={project?.id} revision={project?.context_version} projectName={project?.name} projects={projects}
+        projectId={project?.id} revision={project?.context_version} projectName={project?.name} pageContext={PROJECT_PAGES.find(page=>page.id===location.page)?.label} projects={projects}
         openRequest={askEvidenceRequest} onEvidence={openEvidence} onLocateHit={locateEvidence}
         decisionLocations={decisionLocations} onNavigateDecision={navigateRetrievalDecision} decisionLinksState={decisionLinksState}
         featureLocations={featureLocations} onNavigateFeature={navigateRetrievalDecision}
         onOpenMaterials={() => openEvidence()}
         onSelectProject={id => action(async () => { await loadProject(id); })}
       />, document.body)}
+      {project && <ProjectEvidenceDrawer open={evidenceDrawer?.projectId===project.id} project={project} packet={evidenceDrawer?.packet} refs={evidenceDrawer?.refs||[]} onClose={()=>setEvidenceDrawer(null)} onOpenMaterials={id=>{const saved=evidenceDrawer?.packet;setEvidenceDrawer(null);openMaterials(id?[id]:[],saved||undefined);}}/>}
+      {(settingsOpen || runDetailsOpen) && createPortal(<div className="workspace-utility-backdrop" onClick={()=>{setSettingsOpen(false);setRunDetailsOpen(false);}}><aside className="workspace-utility-drawer" role="dialog" aria-modal="true" aria-label={settingsOpen?'设置':'运行详情'} onClick={event=>event.stopPropagation()}><header><h2>{settingsOpen?'设置':'运行详情'}</h2><button autoFocus aria-label="关闭详情" onClick={()=>{setSettingsOpen(false);setRunDetailsOpen(false);}}>×</button></header>{settingsOpen?<>
+        <section><h3>计算与运行</h3><label>执行方式{modeSelector}</label><p>模型服务：{modelAvailable?'已配置':'尚未配置'}</p><button className="secondary" onClick={()=>{setSettingsOpen(false);navigateGlobal('map');setMapSettings(value=>value+1);}}>地图连接设置</button></section>
+        {project?.input.business_profile==='neighborhood'&&<section><h3>演示情景</h3><p>演示输入单独标记，用于展示完整参数下的方案和运营测算。</p><button className="secondary" onClick={()=>{const next=demoSessionActive?null:project.id;setCompleteDemoProject(next);setDirectionSelection(null);setSettingsOpen(false);setTab('scenarios');setRouteSection('compare');setGlobalView('project');setDetailsOpen(true);try{if(next)localStorage.setItem('hzz-complete-demo-project',next);else localStorage.removeItem('hzz-complete-demo-project');}catch{}}}>{demoSessionActive?'返回项目资料':'打开完整模拟情景'}</button></section>}
+      </>:<><section><h3>{project?.name||'当前项目'}</h3><p>资料基线 v{project?.context_version||0}</p>{run?.status==='failed'&&<p role="alert">本轮运行未完成：{run.error_code||'请查看已保存阶段'}</p>}{overviewStrategy?.error&&<p role="alert">{overviewStrategy.error}</p>}<p>{running?'研究进行中':overviewStrategy?.status==='completed'?'已有完整保存成果':'当前尚无完整保存成果'}</p>{overviewStrategy?.model_calls.map((call,index)=><article key={index}><strong>{call.stage} · {call.returned_model||call.requested_model}</strong><p>耗时 {(call.duration_ms/1000).toFixed(1)} 秒 · 输入 {call.input_tokens} / 输出 {call.output_tokens} tokens</p></article>)}</section><section><h3>已保存运行与阶段</h3>{rail}</section></>}</aside></div>,document.body)}
       {createOpen && createPortal(
         <div className="modal-backdrop" onClick={() => setCreateOpen(false)}>
           <section
@@ -1572,8 +1625,8 @@ export default function App() {
                   await refreshProjects();
                   await loadProject(p.id);
                   setCreateOpen(false);
-                  setTab("evidence");
-                  setDetailsOpen(true);
+                  setTab("evidence"); setRouteSection("files");
+                  setDetailsOpen(true); setGlobalView("project");
                   setMapAnchor(undefined);
                   setMapEvidence(null);
                 });

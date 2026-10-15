@@ -5,13 +5,13 @@ import { AMOUNT_KINDS, WORK_TYPES, ConstructionCostLibrary, constructionCostsCsv
 
 const querySchema = z.object({ q: z.string().max(300).optional(), province: z.string().max(20).optional(), amount_kind: z.enum(AMOUNT_KINDS).optional(), work_type: z.enum(WORK_TYPES).optional(), scale_basis: z.string().max(100).optional(), year: z.coerce.number().int().min(1900).max(2200).optional() }).strict()
 
-/** Host session middleware and the existing project ownership check protect both reads. */
+/** One library serves global reads; project aliases also enforce project ownership. */
 export async function registerConstructionCosts(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>, options: { root?: string } = {}): Promise<ConstructionCostLibrary> {
   const library = new ConstructionCostLibrary(store.db, options.root)
   await library.initialize()
-  for (const exportCsv of [false, true]) app.get(`/api/projects/:id/construction-costs${exportCsv ? '/export' : ''}`, async (request, response, next) => {
+  for (const projectScoped of [false, true]) for (const exportCsv of [false, true]) app.get<{ id?: string }>(`${projectScoped ? '/api/projects/:id' : '/api'}/construction-costs${exportCsv ? '/export' : ''}`, async (request, response, next) => {
     try {
-      await requireProject(String(request.params.id))
+      if (projectScoped) await requireProject(String(request.params.id))
       const result = await library.search(querySchema.parse(request.query))
       if (!exportCsv) { response.json(result); return }
       response.setHeader('Content-Type', 'text/csv; charset=utf-8')

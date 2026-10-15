@@ -37,12 +37,12 @@ function environment() {
   const root = createRoot(dom.document.getElementById('root')!)
   return { dom, root, container: dom.document.getElementById('root')!, cleanup: () => act(async () => root.unmount()) }
 }
-async function mount(data: ResearchRoundsResponse, current: StrategyPacket | null, generated: StrategyPacket = newPacket, legacyResponse?: Promise<StrategyPacket | null>) {
+async function mount(data: ResearchRoundsResponse, current: StrategyPacket | null, generated: StrategyPacket = newPacket, pending?: { legacy?: Promise<StrategyPacket | null>; rounds?: Promise<ResearchRoundsResponse>; waitForRounds?: boolean }) {
   const env = environment(); let state = structuredClone(data), created: ResearchRound | null = null
   const transport = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
     const path = String(url), method = init?.method || 'GET'
-    if (path.includes('/renewal-strategy') && method === 'GET') return json(legacyResponse ? await legacyResponse : current)
-    if (path.endsWith('/research-rounds') && method === 'GET') return json(state)
+    if (path.includes('/renewal-strategy') && method === 'GET') return json(pending?.legacy ? await pending.legacy : current)
+    if (path.endsWith('/research-rounds') && method === 'GET') return json(pending?.rounds ? await pending.rounds : state)
     if (path.endsWith('/research-rounds/adopt')) { const adopted = { ...round('r1', 1, current || state.baseline_candidate), origin: 'adopted_history' as const }; state.rounds.push(adopted); return json({ round: adopted }) }
     if (path.endsWith('/research-rounds') && method === 'POST') { const body = JSON.parse(String(init?.body)) as CreateResearchRoundRequest; created = round(body.parent_round_id ? 'r2' : 'r1', body.parent_round_id ? 2 : 1, null, state.materials.filter(material => body.document_ids.includes(material.document_id))); state.rounds.push(created); return json({ round: created }) }
     if (path.endsWith('/run')) { const completed = { ...created!, result: generated, input_hash: generated.input_hash, status: 'completed' as const, missing_materials: generated.strategy?.round_review?.missing_materials || [] }; state.rounds = state.rounds.map(round => round.id === completed.id ? completed : round); return new Response(JSON.stringify({ type: 'complete', result: generated, round: completed }) + '\n', { headers: { 'content-type': 'application/x-ndjson' } }) }
@@ -50,7 +50,7 @@ async function mount(data: ResearchRoundsResponse, current: StrategyPacket | nul
   })
   vi.stubGlobal('fetch', transport)
   await act(async () => env.root.render(createElement(StrategyOverview, { project, demoActive: false, onEvidence: vi.fn(), onInvestigate: vi.fn(), onUploadMaterial: vi.fn() })))
-  await vi.waitFor(() => expect(env.container.querySelector('.research-intake [role=status]')).toBeNull())
+  if (pending?.waitForRounds !== false) await vi.waitFor(() => expect(env.container.querySelector('.research-intake [role=status]')).toBeNull())
   return { ...env, transport }
 }
 
@@ -106,16 +106,63 @@ test('the second review requires consent, submits inherited plus new documents, 
   } finally { await app.cleanup() }
 })
 
-test('reload restores the matching completed private round before a slower legacy GET and never lets the old cache overwrite it', async () => {
-  let finish!: (result: StrategyPacket | null) => void
-  const legacy = new Promise<StrategyPacket | null>(resolve => { finish = resolve })
-  const app = await mount({ rounds: [round('r1', 1, oldPacket), round('r2', 2, newPacket, [addedMaterial])], materials: [addedMaterial], baseline_candidate: null }, null, newPacket, legacy)
+test.each(['round-first', 'public-first'] as const)('a newer same-scope private result wins when responses arrive %s', async order => {
+  const internal = structuredClone(newPacket), publicPlan = packet(2, '较旧公开结果')
+  internal.created_at = '2026-10-15T09:00:00Z'; publicPlan.created_at = '2026-10-15T07:00:00Z'
+  const history: ResearchRoundsResponse = { rounds: [round('r1', 1, oldPacket), round('r2', 2, internal, [addedMaterial])], materials: [addedMaterial], baseline_candidate: null }
+  let finishPublic!: (result: StrategyPacket | null) => void, finishRounds!: (value: ResearchRoundsResponse) => void
+  const legacy = new Promise<StrategyPacket | null>(resolve => { finishPublic = resolve }), savedRounds = new Promise<ResearchRoundsResponse>(resolve => { finishRounds = resolve })
+  const app = await mount(history, publicPlan, internal, { legacy: order === 'round-first' ? legacy : undefined, rounds: order === 'public-first' ? savedRounds : undefined, waitForRounds: order !== 'public-first' })
   try {
-    await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(newPacket.strategy!.headline))
-    await act(async () => finish(packet(2, '并发返回的旧缓存标题')))
+    if (order === 'round-first') {
+      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(internal.strategy!.headline))
+      await act(async () => finishPublic(publicPlan))
+    } else {
+      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline))
+      await act(async () => finishRounds(history))
+    }
     await vi.waitFor(() => expect(app.container.querySelector('.strategy-working')).toBeNull())
-    expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(newPacket.strategy!.headline)
-    expect(app.container.querySelector('.strategy-summary h3')?.textContent).toBe(newPacket.strategy!.headline)
+    expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(internal.strategy!.headline)
+    expect(app.container.querySelector('.strategy-summary h3')?.textContent).toBe(internal.strategy!.headline)
+    expect(app.transport.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+test('a freshly completed round replaces a public result only through its newer creation timestamp', async () => {
+  const publicPlan = packet(2, '较新公开方案'), generated = packet(2, '刚生成的补充研判')
+  publicPlan.created_at = '2026-10-15T10:00:00Z'; generated.created_at = '2026-10-15T11:00:00Z'
+  const app = await mount({ rounds: [round('r1', 1, oldPacket, [previousMaterial])], materials: [previousMaterial, addedMaterial], baseline_candidate: null }, publicPlan, generated)
+  try {
+    expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline)
+    await act(async () => Simulate.change(app.container.querySelector<HTMLInputElement>('.research-internal-consent input')!, { target: { checked: true } } as never))
+    await act(async () => app.container.querySelector<HTMLButtonElement>('.research-round-actions button')!.click())
+    await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(generated.strategy!.headline))
+    expect(app.container.querySelector('[data-round-id=r1]')?.textContent).toContain(oldPacket.strategy!.headline)
+    expect(app.container.querySelector('[data-round-id=r2]')?.textContent).toContain(generated.strategy!.headline)
+  } finally { await app.cleanup() }
+})
+
+test.each(['round-first', 'public-first'] as const)('a newer public v6 plan wins over an adopted older round when responses arrive %s', async order => {
+  const publicPlan = packet(2, '较新公开v6具体分项方案'), adopted = packet(2, '较旧已采纳v5方案')
+  publicPlan.created_at = '2026-10-15T10:00:00Z'; adopted.created_at = '2026-10-15T08:00:00Z'
+  publicPlan.strategy!.paths[0].work_packages = [{ id: 'V6-WATER', target: '本项目设施', target_basis: 'project_scope', source_id: 'SRC', quote: publicPlan.sources[0].text, locator: 'line:1', intervention: '更换破损管段并设置分段检修阀组', scope: '本期确认的供水设施范围', quantity: null, unit: null, quantity_basis: 'unknown', delivery: '分段试压合格后交付维护', priority: 'first', preconditions: ['核定楼栋和停水时段'], evidence_refs: ['SRC'] }]
+  const history: ResearchRoundsResponse = { rounds: [{ ...round('adopted-old', 1, adopted), created_at: '2026-10-15T11:00:00Z', updated_at: '2026-10-15T11:00:00Z' }], materials: [], baseline_candidate: null }
+  let finishPublic!: (value: StrategyPacket | null) => void, finishRounds!: (value: ResearchRoundsResponse) => void
+  const publicResponse = new Promise<StrategyPacket | null>(resolve => { finishPublic = resolve }), roundsResponse = new Promise<ResearchRoundsResponse>(resolve => { finishRounds = resolve })
+  const app = await mount(history, publicPlan, publicPlan, { legacy: order === 'round-first' ? publicResponse : undefined, rounds: order === 'public-first' ? roundsResponse : undefined, waitForRounds: order !== 'public-first' })
+  try {
+    if (order === 'round-first') {
+      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(adopted.strategy!.headline))
+      await act(async () => finishPublic(publicPlan))
+    } else {
+      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline))
+      await act(async () => finishRounds(history))
+    }
+    await vi.waitFor(() => expect(app.container.querySelector('.strategy-working')).toBeNull())
+    expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline)
+    expect(app.container.querySelector('[data-round-id=adopted-old]')?.textContent).toContain(adopted.strategy!.headline)
+    await act(async () => app.root.render(createElement(StrategyOverview, { project, demoActive: false, workspacePage: 'scheme', section: 'detail', schemeDirection: 'comprehensive', onEvidence: vi.fn(), onInvestigate: vi.fn() })))
+    expect(app.container.querySelector('[data-work-package-id=V6-WATER]')?.textContent).toContain('更换破损管段')
     expect(app.transport.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true)
   } finally { await app.cleanup() }
 })

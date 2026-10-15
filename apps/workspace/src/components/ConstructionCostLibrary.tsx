@@ -12,14 +12,14 @@ const scopeLabels: Record<string, string> = { epc_package: 'EPC标段', construc
 const areaLabels: Record<string, string> = { building_floor_area: '总建筑面积', renovation_site_area: '整体改造范围面积', existing_building_area: '现有建筑面积（待核对口径）', road_area: '道路作业面积', unknown: '面积口径待核实' }
 const platformStatus: Record<string, string> = { public_api_and_html_verified: '已核验部分合同和招标公告，按项目逐项扩充。', linked_official_source: '通过主管部门原发公告及政府采购合同附件归档。', public_notice_verified_spa_api_unverified: '已归档部分项目估算，施工合同等原件由相关交易分平台补充。', public_contracts_verified: '已核验广州3个独立施工合同，金额和建筑面积来自同一官方公告。', housing_repair_results_verified: '新增4个住宅综合修缮施工中标项目，以明确项目与标段身份关联规模原件。' }
 const number = (value: number) => value.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
-export default function ConstructionCostLibrary({ projectId }: { projectId: string }) {
-  const [open, setOpen] = useState(false), [q, setQ] = useState(''), [province, setProvince] = useState('')
+export default function ConstructionCostLibrary({ projectId }: { projectId?: string }) {
+  const [open, setOpen] = useState(!projectId), [q, setQ] = useState(''), [province, setProvince] = useState('')
   const [kind, setKind] = useState(''), [work, setWork] = useState('')
   const [area, setArea] = useState(''), [year, setYear] = useState('')
   const [loaded, setLoaded] = useState<{ key: string; result?: CostLibraryResult; error?: string }>({ key: '' })
   const [retry, setRetry] = useState(0)
   const params = new URLSearchParams({ ...(q.trim() ? { q: q.trim() } : {}), ...(province ? { province } : {}), ...(kind ? { amount_kind: kind } : {}), ...(work ? { work_type: work } : {}), ...(area ? { scale_basis: area } : {}), ...(/^\d{4}$/.test(year) ? { year } : {}) })
-  const path = `/projects/${encodeURIComponent(projectId)}/construction-costs`, query = params.toString(), key = `${path}?${query}`
+  const path = projectId ? `/projects/${encodeURIComponent(projectId)}/construction-costs` : '/construction-costs', query = params.toString(), key = `${path}?${query}`
   useEffect(() => {
     if (!open) return
     const controller = new AbortController()
