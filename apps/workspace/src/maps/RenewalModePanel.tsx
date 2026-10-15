@@ -44,8 +44,8 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
   }, [endpoint, contextVersion])
   const screening = packet?.screening || input, result = packet?.decision || decision, mode = result?.renewal_mode
   const gate = evaluateRenewalModeGate(screening)
-  const direction = gate.rebuild_allowed ? mode?.direction === 'rebuild' ? 'rebuild' : 'investigate' : gate.direction
-  const directionSummary = direction === 'investigate' && gate.rebuild_allowed ? '拆建必要性与实施条件已有依据，下一步复核方案和费用—效果比较，明确优先路径。' : gate.summary
+  const direction = gate.direction
+  const directionSummary = gate.summary
   const conditionCounts = { met: gate.checks.filter(row => row.state === 'met').length, unknown: gate.checks.filter(row => row.state === 'unknown').length, unmet: gate.checks.filter(row => row.state === 'unmet').length, conflict: gate.checks.filter(row => row.state === 'conflict').length }
   const agent=(strategy||cachedStrategy)?.status==='completed'&&!(strategy||cachedStrategy)?.synthetic?(strategy||cachedStrategy)?.strategy:null
   const example = screening.cases.find(row => row.id === caseId) || screening.cases[0]

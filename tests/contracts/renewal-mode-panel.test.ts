@@ -12,6 +12,19 @@ const input = () => projectRenewalModeInput({ ...fixture, business_profile: 'nei
 const oldRebuild = { status: 'completed', renewal_mode: { direction: 'rebuild', status: 'preliminary', summary: '原拆原建优先开展前期论证。',
   model_choice: { choice: 'rebuild', confidence: .99, probabilities: { rebuild: .99 } }, priority_constraint: { choice: 'safety' }, reasons: [], source_ids: [], next_step: '既有模型任务' } } as unknown as DecisionSupport
 
+test('the program applies the same satisfied gate even when the saved model suggests another direction', () => {
+  const screening = input()
+  for (const condition of screening.conditions) Object.assign(condition, {
+    value: condition.kind !== 'structure_repairable', state: condition.kind === 'structure_repairable' ? 'restricted' : 'supported',
+    source_ids: ['CONFIRMED-OBJECT-REPORT'], locators: ['条件确认表第3页'],
+  })
+  const model = structuredClone(oldRebuild)
+  model.renewal_mode!.direction = 'comprehensive'
+  const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: screening, decision: model })))
+  expect(document.querySelector('.renewal-direction>strong')?.textContent).toBe('原拆原建优先论证')
+  expect(document.querySelector('.renewal-gate>summary')?.textContent).toContain('已满足 9/9')
+})
+
 test('a cached model demolition preference cannot replace the current evidence gate in the headline', () => {
   const screening = input()
   const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: screening, decision: oldRebuild })))

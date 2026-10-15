@@ -6355,6 +6355,44 @@
     "RenewalStrategy": {
       "type": "object",
       "properties": {
+        "decision_brief": {
+          "type": "object",
+          "properties": {
+            "renewal": {
+              "type": "object",
+              "properties": {
+                "conclusion": { "type": "string", "minLength": 1, "maxLength": 120 },
+                "reason": { "type": "string", "minLength": 1, "maxLength": 300 },
+                "evidence_refs": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+              },
+              "required": ["conclusion", "reason", "evidence_refs"],
+              "additionalProperties": false
+            },
+            "investment": {
+              "type": "object",
+              "properties": {
+                "conclusion": { "type": "string", "minLength": 1, "maxLength": 120 },
+                "reason": { "type": "string", "minLength": 1, "maxLength": 300 },
+                "stage": { "type": "string", "enum": ["preliminary", "construction", "hold"] },
+                "evidence_refs": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+              },
+              "required": ["conclusion", "reason", "stage", "evidence_refs"],
+              "additionalProperties": false
+            },
+            "returns": {
+              "type": "object",
+              "properties": {
+                "financial": { "type": "string", "minLength": 1, "maxLength": 260 },
+                "social": { "type": "string", "minLength": 1, "maxLength": 260 },
+                "evidence_refs": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+              },
+              "required": ["financial", "social", "evidence_refs"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["renewal", "investment", "returns"],
+          "additionalProperties": false
+        },
         "headline": {
           "type": "string",
           "maxLength": 120

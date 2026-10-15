@@ -73,6 +73,11 @@ python3 -m venv .venv
 .venv/bin/python -m pip install --disable-pip-version-check -r requirements.lock.txt
 npm ci --no-audit --no-fund
 npm run build
+mkdir -p "$release/apps/workspace/dist/deliverables"
+for document in "$base/shared/deliverables"/*.pdf; do
+  [ -f "$document" ] || continue
+  ln -s "$document" "$release/apps/workspace/dist/deliverables/$(basename "$document")"
+done
 .venv/bin/python -m pip freeze > "$base/shared/python-installed.txt"
 if [ ! -f "$base/shared/server.env" ]; then
   BASE_DIR="$base" python3 - <<'PY'
