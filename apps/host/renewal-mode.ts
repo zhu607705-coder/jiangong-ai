@@ -11,7 +11,7 @@ import { evaluateDecision, decisionCacheDescriptor } from '../../services/capabi
 import { renewalHistory } from '../../services/map-screening/renewal-history'
 import { validate } from '../../packages/contracts/validate'
 import { researchRenewalStrategy } from '../../services/map-screening/renewal-strategy'
-import { STRATEGY_POLICY, type StrategyPacket } from '../../packages/retrofit/strategy'
+import { STRATEGY_POLICY, type StrategyPacket, type StrategyStreamEvent } from '../../packages/retrofit/strategy'
 
 export type ModeContextLoader = (id: string, signal: AbortSignal) => Promise<DecisionInput>
 const bodySchema = z.object({ expected_context_version: z.number().int().nonnegative().optional(), refresh: z.boolean().optional() }).strict()
@@ -75,6 +75,8 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
   })
   for (const method of ['get','post'] as const) app[method]('/api/projects/:id/renewal-strategy', async (req,res,next) => {
     let key: string | undefined
+    let streaming = false
+    const emit = (event: StrategyStreamEvent) => { if (streaming && !res.destroyed && !res.writableEnded) res.write(JSON.stringify(event) + '\n') }
     try {
       const project = await requireProject(String(req.params.id)), signal = requestSignal(req,res)
       if (project.input.business_profile !== 'neighborhood') return res.status(422).json({ detail:'请在老旧小区项目中研究更新方案。' })
@@ -89,13 +91,26 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       if (running.has(key)||running.size>=2) {key=undefined;return res.status(409).json({detail:'方案研究正在进行，请稍后查看。'})}
       running.add(key)
       const prior = (await store.db.query<{payload:DecisionSupport}>('SELECT payload FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3',[config.ownerId,project.id,modeHash])).rows[0]?.payload||null
-      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior)
+      streaming = req.headers.accept?.includes('application/x-ndjson') || false
+      if (streaming) { res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Accel-Buffering', 'no'); res.flushHeaders() }
+      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit})
       signal.throwIfAborted()
-      if ((await requireProject(project.id)).context_version!==project.context_version) return res.status(409).json({detail:'研究期间资料已变化，请刷新后重新研究。'})
-      await store.db.query('INSERT INTO renewal_strategy_assessments(owner_id,project_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[config.ownerId,project.id,hash,JSON.stringify(result)])
+      if ((await requireProject(project.id)).context_version!==project.context_version) {
+        if (streaming) { emit({type:'error',message:'研究期间资料已变化，请刷新后重新研究。'}); res.end(); return }
+        return res.status(409).json({detail:'研究期间资料已变化，请刷新后重新研究。'})
+      }
+      if (!cached || cached.status !== 'completed' || result.status === 'completed') {
+        await store.db.query('INSERT INTO renewal_strategy_assessments(owner_id,project_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[config.ownerId,project.id,hash,JSON.stringify(result)])
+      }
       if (result.decision?.status==='completed' && query.demo==='false') await store.db.query('INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[config.ownerId,project.id,modeHash,JSON.stringify(result.decision)])
-      if (!res.destroyed) res.json(result)
-    } catch(error) { if (!res.destroyed) {if(error instanceof z.ZodError)res.status(422).json({detail:'方案研究请求格式不正确。'});else next(error)} }
+      if (!res.destroyed) { if (streaming) { emit({type:'complete',result}); res.end() } else res.json(result) }
+    } catch(error) {
+      if (!res.destroyed) {
+        if (streaming) { emit({type:'error',message:'本轮方案研究已结束，已取得的进度保留。请查看资料或稍后重新研究。'}); res.end() }
+        else if(error instanceof z.ZodError) res.status(422).json({detail:'方案研究请求格式不正确。'})
+        else next(error)
+      }
+    }
     finally {if(key)running.delete(key)}
   })
 }

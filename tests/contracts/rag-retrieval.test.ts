@@ -4,6 +4,7 @@ import type { Server } from 'node:http'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { createHash } from 'node:crypto'
 import fixture from '../../fixtures/inputs/01_auto.json'
 import type { ExperienceCard, ProjectInput, Source } from '../../apps/host/generated/contracts'
 import type { ProjectRecord } from '../../apps/host/store'
@@ -52,7 +53,7 @@ describe('owner-scoped source/version-aware read-only RAG retrieval', () => {
   const calls: ProjectInput[] = []
   const ranker = vi.fn<RetrievalRanker>(async (value, query) => {
     calls.push(value)
-    if (query === '模拟能力服务失败') throw new ExperienceError(502, 'RAG_RETRIEVAL_UNAVAILABLE', '现有检索能力不可用')
+    if (query === '二次供水模拟能力服务失败') throw new ExperienceError(502, 'RAG_RETRIEVAL_UNAVAILABLE', '现有检索能力不可用')
     return { matches: value.sources.filter(item => item.untrusted_text!.includes('二次供水')).slice(0, 5).map(item => ({ source_id: item.id, score: -0.25 })) }
   })
   const documents = [doc('A'), doc('B', '二次供水已实施。'), doc('AI', '二次供水AI草稿。', { file_name: 'AI采集工程.txt' }),
@@ -136,7 +137,7 @@ describe('owner-scoped source/version-aware read-only RAG retrieval', () => {
     expect(other.value.candidate_counts.documents).toBe(0)
   })
   it('reports capability failure instead of silently using another ranker', async () => {
-    const response = await api('RAG-A', { question: '模拟能力服务失败' })
+    const response = await api('RAG-A', { question: '二次供水模拟能力服务失败' })
     expect(response.status).toBe(502); expect(response.value.code).toBe('RAG_RETRIEVAL_UNAVAILABLE')
   })
   it('validates question, exact-date, safe filter and limit bounds', () => {
@@ -271,4 +272,173 @@ it('traces the small community wording expansion and sends only that transparent
   expect(result.hits[0].text).toBe('二次供水拟改造。')
   expect(expandRetrievalQuery('如何改造道路')).toEqual({ rank_query: '如何改造道路', query_expansions: [] })
   expect(expandRetrievalQuery('楼栋楼幢与住户').query_expansions[0].matched_terms).toEqual(['楼栋', '楼幢'])
+})
+
+describe('saved public source text in the same project retrieval', () => {
+  const original = (id: string, text: string, patch: Partial<Source> = {}): Source => ({
+    id, title: `${id}来源`, visibility: 'public', data_class: 'public', synthetic: false,
+    untrusted_text: text, content_status: 'excerpt', hash: `registered-${id}`, locator: `public:${id}`,
+    date_status: 'verified', published_at: '2026-09-01', evidence_scope: 'background', ...patch,
+  })
+  const literalRanker: RetrievalRanker = async (input, query) => ({ matches: input.sources
+    .filter(source => source.untrusted_text!.includes(query)).slice(0, 5).map(source => ({ source_id: source.id, score: 1 })) })
+
+  it('retrieves elevator, parking, funds and rebuilding originals when the project has no uploaded files', async () => {
+    const sources = [original('LIFT', '电梯托管费用由每台每月600元降至300元。'),
+      original('PARK', '停车位安排需要核对权属与周转需求。'), original('FUND', '资金主要用于共有部分维修、更新、改造。'),
+      original('REBUILD', '原拆原建试点先核对产权、规划与业主协商条件。')]
+    const current = project(sources), exported = bundle([], sources), before = JSON.stringify(current)
+    for (const [question, id] of [['电梯', 'LIFT'], ['停车', 'PARK'], ['资金', 'FUND'], ['原拆原建', 'REBUILD']]) {
+      const response = await retrieveProjectEvidence(current, exported, [], { question }, literalRanker)
+      expect(response.hits).toHaveLength(1)
+      expect(response.hits[0]).toMatchObject({ evidence_kind: 'source_text', document_id: id, source: { id },
+        version: `registered-${id}`, version_origin: 'registered_hash', content_status: 'excerpt',
+        locator: `public:${id}`, measure_links: [], review_statuses: [] })
+      expect(response.candidate_counts).toMatchObject({ documents: 0, source_texts: 4, eligible_source_texts: 4 })
+      expect(response.hits[0].text).toBe(sources.find(source => source.id === id)!.untrusted_text)
+    }
+    expect((await retrieveProjectEvidence(current, exported, [], { question: '量子纠缠' }, literalRanker)).hits).toEqual([])
+    expect(JSON.stringify(current)).toBe(before)
+  })
+
+  it('preserves the actual stored scope, locator and full text; absent hashes use an explicit text snapshot version', () => {
+    const text = '邻里中心已有文化康养与助老服务。', value = original('NEIGHBOR', text, {
+      hash: undefined, content_status: 'full_text', body_truncated: true, object_refs: ['community:浙大求是社区'],
+      evidence_scope: 'area', public_records: [], locator: undefined,
+    })
+    const prepared = prepareRetrievalCandidates(project([value]), bundle([], [value]), [], { question: '邻里中心' })
+    expect(prepared.candidates[0]).toMatchObject({ document_id: 'NEIGHBOR', text, locator: 'source:text',
+      version: createHash('sha256').update(text).digest('hex'), version_origin: 'text_sha256',
+      content_status: 'excerpt', source: { evidence_scope: 'area', object_refs: ['community:浙大求是社区'], body_truncated: true } })
+    expect(prepared.candidates[0].source).not.toHaveProperty('untrusted_text')
+    expect(prepared.candidates[0].source).not.toHaveProperty('public_records')
+    expect(prepared.candidates[0].match_reasons.join('；')).toContain('正文快照SHA-256')
+  })
+
+  it('keeps metadata-only, generated, internal, future and unknown-date sources outside the default eligible corpus', () => {
+    const sources = [original('META', '电梯', { content_status: 'metadata_only' }), original('AI', '电梯', { title: 'AI研究草稿' }),
+      original('SIM', '电梯', { synthetic: true, data_class: 'synthetic' }),
+      original('PRIVATE', '电梯', { visibility: 'internal', data_class: 'internal' }),
+      original('FUTURE', '电梯', { published_at: '2027-01-01' }),
+      original('UNDATED', '电梯', { date_status: 'undated', published_at: undefined, retrieved_at: '2026-01-01' })]
+    const prepared = prepareRetrievalCandidates(project(sources), bundle([], sources), [], { question: '电梯', as_of: '2026-10-14' })
+    expect(prepared.candidates).toEqual([])
+    expect(prepared.skipped.map(value => value.code)).toEqual(expect.arrayContaining([
+      'SOURCE_TEXT_UNAVAILABLE', 'GENERATED_SOURCE_EXCLUDED', 'SOURCE_NOT_PUBLIC', 'SOURCE_AFTER_AS_OF', 'SOURCE_DATE_UNKNOWN',
+    ]))
+    const ai = prepareRetrievalCandidates(project(sources), bundle([], sources), [], { question: '电梯', include_ai: true, source_kind: 'ai_draft' })
+    expect(ai.candidates.map(value => value.source.id)).toEqual(['AI'])
+  })
+
+  it('does not let unreviewed source text satisfy citation filters or bypass a failed document-version check', () => {
+    const document = doc('STALE-SOURCE'), bound = source(document, { content_status: 'excerpt', untrusted_text: '电梯原文', hash: 'old-hash' })
+    const publicText = original('EXTERNAL', '电梯原文')
+    const current = project([bound, publicText]), exported = bundle([document], [bound, publicText])
+    const prepared = prepareRetrievalCandidates(current, exported, [document], { question: '电梯' })
+    expect(prepared.candidates.map(value => value.source.id)).toEqual(['EXTERNAL'])
+    for (const filter of [{ measure_key: 'elevator' }, { object_ref: 'building:B1' }, { stage: 'implemented' }, { review_status: 'approved' as const }]) {
+      expect(prepareRetrievalCandidates(current, exported, [document], { question: '电梯', ...filter }).candidates).toEqual([])
+    }
+    expect(prepareRetrievalCandidates(current, { ...exported, project_id: 'RAG-B' }, [], { question: '电梯' }).candidates).toEqual([])
+  })
+
+  it('collapses exact same-scope source mirrors but preserves changed body and scope with each source identity', () => {
+    const first = original('DIRECT', '资金规则原文', { url: 'https://example.org/original' })
+    const mirror = { ...first, id: 'OTHER-PROJECT:ATTACHED:DIRECT' }
+    const changed = { ...first, id: 'CHANGED', untrusted_text: '资金规则另一段原文' }
+    const differentScope = { ...first, id: 'AREA', evidence_scope: 'area' as const }
+    const sources = [mirror, first, changed, differentScope]
+    const prepared = prepareRetrievalCandidates(project(sources), bundle([], sources), [], { question: '资金' })
+    expect(prepared.candidates).toHaveLength(3)
+    expect(prepared.candidates.find(value => value.source.id === 'DIRECT')!.source_aliases).toEqual(['OTHER-PROJECT:ATTACHED:DIRECT'])
+    expect(prepared.candidates.map(value => value.source.id)).toEqual(expect.arrayContaining(['CHANGED', 'AREA']))
+  })
+
+  it('requires meaningful query overlap in the original body before BM25, never a common question word or filename alone', async () => {
+    const document = doc('NAV', '首页 > 联系我们', { file_name: '原拆原建与电梯资料.txt' })
+    const values = [source(document), original('LIFT', '电梯托管费用每月300元。'),
+      original('REBUILD', '原拆原建试点需要核对产权条件。'), original('UNRELATED', '有哪些人参与活动？需要什么资料？已有案例和服务。')]
+    const ranker = vi.fn<RetrievalRanker>(async input => ({ matches: input.sources.slice(0, 5).map(source => ({ source_id: source.id, score: -1 })) }))
+    for (const [question, id] of [['加梯有哪些费用？', 'LIFT'], ['原拆原建有哪些案例？', 'REBUILD']]) {
+      const response = await retrieveProjectEvidence(project(values), bundle([document], values), [document], { question }, ranker)
+      expect(response.hits.map(hit => hit.source.id)).toEqual([id])
+      expect(response.candidate_counts.ranked_chunks).toBe(1)
+    }
+    ranker.mockClear()
+    const missing = await retrieveProjectEvidence(project(values), bundle([document], values), [document], { question: '量子纠缠有哪些资料？' }, ranker)
+    expect(missing.hits).toEqual([])
+    expect(missing.candidate_counts.ranked_chunks).toBe(0)
+    expect(ranker).not.toHaveBeenCalled()
+  })
+
+  it('keeps explicit household/building counting bridges through the body gate without admitting question-only single characters', async () => {
+    const document = doc('COUNTS', '29、30、31、48幢，合计252户。'), value = source(document)
+    const ranker = vi.fn<RetrievalRanker>(async input => ({ matches: input.sources.map(source => ({ source_id: source.id, score: 1 })) }))
+    for (const [question, unit] of [['住户有多少？', '户'], ['楼栋有多少？', '幢']]) {
+      const response = await retrieveProjectEvidence(project([value]), bundle([document], [value]), [document], { question }, ranker)
+      expect(response.hits.map(hit => hit.text)).toEqual(['29、30、31、48幢，合计252户。'])
+      expect(response.candidate_counts).toMatchObject({ eligible_chunks: 1, ranked_chunks: 1, batches: 1 })
+      expect(response.query_expansions).toContainEqual(expect.objectContaining({ added_term: unit }))
+    }
+    expect(ranker).toHaveBeenCalledTimes(2)
+    ranker.mockClear()
+    for (const question of ['有什么？', '有哪些？']) {
+      const response = await retrieveProjectEvidence(project([value]), bundle([document], [value]), [document], { question }, ranker)
+      expect(response.hits).toEqual([])
+      expect(response.query_expansions).toEqual([])
+    }
+    expect(ranker).not.toHaveBeenCalled()
+  })
+
+  it('expands colloquial cost, senior activity and parking questions into transparent lexical groups', async () => {
+    const ranker = vi.fn<RetrievalRanker>(async input => ({ matches: input.sources.map(source => ({ source_id: source.id, score: 1 })) }))
+    const cases = [
+      { question: '改造大概要花多少钱？', words: ['费用', '投资', '预算'] },
+      { question: '老人平时去哪活动？', words: ['养老', '老年', '社区服务', '邻里'] },
+      { question: '停车难有哪些办法？', words: ['停车', '车位', '泊位'] },
+    ]
+    for (const row of cases) {
+      const sources = row.words.map((word, index) => original(`TERM-${index}`, `${word}原文记录。`))
+      const before = JSON.stringify(sources)
+      const response = await retrieveProjectEvidence(project(sources), bundle([], sources), [], { question: row.question }, ranker)
+      expect(response.hits.map(hit => hit.source.id).sort()).toEqual(sources.map(source => source.id).sort())
+      expect(response.question).toBe(row.question)
+      expect(response.query_expansions).toContainEqual(expect.objectContaining({ added_term: row.words.join(' ') }))
+      expect(response.hits.every(hit => sources.some(source => source.untrusted_text === hit.text))).toBe(true)
+      expect(ranker.mock.calls.at(-1)![1]).toBe(response.rank_query)
+      expect(JSON.stringify(sources)).toBe(before)
+    }
+  })
+
+  it('requires an explicit facility topic in the body instead of letting counting units or another topic satisfy it', async () => {
+    const sources = [original('WATER', '二次供水涉及29、30、31、48幢，共计252户。'),
+      original('LIFT', '加装电梯涉及12户，费用另行核定。'), original('PARK', '停车设施涉及3幢居民楼。'),
+      original('REBUILD', '拆除重建涉及548户。'), original('OTHER', '浙工新村改造涉及548户、12幢。')]
+    const ranker: RetrievalRanker = async input => ({ matches: input.sources.map(source => ({ source_id: source.id, score: 1 })) })
+    for (const [question, id] of [['二次供水涉及哪些楼栋？', 'WATER'], ['二次供水涉及多少住户？', 'WATER'],
+      ['电梯涉及多少住户？', 'LIFT'], ['停车涉及哪些楼栋？', 'PARK'], ['原拆原建涉及多少住户？', 'REBUILD']]) {
+      const response = await retrieveProjectEvidence(project(sources), bundle([], sources), [], { question }, ranker)
+      expect(response.hits.map(hit => hit.source.id)).toEqual([id])
+      expect(response.candidate_counts.ranked_chunks).toBe(1)
+    }
+  })
+
+  it('prioritizes matching object and community scope with the same BM25 without promoting a different project or background score', async () => {
+    const local = original('LOCAL', '本项目估算总投资120万元。', { title: '求是村加装电梯草案', evidence_scope: 'object' })
+    const community = original('COMMUNITY', '社区养老服务已有场所。', { title: '社区服务资料', evidence_scope: 'area', object_refs: ['community:浙大求是社区'] })
+    const reference = original('REFERENCE', '养老场所费用及投资预算参考。', { title: '外地区域案例', evidence_scope: 'background' })
+    const foreign = original('FOREIGN', '本项目投资及养老场所参考。', { title: '浙工新村方案', evidence_scope: 'object' })
+    const sources = [reference, foreign, local, community]
+    const current = { ...project(sources), name: '浙大求是村 · 片区研究', input: { ...input('RAG-A', sources), scope: { ...input('RAG-A').scope, name: '浙大求是村' } } }
+    const ranker: RetrievalRanker = async input => ({ matches: [...input.sources].reverse().map(source => ({ source_id: source.id,
+      score: source.untrusted_text!.includes('参考') ? 100 : 1 })) })
+    const cost = await retrieveProjectEvidence(current, bundle([], sources), [], { question: '改造大概要花多少钱？' }, ranker)
+    expect(cost.hits[0].source.id).toBe('LOCAL')
+    expect(cost.hits[0].score).toBe(1)
+    expect(cost.hits.some(hit => hit.source.id === 'FOREIGN')).toBe(true)
+    const activity = await retrieveProjectEvidence(current, bundle([], sources), [], { question: '老人平时去哪活动？' }, ranker)
+    expect(activity.hits[0].source.id).toBe('COMMUNITY')
+    expect(activity.hits[0].score).toBe(1)
+    expect(activity.ranking_note).toContain('来源范围')
+  })
 })

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "offline_fixture": true,
+  "provider_calls": 0,
+  "fixture_post_count": 1,
+  "checks": [
+    "no automatic model generation",
+    "five visible stages",
+    "only emitted steps complete",
+    "elapsed and source count",
+    "no invented percentage",
+    "mobile viewport fit",
+    "Chinese TRANSPORT failure",
+    "raw error hidden",
+    "acquired sources retained",
+    "no page errors"
+  ]
+}

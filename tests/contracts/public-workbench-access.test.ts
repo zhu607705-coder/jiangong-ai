@@ -63,8 +63,8 @@ test('selecting an unstudied map point as a viewer does not create a screening c
   } finally { await act(async () => root.unmount()) }
 })
 
-test('the local administrator still starts strategy generation when no saved result exists', async () => {
-  const { container, root } = setup()
+test('the local administrator starts strategy generation explicitly after a cache miss', async () => {
+  const { container, root, dom } = setup()
   const project = { id: 'local-project', context_version: 0, name: '本机项目', input: fixture } as unknown as Project
   const screening = projectRenewalModeInput(project.input)
   const transport = vi.fn((url: string, init: RequestInit) => Promise.resolve(response(url.includes('renewal-strategy')
@@ -73,6 +73,10 @@ test('the local administrator still starts strategy generation when no saved res
   vi.stubGlobal('fetch', transport)
   try {
     await act(async () => root.render(createElement(StrategyOverview, { project, demoActive: false, onEvidence: vi.fn(), onInvestigate: vi.fn() })))
+    await vi.waitFor(() => expect(container.textContent).toContain('尚未保存本项目的整体更新方案'))
+    expect(transport.mock.calls.filter(([, init]) => init.method === 'POST')).toHaveLength(0)
+    const start=[...container.querySelectorAll('button')].find(button=>button.textContent?.includes('开始研究'))!
+    await act(async()=>start.dispatchEvent(new dom.window.Event('click',{bubbles:true})))
     await vi.waitFor(() => expect(transport.mock.calls.filter(([, init]) => init.method === 'POST')).toHaveLength(1))
     expect(container.querySelector('.strategy-top button')?.hasAttribute('disabled')).toBe(false)
     expect(transport.mock.calls.find(([, init]) => init.method === 'POST')?.[0]).toContain('/projects/local-project/renewal-strategy')

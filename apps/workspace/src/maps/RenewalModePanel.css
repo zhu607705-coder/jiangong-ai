@@ -8,6 +8,23 @@
 .renewal-mode-panel p{margin:8px 0;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
 .renewal-direction.is-rebuild{background:#f7f3eb;border-color:#aa793b}
 .renewal-direction.is-rebuild>strong{color:#815626}
+.renewal-mode-panel .renewal-baseline-note{color:#4d675e;font-size:14px}
+.renewal-gate{margin-top:13px;padding:12px;background:#fff;border:1px solid #d9e5df;border-radius:8px}
+.renewal-gate h4{margin:0;font-size:16px;color:#285c4d}
+.renewal-mode-panel .renewal-gate>p{font-size:14px;color:#536b60}
+.renewal-gate-group h5{margin:14px 0 6px;font-size:14px;color:#305e50}
+.renewal-gate-group ul{list-style:none;margin:0;padding:0}
+.renewal-gate-group li{padding:8px 0;border-top:1px solid #e6ede8}
+.renewal-gate-item{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:14px}
+.renewal-gate-item>strong{flex-shrink:0;font-size:13px;color:#687a70;font-weight:600}
+.renewal-gate li[data-state=met] .renewal-gate-item>strong{color:#227054}
+.renewal-gate li[data-state=unmet] .renewal-gate-item>strong,.renewal-gate li[data-state=conflict] .renewal-gate-item>strong{color:#975c34}
+.renewal-gate details{margin-top:3px;font-size:13px;color:#667d70}
+.renewal-gate summary,.renewal-model-audit summary{cursor:pointer}
+.renewal-mode-panel .renewal-gate details p,.renewal-mode-panel .renewal-gate .renewal-gate-source{font-size:13px;margin:5px 0}
+.renewal-mode-panel .renewal-gate-result{border-top:1px solid #dfe8e2;padding-top:9px;font-weight:600}
+.renewal-model-audit{margin-top:10px;font-size:13px;color:#687b70}
+.renewal-mode-panel .renewal-model-audit p{font-size:13px}
 .renewal-next{padding-top:9px;border-top:1px solid #d5e5de}
 .renewal-next>span{display:block;color:#2d6b5c;font-weight:650;margin-bottom:3px}
 .renewal-judge-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
@@ -39,6 +56,19 @@
 .renewal-standard>button strong{font-size:15px}
 .renewal-standard>button span{margin-left:auto;font-size:13px;color:#677e6d}
 .renewal-standard>div{padding:0 6px 10px}
+.renewal-research-evidence{margin:12px 0 4px;padding:12px;background:#f6f9f6;border:1px solid #dce7df;border-radius:9px}
+.renewal-research-evidence h4{margin:0;font-size:16px;color:#2e5e4b}
+.renewal-research-evidence h5{margin:12px 0 6px;font-size:14px;color:#3c6250}
+.renewal-mode-panel .renewal-research-evidence p{font-size:14px;margin:6px 0}
+.renewal-mode-panel .renewal-research-date,.renewal-mode-panel .renewal-research-scope{color:#637568;font-size:13px}
+.renewal-research-group article{padding:10px;margin:7px 0;background:#fff;border:1px solid #e0e8e0;border-radius:7px}
+.renewal-research-group article>strong{font-size:15px;color:#315b48}
+.renewal-research-group dl{margin:6px 0}
+.renewal-research-group dl>div{padding:5px 0;border-top:1px solid #edf0e9}
+.renewal-research-group dt{font-size:13px;color:#5d7161}
+.renewal-research-group dd{margin:2px 0 0;font-size:17px;font-weight:600;color:#2f654b}
+.renewal-research-group dd>span,.renewal-research-group small{display:block;margin-top:3px;font-size:12px;line-height:1.6;font-weight:400;color:#647867}
+.renewal-mode-panel .renewal-research-missing{border-top:1px solid #dce5dc;margin-top:10px;padding-top:9px;color:#5b6558}
 .renewal-mode-panel .renewal-condition{font-size:14px;margin:4px 0;color:#697d70}
 .renewal-investigate{margin-top:12px;width:100%}
 .renewal-case-switch{display:flex;gap:6px;flex-wrap:wrap}

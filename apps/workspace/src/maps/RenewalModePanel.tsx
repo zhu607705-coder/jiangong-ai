@@ -3,14 +3,23 @@ import { IconBuildingCommunity, IconBuildingSkyscraper, IconSparkles, IconChevro
 import { api } from '../api'
 import { useWorkbenchAccess } from '../AdminAccess'
 import type { DecisionSupport } from '../../../host/generated/contracts'
-import { MODE_LABELS, type RenewalModeInput, type RenewalModePacket } from '../../../../packages/retrofit/renewal-mode'
+import { MODE_LABELS, evaluateRenewalModeGate, type RenewalModeInput, type RenewalModePacket } from '../../../../packages/retrofit/renewal-mode'
 import { decisionErrorMessage } from '../../../../packages/decision/route-labels'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
+import RenewalResearchEvidence from './RenewalResearchEvidence'
 import './RenewalModePanel.css'
 
 const money = (value: number) => value >= 1e8 ? `${(value / 1e8).toLocaleString('zh-CN', { maximumFractionDigits: 3 })} 亿元` : `${(value / 10000).toLocaleString('zh-CN', { maximumFractionDigits: 4 })} 万元`
 const kinds: Record<string, string> = { contract_price: '合同价', winning_bid: '中标价', budget: '预算', tender_ceiling: '控制价', estimate: '估算', settlement: '结算' }
 const conditionLabels: Record<string, string> = { structure_repairable: '可修复性', demolition_permitted: '拆除许可条件', rights_clear: '权属', rebuild_planning_confirmed: '拆建规划', resident_resolution_valid: '居民决议', relocation_ready: '安置', funding_secured: '落实资金', life_cycle_cost_compared: '全周期费用比选', maintenance_entity_confirmed: '维护主体' }
+const unknownConditions: Record<string, string> = {
+  structure_repairable: '尚缺本对象逐栋安全鉴定与修缮可行性意见', demolition_permitted: '尚缺本对象拆除、保护要求及属地程序确认',
+  rights_clear: '尚缺本对象权属与共有权益边界记录', rebuild_planning_confirmed: '尚缺本对象重建规划条件与指标确认',
+  resident_resolution_valid: '尚缺适用程序下的居民决议记录', relocation_ready: '尚缺逐户腾退、过渡和回搬安排',
+  funding_secured: '已查政策和公开估算；本项目尚缺财政批复、分户承担、维修资金余额及拨付时点',
+  life_cycle_cost_compared: '已查费用口径和比较方法；本项目尚缺同口径修缮、重建两套全周期核算',
+  maintenance_entity_confirmed: '尚缺后续接管主体、维护资金和年度预算记录',
+}
 
 export default function RenewalModePanel({ endpoint, contextVersion, input, decision, strategy, compact=false, onInvestigate }: {
   endpoint: string; contextVersion?: number; input: RenewalModeInput; decision?: DecisionSupport | null; strategy?:StrategyPacket|null; compact?:boolean; onInvestigate?: () => void;
@@ -34,12 +43,15 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
     return () => { controller.abort(); requestController.current?.abort() }
   }, [endpoint, contextVersion])
   const screening = packet?.screening || input, result = packet?.decision || decision, mode = result?.renewal_mode
+  const gate = evaluateRenewalModeGate(screening)
+  const direction = gate.rebuild_allowed ? mode?.direction === 'rebuild' ? 'rebuild' : 'investigate' : gate.direction
+  const directionSummary = direction === 'investigate' && gate.rebuild_allowed ? '拆建必要性与实施前提已登记满足，继续复核方案与取证后确定优先研究方向。' : gate.summary
   const agent=(strategy||cachedStrategy)?.status==='completed'&&!(strategy||cachedStrategy)?.synthetic?(strategy||cachedStrategy)?.strategy:null
   const example = screening.cases.find(row => row.id === caseId) || screening.cases[0]
   const evidence = screening.evidence.filter(row => mode?.source_ids.includes(row.source_id))
   useEffect(() => {
-    if (mode?.direction === 'comprehensive' || mode?.direction === 'rebuild') setPath(mode.direction)
-  }, [mode?.direction])
+    setPath(direction === 'rebuild' ? 'rebuild' : 'comprehensive')
+  }, [direction])
   // Every request belongs to this object. Unmounting or changing its snapshot cancels it.
   async function judge() {
     if (running||!canWrite) return
@@ -54,14 +66,29 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
   }
   const condition = (kind: string) => screening.conditions.find(row => row.kind === kind)
   return <section className="renewal-mode-panel" aria-label="改造模式判定">
-    <header><span className="renewal-step">先判模式</span><h3>改造模式判定</h3><span className="renewal-stage">{screening.synthetic ? '模拟初判' : agent?'Agent 初步方案':mode ? '初步方向' : '两条路径'}</span></header>
-    <div className={`renewal-direction is-${mode?.direction || 'compare'}`}>
-      <strong>{agent ? MODE_LABELS[agent.preferred_mode] : mode ? MODE_LABELS[mode.direction] : '综合整治，还是原拆原建？'}</strong>
-      <p>{agent&&!compact?agent.headline:mode?.summary || '先比较建筑保留与拆建的条件，再进入六维方案分析。'}</p>
-      {agent&&!compact&&<p>{agent.summary.slice(0,260)}{agent.summary.length>260?'…':''}</p>}
-      {mode && mode.status !== 'preliminary' && <p>模型原始方向：{MODE_LABELS[mode.model_choice.choice as keyof typeof MODE_LABELS]}</p>}
+    <header><span className="renewal-step">先判模式</span><h3>改造模式判定</h3><span className="renewal-stage">{screening.synthetic ? '模拟初筛' : '证据条件初筛'}</span></header>
+    <div className={`renewal-direction is-${direction}`}>
+      <strong>{direction === 'comprehensive' ? '综合整治优先研究' : direction === 'rebuild' ? '原拆原建优先论证' : MODE_LABELS.investigate}</strong>
+      <p>{directionSummary}</p>
+      <p className="renewal-baseline-note">综合整治作为研究与比选基线；是否可以安全施工，仍由逐栋鉴定和实施条件决定。</p>
+      <section className="renewal-gate" aria-label="原拆原建推荐门槛">
+        <h4>何时切换为原拆原建优先论证</h4>
+        <p>项目初筛门槛：必要性触发与实施前提须同时具备；未知项逐项保留。功能重构或经济必要性需另有专项论证，不能直接套用案例比例或模型偏好。</p>
+        {(['necessity','feasibility'] as const).map(group => <div className="renewal-gate-group" key={group}>
+          <h5>{group === 'necessity' ? '1. 本对象拆建必要性' : '2. 拆建实施可行前提'}</h5>
+          <ul>{gate.checks.filter(row => row.group === group).map(row => <li key={row.kind} data-state={row.state}>
+            <div className="renewal-gate-item"><span>{row.label}</span><strong>{row.state === 'met' ? group === 'necessity' ? '已触发' : '已满足' : row.state === 'unmet' ? group === 'necessity' ? '未触发' : '未满足' : row.state === 'conflict' ? '记录冲突' : '未知'}</strong></div>
+            <details><summary>核验要求{row.source_ids.length ? ` · ${row.source_ids.length} 份依据` : ' · 待补依据'}</summary><p>{row.detail}</p>
+              {row.source_ids.map(id => { const source = screening.evidence.find(item => item.source_id === id); return <p className="renewal-gate-source" key={id}>{source?.url && /^https?:\/\//.test(source.url) ? <a href={source.url} target="_blank" rel="noreferrer">{source.title} ↗</a> : source?.title || id}</p> })}
+              {!!row.locators.length && <p className="renewal-gate-source">原文定位：{row.locators.join('、')}</p>}
+            </details>
+          </li>)}</ul>
+        </div>)}
+        <p className="renewal-gate-result">{gate.rebuild_allowed ? '项目初筛门已满足，继续核对两方案费用和效果结论并履行属地程序。' : '当前未推荐拆建：必要性触发或实施前提尚未全部得到本对象证据支持。'}</p>
+      </section>
       {mode?.reasons.map(reason => <p className="renewal-restriction" key={reason}>{reason}</p>)}
-      {mode && <p className="renewal-next"><span>优先调查</span>{mode.next_step}</p>}
+      <p className="renewal-next"><span>优先调查</span>{gate.next_step}</p>
+      {(mode || agent) && <details className="renewal-model-audit"><summary>查看模型原始输出与历史方案</summary><p>模型偏好作为待核记录，当前研究方向由上方条件初筛决定。</p>{mode && <p>原始模型偏好：{MODE_LABELS[mode.model_choice.choice as keyof typeof MODE_LABELS] || mode.model_choice.choice}</p>}{agent && <p>历史方案偏好：{MODE_LABELS[agent.preferred_mode]}。{!compact && agent.headline}</p>}</details>}
       <div className="renewal-judge-actions">
         <button onClick={() => void judge()} disabled={running||!canWrite} title={!canWrite?'管理员登录后可生成模式初判':undefined}><IconSparkles size={17}/>{running ? 'decision 正在判定…' : mode ? '更新模式初判' : '判定改造模式'}</button>
         {mode && <button onClick={() => { setTab('standards'); setOpenStandard(mode.priority_constraint.choice) }}>查看判定条件</button>}
@@ -85,14 +112,15 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
         <p className="renewal-combination">可按楼栋组合：主体综合整治，特定楼栋另做拆建论证；年龄或单项费用不能单独决定模式。</p>
       </>}
       {tab === 'standards' && <>
-        <p className="renewal-standard-intro">项目初筛标准 v1 · 先核限制，再比较效果和费用。逐栋鉴定与属地程序决定实施条件。</p>
+        <p className="renewal-standard-intro">项目初筛标准 v2 · 综合整治为保守研究基线；达到拆建必要性与实施前提后再切换。两方案的费用、效果与逐栋条件继续分别核对。</p>
         {screening.standards.map(row => {
           const rows = row.kinds.map(kind => condition(kind)).filter(Boolean)
           const status = rows.some(item => item?.state === 'conflict') ? '存在分歧' : rows.some(item => item?.state === 'restricted') ? '有限制记录' : rows.every(item => item?.state === 'supported') ? '已有条件记录' : '安排专项核查'
           return <article className="renewal-standard" key={row.key}>
             <button aria-expanded={openStandard === row.key} onClick={() => setOpenStandard(openStandard === row.key ? '' : row.key)}><strong>{row.label}</strong><span>{status}</span><IconChevronDown size={16}/></button>
-            {openStandard === row.key && <div><p>{row.task}</p>{row.kinds.map(kind => <p className="renewal-condition" key={kind}>{conditionLabels[kind]}：{condition(kind)?.state === 'supported' ? '已登记满足' : condition(kind)?.state === 'restricted' ? '已登记不满足' : condition(kind)?.state === 'conflict' ? '记录冲突' : '尚无对应鉴定或确认记录'}</p>)}
+            {openStandard === row.key && <div><p>{row.task}</p>{row.kinds.map(kind => <p className="renewal-condition" key={kind}>{conditionLabels[kind]}：{condition(kind)?.state === 'supported' ? '已登记满足' : condition(kind)?.state === 'restricted' ? '已登记不满足' : condition(kind)?.state === 'conflict' ? '记录冲突' : unknownConditions[kind] || '尚缺本对象对应确认记录'}</p>)}
               {!!rows.flatMap(item => item?.locators || []).length && <p>原文定位：{rows.flatMap(item => item?.locators || []).join('、')}</p>}
+              {row.key === 'funding' && <RenewalResearchEvidence input={screening}/>}
             </div>}
           </article>
         })}

@@ -1,2 +1,25 @@
 .rag-evidence-search{padding:24px;border:1px solid #cfddd7;border-radius:12px;background:#fff;margin:18px 0;font-size:16px;color:#274d43}.rag-evidence-search h3{font-size:22px;margin:0 0 9px}.rag-evidence-search h4{font-size:18px;margin:0}.rag-evidence-search p{font-size:15px!important;line-height:1.8}.rag-evidence-search label{display:grid;gap:8px;font-size:15px}.rag-evidence-search textarea,.rag-evidence-search input:not([type=checkbox]),.rag-evidence-search select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #bed4c7;border-radius:7px;background:#fff;font-size:16px;color:#315448}.rag-evidence-search textarea{min-height:88px;resize:vertical}.rag-search-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:14px}.rag-search-submit{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-top:18px}.rag-search-submit>label{display:flex;align-items:center;gap:9px}.rag-evidence-search button{font-size:15px;padding:10px 16px;cursor:pointer;border:1px solid #bbd0c2;background:#f5faf6;border-radius:7px;color:#295f4b}.rag-search-submit>button{background:#2e735b;color:white}.rag-search-results{margin-top:24px}.rag-search-results article{padding:20px;border:1px solid #dae5de;border-radius:10px;margin:14px 0}.rag-search-results article>header{display:flex;justify-content:space-between;align-items:center;gap:15px}.rag-hit-kind{font-size:14px;background:#e7f2e9;padding:4px 9px;border-radius:15px;white-space:nowrap}.rag-hit-kind.kind-ai_draft{background:#fbefde;color:#8c6427}.rag-search-results blockquote{margin:14px 0;padding:16px 18px;border-left:3px solid #629a81;background:#f4f8f5;font-size:16px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow:auto}.rag-search-results details{font-size:14px;margin:15px 0;overflow-wrap:anywhere}.rag-search-results summary{cursor:pointer}.rag-hit-actions{display:flex;gap:15px;flex-wrap:wrap;align-items:center}.rag-hit-actions a{font-size:15px;color:#246f57}@media(max-width:800px){.rag-evidence-search{padding:16px}.rag-search-filters{grid-template-columns:1fr 1fr}.rag-search-submit{flex-wrap:wrap}.rag-search-results article{padding:16px}.rag-search-results article>header{align-items:flex-start;flex-wrap:wrap}}
 @media(max-width:800px){.rag-search-filters{grid-template-columns:minmax(0,1fr)}.rag-evidence-search input,.rag-evidence-search select{min-width:0}.rag-search-submit>label{align-items:flex-start}.rag-search-submit input[type=checkbox]{flex:0 0 auto;width:18px;margin:3px 0 0}}
+.rag-current-scope { margin:12px 0 0; padding:10px 12px; border-radius:8px; color:#45675b; background:#f0f6f2; }
+.rag-current-scope button { margin:6px 0 0 10px; padding:3px 9px; font-size:14px; }
+.rag-floating-examples { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0; }
+.rag-floating-examples>button { padding:5px 11px; border-radius:18px; }
+.rag-submitted-scope { padding:12px 14px; border-left:3px solid #6f9e87; background:#f5f8f6; font-size:15px; overflow-wrap:anywhere; }
+.rag-submitted-scope p { margin-top:5px; color:#4f6c60; }
+.rag-hit-basis,.rag-hit-decisions { margin:16px 0; font-size:15px; line-height:1.7; }
+.rag-hit-basis>strong,.rag-hit-decisions>strong { color:#255845; }
+.rag-hit-basis p { margin:4px 0 0; color:#506c60; }
+.rag-hit-decisions { border-top:1px solid #e0e9e3; padding-top:14px; }
+.rag-hit-decisions ul { margin:8px 0 0; padding:0; list-style:none; }
+.rag-hit-decisions li { margin:0 0 12px; }
+.rag-hit-decisions li button { display:block; padding:0; border:0; background:none; text-align:left; color:#216a52; font-weight:600; line-height:1.65; }
+.rag-hit-decisions li p { color:#64796e; margin:3px 0 0; }
+.rag-empty-results { border:1px dashed #b7cfc0; border-radius:9px; padding:14px; }
+.rag-empty-results button { margin:8px 8px 0 0; }
+.rag-feature-shortcuts { padding:14px; margin:16px 0; border:1px solid #d2dfd7; border-radius:9px; background:#f6f9f7; }
+.rag-feature-shortcuts>p { margin:5px 0 12px; color:#586e62; }
+.rag-feature-shortcuts>div { margin-top:12px; }
+.rag-feature-shortcuts button { text-align:left; font-weight:600; }
+.rag-feature-shortcuts>div p { margin:4px 0 0; color:#607669; }
+[data-retrieval-focused="true"] { outline:3px solid #48a28a; outline-offset:5px; scroll-margin-block:100px; }
+.source-row mark[data-retrieval-source-hit] { color:#174c3b; background:#dbedb7; font:inherit; box-decoration-break:clone; -webkit-box-decoration-break:clone; }

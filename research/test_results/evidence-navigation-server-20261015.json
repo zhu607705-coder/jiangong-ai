@@ -1,0 +1,352 @@
+{
+  "schema": "evidence-navigation-server-verification/1",
+  "checked_at": "2026-10-15T04:18:50.147682+00:00",
+  "deployment": {
+    "application_commit": "ba11046445dcf8caa5fce9658bf47b29a6ebb6c6",
+    "release": "/home/zhuhangcheng/apps/haizhizi/releases/ba11046445dcf8caa5fce9658bf47b29a6ebb6c6-evidence-r2",
+    "source_archive_sha256": "437750b5942ef2b7201e368f73e60a2b81d015bab3b239753b6ea3c251d1abfb",
+    "ui_archive_sha256": "8bf99216e489fbd631ed1dd2ec841b7b51a9ca4ad30513ab769d1a85f0b15c52",
+    "dependencies": "Unchanged lockfiles verified; reuse prior installed node_modules and venv",
+    "persistent_data": "Existing shared/data unchanged by release switch",
+    "restart": "host only; unchanged Python capability worker retained",
+    "url": "http://10.70.223.113/",
+    "checked_at": "2026-10-15T04:16:00.2497446Z"
+  },
+  "checks": {
+    "public_root": 200,
+    "viewer_session": 200,
+    "anonymous_model_generation": 403,
+    "public_qiushi_pdf": 200
+  },
+  "projects": [
+    {
+      "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "inventory": {
+        "documents": 2,
+        "cards": 0,
+        "policies": 0,
+        "skills": 0,
+        "public_sources": 76
+      },
+      "prior_candidate_counts": {
+        "documents": 2,
+        "parsed_chunks": 106,
+        "eligible_chunks": 53,
+        "ranked_chunks": 53,
+        "batches": 1,
+        "unresolved_references": 0
+      },
+      "current_candidate_counts": {
+        "documents": 2,
+        "parsed_chunks": 106,
+        "eligible_chunks": 87,
+        "ranked_chunks": 11,
+        "batches": 2,
+        "unresolved_references": 0,
+        "source_texts": 76,
+        "eligible_source_texts": 34
+      },
+      "queries": [
+        {
+          "question": "二次供水涉及哪些楼栋？",
+          "hit_count": 5,
+          "first_source": "浙大求是社区推进二次供水改造",
+          "locators": [
+            "within_scope:body",
+            "line:22",
+            "line:14",
+            "line:39",
+            "line:1"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "求是村电梯改造了多少台？",
+          "hit_count": 5,
+          "first_source": "西湖区三方协同为居民幸福加码",
+          "locators": [
+            "within_scope:body",
+            "within_scope:https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html",
+            "within_scope:https://hznews.hangzhou.com.cn/chengshi/content/2026-08/29/content_9292666.htm",
+            "within_scope:http://zj.xinhuanet.com/20260316/76b6c2d051bd4615b5efda1a267e13b1/c.html",
+            "within_scope:https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "小区停车问题有什么依据？",
+          "hit_count": 2,
+          "first_source": "存量焕新践初心 精筑杭城幸福景 - 存量焕新践初心 精筑杭城幸福景",
+          "locators": [
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2025/art_bc077135478f4b2e91b7823f00ffd328.html#1",
+            "city_background:https://cxjw.hangzhou.gov.cn/col/col1692516/art/2026/art_afaa6781f67f484f8e7886a381030122.html#1"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "改造预算和资金来源有哪些？",
+          "hit_count": 5,
+          "first_source": "西湖区三方协同为居民幸福加码",
+          "locators": [
+            "within_scope:body",
+            "within_scope:https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "within_scope:https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html",
+            "within_scope:https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html",
+            "within_scope:http://iot.china.com.cn/content/2026-03/17/content_43374641.shtml"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "为什么要综合整治而不是原拆原建？",
+          "hit_count": 3,
+          "first_source": "老旧住房自主更新、原拆原建怎么做？浙江国企正在试点先行",
+          "locators": [
+            "within_scope:http://zj.xinhuanet.com/20260316/76b6c2d051bd4615b5efda1a267e13b1/c.html",
+            "city_background:https://cxjw.hangzhou.gov.cn/col/col1692516/art/2026/art_afaa6781f67f484f8e7886a381030122.html#1",
+            "within_scope:http://iot.china.com.cn/content/2026-03/17/content_43374641.shtml"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "养老和社区服务有哪些资料？",
+          "hit_count": 5,
+          "first_source": "这个“康养生活综合体”，已焕新启用！",
+          "locators": [
+            "within_scope:body",
+            "within_scope:body",
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2026/art_9469fc6fcab54f87a223ac7215491e9f.html#1",
+            "within_scope:https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "within_scope:https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "改造大概要花多少钱？",
+          "hit_count": 5,
+          "first_source": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+          "locators": [
+            "官方DOC第三部分（四）投资；第三部分（一）任务规模；第四部分实施计划",
+            "within_scope:body",
+            "第九、十二、十四、十八条（网页正文第50行）",
+            "within_scope:https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "11页PDF，第5页工程方案，第7页七（二），第8页融资与财务可持续性，第9页经济和社会影响"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "老人平时去哪活动？",
+          "hit_count": 5,
+          "first_source": "这个“康养生活综合体”，已焕新启用！",
+          "locators": [
+            "within_scope:body",
+            "within_scope:body",
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2026/art_9469fc6fcab54f87a223ac7215491e9f.html#1",
+            "within_scope:https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "within_scope:https://hznews.hangzhou.com.cn/chengshi/content/2026-08/29/content_9292666.htm"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "量子纠缠有哪些资料？",
+          "hit_count": 0,
+          "first_source": null,
+          "locators": [],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "project_id": "P-e417e04f-784d-4f93-af75-8c75964710e8",
+      "inventory": {
+        "documents": 0,
+        "cards": 0,
+        "policies": 0,
+        "skills": 0,
+        "public_sources": 36
+      },
+      "prior_candidate_counts": {
+        "documents": 0,
+        "parsed_chunks": 0,
+        "eligible_chunks": 0,
+        "ranked_chunks": 0,
+        "batches": 0,
+        "unresolved_references": 0
+      },
+      "current_candidate_counts": {
+        "documents": 0,
+        "parsed_chunks": 0,
+        "eligible_chunks": 27,
+        "ranked_chunks": 3,
+        "batches": 2,
+        "unresolved_references": 0,
+        "source_texts": 36,
+        "eligible_source_texts": 27
+      },
+      "queries": [
+        {
+          "question": "二次供水涉及哪些楼栋？",
+          "hit_count": 3,
+          "first_source": "浙大求是社区推进二次供水改造",
+          "locators": [
+            "body",
+            "within_scope:https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html",
+            "https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "求是村电梯改造了多少台？",
+          "hit_count": 5,
+          "first_source": "西湖区三方协同为居民幸福加码",
+          "locators": [
+            "within_scope:body",
+            "within_scope:https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html",
+            "https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html",
+            "within_scope:https://hznews.hangzhou.com.cn/chengshi/content/2026-08/29/content_9292666.htm",
+            "http://zj.xinhuanet.com/20260316/76b6c2d051bd4615b5efda1a267e13b1/c.html"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "小区停车问题有什么依据？",
+          "hit_count": 2,
+          "first_source": "存量焕新践初心 精筑杭城幸福景 - 存量焕新践初心 精筑杭城幸福景",
+          "locators": [
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2025/art_bc077135478f4b2e91b7823f00ffd328.html#1",
+            "city_background:https://cxjw.hangzhou.gov.cn/col/col1692516/art/2026/art_afaa6781f67f484f8e7886a381030122.html#1"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "改造预算和资金来源有哪些？",
+          "hit_count": 5,
+          "first_source": "西湖区三方协同为居民幸福加码",
+          "locators": [
+            "within_scope:body",
+            "https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "within_scope:https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html",
+            "https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html",
+            "within_scope:https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "为什么要综合整治而不是原拆原建？",
+          "hit_count": 4,
+          "first_source": "65项政策、三大转型……一文读懂城市更新的“杭州模式” - 65项政策、三大转型……一文读懂城市更新的“杭州模式”",
+          "locators": [
+            "city_background:https://cxjw.hangzhou.gov.cn/col/col1692516/art/2026/art_afaa6781f67f484f8e7886a381030122.html#1",
+            "http://zj.xinhuanet.com/20260316/76b6c2d051bd4615b5efda1a267e13b1/c.html",
+            "within_scope:http://zj.xinhuanet.com/20260316/76b6c2d051bd4615b5efda1a267e13b1/c.html",
+            "within_scope:http://iot.china.com.cn/content/2026-03/17/content_43374641.shtml"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "养老和社区服务有哪些资料？",
+          "hit_count": 5,
+          "first_source": "这个“康养生活综合体”，已焕新启用！",
+          "locators": [
+            "within_scope:body",
+            "within_scope:body",
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2026/art_9469fc6fcab54f87a223ac7215491e9f.html#1",
+            "https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "within_scope:https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "改造大概要花多少钱？",
+          "hit_count": 5,
+          "first_source": "西湖区三方协同为居民幸福加码",
+          "locators": [
+            "within_scope:body",
+            "https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm",
+            "https://www.hangzhou.gov.cn/art/2024/10/11/art_812262_59103493.html",
+            "city_background:https://cxjw.hangzhou.gov.cn/col/col1692516/art/2026/art_afaa6781f67f484f8e7886a381030122.html#1",
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2025/art_bc077135478f4b2e91b7823f00ffd328.html#1"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "老人平时去哪活动？",
+          "hit_count": 5,
+          "first_source": "这个“康养生活综合体”，已焕新启用！",
+          "locators": [
+            "within_scope:body",
+            "within_scope:body",
+            "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2026/art_9469fc6fcab54f87a223ac7215491e9f.html#1",
+            "within_scope:https://hznews.hangzhou.com.cn/chengshi/content/2026-08/29/content_9292666.htm",
+            "https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm"
+          ],
+          "fact_writes": 0
+        },
+        {
+          "question": "量子纠缠有哪些资料？",
+          "hit_count": 0,
+          "first_source": null,
+          "locators": [],
+          "fact_writes": 0
+        }
+      ]
+    }
+  ],
+  "browser": {
+    "actual_server": true,
+    "role": "admin",
+    "current_project": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "source_navigation": "Community centre original opened, continuous text highlighted, details expanded and focus moved; same unchanged source-navigation code as final application.",
+    "cost_navigation": "Final application: natural question 改造大概要花多少钱 returned local 75-building official draft first; functional shortcut opened/focused the actual historical construction cost library.",
+    "mode": "Conservative comprehensive-renewal research baseline; nine unmet/unknown cited-condition gates shown before rebuilding recommendation.",
+    "funding": "Actual server displayed 54-wan local elevator draft and separate Hangzhou/Shanghai policy/case references.",
+    "images": [
+      "output/playwright/evidence-repair/cost-evidence.png",
+      "output/playwright/evidence-repair/budget-search.jpg"
+    ]
+  },
+  "progress_ui": {
+    "evidence": "output/playwright/strategy-progress/verification.json",
+    "mode": "offline browser fixture only; not a new successful provider run",
+    "checks": {
+      "passed": true,
+      "offline_fixture": true,
+      "provider_calls": 0,
+      "fixture_post_count": 1,
+      "checks": [
+        "no automatic model generation",
+        "five visible stages",
+        "only emitted steps complete",
+        "elapsed and source count",
+        "no invented percentage",
+        "mobile viewport fit",
+        "Chinese TRANSPORT failure",
+        "raw error hidden",
+        "acquired sources retained",
+        "no page errors"
+      ]
+    }
+  },
+  "provider": {
+    "new_generation_calls": 0,
+    "cached_failure": {
+      "stage": "renewal_strategy",
+      "code": "TRANSPORT",
+      "duration_ms": 10500,
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "server_head_check": {
+      "http_status": 0,
+      "curl_exit": 28,
+      "max_seconds": 8,
+      "meaning": "No HTTP response from the model endpoint; does not prove a provider-wide outage."
+    },
+    "status": "connectivity remains unresolved; no proxy established"
+  },
+  "cleanup": {
+    "status": "automatic_approval_rejected",
+    "reason": "blocked by policy",
+    "action": "Remove failed temporary release staging and a local duplicate report copy created by this turn.",
+    "result": "Retained; no deletion retried. Running release, dependencies, project data and source report preserved."
+  }
+}

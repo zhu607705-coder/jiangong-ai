@@ -1455,6 +1455,31 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/server-public-admin-verification-20261015.json"
+    },
+    {
+      "id": "T59",
+      "depends_on": [
+        "T58"
+      ],
+      "goal": "中文诊断、真实研究进度、多主题资料定位与保守模式门槛",
+      "expected_artifacts": [
+        "research/test_results/evidence-navigation-server-20261015.json"
+      ],
+      "definition_of_done": "真实校园端点与页面验证，补查来源已导入，模型连接问题与代码修复分别记录。",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "services/",
+        "tests/",
+        "scripts/",
+        "data/public_cases/",
+        "docs/research/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/evidence-navigation-server-20261015.json",
+      "status": "completed_campus_http_browser_materials_mode_and_progress_verified"
     }
   ]
 }

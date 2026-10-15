@@ -1,0 +1,947 @@
+{
+  "schema_version": "renewal-evidence-search/1",
+  "as_of": "2026-10-15",
+  "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+  "subject_project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "status": "public_sources_read_and_structured_not_imported_by_this_task",
+  "seed_files": [
+    "docs/research/求是村_旧改深度调研与行动计划.md",
+    "data/public_cases/qiushi-research-20261010.json",
+    "data/public_cases/renewal-mode-benchmarks-20261014.json"
+  ],
+  "collection_method": "Official-first web search; actual original pages/PDF opened; standard HTTP fallback where reader failed; public DOC read-only with macros disabled. No DeepSeek, no private materials, no project facts written.",
+  "records": [
+    {
+      "source": {
+        "id": "PUB-HZ-OLD-2022-10",
+        "title": "杭州市人民政府办公厅关于全面推进城镇老旧小区改造工作的实施意见（杭政办函〔2022〕10号）",
+        "url": "https://zfgb.hangzhou.gov.cn/10/105220253/t117220253054/518761.shtml",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "高于400元/平方米的按400元/平方米核定\n补助50%",
+        "content_status": "excerpt",
+        "hash": "3bf5d8b4ad0cd50032067df69e7ac9fc5bc14c8d4c73812c580accb01c26a789",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "二（二）改造模式；三（三）资金保障；四（四）长效管理（网页正文第51行）",
+        "evidence_scope": "background",
+        "published_at": "2022-02-28"
+      },
+      "metadata": {
+        "source_kind": "official_policy",
+        "region": "杭州市；西湖区补助档次另列",
+        "subject": "杭州城镇老旧小区",
+        "engineering_stage": "policy_not_project_payment",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "西湖区市级财政补助比例",
+            "value": 0.5,
+            "unit": "比例",
+            "scope": "符合条件的2000年底前建成小区"
+          },
+          {
+            "name": "补助基数单价上限",
+            "value": 400,
+            "unit": "元/平方米",
+            "scope": "核定竣工财务决算数；排除加装电梯、二次供水投入"
+          },
+          {
+            "name": "纳入改造范围前次综合改造间隔",
+            "value": 5,
+            "unit": "年",
+            "scope": "重点范围：近5年未综合改造且不在年度征收计划"
+          }
+        ],
+        "decision_use": [
+          "整治/拆改结合的模式研究依据",
+          "市级补助上限的条件测算",
+          "设计时同步形成物业、维修资金与收费机制"
+        ],
+        "applicability_limit": [
+          "不是求是村财政批复或到账证明",
+          "先核楼幢年代、前次综合改造完成时间、适用口径及最新承办意见",
+          "政策列明结构安全、使用功能和适修性等因素，未规定一个通用修缮/重建费用比值"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "issued_at": "2022-02-14",
+        "effective_from": "2022-03-17",
+        "publisher": "杭州市人民政府办公厅",
+        "calculation": {
+          "expression": "eligible_city_subsidy_estimate = 0.50 * min(approved_eligible_final_cost_yuan, 400 * eligible_gfa_m2)",
+          "input_status": "requires_local_eligible_area_and_approved_cost; not cash secured"
+        },
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-NDRC-FEAS-2023",
+        "title": "政府投资项目可行性研究报告编写通用大纲（2023年版）",
+        "url": "https://www.ndrc.gov.cn/xxgk/zcfb/ghxwj/202304/P020230407401908422756.pdf",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "开展项目全生命周期资金平衡分析\n量价协议、框架协议",
+        "content_status": "excerpt",
+        "hash": "af5531a4f505a637769a84dfd89df41cd3f3b80aa97dd3833d631bcd8cc9621e",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "11页PDF，第5页工程方案，第7页七（二），第8页融资与财务可持续性，第9页经济和社会影响",
+        "evidence_scope": "background",
+        "published_at": "2023-04-07"
+      },
+      "metadata": {
+        "source_kind": "official_method",
+        "region": "中国境内政府投资项目",
+        "subject": "全国投资项目方法",
+        "engineering_stage": "feasibility_method",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [],
+        "decision_use": [
+          "同一对象提出整治和拆建两个工程方案",
+          "分别做建设、融资、运营与财政接续的生命周期账",
+          "用量价协议/框架协议和资金闭环支撑输入",
+          "社会效果与财务盈利分栏"
+        ],
+        "applicability_limit": [
+          "该大纲提供研究框架，不给求是村现成折现率、寿命或方案结论",
+          "非经营性公共服务不能只用财务IRR否定价值"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "issued_at": "2023-03-23",
+        "effective_from": "2023-05-01",
+        "publisher": "国家发展改革委",
+        "parent_notice": {
+          "url": "https://www.ndrc.gov.cn/xxgk/zcfb/ghxwj/202304/t20230407_1353356.html",
+          "title": "发改投资规〔2023〕304号",
+          "published_at": "2023-04-07"
+        },
+        "calculation": {
+          "proposed_by_team_not_quoted_rule": "NPC_m = initial_m + relocation_m + sum_t((maintenance_m_t + operation_m_t + replacement_m_t)/(1+r)^t) - residual_m_T/(1+r)^T",
+          "comparison_contract": "same buildings, same functional targets, same price year, common horizon; show safety/social effects separately",
+          "requires": [
+            "工程量清单及价格年",
+            "拆除和临迁户月",
+            "维修/更换周期与费用",
+            "运营收入成本和补贴承诺",
+            "比较年限、折现率依据与残值",
+            "敏感性分析"
+          ]
+        },
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-HZ-MAINT-353",
+        "title": "杭州市物业专项维修资金管理办法（市政府令第353号）",
+        "url": "https://zfgb.hangzhou.gov.cn/9/111220253/t125220253114/529870.shtml",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "资金列支范围\n拨付不超过申请额百分之五十的维修费用",
+        "content_status": "excerpt",
+        "hash": "937a931d0daf8f43ede3e7827cbefde8035c9650327c38cf4d28e41eabb0873a",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "第九、十二、十四、十八条（网页正文第50行）",
+        "evidence_scope": "background",
+        "published_at": "2025-11-25"
+      },
+      "metadata": {
+        "source_kind": "official_regulation",
+        "region": "杭州市行政区域",
+        "subject": "杭州物业专项维修资金",
+        "engineering_stage": "fund_application_and_acceptance_payment",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "普通维修方案参与表决的面积及人数门槛",
+            "value": 0.6666666666666666,
+            "unit": "比例",
+            "scope": "资金列支范围内两项均需满足"
+          },
+          {
+            "name": "参与表决者同意门槛",
+            "value": 0.5,
+            "unit": "比例",
+            "scope": "面积和人数均须过半；不是重建居民表决门槛"
+          },
+          {
+            "name": "预拨比例上限",
+            "value": 0.5,
+            "unit": "申请额比例",
+            "scope": "审核相关表决、预算、清册、施工合同后"
+          }
+        ],
+        "decision_use": [
+          "落实资金时收集分户余额、列支范围及决议",
+          "区分预算、预拨、验收结算和余款",
+          "将维护档案与管理主体交接纳入方案"
+        ],
+        "applicability_limit": [
+          "适用于物业保修期满后共有部分维修更新改造",
+          "资金使用程序不等于整片拆建审批规则",
+          "没有求是村分户余额和批准材料不能认定已落实资金"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "issued_at": "2025-11-14",
+        "effective_from": "2026-01-01",
+        "publisher": "杭州市人民政府",
+        "seed_relation": "already_linked_in_qiushi_report_revisited",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-QS75-DRAFT-2024",
+        "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+        "url": "https://www.hzxh.gov.cn/api-gateway/jpaas-web-server/front/document/file-download?fileUrl=/cms_files/jcms1/web1838/site/attach/0/7189c231fdf6439fbc9db35e125e1352.doc",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "估算总投资约54万元，建设资金来自市区补助及自筹。",
+        "content_status": "excerpt",
+        "hash": "55656d082712e60eb1f5520c173c1582726edbf29deab80107a39e1b336426c7",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "官方DOC第三部分（四）投资；第三部分（一）任务规模；第四部分实施计划",
+        "evidence_scope": "object",
+        "published_at": "2024-09-18"
+      },
+      "metadata": {
+        "source_kind": "official_project_draft_attachment",
+        "region": "杭州市西湖区灵隐街道",
+        "subject": "求是村75幢1单元",
+        "engineering_stage": "draft_estimate_and_schedule_not_actual_completion",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "估算总投资",
+            "value": 540000,
+            "unit": "元",
+            "scope": "75幢1单元一部电梯包件；草案估算",
+            "stage": "draft_estimate"
+          },
+          {
+            "name": "项目总建筑面积",
+            "value": 73.43,
+            "unit": "平方米",
+            "scope": "电梯项目建筑面积；不能作全小区住宅面积"
+          },
+          {
+            "name": "地上计容建筑面积",
+            "value": 10.92,
+            "unit": "平方米",
+            "scope": "加梯项目"
+          },
+          {
+            "name": "用地面积",
+            "value": 10.92,
+            "unit": "平方米",
+            "scope": "加梯项目"
+          }
+        ],
+        "decision_use": [
+          "本对象已有公开估算可作为54万元草案预算节点",
+          "追最终方案、概算/合同、实际验收与补助自筹拨付",
+          "拆整方案应先核是否保留或复用该加梯投入"
+        ],
+        "applicability_limit": [
+          "不把草案资金来源说明作为承诺或到账",
+          "2024-11开工/2025-02月底建成只是稿中计划",
+          "不按电梯井面积计算住宅改造单方造价"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "灵隐街道党政（人大）综合办；西湖区政府网站",
+        "readback_method": "HTTP200 original legacy DOC; opened read-only in Word with macros disabled; 801 characters read",
+        "publication_basis": "官方2024-09-18公告挂载附件日期，未声称文件有独立发布时刻",
+        "parent_notice": {
+          "url": "https://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html",
+          "title": "关于公开征求75幢1单元电梯加装重大行政决策草案意见的公告",
+          "published_at": "2024-09-18",
+          "consultation_period": [
+            "2024-09-18",
+            "2024-10-18"
+          ]
+        },
+        "planned_start": "2024-11",
+        "planned_completion": "2025-02",
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-QS-ELEV-20260829",
+        "title": "累计加装电梯54台 “求是有约”议事平台让老旧小区“梯”升幸福感",
+        "url": "https://hznews.hangzhou.com.cn/chengshi/content/2026-08/29/content_9292666.htm",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "浙大求是社区小区累计成功加装电梯54台",
+        "content_status": "excerpt",
+        "hash": "44f166909e7e85fc8d6a14f515f7b29f6600b15c7c233d169feb05d2dacb2e52",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "网页第16行；第23行署每日商报记者及社区通讯员",
+        "evidence_scope": "object",
+        "published_at": "2026-08-29"
+      },
+      "metadata": {
+        "source_kind": "primary_local_press_reporting",
+        "region": "杭州市西湖区",
+        "subject": "求是社区（社区口径，含求是村报道对象）",
+        "engineering_stage": "reported_installed_and_approval_queue",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "累计成功加装",
+            "value": 54,
+            "unit": "台",
+            "scope": "浙大求是社区统计，不自动等于研究红线内现存可运行数量"
+          },
+          {
+            "name": "当年成功落地",
+            "value": 1,
+            "unit": "台",
+            "scope": "2026报道时社区口径"
+          },
+          {
+            "name": "审批中",
+            "value": 2,
+            "unit": "台",
+            "scope": "2026报道时"
+          },
+          {
+            "name": "协调推进中",
+            "value": 3,
+            "unit": "台",
+            "scope": "2026报道时"
+          }
+        ],
+        "decision_use": [
+          "已有设施后评估及计划队列分账",
+          "逐梯核位置、验收、运行和维护合同",
+          "评估整治可复用投入"
+        ],
+        "applicability_limit": [
+          "原始采访新闻，不是逐梯工程验收台账",
+          "47部的2023报道与54台的2026报道分别保留日期和社区范围"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "每日商报原始采访；杭州网刊载",
+        "seed_relation": "already_linked_in_qiushi_report_revisited",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-ZG-START-20231201",
+        "title": "全省首个！正式开工！效果图来啦→",
+        "url": "https://www.gongshu.gov.cn/art/2023/12/1/art_1229322176_59077771.html",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "涉及13幢房屋共548户住户\n个性化过渡方案",
+        "content_status": "excerpt",
+        "hash": "63cf2aa2492c5b217b025a6437fad43b74d6cf0faa470d8176d3752a5ae78f9e",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "网页第17行规模，第49–55行居民代表/过渡安置，第58–64行审批施工",
+        "evidence_scope": "background",
+        "published_at": "2023-12-01"
+      },
+      "metadata": {
+        "source_kind": "official_district_project_reporting",
+        "region": "杭州拱墅区",
+        "subject": "浙工新村",
+        "engineering_stage": "construction_started_2023_11_28",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "原住宅楼",
+            "value": 13,
+            "unit": "幢",
+            "scope": "拆除对象"
+          },
+          {
+            "name": "原住户",
+            "value": 548,
+            "unit": "户",
+            "scope": "更新范围"
+          },
+          {
+            "name": "拆除建筑面积下限",
+            "value": 39700,
+            "unit": "平方米",
+            "scope": "原文超过3.97万㎡，不是新建面积"
+          },
+          {
+            "name": "新建总建筑面积约",
+            "value": 81000,
+            "unit": "平方米",
+            "scope": "地上57000+地下24000"
+          },
+          {
+            "name": "新建地上面积约",
+            "value": 57000,
+            "unit": "平方米",
+            "scope": "新建地上"
+          },
+          {
+            "name": "新建地下面积约",
+            "value": 24000,
+            "unit": "平方米",
+            "scope": "新建地下"
+          },
+          {
+            "name": "居民正式代表",
+            "value": 13,
+            "unit": "人",
+            "scope": "自愿有机更新委员会"
+          },
+          {
+            "name": "结对高龄老人",
+            "value": 142,
+            "unit": "人",
+            "scope": "85岁以上；个性化过渡方案对象"
+          }
+        ],
+        "decision_use": [
+          "杭州本地自主更新的规划/工程/安置流程样本",
+          "建立搬迁临租与重点人群照护成本项",
+          "按原拆除/新建地上/地下三种面积记账"
+        ],
+        "applicability_limit": [
+          "是浙工新村审批与实施报道，不证明求是村可拆或有同样容积率",
+          "本稿2025竣工属当时计划，后续交付另用2026报告"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "拱墅区政府网站/拱墅发布",
+        "seed_relation": "already_linked_in_qiushi_report_revisited",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-ZG-FUND-20261012",
+        "title": "杭州浙工新村：居民“自主更新”的旧改探索",
+        "url": "https://www.hzzx.gov.cn/cshz/content/2026-10/12/content_9334536.htm",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "居民出资达4.99亿元，占总投入5.6亿元的89.11％",
+        "content_status": "excerpt",
+        "hash": "427bab499b0c5af7402d84264280bde93d26ea72b46ccc66f52dee6b9d057726",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "网页第44、46、49、51、53行",
+        "evidence_scope": "background",
+        "published_at": "2026-10-12"
+      },
+      "metadata": {
+        "source_kind": "official_host_republished_primary_reporting",
+        "region": "杭州拱墅区",
+        "subject": "浙工新村",
+        "engineering_stage": "reported_delivered_not_audited_final_settlement",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "报道总投入",
+            "value": 560000000,
+            "unit": "元",
+            "scope": "整体费用口径；不是EPC合同或审定结算"
+          },
+          {
+            "name": "居民出资",
+            "value": 499000000,
+            "unit": "元",
+            "scope": "同稿整体费用资金来源"
+          },
+          {
+            "name": "居民出资比例",
+            "value": 0.8911,
+            "unit": "比例",
+            "scope": "同稿公布；4.99/5.6四舍五入"
+          },
+          {
+            "name": "原面积费用",
+            "value": 1350,
+            "unit": "元/平方米",
+            "scope": "该项目业主原住房面积部分"
+          },
+          {
+            "name": "扩面费用",
+            "value": 34520,
+            "unit": "元/平方米",
+            "scope": "该项目新增面积部分"
+          },
+          {
+            "name": "车位费用",
+            "value": 221000,
+            "unit": "元/个",
+            "scope": "该项目购置车位"
+          },
+          {
+            "name": "原业主",
+            "value": 548,
+            "unit": "户",
+            "scope": "原范围"
+          },
+          {
+            "name": "初期签约",
+            "value": 547,
+            "unit": "户",
+            "scope": "85天报道口径；交付前最后一户签约"
+          },
+          {
+            "name": "报道装修入住率",
+            "value": 0.7,
+            "unit": "比例",
+            "scope": "报道时；不是收益率"
+          }
+        ],
+        "decision_use": [
+          "记录居民、财政及项目承担主体不同账户",
+          "把原面积、扩面和车位分开核算",
+          "研究带押过户、抵押置换的金融协调"
+        ],
+        "applicability_limit": [
+          "政府网站转载新华社原始采访，不是工程财务审计",
+          "差额6100万元仅是报道总额减居民出资，不能直接称财政实际补贴",
+          "不将居民资产升值计入实施主体收入，不能迁用该比例给求是村"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "杭州政协网刊载新华社记者张璇原始采访",
+        "original_dispatch_date": "2026-10-10",
+        "calculation": {
+          "resident_share_percent": 89.11,
+          "unallocated_reported_difference_yuan": 61000000,
+          "resident_example_yuan": 979480,
+          "difference_interpretation": "difference only; allocation and payment require primary financial records"
+        },
+        "seed_relation": "already_linked_in_qiushi_report_revisited",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-ZG-EPC-20231208",
+        "title": "浙工新村城市危旧房有机更新（试点）项目设计-采购-施工（EPC）总承包合同订立信息",
+        "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001009/20231208/f1b82e1a-5290-40cd-ac88-1bf59dfab2b6.html",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "325,583,472.00元\n2023年11月09日",
+        "content_status": "excerpt",
+        "hash": "432818ccb16b70a52b2deaf13bd1ca522e19f8159b162c3fe5fb685a4cfdb4dc",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "正文合同价款/签约时间行；项目代码2308-330105-04-01-372252",
+        "evidence_scope": "background",
+        "published_at": "2023-12-08"
+      },
+      "metadata": {
+        "source_kind": "official_procurement_contract_notice",
+        "region": "杭州拱墅区",
+        "subject": "浙工新村EPC总承包包件",
+        "engineering_stage": "contract_signed_2023_11_09",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "EPC合同价款",
+            "value": 325583472,
+            "unit": "元",
+            "scope": "设计-采购-施工总承包合同，不包括未列明的其他全项目资金",
+            "stage": "contract"
+          },
+          {
+            "name": "EPC合同价款折万元",
+            "value": 32558.3472,
+            "unit": "万元",
+            "scope": "单位换算"
+          }
+        ],
+        "decision_use": [
+          "造价分阶段同口径库中的EPC合同样本",
+          "与整体投入分栏，避免重复相加"
+        ],
+        "applicability_limit": [
+          "合同不是竣工结算",
+          "本公告没有可直接匹配的合同范围建筑面积，不与别稿8.1万㎡强行计算建安单价"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "浙江省公共资源交易平台/杭州市公共资源交易中心拱墅分中心",
+        "readback_method": "web reader failed; same official URL HTTP200 original HTML parsed with standard urllib",
+        "contract_signed_at": "2023-11-09",
+        "seed_relation": "already_linked_in_qiushi_report_revisited",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-SH-QP-20240315",
+        "title": "关于印发《青浦区老旧小区综合改造实施方案》的通知（青房管〔2024〕1号）",
+        "url": "https://www.shanghai.gov.cn/nw12344/20240315/84ddcd7bfed140c7bd3a038c55ed2a4d.html",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "市级补贴控制单价提升至520元/平方米\n区、镇按5:5承担",
+        "content_status": "excerpt",
+        "hash": "a54b4624d5d19551b2505537adab8669a4809ad2cdc11088def1976bc795a81a",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "二（二）改造标准；二（三）第2、3项；网页42、47、49、52行",
+        "evidence_scope": "background",
+        "published_at": "2024-03-15"
+      },
+      "metadata": {
+        "source_kind": "official_district_policy",
+        "region": "上海市青浦区",
+        "subject": "青浦老旧小区综合改造",
+        "engineering_stage": "policy_cost_control_and_fiscal_sharing",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "综合改造控制标准",
+            "value": 520,
+            "unit": "元/平方米",
+            "scope": "青浦2024方案采用市级补贴控制单价，不是每个项目实际造价"
+          },
+          {
+            "name": "部分镇区级承担比例",
+            "value": 0.5,
+            "unit": "比例",
+            "scope": "扣除市补后控制标准内的剩余资金；赵巷徐泾华新重固"
+          },
+          {
+            "name": "另四镇区级承担比例",
+            "value": 0.8,
+            "unit": "比例",
+            "scope": "扣除市补后控制标准内剩余资金；白鹤朱家角练塘金泽"
+          }
+        ],
+        "decision_use": [
+          "参考财政分级承担、超额责任及分阶段拨付",
+          "比较改后物业费和维修资金续筹的长期可持续性"
+        ],
+        "applicability_limit": [
+          "只适用青浦该方案，不能把520元/㎡或分担比例套给杭州",
+          "控制标准不是结算、实际到账或全周期费用"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "上海市政府网站/青浦区房管局",
+        "issued_at": "2024-03-04",
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-SH-MODE-2023-1",
+        "title": "上海市旧住房成套改造和拆除重建实施管理办法（试行）（沪房规范〔2023〕1号）",
+        "url": "https://shcm.gov.cn/shcm/a33f54e2-e8ba-41e9-a3f5-526380e4c695/238dea4b-dc22-4a6a-8919-c3cb0cb37ed4/%E6%B2%AA%E6%88%BF%E8%A7%84%E8%8C%83%EF%BC%882023%EF%BC%891%E5%8F%B7.pdf",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "形成评估结果\n签约比例达到 95%以上",
+        "content_status": "excerpt",
+        "hash": "bdad9c3032f83960386ac3b49d71c033d14b0feb706dcc72487d4dc332442ebc",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "undated",
+        "parse_status": "extracted",
+        "locator": "11页PDF第3页第二条、第5页第五条、第7页第十三条",
+        "evidence_scope": "background"
+      },
+      "metadata": {
+        "source_kind": "official_joint_policy",
+        "region": "上海市",
+        "subject": "上海公有旧住房及同更新范围私房",
+        "engineering_stage": "mode_assessment_resident_consultation_and_agreement",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "启动意愿征询同意比例",
+            "value": 0.8,
+            "unit": "比例",
+            "scope": "更新范围承租人及私房产权人；启动条件不是准拆许可"
+          },
+          {
+            "name": "协议生效签约比例",
+            "value": 0.95,
+            "unit": "比例",
+            "scope": "该办法规定的项目协议"
+          }
+        ],
+        "decision_use": [
+          "将模式评估、意愿征询、方案、签约和实施分阶段",
+          "政策解释支持先评估质量/结构/规划，再选更新方式"
+        ],
+        "applicability_limit": [
+          "上海具体产权与行政安排，不直接作为杭州表决比例",
+          "原文有效期已被2024延期通知更新，需关联PUB-SH-EXT-2024-12",
+          "本PDF未查得独立网络发布日期，成文日期单列"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "上海市住房城乡建设管理委/房屋管理等部门",
+        "issued_at": "2023-01-04",
+        "effective_from": "2023-02-01",
+        "valid_until": "2026-12-31",
+        "validity_source_id": "PUB-SH-EXT-2024-12",
+        "readback_method": "web open original 11-page PDF text layer",
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": null,
+        "publication_cutoff_note": "独立发布日期未注明；不凭访问日或文内日期证明研判时点可知"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-SH-EXT-2024-12",
+        "title": "上海市房屋管理局关于延长部分规范性文件有效期的通知（沪房规范〔2024〕12号）",
+        "url": "https://fgj.sh.gov.cn/gfxwj/20250122/ae461fc811a34841b80a6e74033d87ff.html",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "延长至2026年12月31日",
+        "content_status": "excerpt",
+        "hash": "ee921ea2f10a8cca02e7e6ef24cc8f23f81d75957d0fb9847fa66f89ea54290f",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "verified",
+        "parse_status": "extracted",
+        "locator": "附件延长有效期的规范性文件目录，序号7（网页28行）",
+        "evidence_scope": "background",
+        "published_at": "2025-01-24"
+      },
+      "metadata": {
+        "source_kind": "official_validity_extension",
+        "region": "上海市",
+        "subject": "沪房规范〔2023〕1号有效期",
+        "engineering_stage": "policy_validity_extension",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [],
+        "decision_use": [
+          "纠正仅按2023文件原始截止日判断失效的错误"
+        ],
+        "applicability_limit": [
+          "只延长所列文件有效期，不自动认可任何具体项目已满足条件"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "上海市房屋管理局",
+        "issued_at": "2024-12-31",
+        "valid_until": "2026-12-31",
+        "extends_source_id": "PUB-SH-MODE-2023-1",
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": true,
+        "publication_cutoff_note": "原始已核发布日期早于研判时点"
+      }
+    },
+    {
+      "source": {
+        "id": "PUB-SH-ST-2024-BOND",
+        "title": "地方政府新增专项债券项目信息披露模板——2024年上海市政府专项债券（十期）",
+        "url": "https://czj.sh.gov.cn/cmsres/4e/4eb674e27da64b12affd57c124001afb/d5e6a467bdb236c0c68e4b9f6e2cea3b.pdf",
+        "data_class": "public",
+        "visibility": "public",
+        "synthetic": false,
+        "untrusted_text": "项目涉及4栋居民楼共计248户居民\n编制项目收益预测",
+        "content_status": "excerpt",
+        "hash": "ca690992576544e22eaeda4637f2c0badfcfef09ba5c254e34b50f33fd3b7ada",
+        "retrieved_at": "2026-10-15T03:57:48.193583+00:00",
+        "date_status": "undated",
+        "parse_status": "extracted",
+        "locator": "22页PDF第6页（三）项目详细信息及同页资金/收益表",
+        "evidence_scope": "background"
+      },
+      "metadata": {
+        "source_kind": "official_fiscal_project_disclosure",
+        "region": "上海市宝山区",
+        "subject": "泗塘二村1—9号、长江西路1200—1220号拆除重建",
+        "engineering_stage": "financing_disclosure_and_future_forecast_not_actual_return",
+        "readback": "opened_original_body",
+        "saved_content": "literal_excerpt_only_not_full_document",
+        "metrics": [
+          {
+            "name": "项目总投资",
+            "value": 259887200,
+            "unit": "元",
+            "scope": "财政披露同版总投资，非审定竣工结算"
+          },
+          {
+            "name": "非专项债资本金",
+            "value": 179887200,
+            "unit": "元",
+            "scope": "资金筹措披露，不是实际银行到账凭证"
+          },
+          {
+            "name": "专项债融资合计",
+            "value": 80000000,
+            "unit": "元",
+            "scope": "项目专项债安排合计"
+          },
+          {
+            "name": "本只债券用于项目",
+            "value": 30000000,
+            "unit": "元",
+            "scope": "该只债用途，不再叠加专项债合计"
+          },
+          {
+            "name": "存续期项目总收益预测",
+            "value": 126486800,
+            "unit": "元",
+            "scope": "同版预测口径，不是已收收入/利润"
+          },
+          {
+            "name": "融资本息预测",
+            "value": 100000000,
+            "unit": "元",
+            "scope": "同版项目融资存续期口径"
+          },
+          {
+            "name": "收益覆盖倍数",
+            "value": 1.26,
+            "unit": "倍",
+            "scope": "原表四舍五入，不混用2025评级1.31"
+          },
+          {
+            "name": "原住户",
+            "value": 248,
+            "unit": "户",
+            "scope": "4栋原住宅"
+          },
+          {
+            "name": "预计新建户数",
+            "value": 266,
+            "unit": "户",
+            "scope": "该披露版本规划"
+          },
+          {
+            "name": "规划总建筑面积",
+            "value": 25240,
+            "unit": "平方米",
+            "scope": "地上20721.98+地下4518.02，审定为准"
+          }
+        ],
+        "decision_use": [
+          "记录总投资、资本金、债务、收益预测和偿付的完整数据列",
+          "资金闭环以同一项目和同一披露版本核算"
+        ],
+        "applicability_limit": [
+          "公开披露与预测不等于资金已到账或方案经济更优",
+          "无独立发布日期，首页2024-10-31为招标/承销日",
+          "2024可研批复约27566㎡与本披露25240㎡存在版本差异，分列不混算",
+          "表中年度收益值不直接认作经营利润或用来计算真实IRR",
+          "PDF截图工具超时，金额已核文本层；未声称视觉复核成功"
+        ],
+        "review_status": "public_source_readback_not_project_fact_approval",
+        "is_qiushi_verified_condition": false,
+        "publisher": "上海市财政局",
+        "document_bond_date": "2024-10-31",
+        "planned_construction_period": [
+          "2024",
+          "2028"
+        ],
+        "forecast_operation_period": [
+          "2028",
+          "2099"
+        ],
+        "readback_method": "web open original 22-page PDF text layer; screenshot p5 requested but timed out",
+        "calculation": {
+          "funding_plan_sum_yuan": 259887200,
+          "forecast_coverage_raw": 1.264868,
+          "not_a_qiushi_forecast": true
+        },
+        "seed_relation": "new_url_beyond_qiushi_report",
+        "published_on_or_before_project_as_of": null,
+        "publication_cutoff_note": "独立发布日期未注明；不凭访问日或文内日期证明研判时点可知"
+      }
+    }
+  ],
+  "counts": {
+    "sources": 12,
+    "new_urls_beyond_qiushi_report": 7,
+    "revisited_urls_from_qiushi_report": 5
+  },
+  "decision_inputs_to_collect": [
+    {
+      "topic": "同范围工程量",
+      "required": [
+        "现状楼幢/住宅面积清册、结构鉴定及可修复性",
+        "整治工程量：管线长度/材质、屋面外墙面积、消防充电点位、无障碍路线和电梯台数",
+        "拆建工程量：拆除地上地下、拟新建地上地下、配套设施、停车及管线迁改"
+      ],
+      "why": "不能将一部电梯井面积、社区总面积和新建总建面混作单方成本分母"
+    },
+    {
+      "topic": "全周期费用比选",
+      "required": [
+        "相同楼幢、功能目标、价格年和共同比较期限",
+        "每年运维、更换周期、临迁户月、融资期和利率、残值",
+        "同等安全和服务效果下总现值/年均成本及参数敏感性"
+      ],
+      "why": "公开方法和案例足以建立计算结构；本对象缺的应转换成有对象、有单位的填报任务"
+    },
+    {
+      "topic": "本对象落实资金",
+      "required": [
+        "财政批复金额/拨付时点、居民决议与分户承担、维修资金可用余额及列支范围",
+        "贷款/融资承诺与期限成本、补助排除项、资金到账或银行凭据",
+        "建设主体与后续接管维保主体及年度预算"
+      ],
+      "why": "草案估算、市区补助政策、外地资本金计划不能代替本项目已落实资金证明"
+    }
+  ],
+  "gate_integration": {
+    "policy_and_cases_are_context_not_facts": true,
+    "facts_not_added": true,
+    "life_cycle_cost_compared_requires_same_scope_actual_comparison": true,
+    "funding_secured_requires_named_local_commitments_and_time": true,
+    "no_universal_repair_to_rebuild_ratio_found_in_reviewed_official_sources": true,
+    "further_action": "Root imports Source objects via existing intelligence intake/attach; gate worker keeps reviewed fact/source/locator/date requirements."
+  },
+  "project_as_of": "2026-10-14"
+}
