@@ -1,6 +1,7 @@
 import { createHash, randomBytes, scrypt, timingSafeEqual } from 'node:crypto'
 import { promisify } from 'node:util'
 import type { Express, Request, Response } from 'express'
+import { isPublicReadRequest } from './public-read'
 
 const derive = promisify(scrypt)
 const HASH_PATTERN = /^scrypt\$([a-f0-9]{32})\$([a-f0-9]{128})$/
@@ -15,7 +16,7 @@ export class AdminAccess {
   private readonly localToken = randomBytes(32).toString('hex')
   private readonly sessions = new Map<string, Session>()
   private failure: LoginFailure = { count: 0, until: 0 }
-  constructor(readonly username: string, private readonly passwordHash: string, readonly ttlSeconds = 28800) {
+  constructor(readonly username: string, private readonly passwordHash: string, readonly ttlSeconds = 28800, readonly publicReadOnly = false) {
     this.enabled = !!passwordHash
     if (this.enabled && !HASH_PATTERN.test(passwordHash)) throw new Error('ADMIN_PASSWORD_HASH must be a scrypt password hash.')
   }
@@ -35,6 +36,7 @@ export class AdminAccess {
     return { username: session.username, expires_at: new Date(session.expires).toISOString() }
   }
   setLocalCookie(response: Response) { response.cookie(COOKIE, this.localToken, cookieOptions) }
+  canReadPublic(method: string, path: string) { return this.enabled && this.publicReadOnly && isPublicReadRequest(method, path) }
   retryAfter(): number { return this.failure.count >= 5 ? Math.max(0, Math.ceil((this.failure.until - Date.now()) / 1000)) : 0 }
   private recordFailure() {
     if (this.failure.until <= Date.now()) this.failure = { count: 0, until: Date.now() + 15 * 60 * 1000 }
@@ -75,7 +77,7 @@ export class AdminAccess {
 }
 
 export function registerAdminRoutes(app: Express, access: AdminAccess, metadata: () => Record<string, unknown>, renderLogin: () => string) {
-  const sessionBody = (header?: string) => ({ ...metadata(), authentication: { enabled: access.enabled, role: 'admin', ...access.identity(header) } })
+  const sessionBody = (header?: string) => ({ ...metadata(), authentication: { enabled: access.enabled, role: 'admin', public_read_only: access.publicReadOnly, ...access.identity(header) } })
   const unauthorized = (response: Response) => response.status(401).json({ code: 'ADMIN_LOGIN_REQUIRED', detail: '请使用管理员账号登录工作台。', authentication: { enabled: true } })
   const csrf = (request: Request, response: Response) => {
     if (request.headers['x-requested-with'] === 'haizhizi') return true
@@ -83,8 +85,16 @@ export function registerAdminRoutes(app: Express, access: AdminAccess, metadata:
   }
   app.get('/api/session', (request, response) => {
     if (!access.enabled) access.setLocalCookie(response)
-    else if (!access.identity(request.headers.cookie)) { unauthorized(response); return }
+    else if (!access.identity(request.headers.cookie)) {
+      if (access.publicReadOnly) response.json({ ...metadata(), user: { id: 'public-viewer', label: '公开访客' }, authentication: { enabled: true, role: 'viewer', public_read_only: true, expires_at: null } })
+      else unauthorized(response)
+      return
+    }
     response.json(sessionBody(request.headers.cookie))
+  })
+  app.get('/admin/login', (request,response) => {
+    if (access.identity(request.headers.cookie)) response.redirect(303, '/')
+    else response.type('html').send(renderLogin())
   })
   app.post('/api/auth/login', async (request, response, next) => {
     if (!csrf(request, response)) return
@@ -107,10 +117,13 @@ export function registerAdminRoutes(app: Express, access: AdminAccess, metadata:
   app.use((request, response, next) => {
     if (!access.enabled) { next(); return }
     if (!access.identity(request.headers.cookie)) {
-      if (request.method === 'GET' && ['/', '/index.html'].includes(request.path)) response.type('html').send(renderLogin())
+      if (access.canReadPublic(request.method, request.path)) { response.locals.workbenchRole = 'viewer'; next(); return }
+      if (access.publicReadOnly) response.status(403).json({ code: 'ADMIN_REQUIRED', detail: '此操作需要管理员登录。', login_url: '/admin/login' })
+      else if (request.method === 'GET' && ['/', '/index.html'].includes(request.path)) response.type('html').send(renderLogin())
       else unauthorized(response)
       return
     }
+    response.locals.workbenchRole = 'admin'
     access.bindResponse(request.headers.cookie, response); next()
   })
 }

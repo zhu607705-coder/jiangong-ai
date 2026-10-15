@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { IconSearch, IconX, IconPlus, IconMinus, IconNavigation, IconLayersIntersect, IconArrowRight,
   IconCube, IconMapPin, IconSatellite, IconBuildingSkyscraper, IconFocus2, IconAdjustments, IconArrowLeft, IconExternalLink } from '@tabler/icons-react'
 import { api, type Project } from '../api'
+import { useWorkbenchAccess } from '../AdminAccess'
 import type { MapConfiguration, PlaceSelection, PlaceDetails } from '../../../../packages/maps/types'
 import { loadAmap, coordinates, normalizePoi, searchPlaces, placeDetails, placeForResearch, mapCoordinates, type AmapSdk, type MapLayer } from './amap-client'
 import MapSettings from './MapSettings'
@@ -27,6 +28,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   onEvidence?: (refs: string[]) => void;
   onAskEvidence?: () => void;
 }) {
+  const { canWrite } = useWorkbenchAccess()
   const canvas = useRef<HTMLDivElement>(null), map = useRef<AMap.Map | null>(null), sdk = useRef<AmapSdk | null>(null)
   const marker = useRef<AMap.Marker | null>(null), projectOverlays = useRef<any[]>([])
   const layers = useRef<{ satellite: MapLayer; visible: boolean; buildings: boolean; nativeBuildings: { show(): void; hide(): void } | null } | null>(null)
@@ -71,6 +73,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   const chooseCellRef = useRef(chooseCell); chooseCellRef.current = chooseCell
   function clearScreen() { screenAbort.current?.abort(); screenVersion.current++; studiesDuringScan.current=null; setScreenRunning(false); setScreenCells([]); setScreenResult(null); setScreenError(''); setScreenProgress(0); setScreenStale(false); screenView.current = null; if (selectedCell) clearSelection() }
   async function startScreen() {
+    if (!canWrite) return
     const current = map.current
     if (!current) return
     const center = coordinates(current.getCenter())!, bounds = current.getBounds()
@@ -100,15 +103,16 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   }
 
   async function confirmArea(target:MapScreenTarget,signal:AbortSignal){
+    if (!canWrite) return
     const context=await api<MapScreenContext>('/maps/screening/context',{target},signal)
     signal.throwIfAborted();clearScreen();setAreaScope(target)
     const cell:MapScreenCell={id:'AREA-'+context.id,label:'框选区域',bounds:target.bounds!,geometry:target.geometry!,anchor:[target.longitude,target.latitude],boundary_source:'user:rectangle',context,tier:'incomplete',rank:null,metric_value:null}
     chooseCell(cell);setNotice('范围已确认；研判此处才会调用模型。')
   }
   useEffect(()=>{
-    const key=(e:KeyboardEvent)=>{if(!interactionBlocked&&e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!isTypingTarget(e.target)&&phase==='ready'&&!screenRunning&&!dataOpen&&!settings){e.preventDefault();setDrawingArea(true)}}
+    const key=(e:KeyboardEvent)=>{if(canWrite&&!interactionBlocked&&e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!isTypingTarget(e.target)&&phase==='ready'&&!screenRunning&&!dataOpen&&!settings){e.preventDefault();setDrawingArea(true)}}
     window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)
-  },[interactionBlocked,phase,screenRunning,dataOpen,settings])
+  },[canWrite,interactionBlocked,phase,screenRunning,dataOpen,settings])
   useEffect(() => {
     if (!interactionBlocked && phase === 'ready') window.dispatchEvent(new Event('resize'))
   }, [interactionBlocked, phase])
@@ -126,7 +130,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       .catch(() => { if (alive) { setPhase('error'); setMapError('地图配置暂时无法读取，请刷新工作台重试。') } })
     return () => { alive = false }
   }, [ready])
-  useEffect(() => { if (settingsRequest) setSettings(true) }, [settingsRequest])
+  useEffect(() => { if (settingsRequest && canWrite) setSettings(true) }, [settingsRequest,canWrite])
 
   useEffect(() => {
     if (!config?.configured || !canvas.current) return
@@ -256,7 +260,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
     finally { if (selectionVersion.current === version) setDetailLoading(false) }
   }
   function createSelectedProject() {
-    if (!selection) return
+    if (!selection||!canWrite) return
     const context=previewContext?.forId===selection.id?previewContext.context:selectedCell?.context||null
     onCreateFromPlace(placeForResearch(selection,details),context)
   }
@@ -272,8 +276,8 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   return <section className={`atlas-view${phase === 'loading' ? ' atlas-view--loading' : ''}`} aria-label="地图空间探索" {...(interactionBlocked ? { inert: '' } : {})} aria-hidden={interactionBlocked}>
     <div className="atlas-map" ref={canvas} aria-label="高德交互地图" data-map-status={phase} />
     <div className="atlas-vignette" />
-    <div className="area-selection-controls glass-panel"><button className="map-text-button" disabled={!interactive||screenRunning} onClick={()=>setDrawingArea(true)}>框选区域 <kbd>R</kbd></button>{areaScope&&<><span>已固定框选范围</span><button className="map-text-button" onClick={()=>{setAreaScope(null);clearScreen();clearSelection()}}>清除范围</button></>}</div>
-    {drawingArea&&map.current&&sdk.current&&<AreaSelectionOverlay map={map.current} sdk={sdk.current} onConfirm={confirmArea} onClose={()=>setDrawingArea(false)}/>}
+    <div className="area-selection-controls glass-panel"><button className="map-text-button" disabled={!interactive||screenRunning||!canWrite} title={!canWrite?'管理员登录后可框选并研究':undefined} onClick={()=>setDrawingArea(true)}>框选区域 <kbd>R</kbd></button>{areaScope&&<><span>已固定框选范围</span><button className="map-text-button" onClick={()=>{setAreaScope(null);clearScreen();clearSelection()}}>清除范围</button></>}</div>
+    {canWrite&&drawingArea&&map.current&&sdk.current&&<AreaSelectionOverlay map={map.current} sdk={sdk.current} onConfirm={confirmArea} onClose={()=>setDrawingArea(false)}/>}
 
     <div className="atlas-search-wrap">
       <form className="atlas-search glass-panel" role="search" onSubmit={async e => {
@@ -295,7 +299,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       setTheme(value)
       if (screenResult) { const cells = classifyCells(screenResult.cells, value,profile); setScreenCells(cells); setScreenResult({...screenResult, theme: value, cells, status: cells.length ? 'completed' : 'partial', comparison_count: cells.filter(c => c.tier !== 'incomplete').length}); setSelectedCell(current => current ? cells.find(c => c.id === current.id) || null : null) }
     }} running={screenRunning} completed={screenProgress}
-      cells={screenCells} result={screenResult} error={screenError} enabled={interactive} stale={screenStale}
+      cells={screenCells} result={screenResult} error={screenError} enabled={interactive&&canWrite} stale={screenStale}
       onScan={() => void startScreen()} onCancel={() => { screenAbort.current?.abort(); screenVersion.current++; studiesDuringScan.current=null; setScreenRunning(false); setScreenCells(cells => classifyCells(cells,theme,profile).map(c=>c.context?c:{...c,tier:'incomplete'})); setScreenError('已停止。') }} onClear={clearScreen} onCell={chooseCell} onData={() => setDataOpen(true)} />
     {dataOpen && <DataSourcesPanel onClose={() => setDataOpen(false)} onAskEvidence={onAskEvidence} onOpenProject={id => { setDataOpen(false); onOpenProject(id) }} />}
     <div className="atlas-status glass-panel"><i className={interactive ? 'is-live' : ''} />{interactive ? `高德地图 · ${satellite ? '卫星影像' : webgl && camera.pitch > 0 ? '3D 城市' : '2D 浏览'}` : phase === 'loading' ? '地图连接中' : '地图待连接'}</div>
@@ -305,7 +309,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       <div className="map-eyebrow">建工 AI</div>
       <h1>{phase === 'loading' ? ready ? '正在展开城市空间' : '正在打开项目空间' : phase === 'unconfigured' ? '从一张真实地图开始' : '地图连接暂未完成'}</h1>
       <p>{phase === 'loading' ? ready ? '正在连接高德底图与地点服务…' : '正在读取本地项目与资料…' : phase === 'unconfigured' ? '连接高德后，缩放街区、查看 3D 建筑，\n点选感兴趣的位置，再深入了解。' : mapError}</p>
-      {phase !== 'loading' && <button className="map-primary" onClick={() => setSettings(true)}><IconKeyVisual />{config?.configured ? '检查地图配置' : '连接高德地图'}<IconArrowRight size={17} /></button>}
+      {phase !== 'loading' && (canWrite?<button className="map-primary" onClick={() => setSettings(true)}><IconKeyVisual />{config?.configured ? '检查地图配置' : '连接高德地图'}<IconArrowRight size={17} /></button>:<a className="map-primary" href="/admin/login">管理员登录后可配置地图<IconArrowRight size={17}/></a>)}
       {phase === 'error' && <button className="map-text-button" onClick={() => window.location.reload()}>重新加载地图</button>}
       {phase === 'unconfigured' && <small>请配置地图 Key</small>}
     </div>}
@@ -342,14 +346,14 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
             setScreenResult(prev=>prev?{...prev,cells:classifyCells(prev.cells.map(update),theme,profile)}:prev)
             if(context.address)setSelection(current=>current?.id===id?{...current,address:context.address!}:current)
           }} /></div>
-        {!expanded ? <div className="assessment-actions"><button className="map-primary" onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
+        {!expanded ? <div className="assessment-actions"><button className="map-primary" disabled={!canWrite} title={!canWrite?'管理员登录后可建立项目':undefined} onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
           <div className="atlas-detail-divider" />
           {detailLoading && <p role="status" className="atlas-detail-loading">正在读取地点资料…</p>}
           {detailsError && <div className="map-error" role="alert">{detailsError}<button className="map-text-button" onClick={() => void openDetails()}>重试</button></div>}
           {details && <><dl className="atlas-detail-fields"><div><dt>详细地址</dt><dd>{details.address || '该地点未返回详细地址'}</dd></div><div><dt>地点分类</dt><dd>{details.category}</dd></div>{details.telephone && <div><dt>联系电话</dt><dd>{details.telephone}</dd></div>}</dl>
             {details.photos.length > 0 && <div className="atlas-photos">{details.photos.map(photo => <img key={photo.url} src={photo.url} alt={photo.title || `${selection.name}的地点照片`} loading="lazy" referrerPolicy="no-referrer" />)}</div>}
             </>}
-          <button className="map-primary" onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button>
+          <button className="map-primary" disabled={!canWrite} title={!canWrite?'管理员登录后可建立项目':undefined} onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button>
           <div className="atlas-detail-actions"><button className="map-text-button" onClick={() => { selectionVersion.current++; setExpanded(false); setDetailLoading(false) }}><IconArrowLeft size={14} />返回简要信息</button>
             <a href={`https://uri.amap.com/marker?position=${selection.longitude},${selection.latitude}&name=${encodeURIComponent(selection.name)}&coordinate=gaode&callnative=0`} target="_blank" rel="noreferrer">高德查看 <IconExternalLink size={13} /></a></div>
         </>}
@@ -377,7 +381,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
     </div>
     <div className="atlas-bottom-hint"><span className="atlas-mouse-symbol" />滚轮缩放<span>·</span>拖拽平移<span>·</span>右键调整视角</div>
     {interactive && <div className="atlas-camera-readout"><span>ZOOM <b>{camera.zoom.toFixed(1)}</b></span><span>PITCH <b>{Math.round(camera.pitch)}°</b></span></div>}
-    {settings && <MapSettings configured={!!config?.configured} onClose={() => setSettings(false)} onSaved={value => { clearSelection(); setConfig(value); setSettings(false) }} />}
+    {canWrite&&settings && <MapSettings configured={!!config?.configured} onClose={() => setSettings(false)} onSaved={value => { clearSelection(); setConfig(value); setSettings(false) }} />}
   </section>
 }
 function IconKeyVisual() { return <IconAdjustments size={18} /> }

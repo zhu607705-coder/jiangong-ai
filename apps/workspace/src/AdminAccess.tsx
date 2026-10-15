@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { ADMIN_LOGIN_REQUIRED_EVENT } from './api'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT } from './api'
 import './admin-access.css'
 
-type Authentication = { enabled: false; role: 'admin' } | { enabled: true; role: 'admin'; username: string; expires_at: string }
+type Authentication = { enabled: false; role: 'admin' } | { enabled: true; role: 'admin'; username: string; expires_at: string } | { enabled: true; role: 'viewer'; public_read_only: true; expires_at: null }
 export type AdminSession = { authentication: Authentication }
+export type WorkbenchAccess = { role: 'admin' | 'viewer'; canWrite: boolean }
+// Components rendered outside the entry gate retain the existing local-workspace behavior.
+export const WorkbenchAccessContext = createContext<WorkbenchAccess>({ role: 'admin', canWrite: true })
+export const useWorkbenchAccess = () => useContext(WorkbenchAccessContext)
 type AccessState = { phase: 'checking' } | { phase: 'locked'; message: string } | { phase: 'error'; message: string } | { phase: 'ready'; session: AdminSession }
 
 export class AdminAccessError extends Error {
@@ -12,6 +16,7 @@ export class AdminAccessError extends Error {
 
 function parseSession(value: unknown): AdminSession {
   const authentication = (value as AdminSession | null)?.authentication
+  if (authentication?.enabled === true && authentication.role === 'viewer' && authentication.public_read_only === true && authentication.expires_at === null) return { authentication }
   if (authentication?.role === 'admin' && authentication.enabled === false) return { authentication }
   if (authentication?.role === 'admin' && authentication.enabled === true && typeof authentication.username === 'string' && authentication.username.trim() && typeof authentication.expires_at === 'string') {
     const expires = Date.parse(authentication.expires_at)
@@ -77,12 +82,14 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const expired = () => lock('管理员会话已失效，请重新登录。')
+    const loginRequested = () => window.location.assign('/admin/login')
     window.addEventListener(ADMIN_LOGIN_REQUIRED_EVENT, expired)
-    return () => window.removeEventListener(ADMIN_LOGIN_REQUIRED_EVENT, expired)
+    window.addEventListener(ADMIN_LOGIN_REQUESTED_EVENT, loginRequested)
+    return () => { window.removeEventListener(ADMIN_LOGIN_REQUIRED_EVENT, expired); window.removeEventListener(ADMIN_LOGIN_REQUESTED_EVENT, loginRequested) }
   }, [lock])
 
   useEffect(() => {
-    if (state.phase !== 'ready' || !state.session.authentication.enabled) return
+    if (state.phase !== 'ready' || !state.session.authentication.enabled || state.session.authentication.role !== 'admin') return
     const expires = Date.parse(state.session.authentication.expires_at)
     let timer: ReturnType<typeof setTimeout>
     const schedule = () => {
@@ -122,8 +129,10 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
   }
 
   if (state.phase === 'ready') {
-    if (!state.session.authentication.enabled) return <>{children}</>
-    return <div className="admin-session-shell"><header className="admin-session-bar" aria-label="管理员会话"><span><span className="admin-session-dot" />管理员 <strong>{state.session.authentication.username}</strong></span><div>{logoutError && <span role="alert">{logoutError}</span>}<button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button></div></header><div className="admin-workspace">{children}</div></div>
+    const auth = state.session.authentication
+    const content = <WorkbenchAccessContext.Provider value={{ role: auth.role, canWrite: auth.role === 'admin' }}>{children}</WorkbenchAccessContext.Provider>
+    if (!auth.enabled) return content
+    return <div className="admin-session-shell"><header className="admin-session-bar" aria-label={auth.role === 'viewer' ? '公开浏览权限' : '管理员会话'}><span><span className="admin-session-dot" />{auth.role === 'viewer' ? '公开浏览 · 只读' : <>管理员 <strong>{auth.username}</strong></>}</span><div><a href={`/deliverables/${encodeURIComponent('求是村_旧改深度调研与行动计划.pdf')}`} target="_blank" rel="noreferrer">求是村报告</a>{auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <><a href="/api/admin/database-schema">数据库结构</a>{logoutError && <span role="alert">{logoutError}</span>}<button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button></>}</div></header><div className="admin-workspace">{content}</div></div>
   }
 
   return <main className="admin-access-screen"><section className="admin-access-card" aria-labelledby="admin-access-title">

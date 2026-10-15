@@ -1,12 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createElement } from 'react'
+import { act, createElement } from 'react'
+import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { parseHTML } from 'linkedom'
 import { runInNewContext } from 'node:vm'
-import AdminAccess, { fetchAdminSession, loginAdmin, logoutAdmin } from '../../apps/workspace/src/AdminAccess'
-import { ADMIN_LOGIN_REQUIRED_EVENT, api } from '../../apps/workspace/src/api'
+import AdminAccess, { fetchAdminSession, loginAdmin, logoutAdmin, useWorkbenchAccess } from '../../apps/workspace/src/AdminAccess'
+import { ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT, api } from '../../apps/workspace/src/api'
 import { renderAdminLoginPage } from '../../apps/host/admin-login-page'
 
 const authenticated = () => ({ authentication: { enabled: true, role: 'admin', username: 'example-admin', expires_at: new Date(Date.now() + 60_000).toISOString() } })
+const viewer = () => ({ authentication: { enabled: true, role: 'viewer', public_read_only: true, expires_at: null } })
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 afterEach(() => vi.unstubAllGlobals())
 
@@ -24,6 +27,31 @@ describe('admin access protocol and entry gate', () => {
     vi.stubGlobal('fetch', transport)
     expect(await fetchAdminSession()).toEqual({ authentication: { enabled: false, role: 'admin' } })
     expect(transport).toHaveBeenCalledWith('/api/session', expect.objectContaining({ method: 'GET', credentials: 'same-origin', cache: 'no-store' }))
+  })
+
+  it('accepts a public viewer session without inventing an expiry or administrator privilege', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(viewer())))
+    expect(await fetchAdminSession()).toEqual(viewer())
+  })
+
+  it.each([
+    [viewer(), '公开浏览 · 只读', 'false'],
+    [authenticated(), '管理员', 'true'],
+    [{ authentication: { enabled: false, role: 'admin' } }, '', 'true'],
+  ])('mounts the workbench with the matching viewer, administrator or local context (%s)', async (session, label, canWrite) => {
+    const dom = parseHTML('<html><body><div id="root"></div></body></html>')
+    vi.stubGlobal('window', dom.window); vi.stubGlobal('document', dom.document); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(session)))
+    const root = createRoot(dom.document.getElementById('root')!)
+    function Business() { const access = useWorkbenchAccess(); return createElement('p', { 'data-can-write': String(access.canWrite) }, 'saved project') }
+    try {
+      await act(async () => root.render(createElement(AdminAccess, { children: createElement(Business) })))
+      await vi.waitFor(() => expect(dom.document.querySelector('[data-can-write]')?.getAttribute('data-can-write')).toBe(canWrite))
+      expect(dom.document.body.textContent).toContain('saved project')
+      if (label) expect(dom.document.querySelector('.admin-session-bar')?.textContent).toContain(label)
+      else expect(dom.document.querySelector('.admin-session-bar')).toBeNull()
+      if (canWrite === 'false') expect(dom.document.querySelector('a')?.getAttribute('href')).toBe('/admin/login')
+    } finally { await act(async () => root.unmount()) }
   })
 
   it('reports an unauthenticated session as requiring login', async () => {
@@ -71,6 +99,18 @@ describe('admin access protocol and entry gate', () => {
     await expect(api('/protected-test')).rejects.toThrow('401')
     expect(locked).toHaveBeenCalledOnce()
   })
+
+  it('requests administrator login only for ADMIN_REQUIRED, without locking on unrelated 403 responses', async () => {
+    const events = new EventTarget(), loginRequested = vi.fn(), locked = vi.fn()
+    events.addEventListener(ADMIN_LOGIN_REQUESTED_EVENT, loginRequested)
+    events.addEventListener(ADMIN_LOGIN_REQUIRED_EVENT, locked)
+    vi.stubGlobal('window', events)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(response({ code: 'INVALID_ORIGIN' }, 403)).mockResolvedValueOnce(response({ code: 'ADMIN_REQUIRED' }, 403)))
+    await expect(api('/denied-read-test')).rejects.toThrow('403')
+    expect(loginRequested).not.toHaveBeenCalled(); expect(locked).not.toHaveBeenCalled()
+    await expect(api('/denied-write-test', {})).rejects.toThrow('需要管理员登录')
+    expect(loginRequested).toHaveBeenCalledOnce(); expect(locked).not.toHaveBeenCalled()
+  })
 })
 
 function loginShell(transport: ReturnType<typeof vi.fn>) {
@@ -80,10 +120,10 @@ function loginShell(transport: ReturnType<typeof vi.fn>) {
     username: { value: ' example-admin ' }, password: { value: 'test-only-password' },
     submit: { disabled: false, textContent: '登录工作台' }, message: { textContent: '' },
   }
-  const reload = vi.fn(), html = renderAdminLoginPage(), script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1]
+  const navigate = vi.fn(), html = renderAdminLoginPage(), script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1]
   if (!script) throw new Error('Independent login script missing')
-  runInNewContext(script, { document: { getElementById: (id: keyof typeof elements) => elements[id] }, fetch: transport, location: { reload }, AbortController, setTimeout, clearTimeout })
-  return { submit: () => submit({ preventDefault: vi.fn() }), elements, reload, html }
+  runInNewContext(script, { document: { getElementById: (id: keyof typeof elements) => elements[id] }, fetch: transport, location: { assign: navigate }, AbortController, setTimeout, clearTimeout })
+  return { submit: () => submit({ preventDefault: vi.fn() }), elements, navigate, html }
 }
 
 describe('independent server login page', () => {
@@ -96,13 +136,13 @@ describe('independent server login page', () => {
     await shell.submit()
     expect(shell.elements.password.value).toBe('')
     expect(transport).toHaveBeenCalledWith('/api/auth/login', expect.objectContaining({ credentials: 'same-origin', body: JSON.stringify({ username: 'example-admin', password: 'test-only-password' }), headers: expect.objectContaining({ 'X-Requested-With': 'haizhizi' }) }))
-    expect(shell.reload).toHaveBeenCalledOnce()
+    expect(shell.navigate).toHaveBeenCalledWith('/')
   })
 
   it('keeps an invalid login on the isolated shell and renders its message as text', async () => {
     const shell = loginShell(vi.fn().mockResolvedValue(response({ code: 'INVALID_CREDENTIALS' }, 401)))
     await shell.submit()
-    expect(shell.reload).not.toHaveBeenCalled()
+    expect(shell.navigate).not.toHaveBeenCalled()
     expect(shell.elements.message.textContent).toBe('账号或密码不正确。')
     expect(shell.elements.password.value).toBe('')
     expect(shell.elements.submit.disabled).toBe(false)

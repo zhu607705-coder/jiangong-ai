@@ -147,9 +147,9 @@ export class MapScreeningService {
     return context
   }
 
-  async savedAnalysis(id:string,profile:MapScreenProfile,signal:AbortSignal):Promise<MapScreenAnalysis|null>{
+  async savedAnalysis(id:string,profile:MapScreenProfile,signal:AbortSignal,persistContext=true):Promise<MapScreenAnalysis|null>{
     const context=await this.loadContext(id,signal)
-    return this.restore(context,profile)
+    return this.restore(context,profile,persistContext)
   }
 
   async modeInput(id:string,signal:AbortSignal) {
@@ -303,7 +303,7 @@ export class MapScreeningService {
     if(invalidated&&!analysis.reason)analysis.reason='原简报已保留，条件已按当前资料时效重新核对。'
   }
 
-  private async restore(context:MapScreenContext,profile:MapScreenProfile):Promise<MapScreenAnalysis|null>{
+  private async restore(context:MapScreenContext,profile:MapScreenProfile,persistContext=true):Promise<MapScreenAnalysis|null>{
     try{
       const saved=JSON.parse(await readFile(join(this.directory,'scope-analyses',this.scopeKey(context,profile)+'.json'),'utf8'))
       const age=Date.now()-Date.parse(saved.saved_at)
@@ -339,7 +339,7 @@ export class MapScreeningService {
       if(!analysis.refresh_required&&saved.decision_signature!==this.decisionSignature(profile)){
         analysis.status='partial';delete analysis.decision_support;analysis.reason='简报已恢复，判断配置已更新，可重新评分。'
       }
-      await this.save('contexts',context.id,context)
+      if(persistContext)await this.save('contexts',context.id,context)
       return analysis
     }catch{return null}
   }

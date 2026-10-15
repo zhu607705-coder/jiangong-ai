@@ -25,6 +25,7 @@ import { registerRenewalMode } from './renewal-mode'
 import { ExperienceError } from '../../packages/experience/domain'
 import { AdminAccess, registerAdminRoutes } from './admin-auth'
 import { renderAdminLoginPage } from './admin-login-page'
+import { describeWorkbenchDatabase } from './database-schema'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -33,7 +34,7 @@ await store.db.query("UPDATE runs SET status='failed',error_code='INTERRUPTED_RE
 const app = express()
 const amapSettings = new AmapSettings(config.dataDir)
 await amapSettings.load()
-const adminAccess = new AdminAccess(config.ADMIN_USERNAME, config.ADMIN_PASSWORD_HASH, config.ADMIN_SESSION_TTL_SECONDS)
+const adminAccess = new AdminAccess(config.ADMIN_USERNAME, config.ADMIN_PASSWORD_HASH, config.ADMIN_SESSION_TTL_SECONDS, config.PUBLIC_READ_ONLY === 'true')
 const controllers = new Map<string, AbortController>()
 const active = new Set<Promise<void>>()
 const { allowedHosts, allowedOrigins } = config.requestOrigins
@@ -51,9 +52,9 @@ app.use(express.json({ limit: '4mb' }))
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'haizhizi-host' }))
 registerAdminRoutes(app, adminAccess, () => ({ user: { id: config.ownerId, label: adminAccess.enabled ? `管理员 ${config.ADMIN_USERNAME}` : '本地项目负责人' }, deployment: adminAccess.enabled ? 'single_admin_server' : 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
   decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL} }), renderAdminLoginPage)
-app.use(['/api', '/_AMapService'], (req, _res, next) => {
-  if (!adminAccess.identity(req.headers.cookie)) return next(new ApiError(401, 'SESSION_REQUIRED', '会话已更新，请刷新页面'))
-  if (req.method !== 'GET' && req.headers['x-requested-with'] !== 'haizhizi') return next(new ApiError(403, 'CSRF_GUARD', '缺少工作台请求标识'))
+app.use(['/api', '/_AMapService'], (req, res, next) => {
+  if (!adminAccess.identity(req.headers.cookie) && res.locals.workbenchRole !== 'viewer') return next(new ApiError(401, 'SESSION_REQUIRED', '会话已更新，请刷新页面'))
+  if (!['GET', 'HEAD'].includes(req.method) && req.headers['x-requested-with'] !== 'haizhizi') return next(new ApiError(403, 'CSRF_GUARD', '缺少工作台请求标识'))
   next()
 })
 const intelligence = registerIntelligence(app,store)
@@ -67,6 +68,15 @@ app.get('/api/ready', async (_req, res) => {
   let capability = false
   try { capability = (await fetch(`${config.capabilityUrl}/health`, { signal: AbortSignal.timeout(1500) })).ok } catch { /* explicit unavailable status below */ }
   res.status(capability ? 200 : 503).json({ status: capability ? 'ok' : 'degraded', database: store.kind, capabilities: capability, live_model: config.modelConfigured ? 'configured_not_verified' : 'blocked_external', live_search: config.searchConfigured ? 'configured_not_verified' : 'blocked_external' })
+})
+app.get('/api/admin/database-schema', async (req,res,next) => {
+  try {
+    const format = z.enum(['json','sql']).parse(req.query.format || 'json')
+    const schema = await describeWorkbenchDatabase(store.db)
+    res.setHeader('Content-Disposition', `attachment; filename="workbench-database-schema.${format}"`)
+    if (format === 'sql') res.type('text/plain').send(schema.sql)
+    else res.json(schema)
+  } catch (error) { next(error) }
 })
 async function requireProject(id: string): Promise<ProjectRecord> {
   const record = await store.project(id, config.ownerId)

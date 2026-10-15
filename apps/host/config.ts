@@ -14,6 +14,7 @@ const env = z.object({
   ADMIN_USERNAME: z.string().regex(/^[A-Za-z0-9_.-]{3,64}$/).default('admin'),
   ADMIN_PASSWORD_HASH: z.string().refine(value => !value || /^scrypt\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(value), 'ADMIN_PASSWORD_HASH must be a scrypt password hash.').default(''),
   ADMIN_SESSION_TTL_SECONDS: z.coerce.number().int().min(300).max(86400).default(28800),
+  PUBLIC_READ_ONLY: z.enum(['true', 'false']).default('false'),
   DATA_DIR: z.string().default('data/local'), DATABASE_URL: z.string().optional(),
   DEEPSEEK_MODEL: z.string().default('deepseek-flash'),
   QWEN_DECISION_ENABLED: z.enum(['true', 'false']).default('false'),
@@ -24,6 +25,7 @@ const env = z.object({
 }).parse(process.env)
 
 if (env.TRUSTED_PUBLIC_ORIGIN.trim() && !env.ADMIN_PASSWORD_HASH) throw new Error('A trusted public origin requires administrator credentials.')
+if (env.PUBLIC_READ_ONLY === 'true' && (!env.TRUSTED_PUBLIC_ORIGIN.trim() || !env.ADMIN_PASSWORD_HASH)) throw new Error('Public browsing requires an explicit origin and administrator credentials.')
 
 export const config = {
   ...env, dataDir: resolve(env.DATA_DIR), ownerId: 'local-operator',

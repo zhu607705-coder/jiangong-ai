@@ -59,32 +59,69 @@ elif test -e /etc/nginx/sites-enabled/haizhizi.conf; then
 fi
 candidate="$backup/haizhizi.conf.new"
 cat > "$candidate" <<'NGINX'
+limit_req_zone $binary_remote_addr zone=haizhizi_public:10m rate=10r/s;
+
 server {
     listen 10.70.223.113:80;
     server_name 10.70.223.113;
 
-    allow __ALLOWED_CLIENT__;
-    allow 127.0.0.1;
-    deny all;
     client_max_body_size 12m;
+    limit_req_status 429;
     access_log /var/log/nginx/haizhizi.access.log;
     error_log /var/log/nginx/haizhizi.error.log warn;
 
-    location / {
+    proxy_http_version 1.1;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_set_header X-Forwarded-Host "";
+    proxy_set_header Forwarded "";
+    proxy_set_header Connection "";
+    proxy_buffering off;
+    proxy_request_buffering off;
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+
+    # Six inspected, non-persistent query/calculation POST endpoints.
+    location ~* ^/api/(?:projects/[^/]+/(?:knowledge/(?:retrieve|chunks|groups)|community-operations/preview|experiences/knowledge-match)|maps/geometry/wgs84)/?$ {
+        limit_req zone=haizhizi_public burst=40 nodelay;
+        limit_except GET POST {
+            allow __ALLOWED_CLIENT__;
+            allow 127.0.0.1;
+            deny all;
+        }
         proxy_pass http://127.0.0.1:4310;
-        proxy_http_version 1.1;
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Forwarded-Port $server_port;
-        proxy_set_header X-Forwarded-Host "";
-        proxy_set_header Forwarded "";
-        proxy_set_header Connection "";
-        proxy_buffering off;
-        proxy_request_buffering off;
-        proxy_read_timeout 300s;
-        proxy_send_timeout 300s;
+    }
+
+    location /api/ {
+        limit_req zone=haizhizi_public burst=40 nodelay;
+        limit_except GET {
+            allow __ALLOWED_CLIENT__;
+            allow 127.0.0.1;
+            deny all;
+        }
+        proxy_pass http://127.0.0.1:4310;
+    }
+
+    location /_AMapService/ {
+        limit_req zone=haizhizi_public burst=40 nodelay;
+        limit_except GET {
+            allow __ALLOWED_CLIENT__;
+            allow 127.0.0.1;
+            deny all;
+        }
+        proxy_pass http://127.0.0.1:4310;
+    }
+
+    location / {
+        limit_except GET {
+            allow __ALLOWED_CLIENT__;
+            allow 127.0.0.1;
+            deny all;
+        }
+        proxy_pass http://127.0.0.1:4310;
     }
 }
 NGINX
@@ -101,15 +138,23 @@ if ! sudo -n nginx -t; then
   exit 1
 fi
 BASE_DIR="$base" python3 - <<'PY'
-import os,pathlib
+import os,pathlib,secrets
 path=pathlib.Path(os.environ['BASE_DIR'])/'shared'/'server.env'
-lines=path.read_text(encoding='utf-8').splitlines()
-lines=[line for line in lines if not line.startswith('TRUSTED_PUBLIC_ORIGIN=')]
-lines.append('TRUSTED_PUBLIC_ORIGIN=http://10.70.223.113')
-temporary=path.with_suffix('.env.new')
-temporary.write_text('\n'.join(lines)+'\n',encoding='utf-8')
-temporary.chmod(0o600)
-temporary.replace(path)
+before=path.read_bytes()
+kept=''.join(line for line in before.decode('utf-8').splitlines(keepends=True) if not line.startswith(('TRUSTED_PUBLIC_ORIGIN=','PUBLIC_READ_ONLY=')))
+if kept and not kept.endswith(('\r','\n')): kept+='\n'
+updated=kept+'TRUSTED_PUBLIC_ORIGIN=http://10.70.223.113\nPUBLIC_READ_ONLY=true\n'
+temporary=path.with_name('.server.env.ingress-'+secrets.token_hex(8)+'.tmp')
+try:
+    descriptor=os.open(temporary,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+    with os.fdopen(descriptor,'wb') as stream:
+        stream.write(updated.encode('utf-8'))
+        stream.flush()
+        os.fsync(stream.fileno())
+    if path.read_bytes()!=before: raise RuntimeError('Server configuration changed concurrently; refusing to replace it.')
+    temporary.replace(path)
+finally:
+    if temporary.exists(): temporary.unlink()
 path.chmod(0o600)
 PY
 sudo -n systemctl unmask nginx.service
@@ -121,11 +166,12 @@ else
 fi
 printf '\nIP_ACCESS_CONFIGURED\n'
 printf 'url=http://%s\nallowed_client=%s/32\nbackup=%s\nfresh_install=%s\n' "$target_ip" "$allowed_client" "$backup" "$fresh_install"
+printf 'public_reads=GET,HEAD and six inspected query POST paths\nwrite_device_restriction=%s/32 and 127.0.0.1\n' "$allowed_client"
 sudo -n nginx -v
 sudo -n systemctl is-active nginx.service
 ss -ltn | awk 'NR==1 || $4 ~ /:(80|443|4310|4311)$/'
 printf 'env_permissions='; stat -c '%a' "$base/shared/server.env"
-printf 'Application host was not restarted; the lead agent will integrate the trusted-origin code.\n'
+printf 'Application host was not restarted; deploy the public read-only host version before enabling the viewer session.\n'
 '@
 $remoteScript = $remoteScript.Replace('__ALLOWED_CLIENT__', $AllowedClient)
 $info = [Diagnostics.ProcessStartInfo]::new('ssh')

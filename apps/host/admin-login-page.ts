@@ -17,7 +17,7 @@ form.addEventListener('submit',async function(event){
     const result=await response.json().catch(function(){return null});
     if(!response.ok){message.textContent=response.status===429?'尝试次数过多，请稍后再试。':response.status===401?'账号或密码不正确。':'登录失败，请稍后重试。';return}
     if(!result||!result.authentication||result.authentication.enabled!==true||result.authentication.role!=='admin'){message.textContent='无法确认管理员会话，请刷新重试。';return}
-    location.reload();
+    location.assign('/');
   }catch(error){message.textContent='连接工作台失败，请检查网络后重试。'}finally{clearTimeout(timer);button.disabled=false;button.textContent='登录工作台'}
 });
 </script></body></html>`

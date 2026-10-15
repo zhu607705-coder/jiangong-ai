@@ -153,19 +153,21 @@ with client.open(base+'/health') as response:
 try:
     with client.open(base+'/api/session') as response:
         session_status=response.status
-        checks['/api/session']={'status':response.status,'body':json.load(response)}
+        session_body=json.load(response)
+        checks['/api/session']={'status':response.status,'body':session_body}
 except urllib.error.HTTPError as response:
     session_status=response.code
     body=json.load(response)
     assert response.code == 401 and body.get('code') == 'ADMIN_LOGIN_REQUIRED'
     checks['/api/session']={'status':response.code,'authentication_required':True}
 admin_mode=session_status == 401
+public_viewer=not admin_mode and session_body.get('authentication',{}).get('role') == 'viewer'
 try:
     with client.open(base+'/api/ready') as response:
-        assert not admin_mode and response.status == 200
+        assert not admin_mode and not public_viewer and response.status == 200
         checks['/api/ready']={'status':response.status,'body':json.load(response)}
 except urllib.error.HTTPError as response:
-    assert admin_mode and response.code == 401
+    assert (admin_mode and response.code == 401) or (public_viewer and response.code == 403)
     checks['/api/ready']={'status':response.code,'authentication_required':True}
 with urllib.request.urlopen(base+'/') as response:
     body=response.read().decode()

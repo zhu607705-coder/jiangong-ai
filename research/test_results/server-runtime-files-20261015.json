@@ -1,0 +1,90 @@
+{
+  "schema_version": "haizhizi-runtime-migration-receipt-v1",
+  "completed_at_utc": "2026-10-15T03:02:51.9998089Z",
+  "remote_host": "10.70.223.113",
+  "remote_user": "zhuhangcheng",
+  "source": "data/local",
+  "result": {
+    "status": "completed",
+    "run": "20261015T030238Z-acae669f3b43",
+    "runtime": {
+      "host_pid": 6656,
+      "data_dir": "/home/zhuhangcheng/apps/haizhizi/shared/data",
+      "host_uses_shared_data": true
+    },
+    "directories": {
+      "map-screening": {
+        "source_files": 223,
+        "source_bytes": 13570725,
+        "added": 223,
+        "identical": 0,
+        "conflicts": 0,
+        "added_bytes": 13570725,
+        "conflict_bytes": 0
+      },
+      "sessions": {
+        "source_files": 472,
+        "source_bytes": 29732742,
+        "added": 472,
+        "identical": 0,
+        "conflicts": 0,
+        "added_bytes": 29732742,
+        "conflict_bytes": 0
+      },
+      "corpus": {
+        "source_files": 50,
+        "source_bytes": 1528648,
+        "added": 50,
+        "identical": 0,
+        "conflicts": 0,
+        "added_bytes": 1528648,
+        "conflict_bytes": 0
+      },
+      "intelligence": {
+        "source_files": 5,
+        "source_bytes": 362589,
+        "added": 5,
+        "identical": 0,
+        "conflicts": 0,
+        "added_bytes": 362589,
+        "conflict_bytes": 0
+      }
+    },
+    "totals": {
+      "source_files": 750,
+      "source_bytes": 45194704,
+      "added": 750,
+      "identical": 0,
+      "conflicts": 0,
+      "added_bytes": 45194704,
+      "conflict_bytes": 0
+    },
+    "validation": {
+      "source_manifest_sha256": "ae7d6987a1414bd1bf772cc867132b2f69597ce5ba9ea1c2a38d6a9ae059ad57",
+      "remote_source_manifest_sha256": "ae7d6987a1414bd1bf772cc867132b2f69597ce5ba9ea1c2a38d6a9ae059ad57",
+      "archive_sha256": "f1242df6d1b6fbfb947735298d4ca48991dc4d847be0203225d534448de5201e",
+      "archive_verified": true,
+      "manifest_files_verified": 750,
+      "atomic_rename_no_replace": true,
+      "new_directories_mode": "0700",
+      "new_files_mode": "0600",
+      "private_new_permissions_verified": true
+    },
+    "audit_directory": "/home/zhuhangcheng/apps/haizhizi/shared/incoming/migration-conflicts/20261015T030238Z-acae669f3b43"
+  },
+  "exclusions": [
+    "database",
+    "blobs",
+    "server.env",
+    "code",
+    "services",
+    "proxy",
+    "DNS",
+    "models",
+    "light 4",
+    "tests",
+    "caches"
+  ],
+  "source_files_deleted": 0,
+  "server_originals_overwritten": 0
+}
