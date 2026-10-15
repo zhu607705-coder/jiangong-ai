@@ -41,6 +41,7 @@ test('the real workbench opens a public source quote and navigates to its cited 
   apiMock.mockImplementation((path: string) => {
     if (path === '/session') return Promise.resolve({ model_configured: false })
     if (path === '/projects') return Promise.resolve([project])
+    if (path === '/projects/public-decisions') return Promise.resolve({ items: [] })
     if (path === `/projects/${project.id}`) return Promise.resolve(project)
     if (path.endsWith('/revision-diff')) return Promise.resolve({ available: false, changes: [] })
     if (path.endsWith('/followups') || path.endsWith('/documents')) return Promise.resolve([])

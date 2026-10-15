@@ -31,7 +31,8 @@ import EvidenceDecisionMap from './imports/EvidenceDecisionMap';
 import RagEvidenceSearch from './imports/RagEvidenceSearch';
 import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
 import type { RetrievalHit } from '../../../packages/experience/retrieval';
-import type { StrategyPacket } from '../../../packages/retrofit/strategy';
+import type { StrategyPacket, PublicStrategyIndexResponse } from '../../../packages/retrofit/strategy';
+import { initialWorkbenchProject, publicDecisionHref, writeWorkbenchLink, type WorkbenchView } from './public-decisions';
 import { findRetrievalDecisionElement, findRetrievalFeatureElement, focusRetrievalElement, retrievalDecisionLocations, retrievalFeatureLocations, retrievalSourceIds, sourceHitFocus, type RetrievalDecisionLocation, type RetrievalFeatureLocation, type SourceHitFocusResult } from './imports/retrieval-navigation';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
@@ -174,6 +175,7 @@ function RegionView({ project }: { project: Project }) {
 
 export default function App() {
   const { canWrite } = useWorkbenchAccess();
+  const [publicDecisions, setPublicDecisions] = useState<{ status: 'loading' | 'ready' | 'unavailable'; items: PublicStrategyIndexResponse['items'] }>({ status: 'loading', items: [] });
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [mapFocus, setMapFocus] = useState(0), [mapSettings, setMapSettings] = useState(0);
   const [mapAnchor, setMapAnchor] = useState<ProjectInput['scope']['map_anchor']>();
@@ -312,7 +314,7 @@ export default function App() {
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
     if (version !== projectLoadVersion.current) return p;
     setProject(p);
-    localStorage.setItem("hzz_project", id);
+    try { localStorage.setItem("hzz_project", id); } catch {}
     const latest = p.runs?.[0] || null;
     setRun(latest);
     setPacket(p.runs?.find((r) => r.decision)?.decision || null);
@@ -344,13 +346,27 @@ export default function App() {
         if (!alive) return;
         setModelAvailable(session.model_configured);
         setExecutionMode(session.model_configured ? "live" : "offline");
-        setLoading(false);
         const list = await refreshProjects();
         if (!alive) return;
-        const selected =
-          list.find((p) => p.id === localStorage.getItem("hzz_project")) ||
-          list.find((p) => !p.input.synthetic) || list[0];
-        if (selected) await loadProject(selected.id);
+        let published: PublicStrategyIndexResponse['items'] = [];
+        try {
+          const index = await api<PublicStrategyIndexResponse>('/projects/public-decisions');
+          if (!alive) return;
+          if (!Array.isArray(index.items)) throw new Error('公开方案目录格式无效');
+          published = index.items;
+          setPublicDecisions({ status: 'ready', items: published });
+        } catch { if (alive) setPublicDecisions({ status: 'unavailable', items: [] }); }
+        if (!alive) return;
+        let storedProjectId: string | null = null;
+        try { storedProjectId = localStorage.getItem('hzz_project'); } catch {}
+        const initial = initialWorkbenchProject(list, published, { viewer: !canWrite, storedProjectId, search: window.location?.search || '' });
+        if (initial.selected) {
+          if (initial.showOverview) { setCompleteDemoProject(null); try { localStorage.removeItem('hzz-complete-demo-project'); } catch {} }
+          await loadProject(initial.selected.id);
+          if (!alive) return;
+          if (initial.showOverview) { setTab(initial.view === 'map' ? 'overview' : initial.view); setDetailsOpen(true); setCompleteDemoProject(null); writeWorkbenchLink(initial.selected.id, initial.view); }
+          if (initial.unavailableProject) setNotice('分享链接中的项目当前不可读取，已打开其他可读项目，请核对来源项目。');
+        }
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "连接失败");
       } finally {
@@ -363,6 +379,16 @@ export default function App() {
       projectLoadVersion.current++;
     };
   }, []);
+  async function openPublicDecision(projectId: string) {
+    setLoadingTarget(projectId);
+    try {
+      const selected = await loadProject(projectId);
+      setCompleteDemoProject(null); setTab('overview'); setDetailsOpen(true); setMapFocus(value => value + 1);
+      try { localStorage.removeItem('hzz-complete-demo-project'); } catch {}
+      writeWorkbenchLink(selected.id, 'overview');
+    } catch (error) { setError(error instanceof Error ? error.message : '公开方案暂时无法读取。'); }
+    finally { setLoadingTarget(null); }
+  }
   useEffect(() => {
     eventSource.current?.close();
     if (!run) {
@@ -570,7 +596,7 @@ export default function App() {
       projects={projects}
       stages={stages}
       tab={tab}
-      onTab={setTab}
+      onTab={value => { setTab(value); if (project) writeWorkbenchLink(project.id, value as WorkbenchView); }}
       onProject={(id) =>
         void action(async () => {
           setLoadingTarget(id);
@@ -579,6 +605,7 @@ export default function App() {
             setTab(selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
             setMapFocus(v => v + 1);
             setDetailsOpen(true);
+            writeWorkbenchLink(selected.id, selected.input.purpose === 'case_library_archive' ? 'context' : 'overview');
           } finally { setLoadingTarget(null); }
         })
       }
@@ -586,7 +613,7 @@ export default function App() {
       mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
-        onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); })().catch(e => setError(e.message)); }}
+      onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setDetailsOpen(true); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
           const clean=context?publicMapContext(context):null
           const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
@@ -597,7 +624,7 @@ export default function App() {
         }} />}
       detailsOpen={detailsOpen}
       bootLoading={loading || !!loadingTarget}
-      onMap={() => setDetailsOpen(false)}
+      onMap={() => { setDetailsOpen(false); if (project) writeWorkbenchLink(project.id, 'map'); }}
       onSettings={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setDetailsOpen(false); setMapSettings(v => v + 1); }}
       error={error}
       onDismissError={() => setError('')}
@@ -685,6 +712,7 @@ export default function App() {
         </section>
       ) : (
         <>
+          {tab === 'overview' && !completeDemoActive && <section className="public-decisions-entry" aria-label="公开决策方案入口"><header><div><h2>公开决策方案</h2><p>无需管理员登录，可阅读已完成的方案、原文依据与六维评估。</p></div>{publicDecisions.items.some(item => item.project_id === project.id) && <a href={publicDecisionHref(project.id)}>本方案分享链接 ↗</a>}</header>{publicDecisions.status === 'loading' ? <p role="status">正在读取公开方案目录…</p> : publicDecisions.status === 'unavailable' ? <p>公开目录暂未读取，当前项目已有方案仍可继续查看。</p> : <details open={!publicDecisions.items.some(item => item.project_id === project.id)}><summary>选择已保存的真实方案 · {publicDecisions.items.length} 个项目</summary><div className="public-decision-projects">{publicDecisions.items.map(item => <a key={item.project_id} href={publicDecisionHref(item.project_id)} aria-current={item.project_id === project.id ? 'page' : undefined} onClick={event => { event.preventDefault(); void openPublicDecision(item.project_id); }}><strong>{item.headline}</strong><span>来源项目：{item.project_name} · 资料 v{item.strategy_context_version}</span><span>{new Date(item.created_at).toLocaleString('zh-CN')} · {item.is_current ? '当前方案' : '已保存快照'}</span><span>查看完整方案 →</span></a>)}</div>{!publicDecisions.items.length && <p>当前目录尚无已保存的真实完整方案。</p>}</details>}</section>}
           <div className={`page-heading${completeDemoActive ? " is-complete-demo" : ""}`}>
             <div>
               <div className="eyebrow">
@@ -729,7 +757,7 @@ export default function App() {
               try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
             }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
           </div>}
-          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} />}
+          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} />}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "overview" && !completeDemoActive && (
             <details className="overview-legacy" open={project.input.business_profile !== 'neighborhood'}><summary>完整研判、计算与运行记录</summary>

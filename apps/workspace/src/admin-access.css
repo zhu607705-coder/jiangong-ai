@@ -18,5 +18,7 @@
 .admin-session-dot { width:7px; height:7px; border-radius:50%; background:#2e8069; }
 .admin-session-bar button,.admin-session-bar a { display:inline-flex; align-items:center; min-height:32px; padding:3px 12px; border:1px solid #b9d1c5; border-radius:7px; background:#fff; color:#286b65; font:inherit; cursor:pointer; text-decoration:none; }
 .admin-session-bar [role=alert] { color:#a43d36; font-size:13px; }
+.admin-session-bar .admin-public-decisions { background:#286b65; border-color:#286b65; color:#fff; font-weight:600; }
+@media(max-width:560px) { .admin-session-bar .admin-session-report { display:none; }.admin-session-bar .admin-public-decisions { padding-inline:7px; font-size:12px; } }
 .admin-workspace { position:fixed; inset:44px 0 0; transform:translateZ(0); overflow:hidden; }
 @media(max-width:560px) { .admin-access-card { padding:28px 24px; }.admin-session-bar { padding:0 10px; font-size:13px; }.admin-session-bar>span,.admin-session-bar>div { gap:6px; }.admin-session-bar [role=alert] { position:absolute; top:44px; right:10px; padding:6px 10px; background:#fff; border:1px solid #e0c8c2; border-radius:6px; } }

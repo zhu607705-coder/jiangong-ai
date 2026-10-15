@@ -3,7 +3,7 @@ import { isPublicReadRequest } from '../../apps/host/public-read'
 
 describe('explicit public read and temporary calculation policy', () => {
   it.each([
-    '/', '/assets/history-records.js', '/deliverables/方案.pdf', '/api/projects',
+    '/', '/assets/history-records.js', '/deliverables/方案.pdf', '/api/projects', '/api/projects/public-decisions',
     '/api/projects/P-one', '/api/projects/P-one/knowledge/pipeline',
     '/api/projects/P-one/community-operations', '/api/projects/P-one/construction-costs/export',
     '/api/projects/P-one/renewal-strategy', '/api/maps/screening/analysis/MAPCTX-one',
@@ -18,7 +18,7 @@ describe('explicit public read and temporary calculation policy', () => {
     '/api/projects/P-one/community-operations/preview', '/api/maps/geometry/wgs84',
   ])('allows inspected temporary query POST: %s', path => expect(isPublicReadRequest('POST', path)).toBe(true))
   it.each([
-    ['POST','/api/projects'], ['POST','/api/projects/P-one/renewal-strategy'],
+    ['POST','/api/projects'], ['POST','/api/projects/public-decisions'], ['POST','/api/projects/P-one/renewal-strategy'],
     ['POST','/api/projects/P-one/renewal-mode'], ['POST','/api/projects/P-one/documents'],
     ['POST','/api/projects/P-one/context-proposals'], ['POST','/api/projects/P-one/knowledge/extract'],
     ['POST','/api/projects/P-one/experiences/extract'], ['POST','/api/projects/P-one/community-operations/scenarios'],
