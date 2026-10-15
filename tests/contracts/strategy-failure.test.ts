@@ -39,6 +39,17 @@ describe('safe strategy failure diagnostics', () => {
     expect(result.diagnostic.code).toBe('STRATEGY_FAILED')
     expect(JSON.stringify(result)).not.toMatch(/sk-private|SK_PRIVATE|provider\.invalid/)
   })
+  it('distinguishes output exhaustion, missing structured delivery and a typed schema failure',()=>{
+    const exhausted=strategyFailure(new Error('LIVE_STAGE_FAILED:renewal_strategy:max-tokens:no structured result'),[])
+    expect(exhausted.diagnostic).toMatchObject({code:'MODEL_OUTPUT_TRUNCATED',stop_reason:'max-tokens'})
+    expect(exhausted.error).toContain('长度上限')
+    const absent=strategyFailure(new Error('LIVE_STAGE_FAILED:renewal_strategy:stop:NO_STRUCTURED_OUTPUT'),[])
+    expect(absent.diagnostic.code).toBe('MODEL_STRUCTURED_OUTPUT_MISSING');expect(absent.error).toContain('未提交')
+    const typed=strategyFailure(new Error('LIVE_SCHEMA_FAILED:renewal_strategy_contract_retry'),[])
+    expect(typed.diagnostic.code).toBe('MODEL_SCHEMA_INVALID');expect(typed.error).toContain('字段')
+    expect(strategyFailureMessage({diagnostic:exhausted.diagnostic})).toContain('长度上限')
+    expect(strategyFailureMessage({diagnostic:{code:'MODEL_OUTPUT_INVALID',stop_reason:'max-tokens'}})).toContain('长度上限')
+  })
   it('retains acquired sources, research records and usage when the model transport fails', async () => {
     const project = { ...structuredClone(fixture), business_profile: 'neighborhood' } as ProjectInput
     const input = projectDecisionInput(project)

@@ -1,0 +1,110 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+stderr | tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires concrete tables only for new research while keeping legacy records and preliminary construction candidates 3ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > rejects survey-only pseudo works even when they mention a construction keyword 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > binds each work package to its actual source locator and a literal continuous quote 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > keeps source quantities, unknowns and explicit scenarios distinct and never transfers a reference project quantity 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires three separate internal-data definitions with usable collection denominators and actual package links 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope 35ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reserves a bounded prompt excerpt for concrete archive references without enlarging the existing source budget 0ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reuses saved public research and its trace without web calls, deduplicating sources and excluding internal material 2ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices 2ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > round-trips scoped reference fields without changing quotes, locators or work identities and rejects unknown IDs 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses short source enums for the model and restores actual IDs before all existing business checks 1ms
+ ✓ tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result 741ms
+ ✓ tests/contracts/research-rounds.test.ts > uses internal document text in AI while public web queries exclude it and unselected/other-project files 376ms
+ ✓ tests/contracts/research-rounds.test.ts > requires config plus per-round consent and disallows parent-internal laundering or cross-project documents 429ms
+ ✓ tests/contracts/research-rounds.test.ts > explicitly adopts a same-project older saved baseline without fabricating its input or prior intake 359ms
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"ef2ab3289b9a5e1f3b3550854b2e6309a9c96b8df365d29b1c094829bb605632","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent 422ms
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"c8068038fd980bd2cc45dcf7d92dc0ad78363d591129bd5044ffbd454c6b1051","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent 402ms
+stderr | tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis
+{"event":"renewal_strategy_quality_retry","project_id":"P-ROUND-DEMO","code":"STRATEGY_SYNTHETIC_IDENTITY_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis 374ms
+ ✓ tests/contracts/research-rounds.test.ts > keeps survey denominators and construction-organization uncertainty in the round prompt 345ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > sends forced structured_output in the real adapter HTTP body for a non-thinking RenewalStrategy request 17ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another output 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no call scope 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another sole tool 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for additional tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for thinking enabled 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps simultaneous renewal and other-output request scopes separate through serialization 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > marks completed plain text as NO_STRUCTURED_OUTPUT without parsing it or retrying 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the existing max-tokens failure marker 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps one contract correction and exposes its final schema failure with the original cause 30ms
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"fixture-hash","diagnostic":{"code":"MODEL_OUTPUT_INVALID"},"source_count":4,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps old strategies compatible while requiring the brief for new research 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants 41ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts same-sentence relocation assumptions while preserving source quotes and historical before text 1ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for renewal 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for investment 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for returns 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > rejects empty decisions and invalid investment stages while retaining the quote check 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts conditional target levels without manufacturing current facts or bypassing the rebuild gate 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > returns the model-authored project decisions and repairs an omitted brief through the same DSH call seam 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires cited object funding and repairability before admitting construction investment 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs a historical preparation mistaken for construction while preserving the proposed route and measures 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps cross-route comparisons out of individual paths and future targets without censoring the global brief or current text 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > resolves known fact citations to their source without accepting invented references 21ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > keeps an authorized project ban binding even when the model calls it a fact candidate 2ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > detaches frozen DSH output before enforcing project constraints 5ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > presents supported DSH schemas while keeping canonical validation separate 2ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > makes brief limits visible to DSH and still rejects overlong output instead of truncating it 5ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > removes optional factor extraction when no project-level sources exist without weakening required fields 1ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > closes brief citations over supplied source IDs rather than casebook IDs or invented fields 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > limits comparison references to candidates that were actually generated 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > constrains deferred baseline actions at the model schema boundary 1ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > does not mistake uncertainty language for a safety guarantee 0ms
+ ✓ tests/contracts/live-policy.test.ts > live DSH boundary regression > rejects invented references and never accepts model-authored metric values 1ms
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500}
+
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > explains an existing truncated TRANSPORT failure without exposing raw messages 2ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the RATE_LIMIT failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the AUTH failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the TIMEOUT failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > preserves the MALFORMED_RESPONSE failure category 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > never forwards an arbitrary exception or unrecognized provider code 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > distinguishes output exhaustion, missing structured delivery and a typed schema failure 0ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails 5ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails 1ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion 2ms
+ ✓ tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > keeps model source excerpts bounded and contiguous while leaving original material intact 1ms
+
+ Test Files  6 passed (6)
+      Tests  65 passed (65)
+   Start at  21:04:34
+   Duration  6.30s (transform 390ms, setup 0ms, import 1.94s, tests 3.66s, environment 0ms)
+

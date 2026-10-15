@@ -4,7 +4,7 @@ import { dashboardDimensions, NEIGHBORHOOD_DASHBOARD_POLICY } from '../../../../
 import { useAnimatedValues } from './analysis-motion'
 
 /** Missing dimensions are never drawn as zero; individual known marks remain visible. */
-export default function DecisionDashboard({value,onEvidence,presentation,compare,animate=false}:{value:Dashboard;onEvidence:(refs:string[])=>void;presentation?:{title:string;scale:string;method:string};compare?:Dashboard;animate?:boolean}){
+export default function DecisionDashboard({value,onEvidence,presentation,compare,animate=false}:{value:Dashboard;onEvidence:(refs:string[])=>void;presentation?:{title:string;scale:string;method:string;accessibleLabel?:string};compare?:Dashboard;animate?:boolean}){
   const [selected,setSelected]=useState<ResearchDimension|null>(null)
   const rows=dashboardDimensions(value.policy_version).map(d=>({...d,result:value.dimensions.find(x=>x.key===d.key)}))
   const known=rows.filter(d=>d.result?.value!=null)
@@ -15,7 +15,7 @@ export default function DecisionDashboard({value,onEvidence,presentation,compare
   return <section className="decision-dashboard" aria-label="六维方案研判">
     <header><h3>{presentation?.title || (value.policy_version===NEIGHBORHOOD_DASHBOARD_POLICY?'老旧小区六维观察':'方案研判')}</h3><span>{presentation?.scale || '适配度 · 1–5级'}</span></header>
     <div className="dashboard-visual">
-      <svg viewBox="0 0 168 168" role="img" aria-label={`${presentation ? '六维模拟条件覆盖' : '六维方案适配'}，${known.length}个维度已评估`}>
+      <svg viewBox="0 0 168 168" role="img" aria-label={`${presentation?.accessibleLabel || (presentation ? '六维模拟条件覆盖' : '六维方案适配')}，${known.length}个维度已评估`}>
         {[20,40,60].map(r=><polygon key={r} points={polygon(r)} className="radar-grid"/>)}
         {presentation && [1,3,5].map(n=><text key={n} x="87" y={84-n/5*60} className="radar-scale">{n}</text>)}
         {rows.map((d,i)=>{const p=xy(i,60);return <line key={d.key} x1="84" y1="84" x2={p[0]} y2={p[1]} className="radar-spoke"/>})}

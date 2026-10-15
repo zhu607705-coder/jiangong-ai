@@ -1,0 +1,20 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/renewal-structured-request.test.ts > sends forced structured_output in the real adapter HTTP body for a non-thinking RenewalStrategy request 18ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another output 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no call scope 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for another sole tool 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for additional tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for no tools 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the real adapter body for thinking enabled 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps simultaneous renewal and other-output request scopes separate through serialization 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > marks completed plain text as NO_STRUCTURED_OUTPUT without parsing it or retrying 2ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > preserves the existing max-tokens failure marker 1ms
+ ✓ tests/contracts/renewal-structured-request.test.ts > keeps one contract correction and exposes its final schema failure with the original cause 29ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  21:05:28
+   Duration  449ms (transform 72ms, setup 0ms, import 274ms, tests 59ms, environment 0ms)
+

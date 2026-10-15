@@ -131,7 +131,7 @@ export function groupDocuments(raw: Document[]): { documents: Document[]; exact_
 }
 
 /** Offsets count Unicode code points, never bytes/UTF-16; every chunk reads back exactly. */
-export function chunkDocument(doc: Document, size = 900, overlap = 120): Chunk[] {
+export function chunkDocument(doc: Pick<Document, 'id' | 'text' | 'content_status' | 'group_id' | 'split'>, size = 900, overlap = 120): Chunk[] {
   if (!Number.isInteger(size) || !Number.isInteger(overlap) || size < 2 || overlap < 0 || overlap >= size) throw new Error('分块参数无效。')
   if (doc.content_status === 'metadata_only') return []
   const chars = Array.from(doc.text), chunks: Chunk[] = []

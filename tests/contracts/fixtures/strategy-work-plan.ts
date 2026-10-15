@@ -1,6 +1,12 @@
 import type { RenewalStrategy } from '../../../apps/host/generated/contracts'
 import type { StrategySource } from '../../../packages/retrofit/strategy'
 
+/** Explicit inference-only fixture, separate from evidence-based current levels. */
+export function withReasoningDimensions<T extends RenewalStrategy>(value:T):T {
+  value.reasoning_dimensions=value.dimensions.map(({key})=>({key,level:'medium',basis:'logical_inference',premises:['若设施具备可维护条件，可分项改善服务。'],assumptions:[],reason:'按候选更新动作推导适配程度。',verification:'核实设施条件和实际服务需求。',evidence_refs:[]}))
+  return value
+}
+
 /** Isolated contract data; these candidate works are not a real project assessment. */
 export function withConcreteWorkPlan<T extends RenewalStrategy>(value:T,source:StrategySource):T {
   for(const path of value.paths)path.work_packages=[

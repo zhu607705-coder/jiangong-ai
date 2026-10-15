@@ -274,10 +274,14 @@ export default function App() {
   const researchRecords = roundIndex.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? roundIndex.data : null;
   const latestSavedRound = researchRecords?.rounds.filter(round => round.status === 'completed' && round.result?.strategy).sort((a,b) => b.round_number-a.round_number)[0] || null;
   const overviewStrategy = currentStrategyPacket || latestSavedRound?.result || researchRecords?.baseline_candidate || null;
+  const hasSavedNeighborhoodResult = completeDemoActive || [overviewStrategy, ...(researchRecords?.rounds.map(round => round.result) || [])].some(result =>
+    result?.status === 'completed' && !!result.strategy && result.project_id === project?.id && result.synthetic === project?.input.synthetic);
+  const availableProjectPages = project?.input.business_profile === 'neighborhood' && !hasSavedNeighborhoodResult
+    ? ['overview', 'evidence', 'assessment'] as ProjectPage[] : PROJECT_PAGES.map(page => page.id);
   const navigationKey = `${project?.id || ''}:${globalView}:${tab}:${location.section}:${routePane}:${currentDirection || ''}:${completeDemoActive}`;
   function rememberPosition() { if (scrollContainer.current) scrollPositions.current.set(navigationKey, scrollContainer.current.scrollTop); }
   function navigateProject(page: ProjectPage | 'map' | 'knowledge', section?: string, pane?: string, scheme?: 'comprehensive'|'rebuild') {
-    if (page === 'map') { navigateGlobal('map'); return; }
+    if (page === 'map') { setMapFocus(value => value + 1); navigateGlobal('map'); return; }
     if (page === 'knowledge') { setRouteSection(section || 'cases'); navigateGlobal('knowledge', section); return; }
     if (page === 'results' && section === 'runs') { setRunDetailsOpen(true); return; }
     rememberPosition();
@@ -302,6 +306,12 @@ export default function App() {
     node.addEventListener('scroll',remember,{passive:true});
     return () => { cancelAnimationFrame(frame); node.removeEventListener('scroll',remember); };
   }, [navigationKey]);
+  useEffect(() => {
+    if (project?.input.business_profile !== 'neighborhood' || hasSavedNeighborhoodResult || retrievalStrategy.key !== `${project.id}:${project.context_version}` || retrievalStrategy.status === 'loading') return;
+    if (!['scenarios', 'actions', 'results', 'compare'].includes(tab)) return;
+    setTab('assessment'); setRouteSection('direction'); setRoutePane('content');
+    writeWorkbenchLink(project.id, 'assessment', { section: 'direction' });
+  }, [project?.id, project?.context_version, hasSavedNeighborhoodResult, retrievalStrategy.key, retrievalStrategy.status, tab]);
   const strategySources: Source[] = (evidencePacket && evidencePacket.projectId === project?.id ? evidencePacket.packet : currentStrategyPacket)?.sources.map(source => ({
     id: source.id, title: source.title, visibility: source.visibility || 'public', data_class: source.data_class || (project?.input.synthetic ? 'synthetic' : 'public'),
     synthetic: project?.input.synthetic || false, untrusted_text: source.text, ...(source.url ? { url: source.url } : {}),
@@ -767,6 +777,7 @@ export default function App() {
       onGlobalView={view => navigateGlobal(view)}
       activeProjectPage={location.page}
       onProjectPage={page => navigateProject(page)}
+      availableProjectPages={availableProjectPages}
       scrollContainerRef={scrollContainer}
       globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={() => setCreateOpen(true)} canCreate={canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
       project={project}
@@ -788,7 +799,7 @@ export default function App() {
         })
       }
       onCreate={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
-      mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
+      mapView={<MapWorkspace ready={!loading && globalView === 'map'} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
       onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setRouteSection(undefined); setDetailsOpen(true); setGlobalView('project'); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
@@ -878,7 +889,7 @@ export default function App() {
           {(project.input.synthetic || completeDemoActive) && <p className="workspace-data-badge">模拟资料 · {completeDemoActive ? '杭州样本社区演示情景' : project.input.scope.name}</p>}
           {['evidence','actions','results'].includes(location.page) && <nav className="workspace-section-nav" aria-label="页面工作区">{(location.page==='evidence'?[['files','资料与证据'],['profile','对象档案'],['context','项目经验与约束']]:location.page==='actions'?[['current','当前调查'],['history','历史记录']]:[['reports','成果管理'],['history','版本变化']]).map(([section,label])=><button key={section} aria-current={location.section===section?'page':undefined} onClick={()=>navigateProject(location.page,section)}>{label}</button>)}</nav>}
           {tab === 'overview' && <ProjectOverview project={project} currentStrategyPacket={overviewStrategy} latestSavedRound={latestSavedRound} currentDirection={currentDirection} stale={!!overviewStrategy && overviewStrategy.context_version!==project.context_version} failed={run?.status==='failed'||researchRecords?.rounds.at(-1)?.status==='failed'} loading={retrievalStrategy.status==='loading'} onNavigate={navigateProject} onEvidence={openEvidence}/>}
-          {project.input.business_profile === 'neighborhood' && <div hidden={tab !== 'assessment' && tab !== 'scenarios'}><StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => navigateProject('actions','current')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} workspacePage={strategySurface.current.workspacePage} section={strategySurface.current.section} pane={strategySurface.current.pane} schemeDirection={currentDirection} onNavigate={target=>navigateProject(target.view as ProjectPage|'knowledge',target.section,target.pane,target.scheme)} /></div>}
+          {project.input.business_profile === 'neighborhood' && <div hidden={tab !== 'assessment' && tab !== 'scenarios'}><StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => navigateProject('actions','current')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket(next ? { identity: directionIdentity, packet: next } : null)} onUploadMaterial={uploadMaterial} materialBusy={busy} materialRequest={materialRequest} workspacePage={strategySurface.current.workspacePage} section={strategySurface.current.section} pane={strategySurface.current.pane} schemeDirection={currentDirection} onNavigate={target=>navigateProject(target.view as ProjectPage|'knowledge',target.section,target.pane,target.scheme)} /></div>}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
           {tab === "assessment" && !(["neighborhood"].includes(project.input.business_profile || "")) && !completeDemoActive && (
             <section className="legacy-assessment-workspace"><h2>工程研判与路径计算</h2>

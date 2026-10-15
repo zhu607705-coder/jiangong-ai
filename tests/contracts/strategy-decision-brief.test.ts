@@ -32,7 +32,7 @@ afterEach(() => { Object.assign(config, initial); vi.restoreAllMocks() })
 
 describe('source-grounded DeepSeek decision brief', () => {
   it('keeps old strategies compatible while requiring the brief for new research', () => {
-    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v6')
+    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v7')
     const legacy=proposal();for(const path of legacy.paths)delete path.work_packages;delete legacy.internal_data_requests
     expect(validateStrategy(legacy, [source])).toBeTruthy()
     expect(() => validateStrategy(proposal(), [source], [], true)).toThrow('STRATEGY_DECISION_BRIEF_REQUIRED')

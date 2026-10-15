@@ -30,6 +30,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
 }) {
   const { canWrite } = useWorkbenchAccess()
   const canvas = useRef<HTMLDivElement>(null), map = useRef<AMap.Map | null>(null), sdk = useRef<AmapSdk | null>(null)
+  const savedView = useRef<{ center: [number, number]; zoom: number; pitch: number; rotation: number } | null>(null)
   const marker = useRef<AMap.Marker | null>(null), projectOverlays = useRef<any[]>([])
   const layers = useRef<{ satellite: MapLayer; visible: boolean; buildings: boolean; nativeBuildings: { show(): void; hide(): void } | null } | null>(null)
   const [config, setConfig] = useState<MapConfiguration | null>(null), [settings, setSettings] = useState(false)
@@ -133,7 +134,7 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
   useEffect(() => { if (settingsRequest && canWrite) setSettings(true) }, [settingsRequest,canWrite])
 
   useEffect(() => {
-    if (!config?.configured || !canvas.current) return
+    if (!ready || !config?.configured || !canvas.current) return
     let alive = true, instance: AMap.Map | null = null, clickTimer: ReturnType<typeof setTimeout> | undefined, hotspotAt = -1000, firstComplete = true
     setPhase('loading'); setMapError(''); setNotice('')
     const timeout = window.setTimeout(() => { if (alive) { setPhase('error'); setMapError('地图加载超时，请检查网络、高德 Key 和绑定域名。') } }, 20000)
@@ -145,10 +146,12 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       const has3D = !!context; context?.getExtension('WEBGL_lose_context')?.loseContext(); setWebgl(has3D)
       const imageLayer = new api.TileLayer.Satellite({ zIndex: 3 })
       layers.current = { satellite: imageLayer, visible: false, buildings: true, nativeBuildings: null }
-      instance = new api.Map(canvas.current, { viewMode: has3D ? '3D' : '2D', pitch: has3D ? 55 : 0, rotation: 0, zoom: 17.2,
-        center: DEFAULT_CENTER, zooms: [3, 20], dragEnable: true, zoomEnable: true,
+      const previousView = savedView.current
+      const mapOptions: Partial<AMap.MapOptions> & { resizeEnable: boolean } = { resizeEnable: true, viewMode: has3D ? '3D' : '2D', pitch: has3D ? previousView?.pitch ?? 55 : 0, rotation: previousView?.rotation ?? 0, zoom: previousView?.zoom ?? 17.2,
+        center: previousView?.center ?? DEFAULT_CENTER, zooms: [3, 20], dragEnable: true, zoomEnable: true,
         rotateEnable: has3D, pitchEnable: has3D, scrollWheel: true, isHotspot: true,
-        showBuildingBlock: true, mapStyle: 'amap://styles/normal', skyColor: '#344f68' })
+        showBuildingBlock: true, mapStyle: 'amap://styles/normal', skyColor: '#344f68' }
+      instance = new api.Map(canvas.current, mapOptions)
       map.current = instance
       instance.addControl(new api.Scale({ position: { bottom: '42px', left: '20px' } }))
       const cameraChanged = () => { if (alive && instance) setCamera({ zoom: instance.getZoom(), pitch: instance.getPitch(), rotation: instance.getRotation() }) }
@@ -182,8 +185,16 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
       })
       instance.on('hotspotclick', (event: any) => { hotspotAt = performance.now(); window.clearTimeout(clickTimer); const poi = normalizePoi(event); if (poi) selectRef.current(poi, false) })
     }).catch(() => { if (alive) { window.clearTimeout(timeout); setPhase('error'); setMapError('高德地图未能加载，请检查地图配置和网络连接。') } })
-    return () => { alive = false; screenAbort.current?.abort(); window.clearTimeout(timeout); window.clearTimeout(clickTimer); instance?.destroy(); if (map.current === instance) map.current = null; marker.current = null; projectOverlays.current = []; screenOverlays.current = []; layers.current = null }
-  }, [config?.revision])
+    return () => {
+      alive = false; screenAbort.current?.abort(); window.clearTimeout(timeout); window.clearTimeout(clickTimer)
+      if (instance) {
+        const center = instance.getCenter()
+        savedView.current = { center: [center.getLng(), center.getLat()], zoom: instance.getZoom(), pitch: instance.getPitch(), rotation: instance.getRotation() }
+        instance.destroy()
+      }
+      if (map.current === instance) map.current = null; marker.current = null; projectOverlays.current = []; screenOverlays.current = []; layers.current = null
+    }
+  }, [config?.revision, ready])
 
   useEffect(() => {
     const current = map.current, api = sdk.current

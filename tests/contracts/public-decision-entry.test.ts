@@ -47,7 +47,7 @@ test('public defaults select a completed project by ID, while an explicit same-n
   expect(readWorkbenchLink(publicDecisionHref('P/测试').split('?')[1]).projectId).toBe('P/测试')
 })
 
-async function mountWorkbench(search = '', snapshot = false, override?: StrategyPacket, roundHistory?: ResearchRoundsResponse) {
+async function mountWorkbench(search = '', snapshot = false, override?: StrategyPacket | null | Promise<StrategyPacket | null>, roundHistory?: ResearchRoundsResponse | Promise<ResearchRoundsResponse>) {
   const dom = parseHTML('<html><body><div id="root"></div></body></html>')
   const location = { href: `http://example.test/${search}`, search }, storage = new Map([['hzz_project', emptyProject.id], ['hzz-complete-demo-project', savedProject.id]])
   const history = { replaceState: vi.fn((_state: unknown, _unused: string, path: string) => { const url = new URL(path, 'http://example.test'); location.href = url.href; location.search = url.search }) }
@@ -55,7 +55,7 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
   for (const [key, value] of Object.entries({ window: dom.window, document: dom.document, location, history, MutationObserver: dom.window.MutationObserver, IS_REACT_ACT_ENVIRONMENT: true,
     requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(() => callback(0), 0), cancelAnimationFrame: clearTimeout,
     localStorage: { getItem: (key: string) => storage.get(key) ?? null, setItem: (key: string, value: string) => storage.set(key, value), removeItem: (key: string) => storage.delete(key) } })) vi.stubGlobal(key, value)
-  const packet = override || (snapshot ? { ...saved, publication: { kind: 'saved_snapshot' as const, is_current: false, current_input_hash: 'changed-parameters', saved_at: saved.created_at } } : saved)
+  const packet = override === undefined ? (snapshot ? { ...saved, publication: { kind: 'saved_snapshot' as const, is_current: false, current_input_hash: 'changed-parameters', saved_at: saved.created_at } } : saved) : override
   apiMock.mockImplementation((path: string) => {
     if (path === '/session') return Promise.resolve({ model_configured: true })
     if (path === '/projects') return Promise.resolve([emptyProject, savedProject])
@@ -313,6 +313,74 @@ test('a stale deep-link baseline keeps the scheme unselected instead of applying
     expect(app.dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('')
     expect(app.dom.document.querySelector('.workspace-project-identity')?.textContent).toContain('资料 v14')
     expect(new URLSearchParams(app.location.search).get('baseline')).toBe('13')
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+const corePages = ['项目总览', '资料与条件', '改造研判']
+function projectPageLabels(app: MountedWorkbench) { return [...app.dom.document.querySelectorAll('[data-project-page]')].map(button => button.textContent) }
+function noEmptyResultCards(app: MountedWorkbench) {
+  for (const selector of ['.project-overview-directions', '.project-overview-investigations', '.project-overview-work', '.project-overview-result-meta']) expect(app.dom.document.querySelector(selector), selector).toBeNull()
+}
+function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(done => { resolve = done }); return { promise, resolve } }
+
+test('a project without a valid saved result has three core pages and no empty decision or result cards', async () => {
+  const app = await mountWorkbench('?project=WITHOUT-PLAN&view=overview')
+  try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.project-overview')?.getAttribute('data-overview-state')).toBe('empty'))
+    expect(projectPageLabels(app)).toEqual(corePages)
+    noEmptyResultCards(app)
+    expect(app.dom.document.querySelector('.project-overview-primary')?.textContent).toContain('进入改造研判')
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+test('a failed response does not unlock result pages or display its unfinished strategy as a completed decision', async () => {
+  const failed: StrategyPacket = { ...structuredClone(saved), status: 'failed', error: '本轮未完成', strategy: { ...structuredClone(saved.strategy!), headline: '未完成的内容不可作为成功成果' } }
+  const app = await mountWorkbench('?project=WITH-PLAN&view=overview', false, failed)
+  try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.project-overview')?.getAttribute('data-overview-state')).toBe('failed'))
+    expect(projectPageLabels(app)).toEqual(corePages)
+    noEmptyResultCards(app)
+    expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).not.toBe(failed.strategy!.headline)
+    expect(app.dom.document.querySelector('.project-overview-notice')?.textContent).toContain('未形成完整结论')
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+test('a saved older-version round restores result pages after pending GETs without redirecting its deep version link early', async () => {
+  const pending = deferred<ResearchRoundsResponse>(), old = structuredClone(saved)
+  old.context_version = 13; old.input_hash = 'older-completed'; old.strategy!.headline = '旧版真实保存建议'
+  const round: ResearchRound = { id: 'OLD-SAVED', project_id: savedProject.id, round_number: 1, context_version: 13, input_hash: old.input_hash, parent_round_id: null, parent_input_hash: null, parent_context_version: null, first_round_id: 'OLD-SAVED', first_input_hash: old.input_hash, first_context_version: 13, origin: 'generated', status: 'completed', material_intake: 'none', allow_internal_ai: false, materials: [], missing_materials: [], result: old, error: null, created_at: old.created_at, updated_at: old.created_at }
+  const app = await mountWorkbench('?project=WITH-PLAN&view=compare', false, null, pending.promise)
+  try {
+    await vi.waitFor(() => expect(apiMock.mock.calls.some(([path]) => path === '/projects/WITH-PLAN/research-rounds')).toBe(true))
+    expect(new URLSearchParams(app.location.search).get('view')).toBe('compare')
+    expect(app.dom.document.querySelector('[data-project-page="assessment"]')?.getAttribute('aria-current')).not.toBe('page')
+    await act(async () => pending.resolve({ rounds: [round], materials: [], baseline_candidate: null }))
+    await vi.waitFor(() => expect(projectPageLabels(app)).toHaveLength(6))
+    expect(new URLSearchParams(app.location.search).get('view')).toBe('compare')
+    expect(app.dom.document.querySelector('[data-project-page="results"]')?.getAttribute('aria-current')).toBe('page')
+    await page(app, 'overview')
+    expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(old.strategy!.headline)
+    expect(app.dom.document.querySelector('.project-overview-result-meta')?.textContent).toContain('资料 v13')
+    expect(app.dom.document.querySelector('.project-overview-notice')?.textContent).toContain('当前资料为 v14')
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+test('an empty deep scheme link redirects to assessment only after strategy restoration finishes', async () => {
+  const pending = deferred<StrategyPacket | null>()
+  const app = await mountWorkbench('?project=WITH-PLAN&view=scenarios&section=detail&pane=content&scheme=comprehensive&baseline=14', false, pending.promise)
+  try {
+    await vi.waitFor(() => expect(apiMock.mock.calls.some(([path]) => path.includes('/renewal-strategy'))).toBe(true))
+    expect(new URLSearchParams(app.location.search).get('view')).toBe('scenarios')
+    await act(async () => pending.resolve(null))
+    await vi.waitFor(() => expect(new URLSearchParams(app.location.search).get('view')).toBe('assessment'))
+    expect(projectPageLabels(app)).toEqual(corePages)
+    expect(app.dom.document.querySelector('[data-project-page="assessment"]')?.getAttribute('aria-current')).toBe('page')
+    expect(app.dom.document.querySelector('.single-scheme-workspace')).toBeNull()
+    expect(app.dom.document.querySelector('.scheme-comparison')).toBeNull()
     expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
   } finally { await app.cleanup() }
 })

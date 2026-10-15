@@ -118,7 +118,7 @@ export function searchTokens(text:string):string[] {
   return [...out].slice(0,16000)
 }
 export function searchExpression(text:string):string { return searchTokens(text).slice(0,32).join(' | ') }
-export function queryScore(m: Material, q: string): number {
+export function queryScore(m: Pick<Material, 'title' | 'text'>, q: string): number {
   const terms=searchTokens(q).slice(0,32),title=m.title.toLowerCase(),body=m.text.toLowerCase()
   if(!terms.length)return 0
   // AIHOT pool.ts field-weighted lexical baseline. This is deliberately not advertised as vector search.

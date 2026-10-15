@@ -17,11 +17,11 @@ import { ResearchRoundsService, ResearchRoundError, registerResearchRoundRoutes 
 
 export type ModeContextLoader = (id: string, signal: AbortSignal) => Promise<DecisionInput>
 const bodySchema = z.object({ expected_context_version: z.number().int().nonnegative().optional(), refresh: z.boolean().optional() }).strict()
-function requestSignal(req: Request, res: Response) {
+function requestSignal(req: Request, res: Response, timeoutMs = 240000) {
   const controller = new AbortController()
   req.once('aborted', () => controller.abort())
   res.once('close', () => { if (!res.writableEnded) controller.abort() })
-  return AbortSignal.any([controller.signal, AbortSignal.timeout(240000)])
+  return AbortSignal.any([controller.signal, AbortSignal.timeout(timeoutMs)])
 }
 
 async function prepareMode(input: DecisionInput, library: ConstructionCostLibrary, history?: ModeHistory) {
@@ -112,7 +112,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
     let streaming = false
     const emit = (event: StrategyStreamEvent) => { if (streaming && !res.destroyed && !res.writableEnded) res.write(JSON.stringify(event) + '\n') }
     try {
-      const project = await requireProject(String(req.params.id)), signal = requestSignal(req,res)
+      const project = await requireProject(String(req.params.id)), signal = requestSignal(req,res,610000)
       if (project.input.business_profile !== 'neighborhood') return res.status(422).json({ detail:'请在老旧小区项目中研究更新方案。' })
       const query = z.object({ demo:z.enum(['true','false']).default('false') }).strict().parse(req.query)
       const body = method==='post'?bodySchema.parse(req.body):{}
@@ -131,7 +131,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const savedResearch = cached?.status==='failed' && cached.project_id===project.id && cached.context_version===project.context_version && cached.input_hash===hash && cached.synthetic===(query.demo==='true')
         && Date.now()-Date.parse(cached.created_at)<20*60_000 && (cached.model_calls.some(call=>call.finish_reason==='max-tokens')||cached.diagnostic?.code==='STRATEGY_EVIDENCE_INVALID') && cached.research?.queries.length
         && cached.sources.length && cached.sources.every(source=>source.visibility!=='internal'&&source.data_class!=='internal') ? {sources:cached.sources,research:cached.research} : undefined
-      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch})
+      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch,researchWorkflow:true})
       signal.throwIfAborted()
       if ((await requireProject(project.id)).context_version!==project.context_version) {
         if (streaming) { emit({type:'error',message:'研究期间资料已变化，请刷新后重新研究。'}); res.end(); return }
@@ -158,10 +158,10 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
     try {
       // Public projection is deliberately independent from the selected internal material manifest.
       const {input}=await prepareMode(projectDecisionInput(project.input),library)
-      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext,referenceSources:await workPlanReferences(library,project.input.as_of)})
+      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext,referenceSources:await workPlanReferences(library,project.input.as_of),researchWorkflow:true})
     } finally {running.delete(key)}
   })
   await researchRounds.initialize()
-  registerResearchRoundRoutes(app,researchRounds,requireProject,requestSignal)
+  registerResearchRoundRoutes(app,researchRounds,requireProject,(req,res)=>requestSignal(req,res,610000))
   return researchRounds
 }
