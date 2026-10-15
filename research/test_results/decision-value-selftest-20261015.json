@@ -1,0 +1,1315 @@
+{
+  "schema": "decision-value-selftest/1",
+  "performed_at": "2026-10-15T01:47:16.2691884Z",
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "operator": "Codex automated browser and API operation",
+  "sample": "one project, two archived originals, two fixed questions, five factual checks",
+  "conditions": "Services running; materials parsed; all measure filters disabled; sequential paired task; no human participant; source acquisition/import excluded; no generated answer",
+  "runs": [
+    {
+      "title": "供水范围与阶段",
+      "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除，当前报道时是什么阶段？",
+      "elapsed_ms": 29.777,
+      "expected_locators": [
+        "line:22",
+        "line:24"
+      ],
+      "matched_targets": 2,
+      "response": {
+        "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+        "question": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除，当前报道时是什么阶段？",
+        "rank_query": "二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除，当前报道时是什么阶段？\n幢 户 不纳入",
+        "query_expansions": [
+          {
+            "matched_terms": [
+              "楼栋"
+            ],
+            "added_term": "幢",
+            "reason": "楼栋数量在工程材料中常用“幢”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "户数"
+            ],
+            "added_term": "户",
+            "reason": "住户数量在工程材料中常用“户”记录，补充其原文计数单位。"
+          },
+          {
+            "matched_terms": [
+              "排除"
+            ],
+            "added_term": "不纳入",
+            "reason": "排除范围在工程材料中可能写作“不纳入”，补充这一明确措辞。"
+          }
+        ],
+        "as_of": null,
+        "hits": [
+          {
+            "id": "RAG-880968c7fa981e798108d19ba20f7c232569a66216c77be984a467ea76eb2cb8",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:22",
+            "alias_locators": [
+              "table:1/row:22"
+            ],
+            "text": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。经过初期的踏勘，浙大求是村二次供水改造存在着计量水表老旧，部分管道锈蚀渗漏，泵房空间布局紧凑等问题。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:22与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 18.93424
+          },
+          {
+            "id": "RAG-b26a2df503b69dc4828ae89fc168455d440168a4a86e0e76eeb5cea86aac1b64",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:20",
+            "alias_locators": [
+              "table:1/row:20"
+            ],
+            "text": "今年，“完成居民住宅小区二次供水设施改造200个”被列入杭州市政府2023年度民生实事。二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:20与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 12.52694
+          },
+          {
+            "id": "RAG-b648ff78ed88a4409641c96a9c77609b82ba4923f236c48f9b5570b258605d62",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:24",
+            "alias_locators": [
+              "table:1/row:24"
+            ],
+            "text": "据悉，随着改造现场踏勘、科学研究设计方案、设计方案公示、留博楼不纳入改造原因公示、一户一表供水合同上门签订工作的完成，紧接着会进行业主同意率公示。有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:24与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 12.25128
+          },
+          {
+            "id": "RAG-35693a1370ca7a67806a5b96659d5571c203e90b620e1cc388c3c70c2d4fcdab",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:25",
+            "alias_locators": [
+              "table:1/row:25"
+            ],
+            "text": "供水的安全性、可靠性惠及千家万户。灵隐街道浙大求是社区、业委会、物业协调联动，用心用情解决老旧高层住宅居民在日常生活用水中遇到的各种难题，正如求是村第六届业委会在公告栏中写到的“小区是我家，建设靠大家；大家齐努力，幸福你我他！”",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:25与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 8.92618
+          },
+          {
+            "id": "RAG-763b431751971a23a0ddabc2c680d0109be7e3ad0a6d16bbc57b9e7434fecfa7",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:21",
+            "alias_locators": [
+              "table:1/row:21"
+            ],
+            "text": "将时间推回到6月份，灵隐街道浙大求是社区、业委会、物业，杭州水务设计院民生实事中心、水务设计、水务建设相关人员接连开展了二次供水改造现场踏勘会、二次供水改造设计方案外审会。“浙大求是村位于杭州市中心地块，是亚运场馆周边老旧小区，多数楼房建于上世纪90年代。二次供水改造能够让小区居民用水水质水压得到明显改善。”浙大求是物业负责人在踏勘会上这样说到。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:21与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 8.73097
+          }
+        ],
+        "candidate_counts": {
+          "documents": 2,
+          "parsed_chunks": 106,
+          "eligible_chunks": 53,
+          "ranked_chunks": 53,
+          "batches": 1,
+          "unresolved_references": 0
+        },
+        "skipped": [
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:1",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:1逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:2",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:2逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:3",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:3逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:4",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:4逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:5",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:5逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:6",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:6逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:7",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:7逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:8",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:8逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:9",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:9逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:10",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:10逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:11",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:11逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:12",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:12逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:13",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:13逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:14",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:14逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:15",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:15逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:16",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:16逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:17",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:17逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:18",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:18逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:19",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:19逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:20",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:20逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:21",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:21逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:22",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:22逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:23",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:23逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:24",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:24逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:25",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:25逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:26",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:26逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:27",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:27逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:28",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:28逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:29",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:29逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:30",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:30逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:31",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:31逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:32",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:32逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:33",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:33逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:34",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:34逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:35",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:35逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:36",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:36逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:37",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:37逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:38",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:38逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:39",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:39逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:40",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:40逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:41",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:41逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:42",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:42逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:43",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:43逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:44",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:44逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:45",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:45逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:46",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:46逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:47",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:47逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:48",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:48逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:49",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:49逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:50",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:50逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:51",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:51逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:52",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:52逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+            "locator": "table:1/row:1",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:1逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          }
+        ],
+        "method": "metadata_gated_bm25",
+        "score_meaning": "BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。",
+        "ranking_note": "在权限、来源版本和元数据筛选后，直接复用现有BM25原文检索。",
+        "content_role": "untrusted_source_material",
+        "fact_writes": 0
+      }
+    },
+    {
+      "title": "电梯征求意见阶段",
+      "question": "求是村75幢1单元加装电梯公告征集意见期限是什么时候？",
+      "elapsed_ms": 19.498,
+      "expected_locators": [
+        "line:1"
+      ],
+      "matched_targets": 1,
+      "response": {
+        "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+        "question": "求是村75幢1单元加装电梯公告征集意见期限是什么时候？",
+        "rank_query": "求是村75幢1单元加装电梯公告征集意见期限是什么时候？",
+        "query_expansions": [],
+        "as_of": null,
+        "hits": [
+          {
+            "id": "RAG-7b46abcd6565439b6b1fe95ec945dd35627c16361e070c7ef2c84ce4ab368bf4",
+            "document_id": "DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+            "version": "20deb1762f45aede2b9b280f03efe97b69468fa3d78776ac598dfffffe67f8fa",
+            "locator": "line:1",
+            "alias_locators": [
+              "table:1/row:1"
+            ],
+            "text": "老旧小区住宅加装电梯是一项社会高度关注的民生工程，对完善老旧小区住宅使用功能、促进无障碍环境建设、适应老龄化社会需求、提升城市生活品质具有重要意义。根据市委、市政府《杭州市人民政府办公厅关于积极推进老旧小区住宅加装电梯工作的实施意见》和《杭州市老旧小区住宅加装电梯管理办法》等有关规范性文件要求，灵隐街道办事处起草了《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》。为确保决策质量，提高决策的可操作性，现予公布，进一步听取社会各界的意见和建议。征集意见期限为：2024年9月18日至2024年10月18日。您可以通过以下途径，将意见和建议向我单位进行反馈：1、当面联系，地址：浙江省杭州市西湖区灵隐街道办事处（外东山弄71号）2、邮寄，地址：浙江省杭州市西湖区灵隐街道办事处（外东山弄71号）3、电话：0571-89511700；联系人：党政办张梁灵隐街道浙大求是社区求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）编制说明.doc灵隐街道浙大求是社区求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）.doc",
+            "file_name": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+              "url": "http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html",
+              "hash": "20deb1762f45aede2b9b280f03efe97b69468fa3d78776ac598dfffffe67f8fa",
+              "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+              "locator": "document:DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+              "raw_hash": "a98e36e311e931e788001157b85b7d9dcdab1a497a831b5f927b48135eefce22",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "parse_status": "extracted",
+              "published_at": "2024-09-18T00:00:00Z",
+              "retrieved_at": "2026-10-08T11:48:52.705Z",
+              "body_truncated": false,
+              "content_status": "uploaded",
+              "records_truncated": false
+            },
+            "source_kind": "public_original",
+            "source_date": "2024-09-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:1与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 21.58416
+          },
+          {
+            "id": "RAG-880968c7fa981e798108d19ba20f7c232569a66216c77be984a467ea76eb2cb8",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:22",
+            "alias_locators": [
+              "table:1/row:22"
+            ],
+            "text": "浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。经过初期的踏勘，浙大求是村二次供水改造存在着计量水表老旧，部分管道锈蚀渗漏，泵房空间布局紧凑等问题。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:22与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 6.81709
+          },
+          {
+            "id": "RAG-d6daeac5a8e3b921f8cebd8dfb7d630d9b216b0f2ed9d8706e6b068a6a57c2a9",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:42",
+            "alias_locators": [
+              "table:1/row:42"
+            ],
+            "text": "1",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:42与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 5.21788
+          },
+          {
+            "id": "RAG-35693a1370ca7a67806a5b96659d5571c203e90b620e1cc388c3c70c2d4fcdab",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:25",
+            "alias_locators": [
+              "table:1/row:25"
+            ],
+            "text": "供水的安全性、可靠性惠及千家万户。灵隐街道浙大求是社区、业委会、物业协调联动，用心用情解决老旧高层住宅居民在日常生活用水中遇到的各种难题，正如求是村第六届业委会在公告栏中写到的“小区是我家，建设靠大家；大家齐努力，幸福你我他！”",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:25与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 3.65201
+          },
+          {
+            "id": "RAG-763b431751971a23a0ddabc2c680d0109be7e3ad0a6d16bbc57b9e7434fecfa7",
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "version": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+            "locator": "line:21",
+            "alias_locators": [
+              "table:1/row:21"
+            ],
+            "text": "将时间推回到6月份，灵隐街道浙大求是社区、业委会、物业，杭州水务设计院民生实事中心、水务设计、水务建设相关人员接连开展了二次供水改造现场踏勘会、二次供水改造设计方案外审会。“浙大求是村位于杭州市中心地块，是亚运场馆周边老旧小区，多数楼房建于上世纪90年代。二次供水改造能够让小区居民用水水质水压得到明显改善。”浙大求是物业负责人在踏勘会上这样说到。",
+            "file_name": "浙大求是社区推进二次供水改造.txt",
+            "source": {
+              "id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+              "hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "title": "浙大求是社区推进二次供水改造",
+              "locator": "document:DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+              "raw_hash": "98fd6918b3aa1c41576f2801a27e3158a3619befa5ffe08bd2a456560d8361bc",
+              "synthetic": false,
+              "data_class": "public",
+              "visibility": "public",
+              "date_status": "verified",
+              "object_refs": [
+                "building:求是村29幢",
+                "building:求是村30幢",
+                "building:求是村31幢",
+                "building:求是村48幢",
+                "building:留博楼"
+              ],
+              "parse_status": "extracted",
+              "published_at": "2023-08-18T00:00:00Z",
+              "retrieved_at": "2026-10-10T09:29:56.806Z",
+              "content_status": "uploaded",
+              "evidence_scope": "object"
+            },
+            "source_kind": "public_original",
+            "source_date": "2023-08-18",
+            "measure_links": [],
+            "matched_measure_links": [],
+            "measure_mentions": [],
+            "stages": [],
+            "objects": [],
+            "review_statuses": [],
+            "match_reasons": [
+              "当前项目、文档版本与来源绑定已核对",
+              "解析镜像table:1/row:21与本定位逐字一致，合并检索命中并保留别名定位",
+              "现有BM25依据问题与原文词项重合排序；分数表示文本相关程度"
+            ],
+            "score": 3.00645
+          }
+        ],
+        "candidate_counts": {
+          "documents": 2,
+          "parsed_chunks": 106,
+          "eligible_chunks": 53,
+          "ranked_chunks": 53,
+          "batches": 1,
+          "unresolved_references": 0
+        },
+        "skipped": [
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:1",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:1逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:2",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:2逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:3",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:3逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:4",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:4逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:5",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:5逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:6",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:6逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:7",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:7逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:8",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:8逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:9",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:9逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:10",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:10逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:11",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:11逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:12",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:12逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:13",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:13逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:14",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:14逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:15",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:15逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:16",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:16逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:17",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:17逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:18",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:18逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:19",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:19逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:20",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:20逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:21",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:21逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:22",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:22逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:23",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:23逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:24",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:24逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:25",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:25逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:26",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:26逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:27",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:27逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:28",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:28逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:29",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:29逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:30",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:30逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:31",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:31逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:32",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:32逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:33",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:33逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:34",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:34逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:35",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:35逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:36",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:36逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:37",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:37逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:38",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:38逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:39",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:39逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:40",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:40逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:41",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:41逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:42",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:42逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:43",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:43逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:44",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:44逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:45",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:45逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:46",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:46逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:47",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:47逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:48",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:48逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:49",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:49逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:50",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:50逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:51",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:51逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+            "locator": "table:1/row:52",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:52逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          },
+          {
+            "document_id": "DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+            "locator": "table:1/row:1",
+            "code": "TEXT_PARSE_MIRROR",
+            "reason": "TXT/MD解析镜像的Text与line:1逐字一致，且无额外独立举措引用；本次优先原文定位，导出仍保留两处定位。"
+          }
+        ],
+        "method": "metadata_gated_bm25",
+        "score_meaning": "BM25词项相关分数，可为负数；不是可信概率、工程效果或举措适用性评分。",
+        "ranking_note": "在权限、来源版本和元数据筛选后，直接复用现有BM25原文检索。",
+        "content_role": "untrusted_source_material",
+        "fact_writes": 0
+      }
+    }
+  ],
+  "total_service_ms": 49.275,
+  "ui_operation": {
+    "schema": "decision-value-timing/1",
+    "performed_at": "2026-10-15T01:46:00.819Z",
+    "operator": "Codex automated browser operation",
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "design": "单次配对操作自测；两份已归档原文；先逐份查看后定向检索；已熟悉答案；采集、导入、服务启动不计入；非人工被试实验",
+    "checklist": [
+      "29、30、31、48幢",
+      "252户仅四幢供水范围",
+      "留博楼泵房位于居民楼正下方被排除",
+      "2023-08-18时点尚拟进场",
+      "75幢1单元2024-09-18至10-18征求意见"
+    ],
+    "manual": {
+      "start": 1792028760819,
+      "documents_opened": 2,
+      "end": 1792028769670,
+      "seconds": 8.851,
+      "checked": 5,
+      "answers": [
+        "29、30、31、48幢",
+        "252户",
+        "留博楼泵房位于居民楼正下方不符合要求",
+        "2023-08-18拟亚运会后进场",
+        "2024-09-18至10-18征求意见"
+      ]
+    },
+    "assisted": {
+      "queries": [
+        {
+          "question": "供水范围、户数、排除原因、报道阶段",
+          "return_ms": 281,
+          "text": "围绕研判问题，检索可定位原文\n\n按资料范围和版本查找，每条结果都有原文和出处。命中的文字与审核事实分别保留。\n\n需要核实的问题\n举措\n不限举措\n供水与管网\n电梯\n长效维护\n公共服务\n对象标识\n原文登记阶段\n资料截止日期\n包括AI研究草稿（单独标注）\n检索原文\n\n0条命中 · 2份材料 · 0个符合范围的原文片段\n\n当前范围没有匹配原文，可检查对象或阶段是否已登记，或补充相应资料。\n\n本次检索的范围检查与排除原因 · 106项"
+        },
+        {
+          "question": "供水范围和阶段，不限举措",
+          "return_ms": 296,
+          "text": "围绕研判问题，检索可定位原文\n\n按资料范围和版本查找，每条结果都有原文和出处。命中的文字与审核事实分别保留。\n\n需要核实的问题\n举措\n不限举措\n供水与管网\n电梯\n长效维护\n公共服务\n对象标识\n原文登记阶段\n资料截止日期\n包括AI研究草稿（单独标注）\n正在检索…"
+        },
+        {
+          "question": "供水范围和阶段，不限举措",
+          "observed_complete_at": 1792028791184,
+          "text": "围绕研判问题，检索可定位原文\n\n按资料范围和版本查找，每条结果都有原文和出处。命中的文字与审核事实分别保留。\n\n需要核实的问题\n举措\n不限举措\n供水与管网\n电梯\n长效维护\n公共服务\n对象标识\n原文登记阶段\n资料截止日期\n包括AI研究草稿（单独标注）\n检索原文\n\n5条命中 · 2份材料 · 53个符合范围的原文片段\n\n浙大求是社区推进二次供水改造.txt · line:22\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。经过初期的踏勘，浙大求是村二次供水改造存在着计量水表老旧，部分管道锈蚀渗漏，泵房空间布局紧凑等问题。\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:22与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:20\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n今年，“完成居民住宅小区二次供水设施改造200个”被列入杭州市政府2023年度民生实事。二次供水通过增压的方式，让高楼层的住户能够正常使用自来水，使用过程中不需要进行蓄水，供水设备还可以将水质进行很好的处理，避免了水源受到污染。\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:20与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:24\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n据悉，随着改造现场踏勘、科学研究设计方案、设计方案公示、留博楼不纳入改造原因公示、一户一表供水合同上门签订工作的完成，紧接着会进行业主同意率公示。有关工作人员表示，亚运会召开之后，浙大求是村二次供水改造项目就将进场施工。\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:24与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:25\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n供水的安全性、可靠性惠及千家万户。灵隐街道浙大求是社区、业委会、物业协调联动，用心用情解决老旧高层住宅居民在日常生活用水中遇到的各种难题，正如求是村第六届业委会在公告栏中写到的“小区是我家，建设靠大家；大家齐努力，幸福你我他！”\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:25与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:21\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n将时间推回到6月份，灵隐街道浙大求是社区、业委会、物业，杭州水务设计院民生实事中心、水务设计、水务建设相关人员接连开展了二次供水改造现场踏勘会、二次供水改造设计方案外审会。“浙大求是村位于杭州市中心地块，是亚运场馆周边老旧小区，多数楼房建于上世纪90年代。二次供水改造能够让小区居民用水水质水压得到明显改善。”浙大求是物业负责人在踏勘会上这样说到。\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:21与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n本次检索的范围检查与排除原因 · 53项"
+        }
+      ],
+      "start": 1792028770240,
+      "end": 1792028809629,
+      "seconds": 39.389,
+      "checked": 5,
+      "final_text": "围绕研判问题，检索可定位原文\n\n按资料范围和版本查找，每条结果都有原文和出处。命中的文字与审核事实分别保留。\n\n需要核实的问题\n举措\n不限举措\n供水与管网\n电梯\n长效维护\n公共服务\n对象标识\n原文登记阶段\n资料截止日期\n包括AI研究草稿（单独标注）\n检索原文\n\n5条命中 · 2份材料 · 53个符合范围的原文片段\n\n关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告.txt · line:1\n公开原件\n\n来源日期 2024-09-18 · 原文提及，尚未形成已审核字段\n\n老旧小区住宅加装电梯是一项社会高度关注的民生工程，对完善老旧小区住宅使用功能、促进无障碍环境建设、适应老龄化社会需求、提升城市生活品质具有重要意义。根据市委、市政府《杭州市人民政府办公厅关于积极推进老旧小区住宅加装电梯工作的实施意见》和《杭州市老旧小区住宅加装电梯管理办法》等有关规范性文件要求，灵隐街道办事处起草了《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》。为确保决策质量，提高决策的可操作性，现予公布，进一步听取社会各界的意见和建议。征集意见期限为：2024年9月18日至2024年10月18日。您可以通过以下途径，将意见和建议向我单位进行反馈：1、当面联系，地址：浙江省杭州市西湖区灵隐街道办事处（外东山弄71号）2、邮寄，地址：浙江省杭州市西湖区灵隐街道办事处（外东山弄71号）3、电话：0571-89511700；联系人：党政办张梁灵隐街道浙大求是社区求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）编制说明.doc灵隐街道浙大求是社区求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）.doc\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:1与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:22\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n浙大求是村二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。经过初期的踏勘，浙大求是村二次供水改造存在着计量水表老旧，部分管道锈蚀渗漏，泵房空间布局紧凑等问题。\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:22与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:42\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n1\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:42与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:25\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n供水的安全性、可靠性惠及千家万户。灵隐街道浙大求是社区、业委会、物业协调联动，用心用情解决老旧高层住宅居民在日常生活用水中遇到的各种难题，正如求是村第六届业委会在公告栏中写到的“小区是我家，建设靠大家；大家齐努力，幸福你我他！”\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:25与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n浙大求是社区推进二次供水改造.txt · line:21\n公开原件\n\n来源日期 2023-08-18 · 原文提及，尚未形成已审核字段\n\n将时间推回到6月份，灵隐街道浙大求是社区、业委会、物业，杭州水务设计院民生实事中心、水务设计、水务建设相关人员接连开展了二次供水改造现场踏勘会、二次供水改造设计方案外审会。“浙大求是村位于杭州市中心地块，是亚运场馆周边老旧小区，多数楼房建于上世纪90年代。二次供水改造能够让小区居民用水水质水压得到明显改善。”浙大求是物业负责人在踏勘会上这样说到。\n\n当前项目、文档版本与来源绑定已核对；解析镜像table:1/row:21与本定位逐字一致，合并检索命中并保留别名定位；现有BM25依据问题与原文词项重合排序；分数表示文本相关程度\n\n查看举措、对象、阶段与材料版本\n定位对应资料 →\n打开原来源 ↗\n本次检索的范围检查与排除原因 · 53项"
+    },
+    "interpretation": "两路径均核对五项。检索路径包含一次未登记举措筛选纠正，且自动化工具往返耗时，不可报告人工节约率。后续接口计时单独记录。"
+  },
+  "pilot": {
+    "started_at": "2026-10-15T01:43:43.032Z",
+    "task": "核对二次供水4幢及252户、留博楼排除原因、2023-08-18时点阶段；核对75幢1单元2024-09-18公告阶段",
+    "manualStart": 1792028623033,
+    "manual": [
+      {
+        "source": "浙大求是社区推进二次供水改造",
+        "quote": "二次供水改造范围为29幢、30幢、31幢、48幢，共计总户数为252户。留博楼由于泵房位于居民楼正下方不符合规范要求，不纳入改造。",
+        "stage": "2023-08-18 报道时计划亚运会后进场，非竣工"
+      },
+      {
+        "source": "75幢1单元电梯重大行政决策草案公告",
+        "stage": "征求意见，2024-09-18至2024-10-18，不能认作已建成"
+      }
+    ],
+    "manualEnd": 1792028637577,
+    "manualSeconds": 14.544,
+    "assistedStart": 1792028638183,
+    "assistedEnd": 1792028646584,
+    "assistedSeconds": 8.401,
+    "status": "pilot_not_comparable",
+    "note": "已保存来源尚无本项目解析材料，检索未命中；该次不计算节时。"
+  },
+  "imports": [
+    {
+      "original_source_id": "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023",
+      "original_url": "https://town.zjol.com.cn/czjsb/202308/t20230818_26113017.shtml",
+      "document_id": "DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+      "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+      "reused": false,
+      "file_name": "浙大求是社区推进二次供水改造.txt"
+    },
+    {
+      "original_source_id": "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+      "original_url": "http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html",
+      "document_id": "DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+      "source_id": "PUBLIC-DOCUMENT-DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+      "reused": false,
+      "file_name": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告.txt"
+    }
+  ],
+  "conclusion": "Three manually identified target fragments present in top five; five factual checks traceable. Service latency and automated browser wall-clock are different metrics. UI assisted time included one filter correction; no human time-saving percentage is inferred."
+}

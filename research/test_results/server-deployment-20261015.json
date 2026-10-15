@@ -1,0 +1,239 @@
+{
+  "schema_version": "server-deployment/1",
+  "target": "zhuhangcheng@10.70.223.113",
+  "commit": "e6b68b8e7ce9589acbc386d184612aa1ee2787f7",
+  "build": {
+    "status": "passed",
+    "modules": 6497,
+    "command": "npm run build",
+    "typescript": "passed",
+    "vite": "passed"
+  },
+  "source_archive": {
+    "excluded": [
+      "data/local",
+      ".env",
+      ".cache",
+      "light 4",
+      "node_modules",
+      "uncommitted working tree edits"
+    ],
+    "method": "git archive HEAD selected application and required build inputs"
+  },
+  "node_official_sha256": "cc2f601cee82d9a5a233302fe307abc600727035fd7d2c3a3571755989e95008",
+  "access": {
+    "tunnel_pid": 86664,
+    "local_url": "http://127.0.0.1:15173",
+    "server_http_exposed": false,
+    "mode": "SSH loopback tunnel"
+  },
+  "migration": {
+    "blobs_restored": true,
+    "amap_configuration_restored": true,
+    "inventory_exact_match": true,
+    "method": "PGlite dumpDataDir snapshot restore by lead agent",
+    "default_fixture_seeded": false,
+    "experience_cards": 28,
+    "projects": 16,
+    "documents": 21
+  },
+  "qwen_live": {
+    "checked_at": "2026-10-15T02:00:24.7838932Z",
+    "endpoint": "POST /api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/renewal-mode",
+    "expected_context_version": 2,
+    "refresh": true,
+    "duration_ms": 1389,
+    "decision_status": "completed",
+    "model": "decision-model-preview",
+    "request_id": "6eaf9b8b-32ce-4300-8eff-c17a1d329de8",
+    "error_code": null,
+    "answers": {
+      "next_action": {
+        "choice": "investigate",
+        "confidence": 0.21,
+        "probabilities": {
+          "investigate": 0.41,
+          "resolve_blocker": 0.16,
+          "compare": 0.37,
+          "review": 0.06
+        }
+      },
+      "priority_dimension": {
+        "choice": "resources",
+        "confidence": 0.22,
+        "probabilities": {
+          "demand": 0.11,
+          "supply": 0.05,
+          "adaptation": 0.13,
+          "implementation": 0.32,
+          "operations": 0.04,
+          "resources": 0.35
+        }
+      },
+      "evidence_sufficient": 0.63
+    },
+    "action": "investigate",
+    "next_step": "取得分楼栋居民需求调查与异议台账，核对改造内容及居民负担。",
+    "guard_reasons": [
+      "返回的置信度或选项概率未达到当前分流阈值。"
+    ],
+    "renewal_mode": {
+      "policy_version": "renewal-mode-first-v3",
+      "model_choice": {
+        "choice": "rebuild",
+        "confidence": 0.66,
+        "probabilities": {
+          "comprehensive": 0.06,
+          "rebuild": 0.75,
+          "compare": 0.05,
+          "investigate": 0.14
+        }
+      },
+      "priority_constraint": {
+        "choice": "rights_planning",
+        "confidence": 0.15,
+        "probabilities": {
+          "safety": 0.26,
+          "rights_planning": 0.32,
+          "consent_relocation": 0.19,
+          "funding": 0.2,
+          "maintenance": 0.03
+        }
+      },
+      "evidence_basis": {
+        "choice": "object_source_10",
+        "confidence": 0.1,
+        "probabilities": {
+          "object_source_1": 0.05,
+          "object_source_2": 0.09,
+          "object_source_3": 0.04,
+          "object_source_4": 0.15,
+          "object_source_5": 0.1,
+          "object_source_6": 0.08,
+          "object_source_7": 0.02,
+          "object_source_8": 0.08,
+          "object_source_9": 0.16,
+          "object_source_10": 0.19,
+          "no_object_evidence": 0.05
+        }
+      },
+      "direction": "investigate",
+      "status": "uncertain",
+      "summary": "先调查影响模式选择的关键条件，再确定优先路径。",
+      "reasons": [
+        "模式选项尚未达到初判阈值，需要先取得能区分两条路径的资料。"
+      ],
+      "next_step": "核对不动产登记、保护名录及规划条件，向属地主管部门确认可采用的程序。",
+      "source_ids": [
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-0446a77889998b53"
+      ]
+    },
+    "screening_policy": "renewal-mode-first-v3"
+  },
+  "notes": [
+    "First restricted archive omitted three imported build fixture JSONs; exact committed files added and build passed.",
+    "Initial post-start ready probe omitted the session cookie; corrected probe reuses cookie jar."
+  ],
+  "remote": {
+    "checked_at": "2026-10-15T10:01:27.65515+08:00",
+    "checks": {
+      "/health": {
+        "status": 200,
+        "body": {
+          "status": "ok",
+          "service": "haizhizi-host"
+        }
+      },
+      "/api/session": {
+        "status": 200,
+        "body": {
+          "user": {
+            "id": "local-operator",
+            "label": "本地项目负责人"
+          },
+          "deployment": "single_operator_local",
+          "model_configured": true,
+          "search_configured": true,
+          "database": "PGlite (embedded PostgreSQL)",
+          "decision_model": {
+            "enabled": true,
+            "configured": true,
+            "model": "decision-model-preview"
+          }
+        }
+      },
+      "/api/ready": {
+        "status": 200,
+        "body": {
+          "status": "ok",
+          "database": "PGlite (embedded PostgreSQL)",
+          "capabilities": true,
+          "live_model": "configured_not_verified",
+          "live_search": "configured_not_verified"
+        }
+      },
+      "/api/projects": {
+        "status": 200,
+        "count": 16,
+        "qiushi": {
+          "id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+          "context_version": 2
+        }
+      },
+      "/": {
+        "status": 200,
+        "html": true,
+        "production_assets": true
+      },
+      "anonymous_projects": {
+        "status": 401
+      },
+      "invalid_host": {
+        "status": 403
+      },
+      "invalid_origin": {
+        "status": 403
+      },
+      "capability_without_token": {
+        "status": 403
+      }
+    },
+    "release": "/home/zhuhangcheng/apps/haizhizi/releases/e6b68b8e7ce9589acbc386d184612aa1ee2787f7-20261015T015642Z",
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "python": "3.12.3",
+    "source_archive_sha256": "0d0415d292bbf868dd272d443a2bea2d50ad54575967baef6bc037b329234d31",
+    "env_permissions": "0o600",
+    "services": "active\nactive",
+    "linger": "Linger=yes",
+    "listeners": "State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\nLISTEN 0      4096      127.0.0.54:53        0.0.0.0:*          \nLISTEN 0      2048       127.0.0.1:4311      0.0.0.0:*          \nLISTEN 0      511        127.0.0.1:4310      0.0.0.0:*          \nLISTEN 0      4096   127.0.0.53%lo:53        0.0.0.0:*          \nLISTEN 0      4096         0.0.0.0:22        0.0.0.0:*          \nLISTEN 0      4096            [::]:22           [::]:*",
+    "deepseek_authenticated_probe": {
+      "endpoint": "https://api.deepseek.com/models",
+      "credential_configured": true,
+      "authenticated_request": true,
+      "attempts": 1,
+      "status": "failed",
+      "http_status": null,
+      "error_category": "CONNECTION_TIMEOUT",
+      "duration_ms": 30042
+    }
+  },
+  "deployment_status": "completed_production_services_and_tunnel",
+  "live_model_status": "Qwen completed; mode uncertain; DeepSeek TCP443 timeout",
+  "server_environment": {
+    "architecture": "x86_64",
+    "root_disk_free_gib": 482,
+    "ram_gib": 31,
+    "vcpus": 8,
+    "os": "Ubuntu24.04.4LTS",
+    "resource_reading": "initial readiness probe before dependency installation"
+  },
+  "script_parse": "passed_after_cookie_probe_fix",
+  "reboot_test": "not_performed; user services enabled and linger verified",
+  "temporary_cleanup": {
+    "tunnel_retained": true,
+    "local_deployment_temp_removed": true,
+    "own_incomplete_first_release_removed": true,
+    "current_release_and_shared_data_preserved": true
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "context_version": 2,
+  "created_at": "2026-10-15T01:52:19.421Z",
+  "status": "failed",
+  "model_calls": [
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 25144,
+      "output_tokens": 4221,
+      "duration_ms": 19991,
+      "session_id": "f10fe983-9842-4dfc-8a49-91dfcdc9fae4",
+      "cache_read_tokens": 2048,
+      "cache_write_tokens": 0
+    },
+    {
+      "stage": "renewal_strategy_quote_repair",
+      "requested_model": "deepseek-flash",
+      "returned_model": null,
+      "finish_reason": "error",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "duration_ms": 121,
+      "session_id": null,
+      "error_code": "SERVER"
+    }
+  ],
+  "research": {
+    "status": "partial",
+    "queries": [
+      "浙大求是村 综合整治 原拆原建 房屋安全鉴定 site:gov.cn",
+      "浙大求是村 加装电梯 二次供水 邻里中心",
+      "浙大求是村 更新 权属 规划 居民协商 资金 安置",
+      "杭州 浙工新村 自主更新 居民筹资 工程 总投资 site:gov.cn",
+      "上海 旧住房 成套改造 综合修缮 拆除重建 2026 site:shanghai.gov.cn",
+      "上海 凤南一村 彭一小区 拆除重建 回搬 site:shanghai.gov.cn"
+    ],
+    "source_ids": [
+      "PUB-10c65fd27bc66567",
+      "PUB-d77a47f628facc42",
+      "PUB-8f9a3d253d17a4fd",
+      "PUB-62fc38dfe56bfeba",
+      "PUB-afb9c13020d6ab50",
+      "PUB-e3895019c813c315",
+      "PUB-9b07712b1504f0f5",
+      "PUB-97bce04c18c97107",
+      "PUB-c3ec8925f7355fd0",
+      "PUB-8549222f3c5aee60"
+    ],
+    "warnings": [
+      "SEARCH_REQUEST_FAILED",
+      "SOURCE_FETCH_FAILED:PUB-c3ec8925f7355fd0",
+      "SOURCE_FETCH_FAILED:PUB-8549222f3c5aee60"
+    ],
+    "reused": false
+  },
+  "error": "LIVE_STAGE_FAILED:renewal_strategy_quote_repair:error"
+}

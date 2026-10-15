@@ -2151,5 +2151,71 @@
       "No enterprise decision-quality evaluation or engineering approval has been performed."
     ],
     "next_runnable_task": null
+  },
+  "decision_value_report_server_20261015": {
+    "status": "reports_completed_server_services_rag_qwen_verified_deepseek_egress_pending",
+    "updated_at": "2026-10-15",
+    "changed_files": [
+      "docs/老旧小区改造案例拆分与六维数据说明.tex",
+      "docs/老旧小区改造案例拆分与六维数据说明.pdf",
+      "docs/老旧小区改造_产品与验证方案.md",
+      "docs/research/求是村_旧改深度调研与行动计划.md",
+      "output/pdf/求是村_旧改深度调研与行动计划.pdf",
+      "docs/本轮交付测试报告_20261015.md",
+      "docs/服务器部署说明.md",
+      "scripts/deploy-haizhizi-server.ps1",
+      "scripts/migrate-workbench-runtime.mjs",
+      "scripts/measure-decision-value.ps1",
+      "scripts/render-qiushi-decision-report.py",
+      "scripts/revise-decision-report.py"
+    ],
+    "document": {
+      "authoritative_docx": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+      "sha256": "28d95f50157c7e5632c42de2b7ba3382b6fd1505ec711e32ed735e6067f0069d",
+      "word_pages": 11,
+      "technical_pdf_pages": 35,
+      "qiushi_decision_pdf_pages": 13,
+      "main_emphasis": "update necessity, mode choice, investment and financial/social returns",
+      "appendices": "neural model and detailed simulation"
+    },
+    "checks": {
+      "word_native_render": "passed",
+      "tex_compile": "passed",
+      "qiushi_pdf_render": "passed",
+      "target_chunks_top5": "3/3",
+      "factual_checks": "5/5",
+      "service_total_ms": 49.275,
+      "timing_scope": "automated operation; no human time-saving claim",
+      "remote_build": "passed",
+      "migration_inventory": "16 projects / 21 documents / 28 cards, exact match",
+      "browser_server_rag": "passed",
+      "qwen_live": "completed; mode uncertain/investigate"
+    },
+    "server": {
+      "target": "zhuhangcheng@10.70.223.113",
+      "url": "http://127.0.0.1:15173/",
+      "ssh_tunnel_pid": 86664,
+      "application_commit": "e6b68b8e7ce9589acbc386d184612aa1ee2787f7",
+      "data": "/home/zhuhangcheng/apps/haizhizi/shared/data",
+      "deepseek": "direct TCP connection timeout; reverse proxy not established"
+    },
+    "artifact_refs": [
+      "research/test_results/decision-value-selftest-20261015.json",
+      "research/test_results/server-deployment-20261015.json",
+      "research/test_results/decision-value-agent-refresh-20261015.json",
+      "output/playwright/server-deployment/qiushi-rag.jpg"
+    ],
+    "decisions": [
+      "Keep real investigation ahead of simulation; place neural exploration in appendices.",
+      "Model explains candidates; program validates sources, amounts and hard constraints.",
+      "Do not call API latency human time saved; retain both measured browser paths.",
+      "Use PGlite dumpDataDir with stopped host and inventory readback for migration."
+    ],
+    "unresolved_questions": [
+      "Human paired decision-quality/efficiency evaluation is designed but not yet collected.",
+      "DeepSeek server egress is externally blocked; reverse-proxy action was rejected by automatic review and awaits explicit user response.",
+      "No approved engineering scope, final investment budget or completed settlement-model validation is inferred."
+    ],
+    "next_runnable_task": "After authorized egress is available, verify DeepSeek using the existing runtime and source/citation gates."
   }
 }
