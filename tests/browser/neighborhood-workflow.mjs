@@ -4,6 +4,7 @@ import { chromium } from '@playwright/test'
 import { build } from 'esbuild'
 import { mkdir, writeFile } from 'node:fs/promises'
 import assert from 'node:assert/strict'
+import { localSession } from './fixtures/local-session.mjs'
 
 const source = (id, title, text) => ({ id, title, data_class: 'synthetic', visibility: 'public', synthetic: true,
   version: `synthetic-${id}`, content_status: 'full_text', untrusted_text: text })
@@ -50,7 +51,7 @@ await page.route('**/*', route => { networkRequests.push(route.request().url());
 await page.exposeFunction('__fixtureRequest', (path, method) => {
   requests.push({ path, method })
   assert.equal(method, 'GET', 'Navigation and scheme calculations must not request a model or mutate project data')
-  if (path === '/api/session') return { model_configured: false }
+  if (path === '/api/session') return localSession()
   if (path === '/api/projects') return projects
   const route = /^\/api\/projects\/(P-[AB])(?:\/(.*))?$/.exec(path)
   if (!route) throw Error(`Unexpected synthetic request ${path}`)

@@ -2261,7 +2261,10 @@
       "tests/contracts/public-workbench-access.test.ts",
       "tests/contracts/request-origin.test.ts",
       "tests/contracts/workspace-uuid.test.ts",
-      "tests/e2e/test_http.py"
+      "tests/e2e/test_http.py",
+      "tests/browser/fixtures/local-session.mjs",
+      "tests/browser/map-workspace.mjs",
+      "tests/browser/neighborhood-workflow.mjs"
     ],
     "server": {
       "url": "http://10.70.223.113/",
@@ -2341,7 +2344,74 @@
       "post_review_intelligence_and_api": "2 passed / 21 not selected",
       "local_host_security_http": "1 passed",
       "document_focus_async": "5 passed",
-      "typescript_vite_build": "passed"
+      "typescript_vite_build": "passed",
+      "browser_session_fixture": {
+        "recorded_at": "2026-10-15T03:37:56.976996+00:00",
+        "scope": "Offline full-App browser fixtures only; no production authentication, credentials or server changes.",
+        "cause": {
+          "ci_run": 38676506423,
+          "step": "Desktop rectangle regression",
+          "error": "INVALID_SESSION_RESPONSE: browser fixtures omitted required authentication metadata"
+        },
+        "changed_files": [
+          "tests/browser/fixtures/local-session.mjs",
+          "tests/browser/map-workspace.mjs",
+          "tests/browser/neighborhood-workflow.mjs"
+        ],
+        "fixture": {
+          "authentication": {
+            "enabled": false,
+            "role": "admin",
+            "public_read_only": false
+          },
+          "model_configured": "preserves each caller setting"
+        },
+        "checks": [
+          {
+            "command": "node tests/browser/map-workspace.mjs",
+            "exit_code": 0,
+            "status": "passed",
+            "main_ui_checks": 36,
+            "late_scan_checks": 4,
+            "cancelled_scan_checks": 4,
+            "geometry_handoff_cases": 8,
+            "assertions_per_handoff": 6
+          },
+          {
+            "command": "HZZ_UI_AREA=1 node tests/browser/map-workspace.mjs",
+            "exit_code": 0,
+            "status": "passed",
+            "assertions": 13
+          },
+          {
+            "command": "node tests/browser/neighborhood-workflow.mjs",
+            "exit_code": 1,
+            "status": "pre-existing workflow drift",
+            "location": "tests/browser/neighborhood-workflow.mjs:71",
+            "error": "Timeout waiting for region 老旧小区改造工作台 after opening project details",
+            "current_component": "apps/workspace/src/App.tsx:670 now renders StrategyOverview with aria-label 更新方案总览",
+            "resolution_scope": "Session fixture corrected; adapting the legacy calculator/navigation scenario to the strategy-first UI is not included in this patch.",
+            "session_gate": "passed: App boot completed and project detail action became available before the old region lookup timed out",
+            "base_commit_evidence": {
+              "commit": "12bcaf57a02a3b13cf054a5dd89d7c10e363e7b3",
+              "app": "apps/workspace/src/App.tsx already renders StrategyOverview for the neighborhood overview",
+              "test": "tests/browser/neighborhood-workflow.mjs already locates region 老旧小区改造工作台",
+              "verification": "git show of both files; no base test rerun"
+            }
+          }
+        ],
+        "not_run": {
+          "intelligence": "Independent IntelligencePanel component entry; does not load the App session gate.",
+          "full_suite": "Parent already has 1147 contract tests, Python and build results for this revision; not repeated."
+        },
+        "artifacts": [
+          "output/playwright/minimal-map-check.json",
+          "output/playwright/desktop-area-draft.png",
+          "output/playwright/desktop-area-fixed.png"
+        ],
+        "live_endpoint_verification": false,
+        "shared_error_rule": "AGENT_ERROR_RULES.md#OPS-406"
+      }
     },
     "browser": {
       "public": "viewer without login; 16 projects, real original retrieval and intelligence search visible",
@@ -2364,7 +2434,8 @@
       "docs/服务器部署说明.md",
       "research/test_results/server-public-admin-verification-20261015.json",
       "research/test_results/server-runtime-files-20261015.json",
-      "research/test_results/server-ip-access-20261015.json"
+      "research/test_results/server-ip-access-20261015.json",
+      "research/test_results/browser-session-fixture-20261015.json"
     ],
     "decisions": [
       "Public GETs are inspected by behavior; only six pure-query POSTs are allowed without admin.",
