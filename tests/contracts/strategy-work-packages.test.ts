@@ -136,3 +136,29 @@ it('reuses saved public research and its trace without web calls, deduplicating 
   expect(progress.some(event=>event.stage==='research'&&event.status==='completed'&&event.message.includes('复用同资料版本'))).toBe(true)
   expect(JSON.stringify(saved)).toBe(before)
 })
+it('projects unrequested round history away and repairs the actual failed JSON using literal source choices',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const mistaken=strategy(),corrected=strategy()
+  mistaken.paths[0].work_packages![0].quote='原文中不存在的改造引句。'
+  const unrequested={summary:'模型虚构的业务轮次',changes:[{topic:'虚构变化',before:'不存在的业务前版',after:'本轮结果',reason:'不能由普通刷新编造',evidence_refs:['OTHER-PROJECT']}],missing_materials:[]}
+  mistaken.round_review=unrequested;corrected.round_review=unrequested
+  const original=JSON.stringify(mistaken),call=vi.fn().mockResolvedValueOnce({value:mistaken}).mockResolvedValueOnce({value:corrected})
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const result=await researchRenewalStrategy(project,0,input,'projection-fixture',false,new AbortController().signal,null)
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(result.strategy?.round_review).toBeUndefined()
+  expect(call.mock.calls[0][1]).toContain('未输入历史首轮或上一轮分析，不输出round_review')
+  const repair=call.mock.calls[1][1] as string,previous=JSON.parse(repair.match(/<previous_strategy_output>(.*?)<\/previous_strategy_output>/s)![1])
+  expect(repair).toContain('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
+  expect(previous.paths[0].work_packages[0].quote).toBe(mistaken.paths[0].work_packages![0].quote)
+  expect(previous.round_review).toBeUndefined()
+  const workChecks=JSON.parse(repair.match(/<work_package_validation>(.*?)<\/work_package_validation>/s)![1])
+  expect(workChecks.find((work:{id:string})=>work.id===mistaken.paths[0].work_packages![0].id)).toMatchObject({source_id:source.id,quote:mistaken.paths[0].work_packages![0].quote,error_code:'STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH'})
+  expect(repair).toContain('幸福度自评');expect(repair).toContain('业主同意率另作程序意愿指标')
+  expect(repair).toContain('去重就餐人数（人）和用餐人次（人次）');expect(repair).toContain('运行台数与有效运行日')
+  expect(repair).toContain('当前完成状态保持待核')
+  const choices=JSON.parse(repair.match(/<repair_quote_candidates>(.*?)<\/repair_quote_candidates>/s)![1])
+  expect(choices.some((row:{source_id:string;quotes:string[]})=>row.source_id===source.id&&row.quotes.includes(source.text))).toBe(true)
+  expect(JSON.stringify(mistaken)).toBe(original);expect(fetch).not.toHaveBeenCalled()
+})

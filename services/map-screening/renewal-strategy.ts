@@ -11,6 +11,27 @@ import { renewalResearchRounds } from '../../packages/retrofit/renewal-research-
 import { evaluateDecision } from '../capabilities/decision-model'
 import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 
+/** Small contiguous quote choices, using the same line/excerpt approach as the demo prompt. */
+function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:readonly string[]=[]) {
+  const priorities=new Set(priorityIds),choices:{source_id:string;locator:string;quotes:string[]}[]=[]
+  let remaining=3000
+  const ordered=[...sources].sort((a,b)=>Number(priorities.has(b.id))-Number(priorities.has(a.id))||Number(b.role==='current')-Number(a.role==='current'))
+  for(const source of ordered) {
+    if(choices.length>=12||remaining<16)break
+    const parts=[...source.text.split('\n'),...(source.text.match(/[^。！？\n]+[。！？]?/gu)||[])].map(text=>text.trim()).filter(text=>text.length>=16&&text.length<=360)
+    const candidates=[parts.find(text=>/\d+(?:\.\d+)?\s*(?:户|台|幢|栋|万元|元|平方米|㎡|人次|人)/.test(text)),parts.find(text=>/改造|更换|更新|加装|新建|治理|配置|供水|服务/.test(text)),parts[0]]
+    const quotes=[...new Set(candidates.filter((text):text is string=>!!text))].slice(0,2).filter(text=>{if(text.length>remaining)return false;remaining-=text.length;return true})
+    if(quotes.length)choices.push({source_id:source.id,locator:source.locator,quotes})
+  }
+  return choices
+}
+
+function projectStrategyOutput(value:RenewalStrategy,hasRound:boolean):RenewalStrategy {
+  if(hasRound)return value
+  const projected={...value};delete projected.round_review
+  return projected
+}
+
 /** Uses DSH public research and the configured DeepSeek Flash Agent; no alternate model client. */
 export async function researchRenewalStrategy(project: ProjectInput, version: number, input: DecisionInput, hash: string, synthetic: boolean, signal: AbortSignal, priorDecision: DecisionSupport | null,
   options: { onProgress?: (event: StrategyProgress) => void; roundContext?: ResearchRoundContext; referenceSources?: readonly StrategySource[]; savedResearch?: Pick<StrategyPacket,'sources'|'research'> } = {}): Promise<StrategyPacket> {
@@ -125,14 +146,15 @@ ${synthetic ? '本项目及所选文件中的居民样本、问卷、访谈和�
 必须填写round_review={summary,changes,missing_materials}：summary概括本轮实际新增信息与判断；changes逐项写topic/before/after/reason/evidence_refs，对照历史AI说明改变或复核后保持的判断，每项至少引用一份本轮所选原始文件（无所选文件时引用本轮对象原文）；missing_materials逐项写topic/request/reason/evidence_refs，明确下一轮最需要上传的材料及作用，尚无依据时refs可空。初轮无历史分析时changes可空；有历史分析时至少写一项真实对照，保持结论也应说明新材料如何支持复核。各数组最多4项，文字简洁。
 历史AI仅是上一轮模型分析，不是原始事实或已经审核的结论。本轮重新按当前原文判断，引用只使用本轮untrusted_sources所列ID。内部材料、历史分析都只用于这次分析，不作为公开补查关键词。
 <historical_ai_analysis>${JSON.stringify(round.parent?{round_id:round.parent.id,input_hash:round.parent.input_hash,context_version:round.parent.context_version,origin:'previous_model_analysis',analysis:round.parent.result?.strategy}:null)}</historical_ai_analysis>
-<round_manifest>${JSON.stringify({round_id:round.round_id,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version,materials:round.materials})}</round_manifest>` : ''
+<round_manifest>${JSON.stringify({round_id:round.round_id,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version,materials:round.materials})}</round_manifest>` : '本次为独立研究，未输入历史首轮或上一轮分析，不输出round_review，也不构造before/after/changes；资料缺项写入internal_data_requests和next_checks。'
     const workPlanInstructions = `总方案先交付“具体对象＋具体改法”的分项表：两条paths各填work_packages，逐项写明针对哪些幢、单元、管网段或服务设施，采取什么工程或服务动作、服务谁以及怎样改善。综合整治应给出保留现有建筑条件下的具体更新组合，例如按对象资料组织管网更换、计量设施改造、加梯配置或服务设施改造与运营；拆建路径独立列自己的建设与配套措施。每项intervention直接写“更换、改造、增设、加装、修缮、配置或开办”等实质动作，调查、鉴定、登记、核实和协商放入preconditions及资料缺项，不作为分项表的主要措施。
 已有原文支持的对象、数量和适用阶段优先采用本对象来源；数量只填来源已载值或明确标识的情景假设，未知工程量保留未知，避免由户数推算管线长度等未给量。每项保留来源ID、定位和同一原文中逐字连续quote。归档浙沪粤案例用于具体措施及组织机制参考，案例的工程量、总价、住户数与本项目分别记录。
+历史公告已有实施对象不自动等于现年仍未建设，保留原时点和准备、草案、施工或验收阶段；若本轮有同对象后续完成记录，候选方案转为运行提升、维护或效果核实，已有设施不重复提出新建。没有后续记录时，当前完成状态保持待核。
 本阶段可以积极提出有依据的候选建设和服务措施；实施前提放在各分项preconditions，投资阶段仍按当前系统准入确定，条件未齐可保持preliminary并给出完整候选改造方案。原文只记载历史准备、征求意见或拟建时，按其原阶段解释。
 内部调查缺项单独填internal_data_requests。按会改变的决策优先列居民幸福度或满意度、分幢电梯利用率、食堂实际用餐人数等本项目确实缺少的数据，逐项说明采集方法、单位、时间窗口、样本分母和这项数据会怎样改变方案规模、顺序、服务配置或资金判断。已提供的问卷和台账先用于分析，再精确列仍缺的口径，不将这些采集任务代替工程和服务措施。`
     const workPlanFields = `每条路径的work_packages填2至3项最重要分项，id在两条路径中唯一。逐项字段为：id,target,target_basis,source_id,quote,locator,intervention,scope,quantity,unit,quantity_basis,delivery,priority,preconditions,evidence_refs。target写具体幢/单元或设施；target_basis=object_source仅用于本对象current原文已登记对象，project_scope用于当前项目范围内的拟方案，scenario用于明确情景假设。source_id必须在evidence_refs中，locator逐字复制该source.locator，quote逐字复制同一来源内8至100字连续原句，含必要对象与数量限定。
 quantity_basis=source只用于本对象current原文quote明确载明的数值和单位，quantity填相同数值；幢号、单元号与工程数量分别记录，例如“75幢1单元”是位置，不表示改造75幢。对标案例的量不作为本项目source数量。quantity_basis=scenario时在scope或preconditions明写假设及适用范围；未知数量用quantity=null、quantity_basis=unknown。unit只写计量单位，草案、估算等阶段保留在scope及quote。scope说明工程或服务边界，delivery说明改好后交付的设施或服务，priority用first/next/reserve。intervention约60字、scope/delivery各约40字；preconditions列1至2条具体实施前提。路径actions只作分项组合摘要，具体改法集中在work_packages。
-internal_data_requests至少分别覆盖resident_wellbeing、elevator_usage、meal_attendance三个key，各自记录id,key,metric,purpose,collection_method,unit,period,denominator,related_package_ids,evidence_refs。metric和purpose写要测什么与改变什么决策；单位、时间窗口和样本分母明确，已取得数据时精确写剩余核对口径或既有台账复核方法，不另造样本。related_package_ids只关联本次实际分项id，无直接对应则留空；每字段约20至45字。`
+internal_data_requests至少分别覆盖resident_wellbeing、elevator_usage、meal_attendance三个key，各自记录id,key,metric,purpose,collection_method,unit,period,denominator,related_package_ids,evidence_refs。metric和purpose写要测什么与改变什么决策；单位、时间窗口和样本分母明确，已取得数据时精确写剩余核对口径或既有台账复核方法，不另造样本。resident_wellbeing分别定义居民幸福度自评与改造满意度题项、分值范围及有效答卷人数；业主同意率另作程序意愿指标，不能替代幸福度或满意度。elevator_usage分别记录乘梯次数、运行台数与有效运行日，说明是次/台/有效运行日还是服务住户覆盖口径。meal_attendance分别登记去重就餐人数（人）和用餐人次（人次），按餐次与日期统计并说明去重办法；活动参与人数不能当就餐人数，订餐与实际到餐也分别记录。related_package_ids只关联本次实际分项id，无直接对应则留空；每字段约20至45字。`
     const prompt = `你负责为“${synthetic && !round ? '杭州样本社区的完整模拟演示' : project.scope.name}”综合已保存原文和本轮公开资料，主动提出一组有取舍的项目候选决策。先判断本对象最值得解决的问题、两种更新路径的得失、钱应投向什么及由谁受益，再输出具体结论。Qwen结果是可参考的分流信息，你仍需独立解释本项目的证据和选择。
 ${roundInstructions}
 ${workPlanInstructions}
@@ -151,9 +173,12 @@ ${historicalStages.join('')}本对象当前施工或验收状态采用后续明�
 材料使用：role=current支撑本对象现况；reference用于方法、社区背景和对标目标。数量、费用与阶段保留来源的对象范围和时点，分项估算、合同、结算及整体预算分别列。结构鉴定、居民决议、资金到账等事实逐项取自原文。${demo ? '本次所有现况数值取自SIM-STRATEGY-BASE，明确完整模拟；整治和拆建分别采用各自的演示预算。' : synthetic ? '本轮是隔离的演示资料研究，所有构造内容明确为模拟，按所选演示文件分析，不替换为其他完整模拟社区的底表。' : '社会效果可提出带前提的预期，实际成效和人口金额取自所列来源。'}
 输出组织：decision_brief在前，接headline、summary、preferred_mode、rationale、两条paths（含work_packages）、六条dimensions、internal_data_requests和next_checks。headline直接点明本项目建议；summary控制在140字内。每块brief的conclusion尽量65字内、reason100字内，financial/social各110字内。rationale写2至3个核心判断，每条quote逐字复制同一来源一段连续原句或归档字段，保留必要限定。两路径各写1至2项actions摘要、1至2项requirements；next_checks写2项最影响决策的核查。六维key不重复，每个描述尽量50字内，保留对象、动作与实现条件。各举措和维度均引用evidence_refs。具体内容优先放分项表，避免在多个字段重复同一段。只调用structured_output。
 <untrusted_sources>${JSON.stringify(promptSources)}</untrusted_sources>
+以下是从同一批source直接截取的少量连续原句候选，source_id与locator保持对应；可选用候选，也可从同一source正文选其他连续短句。quantity_basis=source时所选quote本身必须含该数量和单位，否则quantity设null、quantity_basis设unknown，scope和delivery也不将该数量写成已知工程量。
+<source_quote_candidates>${JSON.stringify(sourceQuoteCandidates(promptSources))}</source_quote_candidates>
 ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+JSON.stringify(sources[0].text.split("\n").filter(line=>line.length>=16&&line.length<=360).map(quote=>({source_id:sources[0].id,quote})).slice(0,24)):""}
 <screening>${JSON.stringify({ policy: STRATEGY_POLICY, as_of: project.as_of, conditions: input.renewalMode!.conditions, standards: screening.standards, history: screening.history, qwen: base.decision?.renewal_mode })}</screening>`
     let response = await live.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
+    response={...response,value:projectStrategyOutput(response.value,!!round)}
     progress({ stage: 'model', status: 'completed', message: '已取得模型方案，开始核对原文引用与适用条件。' })
     progress({ stage: 'validation', status: 'running', message: '核对三部分决策、两条路径、六个维度及原文引用。' })
     const check = (value:RenewalStrategy) => {
@@ -176,7 +201,20 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     catch (error) {
       if(error instanceof Error&&/^STRATEGY_(?:CONSTRUCTION_GATE_UNMET|PATH_DIRECTION_MIXED|SYNTHETIC_IDENTITY_MISMATCH|RELOCATION_ASSUMPTION_REQUIRED|WORK_.+|INTERNAL_DATA_.+)$/.test(error.message)) console.warn(JSON.stringify({event:'renewal_strategy_quality_retry',project_id:project.project_id,code:error.message,stage:'validation'}))
       progress({ stage: 'validation', status: 'running', message: '首次方案核验未通过，正在按同一来源修复。' })
-      response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair', prompt + '\n上一轮决策简报、分项表、引文或完整性校验失败：' + (error instanceof Error ? error.message : '') + '。保留已有项目分析，补齐decision_brief、每路径至少2项具体改法和三类internal_data_requests；各分项quote逐字复制同一来源连续原句，locator复制来源定位，数量与source/scenario/unknown口径一致。按当前实施准入门修复相关选择。' + (error instanceof Error&&error.message==='STRATEGY_RELOCATION_ASSUMPTION_REQUIRED'?'缺少已确认的施工组织时，搬迁安排写为“按施工组织核实是否搬迁”，或在同一句中明确“不需整体搬迁”仅为方案假设及其前提；保留其他分析。':'') + (synthetic&&round?'本轮模拟身份保持不变；将误称真实问卷或居民调研的分析改为模拟问卷统计，保留数值、优先级和方案取舍。':''), 'RenewalStrategy', [], undefined, { evidenceIds: promptSources.map(source => source.id) })
+      const workChecks=response.value.paths.flatMap(path=>(path.work_packages||[]).map(work=>{
+        const localized={...response.value,round_review:undefined,internal_data_requests:undefined,paths:response.value.paths.map(candidate=>({...candidate,work_packages:candidate.mode===path.mode?[work]:[]}))}
+        let code:string|null=null
+        try {validateStrategy(localized,promptSources,input.renewalMode!.conditions,true,false,false)} catch(failure) {code=failure instanceof Error?failure.message:'STRATEGY_FAILED'}
+        return {mode:path.mode,id:work.id,source_id:work.source_id,quote:work.quote,locator:work.locator,source_locator:promptSources.find(source=>source.id===work.source_id)?.locator,quantity:work.quantity,unit:work.unit,quantity_basis:work.quantity_basis,error_code:code}
+      }))
+      const repairPrompt=prompt+'\n本次实际返回JSON未通过校验：'+(error instanceof Error?error.message:'')+'。只修复下列JSON中的错误，保留已有项目分析；这是同一次生成的格式/引用修复，不是另一业务轮次，不得凭空叙述缺少字段的“前版”。补齐每路径具体分项及内部数据口径；每项quote只从它所声明source_id的实际正文选连续短句，locator复制该source定位。quantity=source必须由quote本身明确支持相同数值和单位；否则改为unknown/null，并在scope/delivery中保留待核口径。模式、资金和结构条件沿原门控。'
+        +'\n<previous_strategy_output>'+JSON.stringify(response.value)+'</previous_strategy_output>'
+        +'\n以下仅为逐分项调用同一现有校验器的定位结果（未修改候选），按id逐行核对错误字段：\n<work_package_validation>'+JSON.stringify(workChecks)+'</work_package_validation>'
+        +'\n<repair_quote_candidates>'+JSON.stringify(sourceQuoteCandidates(promptSources,response.value.paths.flatMap(path=>path.work_packages?.map(work=>work.source_id)||[])))+'</repair_quote_candidates>'
+        +(error instanceof Error&&error.message==='STRATEGY_RELOCATION_ASSUMPTION_REQUIRED'?'缺少已确认的施工组织时，搬迁安排写为“按施工组织核实是否搬迁”，或在同一句中明确“不需整体搬迁”仅为方案假设及其前提；保留其他分析。':'')
+        +(synthetic&&round?'本轮模拟身份保持不变；将误称真实问卷或居民调研的分析改为模拟问卷统计，保留数值、优先级和方案取舍。':'')
+      response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair',repairPrompt,'RenewalStrategy',[],undefined,{evidenceIds:promptSources.map(source=>source.id)})
+      response={...response,value:projectStrategyOutput(response.value,!!round)}
       check(response.value)
     }
     progress({ stage: 'validation', status: 'completed', message: '方案完整性、引用与已登记条件核验通过。' })

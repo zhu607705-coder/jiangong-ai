@@ -1,0 +1,66 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_RELOCATION_ASSUMPTION_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"fixture-hash","diagnostic":{"code":"MODEL_OUTPUT_INVALID"},"source_count":4,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps old strategies compatible while requiring the brief for new research 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs unconditional relocation claims including the not-needing-whole-relocation variants 7ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts same-sentence relocation assumptions while preserving source quotes and historical before text 1ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for renewal 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for investment 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires known nonempty evidence for returns 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > rejects empty decisions and invalid investment stages while retaining the quote check 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > accepts conditional target levels without manufacturing current facts or bypassing the rebuild gate 0ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > returns the model-authored project decisions and repairs an omitted brief through the same DSH call seam 1ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > fails a new research result that still omits the brief after the bounded repair 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > requires cited object funding and repairability before admitting construction investment 1ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > repairs a historical preparation mistaken for construction while preserving the proposed route and measures 2ms
+ ✓ tests/contracts/strategy-decision-brief.test.ts > source-grounded DeepSeek decision brief > keeps cross-route comparisons out of individual paths and future targets without censoring the global brief or current text 0ms
+ ✓ tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result 712ms
+ ✓ tests/contracts/research-rounds.test.ts > uses internal document text in AI while public web queries exclude it and unselected/other-project files 393ms
+ ✓ tests/contracts/research-rounds.test.ts > requires config plus per-round consent and disallows parent-internal laundering or cross-project documents 427ms
+ ✓ tests/contracts/research-rounds.test.ts > explicitly adopts a same-project older saved baseline without fabricating its input or prior intake 381ms
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"a98a58da6ca39f88c9e52ed86221607ce76e30ac2175bf9ddb6227b2e61ce6d3","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent 404ms
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"c8068038fd980bd2cc45dcf7d92dc0ad78363d591129bd5044ffbd454c6b1051","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ✓ tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent 420ms
+stderr | tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis
+{"event":"renewal_strategy_quality_retry","project_id":"P-ROUND-DEMO","code":"STRATEGY_SYNTHETIC_IDENTITY_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis 388ms
+ ✓ tests/contracts/research-rounds.test.ts > keeps survey denominators and construction-organization uncertainty in the round prompt 342ms
+stderr | tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+stderr | tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH","stage":"validation"}
+
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires concrete tables only for new research while keeping legacy records and preliminary construction candidates 3ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > rejects survey-only pseudo works even when they mention a construction keyword 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > binds each work package to its actual source locator and a literal continuous quote 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > keeps source quantities, unknowns and explicit scenarios distinct and never transfers a reference project quantity 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > requires three separate internal-data definitions with usable collection denominators and actual package links 1ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope 5ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reserves a bounded prompt excerpt for concrete archive references without enlarging the existing source budget 0ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > reuses saved public research and its trace without web calls, deduplicating sources and excluding internal material 2ms
+ ✓ tests/contracts/strategy-work-packages.test.ts > projects unrequested round history away and repairs the actual failed JSON using literal source choices 2ms
+
+ Test Files  3 passed (3)
+      Tests  30 passed (30)
+   Start at  20:12:48
+   Duration  5.09s (transform 327ms, setup 0ms, import 1.24s, tests 3.50s, environment 0ms)
+

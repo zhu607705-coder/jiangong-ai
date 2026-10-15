@@ -5,6 +5,7 @@ import { config } from '../../apps/host/config'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
 import { STRATEGY_POLICY, validateStrategy, type StrategySource } from '../../packages/retrofit/strategy'
 import type { ModeCondition } from '../../packages/retrofit/renewal-mode'
+import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
 
 const ports = vi.hoisted(() => ({ open: vi.fn() }))
@@ -67,7 +68,9 @@ describe('source-grounded DeepSeek decision brief', () => {
     value.dimensions.find(row=>row.key==='adaptation')!.comprehensive='居民无需整体搬迁仅作为待核前提，按施工组织核实后确定。'
     const call=vi.fn().mockResolvedValue({value})
     ports.open.mockResolvedValueOnce({calls:[],call,close:vi.fn(async()=>{})})
-    const result=await researchRenewalStrategy(project,0,input,'relocation-conditional-fixture',false,new AbortController().signal,null)
+    const roundContext:ResearchRoundContext={round_id:'ROUND-CURRENT',round_number:2,allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-PRIOR',first_input_hash:'prior',first_context_version:0,
+      parent:{id:'ROUND-PRIOR',input_hash:'prior',context_version:0,result:{project_id:project.project_id,context_version:0,input_hash:'prior',created_at:'2026-10-15T00:00:00Z',synthetic:false,status:'completed',strategy:value,sources:[source],decision:null,model_calls:[],research:null,error:null}}}
+    const result=await researchRenewalStrategy(project,0,input,'relocation-conditional-fixture',false,new AbortController().signal,null,{roundContext})
     expect(result.status).toBe('completed');expect(call).toHaveBeenCalledOnce()
     expect(result.strategy?.rationale[0].quote).toBe(quote)
     expect(result.strategy?.round_review?.changes[0].before).toBe('居民不需整体搬迁。')

@@ -256,14 +256,15 @@ function AnalysisBoundsEditor({ input, onChange }: { input: OperationsInput; onC
   </details>
 }
 
-export default function CommunityOperationsPanel({ project, completeDemo, onPreviews, analysisRevision = 0, onCalculationState, direction }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void; analysisRevision?: number; onCalculationState?: (state: 'idle' | 'calculating' | 'error') => void; direction?: StrategyDirection }) {
+export default function CommunityOperationsPanel({ project, completeDemo, onPreviews, analysisRevision = 0, onCalculationState, direction, standalone = false }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void; analysisRevision?: number; onCalculationState?: (state: 'idle' | 'calculating' | 'error') => void; direction?: StrategyDirection; standalone?: boolean }) {
   const scope = `${project.id}:${project.context_version}:${direction||''}`
   const active = useRef({ scope, generation: 0 })
   if (active.current.scope !== scope) active.current = { scope, generation: active.current.generation + 1 }
   const controllers = useRef(new Set<AbortController>())
   const readSequence = useRef(0)
   const pending = useRef(false)
-  const [open, setOpen] = useState(!!completeDemo)
+  const [expanded, setOpen] = useState(!!completeDemo)
+  const open = standalone || expanded
   const [parametersOpen, setParametersOpen] = useState(!completeDemo)
   const [reload, setReload] = useState(0)
   const [loaded, setLoaded] = useState({ scope: '', loading: false, error: '', data: emptyWorkspace() })
@@ -413,9 +414,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
     })
   }
 
-  return <details className="community-operations" open={open} onToggle={event => setOpen(event.currentTarget.open)}>
-    <summary className="ops-summary"><span>社区运营与公共服务</span><small>比较月度使用、现金收支与财政投入</small></summary>
-    {open && <div className="ops-body">
+  const body = open && <div className="ops-body">
       <div className="ops-intro"><h3>{completeDemo ? "完整模拟月度报表 · 已自动填入并计算" : "把服务效果与运营账目放在一起看"}</h3><p>{completeDemo ? "三种情景使用同一核算接口；去重人数按明确的月均频次推算。参数、来源与区间已填入下方草稿。" : "填写设施、服务与现金项目，比较三种需求情景；冻结当前方案后，再用真实台账核对偏差。"}</p></div>
       {direction && <p className="ops-notice">当前方向：{direction === 'comprehensive' ? '综合整治' : '原拆原建'}。只恢复同方向、同资料版本的已登记情景；未登记方向的既有中心记录保留为历史资料。本方向尚无基准时，请建立新的待设参数情景。</p>}
       {loaded.loading && <p className="ops-muted" role="status">正在读取本项目的运营记录…</p>}
@@ -519,6 +518,6 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
           </article>
         })}
       </section></>}
-    </div>}
-  </details>
+    </div>
+  return standalone ? <section className="community-operations community-operations--standalone" aria-label="社区运营与公共服务">{body}</section> : <details className="community-operations" open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary className="ops-summary"><span>社区运营与公共服务</span><small>比较月度使用、现金收支与财政投入</small></summary>{body}</details>
 }

@@ -129,7 +129,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       streaming = req.headers.accept?.includes('application/x-ndjson') || false
       if (streaming) { res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Accel-Buffering', 'no'); res.flushHeaders() }
       const savedResearch = cached?.status==='failed' && cached.project_id===project.id && cached.context_version===project.context_version && cached.input_hash===hash && cached.synthetic===(query.demo==='true')
-        && Date.now()-Date.parse(cached.created_at)<20*60_000 && cached.model_calls.some(call=>call.finish_reason==='max-tokens') && cached.research?.queries.length
+        && Date.now()-Date.parse(cached.created_at)<20*60_000 && (cached.model_calls.some(call=>call.finish_reason==='max-tokens')||cached.diagnostic?.code==='STRATEGY_EVIDENCE_INVALID') && cached.research?.queries.length
         && cached.sources.length && cached.sources.every(source=>source.visibility!=='internal'&&source.data_class!=='internal') ? {sources:cached.sources,research:cached.research} : undefined
       const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch})
       signal.throwIfAborted()
