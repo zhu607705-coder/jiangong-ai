@@ -1,0 +1,94 @@
+{
+  "checked_at": "2026-10-15T06:42:13.246666+00:00",
+  "anonymous_role": "viewer",
+  "public_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+  "public_index_count": 2,
+  "selected_project": {
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "project_name": "浙大求是村 · 片区研究",
+    "context_version": 14,
+    "strategy_context_version": 14,
+    "created_at": "2026-10-15T05:49:52.776Z",
+    "headline": "浙大求是村更新研判：以综合整治为研究基线，重点推进屋面外墙、二次供水与加梯补建；原拆原建仅作逐栋鉴定后的比选路径",
+    "status": "completed",
+    "synthetic": false,
+    "is_current": true,
+    "input_hash": "7bcb89a0b2ae756202b1aa6915d0ba245a85a15484b6199385ca7e35f5a7af45"
+  },
+  "detail": {
+    "status": "completed",
+    "context_version": 14,
+    "paths": 2,
+    "dimensions": 6,
+    "source_count": 24,
+    "next_checks": 5,
+    "publication": {
+      "kind": "current",
+      "is_current": true,
+      "current_input_hash": "7bcb89a0b2ae756202b1aa6915d0ba245a85a15484b6199385ca7e35f5a7af45",
+      "saved_at": "2026-10-15T05:49:52.776Z"
+    }
+  },
+  "same_name_empty_project": {
+    "project_id": "P-e417e04f-784d-4f93-af75-8c75964710e8",
+    "result": null
+  },
+  "anonymous_post_denied": {
+    "/api/projects/P-0529974d-63fe-4ae8-804d-e5efb049f60a/renewal-strategy?demo=false": 403,
+    "/api/projects/public-decisions": 403
+  },
+  "new_model_generation_requested": false,
+  "deployment": {
+    "application_commit": "4fc139592d58e81b49136093c9fe3725d7e3111c",
+    "release": "/home/zhuhangcheng/apps/haizhizi/releases/4fc139592d58e81b49136093c9fe3725d7e3111c-evidence-r2",
+    "source_archive_sha256": "8e1b014c66cbf1170cd936375e2949d57bfe1dff540b7a71c6068d9b9a8d34bc",
+    "ui_archive_sha256": "47bcb457a25e1e03274f69e819d54e5fb4d1b9c423adc176439ad40f6613fb73",
+    "dependencies": "Unchanged lockfiles verified; reuse prior installed node_modules and venv",
+    "persistent_data": "Existing shared/data unchanged by release switch",
+    "restart": "host only; unchanged Python capability worker retained",
+    "url": "http://10.70.223.113/",
+    "checked_at": "2026-10-15T06:42:08.4143074Z"
+  },
+  "checks": {
+    "backend_publication_and_read_policy": {
+      "tests": 48,
+      "status": "passed",
+      "log": "research/test_results/strategy-publication-focused.log",
+      "command": "npm exec -- vitest run tests/contracts/strategy-publication.test.ts tests/contracts/strategy-stream-api.test.ts tests/contracts/public-read.test.ts"
+    },
+    "frontend_public_entry_and_readonly": {
+      "tests": 28,
+      "files": 4,
+      "status": "passed",
+      "observed_by": "delegated frontend agent",
+      "command": "npx vitest run tests/contracts/public-decision-entry.test.ts tests/contracts/public-workbench-access.test.ts tests/contracts/admin-access.test.ts tests/contracts/retrieval-workspace-navigation.test.ts",
+      "started_at_local": "2026-10-15 14:40:01",
+      "duration_seconds": 4.97
+    },
+    "production_build": {
+      "status": "passed",
+      "command": "npm run build",
+      "log": "research/test_results/public-decisions-build-20261015.log"
+    },
+    "anonymous_browser": {
+      "status": "passed",
+      "role": "公开浏览 · 只读",
+      "root_opens_completed_main_project": true,
+      "both_paths_readable": true,
+      "evidence_opens": true,
+      "dimensions": [
+        "居民需求",
+        "公共服务",
+        "居住工程",
+        "实施协同",
+        "长效维护",
+        "资金交付"
+      ],
+      "explicit_empty_same_name_project_kept_distinct": true,
+      "source_project_link_switches_to_main": true,
+      "overview_image": "output/playwright/public-decisions/public-overview.png",
+      "path_image": "output/playwright/public-decisions/public-plan.png"
+    }
+  },
+  "completed_at": "2026-10-15T06:44:44.510185+00:00"
+}
