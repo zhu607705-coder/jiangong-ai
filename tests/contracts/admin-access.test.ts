@@ -51,6 +51,7 @@ describe('admin access protocol and entry gate', () => {
       if (label) expect(dom.document.querySelector('.admin-session-bar')?.textContent).toContain(label)
       else expect(dom.document.querySelector('.admin-session-bar')).toBeNull()
       if (canWrite === 'false') expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '管理员登录')?.getAttribute('href')).toBe('/admin/login')
+      if (label) expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '查看公开决策方案')?.getAttribute('href')).toBe('/?view=published')
     } finally { await act(async () => root.unmount()) }
   })
 

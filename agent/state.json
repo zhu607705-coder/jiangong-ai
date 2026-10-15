@@ -3071,5 +3071,57 @@
       "Some public page fetches failed; warnings remain in the research trace."
     ],
     "next_runnable_task": null
+  },
+  "public_decision_access_20261015": {
+    "status": "completed_anonymous_entry_decision_paths_evidence_six_dimensions_verified",
+    "updated_at": "2026-10-15",
+    "changed_files": [
+      "apps/host/public-read.ts",
+      "apps/host/renewal-mode.ts",
+      "apps/host/strategy-publication.ts",
+      "apps/workspace/src/AdminAccess.tsx",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/admin-access.css",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "apps/workspace/src/components/strategy-overview.css",
+      "apps/workspace/src/public-decisions.ts",
+      "\"docs/\\346\\234\\215\\345\\212\\241\\345\\231\\250\\351\\203\\250\\347\\275\\262\\350\\257\\264\\346\\230\\216.md\"",
+      "packages/retrofit/strategy.ts",
+      "research/test_results/public-decisions-build-20261015.log",
+      "research/test_results/strategy-publication-focused.log",
+      "tests/contracts/admin-access.test.ts",
+      "tests/contracts/public-decision-entry.test.ts",
+      "tests/contracts/public-read.test.ts",
+      "tests/contracts/public-workbench-access.test.ts",
+      "tests/contracts/retrieval-workspace-navigation.test.ts",
+      "tests/contracts/strategy-publication.test.ts"
+    ],
+    "evidence": "research/test_results/public-decisions-server-20261015.json",
+    "application_commit": "4fc139592d58e81b49136093c9fe3725d7e3111c",
+    "public_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+    "browser": {
+      "status": "passed",
+      "role": "公开浏览 · 只读",
+      "root_opens_completed_main_project": true,
+      "both_paths_readable": true,
+      "evidence_opens": true,
+      "dimensions": [
+        "居民需求",
+        "公共服务",
+        "居住工程",
+        "实施协同",
+        "长效维护",
+        "资金交付"
+      ],
+      "explicit_empty_same_name_project_kept_distinct": true,
+      "source_project_link_switches_to_main": true,
+      "overview_image": "output/playwright/public-decisions/public-overview.png",
+      "path_image": "output/playwright/public-decisions/public-plan.png"
+    },
+    "publication_scope": "Same owner, project ID, current context version and synthetic flag only; no cross-project conclusion copies.",
+    "write_boundary": "Anonymous POST generation and index writes return403; existing admin boundary unchanged.",
+    "new_model_generation_requested": false,
+    "unresolved_questions": [],
+    "next_runnable_task": null
   }
 }

@@ -1504,6 +1504,28 @@
       ],
       "evidence_log": "research/test_results/server-model-egress-repair-20261015.json",
       "status": "completed_actual_model_and_reconnect_verified"
+    },
+    {
+      "id": "T61",
+      "depends_on": [
+        "T60"
+      ],
+      "goal": "公开完整决策方案入口、明确项目分享链接与同版本已保存快照读取",
+      "status": "completed_anonymous_http_browser_and_admin_write_boundary_verified",
+      "write_scope": [
+        "apps/",
+        "packages/retrofit/",
+        "tests/contracts/",
+        "docs/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "definition_of_done": "校园匿名入口可直接查看完整真实方案、两条路径、原文依据与六维；同名项目不混用，模型生成和写入仍受管理员保护。",
+      "upstream_verification_required": false,
+      "expected_artifacts": [
+        "research/test_results/public-decisions-server-20261015.json"
+      ],
+      "evidence_log": "research/test_results/public-decisions-server-20261015.json"
     }
   ]
 }

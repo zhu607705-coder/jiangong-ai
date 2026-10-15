@@ -5,6 +5,7 @@ const readPaths = [
   /^\/assets\/[^/]+$/i,
   /^\/deliverables\/[^/]+\.(?:pdf|md|docx)$/i,
   /^\/api\/projects\/?$/i,
+  /^\/api\/projects\/public-decisions\/?$/i,
   new RegExp(`^${project}(?:/(?:revision-diff|documents|followups|experiences|renewal-mode|renewal-strategy|knowledge/pipeline|construction-costs(?:/export)?|community-operations(?:/scenarios/[^/]+/report)?))?/?$`, 'i'),
   new RegExp(`^${project}/knowledge/(?:skills/[^/]+/export|(?:skills|policies)/[^/]+/history)/?$`, 'i'),
   /^\/api\/runs\/[^/]+(?:\/(?:decision-packet|report|events))?\/?$/i,

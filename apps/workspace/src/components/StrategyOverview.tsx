@@ -3,7 +3,8 @@ import { IconArrowRight, IconSparkles, IconRefresh } from '@tabler/icons-react'
 import { api, ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT, type Project } from '../api'
 import { useWorkbenchAccess } from '../AdminAccess'
 import type { DecisionDashboard as Dashboard, DecisionPacket } from '../../../host/generated/contracts'
-import { strategyFailureMessage, strategyStageLabel, strategyCallStatus, type StrategyPacket, type StrategyProgress, type StrategyStreamEvent } from '../../../../packages/retrofit/strategy'
+import { strategyFailureMessage, strategyStageLabel, strategyCallStatus, type StrategyPacket, type StrategyProgress, type StrategyStreamEvent, type PublicStrategyIndexItem } from '../../../../packages/retrofit/strategy'
+import { publicDecisionHref } from '../public-decisions'
 import { consumeStream } from '../maps/screening-stream'
 import { MODE_LABELS, projectRenewalModeInput, evaluateRenewalModeGate } from '../../../../packages/retrofit/renewal-mode'
 import { buildStrategyDemo } from '../../../../packages/retrofit/complete-demo'
@@ -17,8 +18,9 @@ import './strategy-overview.css'
 const levels = { low: 1, medium: 3, high: 5, unknown: null }
 const dimensions = { demand:'居民需求', supply:'公共服务', adaptation:'居住工程', implementation:'实施协同', operations:'长效维护', resources:'资金交付' }
 const researchSteps = [{ stage: 'sources', label: '读取项目资料' }, { stage: 'research', label: '检索与整理来源' }, { stage: 'model', label: '研究两条更新路径' }, { stage: 'validation', label: '核对原文与条件' }, { stage: 'result', label: '形成完整方案' }] as const
-export default function StrategyOverview({ project, demoActive, onEvidence, onInvestigate, packet }: {
+export default function StrategyOverview({ project, demoActive, onEvidence, onInvestigate, packet, publishedPlans = [], onOpenPublishedPlan }: {
   project:Project; demoActive:boolean; onEvidence:(refs:string[])=>void; onInvestigate:()=>void; packet?:DecisionPacket|null;
+  publishedPlans?: PublicStrategyIndexItem[]; onOpenPublishedPlan?: (projectId:string)=>void|Promise<void>;
 }) {
   const { canWrite } = useWorkbenchAccess()
   const [tab,setTab] = useState<'plan'|'assessment'|'operations'>('plan'),[path,setPath] = useState<'comprehensive'|'rebuild'>('comprehensive'),[phase,setPhase] = useState<'before'|'after'>('before')
@@ -82,6 +84,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
     return {policy_version:NEIGHBORHOOD_DASHBOARD_POLICY,purpose:after?'改造方案目标':'现况证据适配',model:result?.model_calls.at(-1)?.returned_model||'DeepSeek',request_id:result?.input_hash||'',status:'completed',dimensions:strategy.dimensions.map(row=>({key:row.key,value:levels[after?(path==='comprehensive'?row.comprehensive_level:row.rebuild_level):row.current_level],confidence:null,basis:after?row[path]:row.current,evidence_refs:row.evidence_refs}))}
   }
   const current=dashboard(false),after=dashboard(true)
+  const otherPublishedPlans = publishedPlans.filter(item => item.project_id !== project.id)
   const openSource=(refs:string[])=>{setSourceIds(refs);const local=refs.filter(id=>project.input.sources.some(source=>source.id===id));if(local.length&&tab==='assessment')onEvidence(local)}
   return <section className="strategy-overview" aria-label="更新方案总览">
     <header className="strategy-top"><div><span>研判总览 / 方案总览</span><h2>整体更新策略</h2><p>{demoActive?'杭州样本社区 · 完整模拟':'基于本项目资料与公开案例'} · 综合整治与原拆原建对照</p></div><button className="secondary" disabled={busy||!canWrite} title={!canWrite?'管理员登录后可生成或更新方案':undefined} onClick={()=>void research(true,false)}><IconRefresh size={17}/>{canWrite&&!result?'开始研究':'重新检索与研判'}</button></header>
@@ -90,6 +93,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
         {strategy&&<div className="strategy-direction-label">{demoActive?`模拟研究方向：${MODE_LABELS[strategy.preferred_mode]}`:`当前研究方向：${MODE_LABELS[modeGate.direction]}`}</div>}
         {latestCall&&<div className="strategy-model-record">{latestCall.returned_model?`实际模型：${latestCall.returned_model}`:`请求模型：${latestCall.requested_model} · 未取得返回模型标识`} · {result!.model_calls.length} 条调用记录 · 最近一次耗时 {(latestCall.duration_ms/1000).toLocaleString('zh-CN',{maximumFractionDigits:1})} 秒 · {new Date(result!.created_at).toLocaleString('zh-CN')}</div>}
       </article>
+      {strategy && !demoActive && result?.publication?.kind === 'saved_snapshot' && <aside className="strategy-saved-snapshot" aria-label="已保存方案版本"><strong>本项目已保存的完整方案 · 资料 v{result.context_version}</strong><p>保存于 {new Date(result.publication.saved_at).toLocaleString('zh-CN')}。当前研判参数或参考资料已更新；以下保留该次方案、原文依据和六维说明，可公开阅读。</p></aside>}
     </>}
     <nav className="strategy-subnav" aria-label="研判总览子页面">{([['plan','方案总览'],['assessment','现况与改后评估'],['operations','社区运营推演']] as const).map(([id,label])=><button key={id} aria-current={tab===id?'page':undefined} onClick={()=>setTab(id)}>{label}</button>)}</nav>
     <div className="strategy-logic" aria-label="整体研判逻辑"><button onClick={()=>setTab('plan')}>01 方案方向</button><IconArrowRight size={15}/><button onClick={()=>{setTab('assessment');setPhase('before')}}>02 现况依据</button><IconArrowRight size={15}/><button onClick={()=>setTab('plan')}>03 模式比选</button><IconArrowRight size={15}/><button onClick={()=>{setTab('assessment');setPhase('after')}}>04 改后目标</button><IconArrowRight size={15}/><button onClick={()=>setTab('operations')}>05 运营验证</button></div>
@@ -105,7 +109,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
 
       <div className={`strategy-plan-layout${!strategy?' is-awaiting-strategy':''}`}><main className="strategy-plan-detail"><div className="strategy-choice" aria-label="选择更新方案"><button aria-pressed={path==='comprehensive'} onClick={()=>setPath('comprehensive')}>综合整治 · 微调更新</button><button aria-pressed={path==='rebuild'} onClick={()=>setPath('rebuild')}>原拆原建 · 整体拆建</button></div>
         {selected&&<><h3>{selected.title}</h3><p>{selected.description}</p><div className="strategy-actions">{selected.actions.map((action,index)=><article key={action.title}><span>{String(index+1).padStart(2,'0')}</span><div><h4>{action.title}</h4><p>{action.detail}</p><button onClick={()=>openSource(action.evidence_refs)}>对应依据</button></div></article>)}</div><details className="strategy-requirements"><summary>展开这条路径的实施前提</summary>{selected.requirements.map(requirement=><p key={requirement}>{requirement}</p>)}</details></>}
-        {!strategy&&!busy&&<p>{canWrite?'点击“开始研究”或“重新检索与研判”，根据本项目资料生成具体路径。':'管理员生成并保存方案后，可在此查看具体路径与对应依据。'}</p>}
+        {!strategy&&!busy&&<div className="strategy-empty-project"><p>当前项目“{project.name}” · 资料 v{project.context_version} 尚无已保存的完整方案。</p>{canWrite&&<p>可点击“开始研究”或“重新检索与研判”，根据本项目资料生成具体路径。</p>}{!!otherPublishedPlans.length&&<section className="strategy-published-alternatives" aria-label="其他项目的公开方案"><h3>可以直接阅读这些已公开方案</h3><p>以下成果属于标注的来源项目；打开后切换到该项目，不作为当前项目的分析结论。</p>{otherPublishedPlans.map(item=><a href={publicDecisionHref(item.project_id)} key={item.project_id} onClick={onOpenPublishedPlan?event=>{event.preventDefault();void onOpenPublishedPlan(item.project_id)}:undefined}><strong>{item.headline}</strong><span>来源项目：{item.project_name} · 资料 v{item.strategy_context_version}</span><span>查看完整方案、依据与六维评估 →</span></a>)}</section>}</div>}
         {strategy&&<section className="strategy-rationale"><h3>判断依据</h3>{strategy.rationale.map((claim,index)=><article key={index}><p>{claim.point}</p><button onClick={()=>openSource([claim.source_id])}>原文与出处</button></article>)}</section>}
         {strategy&&<section className="strategy-next-checks"><h3>下一步先调查什么</h3>{strategy.next_checks.map(check=><article key={check.title}><h4>{check.title}</h4><p>{check.detail}</p><button onClick={()=>openSource(check.evidence_refs)}>调查依据</button></article>)}<button className="secondary" onClick={onInvestigate}>进入下一步调查<IconArrowRight size={16}/></button></section>}
       </main><aside className="strategy-mode-aside">{demoActive?<div className="strategy-plan-detail"><h3>两种模式，同一社区</h3><p>600户 · 1500人 · 45000㎡</p><p>先比较改造内容与落实条件，再切换六维图查看变化。</p><button className="secondary" onClick={()=>{setTab('assessment');setPhase('after')}}>查看两种模式的六维对照</button><div className="strategy-cost-assumption"><strong>{MODE_LABELS[path]} · {demo.budget_wan.toLocaleString('zh-CN')} 万元</strong><p>{demo.assumptions}</p></div></div>:<RenewalModePanel compact strategy={result} endpoint={`/projects/${encodeURIComponent(project.id)}/renewal-mode`} contextVersion={project.context_version} input={projectRenewalModeInput(project.input)} decision={result?.decision} onInvestigate={onInvestigate}/>}</aside></div>

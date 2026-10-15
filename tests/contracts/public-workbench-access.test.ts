@@ -41,7 +41,7 @@ test('a viewer restores saved strategy data without starting model research afte
   vi.stubGlobal('fetch', transport)
   try {
     await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(StrategyOverview, { project, demoActive: false, onEvidence: vi.fn(), onInvestigate: vi.fn() }))))
-    await vi.waitFor(() => expect(container.textContent).toContain('管理员生成并保存方案后'))
+    await vi.waitFor(() => expect(container.textContent).toContain('尚无已保存的完整方案'))
     expect(transport.mock.calls.length).toBeGreaterThan(0)
     expect(transport.mock.calls.every(call => (call as unknown as [string, RequestInit])[1].method === 'GET')).toBe(true)
     const buttons = [...container.querySelectorAll('button')]
