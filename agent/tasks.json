@@ -1389,6 +1389,48 @@
       ],
       "upstream_verification_required": false,
       "evidence_log": "research/test_results/renewal-mode-verification.json"
+    },
+    {
+      "id": "T56",
+      "depends_on": [
+        "T55"
+      ],
+      "goal": "决策主线重排、神经网络与模拟附录、求是村完整方案及真实单例计时",
+      "status": "completed_reports_and_timing",
+      "expected_artifacts": [
+        "research/test_results/decision-value-selftest-20261015.json"
+      ],
+      "definition_of_done": "已形成对应报告或服务，有实际渲染/恢复/接口证据；外部阻塞单独登记。",
+      "write_scope": [
+        "docs/",
+        "scripts/",
+        "research/test_results/",
+        "output/pdf/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/decision-value-selftest-20261015.json"
+    },
+    {
+      "id": "T57",
+      "depends_on": [
+        "T56"
+      ],
+      "goal": "Ubuntu生产部署、项目数据迁移、SSH隧道与真实模型核验",
+      "status": "services_data_rag_qwen_completed_deepseek_egress_pending",
+      "expected_artifacts": [
+        "research/test_results/server-deployment-20261015.json"
+      ],
+      "definition_of_done": "已形成对应报告或服务，有实际渲染/恢复/接口证据；外部阻塞单独登记。",
+      "write_scope": [
+        "docs/",
+        "scripts/",
+        "research/test_results/",
+        "output/pdf/",
+        "agent/"
+      ],
+      "upstream_verification_required": false,
+      "evidence_log": "research/test_results/server-deployment-20261015.json"
     }
   ]
 }
