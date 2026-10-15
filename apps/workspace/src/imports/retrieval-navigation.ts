@@ -94,13 +94,12 @@ export function findRetrievalDecisionElement(root: ParentNode, location: Retriev
   if (['rationale', 'action', 'dimension'].includes(location.kind)) {
     const strategy = root.querySelector('.strategy-overview')
     if (!strategy) return null
-    const wantedTab = location.kind === 'dimension' ? '现况与改后评估' : '方案总览'
+    const chosen=strategy.getAttribute('data-selected-direction')
+    const needsChoice=location.kind!=='rationale'&&(!chosen||location.kind==='action'&&location.mode&&chosen!==location.mode)
+    const wantedTab = needsChoice||location.kind==='rationale'?'改造方向判断':location.kind==='dimension'?'现况与改后评估':'方案总览'
     const tab = [...strategy.querySelectorAll<HTMLButtonElement>('.strategy-subnav button')].find(button => text(button) === wantedTab)
     if (tab && tab.getAttribute('aria-current') !== 'page') { tab.click(); return null }
-    if (location.kind === 'action' && location.mode) {
-      const mode = [...strategy.querySelectorAll<HTMLButtonElement>('.strategy-choice button')].find(button => text(button).startsWith(`${modeLabels[location.mode!]} ·`))
-      if (mode && mode.getAttribute('aria-pressed') !== 'true') { mode.click(); return null }
-    }
+    if(needsChoice){const target=strategy.querySelector<HTMLElement>(location.kind==='action'&&location.mode?`[data-direction-choice="${location.mode}"]`:'.strategy-direction-selection');target?.setAttribute('data-retrieval-awaiting-direction','true');return target||null}
     if (location.kind === 'dimension') {
       const before = [...strategy.querySelectorAll<HTMLButtonElement>('.strategy-assessment-controls button')].find(button => text(button) === '现有评估')
       if (before && before.getAttribute('aria-pressed') !== 'true') { before.click(); return null }
@@ -122,8 +121,10 @@ export function findRetrievalFeatureElement(root: ParentNode, location: Retrieva
   if (location.kind === 'investigations') return root.querySelector<HTMLElement>('[data-retrieval-investigations]')
   const strategy = root.querySelector('.strategy-overview')
   if (!strategy) return null
-  const wanted = location.kind === 'assessment' ? '现况与改后评估' : '方案总览'
+  const needsChoice=location.kind==='assessment'&&!strategy.getAttribute('data-selected-direction')
+  const wanted = location.kind === 'assessment'&&!needsChoice ? '现况与改后评估' : '改造方向判断'
   const tab = [...strategy.querySelectorAll<HTMLButtonElement>('.strategy-subnav button')].find(button => button.textContent?.trim() === wanted)
   if (tab?.getAttribute('aria-current') !== 'page') { tab?.click(); return null }
+  if(needsChoice){const target=strategy.querySelector<HTMLElement>('.strategy-direction-selection');target?.setAttribute('data-retrieval-awaiting-direction','true');return target||null}
   return strategy.querySelector<HTMLElement>(location.kind === 'assessment' ? '.strategy-assessment' : '.renewal-mode-panel')
 }

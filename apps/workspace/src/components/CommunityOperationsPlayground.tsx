@@ -12,22 +12,27 @@ import './community-operations-playground.css'
 export type ExplorationSnapshot = { parameters: ExplorationParameters; input: OperationsInput; result: OperationsResult }
 const format = (value: number) => value.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
 
-export default function CommunityOperationsPlayground({ project, demo, baseline, motion, onResult }: {
+export default function CommunityOperationsPlayground({ project, demo, baseline, motion, onResult, storageScope }: {
   project: Project; demo: CompleteCommunityDemo; baseline?: OperationsResult; motion: boolean;
-  onResult: (value: ExplorationSnapshot | null) => void;
+  onResult: (value: ExplorationSnapshot | null) => void; storageScope?: string;
 }) {
+  const storageKey = `hzz-synthetic-explorations:${project.id}${storageScope ? `:${storageScope}` : ''}`
   const [parameters, setParameters] = useState(defaultExploration)
-  const [computed, setComputed] = useState<ExplorationSnapshot | null>(null)
+  const [computedState, setComputed] = useState<{ key: string; snapshot: ExplorationSnapshot } | null>(null)
+  const computed = computedState?.key === storageKey ? computedState.snapshot : null
   const [busy, setBusy] = useState(true), [error, setError] = useState(''), [retry, setRetry] = useState(0)
   const [serviceId, setServiceId] = useState('activity')
-  const storageKey = `hzz-synthetic-explorations:${project.id}`
-  const [saved, setSaved] = useState<DemoPlan[]>(() => {
+  const readSaved = () => {
     try {
       const values: unknown = JSON.parse(localStorage.getItem(storageKey) || '[]')
       return readDemoPlans(demo, values)
     } catch { return [] }
-  })
-  useEffect(() => { localStorage.setItem(storageKey, JSON.stringify(saved)) }, [saved, storageKey])
+  }
+  const [savedState, setSavedState] = useState<{ key: string; plans: DemoPlan[] }>(() => ({ key: storageKey, plans: readSaved() }))
+  const saved = savedState.key === storageKey ? savedState.plans : []
+  const setSaved = (update: (values: DemoPlan[]) => DemoPlan[]) => setSavedState(current => ({ key: storageKey, plans: update(current.key === storageKey ? current.plans : readSaved()) }))
+  useEffect(() => { setSavedState({ key: storageKey, plans: readSaved() }); setParameters({ ...defaultExploration }); setServiceId('activity') }, [storageKey])
+  useEffect(() => { if (savedState.key === storageKey) try { localStorage.setItem(storageKey, JSON.stringify(savedState.plans)) } catch { /* Local comparison remains usable if browser storage is unavailable. */ } }, [savedState, storageKey])
   useEffect(() => {
     const controller = new AbortController()
     setBusy(true); setError(''); onResult(null)
@@ -41,13 +46,13 @@ export default function CommunityOperationsPlayground({ project, demo, baseline,
         const result = await api<OperationsResult>(endpoint, { input: finalInput }, controller.signal)
         if (controller.signal.aborted) return
         const value = { parameters: { ...parameters }, input: finalInput, result }
-        setComputed(value); onResult(value)
+        setComputed({ key: storageKey, snapshot: value }); onResult(value)
       } catch (cause) {
         if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : '计算暂时没有返回')
       } finally { if (!controller.signal.aborted) setBusy(false) }
     }, 220)
     return () => { window.clearTimeout(timer); controller.abort() }
-  }, [parameters, project.id, project.context_version, demo, retry, onResult])
+  }, [parameters, project.id, project.context_version, demo, retry, onResult, storageKey])
   const result = computed?.result, metrics = result?.metrics
   const selected = result?.services.find(service => service.id === serviceId)
   const unchanged = useMemo(() => computed && JSON.stringify(computed.parameters) === JSON.stringify(parameters), [computed, parameters])

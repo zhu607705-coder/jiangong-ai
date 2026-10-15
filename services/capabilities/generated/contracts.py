@@ -1979,6 +1979,53 @@ class OperationsComparison(BaseModel):
     differences: list[OperationsDifference]
 
 
+class EvidenceRef8(RootModel[str]):
+    root: str = Field(..., max_length=250)
+
+
+class Renewal(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    conclusion: str = Field(..., max_length=120, min_length=1)
+    reason: str = Field(..., max_length=300, min_length=1)
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8, min_length=1)
+
+
+class Stage(StrEnum):
+    preliminary = 'preliminary'
+    construction = 'construction'
+    hold = 'hold'
+
+
+class Investment(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    conclusion: str = Field(..., max_length=120, min_length=1)
+    reason: str = Field(..., max_length=300, min_length=1)
+    stage: Stage
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8, min_length=1)
+
+
+class Returns(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    financial: str = Field(..., max_length=260, min_length=1)
+    social: str = Field(..., max_length=260, min_length=1)
+    evidence_refs: list[EvidenceRef8] = Field(..., max_length=8, min_length=1)
+
+
+class DecisionBrief(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    renewal: Renewal
+    investment: Investment
+    returns: Returns
+
+
 class PreferredMode(StrEnum):
     comprehensive = 'comprehensive'
     rebuild = 'rebuild'
@@ -1997,10 +2044,6 @@ class RationaleItem(BaseModel):
 class Mode2(StrEnum):
     comprehensive = 'comprehensive'
     rebuild = 'rebuild'
-
-
-class EvidenceRef8(RootModel[str]):
-    root: str = Field(..., max_length=250)
 
 
 class Action2(BaseModel):
@@ -2084,6 +2127,7 @@ class RenewalStrategy(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
+    decision_brief: DecisionBrief | None = None
     headline: str = Field(..., max_length=120)
     summary: str = Field(..., max_length=600)
     preferred_mode: PreferredMode

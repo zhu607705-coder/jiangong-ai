@@ -1,0 +1,102 @@
+{
+  "status": "completed",
+  "source": "D:\\建工ai\\docs\\老旧小区改造案例拆分与六维数据说明.tex",
+  "pdf": "D:\\建工ai\\docs\\老旧小区改造案例拆分与六维数据说明.pdf",
+  "pages": 38,
+  "source_commit": "f3457fd93cf079d33128f22e6845594cbceef468",
+  "pdf_sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
+  "source_sha256": "7aa8d44df5fc64fdd61ad6e8f0e0080163a873af8d7a4bb9dfe56d4bfe2d5824",
+  "compile_exit": 0,
+  "build": "One final XeLaTex pass, exit 0; no reference rerun required.",
+  "command": "xelatex -interaction=nonstopmode -halt-on-error -file-line-error -output-directory=output/documents/renewal-review/main docs/老旧小区改造案例拆分与六维数据说明.tex",
+  "latex": {
+    "overfull": 0,
+    "undefined_reference_or_citation": 0,
+    "missing_character": 0,
+    "latex_error": 0,
+    "underfull": 1,
+    "underfull_note": "One retained appendix path-list underfull hbox; no overflow, missing glyphs, unresolved references or LaTeX errors."
+  },
+  "page_map": {
+    "方向判断页直接呈现": [
+      1
+    ],
+    "核心判断标准": [
+      1
+    ],
+    "本次API 综合研判建议": [
+      15
+    ],
+    "本次API综合研判建议": [],
+    "模式前置与方案总览的实现": [
+      25
+    ],
+    "decision_brief": [
+      26
+    ],
+    "改造方向判断": [
+      25
+    ]
+  },
+  "rendered_pages": [
+    1,
+    2,
+    3,
+    15,
+    25,
+    26
+  ],
+  "contacts": [
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\api-direction-contact-01.png",
+    "D:\\建工ai\\output\\documents\\renewal-review\\main\\api-direction-contact-02.png"
+  ],
+  "measurement_evidence": "research/test_results/decision-value-campus-v14-20261015T074703394Z.json",
+  "timing_input_sha256": "52d160c6b7b5fe7d29132276219501291070ce220f0d0065b9dd4212b73c665f",
+  "timing_numbers": {
+    "batch_seconds": 0.388,
+    "automated_checked_seconds": 0.494,
+    "pre_registered_items": "12/12",
+    "current_source_version_quotes": "17/17",
+    "human_time_saving_claim": false
+  },
+  "implementation_bindings": [
+    "packages/retrofit/renewal-mode.ts:evaluateRenewalModeGate",
+    "packages/retrofit/decision-priorities.ts:compareGoalPriorities"
+  ],
+  "validation_scope": "Narrow API-role prose, direction-selection workflow and one existing Qiushi summary; one final XeLaTex pass and pages 1,2,3,15,25,26 render check.",
+  "visual_review": {
+    "result": "passed",
+    "pages": [
+      1,
+      2,
+      3,
+      15,
+      25,
+      26
+    ],
+    "observed": "Actual API responsibility is explicit in the opening. Four-layer standards, weight/evaluation content, the existing Qiushi API recommendation and direction-first implementation flow remain readable with no clipping, overlap or missing glyphs. The first standards subsection continues normally across pages 1–2 with two text lines after its heading.",
+    "scope": "Six affected pages only; unchanged chapters, generated timing and application tests were not re-audited."
+  },
+  "compile_logs": [
+    "output/documents/renewal-review/main/api-direction-final-compile.log"
+  ],
+  "frozen": true,
+  "previous_pdf_sha256": "8bd6530fbf76cd0567403d1d089a8f75162e08db581ca1e4bc1d02a8c616f9d2",
+  "previous_source_sha256": "3c8b421d72006a7e8769e0b8f641432afefb34ac3f68d2d5c178d0be05b8612e",
+  "repository_head_at_build": "18dfd4872a69a2533ca7749b537165a4752cc755",
+  "revision": "Restore substantive API decision analysis and direction-first selected-path workflow; three original method paragraphs, the existing workflow paragraph and one existing Qiushi summary field only.",
+  "source_commit_note": "source_commit refers to the earlier retrieval self-test/code baseline; current repository HEAD and model readback are recorded separately.",
+  "api_model_evidence": {
+    "path": "research/test_results/direction-api-v5-readback-20261015.json",
+    "sha256": "7a310e4990dfe48af1830764c99e432fa08145abdaddfb7a68e554abdd69081f",
+    "status": "completed",
+    "policy": "renewal-strategy-overview-v5",
+    "investment_stage": "preliminary",
+    "source_count": 28,
+    "literal_rationale_quotes_verified": 4,
+    "root_reported_model_total_seconds": 183.89,
+    "timing_distinction": "0.494 seconds remains the prior retrieval-only automated self-test, not model generation time."
+  },
+  "timing_unchanged": true,
+  "human_time_saving_claim": false
+}

@@ -1,0 +1,154 @@
+{
+  "schema": "decision-criteria-and-direction-workflow/1",
+  "status": "completed",
+  "checked_at": "2026-10-15T08:47:11.168371+00:00",
+  "deployment": {
+    "application_commit": "341b995d0788b41d2ccb7ce6e0c2708aea5432ba",
+    "release": "/home/zhuhangcheng/apps/haizhizi/releases/341b995d0788b41d2ccb7ce6e0c2708aea5432ba-evidence-r2",
+    "source_archive_sha256": "7ae5f33c8f5fa4977cc678ea68b510f51e07b65f679c44b3e254c8aa559123b1",
+    "ui_archive_sha256": "1a40273739c1bb35443ffdf27de949efe83ff205f7646b633503d93618def5fd",
+    "dependencies": "Unchanged lockfiles verified; reuse prior installed node_modules and venv",
+    "persistent_data": "Existing shared/data unchanged by release switch",
+    "restart": "host only; unchanged Python capability worker retained",
+    "url": "http://10.70.223.113/",
+    "checked_at": "2026-10-15T08:40:10.5207909Z"
+  },
+  "public_url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+  "browser": {
+    "url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=overview",
+    "role": "viewer",
+    "checks": {
+      "comprehensive": {
+        "selected": "comprehensive",
+        "header": "综合整治 · 方案总览",
+        "oppositeVisible": false,
+        "title": "综合整治·分项更新路径：以保留建筑为前提，逐栋核实后按分项打包实施",
+        "assessment": {
+          "mode": "comprehensive",
+          "dimensions": 6,
+          "oppositeVisible": false
+        }
+      },
+      "returnFromEvidence": "comprehensive",
+      "rebuild": {
+        "selected": "rebuild",
+        "header": "原拆原建 · 方案总览",
+        "oppositeVisible": false,
+        "title": "原拆原建·整体重建路径（对照）：仅当逐栋鉴定确认不可修复且拆建与决议条件齐备后成立",
+        "assessment": {
+          "mode": "rebuild",
+          "dimensions": 6,
+          "oppositeVisible": false
+        },
+        "operations": {
+          "heading": "当前方向：原拆原建",
+          "oppositeVisible": false
+        }
+      },
+      "finalDefault": {
+        "page": "改造方向判断",
+        "selected": "",
+        "planEnabled": false
+      }
+    },
+    "screenshots": [
+      "output/playwright/single-direction/direction-judgment.png",
+      "output/playwright/single-direction/direction-choice.png",
+      "output/playwright/single-direction/rebuild-assessment.png"
+    ]
+  },
+  "server_read_and_write_boundary": "research/test_results/single-direction-server-20261015.json",
+  "standards": {
+    "mode_gate": "renewal-mode-gate-v1",
+    "goal_preferences": "renewal-goal-sensitivity-v1",
+    "research_policy": "renewal-strategy-overview-v5",
+    "roles": "Existing DSH proposes sourced project decisions; program validates scope, investment admission, citations and calculations."
+  },
+  "real_api": {
+    "generation": "research/test_results/direction-api-v5-live-generation-20261015.json",
+    "readback": "research/test_results/direction-api-v5-readback-20261015.json",
+    "elapsed_seconds": 183.89,
+    "source_count": 28,
+    "model_calls": [
+      {
+        "stage": "renewal_strategy",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "duration_ms": 29717,
+        "input_tokens": 33639,
+        "output_tokens": 4701,
+        "finish_reason": "tool-calls"
+      },
+      {
+        "stage": "renewal_strategy",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "duration_ms": 20599,
+        "input_tokens": 40126,
+        "output_tokens": 4641,
+        "finish_reason": "tool-calls"
+      },
+      {
+        "stage": "renewal_strategy_quote_repair",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "duration_ms": 30221,
+        "input_tokens": 33698,
+        "output_tokens": 4942,
+        "finish_reason": "tool-calls"
+      },
+      {
+        "stage": "renewal_strategy_quote_repair",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "duration_ms": 18533,
+        "input_tokens": 39541,
+        "output_tokens": 4966,
+        "finish_reason": "tool-calls"
+      }
+    ],
+    "preferred_mode": "comprehensive",
+    "investment_stage": "preliminary",
+    "literal_quotes_verified": 4,
+    "initial_quality_defect_and_repair": "research/test_results/direction-api-stage-review-20261015.json"
+  },
+  "automatic_retrieval_selftest": {
+    "evidence": "research/test_results/decision-value-campus-v14-20261015T074703394Z.json",
+    "fixed_questions": 4,
+    "registered_checks": 12,
+    "before_traceable": 8,
+    "after_traceable": 12,
+    "batch_ms": 387.621,
+    "automatic_check_ms": 494.44,
+    "human_time_saving_claim": false
+  },
+  "documents": {
+    "pdf": {
+      "path": "D:\\建工ai\\docs\\老旧小区改造案例拆分与六维数据说明.pdf",
+      "sha256": "c89f9719a2352c4c78ecd3ff032037ac33ed8151dfe911a1a5f4c06254cee7f4",
+      "pages": 38,
+      "qa": "output/documents/renewal-review/main/decision-standards-qa-20261015.json",
+      "public_delivery": "research/test_results/decision-criteria-report-delivery-20261015.json"
+    },
+    "word": {
+      "path": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+      "sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+      "qa": "research/test_results/decision-criteria-word-20261015.json"
+    }
+  },
+  "checks": {
+    "production_build": "passed; research/test_results/single-direction-final-build-20261015.log",
+    "api_publication_and_stage": "22 focused checks passed; research/test_results/direction-api-cache-stage-20261015.log",
+    "new_research_validation": "25 focused checks passed; research/test_results/strategy-investment-stage-focused.log",
+    "frontend_flows": "Delegated six files31 passed, final entry8 passed; final operations/export/storage boundary two files12 passed.",
+    "live_browser": "Both choices, plan/assessment separation, evidence return and rebuilding operations verified anonymously."
+  },
+  "scope": {
+    "model_client": "Existing DSH only",
+    "new_scheduler": false,
+    "choice_writes_project_data": false,
+    "choice_triggers_model_generation": false,
+    "simulation": "Explicit scenario only; per-direction monthly view excludes the other path capital/dimensions and scopes local saved comparisons.",
+    "historic_unscoped_operations": "Read-only history; not automatically restored into a selected direction."
+  }
+}

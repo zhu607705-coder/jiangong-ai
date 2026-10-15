@@ -61,7 +61,7 @@ test('focusing a located quote expands every parent details before scrolling and
 })
 
 test('decision lookup activates the required inner tab and only returns an actual matching row', () => {
-  const { document } = parseHTML('<section class="strategy-overview"><nav class="strategy-subnav"><button aria-current="page">方案总览</button><button id="assessment">现况与改后评估</button></nav><div class="strategy-dimension-cards"><article>长效维护</article></div></section>')
+  const { document } = parseHTML('<section class="strategy-overview" data-selected-direction="comprehensive"><nav class="strategy-subnav"><button aria-current="page">方案总览</button><button id="assessment">现况与改后评估</button></nav><div class="strategy-dimension-cards"><article>长效维护</article></div></section>')
   const location = retrievalDecisionLocations(hit, 'P1', strategy, null).find(row => row.kind === 'dimension')!
   const tab = document.getElementById('assessment')!, click = vi.fn(() => tab.setAttribute('aria-current', 'page'))
   tab.click = click

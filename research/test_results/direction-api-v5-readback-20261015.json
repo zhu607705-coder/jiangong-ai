@@ -1,0 +1,201 @@
+{
+  "checked_at": "2026-10-15T08:32:20.888142+00:00",
+  "anonymous_readback": true,
+  "status": "completed",
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "context_version": 14,
+  "input_hash": "f83eda2e5c9724b6fe1dcb9ed28fc2fad65e481779481fa2dfa344ff1e31a476",
+  "publication": {
+    "kind": "current",
+    "is_current": true,
+    "current_input_hash": "f83eda2e5c9724b6fe1dcb9ed28fc2fad65e481779481fa2dfa344ff1e31a476",
+    "saved_at": "2026-10-15T08:31:52.674Z"
+  },
+  "source_count": 28,
+  "preferred_mode": "comprehensive",
+  "headline": "求是村建议以综合整治优先研究：先逐栋鉴定+分项更新（二次供水、加梯、适老、管网），拆建因结构不可修与拆建条件均未核实暂作比选",
+  "decision_brief": {
+    "renewal": {
+      "reason": "本对象多为90年代住宅，已存在二次供水（29/30/31/48幢252户）设计与加梯、适老改造的分项工作面，可在不腾退条件下先解决用水水压、渗漏与出行问题；拆建路径所需的结构不可修复、规划权属、全体业主决议与腾退资金条件在本轮均无记录，故先以分项更新落地，把拆建留作条件成熟后的比选。",
+      "conclusion": "建议优先综合整治方向：以保留建筑为基线，按逐栋鉴定结果分项实施二次供水、加梯、适老化与管网消防改善，暂不推进原拆原建。",
+      "evidence_refs": [
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023",
+        "PUB-5b0fef0db26d0d6b",
+        "PUB-af0615434805b8a9"
+      ]
+    },
+    "returns": {
+      "social": "分项更新直接受益对象为高龄、独居及低边老人住户：二次供水252户改善水质水压，加梯与适老化缓解上下楼和厨卫安全问题，已有百岁老人因电梯得以居家养老的个案记录。实施代价是分幢施工带来的短期通行与管线干扰，需临时过渡安排；实际成效与覆盖户数须以鉴定、验收记录核实。",
+      "financial": "政府侧：加梯补助20万元/台、管线迁移费用无需业主承担，市区补助为分项工程主要外部资金。居民侧：75幢1单元加梯草案估算约54万元/单元，系市区补助与自筹，属草案口径非到账。运营侧：电梯委托物业托管费议定为每台每月300元，构成持续维护支出。本项目综合整治总预算与出资到位情况均无记录。",
+      "evidence_refs": [
+        "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-17c3448c4356:PUB-2d6a2b0f4d28ccae",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:PUB-16c64d454a5024c2"
+      ]
+    },
+    "investment": {
+      "stage": "preliminary",
+      "reason": "准入结果为综合整治与拆建均未通过，且本项目结构可修复性、资金落实与维护责任均为未知，故先投向鉴定、设计与预算核价、居民协商记录等确定性有限的工作；以逐栋鉴定结论和分项居民同意、资金到位为下一阶段触发条件，二次供水与75幢1单元加梯按原文所载的准备/征求意见阶段对待。",
+      "conclusion": "现在值得投入，但只投前期与分项核实：先做逐栋结构鉴定、分项工程量与预算、居民分项意愿；不加梯开工、不启动拆建。",
+      "evidence_refs": [
+        "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023"
+      ]
+    }
+  },
+  "rationale_quotes_verified": 4,
+  "paths": [
+    {
+      "mode": "comprehensive",
+      "title": "综合整治·分项更新路径：以保留建筑为前提，逐栋核实后按分项打包实施",
+      "description": "保留现有建筑，按“先安全、后功能、再品质”排序：先做逐栋结构安全鉴定与消防、管网排查，再同步组织二次供水（29/30/31/48幢）、加装电梯、适老化与无障碍、公共空间和停车管理、康养服务衔接。该路径腾退压力小、居民可原地居住、单户现金支出可控，但对老管线和既有结构缺陷只能改善而非根治。",
+      "actions": [
+        {
+          "title": "逐栋结构与消防、管网排查，出具分项缺陷清单",
+          "detail": "向产权单位、住建与房管部门取得各幢安全鉴定意见及消防检查记录，重点核实70幢等反映倾斜、渗漏的楼幢；按幢形成“可修/需专项加固/需进一步评估”三类清单，作为分项更新范围和施工顺序依据。",
+          "evidence_refs": [
+            "PUB-5b0fef0db26d0d6b",
+            "PUB-af0615434805b8a9"
+          ]
+        },
+        {
+          "title": "打包二次供水与既有加梯、适老的施工接口",
+          "detail": "以29、30、31、48幢共252户为第一批次，按已形成的设计（直供+加压供给、水泵与水池管道提升、水表改造）核对现况与工程量；与已加装电梯楼幢及适老化改造住户的工作面错开排期，避免重复开挖。",
+          "evidence_refs": [
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023",
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-e8cca15f64ed:PUB-7accdf1ab8eea290"
+          ]
+        },
+        {
+          "title": "编制分项工程量与维修预算，明确资金与运维责任",
+          "detail": "按杭州当前价格年、同一费用范围分别列出各分项工程量、结算口径与分期资金，区分市区补助、居民自筹和公共收益；同步核对电梯托管等既有维护合同与费用，形成更新后年度维护支出与续筹安排。",
+          "evidence_refs": [
+            "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023"
+          ]
+        }
+      ],
+      "requirements": [
+        "取得逐栋结构安全鉴定与消防检查记录，明确哪些楼幢仅可修缮、哪些需专项加固或进一步评估。",
+        "核对各分项工程的现有设计（如二次供水）可实施状态、工程量与预算依据，避免沿用历史估算。",
+        "落实各分项居民意愿（分幢、分单元统计）与出资承受力，形成可执行的施工期临时保障安排。",
+        "明确更新后物业、设施接收与维护责任主体及年度维护费用来源。"
+      ]
+    },
+    {
+      "mode": "rebuild",
+      "title": "原拆原建·整体重建路径（对照）：仅当逐栋鉴定确认不可修复且拆建与决议条件齐备后成立",
+      "description": "以整片重建方式一次性解决结构与配套缺陷，可获得电梯、地下车位和公共配套的成套提升；但需先具备“结构不可修复或功能无法满足”的技术依据、规划与权属条件、全体业主决议及腾退过渡回搬与资金方案。本对象目前无任何一项对应记录，故只作为比选路径，不构成开工依据。",
+      "actions": [
+        {
+          "title": "取得拆建必要性的专项技术意见",
+          "detail": "在逐栋鉴定基础上，请产权单位与住建部门就存在倾斜、渗漏记录的楼幢出具不可修复或功能无法满足的专项意见；无此依据不得进入拆建方案设计。",
+          "evidence_refs": [
+            "PUB-5b0fef0db26d0d6b",
+            "PUB-af0615434805b8a9"
+          ]
+        },
+        {
+          "title": "核对权属、规划与保护条件，明确适用程序",
+          "detail": "核对不动产登记、学校教工住宅权属边界、可调整规划指标与保护名录，向属地主管部门确认原拆原建可采用的审批程序与容积率支持条件；杭州现行政策要求业主作为改造主体并100%同意方可实施。",
+          "evidence_refs": [
+            "PUB-af0615434805b8a9",
+            "PUB-72750052ed1b6930"
+          ]
+        },
+        {
+          "title": "按同口径测算全周期方案与居民出资承受力",
+          "detail": "参照杭州危旧房更新的分项口径（原面积出资、扩面购买、车位、过渡与回搬）编制现金流与资金峰值，先做逐户支付能力与意愿调查再判断可行性；本地对标数据仅作方法参考，不直接套用其金额。",
+          "evidence_refs": [
+            "MODE-ZHEGONG-20261012",
+            "PUB-62fc38dfe56bfeba"
+          ]
+        }
+      ],
+      "requirements": [
+        "取得逐栋安全鉴定中“不可修复或需整体重建”的专项技术意见。",
+        "落实权属与规划条件、通过全体业主决议并形成腾退、过渡与回搬方案。",
+        "完成拆除、新建、过渡及资金成本全口径比选，并核实政府与居民出资落实状态。",
+        "确认重建后新增配套的权属、运营主体与长期维护费用来源。"
+      ]
+    }
+  ],
+  "dimensions": [
+    {
+      "key": "demand",
+      "current_level": "medium",
+      "comprehensive_level": "high",
+      "rebuild_level": "unknown"
+    },
+    {
+      "key": "supply",
+      "current_level": "medium",
+      "comprehensive_level": "high",
+      "rebuild_level": "low"
+    },
+    {
+      "key": "adaptation",
+      "current_level": "low",
+      "comprehensive_level": "medium",
+      "rebuild_level": "unknown"
+    },
+    {
+      "key": "implementation",
+      "current_level": "medium",
+      "comprehensive_level": "high",
+      "rebuild_level": "low"
+    },
+    {
+      "key": "operations",
+      "current_level": "medium",
+      "comprehensive_level": "high",
+      "rebuild_level": "low"
+    },
+    {
+      "key": "resources",
+      "current_level": "low",
+      "comprehensive_level": "medium",
+      "rebuild_level": "low"
+    }
+  ],
+  "model_calls": [
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "duration_ms": 29717,
+      "input_tokens": 33639,
+      "output_tokens": 4701,
+      "finish_reason": "tool-calls"
+    },
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "duration_ms": 20599,
+      "input_tokens": 40126,
+      "output_tokens": 4641,
+      "finish_reason": "tool-calls"
+    },
+    {
+      "stage": "renewal_strategy_quote_repair",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "duration_ms": 30221,
+      "input_tokens": 33698,
+      "output_tokens": 4942,
+      "finish_reason": "tool-calls"
+    },
+    {
+      "stage": "renewal_strategy_quote_repair",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "duration_ms": 18533,
+      "input_tokens": 39541,
+      "output_tokens": 4966,
+      "finish_reason": "tool-calls"
+    }
+  ]
+}

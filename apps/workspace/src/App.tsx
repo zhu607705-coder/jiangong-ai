@@ -37,7 +37,9 @@ import { findRetrievalDecisionElement, findRetrievalFeatureElement, focusRetriev
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
-import StrategyOverview from './components/StrategyOverview';
+import StrategyOverview, { type StrategyDirectionSelection } from './components/StrategyOverview';
+import { MODE_LABELS } from '../../../packages/retrofit/renewal-mode';
+import { currentDirectionText } from './components/strategy-direction-text';
 import StrategyInvestigations from './components/StrategyInvestigations';
 import { DemoPlanVersions, DemoInvestigationPanel } from './components/CommunityDemoWorkflow';
 import ConstructionCostLibrary from './components/ConstructionCostLibrary';
@@ -206,11 +208,17 @@ export default function App() {
   });
   const demoSessionActive = !!project && project.id === completeDemoProject;
   const completeDemoActive = demoSessionActive && ['overview', 'compare', 'actions'].includes(tab);
+  const directionIdentity = project ? `${project.id}:${project.context_version}:${demoSessionActive}` : '';
+  const [directionSelection, setDirectionSelection] = useState<StrategyDirectionSelection | null>(null);
+  const [directionPacket, setDirectionPacket] = useState<{ identity: string; packet: StrategyPacket } | null>(null);
+  const currentDirection = directionSelection?.identity === directionIdentity ? directionSelection.mode : null;
+  const currentDirectionPath = currentDirection && directionPacket?.identity === directionIdentity ? directionPacket.packet.strategy?.paths.find(path => path.mode === currentDirection) : null;
   const [sourceFocus, setSourceFocus] = useState<{ projectId: string; contextVersion: number; refs: string[]; token: number } | null>(null);
   const [sourceTextFocus, setSourceTextFocus] = useState<{ projectId: string; contextVersion: number; sourceId: string; hit: RetrievalHit } | null>(null);
   const [sourceTextCheck, setSourceTextCheck] = useState<{ key: string; result: SourceHitFocusResult | null }>({ key: '', result: null });
   const [retrievalStrategy, setRetrievalStrategy] = useState<{ key: string; status: 'loading' | 'ready' | 'unavailable'; packet: StrategyPacket | null }>({ key: '', status: 'loading', packet: null });
   const [decisionFocus, setDecisionFocus] = useState<{ projectId: string; contextVersion: number; location: RetrievalDecisionLocation | RetrievalFeatureLocation; token: number } | null>(null);
+  const completedDecisionFocus = useRef<number | null>(null);
   const [askEvidenceRequest, setAskEvidenceRequest] = useState(0);
   const [evidenceLocation, setEvidenceLocation] = useState<{ projectId: string; contextVersion: number; documentId: string; version: string; locator: string; quote: string; token: number } | null>(null);
   const [modelAvailable, setModelAvailable] = useState(false);
@@ -275,6 +283,7 @@ export default function App() {
     return () => { cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
   }, [tab, project?.id, focusedSourceKey, sourceFocus?.token, sourceTextResolved?.status]);
   useEffect(() => { setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null); setDecisionFocus(null); }, [retrievalKey]);
+  useEffect(() => { setDirectionSelection(null); setDirectionPacket(null); }, [directionIdentity]);
   useEffect(() => {
     const controller = new AbortController();
     setRetrievalStrategy({ key: retrievalKey, status: 'loading', packet: null });
@@ -290,25 +299,28 @@ export default function App() {
     if (!project) return;
     setSourceFocus(null); setSourceTextFocus(null); setEvidenceLocation(null);
     setCompleteDemoProject(null);
+    completedDecisionFocus.current = null;
     try { localStorage.removeItem('hzz-complete-demo-project'); } catch {}
     setDecisionFocus(previous => ({ projectId: project.id, contextVersion: project.context_version, location, token: (previous?.token || 0) + 1 }));
     setTab(location.tab); setDetailsOpen(true);
   }
   useEffect(() => {
-    if (!decisionFocus || decisionFocus.projectId !== project?.id || decisionFocus.contextVersion !== project?.context_version || tab !== decisionFocus.location.tab) return;
+    if (!decisionFocus) { completedDecisionFocus.current=null; return; }
+    if (completedDecisionFocus.current===decisionFocus.token || decisionFocus.projectId !== project?.id || decisionFocus.contextVersion !== project?.context_version || tab !== decisionFocus.location.tab) return;
     let frame = 0, focused: HTMLElement | null = null;
     const attempt = () => {
       const target = 'detail' in decisionFocus.location ? findRetrievalFeatureElement(document, decisionFocus.location) : findRetrievalDecisionElement(document, decisionFocus.location);
       if (!target) return;
       observer.disconnect(); clearTimeout(timeout); focused = target; focusRetrievalElement(target);
-      setNotice(`已定位：${decisionFocus.location.label}`);
+      if(target.hasAttribute('data-retrieval-awaiting-direction'))setNotice('请先在改造方向判断页明确选择研究方向，再查看对应方案或评价。');
+      else { completedDecisionFocus.current=decisionFocus.token; setNotice(`已定位：${decisionFocus.location.label}`); }
     };
     const observer = new MutationObserver(() => { cancelAnimationFrame(frame); frame = requestAnimationFrame(attempt); });
     const timeout = setTimeout(() => { observer.disconnect(); cancelAnimationFrame(frame); setNotice('已打开对应页面，该引用条目暂未读取，请重试定位。'); }, 10000);
     observer.observe(document.body, { childList: true, subtree: true, attributes: true });
     attempt();
     return () => { observer.disconnect(); clearTimeout(timeout); cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
-  }, [project?.id, project?.context_version, tab, decisionFocus?.token]);
+  }, [project?.id, project?.context_version, tab, decisionFocus?.token, currentDirection]);
   async function loadProject(id: string) {
     const version = ++projectLoadVersion.current;
     const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
@@ -749,7 +761,7 @@ export default function App() {
               </span>
             </div>
           )}
-          {project.input.business_profile === 'neighborhood' && <div className="full-demo-mode-toolbar">
+          {project.input.business_profile === 'neighborhood' && <div className={`full-demo-mode-toolbar${demoSessionActive ? '' : ' is-real-project'}`}>
             <p>{completeDemoActive ? '全量模拟：六维现况、改造方案、月度运营和模拟台账均有完整数值与推算依据；支持版本对比与下一步调查。' : demoSessionActive ? '当前查看真实项目的材料与证据。模拟方案、版本对比和调查演示可通过顶部标签返回。' : '可查看真实项目资料，或打开全量模拟数据，演示政府工作人员掌握完整资料后的报表。'}</p>
             <button className="secondary" type="button" onClick={() => {
               const next = demoSessionActive ? null : project.id;
@@ -757,9 +769,9 @@ export default function App() {
               try { if (next) localStorage.setItem('hzz-complete-demo-project', next); else localStorage.removeItem('hzz-complete-demo-project'); } catch {}
             }}>{demoSessionActive ? '返回真实项目资料' : '打开完整数据模拟演示'}</button>
           </div>}
-          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} />}
+          {tab === 'overview' && project.input.business_profile === 'neighborhood' && <StrategyOverview key={`strategy-${project.id}-${completeDemoActive}`} project={project} demoActive={completeDemoActive} packet={packet} onEvidence={openEvidence} onInvestigate={() => setTab('actions')} publishedPlans={publicDecisions.items} onOpenPublishedPlan={openPublicDecision} directionSelection={directionSelection} onDirectionSelect={mode => { setDirectionSelection({ identity: directionIdentity, mode }); }} onStrategyResult={next => setDirectionPacket({ identity: directionIdentity, packet: next })} />}
           {tab === 'overview' && completeDemoActive && project.input.business_profile !== 'neighborhood' && <CompleteCommunityDemo key={`complete-demo-${project.id}`} project={project} />}
-          {tab === "overview" && !completeDemoActive && (
+          {tab === "overview" && !completeDemoActive && !currentDirection && (
             <details className="overview-legacy" open={project.input.business_profile !== 'neighborhood'}><summary>完整研判、计算与运行记录</summary>
               {run?.status === "failed" && (
                 <div className="feedback notice">
@@ -1400,10 +1412,10 @@ export default function App() {
               )}
             </section>
           )}
-          {tab === 'actions' && completeDemoActive && <DemoInvestigationPanel key={`demo-investigations-${project.id}`} project={project} />}
-          {tab === 'actions' && !completeDemoActive && project.input.business_profile === 'neighborhood' && <StrategyInvestigations project={project} onEvidence={openEvidence} />}
+          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <section className="content-panel strategy-current-investigations" data-retrieval-investigations="true" aria-label="当前方向调查与条件"><header><h2>{currentDirection ? `${MODE_LABELS[currentDirection]} · 调查与实施条件` : '先明确本次研究方向'}</h2><button className="secondary" onClick={() => setTab('overview')}>返回方案页面</button></header>{currentDirection && currentDirectionPath ? <><h3>当前方向的实施前提</h3>{currentDirectionPath.requirements.map(text => currentDirectionText(text, currentDirection)).filter(Boolean).map((text, index) => <article key={index}><h4>条件 {index + 1}</h4><p>{text}</p></article>)}<h3>当前方向的研究与行动</h3>{currentDirectionPath.actions.filter(action => currentDirectionText(action.title, currentDirection) || currentDirectionText(action.detail, currentDirection)).map(action => <article key={action.title}><h4>{currentDirectionText(action.title, currentDirection) || '本方向专项核实'}</h4><p>{currentDirectionText(action.detail, currentDirection)}</p>{!!action.evidence_refs.length && <button className="text-button" onClick={() => openEvidence(action.evidence_refs)}>查看本项依据</button>}</article>)}</> : <p>在“改造方向判断”中明确选择后，这里只显示该方向的研究任务和实施前提。</p>}</section>}
+          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <details className="strategy-historical-investigations"><summary>历史研判调查记录 · 不作为本次所选方向的任务</summary>{completeDemoActive ? <DemoInvestigationPanel key={`demo-investigations-${project.id}`} project={project} /> : <StrategyInvestigations project={project} onEvidence={openEvidence} />}</details>}
           {tab === "actions" && !completeDemoActive && (
-            <section className="content-panel" data-retrieval-investigations="true">
+            <details className="strategy-historical-investigations" open={project.input.business_profile !== 'neighborhood'}><summary>历史调查建议与已保存清单</summary><section className="content-panel">
               <div className="kicker">NEXT ACTIONS</div>
               <h2>优先调查，最可能改变判断的事</h2>
               <p className="intro">
@@ -1455,7 +1467,7 @@ export default function App() {
               ) : (
                 <p className="empty-text">完成首次研判后显示调查建议。</p>
               )}
-            </section>
+            </section></details>
           )}
         </>
       )}

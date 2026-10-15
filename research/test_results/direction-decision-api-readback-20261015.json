@@ -1,0 +1,172 @@
+{
+  "checked_at": "2026-10-15T08:11:48.858832+00:00",
+  "anonymous_readback": true,
+  "status": "completed",
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "context_version": 14,
+  "input_hash": "b8333f3354b98db3cc29ac3eb91ae3d27f96271becbe2d164c5f6a5a52619faa",
+  "publication": {
+    "kind": "current",
+    "is_current": true,
+    "current_input_hash": "b8333f3354b98db3cc29ac3eb91ae3d27f96271becbe2d164c5f6a5a52619faa",
+    "saved_at": "2026-10-15T08:10:41.901Z"
+  },
+  "source_count": 27,
+  "preferred_mode": "comprehensive",
+  "headline": "求是村建议走“保留建筑+分项综合整治”路径，逐栋鉴定后分层投入",
+  "decision_brief": {
+    "renewal": {
+      "reason": "求是村多数楼房建于90年代，2009年已翻新外立面；29、30、31、48幢252户的二次供水改造已完成踏勘、方案外审与一户一表签约，75幢1单元加梯已进入街道决策程序，属可按楼栋拆分的现成接口。而逐栋结构鉴定、拆除许可与权属条件全部缺失，整体拆建缺少硬约束支撑，故不做默认路径。",
+      "conclusion": "建议优先走保留建筑的分项综合整治：先做二次供水与泵房、逐幢加梯、管线与户内适老、公共空间补缺，整体拆建只作比选。",
+      "evidence_refs": [
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023",
+        "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db",
+        "PUB-af0615434805b8a9"
+      ]
+    },
+    "returns": {
+      "social": "主要受益者为社区33%的老年居民、高龄独居与低保低边户：供水水质水压改善惠及4幢252户，加梯解决上下楼，户内适老改造已在西湖区80户范围落地（12户改造中、刘奶奶家为首户完成）。实施代价是入户施工、泵房与管道断供期、老年住户过渡安排及后续电梯与设施维护支出；确有效果与运营数据须待逐户记录核实。",
+      "financial": "已知金额仅单幢口径：75幢1单元加梯估算约54万元，来自市区补助加居民自筹，属估算非结算。252户二次供水改造、泵房更新及适老化改造均无本项目金额。年度维护已见电梯托管每台每月300元（由600元协商下调）。政府补助于分项工程立项后按项核定；居民承担按户分摊，须待预算方能确定。本项目整体收支不足，不计算回报率。",
+      "evidence_refs": [
+        "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:PUB-da0641e4827c9eb7",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023"
+      ]
+    },
+    "investment": {
+      "stage": "construction",
+      "reason": "二次供水此前已排定待进场施工，加梯单幢估算约54万元、市区补助加自筹，属可招标可交付的口径；此类工程不需要等项目级整体方案。相反，本项目整体预算、已落实出资与全周期费用均无原文依据，居民决议与腾退安置也未核实，整体拆建不具备立项条件。",
+      "conclusion": "现进入工程实施前的分项投入：先投鉴定、设计与已开工的供水、加梯工程包，整体拆建维持暂缓不投入。",
+      "evidence_refs": [
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023",
+        "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+        "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db"
+      ]
+    }
+  },
+  "rationale_quotes_verified": 4,
+  "paths": [
+    {
+      "mode": "comprehensive",
+      "title": "路径A：保留建筑，按楼栋分项综合整治（建议）",
+      "description": "以保留现有建筑为前提，把求是村拆成可独立立项的分项工程：二次供水与泵房、逐幢加装电梯、楼道与管线、适老化与无障碍、公共空间与邻里服务。投入按“安全与管网优先—出行与适老—环境与服务”三批排序，每批以逐栋鉴定和居民分项意愿为开工前提。整体拆建不进入本路径，仅在个别楼栋鉴定结论明确不可修时才单独立项处置。",
+      "actions": [
+        {
+          "title": "编制逐栋问题清单与分项工程包",
+          "detail": "以29、30、31、48幢为起点，把水表老旧、管道锈蚀渗漏、泵房布局紧凑登记为工程量；每幢标注建成年代、2009年外立面翻新范围与后续单项改造记录。",
+          "evidence_refs": [
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:INTEL-cde2a3da3dd5:QS-water2023"
+          ]
+        },
+        {
+          "title": "复制75幢1单元的分幢加梯决策流程",
+          "detail": "参照已列入街道重大行政决策目录的做法，逐幢完成意愿征询、合法性审查和资金分担方案，明确市区补助与居民自筹比例，不把单幢54万元当作整小区造价。",
+          "evidence_refs": [
+            "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db"
+          ]
+        },
+        {
+          "title": "把电梯托管与三方协同写进整治后运维安排",
+          "detail": "沿用党组织、业委会、物业三方协商机制，将电梯托管费用每台每月300元与维护细则作为后续续筹依据；邻里中心等既有设施明确接收与运营主体。",
+          "evidence_refs": [
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-37c81c049883:QS-neighbor2025"
+          ]
+        }
+      ],
+      "requirements": [
+        "取得逐栋结构安全鉴定结论与修缮可行性意见，明确哪些楼栋只能单独立项处置。",
+        "逐幢核实产权与维修责任边界，确认施工范围、共有部位和入户作业的许可方式。",
+        "按2026年价格年编制分项工程预算与分期资金安排，注明已落实与计划出资的差别。"
+      ]
+    },
+    {
+      "mode": "rebuild",
+      "title": "路径B：整体拆建或拆改结合（条件未齐，仅作比选）",
+      "description": "按居民自主更新、原拆原建思路，在结构鉴定、拆除许可、权属与规划指标、业主决议、腾退过渡、同口径全周期测算六项条件齐备后启动。参考本项目所在城市的浙工新村与上海凤南一村、彭一小区，重建可新增电梯、地下车位与“一老一小”配套，户内面积和适老化水平跃升，但代价是居民自筹为主、过渡期长、楼幢与户型受规划指标约束。本路径下所有目标都以后述条件成立为实现前提。",
+      "actions": [
+        {
+          "title": "先做条件预判而非直接编制方案",
+          "detail": "向产权单位与住建部门取得逐栋安全鉴定，同时核对是否列入保护名录、拆除许可与容积率调整空间，任一硬约束不成立就退回路径A。",
+          "evidence_refs": [
+            "P-e417e04f-784d-4f93-af75-8c75964710e8:PUB-da0641e4827c9eb7",
+            "PUB-af0615434805b8a9"
+          ]
+        },
+        {
+          "title": "按浙工新村口径试算居民出资与过渡成本",
+          "detail": "以原面积1350元/㎡、扩面34520元/㎡、车位22.1万元等历史字段做敏感性试算，注明是2026年10月归档版本、含已扩面与专项资金口径，本项目未测算前不得视为居民负担结论。",
+          "evidence_refs": [
+            "MODE-ZHEGONG-20261012",
+            "PUB-ef3ee89b0e627c85"
+          ]
+        },
+        {
+          "title": "预置决议、腾退与回搬机制",
+          "detail": "参照“一楼幢一代表”居民代表组织与连续入户走访的经验组织意愿征询，同时排定过渡住房、租房补贴与回搬顺序，重点覆盖求是村高龄、低保低边住户。",
+          "evidence_refs": [
+            "PUB-d77a47f628facc42",
+            "PUB-a63cd753fa94df7b"
+          ]
+        }
+      ],
+      "requirements": [
+        "结构安全鉴定需明确存在不可修缮情形，且拆除不涉及保护名录与既有规划禁止性要求。",
+        "业主决议比例、筹资承受力与逐户支付能力调查完成，并形成可核对的签约记录。",
+        "过渡安置与回搬方案落实，老年人、低保低边户的过渡住房与补贴来源明确。"
+      ]
+    }
+  ],
+  "dimensions": [
+    {
+      "key": "demand",
+      "current_level": "high",
+      "comprehensive_level": "medium",
+      "rebuild_level": "low"
+    },
+    {
+      "key": "supply",
+      "current_level": "medium",
+      "comprehensive_level": "medium",
+      "rebuild_level": "medium"
+    },
+    {
+      "key": "adaptation",
+      "current_level": "medium",
+      "comprehensive_level": "medium",
+      "rebuild_level": "unknown"
+    },
+    {
+      "key": "implementation",
+      "current_level": "medium",
+      "comprehensive_level": "medium",
+      "rebuild_level": "unknown"
+    },
+    {
+      "key": "operations",
+      "current_level": "medium",
+      "comprehensive_level": "medium",
+      "rebuild_level": "unknown"
+    },
+    {
+      "key": "resources",
+      "current_level": "unknown",
+      "comprehensive_level": "medium",
+      "rebuild_level": "low"
+    }
+  ],
+  "model_calls": [
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "duration_ms": 29535,
+      "input_tokens": 31969,
+      "output_tokens": 4905,
+      "finish_reason": "tool-calls"
+    }
+  ]
+}

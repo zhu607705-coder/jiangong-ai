@@ -1526,6 +1526,30 @@
         "research/test_results/public-decisions-server-20261015.json"
       ],
       "evidence_log": "research/test_results/public-decisions-server-20261015.json"
+    },
+    {
+      "id": "T62",
+      "depends_on": [
+        "T61"
+      ],
+      "goal": "判断标准核心、主动API决策简报、方向前置与单向方案指标及技术报告",
+      "status": "completed_actual_api_direction_isolation_documents_and_public_deployment_verified",
+      "write_scope": [
+        "apps/",
+        "packages/",
+        "services/map-screening/",
+        "scripts/",
+        "docs/",
+        "tests/contracts/",
+        "research/test_results/",
+        "agent/"
+      ],
+      "definition_of_done": "真实模型给带引用的具体判断；人工明确选向后仅显示本方向方案与指标；匿名真实页面、阶段准入、报告与自测有实际证据。",
+      "upstream_verification_required": false,
+      "expected_artifacts": [
+        "research/test_results/decision-criteria-direction-completion-20261015.json"
+      ],
+      "evidence_log": "research/test_results/decision-criteria-direction-completion-20261015.json"
     }
   ]
 }

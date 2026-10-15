@@ -10,7 +10,7 @@ import type { Project } from '../../apps/workspace/src/api'
 vi.mock('../../apps/workspace/src/maps/RenewalModePanel', () => ({ default: () => null }))
 vi.mock('../../apps/workspace/src/components/CompleteCommunityDemo', () => ({ default: () => null }))
 vi.mock('../../apps/workspace/src/components/CommunityOperationsPanel', () => ({ default: () => null }))
-const project = { id: 'strategy-status', context_version: 0, name: '测试项目', input: fixture } as unknown as Project
+const project = { id: 'strategy-status', context_version: 0, name: '测试项目', input: { ...fixture, synthetic: false } } as unknown as Project
 const failed = { project_id: project.id, context_version: 0, input_hash: 'hash', created_at: '2026-10-15T03:30:51.777Z', synthetic: false, status: 'failed', strategy: null,
   sources: [{ id: 'SOURCE', title: '已取得的来源', text: '已保留原文。', url: null, published_at: null, role: 'current', locator: 'line:1' }],
   research: { queries: ['测试项目 综合整治'] }, error: 'LIVE_STAGE_FAILED:renewal_strategy:error',
@@ -104,7 +104,7 @@ test('historical rebuild output stays a comparison until the current nine-condit
   const {container,root}=await render({...failed,status:'completed',strategy,error:null})
   try{
     await vi.waitFor(()=>expect(container.querySelector('.strategy-summary h3')?.textContent).toContain('综合整治'))
-    expect(container.querySelector('.strategy-direction-label')?.textContent).toBe('当前研究基线：综合整治')
+    expect(container.querySelector('.strategy-direction-label')?.textContent).toBe('当前研究方向：综合整治')
     expect(container.querySelector('.strategy-summary')?.textContent).not.toContain('直接推荐整体拆建的旧标题')
     expect(container.querySelector('.strategy-search-record')?.textContent).toContain('历史模型原始方向')
   }finally{await act(async()=>root.unmount())}

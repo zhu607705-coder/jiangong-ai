@@ -1,0 +1,283 @@
+{
+  "revision": {
+    "path": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+    "before_sha256": "28d95f50157c7e5632c42de2b7ba3382b6fd1505ec711e32ed735e6067f0069d",
+    "after_sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+    "backup": "D:\\建工ai\\.cache\\decision-criteria-docx\\original-28d95f50157c7e56.docx",
+    "evidence": "D:\\建工ai\\research\\test_results\\decision-value-campus-v14-20261015T074703394Z.json",
+    "evidence_sha256": "1bb0410427675345f17de796b703f83ff37409f8de2e658cd7d40f8d9fdcacd3",
+    "changed_original_nodes": [
+      7,
+      11,
+      22,
+      31,
+      32,
+      33,
+      34,
+      39,
+      50,
+      77,
+      80,
+      85,
+      89,
+      90,
+      108,
+      109,
+      110,
+      111
+    ],
+    "inserted": [
+      {
+        "after_original_node": 33,
+        "text": "前五条定位支持12/12项核对，17/17条返回片段可回到当前资料版本；同题同资料快照前测为8/12项。两轮遗漏项与原始记录保留在附录B。该结果为自动流程自测，人工配对评价继续按上表执行。"
+      },
+      {
+        "after_original_node": 39,
+        "text": "使用者对六维分别设置0至5权重，至少一项为正，程序归一化使权重合计为100%。低、中、高适配依次记20、60、100；仅有唯一维度记录且引用能对应本次来源包的评价进入计算。已知贡献按“权重×等级分”加总；待评价部分保留20至100的可能范围，同时显示已评估权重比例。范围交叠时继续比较关键差异，资料补齐后再排序。偏好分值表达目标取舍，投资收益按资金与收支表核算，模式准入由独立条件决定。"
+      },
+      {
+        "before_original_node": 77,
+        "text": "本质区别在于“模型负责解释、程序负责判定”。模型把原文组织为案例、条件解释和备选方案；程序依次核对证据身份与范围、检查模式及行动条件、复算费用和收益，再结合用户明确设置的六维目标权重比较取舍。判断标准、触发依据、各维贡献和下一步行动可逐项回查，形成资料变化后能够更新的决策链。"
+      },
+      {
+        "after_original_node": 111,
+        "text": "同日较早的两文档、两问题自动浏览器自测保留原记录：逐份查看8.851秒，工作台路径39.389秒，后者包含一次筛选纠正；两次本地接口响应合计49.275毫秒。两轮资料、端点和操作不同，分别陈列，自动操作耗时不换算为人工节时。旧记录见research/test_results/decision-value-selftest-20261015.json。"
+      }
+    ],
+    "original_body_nodes": 115,
+    "after_body_nodes": 119,
+    "unchanged_package_members": 16,
+    "only_changed_member": "word/document.xml",
+    "saved_at": "2026-10-15T07:51:56.462696+00:00",
+    "render_status": "passed",
+    "runtime": {
+      "python": "C:\\Users\\123\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "bundled_libreoffice": "unavailable_on_windows",
+      "renderer": "WSL /usr/bin/libreoffice with isolated profile, authorized fallback"
+    },
+    "pagination_adjustment": "Condensed duplicated Appendix B wording while preserving all metrics and original record paths; clarified all nine gate conditions must be met.",
+    "render": {
+      "engine": "WSL /usr/bin/libreoffice 26.2.6.3, isolated UserInstallation profile; Windows bundled Poppler pdftoppm",
+      "fallback_authorization": "User AGENTS equivalent-tool route expressly authorized by root; bundled Windows LibreOffice unavailable",
+      "input_document": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+      "input_sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+      "pdf": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\render-input.pdf",
+      "pdf_sha256": "d202081a8b60a852fd5d5a35df91b301ca4dd47a4736b99271e80a30a5d96a10",
+      "page_count": 11,
+      "page_images_prefix": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\direction-final-page-",
+      "visually_reviewed_pages": [
+        5,
+        6,
+        11
+      ],
+      "reused_prior_review_pages": [
+        1,
+        2,
+        3,
+        4,
+        7,
+        8,
+        9,
+        10
+      ],
+      "verdict": "Final direction-flow paragraph visible on page 5; following page 6 and final appendix page 11 checked. No clipping, missing glyphs, overlap or new tail page. Original styles and appendices retained.",
+      "conversion_count_for_this_revision": 1,
+      "document_modified_by_render": false,
+      "timing_scope_preserved": "0.494 seconds remains the four-question automatic retrieval and original/version/snapshot check; no AI end-to-end duration or new accuracy claim added.",
+      "completed_at": "2026-10-15T08:40:56.081213+00:00"
+    },
+    "revision_history": [
+      {
+        "reason": "Restore substantive API analysis and conditional decision proposals after user correction",
+        "previous_sha256": "02ad28f9ff56a27bd1b5203647bb0007fecaec626a06a061e199a28e61c6c773",
+        "after_sha256": "6e2cacbb9c3c6c2fc9702075255f567342ca7ed41595406e135e3726a16263f1",
+        "previous_backup": "D:\\建工ai\\.cache\\decision-criteria-docx\\previous-02ad28f9ff56a27b.docx",
+        "edits": [
+          {
+            "body_node": 51,
+            "before": "项目展开后，DeepSeek Flash 先概括总体方案及主要举措；用户再查看综合整治与原拆原建的适用条件、支持原文和下一步取证点，切换现况与改后目标的六维对照。建设投资按工程范围计算，财务收支与社会效果分项比较；社区运营推演安排在最后一个子页面。",
+            "after": "项目展开后，现有DeepSeekHarness中的API模型主动阅读项目原文、归纳关键问题并比较两条更新路线，形成更新结论、投入阶段及财务与社会收益的条件化建议，首屏各项建议均附来源引用。建设投资按工程范围计算，财务收支与社会效果分项比较；社区运营推演安排在最后一个子页面。"
+          },
+          {
+            "body_node": 61,
+            "before": "模型负责解释、程序负责判定。DeepSeek 与 Qwen 复用 DeepSeekHarness 理解资料、关联经验、提出方案并解释支持与反对依据；程序检查来源版本、逐字引文、对象时点、金额单位和必要条件。证据缺失或冲突时，系统给出待核事项，拒绝将模型偏好写成确定性工程结论；已确认的否决条件不能被综合高分抵消。",
+            "after": "模型负责解释、程序负责判定。这里的解释包含实质分析与候选决策：DeepSeek与Qwen沿现有DeepSeekHarness分析资料、比较路线，提出有条件的更新和投资建议及其理由；程序复核证据、实施条件与数值，不以固定模板替代AI研判。证据缺失或冲突时，系统给出待核事项，拒绝将模型偏好写成确定性工程结论；已确认的否决条件不能被综合高分抵消。"
+          },
+          {
+            "body_node": 79,
+            "before": "本质区别在于“模型负责解释、程序负责判定”。模型把原文组织为案例、条件解释和备选方案；程序依次核对证据身份与范围、检查模式及行动条件、复算费用和收益，再结合用户明确设置的六维目标权重比较取舍。判断标准、触发依据、各维贡献和下一步行动可逐项回查，形成资料变化后能够更新的决策链。",
+            "after": "本质区别在于“模型负责解释、程序负责判定”。模型主动阅读原文、综合案例与项目条件，比较路线并提出更新、投资阶段及收益建议；程序核对证据身份与范围、实施条件与数值，再结合用户设置的六维目标权重比较取舍。判断标准、触发依据、各维贡献和下一步行动可逐项回查，形成资料变化后能够更新的决策链。"
+          }
+        ],
+        "saved_at": "2026-10-15T08:01:33.276072+00:00",
+        "render_status": "passed",
+        "render": {
+          "engine": "WSL /usr/bin/libreoffice 26.2.6.3 with isolated UserInstallation profile; bundled Poppler pdftoppm",
+          "fallback_authorization": "Existing root/user AGENTS equivalent-tool authorization; bundled Windows LibreOffice unavailable",
+          "pdf": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\render-input.pdf",
+          "pdf_sha256": "a2763c2fe0ec2c8ad23a72ec8c49368e024694d54f3a7fd07dedcc2c505cd8e3",
+          "page_count": 11,
+          "page_images_prefix": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\api-page-",
+          "visually_reviewed_pages": [
+            5,
+            6,
+            7,
+            11
+          ],
+          "reused_previous_visual_review_pages": [
+            1,
+            2,
+            3,
+            4,
+            8,
+            9,
+            10
+          ],
+          "verdict": "Three modified paragraphs reviewed on pages 5 and 7; page 6 and appendix page 11 checked for pagination. No clipping, overlap, missing glyphs, or new page. Existing structure and metrics retained.",
+          "conversion_count_for_this_revision": 1,
+          "completed_at": "2026-10-15T08:02:57.607117+00:00"
+        }
+      },
+      {
+        "reason": "Latest user workflow: direction judgment, explicit selection, then selected-direction-only detail; switching returns to judgment",
+        "previous_sha256": "6e2cacbb9c3c6c2fc9702075255f567342ca7ed41595406e135e3726a16263f1",
+        "after_sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+        "previous_backup": "D:\\建工ai\\.cache\\decision-criteria-docx\\previous-6e2cacbb9c3c6c2f.docx",
+        "edits": [
+          {
+            "body_node": 51,
+            "before": "项目展开后，现有DeepSeekHarness中的API模型主动阅读项目原文、归纳关键问题并比较两条更新路线，形成更新结论、投入阶段及财务与社会收益的条件化建议，首屏各项建议均附来源引用。建设投资按工程范围计算，财务收支与社会效果分项比较；社区运营推演安排在最后一个子页面。",
+            "after": "项目展开后先进入“改造方向判断”：API模型主动分析项目原文并按规则提出综合整治、原拆原建或资料不足的建议及理由，使用者明确选一路，两路比较集中在判断阶段。后台沿现有DeepSeekHarness一次生成两路方案；选择后，方案、现况及改后评价和全部指标只服务所选方向，切换本机展示不额外调用模型，换方向返回判断页，更新结论、投入阶段与财务及社会收益均保留来源引用，社区运营推演仍在末端。"
+          }
+        ],
+        "saved_at": "2026-10-15T08:04:35.282432+00:00",
+        "render_status": "passed",
+        "render": {
+          "engine": "WSL /usr/bin/libreoffice 26.2.6.3, isolated UserInstallation profile; Windows bundled Poppler pdftoppm",
+          "fallback_authorization": "User AGENTS equivalent-tool route expressly authorized by root; bundled Windows LibreOffice unavailable",
+          "input_document": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+          "input_sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+          "pdf": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\render-input.pdf",
+          "pdf_sha256": "d202081a8b60a852fd5d5a35df91b301ca4dd47a4736b99271e80a30a5d96a10",
+          "page_count": 11,
+          "page_images_prefix": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\direction-final-page-",
+          "visually_reviewed_pages": [
+            5,
+            6,
+            11
+          ],
+          "reused_prior_review_pages": [
+            1,
+            2,
+            3,
+            4,
+            7,
+            8,
+            9,
+            10
+          ],
+          "verdict": "Final direction-flow paragraph visible on page 5; following page 6 and final appendix page 11 checked. No clipping, missing glyphs, overlap or new tail page. Original styles and appendices retained.",
+          "conversion_count_for_this_revision": 1,
+          "document_modified_by_render": false,
+          "timing_scope_preserved": "0.494 seconds remains the four-question automatic retrieval and original/version/snapshot check; no AI end-to-end duration or new accuracy claim added.",
+          "completed_at": "2026-10-15T08:40:56.081213+00:00"
+        }
+      }
+    ],
+    "render_history": [
+      {
+        "engine": "WSL /usr/bin/libreoffice 26.2.6.3, isolated UserInstallation profile; Windows bundled Poppler pdftoppm",
+        "bundled_windows_libreoffice": "unavailable; equivalent tool expressly authorized by root from user AGENTS",
+        "pdf": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\render-input.pdf",
+        "pdf_sha256": "e78450023188440a2a29f6c3e7382b2bd68e3e6bb3d199d34b42d757875a1893",
+        "page_count": 11,
+        "page_images_prefix": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\final-page-",
+        "visually_reviewed_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "affected_pages": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          11
+        ],
+        "verdict": "All 11 final page images inspected; no clipping, overlap or missing Chinese glyphs. Source styles, tables, pictures and appendix structure retained. Condensed duplicate Appendix B prose eliminated the three-line page-12 tail.",
+        "conversion_count": 2,
+        "second_conversion_reason": "Necessary pagination repair after first preview showed three-line appendix tail on page 12.",
+        "cleanup_note": "Superseded first-preview page-12.png retained after automatic policy rejected its cleanup; final-page-01..11 are the current approved images.",
+        "completed_at": "2026-10-15T07:56:42.933279+00:00"
+      },
+      {
+        "engine": "WSL /usr/bin/libreoffice 26.2.6.3 with isolated UserInstallation profile; bundled Poppler pdftoppm",
+        "fallback_authorization": "Existing root/user AGENTS equivalent-tool authorization; bundled Windows LibreOffice unavailable",
+        "pdf": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\render-input.pdf",
+        "pdf_sha256": "a2763c2fe0ec2c8ad23a72ec8c49368e024694d54f3a7fd07dedcc2c505cd8e3",
+        "page_count": 11,
+        "page_images_prefix": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\api-page-",
+        "visually_reviewed_pages": [
+          5,
+          6,
+          7,
+          11
+        ],
+        "reused_previous_visual_review_pages": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          10
+        ],
+        "verdict": "Three modified paragraphs reviewed on pages 5 and 7; page 6 and appendix page 11 checked for pagination. No clipping, overlap, missing glyphs, or new page. Existing structure and metrics retained.",
+        "conversion_count_for_this_revision": 1,
+        "completed_at": "2026-10-15T08:02:57.607117+00:00"
+      }
+    ],
+    "final_frozen_at": "2026-10-15T08:40:56.081213+00:00"
+  },
+  "render": {
+    "engine": "WSL /usr/bin/libreoffice 26.2.6.3, isolated UserInstallation profile; Windows bundled Poppler pdftoppm",
+    "fallback_authorization": "User AGENTS equivalent-tool route expressly authorized by root; bundled Windows LibreOffice unavailable",
+    "input_document": "C:\\Users\\123\\.codex\\visualizations\\2026\\10\\14\\01a139b9-0d2c-7fb2-b1fb-8a4495c923ab\\document-revision\\海之子_老旧小区改造研判工作台_技术路径修订_20261014.docx",
+    "input_sha256": "5e3dde134eef30acf68a50c45ae13dd5a245141b175dc1ea62cdf518ccd1dd9b",
+    "pdf": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\render-input.pdf",
+    "pdf_sha256": "d202081a8b60a852fd5d5a35df91b301ca4dd47a4736b99271e80a30a5d96a10",
+    "page_count": 11,
+    "page_images_prefix": "D:\\建工ai\\.cache\\decision-criteria-docx\\render\\direction-final-page-",
+    "visually_reviewed_pages": [
+      5,
+      6,
+      11
+    ],
+    "reused_prior_review_pages": [
+      1,
+      2,
+      3,
+      4,
+      7,
+      8,
+      9,
+      10
+    ],
+    "verdict": "Final direction-flow paragraph visible on page 5; following page 6 and final appendix page 11 checked. No clipping, missing glyphs, overlap or new tail page. Original styles and appendices retained.",
+    "conversion_count_for_this_revision": 1,
+    "document_modified_by_render": false,
+    "timing_scope_preserved": "0.494 seconds remains the four-question automatic retrieval and original/version/snapshot check; no AI end-to-end duration or new accuracy claim added.",
+    "completed_at": "2026-10-15T08:40:56.081213+00:00"
+  }
+}

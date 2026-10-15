@@ -283,6 +283,24 @@ describe('saved public source text in the same project retrieval', () => {
   const literalRanker: RetrievalRanker = async (input, query) => ({ matches: input.sources
     .filter(source => source.untrusted_text!.includes(query)).slice(0, 5).map(source => ({ source_id: source.id, score: 1 })) })
 
+  it('retrieves separate cost and consultation attributes through one complete same-project building and unit locator', async () => {
+    const cost = original('LOCAL-COST', '估算总投资约38万元，建设资金来自补助及居民自筹。', { title: '桂苑村第１８栋第２单元加装电梯草案附件', evidence_scope: 'object' })
+    const notice = original('LOCAL-NOTICE', '现将决策草案征求意见，征集意见期限为2024年6月1日至6月30日。', { title: '桂苑村18号楼2单元电梯加装意见公告', evidence_scope: 'object' })
+    const wrongUnit = original('OTHER-UNIT', '加装电梯投资估算、建设资金来源及征求意见资料。', { title: '桂苑村18幢3单元', evidence_scope: 'object' })
+    const neighbour = original('NEIGHBOUR', '加装电梯投资估算、建设资金来源及征求意见资料。', { title: '桂园社区18幢2单元', evidence_scope: 'object' })
+    const sources = [wrongUnit, neighbour, ...Array.from({ length: 7 }, (_, i) => original(`GENERAL-${i}`, '加装电梯投资估算和建设资金为城市更新的重要内容。')), cost, notice]
+    const current = { ...project(sources), name: '桂苑村', input: { ...input('RAG-A', sources), scope: { ...input('RAG-A').scope, name: '桂苑村' } } }
+    const ranker: RetrievalRanker = async value => ({ matches: value.sources.slice(0, 5).map(source => ({ source_id: source.id, score: 1 })) })
+    const request = { question: '桂苑村十八幢二单元加装电梯的投资估算、建设资金来源和公告征求意见阶段是什么？', limit: 5 }
+    const response = await retrieveProjectEvidence(current, bundle([], sources), [], request, ranker)
+    expect(response.hits.slice(0, 2).map(hit => hit.source.id).sort()).toEqual([cost.id, notice.id].sort())
+    expect(response.hits.find(hit => hit.source.id === cost.id)?.text).toBe(cost.untrusted_text)
+    expect(response.hits.find(hit => hit.source.id === notice.id)?.text).toBe(notice.untrusted_text)
+    expect(response.hits.find(hit => hit.source.id === cost.id)?.match_reasons.join()).toContain('完整定位对应')
+    const missing = await retrieveProjectEvidence(current, bundle([], sources), [], { question: '桂苑村18幢2单元的量子纠缠实验是什么？' }, ranker)
+    expect(missing.hits).toEqual([])
+  })
+
   it('retrieves elevator, parking, funds and rebuilding originals when the project has no uploaded files', async () => {
     const sources = [original('LIFT', '电梯托管费用由每台每月600元降至300元。'),
       original('PARK', '停车位安排需要核对权属与周转需求。'), original('FUND', '资金主要用于共有部分维修、更新、改造。'),

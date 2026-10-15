@@ -1,7 +1,7 @@
 import type { ModelCall, RenewalStrategy, DecisionSupport, ResearchTrace } from '../../apps/host/generated/contracts'
 import { evaluateRenewalModeGate, type ModeCondition } from './renewal-mode'
 
-export const STRATEGY_POLICY = 'renewal-strategy-overview-v3'
+export const STRATEGY_POLICY = 'renewal-strategy-overview-v5'
 export type StrategySource = { id: string; title: string; text: string; url: string | null; published_at: string | null; role: 'current' | 'reference'; locator: string }
 export type StrategyPublication = { kind: 'current' | 'saved_snapshot'; is_current: boolean; current_input_hash: string; saved_at: string }
 export type PublicStrategyIndexItem = { project_id: string; project_name: string; context_version: number; strategy_context_version: number; created_at: string; headline: string; status: 'completed'; synthetic: false; is_current: boolean; input_hash: string }
@@ -44,8 +44,8 @@ export function strategyFailure(error: unknown, calls: readonly ModelCall[], opt
   else if (options.timedOut || provider === 'TIMEOUT') code = 'MODEL_TIMEOUT'
   else if (provider === 'AUTH' || provider === 'INVALID_CREDENTIAL') code = 'MODEL_AUTH_FAILED'
   else if (provider === 'RATE_LIMIT') code = 'MODEL_RATE_LIMITED'
-  else if (provider === 'MALFORMED_RESPONSE' || provider === 'EMPTY_RESPONSE' || parsed?.[2] === 'max-tokens' || error instanceof Error && error.name === 'ContractError' || message === 'STRATEGY_INCOMPLETE') code = 'MODEL_OUTPUT_INVALID'
-  else if (/^STRATEGY_(QUOTE_MISMATCH|SOURCE_MISMATCH|OBJECT_EVIDENCE_MISSING|MODE_RESTRICTED|REBUILD_GATE_UNMET)$/.test(message)) code = 'STRATEGY_EVIDENCE_INVALID'
+  else if (provider === 'MALFORMED_RESPONSE' || provider === 'EMPTY_RESPONSE' || parsed?.[2] === 'max-tokens' || error instanceof Error && error.name === 'ContractError' || /^STRATEGY_(INCOMPLETE|DECISION_BRIEF_REQUIRED|BRIEF_INCOMPLETE|PATH_DIRECTION_MIXED)$/.test(message)) code = 'MODEL_OUTPUT_INVALID'
+  else if (/^STRATEGY_(QUOTE_MISMATCH|SOURCE_MISMATCH|OBJECT_EVIDENCE_MISSING|MODE_RESTRICTED|REBUILD_GATE_UNMET|BRIEF_EVIDENCE_MISSING|CONSTRUCTION_GATE_UNMET)$/.test(message)) code = 'STRATEGY_EVIDENCE_INVALID'
   else if (provider) code = 'MODEL_PROVIDER_FAILED'
   else if (options.stage === 'research') code = 'RESEARCH_FAILED'
   const diagnostic: StrategyDiagnostic = { code, ...(parsed ? { stage: parsed[1], stop_reason: parsed[2] } : {}), ...(provider ? { provider_code: provider } : {}) }
@@ -90,7 +90,15 @@ export function strategyPromptSources(sources: readonly StrategySource[]): Strat
 }
 
 const literal = (value: string) => value.normalize('NFKC').replace(/\s+/g, '')
-export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = []) {
+/** Current workbench investment-stage admission, separate from statutory or professional approval. */
+export function strategyConstructionAllowed(mode: RenewalStrategy['preferred_mode'], conditions: ModeCondition[], sources: readonly StrategySource[]): boolean {
+  const gate = evaluateRenewalModeGate({conditions}), currentIds = new Set(sources.filter(source=>source.role==='current').map(source=>source.id))
+  const citedAtObject = (kind: string, expected: boolean) => conditions.some(row=>row.kind===kind&&row.value===expected&&row.state===(expected?'supported':'restricted')&&row.source_ids.some(id=>currentIds.has(id))&&row.locators.some(locator=>locator.trim()))
+  if (gate.checks.find(row=>row.kind==='funding_secured')?.state!=='met'||!citedAtObject('funding_secured',true)) return false
+  if (mode==='rebuild') return gate.rebuild_allowed&&gate.checks.every(row=>citedAtObject(row.kind,row.kind!=='structure_repairable'))
+  return mode==='comprehensive'&&gate.checks.find(row=>row.kind==='structure_repairable')?.state==='unmet'&&citedAtObject('structure_repairable',true)
+}
+export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false) {
   if (value.paths.length !== 2 || new Set(value.paths.map(path => path.mode)).size !== 2 || value.dimensions.length !== 6 || new Set(value.dimensions.map(row => row.key)).size !== 6) throw new Error('STRATEGY_INCOMPLETE')
   const ids = new Set(sources.map(source => source.id))
   for (const row of value.rationale) {
@@ -101,5 +109,21 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
   if (!value.rationale.some(row => sources.find(source => source.id === row.source_id)?.role === 'current')) throw new Error('STRATEGY_OBJECT_EVIDENCE_MISSING')
   if (value.preferred_mode==='comprehensive'&&conditions.some(row=>row.kind==='structure_repairable'&&row.value===false)||value.preferred_mode==='rebuild'&&conditions.some(row=>row.kind==='demolition_permitted'&&row.value===false)) throw new Error('STRATEGY_MODE_RESTRICTED')
   if (value.preferred_mode==='rebuild'&&!evaluateRenewalModeGate({conditions}).rebuild_allowed) throw new Error('STRATEGY_REBUILD_GATE_UNMET')
+  const brief = value.decision_brief
+  if (requireBrief && !brief) throw new Error('STRATEGY_DECISION_BRIEF_REQUIRED')
+  if (brief) {
+    const texts = [brief.renewal?.conclusion, brief.renewal?.reason, brief.investment?.conclusion, brief.investment?.reason, brief.returns?.financial, brief.returns?.social]
+    if (texts.some(text => typeof text !== 'string' || !text.trim()) || !['preliminary','construction','hold'].includes(brief.investment?.stage)) throw new Error('STRATEGY_BRIEF_INCOMPLETE')
+    for (const row of [brief.renewal, brief.investment, brief.returns]) {
+      if (!Array.isArray(row.evidence_refs) || !row.evidence_refs.length) throw new Error('STRATEGY_BRIEF_EVIDENCE_MISSING')
+      if (row.evidence_refs.some(id => typeof id !== 'string' || !id.trim() || !ids.has(id))) throw new Error('STRATEGY_SOURCE_MISMATCH')
+    }
+    if (requireBrief&&brief.investment.stage==='construction'&&!strategyConstructionAllowed(value.preferred_mode,conditions,sources)) throw new Error('STRATEGY_CONSTRUCTION_GATE_UNMET')
+  }
+  if (requireBrief) for (const mode of ['comprehensive','rebuild'] as const) {
+    const path = value.paths.find(path=>path.mode===mode)!
+    const text = [path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail]),...path.requirements,...value.dimensions.map(dimension=>dimension[mode])].map(literal).join('\n')
+    if ((mode==='comprehensive'?/原拆原建|整体拆建|整体拆除重建/:/综合整治/).test(text)) throw new Error('STRATEGY_PATH_DIRECTION_MIXED')
+  }
   return value
 }

@@ -1927,6 +1927,36 @@ export interface OperationsWorkspace {
  * via the `definition` "RenewalStrategy".
  */
 export interface RenewalStrategy {
+  decision_brief?: {
+    renewal: {
+      conclusion: string;
+      reason: string;
+      /**
+       * @minItems 1
+       * @maxItems 8
+       */
+      evidence_refs: string[];
+    };
+    investment: {
+      conclusion: string;
+      reason: string;
+      stage: "preliminary" | "construction" | "hold";
+      /**
+       * @minItems 1
+       * @maxItems 8
+       */
+      evidence_refs: string[];
+    };
+    returns: {
+      financial: string;
+      social: string;
+      /**
+       * @minItems 1
+       * @maxItems 8
+       */
+      evidence_refs: string[];
+    };
+  };
   headline: string;
   summary: string;
   preferred_mode: "comprehensive" | "rebuild" | "compare";

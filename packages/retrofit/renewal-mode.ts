@@ -39,15 +39,15 @@ export type RenewalModeGate = {
 }
 
 const rebuildChecks = [
-  { kind: 'structure_repairable', label: '现有结构修缮不可行', group: 'necessity', expected: false, detail: '现有字段可核实的必要性触发为：本对象专业鉴定或修缮论证明确不能通过修缮解决。房龄、C级标签和模型偏好不能代替该结论。' },
-  { kind: 'demolition_permitted', label: '拆除与保护条件允许', group: 'feasibility', expected: true, detail: '核对本对象拆除程序及保护要求，确认没有禁止拆除的约束。' },
+  { kind: 'structure_repairable', label: '现有结构修缮不可行', group: 'necessity', expected: false, detail: '以本对象逐栋专业鉴定和修缮论证，确认结构问题无法通过修缮解决的楼栋、范围及处置要求。' },
+  { kind: 'demolition_permitted', label: '拆除与保护条件允许', group: 'feasibility', expected: true, detail: '核对本对象拆除程序、保护要求与允许实施的楼栋范围，取得属地主管部门确认。' },
   { kind: 'rights_clear', label: '权属与实施边界明确', group: 'feasibility', expected: true, detail: '以本对象不动产和共有权益记录确认权利主体、边界与实施责任。' },
   { kind: 'rebuild_planning_confirmed', label: '重建规划条件已确认', group: 'feasibility', expected: true, detail: '确认本对象适用的规划条件、新建指标和主管部门程序。' },
-  { kind: 'resident_resolution_valid', label: '适用的居民决议有效', group: 'feasibility', expected: true, detail: '按本对象适用程序核验决议范围、记录及效力，不套用对标案例的同意比例。' },
+  { kind: 'resident_resolution_valid', label: '适用的居民决议有效', group: 'feasibility', expected: true, detail: '按本项目适用程序，核验居民决议的参与范围、表决记录与生效条件。' },
   { kind: 'relocation_ready', label: '腾退、过渡与回搬已落实', group: 'feasibility', expected: true, detail: '核验逐户安置、过渡保障、回搬和特殊居民安排。' },
-  { kind: 'funding_secured', label: '本项目资金已落实', group: 'feasibility', expected: true, detail: '落实责任主体、出资承诺、到位时点与现金流缺口；政策补助和其他案例金额不能代替项目资金。' },
-  { kind: 'life_cycle_cost_compared', label: '同口径全周期方案已比选', group: 'feasibility', expected: true, detail: '比较修缮与重建的建设、腾退、过渡和运维费用及服务效果；已比选不表示拆建更优，不构造统一费用比值。' },
-  { kind: 'maintenance_entity_confirmed', label: '后续维护责任已确认', group: 'feasibility', expected: true, detail: '确认交付后的管理主体、维护资金和居民长期负担。' },
+  { kind: 'funding_secured', label: '本项目资金已落实', group: 'feasibility', expected: true, detail: '逐项登记责任主体、出资承诺、到位时点和现金流缺口，形成覆盖建设与过渡期的资金安排。' },
+  { kind: 'life_cycle_cost_compared', label: '同口径全周期方案已比选', group: 'feasibility', expected: true, detail: '在同一范围和价格年，比较修缮与重建的建设（含拆除）、腾退过渡、运维费用及使用效果，形成两方案费用—效果表。' },
+  { kind: 'maintenance_entity_confirmed', label: '后续维护责任已确认', group: 'feasibility', expected: true, detail: '确认交付后的接管主体、年度维护预算、资金来源和居民长期负担。' },
 ] as const
 
 /** Project screening gate, not a statutory numeric threshold or an engineering approval. */
@@ -68,9 +68,9 @@ export function evaluateRenewalModeGate(input: Pick<RenewalModeInput, 'condition
   const direction = rebuild_allowed ? 'rebuild' : unsafeToRepair || conflict ? 'investigate' : 'comprehensive'
   const firstMissing = checks.find(row => row.state === 'conflict') || checks.find(row => row.state !== 'met')
   const standard = MODE_STANDARD.find(row => row.kinds.some(kind => kind === firstMissing?.kind)) || MODE_STANDARD[0]
-  const summary = rebuild_allowed ? '本对象已触发结构修缮不可行条件，拆建实施前提已登记满足，原拆原建可优先开展前期论证。'
-    : direction === 'investigate' ? unsafeToRepair ? '已确认现有结构修缮不可行；拆建前提尚未全部满足，先核查缺项并安排专项处置。' : '关键条件记录存在冲突，先核实原件；综合整治继续作为两方案比选基线。'
-    : '综合整治优先研究，保留建筑作为比选基线；拆建必要性与实施前提尚未全部核实。'
+  const summary = rebuild_allowed ? '拆建必要性与八项实施前提均已核实，原拆原建优先开展前期论证，明确投入、过渡安排和长期使用效果。'
+    : direction === 'investigate' ? unsafeToRepair ? '现有结构修缮不可行已得到确认，先安排专项处置与拆建论证，同步落实规划、居民、安置和资金条件。' : '先核对存在分歧的条件与来源，形成一致的项目条件记录，再比较两条更新路径。'
+    : '综合整治优先研究：以保留建筑、分项更新组织方案，逐栋核实结构、改造范围与实施条件。'
   return { policy_version: 'renewal-mode-gate-v1', baseline: 'comprehensive', direction, rebuild_allowed, checks, summary,
     next_step: rebuild_allowed ? '在逐栋技术方案中核对修缮与重建的费用和效果结论，按属地程序开展原拆原建前期论证。' : standard.task }
 }
