@@ -5,6 +5,7 @@ import { config } from '../../apps/host/config'
 import { projectDecisionInput } from '../../packages/decision/structured-route'
 import { validateStrategy, strategyPromptSources, strategyModelReferences, STRATEGY_PROMPT_SOURCE_CHARS, type StrategySource, type StrategyPacket, type StrategyProgress } from '../../packages/retrofit/strategy'
 import { withConcreteWorkPlan, withReasoningDimensions } from './fixtures/strategy-work-plan'
+import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 
 const ports=vi.hoisted(()=>({open:vi.fn(),workflow:vi.fn()}))
 vi.mock('../../runtime/dsh/live-session',()=>({LiveSession:{open:ports.open}}))
@@ -187,6 +188,44 @@ it('projects unrequested round history away and repairs the actual failed JSON u
   const choices=JSON.parse(repair.match(/<repair_quote_candidates>(.*?)<\/repair_quote_candidates>/s)![1])
   expect(choices.some((row:{source_id:string;quotes:string[]})=>row.source_id===alias&&row.quotes.includes(source.text))).toBe(true)
   expect(JSON.stringify(mistaken)).toBe(original);expect(fetch).not.toHaveBeenCalled()
+})
+it('projects invented comparisons out of a parentless later attempt while retaining the existing work-plan repair',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const reference:StrategySource={...source,id:'COMMUNITY',role:'reference',title:'演示社区范围运营背景'}
+  const repaired=withReasoningDimensions(strategy())
+  repaired.round_review={summary:'本次形成对象分项方案与运营待核口径。',changes:[{topic:'社区运营',before:'无历史记录。',after:'按本轮社区资料形成候选措施。',reason:'社区资料用于运营机制参考。',evidence_refs:[reference.id]}],missing_materials:[{topic:'维保',request:'补充本对象维保协议。',reason:'核实责任与实际费用。',evidence_refs:[]}]}
+  const initial=structuredClone(repaired);for(const path of initial.paths)delete path.work_packages
+  const frozen=JSON.stringify({initial,repaired})
+  expect(()=>validateStrategy(repaired,[source,reference],[],true,true,true,true)).toThrow('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  const call=vi.fn().mockResolvedValueOnce({value:initial}).mockResolvedValueOnce({value:repaired})
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const roundContext:ResearchRoundContext={round_id:'ROUND-ATTEMPT-5',round_number:5,parent:null,allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-ATTEMPT-5',first_input_hash:'current',first_context_version:0}
+  const result=await researchRenewalStrategy(project,0,input,'current',false,new AbortController().signal,null,{roundContext,referenceSources:[reference]})
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[0][1]).toContain('第5次研究尝试');expect(call.mock.calls[0][1]).toContain('未选择历史AI分析作为对照')
+  const repairPrompt=call.mock.calls[1][1] as string
+  expect(repairPrompt).toContain('STRATEGY_WORK_PACKAGES_REQUIRED')
+  expect(repairPrompt).not.toContain('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  expect(result.strategy?.round_review).toEqual({...repaired.round_review,changes:[]})
+  expect(result.strategy?.paths).toEqual(repaired.paths)
+  expect(result.strategy?.reasoning_dimensions).toHaveLength(6)
+  expect(validateStrategy(result.strategy!,result.sources,[],true,true,true,true)).toBe(result.strategy)
+  expect(JSON.stringify({initial,repaired})).toBe(frozen);expect(fetch).not.toHaveBeenCalled()
+})
+it('keeps real-parent comparisons subject to their original object evidence gate',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const reference:StrategySource={...source,id:'COMMUNITY',role:'reference',title:'演示社区范围运营背景'}
+  const value=strategy();value.round_review={summary:'对照已有历史分析。',changes:[{topic:'社区运营',before:'已有分项候选。',after:'按社区资料调整运营。',reason:'社区背景不等于本对象新增依据。',evidence_refs:[reference.id]}],missing_materials:[]}
+  const call=vi.fn().mockResolvedValue({value});ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const parent:StrategyPacket={project_id:project.project_id,context_version:0,input_hash:'prior',created_at:'2026-10-15T00:00:00Z',synthetic:false,status:'completed',strategy:strategy(),sources:[source],decision:null,model_calls:[],research:null,error:null}
+  const roundContext:ResearchRoundContext={round_id:'ROUND-WITH-PARENT',round_number:6,parent:{id:'ROUND-PRIOR',input_hash:'prior',context_version:0,result:parent},allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-PRIOR',first_input_hash:'prior',first_context_version:0}
+  const result=await researchRenewalStrategy(project,0,input,'current',false,new AbortController().signal,null,{roundContext,referenceSources:[reference]})
+  expect(result.status).toBe('failed');expect(result.diagnostic?.code).toBe('STRATEGY_EVIDENCE_INVALID')
+  expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[1][1]).toContain('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  expect(value.round_review.changes).toHaveLength(1);expect(fetch).not.toHaveBeenCalled()
 })
 it('round-trips scoped reference fields without changing quotes, locators or work identities and rejects unknown IDs',()=>{
   const value=strategy(),refs=strategyModelReferences([source]),before=JSON.stringify(value)

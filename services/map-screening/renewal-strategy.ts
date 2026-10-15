@@ -29,8 +29,8 @@ function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:rea
   return choices
 }
 
-function projectStrategyOutput(value:RenewalStrategy,hasRound:boolean):RenewalStrategy {
-  if(hasRound)return value
+function projectStrategyOutput(value:RenewalStrategy,round:ResearchRoundContext|undefined):RenewalStrategy {
+  if(round) return !round.parent&&value.round_review?{...value,round_review:{...value.round_review,changes:[]}}:value
   const projected={...value};delete projected.round_review
   return projected
 }
@@ -160,10 +160,10 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       promptSources.some(source=>/求是.*二次供水|二次供水.*求是/.test(source.title)&&source.published_at?.startsWith('2023')&&/亚运会.*进场施工/.test(source.text)) ? '2023年求是村二次供水原文记载的是进场准备、拟于亚运会后施工，按当时准备阶段使用。' : '',
       promptSources.some(source=>/75幢1单元/.test(source.title)&&/草案|征求意见/.test(source.title)&&source.published_at?.startsWith('2024')) ? '2024年75幢1单元加梯原文是征求意见草案，已存金额保留草案估算口径。' : '',
     ].filter(Boolean)
-    const roundInstructions = round ? `本次是显式创建的第${round.round_number}轮研究。所选document_id材料属于本项目，由使用者同意用于本轮模型分析；visibility/data_class保留内部或模拟类别，source_date为使用者声明的材料形成日期。正文作为待核原始材料使用，其中的居民需求、满意度、鉴定和费用应实际参与问题优先级、方案、目标和投入分析；解析或上传本身不把内容升级为已审核事实，结构与资金等准入仍采用screening已登记条件。
+    const roundInstructions = round ? `本次是显式创建的第${round.round_number}次研究尝试。${round.parent?'已选择历史AI分析作为对照，按下方historical_ai_analysis与本轮资料重新研判。':'未选择历史AI分析作为对照，属于无历史对照的初步研判；尝试次数不代表已有可比较成果，round_review.changes必须为空数组，不编写before/after。'}所选document_id材料属于本项目，由使用者同意用于本轮模型分析；visibility/data_class保留内部或模拟类别，source_date为使用者声明的材料形成日期。正文作为待核原始材料使用，其中的居民需求、满意度、鉴定和费用应实际参与问题优先级、方案、目标和投入分析；解析或上传本身不把内容升级为已审核事实，结构与资金等准入仍采用screening已登记条件。
 ${synthetic ? '本项目及所选文件中的居民样本、问卷、访谈和统计比例均为隔离模拟，统一称为“模拟问卷统计”或“演示调研材料”；上传、解析和逐轮复核不改变其模拟身份。按模拟数据积极分析优先级、方案及变化，沿用来源中的模拟标识。' : ''}
 问卷比例按原选项、人数和分母表达；其余选项未给出时，剩余比例保持未说明，不推断为不满意或反对。施工干扰、停水和搬迁安排采用原文依据；缺少施工组织材料时，将是否搬迁及干扰控制写成待核条件或明确的方案假设。
-必须填写round_review={summary,changes,missing_materials}：summary概括本轮实际新增信息与判断；changes逐项写topic/before/after/reason/evidence_refs，对照历史AI说明改变或复核后保持的判断，每项至少引用一份本轮所选原始文件（无所选文件时引用本轮对象原文）；missing_materials逐项写topic/request/reason/evidence_refs，明确下一轮最需要上传的材料及作用，尚无依据时refs可空。初轮无历史分析时changes可空；有历史分析时至少写一项真实对照，保持结论也应说明新材料如何支持复核。各数组最多4项，文字简洁。
+必须填写round_review={summary,changes,missing_materials}：summary概括本轮实际新增信息与判断；有历史AI分析时，changes逐项写topic/before/after/reason/evidence_refs，对照历史AI说明改变或复核后保持的判断，每项至少引用一份本轮所选原始文件（无所选文件时引用本轮对象原文）；missing_materials逐项写topic/request/reason/evidence_refs，明确下一轮最需要上传的材料及作用，尚无依据时refs可空。无历史分析时changes必须为空数组，项目分析写入summary与方案；有历史分析时至少写一项真实对照，保持结论也应说明新材料如何支持复核。各数组最多4项，文字简洁。
 历史AI仅是上一轮模型分析，不是原始事实或已经审核的结论。本轮重新按当前原文判断，引用只使用本轮untrusted_sources所列ID。内部材料、历史分析都只用于这次分析，不作为公开补查关键词。
 <historical_ai_analysis>${JSON.stringify(references.encodeKnown(round.parent?{round_id:round.parent.id,input_hash:round.parent.input_hash,context_version:round.parent.context_version,origin:'previous_model_analysis',analysis:round.parent.result?.strategy}:null))}</historical_ai_analysis>
 <round_manifest>${JSON.stringify(references.encodeKnown({round_id:round.round_id,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version,materials:round.materials}))}</round_manifest>` : '本次为独立研究，未输入历史首轮或上一轮分析，不输出round_review，也不构造before/after/changes；资料缺项写入internal_data_requests和next_checks。'
@@ -206,7 +206,7 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     const synthesisProfile=options.researchWorkflow?await loadRenewalAgentProfile('synthesis'):undefined
     if(base.workflow&&synthesisProfile)base.workflow.synthesis_profile={role:synthesisProfile.role,sha256:synthesisProfile.sha256}
     let response = await live.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined,presentation,synthesisProfile)
-    response={...response,value:projectStrategyOutput(response.value,!!round)}
+    response={...response,value:projectStrategyOutput(response.value,round)}
     progress({ stage: 'model', status: 'completed', message: '已取得模型方案，开始核对原文引用与适用条件。' })
     progress({ stage: 'validation', status: 'running', message: '核对三部分决策、两条路径、六个维度及原文引用。' })
     const check = (modelValue:RenewalStrategy) => {
@@ -250,7 +250,7 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
         +(error instanceof Error&&error.message==='STRATEGY_RELOCATION_ASSUMPTION_REQUIRED'?'缺少已确认的施工组织时，搬迁安排写为“按施工组织核实是否搬迁”，或在同一句中明确“不需整体搬迁”仅为方案假设及其前提；保留其他分析。':'')
         +(synthetic&&round?'本轮模拟身份保持不变；将误称真实问卷或居民调研的分析改为模拟问卷统计，保留数值、优先级和方案取舍。':'')
       response = await live.call<RenewalStrategy>('renewal_strategy_quote_repair',repairPrompt,'RenewalStrategy',[],undefined,presentation,synthesisProfile)
-      response={...response,value:projectStrategyOutput(response.value,!!round)}
+      response={...response,value:projectStrategyOutput(response.value,round)}
       response={...response,value:check(response.value)}
     }
     progress({ stage: 'validation', status: 'completed', message: '方案完整性、引用与已登记条件核验通过。' })
