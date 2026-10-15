@@ -82,6 +82,14 @@
   .complete-community-demo--operations .full-demo-heading { position:absolute; right:0; top:-44px; padding:0; margin:0; display:block; width:auto; }
   .complete-community-demo--operations .full-demo-actions { flex-wrap:nowrap; }
 }
+@media(min-width:1250px) and (max-height:920px) {
+  .playground-slider strong { white-space:nowrap; }
+  .playground-saved article { padding:6px 11px; }
+  .playground-plan-condition { margin-top:2px; }
+  .playground-plan-metrics { margin:3px 0; }
+  .playground-saved article > footer { padding-top:4px; }
+  .playground-saved-grid { gap:6px; }
+}
 .playground-comparison-backdrop { position:fixed; inset:0; z-index:150; background:#183c37a6; display:grid; place-items:center; padding:28px; }
 .playground-comparison-dialog { width:min(1200px,100%); max-height:calc(100dvh - 56px); overflow:auto; padding:25px; border:1px solid #c6dacf; border-radius:14px; background:#fff; box-shadow:0 24px 90px #092b344d; }
 .playground-comparison-dialog > header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:20px; }
