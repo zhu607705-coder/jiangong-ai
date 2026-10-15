@@ -10,7 +10,7 @@ export type RetrievalDecisionLocation = {
 export type RetrievalFeatureLocation = { id: string; label: string; detail: string; tab: 'overview' | 'actions'; kind: 'cost-library' | 'mode-panel' | 'assessment' | 'investigations' }
 export function retrievalFeatureLocations(question: string): RetrievalFeatureLocation[] {
   const locations: RetrievalFeatureLocation[] = []
-  if (/造价|预算|资金|费用|投资|合同价|中标价|成本/.test(question)) locations.push({ id: 'cost-library', kind: 'cost-library', tab: 'overview', label: '查看历史造价参考', detail: '按问题中的造价、费用或资金事项打开工程库，分价格阶段核对；不是本项目预算结论。' })
+  if (/造价|预算|资金|费用|投资|合同价|中标价|成本|多少钱|花钱|花费/.test(question)) locations.push({ id: 'cost-library', kind: 'cost-library', tab: 'overview', label: '查看历史造价参考', detail: '按问题中的造价、费用或资金事项打开工程库，分价格阶段核对；不是本项目预算结论。' })
   if (/模式|拆建|拆除|重建|原拆原建|综合整治/.test(question)) locations.push({ id: 'mode-panel', kind: 'mode-panel', tab: 'overview', label: '查看改造模式判定', detail: '查看综合整治与原拆原建的条件、标准和已保存的初判。' })
   if (/六维|现况|现状|评估|评定/.test(question)) locations.push({ id: 'assessment', kind: 'assessment', tab: 'overview', label: '打开现况与改后评估', detail: '查看已有六维资料与方案目标；缺少证据的维度仍需调查。' })
   if (/下一步|调查|核查|补充资料|待补|待核/.test(question)) locations.push({ id: 'investigations', kind: 'investigations', tab: 'actions', label: '打开下一步调查', detail: '查看当前项目已保存的调查任务与材料缺项。' })
