@@ -86,3 +86,9 @@ trace 保存原输入字符数、来源字符数、保留窗口字符数及整�
 本说明核对了 `runtime/workflows/renewal-research.ts`、`runtime/dsh/live-session.ts`、`runtime/agents/renewal/profiles.ts`、`services/map-screening/renewal-strategy.ts`、`packages/retrofit/strategy.ts`，以及前端的 `App.tsx`、`StrategyResearchProgress.tsx`、`ResearchReasoningNotes.tsx`、`StrategyCurrentAssessment.tsx` 和 `ProjectLocationMap.tsx`。
 
 本轮生产验收仍在进行。实际 DSH 调用、保存读回、失败恢复、真实地图底图与页面流程的通过状态须由同轮部署证据登记；既有夹具、源码核对和历史成功记录各保留其范围。
+
+## 求是村稳定演示路径
+
+独立项目 `DEMO-QIUSHI-20261015` 使用固定的公开资料与已校验模型方案回放。数据来自真实 DSH 第五次尝试的最终结构化输出；原始失败轮保持原状，回放对象只清空不存在的历史对照，并通过完整方案、引用、数量、模式、资金和六维校验。原始包、结构化输出、模型时间与校验时间的指纹保存在 `demo_replay` 中。
+
+演示项目沿正常已保存方案接口读取，不触发模型生成。六维切换、依据查看与参数预览可操作；上传、重新研判和服务端保存留在原项目。固定演示项目的后端写保护仍允许正文检索、片段读取和运营预览，原项目权限保持原配置。演示种子在数据库中独立保存，不修改原项目或历史失败记录。

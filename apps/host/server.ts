@@ -28,6 +28,8 @@ import { AdminAccess, registerAdminRoutes } from './admin-auth'
 import { renderAdminLoginPage } from './admin-login-page'
 import { describeWorkbenchDatabase } from './database-schema'
 import { publicProjectInput } from './public-project'
+import { installQiushiDemoReplay, qiushiDemoReadOnly } from './qiushi-demo'
+import { QIUSHI_SOURCE_PROJECT_ID } from '../../packages/retrofit/qiushi-demo'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -59,6 +61,7 @@ app.use(['/api', '/_AMapService'], (req, res, next) => {
   if (!['GET', 'HEAD'].includes(req.method) && req.headers['x-requested-with'] !== 'haizhizi') return next(new ApiError(403, 'CSRF_GUARD', '缺少工作台请求标识'))
   next()
 })
+app.use(qiushiDemoReadOnly)
 const intelligence = registerIntelligence(app,store)
 const experience = await registerExperience(app,store,requireProject)
 await registerCommunityOperations(app,store,requireProject)
@@ -66,6 +69,7 @@ const costLibrary = await registerConstructionCosts(app,store,requireProject)
 registerAmap(app, amapSettings)
 const mapScreening = registerMapScreening(app, amapSettings, store)
 const researchRounds = await registerRenewalMode(app,store,requireProject,costLibrary,(id,signal)=>mapScreening.modeInput(id,signal))
+if (await store.project(QIUSHI_SOURCE_PROJECT_ID, config.ownerId)) await installQiushiDemoReplay(store, config.ownerId)
 app.get('/api/ready', async (_req, res) => {
   let capability = false
   try { capability = (await fetch(`${config.capabilityUrl}/health`, { signal: AbortSignal.timeout(1500) })).ok } catch { /* explicit unavailable status below */ }

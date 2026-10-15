@@ -1,0 +1,22 @@
+{
+  "status": "frontend_targeted_checks_passed",
+  "recorded_at": "2026-10-15T15:09:55.523182+00:00",
+  "command": "npx vitest run tests/contracts/public-decision-entry.test.ts tests/contracts/strategy-workspace.test.ts tests/contracts/operations-direction.test.ts",
+  "files": 3,
+  "passed": 32,
+  "reported_by": "direct_access_contract",
+  "tool_result_reference": "57ce18",
+  "typecheck": {
+    "command": "npx tsc --noEmit",
+    "exit_code": 0,
+    "tool_result_reference": "c46f70"
+  },
+  "scope": [
+    "six project pages and four single-scheme workspaces",
+    "evidence drawer and six-dimension evidence/reasoning switch",
+    "read-only demo context and ordinary source project link",
+    "pure operations preview remains available; persistence controls hidden"
+  ],
+  "provider_calls": 0,
+  "live_browser_acceptance": "pending deployment"
+}

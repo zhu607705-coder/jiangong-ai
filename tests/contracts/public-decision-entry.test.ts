@@ -3,6 +3,7 @@ import { act, createElement } from 'react'
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { parseHTML } from 'linkedom'
+import { readFileSync } from 'node:fs'
 import input from '../../fixtures/inputs/01_auto.json'
 import App from '../../apps/workspace/src/App'
 import DecisionBrief from '../../apps/workspace/src/components/DecisionBrief'
@@ -13,6 +14,9 @@ import { projectRenewalModeInput, evaluateRenewalModeGate } from '../../packages
 import type { Project } from '../../apps/workspace/src/api'
 import type { PublicStrategyIndexItem, StrategyPacket } from '../../packages/retrofit/strategy'
 import type { ResearchRound, ResearchRoundsResponse } from '../../packages/retrofit/research-rounds'
+import { QIUSHI_DEMO_PROJECT_ID, QIUSHI_SOURCE_PROJECT_ID } from '../../packages/retrofit/qiushi-demo'
+import { buildCompleteCommunityDemo } from '../../packages/retrofit/complete-demo'
+import { markOperationsDirection } from '../../apps/workspace/src/components/operations-direction'
 
 const apiMock = vi.hoisted(() => vi.fn())
 vi.mock('../../apps/workspace/src/api', () => ({ api: apiMock, ADMIN_LOGIN_REQUIRED_EVENT: 'test-expired', ADMIN_LOGIN_REQUESTED_EVENT: 'test-login' }))
@@ -47,7 +51,7 @@ test('public defaults select a completed project by ID, while an explicit same-n
   expect(readWorkbenchLink(publicDecisionHref('P/测试').split('?')[1]).projectId).toBe('P/测试')
 })
 
-async function mountWorkbench(search = '', snapshot = false, override?: StrategyPacket | null | Promise<StrategyPacket | null>, roundHistory?: ResearchRoundsResponse | Promise<ResearchRoundsResponse>) {
+async function mountWorkbench(search = '', snapshot = false, override?: StrategyPacket | null | Promise<StrategyPacket | null>, roundHistory?: ResearchRoundsResponse | Promise<ResearchRoundsResponse>, replay = false) {
   const dom = parseHTML('<html><body><div id="root"></div></body></html>')
   const location = { href: `http://example.test/${search}`, search }, storage = new Map([['hzz_project', emptyProject.id], ['hzz-complete-demo-project', savedProject.id]])
   const history = { replaceState: vi.fn((_state: unknown, _unused: string, path: string) => { const url = new URL(path, 'http://example.test'); location.href = url.href; location.search = url.search }) }
@@ -55,20 +59,32 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
   for (const [key, value] of Object.entries({ window: dom.window, document: dom.document, location, history, MutationObserver: dom.window.MutationObserver, IS_REACT_ACT_ENVIRONMENT: true,
     requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(() => callback(0), 0), cancelAnimationFrame: clearTimeout,
     localStorage: { getItem: (key: string) => storage.get(key) ?? null, setItem: (key: string, value: string) => storage.set(key, value), removeItem: (key: string) => storage.delete(key) } })) vi.stubGlobal(key, value)
-  const packet = override === undefined ? (snapshot ? { ...saved, publication: { kind: 'saved_snapshot' as const, is_current: false, current_input_hash: 'changed-parameters', saved_at: saved.created_at } } : saved) : override
+  const replayProject = project(QIUSHI_DEMO_PROJECT_ID, 14), replayed = structuredClone(saved)
+  replayed.project_id = replayProject.id; replayed.input_hash = 'fixed-replay-hash'
+  replayed.publication = { kind: 'saved_snapshot', is_current: false, current_input_hash: 'fixed-input', saved_at: replayed.created_at }
+  replayed.strategy!.dimensions.forEach(row => { row.current_level = 'unknown' })
+  replayed.strategy!.reasoning_dimensions = replayed.strategy!.dimensions.map(row => ({ key: row.key, level: 'medium', basis: 'scenario_assumption', premises: ['固定资料范围内尚无实测'], assumptions: ['按分项实施情景研究'], reason: '回放中的模型情景判断', verification: '取得本项目台账后复核', evidence_refs: [] }))
+  replayed.workflow = { planner_status: 'completed', plan: null, tasks: [{ id: 'RESIDENTS', role: 'residents_operations', source_ids: [], status: 'completed', reasoning: 'reasoned_fallback' }], input_characters: 1000, source_characters: 500, retained_source_characters: 500, output_characters: 300, compression: 'retained', method: 'evidence_windows_and_untrusted_notes' }
+  const packet = replay ? replayed : override === undefined ? (snapshot ? { ...saved, publication: { kind: 'saved_snapshot' as const, is_current: false, current_input_hash: 'changed-parameters', saved_at: saved.created_at } } : saved) : override
+  // Existing simulation output is a UI transport fixture only; it is never seeded into a project or passed to a provider.
+  const operationFixture = replay ? JSON.parse(readFileSync('research/test_results/complete-community-demo-calculations.json', 'utf8')).scenarios[1].result : null
   apiMock.mockImplementation((path: string) => {
     if (path === '/session') return Promise.resolve({ model_configured: true })
-    if (path === '/projects') return Promise.resolve([emptyProject, savedProject])
+    if (path === '/projects') return Promise.resolve(replay ? [replayProject, emptyProject, savedProject] : [emptyProject, savedProject])
     if (path === '/projects/public-decisions') return Promise.resolve({ items: [published] })
     if (path === `/projects/${emptyProject.id}`) return Promise.resolve(emptyProject)
     if (path === `/projects/${savedProject.id}`) return Promise.resolve(savedProject)
+    if (path === `/projects/${replayProject.id}`) return Promise.resolve(replayProject)
+    if (replay && path.includes(replayProject.id) && /research-rounds|revision-diff|followups/.test(path)) throw new Error('Fixed replay must not read retry history')
     if (path.endsWith('/revision-diff')) return Promise.resolve({ available: false, changes: [] })
     if (path.endsWith('/followups') || path.endsWith('/documents')) return Promise.resolve([])
     if (path.endsWith('/research-rounds')) return Promise.resolve(roundHistory || { rounds: [], materials: [], baseline_candidate: null })
     if (path.endsWith('/knowledge/groups')) return Promise.resolve({ groups: [], documents: [] })
     if (path.endsWith('/knowledge/pipeline')) return Promise.resolve({ cards: [] })
     if (path.startsWith('/experiences/search?')) return Promise.resolve({ items: [] })
-    if (path.includes('/renewal-strategy')) return Promise.resolve(path.includes(savedProject.id) ? packet : null)
+    if (path.includes('/renewal-strategy')) return Promise.resolve(path.includes(replay ? replayProject.id : savedProject.id) ? packet : null)
+    if (replay && path.endsWith('/community-operations')) return Promise.resolve({ scenarios: [{ id: 'UI-OPS-FIXTURE', project_id: replayProject.id, context_version: 14, input_hash: 'ui-only-snapshot', created_at: replayed.created_at, input: markOperationsDirection(buildCompleteCommunityDemo().operations,'comprehensive'), result: operationFixture }], observations: [], comparisons: [] })
+    if (replay && path.endsWith('/community-operations/preview')) return Promise.resolve(operationFixture)
     if (path.endsWith('/renewal-mode')) return Promise.resolve({ screening: projectRenewalModeInput(path.includes(savedProject.id) ? savedProject.input : emptyProject.input), decision: null })
     if (path === '/maps/config') return Promise.resolve({ configured: false })
     throw new Error(`Unexpected request ${path}`)
@@ -78,7 +94,7 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
   Object.defineProperty(dom.document, 'activeElement', { configurable: true, get: () => focused })
   dom.window.HTMLElement.prototype.focus = vi.fn(function (this: HTMLElement) { focused = this }); dom.window.HTMLElement.prototype.scrollIntoView = vi.fn()
   const root = createRoot(dom.document.getElementById('root')!)
-  await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: roundHistory ? { role: 'admin', canWrite: true } : { role: 'viewer', canWrite: false } }, createElement(App))))
+  await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: roundHistory || replay ? { role: 'admin', canWrite: true } : { role: 'viewer', canWrite: false } }, createElement(App))))
   return { dom, location, root, cleanup: async () => { await act(async () => root.unmount()); dom.window.HTMLElement.prototype.focus = focusBefore; dom.window.HTMLElement.prototype.scrollIntoView = scrollBefore } }
 }
 type MountedWorkbench = Awaited<ReturnType<typeof mountWorkbench>>
@@ -141,6 +157,67 @@ test('anonymous entry opens the saved project overview, then its direction, plan
     await click(app, '.strategy-subnav button', '六维现况')
     expect(app.dom.document.querySelectorAll('.strategy-dimension-cards article')).toHaveLength(6)
     expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})
+
+test('the fixed Qiushi replay keeps all six pages and local scenario controls while isolating live writes and failed history', async () => {
+  const app = await mountWorkbench(`?project=${QIUSHI_DEMO_PROJECT_ID}&view=overview`, false, undefined, undefined, true)
+  try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
+    expect(app.dom.document.querySelector('.qiushi-demo-replay strong')?.textContent).toBe('求是村演示回放 · 已校验方案与固定资料')
+    expect(app.dom.document.querySelector('.qiushi-demo-replay a')?.getAttribute('href')).toBe(publicDecisionHref(QIUSHI_SOURCE_PROJECT_ID))
+    expect(app.dom.document.querySelector('.workspace-frame-mode')?.textContent).toContain('已保存方案回放')
+    expect(app.dom.document.querySelectorAll('[data-project-page]')).toHaveLength(6)
+    await page(app, 'evidence')
+    expect(app.dom.document.querySelector('input[type=file],.research-intake')).toBeNull()
+    await click(app, '.workspace-section-nav button', '项目经验与约束')
+    expect(app.dom.document.querySelector('.experience-input,.experience-extract,.knowledge-workbench')).toBeNull()
+    await page(app, 'assessment')
+    expect(app.dom.document.querySelector('.decision-brief h3')?.textContent).toBe(published.headline)
+    expect(app.dom.document.querySelector('.strategy-top>button,.research-intake,.research-rounds')).toBeNull()
+    await click(app, '.strategy-subnav button', '六维现况')
+    expect(app.dom.document.querySelector('.strategy-current-assessment')?.getAttribute('data-assessment-view')).toBe('reasoning')
+    await click(app, '.strategy-assessment-switch button', '证据画像')
+    expect(app.dom.document.querySelectorAll('.radar-point')).toHaveLength(0)
+    await click(app, '.strategy-assessment-switch button', '推理情景')
+    expect(app.dom.document.querySelectorAll('.radar-point')).toHaveLength(6)
+    await page(app, 'scenarios')
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-open-scheme=comprehensive]')!.click())
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.getAttribute('data-scheme')).toBe('comprehensive')
+    await click(app, '.cwp-legacy button', '查看举措依据 ↗')
+    expect(app.dom.document.querySelector('.project-evidence-original')?.textContent).toContain('求是村保留建筑')
+    await click(app, '.project-evidence-heading button', '关闭 ×')
+    const pane = async (name: string) => act(async () => [...app.dom.document.querySelectorAll<HTMLButtonElement>('.ssw-tabs button')].find(button => button.querySelector('strong')?.textContent === name)!.click())
+    await pane('建设与资金')
+    expect(app.dom.document.querySelectorAll('.ssw-funding-inputs input')).toHaveLength(6)
+    expect([...app.dom.document.querySelectorAll<HTMLInputElement>('.ssw-funding-inputs input')].every(input => !input.disabled)).toBe(true)
+    await pane('敏感性与核验')
+    expect(app.dom.document.querySelectorAll('.ssw-weight-controls input[type=range]')).toHaveLength(6)
+    await act(async () => app.dom.document.querySelectorAll<HTMLButtonElement>('.ssw-presets button')[1].click())
+    expect(app.dom.document.querySelectorAll('.ssw-weight-controls output')).toHaveLength(6)
+    await pane('社区运营')
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.community-operations--standalone')).not.toBeNull())
+    expect(app.dom.document.querySelector('[aria-label="真实运营反馈"]')).toBeNull()
+    expect(app.dom.document.querySelector('[aria-label="保守需求倍率"]')?.hasAttribute('disabled')).toBe(false)
+    await vi.waitFor(() => expect(app.dom.document.querySelectorAll('.ops-history-list>.ops-snapshot')).toHaveLength(1))
+    await click(app, '.ops-snapshot-actions button', '载入为新草稿')
+    await click(app, '.ops-toolbar button', '计算三种情景')
+    await vi.waitFor(() => expect(app.dom.document.querySelectorAll('.ops-preview-grid>.ops-result-card')).toHaveLength(3))
+    expect(app.dom.document.querySelector('.ops-preview-grid')?.textContent).not.toMatch(/冻结保存|保存真实/)
+    expect(app.dom.document.querySelector('.ops-error,[role=alert]')).toBeNull()
+    expect(apiMock.mock.calls.filter(([path])=>String(path).endsWith('/community-operations/preview'))).toHaveLength(3)
+    await page(app, 'actions')
+    expect(app.dom.document.querySelector('.project-tasks-page')).not.toBeNull()
+    await page(app, 'results')
+    expect(app.dom.document.querySelector('.project-results-primary h3')?.textContent).toBe(published.headline)
+    await click(app, '.workspace-section-nav button', '版本变化')
+    expect(app.dom.document.querySelector('.qiushi-replay-version')?.textContent).toContain('固定演示资料基线')
+    expect(app.dom.document.querySelector('.qiushi-replay-version')?.textContent).toContain('取得逐栋结构资料')
+    expect(app.dom.document.querySelector('.legacy-run-history')).toBeNull()
+    expect(app.dom.document.querySelector('.feedback.error,[role=alert]')).toBeNull()
+    expect(app.dom.document.body.textContent).not.toMatch(/真实模型研判|资料已更新|同意.*进入模型/)
+    expect(apiMock.mock.calls.every(([path, body]) => body === undefined || String(path).endsWith('/community-operations/preview'))).toBe(true)
+    expect(apiMock.mock.calls.some(([path]) => String(path).includes(QIUSHI_DEMO_PROJECT_ID) && /research-rounds|revision-diff|followups/.test(String(path)))).toBe(false)
   } finally { await app.cleanup() }
 })
 

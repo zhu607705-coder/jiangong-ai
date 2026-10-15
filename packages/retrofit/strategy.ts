@@ -10,8 +10,11 @@ export type PublicStrategyIndexItem = { project_id: string; project_name: string
 export type PublicStrategyIndexResponse = { items: PublicStrategyIndexItem[] }
 export type StrategyReview = { kind: 'source_and_metric_review'; reviewed_at: string; original_packet_sha256: string;
   changes: { path: string; before: unknown; after: unknown; reason: string }[] }
+export type StrategyDemoReplay = { kind: 'validated_model_replay'; source_project_id: string; source_round_id: string;
+  source_packet_sha256: string; source_structured_sha256: string; model_generated_at: string; validated_at: string;
+  transformation: 'clear_nonexistent_parent_comparison'; validation_policy: string }
 export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';
-  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; workflow?:StrategyWorkflowTrace }
+  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
 
 export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compression'|'synthesis';
   tasks?:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];status:'pending'|'running'|'completed'|'failed';source_count:number;summary?:string}[];
@@ -232,9 +235,8 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
         /^(?:对|针对)[^，。；,]{1,40}(?:开展|进行|组织)(?:调查|调研|鉴定|登记|核实|核查|勘察|测绘|协商|论证|评估)/,
       ]
       if(taskPatterns.some(pattern=>pattern.test(action)))throw new Error('STRATEGY_WORK_PACKAGE_TASK_ONLY')
-      const scenarioText=[work.scope,...work.preconditions].join('；')
       if(!['source','scenario','unknown'].includes(work.quantity_basis)||work.quantity_basis==='unknown'&&work.quantity!==null||work.quantity_basis!=='unknown'&&(work.quantity===null||!Number.isFinite(work.quantity)||work.quantity<0||!work.unit?.trim()))throw new Error('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
-      if((work.quantity_basis==='scenario'||work.target_basis==='scenario')&&!/情景|假设|模拟/.test(scenarioText))throw new Error('STRATEGY_WORK_PACKAGE_SCENARIO_REQUIRED')
+      // Typed basis fields identify scenarios; their wording is not an admission condition.
       if(work.quantity_basis==='source') {
         const quantity=String(work.quantity).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
         const unit=work.unit!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/平方米|平米|㎡|m²|m2/gi,'(?:平方米|平米|㎡|m²|m2)')

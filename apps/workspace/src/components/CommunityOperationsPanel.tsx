@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useWorkbenchAccess } from '../AdminAccess'
 import type { OperationsAnalysisBound, OperationsCashItem, OperationsInput, OperationsMetrics, OperationsObservedMetrics, OperationsResult, OperationsService, OperationsSnapshot, OperationsTimeBlock, OperationsValue, OperationsWorkspace } from '../../../host/generated/contracts'
 import { api, type Project } from '../api'
 import { randomUUID } from '../uuid'
@@ -257,6 +258,7 @@ function AnalysisBoundsEditor({ input, onChange }: { input: OperationsInput; onC
 }
 
 export default function CommunityOperationsPanel({ project, completeDemo, onPreviews, analysisRevision = 0, onCalculationState, direction, standalone = false }: { project: Project; completeDemo?: CompleteCommunityDemo; onPreviews?: (previews: OperationsPreview[]) => void; analysisRevision?: number; onCalculationState?: (state: 'idle' | 'calculating' | 'error') => void; direction?: StrategyDirection; standalone?: boolean }) {
+  const { canWrite } = useWorkbenchAccess()
   const scope = `${project.id}:${project.context_version}:${direction||''}`
   const active = useRef({ scope, generation: 0 })
   if (active.current.scope !== scope) active.current = { scope, generation: active.current.generation + 1 }
@@ -371,6 +373,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
   }
   useEffect(() => { if (completeDemo) void previewAll() }, [completeDemo?.id, scope, analysisRevision])
   async function saveSnapshot(preview: Preview, index: number) {
+    if (!canWrite) return
     await run(`save:${index}`, async (signal, current) => {
       const snapshot = await api<OperationsSnapshot>(`${base}/scenarios`, { input: direction ? markOperationsDirection(preview.input, direction) : preview.input, expected_context_version: project.context_version }, signal)
       if (!current()) return
@@ -397,7 +400,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
   if (['served_visits', 'unique_users'].some(key => feedback.metrics[key as keyof OperationsObservedMetrics].trim() !== '' && !Number.isInteger(Number(feedback.metrics[key as keyof OperationsObservedMetrics])))) feedbackIssues.push('实测人数与人次须为整数。')
   if (feedback.metrics.unique_users.trim() && feedback.metrics.served_visits.trim() && Number(feedback.metrics.unique_users) > Number(feedback.metrics.served_visits)) feedbackIssues.push('去重人数不能大于服务人次。')
   async function saveObservation() {
-    if (!selectedSnapshot || feedbackIssues.length) return
+    if (!canWrite || !selectedSnapshot || feedbackIssues.length) return
     await run('observation', async (signal, current) => {
       const metrics = Object.fromEntries(Object.entries(feedback.metrics).map(([key, value]) => [key, value.trim() === '' ? null : Number(value)])) as unknown as OperationsObservedMetrics
       await api(`${base}/observations`, { snapshot_id: selectedSnapshot.id, observation: { facility_id: selectedSnapshot.input.facility_id, period: selectedSnapshot.input.period, source_id: feedback.sourceId, locator: feedback.locator.trim(), collected_at: feedback.collectedAt, split: feedback.split, note: feedback.note.trim(), metrics } }, signal)
@@ -482,7 +485,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
         <div className="ops-presets">{['保守', '基准', '积极'].map((label, index) => <label className="ops-field" key={label}>{label}需求倍率<input aria-label={`${label}需求倍率`} type="number" min="0" step="0.1" disabled={!!busy} value={multipliers[index]} onChange={event => { setMultipliers(values => values.map((value, position) => position === index ? event.target.value : value)); setPreviews([]) }} /></label>)}</div>
         <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy} onClick={() => void previewAll()}>{busy === 'preview' ? '正在计算三个情景…' : '计算三种情景'}</button></div>
         <div className="ops-preview-grid">{previews.map((preview, index) => <article className="ops-result-card" key={preview.label} aria-label={`${preview.label}情景结果`}><div className="ops-section-heading"><h4>{preview.label}</h4><span className="ops-badge">情景预测 · {preview.input.period}</span></div>
-          {preview.result ? <><Metrics result={preview.result} /><ScientificResults result={preview.result} complete={!!completeDemo} /><ResultDetails result={preview.result} />{!completeDemo && <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy || !!preview.savedId} onClick={() => void saveSnapshot(preview, index)}>{preview.savedId ? '已冻结保存' : busy === `save:${index}` ? '正在保存…' : `冻结保存${preview.label}情景`}</button></div>}</> : <><p className="ops-error" role="alert">{preview.error}</p><button type="button" className="ops-button" disabled={!!busy} onClick={() => completeDemo ? void previewAll() : void run(`retry:${index}`, async (signal, current) => { const result = await api<OperationsResult>(`${base}/preview`, { input: preview.input }, signal); if (current()) setPreviews(values => values.map((value, position) => position === index ? { ...value, result, error: '' } : value)) })}>重试{preview.label}情景</button></>}
+          {preview.result ? <><Metrics result={preview.result} /><ScientificResults result={preview.result} complete={!!completeDemo} /><ResultDetails result={preview.result} />{!completeDemo && canWrite && <div className="ops-toolbar"><button type="button" className="ops-button ops-primary" disabled={!!busy || !!preview.savedId} onClick={() => void saveSnapshot(preview, index)}>{preview.savedId ? '已冻结保存' : busy === `save:${index}` ? '正在保存…' : `冻结保存${preview.label}情景`}</button></div>}</> : <><p className="ops-error" role="alert">{preview.error}</p><button type="button" className="ops-button" disabled={!!busy} onClick={() => completeDemo ? void previewAll() : void run(`retry:${index}`, async (signal, current) => { const result = await api<OperationsResult>(`${base}/preview`, { input: preview.input }, signal); if (current()) setPreviews(values => values.map((value, position) => position === index ? { ...value, result, error: '' } : value)) })}>重试{preview.label}情景</button></>}
         </article>)}</div>
       </section>
       {!completeDemo && <><section className="ops-section" aria-label="已冻结的运营情景"><div className="ops-section-heading"><h3>3. 已冻结的运营情景</h3><button type="button" className="ops-button" disabled={!!busy || loaded.loading} onClick={() => setReload(value => value + 1)}>刷新已保存记录</button></div>
@@ -490,12 +493,12 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
         <div className="ops-history-list">{workspace.scenarios.map(snapshot => <article className="ops-snapshot" key={snapshot.id} aria-label={`已冻结：${snapshot.input.name}`}><div className="ops-section-heading"><div><h4>{snapshot.input.name}</h4><p>{snapshot.input.facility_name} · {snapshot.input.period}</p><small className="ops-muted">保存于 {new Date(snapshot.created_at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })} · 依据版本 {snapshot.context_version}</small></div><span className="ops-badge">已冻结</span></div>
           {snapshot.context_version !== project.context_version && <p className="ops-notice">项目依据已更新。此快照保留版本 {snapshot.context_version} 的预测，当前项目为版本 {project.context_version}。</p>}
           <p>服务 {show(snapshot.result.metrics.served_visits)} 人次/月 · 经营收入（含政府合同）{show(snapshot.result.metrics.earned_income)} 元/月 · 支持后运营缺口 {show(snapshot.result.metrics.unfunded_gap)} 元/月</p>
-          <div className="ops-snapshot-actions"><button type="button" className="ops-button" disabled={!!busy} onClick={() => { updateDraft(() => structuredClone(snapshot.input)); setNotice(`已将“${snapshot.input.name}”载入草稿；计算后可另存新快照。`) }}>载入为新草稿</button><button type="button" className="ops-button" disabled={!!busy} onClick={() => setFeedback({ ...emptyFeedback(), snapshotId: snapshot.id })}>核对真实运营记录</button><a className="ops-button" href={`/api${base}/scenarios/${encodeURIComponent(snapshot.id)}/report`} download>导出情景报告</a></div>
+          <div className="ops-snapshot-actions"><button type="button" className="ops-button" disabled={!!busy} onClick={() => { updateDraft(() => structuredClone(snapshot.input)); setNotice(`已将“${snapshot.input.name}”载入草稿${canWrite?'；计算后可另存新快照':'，可在本机继续比较'}。`) }}>载入为新草稿</button>{canWrite && <button type="button" className="ops-button" disabled={!!busy} onClick={() => setFeedback({ ...emptyFeedback(), snapshotId: snapshot.id })}>核对真实运营记录</button>}<a className="ops-button" href={`/api${base}/scenarios/${encodeURIComponent(snapshot.id)}/report`} download>导出情景报告</a></div>
           <InputEvidence input={snapshot.input} /><ScientificResults result={snapshot.result} /><ResultDetails result={snapshot.result} />
         </article>)}</div>
       </section>
       {!!historical.length && <details className="ops-unscoped-history"><summary>历史运营记录 · {historical.length} 份未登记为当前方向和版本</summary>{historical.map(snapshot => <article className="ops-snapshot" key={snapshot.id}><h4>{snapshot.input.name}</h4><p>{snapshot.input.facility_name} · {snapshot.input.period} · 历史资料版本 {snapshot.context_version}</p><p>服务 {show(snapshot.result.metrics.served_visits)} 人次/月 · 支持后运营缺口 {show(snapshot.result.metrics.unfunded_gap)} 元/月</p><InputEvidence input={snapshot.input}/><ResultDetails result={snapshot.result}/><a className="ops-button" href={`/api${base}/scenarios/${encodeURIComponent(snapshot.id)}/report`} download>导出历史情景报告</a></article>)}</details>}
-      <section className="ops-section" aria-label="真实运营反馈"><h3>4. 用真实运营记录核对预测</h3><p className="ops-muted">按同一设施、同一月份和目标居民范围核对。校准样本用于调整，独立检验样本用于检查调整后的表现。</p>
+      {canWrite && <section className="ops-section" aria-label="真实运营反馈"><h3>4. 用真实运营记录核对预测</h3><p className="ops-muted">按同一设施、同一月份和目标居民范围核对。校准样本用于调整，独立检验样本用于检查调整后的表现。</p>
         <fieldset className="ops-feedback-form" disabled={!!busy}><legend className="sr-only">真实观测录入</legend><div className="ops-form-grid">
           <label className="ops-field ops-wide">对应冻结情景<select aria-label="对应冻结情景" value={feedback.snapshotId} onChange={event => setFeedback({ ...emptyFeedback(), snapshotId: event.target.value })}><option value="">选择已保存的情景</option>{workspace.scenarios.map(snapshot => <option key={snapshot.id} value={snapshot.id}>{snapshot.input.name} · {snapshot.input.facility_name} · {snapshot.input.period}</option>)}</select></label>
           <label className="ops-field ops-wide">真实台账来源<select aria-label="真实台账来源" value={feedback.sourceId} onChange={event => setFeedback(value => ({ ...value, sourceId: event.target.value }))}><option value="">{eligibleSources.length ? '选择项目中已取得的真实原文' : '待取得并导入真实运营台账'}</option>{eligibleSources.map(source => <option key={source.id} value={source.id}>{source.title}</option>)}</select></label>
@@ -517,7 +520,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
             {observation && <p className="ops-muted">核对记录：{observation.input.note}</p>}
           </article>
         })}
-      </section></>}
+      </section>}</>}
     </div>
   return standalone ? <section className="community-operations community-operations--standalone" aria-label="社区运营与公共服务">{body}</section> : <details className="community-operations" open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary className="ops-summary"><span>社区运营与公共服务</span><small>比较月度使用、现金收支与财政投入</small></summary>{body}</details>
 }

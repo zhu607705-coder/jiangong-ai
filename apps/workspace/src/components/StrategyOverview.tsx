@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { IconArrowRight, IconSparkles, IconRefresh } from '@tabler/icons-react'
 import { api, ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT, type Project } from '../api'
 import { useWorkbenchAccess } from '../AdminAccess'
+import { isQiushiDemoProject } from '../../../../packages/retrofit/qiushi-demo'
 import type { DecisionDashboard as Dashboard, DecisionPacket } from '../../../host/generated/contracts'
 import { strategyFailureMessage, strategyStageLabel, strategyCallStatus, type StrategyPacket, type StrategyProgress, type StrategyStreamEvent, type PublicStrategyIndexItem } from '../../../../packages/retrofit/strategy'
 import type { ResearchRound, ResearchRoundsResponse, ResearchRoundStreamEvent, CreateResearchRoundRequest } from '../../../../packages/retrofit/research-rounds'
@@ -39,7 +40,8 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   workspacePage?: 'assessment' | 'scheme'; section?: string; pane?: SchemePane; schemeDirection?: 'comprehensive' | 'rebuild' | null;
   onNavigate?: (target: StrategyWorkspaceNavigation) => void;
 }) {
-  const { canWrite } = useWorkbenchAccess()
+  const access = useWorkbenchAccess(),replay=isQiushiDemoProject(project.id)
+  const canWrite = access.canWrite&&!replay
   const [tab,setTab] = useState<'direction'|'plan'|'assessment'|'operations'>(directionSelection?.identity===`${project.id}:${project.context_version}:${demoActive}`?'plan':'direction'),[localSelection,setLocalSelection] = useState<StrategyDirectionSelection|null>(null),[phase,setPhase] = useState<'before'|'after'>('before')
   const [result,setResult] = useState<StrategyPacket|null>(null),[activity,setActivity] = useState<'read'|'research'|null>(null),[error,setError] = useState(''),[sourceIds,setSourceIds] = useState<string[]>([])
   const [progress,setProgress] = useState<StrategyProgress[]>([]),[startedAt,setStartedAt] = useState(0),[elapsed,setElapsed] = useState(0),[stopped,setStopped] = useState(false)
@@ -263,7 +265,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       </article>
       </details>
       {strategy&&<details className="strategy-original-paths"><summary>查看两方向的完整 AI 方案原文</summary>{strategy.paths.map(row=><article key={row.mode}><h3>{row.title}</h3><p>{row.description}</p>{row.actions.map(action=><div key={action.title}><h4>{action.title}</h4><p>{action.detail}</p></div>)}{row.requirements.map(text=><p key={text}>{text}</p>)}</article>)}<h3>六维原始分析</h3>{strategy.dimensions.map(row=><article key={row.key}><h4>{dimensions[row.key]}</h4><p>现况：{row.current}</p><p>综合整治：{row.comprehensive}</p><p>原拆原建：{row.rebuild}</p></article>)}</details>}
-      {strategy && !demoActive && result?.publication?.kind === 'saved_snapshot' && <aside className="strategy-saved-snapshot" aria-label="已保存方案版本"><strong>本项目已保存的完整方案 · 资料 v{result.context_version}</strong><p>保存于 {new Date(result.publication.saved_at).toLocaleString('zh-CN')}。当前研判参数或参考资料已更新；以下保留该次方案、原文依据和六维说明，可公开阅读。</p></aside>}
+      {strategy && !demoActive && result?.publication?.kind === 'saved_snapshot' && <aside className="strategy-saved-snapshot" aria-label="已保存方案版本"><strong>{replay?'求是村固定演示方案':'本项目已保存的完整方案'} · 资料 v{result.context_version}</strong><p>{replay?'使用已校验的方案与固定资料进行交互回放。':`保存于 ${new Date(result.publication.saved_at).toLocaleString('zh-CN')}。当前研判参数或参考资料已更新；以下保留该次方案、原文依据和六维说明，可公开阅读。`}</p></aside>}
     </section>}
     <div ref={contentAnchor} className="strategy-content-anchor"/>
     {activity==='read'&&<div className="strategy-working" role="status"><IconSparkles size={22}/><div><strong>正在读取已保存的更新方案</strong><p>读取历史方案与原文依据，不自动发起新的模型研究。</p></div></div>}
