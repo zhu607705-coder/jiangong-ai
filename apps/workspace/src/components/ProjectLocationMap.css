@@ -1,15 +1,15 @@
-.project-location-map{margin-bottom:15px;border:1px solid #dce7df;border-radius:9px;overflow:hidden;background:#f0f5f3;color:#456c58}
+.project-location-map{margin-bottom:15px;border:1px solid var(--color-line);border-radius:9px;overflow:hidden;background:var(--color-surface-soft);color:var(--color-muted)}
 .project-location-map-viewport{position:relative;height:218px;isolation:isolate}
 .project-location-map-canvas{width:100%;height:100%;pointer-events:none}
 .project-location-map-canvas .amap-logo,.project-location-map-canvas .amap-copyright{pointer-events:auto}
-.project-location-map-message{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#f1f6f3ed;padding:20px;text-align:center;font-size:14px;line-height:1.6}
+.project-location-map-message{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:color-mix(in srgb, var(--color-surface-soft) 92.94%, transparent);padding:20px;text-align:center;font-size:16px;line-height:1.6}
 .project-location-map-message>svg{flex-shrink:0}
 .project-location-map-message[role=status]>svg{animation:project-location-map-spin 1.4s linear infinite}
-.project-location-map-message button{padding:7px 14px;border:1px solid #83aa93;border-radius:6px;background:#fff;color:#286346;font:inherit;cursor:pointer}
-.project-location-map-message button:focus-visible,.project-location-map-caption a:focus-visible{outline:2px solid #2a7954;outline-offset:2px}
-.project-location-map-caption{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:#f7faf8;font-size:12px;line-height:1.55}
-.project-location-map-caption a{flex-shrink:0;color:#456c58;text-decoration:underline;text-underline-offset:2px}
-.project-location-map-empty{display:flex;min-height:218px;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px;text-align:center;font-size:13px;line-height:1.65}
+.project-location-map-message button{padding:7px 14px;border:1px solid var(--color-primary-line);border-radius:6px;background:var(--color-surface);color:var(--color-primary);font:inherit;cursor:pointer}
+.project-location-map-message button:focus-visible,.project-location-map-caption a:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+.project-location-map-caption{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--color-surface-soft);font-size:14px;line-height:1.55}
+.project-location-map-caption a{flex-shrink:0;color:var(--color-muted);text-decoration:underline;text-underline-offset:2px}
+.project-location-map-empty{display:flex;min-height:218px;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px;text-align:center;font-size:15px;line-height:1.65}
 .project-location-map-empty strong{font-size:15px;font-weight:500}
 @keyframes project-location-map-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.project-location-map-message[role=status]>svg{animation:none}}

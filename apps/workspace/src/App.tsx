@@ -153,7 +153,7 @@ function RegionView({ project }: { project: Project }) {
             <path
               d="M 16 0 L 0 0 0 16"
               fill="none"
-              stroke="#dce6e4"
+              stroke="var(--color-line)"
               strokeWidth=".6"
             />
           </pattern>
@@ -161,8 +161,8 @@ function RegionView({ project }: { project: Project }) {
         <rect width="290" height="200" fill="url(#grid)" />
         <polygon
           points={points}
-          fill="#cde1dc"
-          stroke="#347666"
+          fill="var(--color-primary-line)"
+          stroke="var(--color-primary)"
           strokeWidth="1.5"
           strokeDasharray="5 3"
         />
@@ -172,7 +172,7 @@ function RegionView({ project }: { project: Project }) {
             cx={35 + ((p[0] - minX) / (maxX - minX || 1)) * 220}
             cy={155 - ((p[1] - minY) / (maxY - minY || 1)) * 110}
             r="3"
-            fill="#347666"
+            fill="var(--color-primary)"
           />
         ))}
       </svg>

@@ -1,7 +1,7 @@
 /* Desktop rectangular study scope: explicit confirmation, no model on pointer events. */
-.area-selection-controls{position:absolute;left:96px;bottom:64px;z-index:180;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;font-size:13px}
+.area-selection-controls{position:absolute;left:96px;bottom:64px;z-index:180;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;font-size:15px}
 .area-selection-controls kbd{margin-left:6px;padding:1px 5px;border:1px solid currentColor;border-radius:4px}
 .area-selection-overlay{position:absolute;inset:0;z-index:500;cursor:crosshair;touch-action:none;background:rgba(255,255,255,.06)}
-.area-selection-box{position:absolute;pointer-events:none;border:2px solid #244d7c;background:rgba(36,77,124,.10);box-shadow:0 0 0 9999px rgba(0,0,0,.12)}
+.area-selection-box{position:absolute;pointer-events:none;border:2px solid var(--color-primary);background:rgba(36,77,124,.10);box-shadow:0 0 0 9999px rgba(0,0,0,.12)}
 .area-selection-toolbar{position:absolute;top:90px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;cursor:default;min-width:540px;flex-wrap:wrap}
 .area-selection-toolbar p{width:100%;margin:0}
