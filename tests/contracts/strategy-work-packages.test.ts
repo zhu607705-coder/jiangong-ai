@@ -1,0 +1,114 @@
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import fixture from '../../fixtures/inputs/01_auto.json'
+import type { ProjectInput, RenewalStrategy } from '../../apps/host/generated/contracts'
+import { config } from '../../apps/host/config'
+import { projectDecisionInput } from '../../packages/decision/structured-route'
+import { validateStrategy, strategyPromptSources, STRATEGY_PROMPT_SOURCE_CHARS, type StrategySource } from '../../packages/retrofit/strategy'
+import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
+
+const ports=vi.hoisted(()=>({open:vi.fn()}))
+vi.mock('../../runtime/dsh/live-session',()=>({LiveSession:{open:ports.open}}))
+import { researchRenewalStrategy } from '../../services/map-screening/renewal-strategy'
+const source:StrategySource={id:'OBJECT',title:'本对象供水范围',text:'本小区29、30、31、48幢供水设施已开展方案核查，涉及252户。',url:null,published_at:'2023-08-18',role:'current',locator:'原文第1段'}
+function strategy():RenewalStrategy {
+  return withConcreteWorkPlan({headline:'更换给水立管并改善计量设施',summary:'针对既有供水设施形成候选改造组合，实施条件分别核查。',preferred_mode:'comprehensive',
+    decision_brief:{renewal:{conclusion:'优先研究给水立管和计量设施更新。',reason:'对象原文支持明确供水服务范围。',evidence_refs:[source.id]},investment:{conclusion:'开展前期技术准备，并保留具体建设方案。',reason:'结构和资金条件待核。',stage:'preliminary',evidence_refs:[source.id]},returns:{financial:'分别核对建设与持续维护支出。',social:'改善对象供水可靠性。',evidence_refs:[source.id]}},
+    rationale:[{point:'已有明确服务对象。',source_id:source.id,quote:source.text}],
+    paths:(['comprehensive','rebuild'] as const).map(mode=>({mode,title:mode==='comprehensive'?'管网与计量更新':'新建给水系统',description:'按对象与设施组织候选方案。',actions:[{title:'形成给水系统更新组合',detail:'结合管网与计量设施安排实施顺序。',evidence_refs:[source.id]}],requirements:['核实技术与资金前提。']})),
+    dimensions:(['demand','supply','adaptation','implementation','operations','resources'] as const).map(key=>({key,current:'已有对象资料，专项条件待核。',current_level:'unknown',comprehensive:'按设施更新改善服务。',comprehensive_level:'medium',rebuild:'按新建方案配置设施。',rebuild_level:'medium',evidence_refs:[source.id]})),next_checks:[],
+  },source)
+}
+const check=(value:RenewalStrategy,sources=[source])=>validateStrategy(value,sources,[],true,false,true)
+const original={modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
+beforeEach(()=>{vi.clearAllMocks();Object.assign(config,{modelConfigured:true,searchConfigured:false,decisionEnabled:false});vi.spyOn(globalThis,'fetch').mockRejectedValue(new Error('NO_EXTERNAL_CALLS'))})
+afterEach(()=>{Object.assign(config,original);vi.restoreAllMocks()})
+
+it('requires concrete tables only for new research while keeping legacy records and preliminary construction candidates',()=>{
+  const legacy=strategy();for(const path of legacy.paths)delete path.work_packages;delete legacy.internal_data_requests
+  expect(validateStrategy(legacy,[source],[],true)).toBe(legacy)
+  expect(()=>check(legacy)).toThrow('STRATEGY_WORK_PACKAGES_REQUIRED')
+  const candidate=strategy(),frozen=JSON.stringify(candidate)
+  expect(check(candidate)).toBe(candidate)
+  expect(candidate.decision_brief?.investment.stage).toBe('preliminary')
+  expect(candidate.paths[0].work_packages?.[0].intervention).toBe('更换老化给水立管')
+  expect(JSON.stringify(candidate)).toBe(frozen)
+})
+it('rejects survey-only pseudo works even when they mention a construction keyword',()=>{
+  for(const intervention of ['登记管网问题','开展加装电梯可行性调查','编制更换管网方案','对给水管网开展调查并登记问题']) {
+    const value=strategy();value.paths[0].work_packages![0].intervention=intervention
+    expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_TASK_ONLY')
+  }
+})
+it('binds each work package to its actual source locator and a literal continuous quote',()=>{
+  let value=strategy();value.paths[0].work_packages![0].quote=source.text.replace('涉及','涉 及')
+  expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
+  value=strategy();value.paths[0].work_packages![0].locator='另一个段落'
+  expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_LOCATOR_MISMATCH')
+  value=strategy();value.paths[0].work_packages![0].source_id='OTHER-PROJECT'
+  expect(()=>check(value)).toThrow('STRATEGY_SOURCE_MISMATCH')
+  value=strategy();const row=value.paths[0].work_packages![0];row.target_basis='object_source'
+  expect(()=>check(value,[{...source,role:'reference'}])).toThrow('STRATEGY_OBJECT_EVIDENCE_MISSING')
+  const reference={...source,id:'REFERENCE',role:'reference' as const}
+  row.source_id=reference.id;row.evidence_refs=[reference.id]
+  expect(()=>check(value,[source,reference])).toThrow('STRATEGY_WORK_PACKAGE_TARGET_SCOPE')
+})
+it('keeps source quantities, unknowns and explicit scenarios distinct and never transfers a reference project quantity',()=>{
+  const value=strategy(),row=value.paths[0].work_packages![0]
+  Object.assign(row,{quantity:252,unit:'户',quantity_basis:'source'})
+  expect(check(value)).toBe(value)
+  row.unit='台';expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  Object.assign(row,{quantity:12,unit:'米',quantity_basis:'scenario'})
+  expect(()=>check(value)).toThrow('STRATEGY_WORK_PACKAGE_SCENARIO_REQUIRED')
+  row.preconditions.push('情景假设：先以12米试验段比较施工和维护条件。')
+  expect(check(value)).toBe(value)
+  const archive:StrategySource={...source,id:'ARCHIVE',title:'浙江另一案例道路排水改造',text:'该案例道路、排水与绿化改造，道路总面积32545平方米。',locator:'案例ZJ-001/改造内容',role:'reference'}
+  Object.assign(row,{source_id:archive.id,quote:archive.text,locator:archive.locator,quantity:32545,unit:'㎡',quantity_basis:'source',evidence_refs:[archive.id]})
+  expect(()=>check(value,[source,archive])).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  Object.assign(row,{quantity:null,unit:null,quantity_basis:'unknown'})
+  expect(check(value,[source,archive])).toBe(value)
+  const addressed=strategy(),addressSource={...source,text:'求是村75幢1单元拟加装电梯，当前为征求意见草案。'}
+  addressed.rationale[0].quote=addressSource.text
+  for(const path of addressed.paths)for(const work of path.work_packages!)work.quote=addressSource.text
+  Object.assign(addressed.paths[0].work_packages![0],{quantity:75,unit:'幢',quantity_basis:'source'})
+  expect(()=>check(addressed,[addressSource])).toThrow('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+  addressSource.text+='本批另有75幢住宅采用同一维修方案。'
+  addressed.rationale[0].quote=addressSource.text
+  for(const path of addressed.paths)for(const work of path.work_packages!)work.quote=addressSource.text
+  expect(check(addressed,[addressSource])).toBe(addressed)
+})
+it('requires three separate internal-data definitions with usable collection denominators and actual package links',()=>{
+  const value=strategy()
+  value.internal_data_requests=value.internal_data_requests!.filter(row=>row.key!=='meal_attendance')
+  expect(()=>check(value)).toThrow('STRATEGY_INTERNAL_DATA_REQUESTS_REQUIRED')
+  let complete=strategy();complete.internal_data_requests![0].denominator=' '
+  expect(()=>check(complete)).toThrow('STRATEGY_INTERNAL_DATA_REQUEST_INCOMPLETE')
+  complete=strategy();complete.internal_data_requests![0].related_package_ids=['INVENTED-WORK']
+  expect(()=>check(complete)).toThrow('STRATEGY_INTERNAL_DATA_PACKAGE_MISMATCH')
+  expect(check(strategy()).internal_data_requests?.map(row=>row.key)).toEqual(['resident_wellbeing','elevator_usage','meal_attendance'])
+})
+it('uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  const incomplete=strategy();for(const path of incomplete.paths)delete path.work_packages;delete incomplete.internal_data_requests
+  const completed=strategy(),archive:StrategySource={id:'ARCHIVE-ZJ-003',title:'浙江归档措施参考',text:'该案例道路修复、雨污分流、给水管改造及泵站。',url:null,published_at:'2024-01-01',locator:'ZJ-003/改造内容',role:'reference'}
+  const call=vi.fn().mockResolvedValueOnce({value:incomplete}).mockResolvedValueOnce({value:completed})
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const result=await researchRenewalStrategy(project,0,input,'v6-fixture',false,new AbortController().signal,null,{referenceSources:[archive]})
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
+  expect(call.mock.calls[1][1]).toContain('STRATEGY_WORK_PACKAGES_REQUIRED')
+  expect(call.mock.calls[0][1]).toContain('雨污分流、给水管改造及泵站')
+  expect(call.mock.calls[0][1]).toContain('不将这些采集任务代替工程和服务措施')
+  expect(result.sources.find(row=>row.id===archive.id)?.role).toBe('reference')
+  expect(result.strategy?.paths[0].work_packages).toEqual(completed.paths[0].work_packages)
+  expect(fetch).not.toHaveBeenCalled()
+})
+it('reserves a bounded prompt excerpt for concrete archive references without enlarging the existing source budget',()=>{
+  const archive={...source,id:'ARCHIVE',role:'reference' as const,text:'给水管改造及泵站。'.repeat(600)}
+  const sources=[...Array.from({length:20},(_,i)=>({...source,id:`OBJECT-${i}`,text:source.text.repeat(150)})),archive]
+  const selected=strategyPromptSources(sources,[archive.id])
+  expect(selected.some(row=>row.id===archive.id)).toBe(true)
+  expect(selected.some(row=>row.role==='current')).toBe(true)
+  expect(selected.find(row=>row.id===archive.id)!.text.length).toBeLessThanOrEqual(2000)
+  expect(selected.reduce((sum,row)=>sum+row.text.length,0)).toBeLessThanOrEqual(STRATEGY_PROMPT_SOURCE_CHARS)
+})

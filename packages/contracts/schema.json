@@ -4,6 +4,43 @@
   "title": "ProjectInput",
   "$ref": "#/definitions/ProjectInput",
   "definitions": {
+    "RenewalWorkPackage": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "target": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "target_basis": { "type": "string", "enum": ["object_source", "project_scope", "scenario"] },
+        "source_id": { "type": "string", "minLength": 1, "maxLength": 250 },
+        "quote": { "type": "string", "minLength": 8, "maxLength": 600 },
+        "locator": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "intervention": { "type": "string", "minLength": 1, "maxLength": 260 },
+        "scope": { "type": "string", "minLength": 1, "maxLength": 220 },
+        "quantity": { "type": ["number", "null"], "minimum": 0 },
+        "unit": { "type": ["string", "null"], "maxLength": 40 },
+        "quantity_basis": { "type": "string", "enum": ["source", "scenario", "unknown"] },
+        "delivery": { "type": "string", "minLength": 1, "maxLength": 220 },
+        "priority": { "type": "string", "enum": ["first", "next", "reserve"] },
+        "preconditions": { "type": "array", "maxItems": 5, "items": { "type": "string", "maxLength": 200 } },
+        "evidence_refs": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+      },
+      "required": ["id", "target", "target_basis", "source_id", "quote", "locator", "intervention", "scope", "quantity", "unit", "quantity_basis", "delivery", "priority", "preconditions", "evidence_refs"]
+    },
+    "RenewalInternalDataRequest": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "key": { "type": "string", "enum": ["resident_wellbeing", "elevator_usage", "meal_attendance", "other"] },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "purpose": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "collection_method": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "period": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "denominator": { "type": "string", "minLength": 1, "maxLength": 180 },
+        "related_package_ids": { "type": "array", "maxItems": 8, "items": { "type": "string", "maxLength": 80 } },
+        "evidence_refs": { "type": "array", "maxItems": 8, "items": { "type": "string", "maxLength": 250 } }
+      },
+      "required": ["id", "key", "metric", "purpose", "collection_method", "unit", "period", "denominator", "related_package_ids", "evidence_refs"]
+    },
     "OperationsTimeBlock": {
       "type": "object",
       "additionalProperties": false,
@@ -6355,6 +6392,7 @@
     "RenewalStrategy": {
       "type": "object",
       "properties": {
+        "internal_data_requests": { "type": "array", "maxItems": 6, "items": { "$ref": "#/definitions/RenewalInternalDataRequest" } },
         "round_review": {
           "type": "object",
           "properties": {
@@ -6485,6 +6523,7 @@
                   "rebuild"
                 ]
               },
+              "work_packages": { "type": "array", "maxItems": 6, "items": { "$ref": "#/definitions/RenewalWorkPackage" } },
               "title": {
                 "type": "string",
                 "maxLength": 100

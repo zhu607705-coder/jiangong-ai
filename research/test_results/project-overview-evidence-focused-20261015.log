@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/project-evidence-drawer.test.ts > opens a body portal with source metadata and caller claim without fetching or changing input 13ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > same-project old packet wins over current text and uses its own saved version for exact highlighting 6ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > old packets never replace a missing saved source with a current source under the same reference 1ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > foreign packet, inconsistent project input and foreign saved source are rejected without exposing their body 2ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > exact same-project aliases work while a foreign namespace does not alias to a local source 2ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > does not highlight an unchecked quote: 'version-mismatch' 2ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > does not highlight an unchecked quote: 'quote-mismatch' 2ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > does not highlight an unchecked quote: 'version-unverified' 1ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > a saved source without document version cannot borrow the current hash to highlight 1ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > Tab stays within the drawer, Escape closes, and controlled closing restores focus and body scrolling 2ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > only backdrop clicks close; explicit materials action receives its source without fetching 3ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > unmount restores the original overflow and focus, and a disconnected trigger is safe 3ms
+ ✓ tests/contracts/project-evidence-drawer.test.ts > switching projects clears prior highlighting and never renders a mismatched old packet 1ms
+ ✓ tests/contracts/project-overview.test.ts > keeps the actual API recommendation independent from the user direction and opens evidence without navigating 19ms
+ ✓ tests/contracts/project-overview.test.ts > routes missing conditions, candidate comparison and object geometry to their actual work pages 5ms
+ ✓ tests/contracts/project-overview.test.ts > labels a prior-version result and links changed material impacts without passing it off as current 3ms
+ ✓ tests/contracts/project-overview.test.ts > retains a completed saved round on failure and keeps loading distinct from completion 5ms
+ ✓ tests/contracts/project-overview.test.ts > does not borrow another project or simulation and gives a truthful empty-material entry 2ms
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  19:21:01
+   Duration  783ms (transform 111ms, setup 0ms, import 476ms, tests 74ms, environment 0ms)
+

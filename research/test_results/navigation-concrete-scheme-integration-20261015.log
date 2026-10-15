@@ -1,0 +1,13 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+stderr | tests/contracts/strategy-work-packages.test.ts > uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope
+{"event":"renewal_strategy_quality_retry","project_id":"SYN-INDUSTRIAL-001","code":"STRATEGY_WORK_PACKAGES_REQUIRED","stage":"validation"}
+
+·········································
+
+ Test Files  6 passed (6)
+      Tests  41 passed (41)
+   Start at  19:47:44
+   Duration  3.75s (transform 1.01s, setup 0ms, import 2.48s, tests 578ms, environment 0ms)
+

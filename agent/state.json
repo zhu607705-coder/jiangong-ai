@@ -3290,5 +3290,24 @@
       "word_sha256": "f3717d3f6ff629e2501a638afb97ad02839652838fd11106f2adc8d91a78400b",
       "publication": "research/test_results/decision-criteria-report-delivery-20261015.json"
     }
+  },
+  "navigation_concrete_scheme_20261015": {
+    "updated_at": "2026-10-15",
+    "status": "implemented_build_passed_deployment_and_actual_browser_pending",
+    "tasks": [
+      "T65",
+      "T66"
+    ],
+    "scope": "Three global entry points, six project pages, shared evidence and process drawers, concrete source-bound work packages with separate internal survey requests.",
+    "source_reference": "D:/海之子_界面逻辑结构稿.html",
+    "workbook_reference": "data/imports/renewal-database-20261014/history-records.json",
+    "backend_policy": "renewal-strategy-overview-v6",
+    "tests": [
+      "research/test_results/navigation-concrete-scheme-integration-20261015.log",
+      "research/test_results/navigation-adaptation-build-20261015.log",
+      "research/test_results/strategy-v6-work-packages-focused-20261015.log"
+    ],
+    "unresolved_questions": [],
+    "next_runnable_task": "Deploy matching source/UI, inspect actual page and legacy link navigation, execute one permitted real P052 v6 research and inspect concrete interventions."
   }
 }

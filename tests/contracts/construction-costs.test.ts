@@ -224,11 +224,13 @@ test('CSV carries Chinese stage labels, source hash, scope, and neutralizes form
   expect(csv).toContain('https://ggzy.zj.gov.cn/')
   expect(csv).not.toContain('单价')
 })
-test('HTTP list and CSV both enforce project ownership and preserve filter semantics', async () => {
+test('HTTP project/global list and CSV share one library while project aliases enforce ownership', async () => {
   const input = JSON.parse(await readFile('fixtures/inputs/01_auto.json', 'utf8'))
   await store.db.query('INSERT INTO projects(id,owner_id,name,input) VALUES($1,$2,$3,$4)', ['COST-OWNED', 'test-owner', '契约测试社区', JSON.stringify(input)])
   const app = express()
+  const requiredProjects: string[] = []
   await registerConstructionCosts(app, store, async id => {
+    requiredProjects.push(id)
     const record = await store.project(id, 'test-owner')
     if (!record) throw Object.assign(new Error('项目不存在或无权访问'), { status: 404 })
     return record as ProjectRecord
@@ -243,10 +245,20 @@ test('HTTP list and CSV both enforce project ownership and preserve filter seman
     expect((await fetch(`${base}/COST-OWNED/construction-costs?amount_kind=unknown`)).status).toBe(422)
     const result = await (await fetch(`${base}/COST-OWNED/construction-costs?province=${encodeURIComponent('浙江')}&work_type=construction`)).json() as { items: unknown[] }
     expect(result.items).toHaveLength(1)
+    const ownershipChecks = requiredProjects.length
+    const globalBase = base.replace(/\/projects$/, '')
+    const globalResult = await (await fetch(`${globalBase}/construction-costs?province=${encodeURIComponent('浙江')}&work_type=construction`)).json() as { items: unknown[] }
+    expect(globalResult.items).toEqual(result.items)
+    expect(requiredProjects).toHaveLength(ownershipChecks)
+    expect((await fetch(`${globalBase}/construction-costs?amount_kind=unknown`)).status).toBe(422)
     const exported = await fetch(`${base}/COST-OWNED/construction-costs/export?amount_kind=budget`)
     expect(exported.status).toBe(200)
     expect(exported.headers.get('content-type')).toContain('text/csv')
     expect((await exported.text()).trim().split('\r\n')).toHaveLength(1)
+    const globalExported = await fetch(`${globalBase}/construction-costs/export?amount_kind=budget`)
+    expect(globalExported.status).toBe(200)
+    expect(globalExported.headers.get('content-type')).toContain('text/csv')
+    expect((await globalExported.text()).trim().split('\r\n')).toHaveLength(1)
     expect((await store.db.query("SELECT to_regclass('intel_jobs') AS table_name")).rows[0].table_name).toBe(null)
   } finally { await new Promise<void>(done => server.close(() => done())) }
 })

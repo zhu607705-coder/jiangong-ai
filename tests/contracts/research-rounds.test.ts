@@ -11,6 +11,7 @@ import { config } from '../../apps/host/config'
 import type { StrategyPacket, StrategySource } from '../../packages/retrofit/strategy'
 import type { ResearchRound, ResearchRoundsResponse } from '../../packages/retrofit/research-rounds'
 import { parseResearchMaterialMetadata, type ResearchRoundsService } from '../../apps/host/research-rounds'
+import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
 
 const ports=vi.hoisted(()=>({open:vi.fn(),search:vi.fn(),prompts:[] as string[]}))
 vi.mock('../../runtime/dsh/live-session',()=>({LiveSession:{open:ports.open}}))
@@ -23,13 +24,13 @@ const settings={modelConfigured:config.modelConfigured,searchConfigured:config.s
 const original='演示小区供水管线需要分栋核查，居民停水安排和持续维护责任尚待确认。'
 function proposal(source:StrategySource,parent=false):RenewalStrategy {
   const refs=[source.id]
-  return {headline:'按本轮演示材料优先安排管线核查与居民协商',summary:'使用选中材料形成项目候选决策。',preferred_mode:'comprehensive',
+  return withConcreteWorkPlan({headline:'按本轮演示材料优先安排管线核查与居民协商',summary:'使用选中材料形成项目候选决策。',preferred_mode:'comprehensive',
     decision_brief:{renewal:{conclusion:'优先研究供水分项改善。',reason:'本轮材料支持按居民影响安排核查。',evidence_refs:refs},investment:{conclusion:'先投入管线核查和预算核实。',reason:'资金与结构条件尚未登记核实。',stage:'preliminary',evidence_refs:refs},returns:{financial:'按实际预算核实建设与持续维护支出。',social:'优先处理演示资料所列停水和居民安排。',evidence_refs:refs}},
     rationale:[{point:'本轮原始材料参与判断。',source_id:source.id,quote:source.text}],
     paths:(['comprehensive','rebuild'] as const).map(mode=>({mode,title:mode==='comprehensive'?'供水分项改善':'建筑更新条件研究',description:'按本对象材料提出动作。',actions:[{title:'核查管线',detail:'按材料核查费用和居民安排。',evidence_refs:refs}],requirements:['核实结构和资金条件。']})),
     dimensions:(['demand','supply','adaptation','implementation','operations','resources'] as const).map(key=>({key,current:'原文提供本轮研究线索。',current_level:'unknown',comprehensive:'完成管线与维护核查后改善服务。',comprehensive_level:'medium',rebuild:'满足实施条件后研究设施更新。',rebuild_level:'medium',evidence_refs:refs})),
     next_checks:[{title:'补充资金依据',detail:'登记专项预算和资金来源。',evidence_refs:refs}],
-    round_review:{summary:'已结合本轮选中资料重新研判。',changes:parent?[{topic:'分项投入',before:'按公开材料核查范围。',after:'加入选中资料的预算与居民安排。',reason:'本轮原始文件提供新增线索。',evidence_refs:refs}]:[],missing_materials:[{topic:'资金',request:'上传资金落实与维护安排。',reason:'决定后续投入阶段。',evidence_refs:[]}]}}
+    round_review:{summary:'已结合本轮选中资料重新研判。',changes:parent?[{topic:'分项投入',before:'按公开材料核查范围。',after:'加入选中资料的预算与居民安排。',reason:'本轮原始文件提供新增线索。',evidence_refs:refs}]:[],missing_materials:[{topic:'资金',request:'上传资金落实与维护安排。',reason:'决定后续投入阶段。',evidence_refs:[]}]}},source)
 }
 async function project(id='P-ROUND-DEMO',synthetic=false) {
   const input={...structuredClone(fixture),project_id:id,synthetic,business_profile:'neighborhood',as_of:'2026-10-15',scope:{...fixture.scope,name:'演示小区'},facts:[],sources:[{id:'PUBLIC',title:'演示小区公开对象资料',data_class:synthetic?'synthetic':'public',visibility:'public',synthetic,published_at:'2026-10-01',untrusted_text:original,evidence_scope:'object',object_refs:[`project:${id}`],content_status:'full_text',locator:'line:1'}]} as ProjectInput

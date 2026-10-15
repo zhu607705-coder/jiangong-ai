@@ -1,6 +1,7 @@
 /** Only inspected read paths are public; method names alone do not establish read-only behavior. */
 const project = '/api/projects/[^/]+'
 const readPaths = [
+  /^\/api\/construction-costs(?:\/export)?\/?$/i,
   /^\/(?:index\.html|favicon\.(?:ico|svg))?$/i,
   /^\/assets\/[^/]+$/i,
   /^\/deliverables\/[^/]+\.(?:pdf|md|docx)$/i,

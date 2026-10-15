@@ -11,7 +11,7 @@ import { evaluateDecision, decisionCacheDescriptor } from '../../services/capabi
 import { renewalHistory } from '../../services/map-screening/renewal-history'
 import { validate } from '../../packages/contracts/validate'
 import { researchRenewalStrategy } from '../../services/map-screening/renewal-strategy'
-import { STRATEGY_POLICY, type StrategyPacket, type StrategyStreamEvent } from '../../packages/retrofit/strategy'
+import { STRATEGY_POLICY, type StrategyPacket, type StrategyStreamEvent, type StrategySource } from '../../packages/retrofit/strategy'
 import { listPublishedStrategies, readPublishedStrategy } from './strategy-publication'
 import { ResearchRoundsService, ResearchRoundError, registerResearchRoundRoutes } from './research-rounds'
 
@@ -36,6 +36,25 @@ async function prepareMode(input: DecisionInput, library: ConstructionCostLibrar
 }
 function strategyHash(modeHash: string, version: number, demo: 'true' | 'false') {
   return createHash('sha256').update(JSON.stringify({modeHash,version,policy:STRATEGY_POLICY+(demo==='true'?'-readable-demo-v2':''),model:config.DEEPSEEK_MODEL,demo})).digest('hex')
+}
+async function workPlanReferences(library: ConstructionCostLibrary, asOf: string): Promise<StrategySource[]> {
+  if (typeof library.search !== 'function') return []
+  const results = await Promise.allSettled(['浙江省','上海市','广东省'].map(province=>library.search({province,work_type:'construction'})))
+  const selected: StrategySource[] = []
+  for (const [index,result] of results.entries()) {
+    if (result.status !== 'fulfilled') continue
+    const seen = new Set<string>()
+    for (const item of result.value.items) {
+      const scope = item.scope_quote || item.scale_quote
+      const date = item.source.published_at || item.notice_date
+      if (!scope || !/道路|排水|供水|管网|立面|屋面|电梯|消防|适老|绿化/.test(scope) || date && date.slice(0,10)>asOf.slice(0,10) || seen.has(item.project_name)) continue
+      seen.add(item.project_name)
+      selected.push({id:`COST-REF-${item.id}`,title:`${item.province} · ${item.project_name} · 工程内容参考`,role:'reference',visibility:'public',data_class:'public',url:item.source.url,published_at:date||null,locator:`cost:${item.id}:scope_quote`,
+        text:`项目：${item.project_name}\n来源范围原文：\n${scope}\n金额阶段：${item.amount_kind}\n金额原文：\n${item.amount_quote}\n案例数量与金额按该历史项目使用。`})
+      if (seen.size >= (index===0?2:1)) break
+    }
+  }
+  return selected.slice(0,4)
 }
 
 /** A bounded read capability; source/version keyed results use the existing Store. */
@@ -109,7 +128,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const prior = (await store.db.query<{payload:DecisionSupport}>('SELECT payload FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3',[config.ownerId,project.id,modeHash])).rows[0]?.payload||null
       streaming = req.headers.accept?.includes('application/x-ndjson') || false
       if (streaming) { res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Accel-Buffering', 'no'); res.flushHeaders() }
-      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit})
+      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of)})
       signal.throwIfAborted()
       if ((await requireProject(project.id)).context_version!==project.context_version) {
         if (streaming) { emit({type:'error',message:'研究期间资料已变化，请刷新后重新研究。'}); res.end(); return }
@@ -136,7 +155,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
     try {
       // Public projection is deliberately independent from the selected internal material manifest.
       const {input}=await prepareMode(projectDecisionInput(project.input),library)
-      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext})
+      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext,referenceSources:await workPlanReferences(library,project.input.as_of)})
     } finally {running.delete(key)}
   })
   await researchRounds.initialize()

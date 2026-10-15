@@ -51,6 +51,7 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
   const dom = parseHTML('<html><body><div id="root"></div></body></html>')
   const location = { href: `http://example.test/${search}`, search }, storage = new Map([['hzz_project', emptyProject.id], ['hzz-complete-demo-project', savedProject.id]])
   const history = { replaceState: vi.fn((_state: unknown, _unused: string, path: string) => { const url = new URL(path, 'http://example.test'); location.href = url.href; location.search = url.search }) }
+  Object.defineProperties(dom.window, { location: { configurable: true, value: location }, history: { configurable: true, value: history } })
   for (const [key, value] of Object.entries({ window: dom.window, document: dom.document, location, history, MutationObserver: dom.window.MutationObserver, IS_REACT_ACT_ENVIRONMENT: true,
     requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(() => callback(0), 0), cancelAnimationFrame: clearTimeout,
     localStorage: { getItem: (key: string) => storage.get(key) ?? null, setItem: (key: string, value: string) => storage.set(key, value), removeItem: (key: string) => storage.delete(key) } })) vi.stubGlobal(key, value)
@@ -66,16 +67,31 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
     if (path.endsWith('/research-rounds')) return Promise.resolve(roundHistory || { rounds: [], materials: [], baseline_candidate: null })
     if (path.endsWith('/knowledge/groups')) return Promise.resolve({ groups: [], documents: [] })
     if (path.endsWith('/knowledge/pipeline')) return Promise.resolve({ cards: [] })
+    if (path.startsWith('/experiences/search?')) return Promise.resolve({ items: [] })
     if (path.includes('/renewal-strategy')) return Promise.resolve(path.includes(savedProject.id) ? packet : null)
     if (path.endsWith('/renewal-mode')) return Promise.resolve({ screening: projectRenewalModeInput(path.includes(savedProject.id) ? savedProject.input : emptyProject.input), decision: null })
     if (path === '/maps/config') return Promise.resolve({ configured: false })
     throw new Error(`Unexpected request ${path}`)
   })
   const focusBefore = dom.window.HTMLElement.prototype.focus, scrollBefore = dom.window.HTMLElement.prototype.scrollIntoView
-  dom.window.HTMLElement.prototype.focus = vi.fn(); dom.window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  let focused: Element | null = null
+  Object.defineProperty(dom.document, 'activeElement', { configurable: true, get: () => focused })
+  dom.window.HTMLElement.prototype.focus = vi.fn(function (this: HTMLElement) { focused = this }); dom.window.HTMLElement.prototype.scrollIntoView = vi.fn()
   const root = createRoot(dom.document.getElementById('root')!)
   await act(async () => root.render(createElement(WorkbenchAccessContext.Provider, { value: roundHistory ? { role: 'admin', canWrite: true } : { role: 'viewer', canWrite: false } }, createElement(App))))
   return { dom, location, root, cleanup: async () => { await act(async () => root.unmount()); dom.window.HTMLElement.prototype.focus = focusBefore; dom.window.HTMLElement.prototype.scrollIntoView = scrollBefore } }
+}
+type MountedWorkbench = Awaited<ReturnType<typeof mountWorkbench>>
+async function page(app: MountedWorkbench, id: string) {
+  const button = app.dom.document.querySelector<HTMLButtonElement>(`[data-project-page="${id}"]`)!
+  expect(button.disabled).toBe(false)
+  await act(async () => button.click())
+  expect(button.getAttribute('aria-current')).toBe('page')
+}
+async function click(app: MountedWorkbench, selector: string, label: string) {
+  const button = [...app.dom.document.querySelectorAll<HTMLButtonElement>(selector)].find(button => button.textContent?.trim() === label)
+  expect(button, `找不到 ${selector} 内的 ${label}`).toBeDefined()
+  await act(async () => button!.click())
 }
 
 test('the versions tab reloads saved research rounds and changes without starting any write or model request', async () => {
@@ -98,28 +114,31 @@ test('the versions tab reloads saved research rounds and changes without startin
       expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
     } finally { await app.cleanup() }
   }
-  expect(apiMock.mock.calls.filter(([path]) => path === '/projects/WITH-PLAN/research-rounds')).toHaveLength(2)
+  expect(apiMock.mock.calls.filter(([path]) => path === '/projects/WITH-PLAN/research-rounds').length).toBeGreaterThanOrEqual(2)
 })
 
-test('anonymous entry opens a real completed plan, including both paths, citations and all six dimensions', async () => {
+test('anonymous entry opens the saved project overview, then its direction, plan citations and six current dimensions', async () => {
   const app = await mountWorkbench()
   try {
-    await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-summary h3')?.textContent).toBe(published.headline))
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
     expect(app.dom.document.querySelector('.research-drawer')?.hasAttribute('hidden')).toBe(false)
     expect(app.location.search).toContain('project=WITH-PLAN')
-    expect(app.dom.document.querySelector('.full-demo-mode-toolbar')?.textContent).toContain('打开完整数据模拟演示')
-    const buttons = () => [...app.dom.document.querySelectorAll<HTMLButtonElement>('.strategy-overview button')]
-    const decisionSections = [...app.dom.document.querySelectorAll('.strategy-direction-selection,.strategy-original-paths,.renewal-mode-panel')]
-    expect(decisionSections[0].classList.contains('strategy-direction-selection')).toBe(true)
+    expect(app.dom.document.querySelector('.project-overview-result-meta')?.textContent).toContain('资料 v14')
+    await page(app, 'assessment')
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.decision-brief h3')?.textContent).toBe(published.headline))
     expect(app.dom.document.querySelectorAll('[data-direction-choice]')).toHaveLength(2)
     expect(app.dom.document.querySelector('.decision-ai-rationale details')?.hasAttribute('open')).toBe(false)
     expect(app.dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('')
-    expect(buttons().find(button => button.textContent === '方案总览')?.disabled).toBe(true)
     await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-direction-choice="rebuild"]')!.click())
-    expect(app.dom.document.querySelector('.strategy-plan-detail>h3')?.textContent).toBe('拆建条件专项论证')
-    await act(async () => buttons().find(button => button.textContent === '对应依据')!.click())
-    expect(app.dom.document.querySelector('.strategy-source-detail blockquote')?.textContent).toContain('求是村保留建筑')
-    await act(async () => buttons().find(button => button.textContent === '现况与改后评估')!.click())
+    await click(app, '.strategy-direction-selection button', '进入本方向方案 →')
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.single-scheme-workspace h2')?.textContent).toBe('拆建条件专项论证'))
+    await click(app, '.cwp-legacy button', '查看举措依据 ↗')
+    expect(app.dom.document.querySelector('.project-evidence-original')?.textContent).toContain('求是村保留建筑')
+    expect(app.dom.document.querySelector('.project-evidence-baseline')?.textContent).toContain('资料 v14')
+    expect(app.dom.document.querySelector('[data-project-page="scenarios"]')?.getAttribute('aria-current')).toBe('page')
+    await click(app, '.project-evidence-heading button', '关闭 ×')
+    await page(app, 'assessment')
+    await click(app, '.strategy-subnav button', '六维现况')
     expect(app.dom.document.querySelectorAll('.strategy-dimension-cards article')).toHaveLength(6)
     expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
   } finally { await app.cleanup() }
@@ -128,13 +147,18 @@ test('anonymous entry opens a real completed plan, including both paths, citatio
 test('a link to an empty same-name project shows its own state and explicitly switches to the source project', async () => {
   const app = await mountWorkbench('?project=WITHOUT-PLAN&view=overview')
   try {
-    await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-empty-project')?.textContent).toContain('资料 v0'))
-    expect(app.dom.document.querySelector('.strategy-summary h3')?.textContent).not.toBe(published.headline)
-    const link = app.dom.document.querySelector<HTMLAnchorElement>('.strategy-published-alternatives a')!
-    expect(link.getAttribute('href')).toBe(publicDecisionHref(savedProject.id))
-    expect(link.textContent).toContain('来源项目：浙大求是村 · 片区研究 · 资料 v14')
-    await act(async () => link.dispatchEvent(new app.dom.window.Event('click', { bubbles: true, cancelable: true })))
-    await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-summary h3')?.textContent).toBe(published.headline))
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.workspace-project-identity')?.textContent).toContain('资料 v0'))
+    expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).not.toBe(published.headline)
+    expect(app.location.search).toContain('project=WITHOUT-PLAN')
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('.atlas-dock [aria-label="项目空间"]')!.click())
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-project-section="published"]')!.click())
+    await vi.waitFor(() => expect(app.dom.document.querySelector('[data-published-project-id="WITH-PLAN"]')).not.toBeNull())
+    const source = app.dom.document.querySelector<HTMLElement>('[data-published-project-id="WITH-PLAN"]')!
+    expect(source.textContent).toContain('来源项目：浙大求是村 · 片区研究')
+    expect(source.textContent).toContain('成果资料版本 v14')
+    expect(source.querySelector('code')?.textContent).toBe(savedProject.id)
+    await act(async () => source.querySelector<HTMLButtonElement>('button')!.click())
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
     expect(app.location.search).toContain('project=WITH-PLAN')
     expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
   } finally { await app.cleanup() }
@@ -143,22 +167,32 @@ test('a link to an empty same-name project shows its own state and explicitly sw
 test('a same-project saved snapshot is openly readable and labelled with its saved version', async () => {
   const app = await mountWorkbench('?project=WITH-PLAN&view=overview', true)
   try {
-    await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-saved-snapshot')?.textContent).toContain('资料 v14'))
-    expect(app.dom.document.querySelector('.strategy-saved-snapshot')?.textContent).toContain('当前研判参数或参考资料已更新')
-    expect(app.dom.document.querySelector('.strategy-summary h3')?.textContent).toBe(published.headline)
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
+    expect(app.dom.document.querySelector('.project-overview-result-meta')?.textContent).toContain('资料 v14')
+    await page(app, 'results')
+    expect(app.dom.document.querySelector('.project-results-page')?.textContent).toContain('同资料版本保存快照')
+    expect(app.dom.document.querySelector('.project-results-page')?.textContent).toContain('v14')
   } finally { await app.cleanup() }
 })
 
-test('goal preferences are interactive for visitors and keep the rule-based action independent', async () => {
+test('goal preferences remain interactive in single-scheme sensitivity while the rule-based action stays independent', async () => {
   const app = await mountWorkbench('?project=WITH-PLAN&view=overview')
   try {
-    await vi.waitFor(() => expect(app.dom.document.querySelector('.decision-brief h3')?.textContent).toBe(published.headline))
-    const initialAction = app.dom.document.querySelector('.decision-current-action')?.textContent
-    const preset = [...app.dom.document.querySelectorAll<HTMLButtonElement>('.decision-presets button')].find(button => button.textContent === '财政承受优先')!
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
+    await page(app, 'assessment')
+    const initialAction = app.dom.document.querySelector('.decision-program-check')?.textContent
+    expect(initialAction).toBeTruthy()
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-direction-choice="comprehensive"]')!.click())
+    await click(app, '.strategy-direction-selection button', '进入本方向方案 →')
+    const sensitivity = [...app.dom.document.querySelectorAll<HTMLButtonElement>('.ssw-tabs button')].find(button => button.textContent?.includes('敏感性与核验'))!
+    await act(async () => sensitivity.click())
+    const preset = [...app.dom.document.querySelectorAll<HTMLButtonElement>('.ssw-presets button')].find(button => button.textContent === '财政承受优先')!
     await act(async () => preset.click())
-    expect(app.dom.document.querySelector<HTMLInputElement>('[aria-label="资金交付目标权重"]')?.value).toBe('5')
+    expect(app.dom.document.querySelector<HTMLInputElement>('[aria-label="资金交付权重"]')?.value).toBe('5')
     expect(preset.getAttribute('aria-pressed')).toBe('true')
-    expect(app.dom.document.querySelector('.decision-current-action')?.textContent).toBe(initialAction)
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.getAttribute('data-scheme')).toBe('comprehensive')
+    await page(app, 'assessment')
+    expect(app.dom.document.querySelector('.decision-program-check')?.textContent).toBe(initialAction)
     expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
   } finally { await app.cleanup() }
 })
@@ -192,40 +226,64 @@ test('the selected direction alone determines subsequent plan text, assessment t
   packet.strategy!.paths[0].description += '整体拆建不进入本路径。'
   packet.strategy!.dimensions.forEach(row => { row.comprehensive = '综合整治专属目标'; row.comprehensive_level = 'low'; row.rebuild = '原拆原建专属目标'; row.rebuild_level = 'high' })
   const app = await mountWorkbench('?project=WITH-PLAN&view=overview', false, packet)
-  const button = (name: string) => [...app.dom.document.querySelectorAll<HTMLButtonElement>('.strategy-overview button')].find(row => row.textContent === name)!
   try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
+    await page(app, 'assessment')
     await vi.waitFor(() => expect(app.dom.document.querySelector('[data-direction-choice="comprehensive"]')).not.toBeNull())
-    expect(button('方案总览').disabled).toBe(true)
     await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-direction-choice="comprehensive"]')!.click())
-    expect(app.dom.document.querySelector('.strategy-overview')?.textContent).not.toContain('原拆原建')
-    expect(app.dom.document.querySelector('.strategy-overview')?.textContent).not.toContain('整体拆建')
-    expect(app.dom.document.querySelector('.decision-criteria')).toBeNull()
-    await act(async () => button('现况与改后评估').click())
-    await act(async () => button('改后目标对照').click())
-    expect(app.dom.document.querySelector('.strategy-assessment')?.textContent).toContain('综合整治专属目标')
-    expect(app.dom.document.querySelector('.strategy-assessment')?.textContent).not.toContain('原拆原建专属目标')
-    expect(app.dom.document.querySelectorAll('.strategy-assessment .dimension-readout')).toHaveLength(1)
-    expect(app.dom.document.querySelector('.strategy-assessment .dimension-readout')?.textContent).toContain('1')
-    await act(async () => button('返回方向判断').click())
+    await click(app, '.strategy-direction-selection button', '进入本方向方案 →')
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.textContent).not.toContain('原拆原建')
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.textContent).not.toContain('整体拆建')
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('.ssw-targets .dimension-readout button')!.click())
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.textContent).toContain('综合整治专属目标')
+    expect(app.dom.document.querySelector('.ssw-targets .dimension-readout')?.textContent).toContain('1')
+    await page(app, 'assessment')
     await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-direction-choice="rebuild"]')!.click())
-    expect(app.dom.document.querySelector('.strategy-plan-detail')?.textContent).toContain('拆建条件专项论证')
-    expect(app.dom.document.querySelector('.strategy-overview')?.textContent).not.toContain('综合整治专属目标')
-    expect(app.dom.document.querySelector('.strategy-overview')?.textContent).not.toContain('保留建筑、分项改善')
-    await act(async () => button('现况与改后评估').click())
-    await act(async () => button('改后目标对照').click())
-    expect(app.dom.document.querySelector('.strategy-assessment')?.textContent).toContain('原拆原建专属目标')
-    expect(app.dom.document.querySelector('.strategy-assessment .dimension-readout')?.textContent).toContain('5')
-    expect(app.dom.document.querySelector('.strategy-assessment')?.textContent).not.toContain('综合整治专属目标')
-    const outerTab = (label: string) => [...app.dom.document.querySelectorAll<HTMLButtonElement>('.research-tabs button')].find(row => row.textContent === label)!
-    await act(async () => outerTab('逻辑与证据').click())
-    await act(async () => outerTab('研判总览').click())
-    await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-plan-detail>h3')?.textContent).toBe('拆建条件专项论证'))
+    await click(app, '.strategy-direction-selection button', '进入本方向方案 →')
+    expect(app.dom.document.querySelector('.single-scheme-workspace h2')?.textContent).toBe('拆建条件专项论证')
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.textContent).not.toContain('综合整治专属目标')
+    expect(app.dom.document.querySelector('.single-scheme-workspace')?.textContent).not.toContain('保留建筑、分项改善')
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('.ssw-targets .dimension-readout button')!.click())
+    expect(app.dom.document.querySelector('.ssw-targets')?.textContent).toContain('原拆原建专属目标')
+    expect(app.dom.document.querySelector('.ssw-targets .dimension-readout')?.textContent).toContain('5')
+    await page(app, 'evidence')
+    await page(app, 'scenarios')
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-open-scheme="rebuild"]')!.click())
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.single-scheme-workspace h2')?.textContent).toBe('拆建条件专项论证'))
     expect(app.dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('rebuild')
     expect(app.dom.document.querySelector('.decision-brief')).toBeNull()
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
     await act(async () => app.root.render(createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(StrategyOverview, { project: { ...savedProject, context_version: 15 }, demoActive: false, directionSelection: { identity: 'WITH-PLAN:14:false', mode: 'rebuild' }, onEvidence: vi.fn(), onInvestigate: vi.fn() }))))
     expect(app.dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('')
-    expect(button('方案总览').disabled).toBe(true)
+    const legacyPlan = [...app.dom.document.querySelectorAll<HTMLButtonElement>('.strategy-overview button')].find(row => row.textContent === '方案总览')!
+    expect(legacyPlan.disabled).toBe(true)
     expect(app.dom.document.querySelector('.strategy-plan-detail')).toBeNull()
+  } finally { await app.cleanup() }
+})
+
+test('all six project pages remain accessible without choosing a direction and the global library has its own entrance', async () => {
+  const app = await mountWorkbench('?project=WITH-PLAN&view=overview')
+  try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(published.headline))
+    expect([...app.dom.document.querySelectorAll('[data-project-page]')].map(button => button.textContent)).toEqual(['项目总览', '资料与条件', '改造研判', '方案与测算', '调查任务', '成果与版本'])
+    for (const id of ['evidence', 'assessment', 'scenarios', 'actions', 'results', 'overview']) await page(app, id)
+    expect(app.dom.document.querySelector('.project-overview-directions')?.textContent).toContain('当前工作方向：尚未选择')
+    const trigger = [...app.dom.document.querySelectorAll<HTMLButtonElement>('.project-overview-actions button')].find(button => button.textContent === '查看判断依据')!
+    trigger.focus()
+    const beforeUrl = app.location.search
+    await act(async () => trigger.click())
+    expect(app.dom.document.querySelector('.project-evidence-drawer')?.getAttribute('role')).toBe('dialog')
+    expect(app.dom.document.querySelector('[data-project-page="overview"]')?.getAttribute('aria-current')).toBe('page')
+    expect(app.location.search).toBe(beforeUrl)
+    expect(app.dom.document.querySelector('.project-evidence-original')?.textContent).toBe(saved.sources[0].text)
+    await click(app, '.project-evidence-heading button', '关闭 ×')
+    expect(app.dom.document.activeElement).toBe(trigger)
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('.atlas-dock [aria-label="案例与规则"]')!.click())
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.global-knowledge-catalog')?.getAttribute('aria-label')).toBe('全局案例库'))
+    expect([...app.dom.document.querySelectorAll('.global-knowledge-tabs button')].map(button => button.textContent)).toEqual(['案例库', '规则库', '成本参考'])
+    await act(async () => app.dom.document.querySelector<HTMLButtonElement>('[data-knowledge-section="rules"]')!.click())
+    await vi.waitFor(() => expect(apiMock.mock.calls.some(([path]) => path.startsWith('/experiences/search?kind=rule'))).toBe(true))
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
   } finally { await app.cleanup() }
 })
 

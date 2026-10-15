@@ -9,8 +9,8 @@ const number = (value: number) => value.toLocaleString('zh-CN', { maximumFractio
 const gradeLabels = { low: '低', medium: '中', high: '高', unknown: '待评价' }
 const firstSentence = (text: string) => text.trim().split(/(?<=[。！？])/)[0] || text
 
-export default function DecisionBrief({ result, gate, onEvidence, onPlan }: {
-  result: StrategyPacket; gate: RenewalModeGate; onEvidence: (refs: string[]) => void; onPlan: () => void;
+export default function DecisionBrief({ result, gate, onEvidence, onPlan, showPriorities = true }: {
+  result: StrategyPacket; gate: RenewalModeGate; onEvidence: (refs: string[]) => void; onPlan: () => void; showPriorities?: boolean;
 }) {
   const strategy = result.strategy!
   const [weights, setWeights] = useState<PriorityWeights>({ ...PRIORITY_PRESETS[0].weights })
@@ -48,7 +48,7 @@ export default function DecisionBrief({ result, gate, onEvidence, onPlan }: {
     </div>
     {!!strategy.rationale.length && <section className="decision-ai-rationale strategy-rationale" aria-label="AI研判的主要依据"><h4>这项判断依据什么</h4>{strategy.rationale.slice(0, 3).map((row, index) => <article key={`${row.source_id}:${index}`}><p>{row.point}</p><details><summary>展开引用原文</summary><blockquote>{row.quote}</blockquote></details><button disabled={!sourceIds.has(row.source_id)} onClick={() => onEvidence([row.source_id])}>依据 {index + 1} · {result.sources.find(source => source.id === row.source_id)?.title || '来源暂不可读'} →</button></article>)}</section>}
     <p className="decision-principle"><strong>模型负责解释，程序负责判定。</strong>每个结论对应判断标准、原文依据和下一步行动。</p>
-    <details className="decision-criteria">
+    {showPriorities && <details className="decision-criteria">
       <summary><strong>判断标准与目标权重</strong><span>先检查实施条件，再比较方案适配</span></summary>
       <div className="decision-rule-chain"><article><b>1</b><strong>实施条件</strong><p>结构、权属规划、居民决议、安置、资金和维护逐项核实。</p></article><article><b>2</b><strong>目标取舍</strong><p>在同一效果标尺下调整目标权重，对照两条路径。</p></article><article><b>3</b><strong>形成行动</strong><p>给出优先路径、分期举措与下一项调查，并关联原文。</p></article></div>
       <div className="decision-preference-heading"><h4>调整目标，看看取舍怎样变化</h4><p>滑杆表示该项从低适配改善到高适配的价值。预设可直接调整。</p></div>
@@ -80,6 +80,6 @@ export default function DecisionBrief({ result, gate, onEvidence, onPlan }: {
         })}</tbody></table></div>
         <ul>{PRIORITY_PRESETS.map(preset => <li key={preset.id}>{preset.label}：{label(compareGoalPriorities(strategy.dimensions, preset.weights, sourceIds).preference)}</li>)}</ul><p>计算版本 {comparison?.policy_version || 'renewal-goal-sensitivity-v1'} · 方案资料 v{result.context_version} · 本次调整仅用于当前页面比较。</p>
       </details>
-    </details>
+    </details>}
   </section>
 }

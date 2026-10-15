@@ -237,6 +237,56 @@ export interface KnowledgeQuery {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalWorkPackage".
+ */
+export interface RenewalWorkPackage {
+  id: string;
+  target: string;
+  target_basis: "object_source" | "project_scope" | "scenario";
+  source_id: string;
+  quote: string;
+  locator: string;
+  intervention: string;
+  scope: string;
+  quantity: number | null;
+  unit: string | null;
+  quantity_basis: "source" | "scenario" | "unknown";
+  delivery: string;
+  priority: "first" | "next" | "reserve";
+  /**
+   * @maxItems 5
+   */
+  preconditions: string[];
+  /**
+   * @minItems 1
+   * @maxItems 8
+   */
+  evidence_refs: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalInternalDataRequest".
+ */
+export interface RenewalInternalDataRequest {
+  id: string;
+  key: "resident_wellbeing" | "elevator_usage" | "meal_attendance" | "other";
+  metric: string;
+  purpose: string;
+  collection_method: string;
+  unit: string;
+  period: string;
+  denominator: string;
+  /**
+   * @maxItems 8
+   */
+  related_package_ids: string[];
+  /**
+   * @maxItems 8
+   */
+  evidence_refs: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "OperationsTimeBlock".
  */
 export interface OperationsTimeBlock {
@@ -1927,6 +1977,10 @@ export interface OperationsWorkspace {
  * via the `definition` "RenewalStrategy".
  */
 export interface RenewalStrategy {
+  /**
+   * @maxItems 6
+   */
+  internal_data_requests?: RenewalInternalDataRequest[];
   round_review?: {
     summary: string;
     /**
@@ -2002,6 +2056,10 @@ export interface RenewalStrategy {
    */
   paths: {
     mode: "comprehensive" | "rebuild";
+    /**
+     * @maxItems 6
+     */
+    work_packages?: RenewalWorkPackage[];
     title: string;
     description: string;
     /**
