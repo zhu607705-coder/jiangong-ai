@@ -8,8 +8,10 @@ export type StrategySource = { id: string; title: string; text: string; url: str
 export type StrategyPublication = { kind: 'current' | 'saved_snapshot'; is_current: boolean; current_input_hash: string; saved_at: string }
 export type PublicStrategyIndexItem = { project_id: string; project_name: string; context_version: number; strategy_context_version: number; created_at: string; headline: string; status: 'completed'; synthetic: false; is_current: boolean; input_hash: string }
 export type PublicStrategyIndexResponse = { items: PublicStrategyIndexItem[] }
+export type StrategyReview = { kind: 'source_and_metric_review'; reviewed_at: string; original_packet_sha256: string;
+  changes: { path: string; before: unknown; after: unknown; reason: string }[] }
 export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';
-  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication }
+  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview }
 
 export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
   stage?: string; stop_reason?: string; provider_code?: string }

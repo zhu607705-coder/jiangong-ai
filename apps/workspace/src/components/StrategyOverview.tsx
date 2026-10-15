@@ -56,12 +56,24 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   const contentAnchor=useRef<HTMLDivElement|null>(null),summaryAnchor=useRef<HTMLElement|null>(null),previousTab=useRef(tab)
   useEffect(()=>{if(previousTab.current===visibleTab)return;previousTab.current=visibleTab;const frame=requestAnimationFrame(()=>(visibleTab==='direction'?summaryAnchor.current:contentAnchor.current)?.scrollIntoView({block:'start',behavior:'smooth'}));return()=>cancelAnimationFrame(frame)},[visibleTab])
   const resultCallback=useRef(onStrategyResult);resultCallback.current=onStrategyResult
-  const roundResult=useRef<{key:string;result:StrategyPacket}|null>(null)
+  const latestResult=useRef<{key:string;result:StrategyPacket}|null>(null)
   useEffect(()=>{if(result?.status==='completed'&&result.strategy)resultCallback.current?.(result)},[result])
   const currentIdentity = useRef(identity); currentIdentity.current=identity
   const endpoint = `/projects/${encodeURIComponent(project.id)}/renewal-strategy?demo=${demoActive}`
   const roundsEndpoint = `/projects/${encodeURIComponent(project.id)}/research-rounds`
   const rounds = roundState.key===identity?roundState.data:{rounds:[],materials:[],baseline_candidate:null}
+  const sameScope=(candidate:StrategyPacket)=>candidate.project_id===project.id&&candidate.context_version===project.context_version&&candidate.synthetic===(demoActive||project.input.synthetic)
+  function acceptResult(next:StrategyPacket|null,key:string) {
+    if(currentIdentity.current!==key)return
+    const previous=latestResult.current?.key===key?latestResult.current.result:null
+    if(next?.status==='completed'&&next.strategy&&sameScope(next)) {
+      const previousTime=Date.parse(previous?.created_at||''),nextTime=Date.parse(next.created_at)
+      // Compare result creation, not adoption time or transport completion. Equal or unknown dates do not prove a newer result.
+      const selected=!previous||Number.isFinite(nextTime)&&(!Number.isFinite(previousTime)||nextTime>previousTime)?next:previous
+      latestResult.current={key,result:selected};setResult(selected)
+    } else if(previous)setResult(previous)
+    else setResult(next&&sameScope(next)?next:null)
+  }
   async function readRounds(signal?:AbortSignal) {
     const key=identity
     setRoundState(previous=>({...previous,key,loading:true,error:''}))
@@ -70,8 +82,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       if(!data||!Array.isArray(data.rounds)||!Array.isArray(data.materials))throw new Error('INVALID_ROUNDS')
       if(!signal?.aborted&&currentIdentity.current===key){
         setRoundState({key,loading:false,error:'',data})
-        const saved=data.rounds.filter(round=>round.status==='completed'&&round.result?.status==='completed'&&round.result.strategy&&round.result.project_id===project.id&&round.result.context_version===project.context_version&&round.result.synthetic===(demoActive||project.input.synthetic)).sort((a,b)=>a.round_number-b.round_number).at(-1)?.result
-        if(saved){roundResult.current={key,result:saved};setResult(saved)}
+        for(const round of data.rounds)if(round.status==='completed'&&round.project_id===project.id&&round.context_version===project.context_version&&round.result?.status==='completed'&&round.result.strategy)acceptResult(round.result,key)
       }
     } catch {
       if(!signal?.aborted&&currentIdentity.current===key)setRoundState(previous=>({...previous,key,loading:false,error:'研判轮次暂时无法读取，请重试；已有方案仍可查看。'}))
@@ -80,7 +91,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   function keepRound(round:ResearchRound) {
     setRoundState(previous=>previous.key!==identity?previous:{...previous,data:{...previous.data,rounds:[...previous.data.rounds.filter(row=>row.id!==round.id),round]}})
     const saved=round.result
-    if(round.status==='completed'&&saved?.status==='completed'&&saved.strategy&&saved.project_id===project.id&&saved.context_version===project.context_version&&saved.synthetic===(demoActive||project.input.synthetic)){roundResult.current={key:identity,result:saved};setResult(saved)}
+    if(round.status==='completed'&&saved?.status==='completed'&&saved.strategy)acceptResult(saved,identity)
   }
   async function adoptCandidate(candidate:StrategyPacket):Promise<ResearchRound|null> {
     if(!roundFlow||busy)return null
@@ -123,8 +134,8 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       } else await consumeStream<ResearchRoundStreamEvent>(response,abort.signal,accept)
       if(!abort.signal.aborted&&currentIdentity.current===key&&next) {
         const completed=next as StrategyPacket
-        if(completed.status!=='completed'&&result?.status==='completed'&&result.strategy)setError(`本轮更新失败，展示上次已保存方案。${strategyFailureMessage(completed)}`)
-        else {if(completed.status==='completed'&&completed.strategy)roundResult.current={key,result:completed};setResult(completed)}
+        if(completed.status!=='completed'&&latestResult.current?.key===key)setError(`本轮更新失败，展示上次已保存方案。${strategyFailureMessage(completed)}`)
+        acceptResult(completed,key)
       }
     } catch {
       if(!abort.signal.aborted&&currentIdentity.current===key)setError('本轮补充研判未完成，首轮基线与已上传文件仍保留。可重新读取轮次后继续。')
@@ -156,13 +167,13 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
         }
       }
       if(!abort.signal.aborted&&currentIdentity.current===key){
-        if(next&&next.status!=='completed'&&result?.status==='completed'&&result.strategy)setError(`本轮更新失败，展示上次已保存方案。${strategyFailureMessage(next)}`)
-        else setResult(roundResult.current?.key===key?roundResult.current.result:next)
+        if(next&&next.status!=='completed'&&latestResult.current?.key===key)setError(`本轮更新失败，展示上次已保存方案。${strategyFailureMessage(next)}`)
+        acceptResult(next,key)
       }
     }catch{if(!abort.signal.aborted&&currentIdentity.current===key)setError(refresh?'研究连接未完成，请检查工作台连接后查看已保存结果。':'更新方案读取失败，请检查工作台连接后重试。')}
     finally{if(!abort.signal.aborted&&currentIdentity.current===key)setActivity(null)}
   }
-  useEffect(()=>{const readAbort=new AbortController();roundResult.current=null;setResult(null);setTab(directionSelection?.identity===identity?'plan':'direction');setLocalSelection(null);setPhase('before');setSourceIds([]);setArchivedSources(null);setProgress([]);setRoundMutation(false);void research();if(roundFlow)void readRounds(readAbort.signal);return()=>{controller.current?.abort();readAbort.abort()}},[identity,canWrite])
+  useEffect(()=>{const readAbort=new AbortController();latestResult.current=null;setResult(null);setTab(directionSelection?.identity===identity?'plan':'direction');setLocalSelection(null);setPhase('before');setSourceIds([]);setArchivedSources(null);setProgress([]);setRoundMutation(false);void research();if(roundFlow)void readRounds(readAbort.signal);return()=>{controller.current?.abort();readAbort.abort()}},[identity,canWrite])
   useEffect(()=>{if(!materialRequest)return;setTab('direction');setIntakeVisible(true);const frame=requestAnimationFrame(()=>intakeAnchor.current?.scrollIntoView({block:'start',behavior:'smooth'}));return()=>cancelAnimationFrame(frame)},[materialRequest])
   useEffect(()=>{if(activity!=='research')return;const timer=setInterval(()=>setElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);return()=>clearInterval(timer)},[activity,startedAt])
   const resultMatches=!!result&&result.project_id===project.id&&result.context_version===project.context_version&&result.synthetic===(demoActive||project.input.synthetic)

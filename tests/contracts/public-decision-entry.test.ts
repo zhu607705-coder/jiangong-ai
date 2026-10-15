@@ -287,6 +287,36 @@ test('all six project pages remain accessible without choosing a direction and t
   } finally { await app.cleanup() }
 })
 
+test('a current project-baseline deep link hydrates its selected scheme and pane without being cleared by identity effects', async () => {
+  for (const [scheme, pane, title] of [['comprehensive', 'content', '保留建筑、分项改善'], ['rebuild', 'funding', '拆建条件专项论证']] as const) {
+    const app = await mountWorkbench(`?project=WITH-PLAN&view=scenarios&section=detail&pane=${pane}&scheme=${scheme}&baseline=14`)
+    try {
+      await vi.waitFor(() => expect(app.dom.document.querySelector('.single-scheme-workspace')?.getAttribute('data-scheme')).toBe(scheme))
+      expect(app.dom.document.querySelector('.single-scheme-workspace')?.getAttribute('data-pane')).toBe(pane)
+      expect(app.dom.document.querySelector('.single-scheme-workspace h2')?.textContent).toBe(title)
+      expect(app.dom.document.querySelector('.ssw-header')?.textContent).toContain('资料 v14')
+      expect(app.dom.document.querySelector('[data-project-page="scenarios"]')?.getAttribute('aria-current')).toBe('page')
+      expect(app.dom.document.querySelector('.strategy-scheme-entries')).toBeNull()
+      const location = new URLSearchParams(app.location.search)
+      expect(location.get('project')).toBe(savedProject.id)
+      expect(location.get('scheme')).toBe(scheme); expect(location.get('pane')).toBe(pane); expect(location.get('baseline')).toBe('14')
+      expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+    } finally { await app.cleanup() }
+  }
+})
+
+test('a stale deep-link baseline keeps the scheme unselected instead of applying it to the current project version', async () => {
+  const app = await mountWorkbench('?project=WITH-PLAN&view=scenarios&section=detail&pane=content&scheme=comprehensive&baseline=13')
+  try {
+    await vi.waitFor(() => expect(app.dom.document.querySelector('.strategy-scheme-entries')).not.toBeNull())
+    expect(app.dom.document.querySelector('.single-scheme-workspace')).toBeNull()
+    expect(app.dom.document.querySelector('.strategy-overview')?.getAttribute('data-selected-direction')).toBe('')
+    expect(app.dom.document.querySelector('.workspace-project-identity')?.textContent).toContain('资料 v14')
+    expect(new URLSearchParams(app.location.search).get('baseline')).toBe('13')
+    expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
+  } finally { await app.cleanup() }
+})
+
 test('a demolition headline blocked by the rule gate is retained as model analysis rather than an execution recommendation', () => {
   const packet = structuredClone(saved)
   packet.strategy!.preferred_mode = 'rebuild'; packet.strategy!.headline = '直接实施整体拆建'

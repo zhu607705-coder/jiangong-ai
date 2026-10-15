@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "recorded_at": "2026-10-15T20:15:35.2335084+08:00",
+  "scope": "Standalone real operations page in SingleSchemeWorkspace",
+  "verification": "Recorded from completed tool results; commands were not rerun",
+  "changed_files": [
+    "apps/workspace/src/components/CommunityOperationsPanel.tsx",
+    "apps/workspace/src/components/SingleSchemeWorkspace.tsx",
+    "tests/contracts/operations-direction.test.ts"
+  ],
+  "commands": [
+    {
+      "command": "npx vitest run tests/contracts/operations-direction.test.ts",
+      "started_at": "2026-10-15T20:04:15+08:00",
+      "status": "passed",
+      "exit_code": 0,
+      "test_files_passed": 1,
+      "tests_passed": 5,
+      "tests_failed": 0,
+      "duration_ms": 992,
+      "evidence_chunk_id": "c58368",
+      "checked_behaviors": [
+        "Standalone page renders section and ops-body without an outer details wrapper",
+        "Opening the real single-scheme operations page immediately reads same-direction saved records",
+        "Embedded default remains collapsed and does not read before opening",
+        "Read AbortSignal is aborted on unmount"
+      ]
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "status": "passed",
+      "exit_code": 0,
+      "exact_command_time_recorded": false,
+      "time_note": "Ran after the focused tests in the same execution; exact independent start/end timestamps were not emitted",
+      "execution_session_id": 1454,
+      "completion_chunk_id": "3d9a09",
+      "output": ""
+    },
+    {
+      "command": "git diff --check -- apps/workspace/src/components/CommunityOperationsPanel.tsx apps/workspace/src/components/SingleSchemeWorkspace.tsx tests/contracts/operations-direction.test.ts",
+      "status": "passed",
+      "exit_code": 0,
+      "evidence_chunk_id": "e8ffc2",
+      "warnings": [
+        "Git reported LF-to-CRLF working-copy normalization warnings; no whitespace errors"
+      ]
+    }
+  ],
+  "provider_called": false,
+  "build_run": false,
+  "deployed": false
+}
