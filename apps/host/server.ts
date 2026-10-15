@@ -1,7 +1,7 @@
 import express from 'express'
 import helmet from 'helmet'
 import multer from 'multer'
-import { randomBytes, randomUUID, createHash } from 'node:crypto'
+import { randomUUID, createHash } from 'node:crypto'
 import { readFile, mkdir, writeFile, unlink } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import { z } from 'zod'
@@ -23,6 +23,8 @@ import { registerCommunityOperations } from './community-operations'
 import { registerConstructionCosts } from './construction-costs'
 import { registerRenewalMode } from './renewal-mode'
 import { ExperienceError } from '../../packages/experience/domain'
+import { AdminAccess, registerAdminRoutes } from './admin-auth'
+import { renderAdminLoginPage } from './admin-login-page'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -31,31 +33,26 @@ await store.db.query("UPDATE runs SET status='failed',error_code='INTERRUPTED_RE
 const app = express()
 const amapSettings = new AmapSettings(config.dataDir)
 await amapSettings.load()
-const session = randomBytes(32).toString('hex')
+const adminAccess = new AdminAccess(config.ADMIN_USERNAME, config.ADMIN_PASSWORD_HASH, config.ADMIN_SESSION_TTL_SECONDS)
 const controllers = new Map<string, AbortController>()
 const active = new Set<Promise<void>>()
-const allowedHosts = new Set([`127.0.0.1:${config.PORT}`, `localhost:${config.PORT}`, `127.0.0.1:${config.WORKSPACE_PORT}`, `localhost:${config.WORKSPACE_PORT}`])
-const allowedOrigins = new Set([...allowedHosts].map(host => `http://${host}`))
+const { allowedHosts, allowedOrigins } = config.requestOrigins
 app.disable('x-powered-by')
 app.use(helmet({ contentSecurityPolicy: false }))
 app.use((req, res, next) => {
   const requestId = randomUUID(); res.setHeader('X-Request-ID', requestId)
   if (req.path.startsWith('/api/')) res.setHeader('Cache-Control', 'no-store')
   res.on('finish', () => { console.log(JSON.stringify({ event: 'http', request_id: requestId, method: req.method, status: res.statusCode, path: req.path.replace(/[a-f0-9-]{36}/g, ':id') })) })
-  if (!allowedHosts.has(req.headers.host || '')) return next(new ApiError(403, 'INVALID_HOST', '仅支持本地工作台访问'))
+  if (!allowedHosts.has(req.headers.host || '')) return next(new ApiError(403, 'INVALID_HOST', '访问地址不在授权范围内'))
   if (req.headers.origin && !allowedOrigins.has(req.headers.origin)) return next(new ApiError(403, 'INVALID_ORIGIN', '来源不在授权范围内'))
   next()
 })
 app.use(express.json({ limit: '4mb' }))
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'haizhizi-host' }))
-app.get('/api/session', (_req, res) => {
-  res.cookie('hzz_session', session, { httpOnly: true, sameSite: 'strict', path: '/' })
-  res.json({ user: { id: config.ownerId, label: '本地项目负责人' }, deployment: 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
-    decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL} })
-})
+registerAdminRoutes(app, adminAccess, () => ({ user: { id: config.ownerId, label: adminAccess.enabled ? `管理员 ${config.ADMIN_USERNAME}` : '本地项目负责人' }, deployment: adminAccess.enabled ? 'single_admin_server' : 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
+  decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL} }), renderAdminLoginPage)
 app.use(['/api', '/_AMapService'], (req, _res, next) => {
-  const match = req.headers.cookie?.split(';').map(c => c.trim()).find(c => c.startsWith('hzz_session='))?.slice('hzz_session='.length)
-  if (match !== session) return next(new ApiError(401, 'SESSION_REQUIRED', '会话已更新，请刷新页面'))
+  if (!adminAccess.identity(req.headers.cookie)) return next(new ApiError(401, 'SESSION_REQUIRED', '会话已更新，请刷新页面'))
   if (req.method !== 'GET' && req.headers['x-requested-with'] !== 'haizhizi') return next(new ApiError(403, 'CSRF_GUARD', '缺少工作台请求标识'))
   next()
 })
@@ -259,5 +256,5 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
   res.status(500).json({ code: 'INTERNAL_ERROR', detail: '服务处理失败，请查看本地运行记录' })
 })
 const server = app.listen(config.PORT, config.HOST, () => console.log(JSON.stringify({ event: 'host_ready', url: `http://${config.HOST}:${config.PORT}` })))
-async function shutdown() { server.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await intelligence.stop(); await store.db.close(); process.exit(0) }
+async function shutdown() { server.close(); adminAccess.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await intelligence.stop(); await store.db.close(); process.exit(0) }
 process.once('SIGINT', () => void shutdown()); process.once('SIGTERM', () => void shutdown())

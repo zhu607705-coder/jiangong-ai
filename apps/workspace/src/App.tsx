@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
+import { randomUUID } from './uuid';
 import {
   IconArrowRight,
   IconArrowUpRight,
@@ -348,7 +349,7 @@ export default function App() {
       {
         mode,
         execution_mode: executionMode,
-        idempotency_key: crypto.randomUUID(),
+        idempotency_key: randomUUID(),
         ...(knowledgeQuery ? { knowledge_query: knowledgeQuery } : {}),
       },
     );
@@ -1400,7 +1401,7 @@ export default function App() {
                       : null;
                   const input: ProjectInput = {
                     schema_version: "2.0",
-                    project_id: `P-${crypto.randomUUID()}`,
+                    project_id: `P-${randomUUID()}`,
                     synthetic: false,
                     purpose: "preconstruction_research",
                     business_profile: businessProfile,

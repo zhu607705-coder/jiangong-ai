@@ -74,7 +74,7 @@ test('a loaded focus request selects and focuses once, allows manual selection, 
     expect(apiMock.mock.calls.filter(([path])=>path.endsWith('/chunks')).every(([,body])=>body.document_id==='doc')).toBe(true)
     expect(selected()?.textContent).toContain('拟更新二次供水管网')
     expect(dom.document.querySelector('.document-lineage-filter button[aria-pressed="true"]')?.textContent).toBe('全部原文片段')
-    expect(focused).toHaveBeenCalled();expect(scrolled).toHaveBeenCalled()
+    await vi.waitFor(()=>{expect(focused).toHaveBeenCalled();expect(scrolled).toHaveBeenCalled()})
     await act(async()=>{dom.document.querySelector('.document-lineage-chunks button')!.dispatchEvent(new dom.window.Event('click',{bubbles:true}));await flush()})
     expect(selected()?.textContent).toContain('原件标题')
     const focusCalls=focused.mock.calls.length
@@ -84,7 +84,7 @@ test('a loaded focus request selects and focuses once, allows manual selection, 
     await act(async()=>{render({...target,token:2});await flush()})
     await act(flush)
     expect(selected()?.textContent).toContain('拟更新二次供水管网')
-    expect(focused.mock.calls.length).toBeGreaterThan(focusCalls)
+    await vi.waitFor(()=>expect(focused.mock.calls.length).toBeGreaterThan(focusCalls))
     await act(async()=>{render({...target,version:'old-hash',token:3});await flush()})
     expect(dom.document.querySelector('[role="alert"]')?.textContent).toContain('版本不同')
     expect(selected()?.textContent).toContain('拟更新二次供水管网')
