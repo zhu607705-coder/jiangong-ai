@@ -7,6 +7,7 @@ import { build } from 'esbuild'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { createHash } from 'node:crypto'
+import { localSession } from './fixtures/local-session.mjs'
 const handoffCase=process.env.HZZ_UI_HANDOFF||(process.env.HZZ_UI_EARLY_CREATE==='1'?'normal-pending':'')
 const earlyCreate=!!handoffCase
 const pointHandoff=handoffCase==='point-ready',switchHandoff=handoffCase==='expanded-switch'
@@ -47,7 +48,7 @@ await page.exposeFunction('__fixtureFrame',event=>{if((event.type==='brief'||eve
 await page.exposeFunction('__fixtureRequest',async (route,body,method)=>{
  const url=new URL(route,'https://fixture.invalid'),path=url.pathname
  let data
- if(path==='/api/session')data={model_configured:true}
+ if(path==='/api/session')data=localSession({modelConfigured:true})
  else if(path==='/api/projects'&&method==='POST'){createdInput=JSON.parse(body);created={id:createdInput.input.project_id,name:createdInput.name,input:createdInput.input,context_version:0,runs:[]};data=created}
  else if(path==='/api/projects')data=created?[created]:[]
  else if(created&&path==='/api/projects/'+created.id)data=created

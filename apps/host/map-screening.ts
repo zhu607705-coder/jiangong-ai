@@ -34,7 +34,7 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
   app.get('/api/maps/data', async (_req, res) => res.json(dataCatalog(await loadEvidence())))
   app.get('/api/maps/screening/profiles', (_req, res) => res.json(SCREEN_PROFILES))
   app.get('/api/maps/screening/analysis/:id',async(req,res)=>{
-    try{const profile=profileSchema.parse(req.query.profile);res.json(await service.savedAnalysis(String(req.params.id),profile,requestSignal(req,res,10000)))}
+    try{const profile=profileSchema.parse(req.query.profile);res.json(await service.savedAnalysis(String(req.params.id),profile,requestSignal(req,res,10000),res.locals.workbenchRole!=='viewer'))}
     catch(error){failure(res,error)}
   })
   app.post('/api/maps/geometry/wgs84',async(req,res)=>{

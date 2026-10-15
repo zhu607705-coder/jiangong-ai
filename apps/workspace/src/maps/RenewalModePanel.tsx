@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { IconBuildingCommunity, IconBuildingSkyscraper, IconSparkles, IconChevronDown, IconArrowUpRight } from '@tabler/icons-react'
 import { api } from '../api'
+import { useWorkbenchAccess } from '../AdminAccess'
 import type { DecisionSupport } from '../../../host/generated/contracts'
 import { MODE_LABELS, type RenewalModeInput, type RenewalModePacket } from '../../../../packages/retrofit/renewal-mode'
 import { decisionErrorMessage } from '../../../../packages/decision/route-labels'
@@ -14,6 +15,7 @@ const conditionLabels: Record<string, string> = { structure_repairable: '可修�
 export default function RenewalModePanel({ endpoint, contextVersion, input, decision, strategy, compact=false, onInvestigate }: {
   endpoint: string; contextVersion?: number; input: RenewalModeInput; decision?: DecisionSupport | null; strategy?:StrategyPacket|null; compact?:boolean; onInvestigate?: () => void;
 }) {
+  const { canWrite } = useWorkbenchAccess()
   const [packet, setPacket] = useState<RenewalModePacket | null>(null), [running, setRunning] = useState(false), [error, setError] = useState('')
   const [cachedStrategy,setCachedStrategy]=useState<StrategyPacket|null>(null)
   const [tab, setTab] = useState<'compare' | 'standards' | 'cases'>('compare'), [path, setPath] = useState<'comprehensive' | 'rebuild'>('comprehensive')
@@ -40,7 +42,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
   }, [mode?.direction])
   // Every request belongs to this object. Unmounting or changing its snapshot cancels it.
   async function judge() {
-    if (running) return
+    if (running||!canWrite) return
     restoreController.current?.abort()
     const controller = new AbortController(), currentIdentity = identity.current
     requestController.current = controller; setRunning(true); setError('')
@@ -61,7 +63,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
       {mode?.reasons.map(reason => <p className="renewal-restriction" key={reason}>{reason}</p>)}
       {mode && <p className="renewal-next"><span>优先调查</span>{mode.next_step}</p>}
       <div className="renewal-judge-actions">
-        <button onClick={() => void judge()} disabled={running}><IconSparkles size={17}/>{running ? 'decision 正在判定…' : mode ? '更新模式初判' : '判定改造模式'}</button>
+        <button onClick={() => void judge()} disabled={running||!canWrite} title={!canWrite?'管理员登录后可生成模式初判':undefined}><IconSparkles size={17}/>{running ? 'decision 正在判定…' : mode ? '更新模式初判' : '判定改造模式'}</button>
         {mode && <button onClick={() => { setTab('standards'); setOpenStandard(mode.priority_constraint.choice) }}>查看判定条件</button>}
       </div>
       {running && <button className="renewal-stop" onClick={() => { requestController.current?.abort(); setRunning(false) }}>停止本次判定</button>}

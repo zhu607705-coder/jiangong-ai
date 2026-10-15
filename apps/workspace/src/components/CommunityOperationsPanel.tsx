@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { OperationsAnalysisBound, OperationsCashItem, OperationsInput, OperationsMetrics, OperationsObservedMetrics, OperationsResult, OperationsService, OperationsSnapshot, OperationsTimeBlock, OperationsValue, OperationsWorkspace } from '../../../host/generated/contracts'
 import { api, type Project } from '../api'
+import { randomUUID } from '../uuid'
 import './community-operations.css'
 import { isOperationsOriginal } from '../../../../packages/operations/sources'
 import { simulateScenarioUsers, type CompleteCommunityDemo } from '../../../../packages/retrofit/complete-demo'
@@ -94,7 +95,7 @@ const newService = (id: string): OperationsService => ({
   capacity_per_slot: missingValue('visit/slot'), available_slots: missingValue('slot/month'), demand_visits: missingValue('visit/month'),
   paid_share: missingValue('ratio'), fee_per_visit: missingValue('yuan/visit'), variable_cost_per_visit: missingValue('yuan/visit'),
 })
-const newBlock = (): OperationsTimeBlock => ({ id: `block-${crypto.randomUUID().slice(0, 8)}`, name: '新增时段', slots: missingValue('slot/month'), capacity_per_slot: missingValue('visit/slot'), demand_visits: missingValue('visit/month') })
+const newBlock = (): OperationsTimeBlock => ({ id: `block-${randomUUID().slice(0, 8)}`, name: '新增时段', slots: missingValue('slot/month'), capacity_per_slot: missingValue('visit/slot'), demand_visits: missingValue('visit/month') })
 function boundBase(input: OperationsInput, target: OperationsAnalysisBound['target'], itemId: string): number | null {
   if (target === 'cash_amount') return input.cash_items.find(item => item.economic_item_id === itemId)?.amount.value ?? null
   const service = input.services.find(item => item.id === itemId)
@@ -108,7 +109,7 @@ function boundItems(input: OperationsInput, target: OperationsAnalysisBound['tar
 }
 function makeBound(input: OperationsInput, target: OperationsAnalysisBound['target'], itemId: string): OperationsAnalysisBound {
   const base = boundBase(input, target, itemId)
-  return { id: `bound-${crypto.randomUUID().slice(0, 8)}`, target, item_id: itemId, low: base ?? Number.NaN, high: base ?? Number.NaN, unit: boundTargets[target].unit, origin: 'manual_scenario', basis: '', source_ref: '待补范围依据', as_of: today() }
+  return { id: `bound-${randomUUID().slice(0, 8)}`, target, item_id: itemId, low: base ?? Number.NaN, high: base ?? Number.NaN, unit: boundTargets[target].unit, origin: 'manual_scenario', basis: '', source_ref: '待补范围依据', as_of: today() }
 }
 function blankInput(): OperationsInput {
   return {
@@ -426,7 +427,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
             <ValueField label="目标人群规模（人）" value={draft.target_population} onChange={next => updateDraft(value => ({ ...value, target_population: next }))} />
             <ValueField label="月度目标居民去重服务人数（人）" value={draft.unique_users} onChange={next => updateDraft(value => ({ ...value, unique_users: next }))} />
           </div>
-          <div className="ops-section-heading"><h4>服务项目与容量</h4><button type="button" className="ops-button" disabled={draft.services.length >= 20} onClick={() => updateDraft(value => ({ ...value, services: [...value.services, newService(`service-${crypto.randomUUID().slice(0, 8)}`)] }))}>添加服务</button></div>
+          <div className="ops-section-heading"><h4>服务项目与容量</h4><button type="button" className="ops-button" disabled={draft.services.length >= 20} onClick={() => updateDraft(value => ({ ...value, services: [...value.services, newService(`service-${randomUUID().slice(0, 8)}`)] }))}>添加服务</button></div>
           {draft.services.map((service, index) => {
             const change = (update: Partial<OperationsService>) => updateDraft(value => ({ ...value, services: value.services.map((item, position) => position === index ? { ...item, ...update } : item) }))
             return <fieldset className="ops-service" key={index}><legend>服务 {index + 1}</legend><div className="ops-form-grid">
@@ -438,7 +439,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
             </div>
               <label className="ops-checkbox"><input type="checkbox" aria-label={`服务${index + 1}：启用分时段核算`} checked={!!service.time_blocks?.length} onChange={event => {
                 const next = { ...service }
-                if (event.target.checked) next.time_blocks = [{ id: `block-${crypto.randomUUID().slice(0, 8)}`, name: '月度总量（待拆分）', slots: structuredClone(service.available_slots), capacity_per_slot: structuredClone(service.capacity_per_slot), demand_visits: structuredClone(service.demand_visits) }]
+                if (event.target.checked) next.time_blocks = [{ id: `block-${randomUUID().slice(0, 8)}`, name: '月度总量（待拆分）', slots: structuredClone(service.available_slots), capacity_per_slot: structuredClone(service.capacity_per_slot), demand_visits: structuredClone(service.demand_visits) }]
                 else delete next.time_blocks
                 updateDraft(value => ({ ...value, services: value.services.map((item, position) => position === index ? next : item) }))
               }} /><span>启用分时段核算</span></label>
@@ -456,7 +457,7 @@ export default function CommunityOperationsPanel({ project, completeDemo, onPrev
               </div>}
             <div className="ops-toolbar"><button type="button" className="ops-button ops-danger" disabled={draft.services.length <= 1} onClick={() => updateDraft(value => ({ ...value, services: value.services.filter((_, position) => position !== index) }))}>移除服务 {index + 1}</button></div></fieldset>
           })}
-          <div className="ops-section-heading"><h4>月度现金项目</h4><button type="button" className="ops-button" disabled={draft.cash_items.length >= 100} onClick={() => updateDraft(value => ({ ...value, cash_items: [...value.cash_items, { economic_item_id: `cash-${crypto.randomUUID().slice(0, 8)}`, description: '新增现金项目', kind: 'fixed_cost', amount: missingValue('yuan/month') }] }))}>添加现金项目</button></div>
+          <div className="ops-section-heading"><h4>月度现金项目</h4><button type="button" className="ops-button" disabled={draft.cash_items.length >= 100} onClick={() => updateDraft(value => ({ ...value, cash_items: [...value.cash_items, { economic_item_id: `cash-${randomUUID().slice(0, 8)}`, description: '新增现金项目', kind: 'fixed_cost', amount: missingValue('yuan/month') }] }))}>添加现金项目</button></div>
           <p className="ops-muted">同一笔经济事项使用同一标识，并只登记一次。政府直接支付填写未进入运营方支出的费用，避免重复核算。</p>
           {draft.cash_items.map((item, index) => {
             const change = (update: Partial<OperationsCashItem>) => updateDraft(value => ({ ...value, cash_items: value.cash_items.map((entry, position) => position === index ? { ...entry, ...update } : entry) }))

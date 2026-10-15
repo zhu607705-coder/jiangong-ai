@@ -1,0 +1,37 @@
+{
+  "schema": "server-public-administrator-verification/1",
+  "checked_at": "2026-10-15T03:14:32.9471945Z",
+  "url": "http://10.70.223.113",
+  "checks": {
+    "public_root": 200,
+    "viewer_session": 200,
+    "public_projects": 200,
+    "anonymous_project_write": 403,
+    "anonymous_model_generation": 403,
+    "anonymous_database_schema": 403,
+    "public_original_retrieval": 200,
+    "untrusted_origin": 403,
+    "untrusted_host": 403,
+    "administrator_login": 200,
+    "administrator_ready": 200,
+    "administrator_csrf_guard": 403,
+    "administrator_database_schema": 200,
+    "public_qiushi_report": 200,
+    "administrator_logout": 200,
+    "revoked_administrator_cookie": 403,
+    "revoked_cookie_write": 403
+  },
+  "public_project_count": 16,
+  "original_retrieval_hits": 5,
+  "database_counts": {
+    "projects": 16,
+    "documents": 21,
+    "experience_cards": 28
+  },
+  "database_tables": 29,
+  "database_sequences": 4,
+  "database_schema_issues": [],
+  "schema_sha256": "ef32f52c33e6711aa9be99dbce38a495f6a20f78e244ef462f31a1c84d82fa33",
+  "mutation_scope": "No project records changed; only login/logout. Data retrieval and schema export are read-only.",
+  "provider_calls": "No DeepSeek or Qwen generation invoked."
+}

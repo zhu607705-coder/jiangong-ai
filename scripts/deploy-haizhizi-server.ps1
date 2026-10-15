@@ -143,16 +143,39 @@ if [ "$ready" != 1 ]; then
   exit 1
 fi
 python3 - <<'PY'
-import http.cookiejar, json, urllib.request
+import http.cookiejar, json, urllib.request, urllib.error
 base='http://127.0.0.1:4310'
 checks={}
 client=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
-for path in ['/health','/api/session','/api/ready']:
-    with client.open(base+path) as response:
-        checks[path]={'status':response.status, 'body':json.load(response)}
+with client.open(base+'/health') as response:
+    assert response.status == 200
+    checks['/health']={'status':response.status,'body':json.load(response)}
+try:
+    with client.open(base+'/api/session') as response:
+        session_status=response.status
+        session_body=json.load(response)
+        checks['/api/session']={'status':response.status,'body':session_body}
+except urllib.error.HTTPError as response:
+    session_status=response.code
+    body=json.load(response)
+    assert response.code == 401 and body.get('code') == 'ADMIN_LOGIN_REQUIRED'
+    checks['/api/session']={'status':response.code,'authentication_required':True}
+admin_mode=session_status == 401
+public_viewer=not admin_mode and session_body.get('authentication',{}).get('role') == 'viewer'
+try:
+    with client.open(base+'/api/ready') as response:
+        assert not admin_mode and not public_viewer and response.status == 200
+        checks['/api/ready']={'status':response.status,'body':json.load(response)}
+except urllib.error.HTTPError as response:
+    assert (admin_mode and response.code == 401) or (public_viewer and response.code == 403)
+    checks['/api/ready']={'status':response.code,'authentication_required':True}
 with urllib.request.urlopen(base+'/') as response:
     body=response.read().decode()
-    checks['/']={'status':response.status,'html': '<div id="root"></div>' in body,'production_assets':'/assets/' in body}
+    if admin_mode:
+        assert 'id="login"' in body and '/assets/' not in body
+    else:
+        assert '<div id="root"></div>' in body and '/assets/' in body
+    checks['/']={'status':response.status,'independent_login_shell':admin_mode,'production_assets':'/assets/' in body}
 print(json.dumps(checks,ensure_ascii=False,indent=2))
 PY
 printf '\nDEPLOYED_COMMIT=%s\n' "$commit"

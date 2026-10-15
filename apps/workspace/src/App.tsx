@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
+import { randomUUID } from './uuid';
+import { useWorkbenchAccess } from './AdminAccess';
 import {
   IconArrowRight,
   IconArrowUpRight,
@@ -169,6 +171,7 @@ function RegionView({ project }: { project: Project }) {
 }
 
 export default function App() {
+  const { canWrite } = useWorkbenchAccess();
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [mapFocus, setMapFocus] = useState(0), [mapSettings, setMapSettings] = useState(0);
   const [mapAnchor, setMapAnchor] = useState<ProjectInput['scope']['map_anchor']>();
@@ -343,12 +346,13 @@ export default function App() {
     }
   }
   async function startRun(p: Project, mode: "automatic" | "enterprise", knowledgeQuery?: KnowledgeQuery) {
+    if (!canWrite) return;
     const created = await api<{ id: string; revision: number; status: string }>(
       `/projects/${p.id}/runs`,
       {
         mode,
         execution_mode: executionMode,
-        idempotency_key: crypto.randomUUID(),
+        idempotency_key: randomUUID(),
         ...(knowledgeQuery ? { knowledge_query: knowledgeQuery } : {}),
       },
     );
@@ -361,6 +365,7 @@ export default function App() {
     setTab("overview");
   }
   async function createFixture(fixture = "01_auto") {
+    if (!canWrite) return;
     const p = await api<Project>("/projects", {
       fixture,
       name:
@@ -515,7 +520,7 @@ export default function App() {
           } finally { setLoadingTarget(null); }
         })
       }
-      onCreate={() => { setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
+      onCreate={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
       mapView={<MapWorkspace ready={!loading} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
@@ -531,7 +536,7 @@ export default function App() {
       detailsOpen={detailsOpen}
       bootLoading={loading || !!loadingTarget}
       onMap={() => setDetailsOpen(false)}
-      onSettings={() => { setDetailsOpen(false); setMapSettings(v => v + 1); }}
+      onSettings={() => { if (!canWrite) { window.location.assign('/admin/login'); return; } setDetailsOpen(false); setMapSettings(v => v + 1); }}
       error={error}
       onDismissError={() => setError('')}
       rail={rail}
@@ -587,13 +592,13 @@ export default function App() {
           <div className="welcome-actions">
             <button
               className="primary"
-              disabled={busy}
+              disabled={busy || !canWrite}
               onClick={() => void action(() => createFixture())}
             >
               <IconPlayerPlay size={17} />
               打开合成示范
             </button>
-            <button className="secondary" onClick={() => setCreateOpen(true)}>
+            <button className="secondary" disabled={!canWrite} onClick={() => setCreateOpen(true)}>
               <IconPlus size={17} />
               新建真实项目
             </button>
@@ -632,7 +637,7 @@ export default function App() {
                 {project.input.purpose === 'case_library_archive' ? '举措拆分、规则提取与原文复核' : project.input.business_profile === 'neighborhood' ? '老旧小区改造 · 居民需求、实施条件与长效维护' : '以建筑、实施和企业条件为研判主线'}
               </p>
             </div>
-            <button className="secondary" onClick={() => setCreateOpen(true)}>
+            <button className="secondary" disabled={!canWrite} onClick={() => setCreateOpen(true)}>
               <IconPlus size={16} />
               新建项目
             </button>
@@ -771,7 +776,7 @@ export default function App() {
                   </span>
                   <button
                     className="primary"
-                    disabled={busy || running}
+                    disabled={busy || running || !canWrite}
                     onClick={() =>
                       void action(() =>
                         startRun(
@@ -981,7 +986,7 @@ export default function App() {
                 </button>
                 <button
                   className="primary"
-                  disabled={busy || running || !experience.trim()}
+                    disabled={busy || running || !experience.trim() || !canWrite}
                   onClick={() =>
                     void action(async () => {
                       const updated = await api<Project>(
@@ -1085,7 +1090,7 @@ export default function App() {
                   <input
                     type="file"
                     accept=".md,.txt,.csv,.pdf,.docx,.xlsx"
-                    disabled={busy || project.input.synthetic}
+                    disabled={busy || project.input.synthetic || !canWrite}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
@@ -1400,7 +1405,7 @@ export default function App() {
                       : null;
                   const input: ProjectInput = {
                     schema_version: "2.0",
-                    project_id: `P-${crypto.randomUUID()}`,
+                    project_id: `P-${randomUUID()}`,
                     synthetic: false,
                     purpose: "preconstruction_research",
                     business_profile: businessProfile,

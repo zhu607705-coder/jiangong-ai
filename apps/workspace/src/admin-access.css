@@ -1,0 +1,22 @@
+.admin-access-screen { min-height:100dvh; display:grid; place-items:center; padding:32px 20px; background:radial-gradient(ellipse at 18% 10%,#dfeee7,transparent 60%),#f4f7f5; color:#243d3b; font-size:16px; }
+.admin-access-card { width:min(100%,460px); padding:38px; background:#fff; border:1px solid #dce8e2; border-radius:20px; box-shadow:0 16px 60px #2444380d; }
+.admin-access-brand { display:flex; align-items:center; gap:12px; margin-bottom:30px; font-size:17px; font-weight:600; color:#286b65; }
+.admin-access-brand>span { display:grid; place-items:center; width:42px; height:42px; border-radius:12px; background:#286b65; color:#fff; font-size:20px; }
+.admin-access-card h1 { margin:0; font-size:28px; line-height:1.4; letter-spacing:0; }
+.admin-access-intro { margin:8px 0 26px; color:#61756f; font-size:16px; }
+.admin-access-description { margin:0 0 24px; font-size:15px; line-height:1.8; color:#4b655e; }
+.admin-access-card label { display:block; margin:18px 0 8px; font-size:16px; font-weight:600; }
+.admin-access-card input { width:100%; min-height:48px; padding:11px 13px; border:1px solid #bfcfc8; border-radius:9px; background:#fbfcfb; color:#243d3b; font:inherit; }
+.admin-access-message { min-height:26px; margin:14px 0 8px; font-size:15px; line-height:1.7; color:#a43d36; }
+.admin-access-status { font-size:16px; color:#4b655e; }
+.admin-access-submit { width:100%; min-height:48px; border:0; border-radius:9px; background:#286b65; color:#fff; padding:11px 18px; font:inherit; font-weight:600; cursor:pointer; }
+.admin-access-submit:hover:not(:disabled) { background:#205a55; }
+.admin-access-card input:focus-visible,.admin-access-card button:focus-visible,.admin-session-bar button:focus-visible { outline:3px solid #86b4a6; outline-offset:3px; }
+.admin-session-bar { position:fixed; inset:0 0 auto; z-index:300; height:44px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 20px; background:#eaf3ee; border-bottom:1px solid #cbded4; color:#35594f; font-size:14px; }
+.admin-session-bar>span,.admin-session-bar>div { display:flex; align-items:center; gap:10px; }
+.admin-session-bar strong { font-weight:600; }
+.admin-session-dot { width:7px; height:7px; border-radius:50%; background:#2e8069; }
+.admin-session-bar button,.admin-session-bar a { display:inline-flex; align-items:center; min-height:32px; padding:3px 12px; border:1px solid #b9d1c5; border-radius:7px; background:#fff; color:#286b65; font:inherit; cursor:pointer; text-decoration:none; }
+.admin-session-bar [role=alert] { color:#a43d36; font-size:13px; }
+.admin-workspace { position:fixed; inset:44px 0 0; transform:translateZ(0); overflow:hidden; }
+@media(max-width:560px) { .admin-access-card { padding:28px 24px; }.admin-session-bar { padding:0 10px; font-size:13px; }.admin-session-bar>span,.admin-session-bar>div { gap:6px; }.admin-session-bar [role=alert] { position:absolute; top:44px; right:10px; padding:6px 10px; background:#fff; border:1px solid #e0c8c2; border-radius:6px; } }
