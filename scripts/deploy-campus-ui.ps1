@@ -56,6 +56,9 @@ if($LASTEXITCODE-ne0){throw 'UI upload failed'}
 $remote=@'
 import pathlib,hashlib,json,datetime,ctypes,os,tarfile,shutil,subprocess,urllib.request
 base=pathlib.Path('/home/zhuhangcheng/apps/haizhizi')
+import fcntl
+publication_lock=(base/'shared/ui-publication.lock').open('a')
+fcntl.flock(publication_lock.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
 release=(base/'current').resolve(strict=True)
 assert release.is_relative_to(base/'releases')
 dist=release/'apps/workspace/dist'
