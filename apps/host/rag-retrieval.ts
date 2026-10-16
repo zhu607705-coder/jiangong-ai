@@ -7,6 +7,11 @@ import type { KnowledgePipelineService } from '../../packages/experience/pipelin
 import { buildRagExport } from '../../packages/experience/rag-export'
 import { retrieveProjectEvidence, type RetrievalRanker } from '../../packages/experience/retrieval'
 import { normalizeImportDocument } from '../workspace/src/imports/graph-model'
+import { randomUUID } from 'node:crypto'
+import { LiveSession } from '../../runtime/dsh/live-session'
+import { HybridRetrievalService, type RagModelPort } from '../../packages/experience/hybrid-retrieval'
+import { SemanticIndexRepository } from '../../packages/experience/semantic-index'
+import {withResearchOriginals} from '../../packages/experience/retrieval-sources'
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const parsed = new Date(`${value}T00:00:00Z`)
@@ -18,35 +23,52 @@ export const retrievalRequest = z.object({ question: z.string().trim().min(1).ma
   source_kind: z.enum(['public_original', 'ai_draft', 'synthetic', 'internal_material', 'unknown']).optional(),
   include_ai: z.boolean().default(false), review_status: z.enum(['draft', 'approved', 'rejected']).optional(),
   as_of: date.optional(), limit: z.number().int().min(1).max(5).default(5),
+  use_ai:z.boolean().default(false), allow_internal_ai:z.boolean().default(false),
 }).strict()
 
-/** The capability already owns Jieba/BM25/STORM curation. Local original text never goes to a model or public search. */
-export const capabilityRetrievalRanker: RetrievalRanker = async (project, query) => {
+/** The existing local capability remains the lexical ranker; API use is handled separately after consent filtering. */
+export const capabilityRetrievalRanker: RetrievalRanker = async (project, query,limit=5) => {
   let response: globalThis.Response
   try {
     response = await fetch(`${config.capabilityUrl}/capabilities/retrieval.query`, { method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Capability-Token': config.capabilityToken },
-      body: JSON.stringify({ project, query, include_internal: true }), signal: AbortSignal.timeout(20000) })
+      body: JSON.stringify({ project, query, include_internal: true,retrieval_limit:limit }), signal: AbortSignal.timeout(20000) })
   } catch { throw new ExperienceError(502, 'RAG_RETRIEVAL_UNAVAILABLE', '现有本地检索能力未响应，请检查能力服务。') }
   if (!response.ok) throw new ExperienceError(502, 'RAG_RETRIEVAL_FAILED', `现有本地检索能力返回HTTP ${response.status}，本次检索未完成。`)
   let payload: unknown
   try { payload = await response.json() } catch { throw new ExperienceError(502, 'RAG_RETRIEVAL_INVALID', '本地检索能力未返回有效JSON。') }
-  const checked = z.object({ matches: z.array(z.object({ source_id: z.string().min(1), score: z.number().finite() }).passthrough()).max(5) }).passthrough().safeParse(payload)
+  const checked = z.object({ matches: z.array(z.object({ source_id: z.string().min(1), score: z.number().finite() }).passthrough()).max(50) }).passthrough().safeParse(payload)
   if (!checked.success) throw new ExperienceError(502, 'RAG_RETRIEVAL_INVALID', '本地检索能力返回的命中结构无效。')
   return { matches: checked.data.matches }
 }
 
 /** Mounted under the existing session/CSRF middleware; ownership is obtained solely through requireProject. */
-export function registerRagRetrieval(app: Express, _store: Store, requireProject: (id: string) => Promise<ProjectRecord>, options: { pipeline: Pick<KnowledgePipelineService, 'state'>; ranker?: RetrievalRanker }) {
+async function openRagModel(signal:AbortSignal):Promise<RagModelPort> {
+  const live=await LiveSession.open('RAG-'+randomUUID(),signal)
+  return {name:config.DEEPSEEK_MODEL,calls:()=>live.calls.length,close:()=>live.close(),
+    call:async<T>(type:string,prompt:string,callSignal:AbortSignal)=>(await live.call<T>('rag_'+type,prompt,type,[],undefined,undefined,undefined,{signal:callSignal,maxOutputTokens:type==='RagSemanticIndex'?4500:2500})).value}
+}
+
+export function registerRagRetrieval(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>, options: { pipeline: Pick<KnowledgePipelineService, 'state'>; ranker?: RetrievalRanker; modelFactory?:((signal:AbortSignal)=>Promise<RagModelPort>)|null }) {
+  const hybrid=new HybridRetrievalService(new SemanticIndexRepository(store.db),options.ranker||capabilityRetrievalRanker,
+    options.modelFactory===undefined?(config.modelConfigured?openRagModel:null):options.modelFactory)
+  const signalFor=(request:Request,response:Response)=>{
+    const controller=new AbortController()
+    request.once('aborted',()=>controller.abort())
+    response.once('close',()=>{if(!response.writableEnded)controller.abort()})
+    return AbortSignal.any([controller.signal,AbortSignal.timeout(100000)])
+  }
   app.post('/api/projects/:id/knowledge/retrieve', async (request: Request, response: Response) => {
     try {
-      const project = await requireProject(String(request.params.id)), body = retrievalRequest.parse(request.body)
+      const project = await withResearchOriginals(store,await requireProject(String(request.params.id))), {use_ai,allow_internal_ai,...body} = retrievalRequest.parse(request.body)
       if (project.input.project_id !== project.id) throw new ExperienceError(409, 'PROJECT_INPUT_CONFLICT', '项目资料标识不一致，请核对当前项目。')
       const state = await options.pipeline.state(project)
       const bundle = buildRagExport({ projectId: project.id, documents: state.documents.map(document => ({
         ...normalizeImportDocument(document), hash: document.sha256,
       })), rawDocuments: state.documents, cards: state.cards, sources: project.input.sources })
-      response.json(await retrieveProjectEvidence(project, bundle, state.documents, body, options.ranker || capabilityRetrievalRanker))
+      const result=use_ai?await hybrid.retrieve(project,bundle,state.documents,body,{signal:signalFor(request,response),allowInternalAI:allow_internal_ai&&config.ALLOW_INTERNAL_MODEL==='true'})
+        :await retrieveProjectEvidence(project,bundle,state.documents,body,options.ranker||capabilityRetrievalRanker)
+      if(!response.destroyed)response.json(result)
     } catch (error) {
       if (response.headersSent) return
       if (error instanceof z.ZodError) { response.status(422).json({ code: 'VALIDATION_ERROR', detail: error.message }); return }
@@ -56,6 +78,21 @@ export function registerRagRetrieval(app: Express, _store: Store, requireProject
       }
       console.warn('RAG_RETRIEVAL_REQUEST_FAILED')
       response.status(500).json({ code: 'RAG_RETRIEVAL_REQUEST_FAILED', detail: '材料检索未完成，请检查本地运行记录。' })
+    }
+  })
+  app.post('/api/projects/:id/knowledge/index',async(request:Request,response:Response)=>{
+    try {
+      const project=await withResearchOriginals(store,await requireProject(String(request.params.id)))
+      const {allow_internal_ai,...body}=retrievalRequest.omit({question:true,use_ai:true}).parse(request.body)
+      if(project.input.project_id!==project.id)throw new ExperienceError(409,'PROJECT_INPUT_CONFLICT','项目资料标识不一致，请核对当前项目。')
+      const state=await options.pipeline.state(project)
+      const bundle=buildRagExport({projectId:project.id,documents:state.documents.map(document=>({...normalizeImportDocument(document),hash:document.sha256})),rawDocuments:state.documents,cards:state.cards,sources:project.input.sources})
+      const result=await hybrid.index(project,bundle,state.documents,{...body,question:''},{signal:signalFor(request,response),allowInternalAI:allow_internal_ai&&config.ALLOW_INTERNAL_MODEL==='true'})
+      if(!response.destroyed)response.json(result)
+    }catch(error){
+      if(response.destroyed)return
+      const value=error as {status?:number;message?:string}
+      response.status(error instanceof z.ZodError?422:value.status||503).json({detail:error instanceof z.ZodError?'索引请求格式不正确。':'语义索引暂未完成，可继续检索原文并稍后重试。'})
     }
   })
 }

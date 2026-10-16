@@ -53,6 +53,7 @@ class Request(BaseModel):
     project: ProjectInput
     role: Literal["building_feasibility", "demand_operations", "case_enterprise"] = "building_feasibility"
     query: str = Field(default="建筑", max_length=1000)
+    retrieval_limit: int = Field(default=5, ge=1, le=50)
     include_internal: bool = False
     source_id: str = ""
     round_number: int = Field(default=0, ge=0, le=2)
@@ -88,7 +89,7 @@ def capability(name: str, request: Request):
         if name == "spatial.profile":
             return spatial_profile(project["scope"])
         if name == "retrieval.query":
-            return retrieval_query(project, request.query, request.include_internal)
+            return retrieval_query(project, request.query, request.include_internal, limit=request.retrieval_limit)
         if name == "structured.query":
             if not request.include_internal:
                 public_ids = {s["id"] for s in project["sources"] if s["visibility"] == "public"}
