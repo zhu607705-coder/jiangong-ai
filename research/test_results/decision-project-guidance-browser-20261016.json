@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-16T15:51:36.091655+00:00",
+  "project": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+  "origin": "https://laneanew.cn/",
+  "checks": [
+    "overview primary action follows Decision choice",
+    "open suggested work navigates to scenarios/compare",
+    "same Decision result shown on actions page",
+    "task list really ordered by Decision ranks",
+    "all eleven original tasks retained",
+    "six page decisions available on demand",
+    "compact top panel, original business page visible"
+  ],
+  "screenshots": [
+    "D:/建工ai/output/playwright/decision-project-guidance/work-suggestions.jpg"
+  ],
+  "full_research_rerun": false,
+  "factual_accuracy_of_historical_strategy_evaluated": false
+}

@@ -1,0 +1,25 @@
+{
+  "deployed_at": "2026-10-16T15:39:06.491732+00:00",
+  "commit": "42db32603d57a4cf1861c60da3b191af6802c441",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261016T153903Z",
+  "runtime_files": {
+    "apps/host/project-decision.ts": {
+      "before": "815c8b01ba600d06e8393bbff933a3c22caa8f8dc9db5ef2080ff5248b076a2d",
+      "after": "a8ea6ab4859b6baa905d9975b424b47ca39618c2fbd4358f31084af4b878f2e9"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "42db32603d57a4cf1861c60da3b191af6802c441",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_count": 36,
+  "project_metadata_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

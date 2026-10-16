@@ -1,0 +1,45 @@
+{
+  "deployed_at": "2026-10-16T15:36:44.913975+00:00",
+  "commit": "ba000b915d9ec45f73802439591e2d5aae678246",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261016T153642Z",
+  "runtime_files": {
+    "apps/host/project-decision.ts": {
+      "before": null,
+      "after": "815c8b01ba600d06e8393bbff933a3c22caa8f8dc9db5ef2080ff5248b076a2d"
+    },
+    "apps/host/server.ts": {
+      "before": "d955de29854f3d70079c1af5d59cdf969007bcac1e127aad60d34ea5e3ddf3ab",
+      "after": "b58a1601a27f72fc0bc9b44c67de4562cc374ca86003d261b298f5176307e02b"
+    },
+    "packages/decision/project-guidance.ts": {
+      "before": null,
+      "after": "e28b234bb98174e958f39811a632dde0b49c0a354111a812afdc11e943436b6d"
+    },
+    "packages/retrofit/direction-text.ts": {
+      "before": null,
+      "after": "0552b6a870f8c776303820c6427c28eddc00367ab62e78dff11310857a5893e2"
+    },
+    "packages/retrofit/project-tasks.ts": {
+      "before": null,
+      "after": "787032f31e5a5a033def820c58c2670c6b5a2d11758d08291e7933dae288542e"
+    },
+    "services/capabilities/project-decision.ts": {
+      "before": null,
+      "after": "42108e9b31cf74b21a894c939240095cce5f42687f1f7f26cad3bee5185261e2"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "ba000b915d9ec45f73802439591e2d5aae678246",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_count": 36,
+  "project_metadata_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

@@ -1,0 +1,225 @@
+{
+  "checked_at": "2026-10-16T15:51:36.558543+00:00",
+  "release": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "2e41aca94ab1a530266a123caef48fc48cdc4b9a",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "result": {
+    "error": null,
+    "stale": false,
+    "issues": [],
+    "policy": "project-decision-guidance-v1",
+    "reused": true,
+    "stages": {
+      "actions": {
+        "label": "优先核实分幢工程条件",
+        "choice": "engineering",
+        "reason": "优先取得影响改造对象、技术措施与施工安排的资料。",
+        "target": {
+          "page": "actions",
+          "section": "current"
+        },
+        "confidence": 0.33
+      },
+      "results": {
+        "label": "整理本轮成果与后续调查",
+        "choice": "prepare_report",
+        "reason": "将本轮建议、依据和后续资料请求整理为可查看的成果。",
+        "target": {
+          "page": "results",
+          "section": "reports"
+        },
+        "confidence": 0.43
+      },
+      "evidence": {
+        "label": "按已有材料推进分析",
+        "choice": "use_current",
+        "reason": "已有材料可支持本轮条件分析，缺项继续登记和补充。",
+        "target": {
+          "page": "assessment",
+          "section": "direction"
+        },
+        "confidence": 0.62
+      },
+      "overview": {
+        "label": "比较候选方案与优先举措",
+        "choice": "compare_plans",
+        "reason": "结合现有方案、关键条件和目标偏好，比较本轮先做什么。",
+        "target": {
+          "page": "scenarios",
+          "section": "compare"
+        },
+        "confidence": 0.71
+      },
+      "scenarios": {
+        "label": "先排具体改造举措",
+        "choice": "prioritize",
+        "reason": "按居民改善、实施条件和投入效果确定候选举措的先后顺序。",
+        "target": {
+          "page": "scenarios",
+          "section": "compare"
+        },
+        "confidence": 0.89
+      },
+      "assessment": {
+        "label": "先比较改造方向",
+        "choice": "compare_direction",
+        "reason": "先对照现有资料与模式标准，由模式判定给出方向初判。",
+        "target": {
+          "page": "assessment",
+          "section": "direction"
+        },
+        "confidence": 0.37
+      }
+    },
+    "status": "completed",
+    "measures": [
+      {
+        "id": "comprehensive:C3",
+        "kind": "measure",
+        "mode": "comprehensive",
+        "score": 47,
+        "title": "建工新村小区消防通道及地下管线走向 · 改造消防通道并同步实施地下管线入地改造，消除雨天老旧线路隐患",
+        "detail": "小区内消防通道及沿线地下管沟；地下管线工程量按情景假设，须以管线探测与设计成果核定；交付连续、无障碍的消防通道与入地敷设的地下管线；前提：取得消防通道标段工程量清单与地下管线探测资料，明确开挖分段与临时通行方案",
+        "confidence": 0.76,
+        "evidence_refs": [
+          "INTEL-5d50cffc79a1:PUB-dfbce596fb3115f1",
+          "PUB-adab4a1098fc0702"
+        ]
+      },
+      {
+        "id": "comprehensive:C1",
+        "kind": "measure",
+        "mode": "comprehensive",
+        "score": 46,
+        "title": "建工新村、日晖新村区块（一期）强弱电及管线配套 · 改造已建单体的电力与机电管线配套，含线路敷设、计量与隐蔽验收收口",
+        "detail": "（一期）标段，预算80.8744万元、工期30天、区级国有投资，范围详见招标文件；交付经隐蔽验收的机电管线配套及分户计量设施；前提：取得（一期）标段招标文件与工程量清单，核定敷设范围与停电切改窗口",
+        "confidence": 0.79,
+        "evidence_refs": [
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6",
+          "PUB-3711e398a72e88ea"
+        ]
+      },
+      {
+        "id": "rebuild:R2",
+        "kind": "measure",
+        "mode": "rebuild",
+        "score": 41,
+        "title": "4幢住宅外立面、屋面及单元出入口附属构件 · 修缮外立面与屋面防水、加固出入口附属构件并完善雨篷与无障碍设施",
+        "detail": "情景假设：范围为已建成4幢住宅（5层、8层、8层、20层），工程量按分幢检测与设计成果核定；交付无渗漏、附属构件受控且出入口可达的住宅立面与通道；前提：取得分幢结构检测与外墙检测结论后确定修缮加固范围",
+        "confidence": 0.76,
+        "evidence_refs": [
+          "INTEL-218b8e52f563:PUB-82c312bf956e4603",
+          "PUB-adab4a1098fc0702"
+        ]
+      },
+      {
+        "id": "rebuild:R1",
+        "kind": "measure",
+        "mode": "rebuild",
+        "score": 39,
+        "title": "小区内高低压线路及引下线路径 · 改造架空高低压线路为入地敷设，增设线路保护与故障隔离设施",
+        "detail": "情景假设：按已建成4幢住宅共用线路通道估算，不以户数推算管线长度，实际规模须经探测核定；交付入地敷设的线路通道与故障隔离设施，降低雨天起火风险；前提：完成线路走向探测与停电改接方案，确定分段施工与居民临时供电安排",
+        "confidence": 0.75,
+        "evidence_refs": [
+          "PUB-adab4a1098fc0702"
+        ]
+      },
+      {
+        "id": "comprehensive:C2",
+        "kind": "measure",
+        "mode": "comprehensive",
+        "score": 36,
+        "title": "建工新村4号楼北侧附属雨棚 · 在4号楼北侧加装雨棚附属构筑物，改善单元出入口遮护条件",
+        "detail": "4号楼北侧，预算106.6425万元、工期45天、区财政、邀请招标，规模栏空白；交付4号楼北侧可使用的雨棚及排水收口；前提：取得施工图与荷载核算，确认不影响4号楼外立面与消防通道通行断面",
+        "confidence": 0.76,
+        "evidence_refs": [
+          "PUB-68388708cf4ae0d9",
+          "PUB-c291a805fb8420a6"
+        ]
+      }
+    ],
+    "direction": null,
+    "materials": [
+      {
+        "id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:0",
+        "kind": "material",
+        "score": 45,
+        "title": "逐幢结构检测与工程条件",
+        "detail": "向产权单位与住建部门取得4幢住宅及附属构件检测结论，确认雨棚荷载与消防通道开挖条件，据此确定标段顺序。",
+        "confidence": 0.55,
+        "evidence_refs": [
+          "PUB-3554c8d24b99e944",
+          "PUB-68388708cf4ae0d9"
+        ]
+      },
+      {
+        "id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:1",
+        "kind": "material",
+        "score": 38,
+        "title": "分项工程量与合同资料",
+        "detail": "调取（一期）、雨棚、消防通道三标段的招标文件、工程量清单、合同与验收记录，核定作业面界面的重复开挖风险。",
+        "confidence": 0.74,
+        "evidence_refs": [
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6",
+          "PUB-68388708cf4ae0d9",
+          "INTEL-5d50cffc79a1:PUB-dfbce596fb3115f1"
+        ]
+      },
+      {
+        "id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:internal:D1",
+        "kind": "material",
+        "score": 35,
+        "title": "回迁居民幸福度自评与改造满意度题项得分分布",
+        "detail": "判断配套完善优先级与服务配置，替代以户数推测需求的做法；入户或线上问卷，按分幢配额发放，含幸福度自评与改造满意度两组题项，分别为1至5分与1至5分，另记录有效答卷人数",
+        "confidence": 0.76,
+        "evidence_refs": [
+          "INTEL-218b8e52f563:PUB-82c312bf956e4603",
+          "PUB-adab4a1098fc0702"
+        ]
+      },
+      {
+        "id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:internal:D2",
+        "kind": "material",
+        "score": 31,
+        "title": "乘梯次数、运行台数与有效运行日",
+        "detail": "核定电梯维护费用与运行时段安排，决定维护资金配置；调取电梯维保台账与物业运行记录，按台分月登记乘梯次数与有效运行日，并记录服务覆盖住户数",
+        "confidence": 0.69,
+        "evidence_refs": [
+          "INTEL-218b8e52f563:PUB-82c312bf956e4603",
+          "PUB-adab4a1098fc0702"
+        ]
+      },
+      {
+        "id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:internal:D3",
+        "kind": "material",
+        "score": 30,
+        "title": "养老用房助餐去重就餐人数与用餐人次",
+        "detail": "确定助餐服务规模与开办方式，影响为老服务用房运营配置；食堂刷卡或登记台账，按餐次分日统计，一人当日多餐次计为多个人次，按唯一凭证号去重得就餐人数；订餐与实际到餐分别记录",
+        "confidence": 0.7,
+        "evidence_refs": [
+          "PUB-adab4a1098fc0702"
+        ]
+      }
+    ],
+    "created_at": "2026-10-16T15:50:50.720Z",
+    "input_hash": "dd909d6f55f8a13e4b566287744f08eb16e2747e738d477204da03229cd91f31",
+    "preference": "balanced",
+    "project_id": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+    "request_id": "a0264440-7bf5-46c1-91d3-83ee92677c5c",
+    "duration_ms": 918,
+    "input_tokens": 10583,
+    "source_count": 21,
+    "strategy_hash": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961",
+    "context_version": 0
+  },
+  "refreshed": false,
+  "project_unchanged": true,
+  "research_rounds_unchanged": true,
+  "scope": "One project Decision guidance request; no full research rerun."
+}
