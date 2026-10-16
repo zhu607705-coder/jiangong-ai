@@ -1,15 +1,15 @@
 {
   "status": "owned_runtime_deployed",
-  "commit": "a561a921d17e846c134fa30851029c4140616279",
+  "commit": "98e1f75218526c5e1efa2fa5134531ab2db3aac0",
   "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
-  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/backups/mode-lifecycle-a561a921d17e846c134fa30851029c4140616279-20261016T020958Z",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/backups/mode-lifecycle-98e1f75218526c5e1efa2fa5134531ab2db3aac0-20261016T025318Z",
   "changed_files": [
     "apps/host/renewal-mode.ts",
     "packages/retrofit/renewal-mode.ts"
   ],
   "file_hashes_after": {
-    "apps/host/renewal-mode.ts": "324ff2a8a73db7d4cb1620600f064b7d6437c94ce75f8737cbce474cb34869d2",
-    "packages/retrofit/renewal-mode.ts": "d061ecda7d6e5de4a9bcc7443189129a63952a1a4befd235b7735e450ca06cc0"
+    "apps/host/renewal-mode.ts": "151b4b84d47c0e540b92672eee9e5ee24a18a740841cce5e2716eed59298ba83",
+    "packages/retrofit/renewal-mode.ts": "529e9d740e28a6e917842f04e7dc3860b1ec86b311c46c851c7799785945b59c"
   },
   "protected_files_before": {
     "apps/host/server.ts": "53c05663913f2e73fa76db03feae2724fa67961ac10c7b7e0eb5d52f91dbfa93",
@@ -29,11 +29,11 @@
   },
   "nginx_unchanged": true,
   "project_input_unchanged": true,
-  "host_pid_before": "44088",
-  "host_pid_after": "46434",
+  "host_pid_before": "46434",
+  "host_pid_after": "46922",
   "provider_calls": 0,
   "project_writes": 0,
   "mode_readable": true,
   "saved_mode_present": false,
-  "checked_at": "2026-10-16T02:10:01.650553+00:00"
+  "checked_at": "2026-10-16T02:53:21.044098+00:00"
 }

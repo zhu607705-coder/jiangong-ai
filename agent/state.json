@@ -3570,7 +3570,7 @@
   },
   "mode_lifecycle_and_reports_20261016": {
     "status": "deployed_verified_pending_merge",
-    "updated_at": "2026-10-16T10:13:00+08:00",
+    "updated_at": "2026-10-16T10:54:27.092938+08:00",
     "branch": "codex/mode-judgement-lifecycle",
     "request": "No mode verdict before real Decision; real progress, explicit unmet/unknown/review states; remove global debug links and bind report to completed project research",
     "reuse": "Existing Decision evaluation, gate, optional NDJSON endpoint and consumeStream, experience draft read, saved StrategyPacket report exports",
@@ -3584,7 +3584,7 @@
       "apps/workspace/src/components/ProjectResultsPage.css"
     ],
     "tests": "isolated source: 7 files, 62 cases passed; TypeScript+Vite build exit0",
-    "implementation_commit": "a561a921d17e846c134fa30851029c4140616279",
+    "implementation_commit": "98e1f75218526c5e1efa2fa5134531ab2db3aac0",
     "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/41",
     "build_log": "research/test_results/mode-lifecycle-build-20261016.log",
     "runtime_deployment": "research/test_results/mode-lifecycle-runtime-deployment-20261016.json",
@@ -3601,6 +3601,11 @@
       "project_input": "unchanged",
       "live_model_calls": 0
     },
-    "next_runnable_task": "Wait exact PR41 head checks and merge; user starts judgement manually."
+    "next_runnable_task": "Wait exact PR41 head checks and merge; user starts judgement manually.",
+    "origin_fix": "Only explicit_mode caches restore a mode verdict. Overall-research props and strategy/legacy cache origins remain separate. Existing records retained; one origin column added.",
+    "origin_tests": "7 files 48 cases plus 3 integration files 29 cases; isolated TypeScript+Vite build exit0",
+    "origin_build_log": "research/test_results/mode-origin-build-20261016.log",
+    "origin_ui_deployment": "research/test_results/mode-origin-ui-deployment-20261016.json",
+    "new_project_browser_proof": "output/playwright/mode-lifecycle/new-project-no-inherited-verdict-20261016.png"
   }
 }
