@@ -1757,7 +1757,7 @@
         "T-MODE-LIFECYCLE-20261016"
       ],
       "goal": "处理创建窗口与HTTP浏览器兼容，前置专家准备检查、局部修复、按任务分配力度并验证压缩引用完整性。",
-      "status": "implementing",
+      "status": "completed",
       "write_scope": [
         "apps/host/server.ts",
         "apps/host/project-creation.ts",
@@ -1776,7 +1776,8 @@
         "tests/contracts/renewal-structured-request.test.ts",
         "tests/contracts/json-format-repair.test.ts"
       ],
-      "definition_of_done": "创建重试不重复、错误在窗口可见；准备检查和专家局部恢复可复现，压缩引文可还原，保留原硬约束与无调用次数上限政策；服务端定点发布和协议检查/页面验收有记录。"
+      "definition_of_done": "创建重试不重复、错误在窗口可见；准备检查和专家局部恢复可复现，压缩引文可还原，保留原硬约束与无调用次数上限政策；服务端定点发布和协议检查/页面验收有记录。",
+      "evidence_log": "research/test_results/creation-reliability-runtime-deployment-20261016.json"
     }
   ]
 }
