@@ -348,3 +348,9 @@ export function reviewStrategyContent(value:RenewalStrategy,sources:StrategySour
   return {policy:'advisory-v1',status:issues.length?'needs_review':'clear',checked_at:new Date().toISOString(),issues,follow_up:{search_queries,reading_focus,internal_data}}
 
 }
+
+/** Reuses the next-round material queue; no new approval or research gate. */
+export function strategySupplementRequests(review:StrategyContentReview|undefined):import('./research-rounds').ResearchMissingMaterial[] {
+  if(!review)return []
+  return review.issues.map(issue=>({topic:'后续资料补充',request:issue.message,reason:`对应方案字段：${issue.path}。补充后用于复核该项判断与方案参数。`,evidence_refs:[]}))
+}

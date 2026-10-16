@@ -1,3 +1,4 @@
+import StrategyContentNotice from './StrategyContentNotice'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 import type { ResearchMaterial, ResearchRound } from '../../../../packages/retrofit/research-rounds'
@@ -65,6 +66,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
       <div className="research-source-count"><span>现有公开资料 {sourceCounts.public} 份</span><span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
       {loading && <p role="status">正在读取已保存的研判轮次与项目文件…</p>}
       {error && <div className="research-round-notice" role="alert"><p>{error}</p><button disabled={busy || loading} onClick={onReload}>重新读取轮次</button></div>}
+      {baseline?.result?.content_review&&<StrategyContentNotice packet={baseline.result} details/>}
       <div className="research-intake-actions">
         <button disabled={!actionable} aria-pressed={uploadOpen} onClick={() => void prepareUpload()}>有，补充内部资料</button>
         <button disabled={!actionable} onClick={() => void useExisting()}>{baseline ? '暂不补充，查看已完成研判' : candidate ? '暂不补充，保留现有方案作为首轮' : '暂不补充，先用现有公开资料开展首轮研判'}</button>

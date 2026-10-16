@@ -7,7 +7,7 @@ import { validate } from '../packages/contracts/validate'
 import type { RenewalStrategy } from '../apps/host/generated/contracts'
 import type { ResearchRound } from '../packages/retrofit/research-rounds'
 import { projectRenewalModeInput } from '../packages/retrofit/renewal-mode'
-import { reviewStrategyContent, strategyModelReferences, type StrategyPacket } from '../packages/retrofit/strategy'
+import { reviewStrategyContent, strategySupplementRequests, strategyModelReferences, type StrategyPacket } from '../packages/retrofit/strategy'
 
 // Operational recovery of an actual, persisted model result. No provider or search calls.
 const [projectId,roundId,nativePath,apply]=process.argv.slice(2)
@@ -47,7 +47,7 @@ try {
       const existing=rounds.find(round=>round.result?.content_review?.recovered_from?.round_id===roundId)
       if(existing)return existing.id
       if(rounds.some(round=>['running','draft','completed'].includes(round.status)))throw new Error('RECOVERY_NEWER_RESULT_EXISTS')
-      const round:ResearchRound={...original,id,round_number:Math.max(...rounds.map(round=>round.round_number))+1,input_hash:inputHash,first_round_id:original.parent_round_id?original.first_round_id:id,first_input_hash:original.parent_round_id?original.first_input_hash:inputHash,origin:'adopted_history',status:'completed',result,error:null,created_at:now,updated_at:now,missing_materials:strategy.round_review?.missing_materials||[]}
+      const round:ResearchRound={...original,id,round_number:Math.max(...rounds.map(round=>round.round_number))+1,input_hash:inputHash,first_round_id:original.parent_round_id?original.first_round_id:id,first_input_hash:original.parent_round_id?original.first_input_hash:inputHash,origin:'adopted_history',status:'completed',result,error:null,created_at:now,updated_at:now,missing_materials:[...(strategy.round_review?.missing_materials||[]),...strategySupplementRequests(content_review)]}
       await db.query('INSERT INTO renewal_research_rounds(id,owner_id,project_id,round_number,payload,input_snapshot) VALUES($1,$2,$3,$4,$5,$6)',[id,config.ownerId,projectId,round.round_number,JSON.stringify(round),JSON.stringify(row.input_snapshot)])
       await db.query('INSERT INTO renewal_strategy_assessments(owner_id,project_id,input_hash,payload) VALUES($1,$2,$3,$4)',[config.ownerId,projectId,inputHash,JSON.stringify(result)])
       return id
