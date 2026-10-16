@@ -68,7 +68,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
       {loading && <p role="status">正在读取已保存的研判轮次与项目文件…</p>}
       {error && <div className="research-round-notice" role="alert"><p>{error}</p><button disabled={busy || loading} onClick={onReload}>重新读取轮次</button></div>}
       {baseline?.result?.content_review&&<StrategyContentNotice packet={baseline.result} details/>}
-      {!!requestedMaterials.length&&<section aria-label="待补充项目资料"><h4>本轮建议补充资料</h4><ul className="research-round-gap-list">{requestedMaterials.map((item,index)=><li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p></li>)}</ul></section>}
+      {!!requestedMaterials.length&&<section aria-label="下一轮建议补充资料"><h4>本轮建议补充资料</h4><ul className="research-round-gap-list">{requestedMaterials.map((item,index)=><li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p></li>)}</ul></section>}
       <div className="research-intake-actions">
         <button disabled={!actionable} aria-pressed={uploadOpen} onClick={() => void prepareUpload()}>有，补充内部资料</button>
         <button disabled={!actionable} onClick={() => void useExisting()}>{baseline ? '暂不补充，查看已完成研判' : candidate ? '暂不补充，保留现有方案作为首轮' : '暂不补充，先用现有公开资料开展首轮研判'}</button>
