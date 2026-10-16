@@ -1,0 +1,11 @@
+{
+  "command": "sudo -n /opt/certbot/bin/python /home/zhuhangcheng/apps/haizhizi/shared/test_certbot_cleanup.py /opt/certbot/haizhizi-certbot.py",
+  "repository_script": "scripts/check-certbot-cleanup.py",
+  "passed": 3,
+  "cases": [
+    "exact challenge value removed while same-name others remain",
+    "missing challenge is harmless",
+    "unrelated domains rejected"
+  ],
+  "exit_code": 0
+}

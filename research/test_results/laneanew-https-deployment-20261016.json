@@ -1,0 +1,17 @@
+{
+  "configured_at": "20261016T105730Z",
+  "domains": [
+    "laneanew.cn",
+    "www.laneanew.cn"
+  ],
+  "certificate": "issuer=C = US, O = Let's Encrypt, CN = YE1\nnotBefore=Oct 16 09:56:56 2026 GMT\nnotAfter=Jan 14 09:56:55 2027 GMT\nX509v3 Subject Alternative Name: \n    DNS:laneanew.cn, DNS:www.laneanew.cn",
+  "https_status": 200,
+  "http_domain_redirect": 308,
+  "campus_ip_http_preserved": true,
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/https-backups/20261016T105730Z",
+  "ui_unchanged": true,
+  "checked_projects_before_restart": 35,
+  "host_main_pid": "55681",
+  "renewal": "DNS credentials and automated authentication verification pending",
+  "model_calls": 0
+}

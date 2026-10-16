@@ -10,3 +10,6 @@ scripts/build-scientific-methods-evidence.py text eol=lf
 services/capabilities/community_operations.py text eol=lf
 services/capabilities/operations_science.py text eol=lf
 research/test_results/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+# Linux certificate deploy hooks must remain executable after Windows checkouts.
+scripts/deploy/* text eol=lf
+scripts/haizhizi-certbot.py text eol=lf

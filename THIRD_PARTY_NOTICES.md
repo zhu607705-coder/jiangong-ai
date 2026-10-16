@@ -31,3 +31,10 @@ OpenStreetMap boundary data is queried on demand under ODbL 1.0; attribution and
 ## AIHOT — MIT selective source adaptation
 
 AIHOT `KKKKhazix/AIHOT@589f79eff09470b31ba8a7f1d9eb62d36ff2be6c`, copyright (c) 2026 数字生命卡兹克. Selected JSON mapping and event relation functions are in `vendor/aihot/algorithms.ts`; the intake, double-score selection, source-group decay and evaluation workflow are adapted for construction research. Full license: `licenses/AIHOT-LICENSE.txt`. Exact source blobs, target hashes and static call edges: `research/aihot.upstream.lock.json`. The source ledger distinguishes copied functions from mechanism adaptation. No AIHOT brand/logo/fonts, entire web application or independent provider runtime is imported.
+
+
+## Certbot deployment dependencies
+
+The campus HTTPS service uses Certbot 5.8.0 and certbot-dns-aliyun 2.0.0 from their published Python packages (Apache-2.0), installed in a dedicated server venv at `/opt/certbot`. Aliyun plugin upstream: https://github.com/tengattack/certbot-dns-aliyun , inspected commit `c179a6e569ed70a78ec817fe839cdf26dfcdbfc0`. Their packages retain their upstream licenses and notices. No upstream source is vendored into the application.
+
+`scripts/haizhizi-certbot.py` imports that plugin and wraps only its DNS transport and cleanup. The existing signer/authenticator remains upstream; cleanup matches the full TXT name, type and challenge value, and an explicitly configured existing loopback proxy applies only to the Aliyun API. The wrapper does not acquire broader DNS permissions.

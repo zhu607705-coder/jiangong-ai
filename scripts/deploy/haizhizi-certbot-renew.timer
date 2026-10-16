@@ -1,0 +1,11 @@
+[Unit]
+Description=Check laneanew.cn renewal twice daily
+
+[Timer]
+OnCalendar=*-*-* 00,12:00:00 Asia/Shanghai
+RandomizedDelaySec=1h
+Persistent=true
+Unit=haizhizi-certbot-renew.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,8 @@
+{
+  "dns_api_authorized": true,
+  "existing_A_records_preserved": true,
+  "manual_challenge_records_removed": 2,
+  "credential_owner": "root",
+  "credential_mode": "0600",
+  "dns_api_route": "existing loopback SSH proxy 127.0.0.1:17897"
+}

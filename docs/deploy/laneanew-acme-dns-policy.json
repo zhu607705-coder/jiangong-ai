@@ -1,0 +1,19 @@
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["alidns:DescribeDomains"],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "alidns:DescribeDomainRecords",
+        "alidns:AddDomainRecord",
+        "alidns:DeleteDomainRecord"
+      ],
+      "Resource": "acs:alidns::*:domain/laneanew.cn"
+    }
+  ]
+}
