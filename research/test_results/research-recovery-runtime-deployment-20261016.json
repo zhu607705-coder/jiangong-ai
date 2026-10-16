@@ -1,0 +1,29 @@
+{
+  "deployed_at": "2026-10-16T14:10:09.879233+00:00",
+  "commit": "d985ab668b1a8aa14fce23bcf8aab7110eb231ea",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261016T141007Z",
+  "runtime_files": {
+    "apps/host/rag-retrieval.ts": {
+      "before": "e9d5c4f71ffe0ad7f69d6ccb0d265f437a0860a39429e86fc936b1fe466093c5",
+      "after": "ceaab45f7fdbe01c4e43d5cb90815215b7a4bc63e4d7de007a8ae93432eb5f2a"
+    },
+    "packages/experience/hybrid-retrieval.ts": {
+      "before": "3fc265ce81d91a614a59ff26a29d8cc2452ca435e3c9d429af48d87d71220286",
+      "after": "fc3f2979fcf8c471d6609d6b6003eed2ffefddf1f22291d58d5129aa206fdb4d"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "d985ab668b1a8aa14fce23bcf8aab7110eb231ea",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_count": 35,
+  "project_metadata_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}
