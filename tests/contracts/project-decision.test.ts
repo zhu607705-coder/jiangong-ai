@@ -23,7 +23,7 @@ it('uses one Decision request for six page actions and ranked tasks, with select
  expect(result.stages.scenarios?.target).toEqual({page:'scenarios',section:'detail',pane:'funding'})
  expect(result.measures[0].title).toContain('SERVICE')
  expect(result.materials[0].title).toBe('资金落实')
- expect(Object.keys(projectGuidanceQuestions(input)).length).toBeLessThanOrEqual(24)
+ expect(Object.keys(projectGuidanceQuestions(input)).length).toBeLessThanOrEqual(16)
 })
 
 it('isolates private sources, facts and derived analysis while retaining the existing-plan status',()=>{
@@ -85,4 +85,14 @@ it('GET only restores a matching snapshot; POST caches once and rejects a change
  changedDuring=true;reads=0
  expect((await send({...request,refresh:true})).status).toBe(409)
  expect(cache.size).toBe(1)
+})
+
+it('keeps a full project within the live 16-question limit while retaining six page choices',async()=>{
+ const packet=guidePacket();packet.strategy!.paths.forEach(path=>path.work_packages!.push({...path.work_packages![0],id:path.mode+'-EXTRA'}));packet.strategy!.next_checks=Array.from({length:9},(_,i)=>({title:'调查'+i,detail:'核实本对象数据'+i,evidence_refs:['PUBLIC']}))
+ const input=projectGuidanceInput(guideProject.input,2,packet,[],null,'balanced')
+ const result=await evaluateProjectGuidance(input,'full',new AbortController().signal,async(state,questions)=>{if(Object.keys(questions).length>16)throw new Error('DECISION_HTTP_400');return guideResponse(state,questions)})
+ expect(result.status).toBe('completed');expect(Object.keys(result.stages)).toHaveLength(6)
+ expect(result.measures).toHaveLength(5);expect(result.materials).toHaveLength(5)
+ expect(packet.strategy!.paths.flatMap(path=>path.work_packages!)).toHaveLength(6)
+ expect(packet.strategy!.next_checks).toHaveLength(9)
 })
