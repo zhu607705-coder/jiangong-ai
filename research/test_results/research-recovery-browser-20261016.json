@@ -29,12 +29,24 @@
     "source_version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
     "source_drawer_opened": true,
     "same_source_and_citation_version": true,
-    "quote_focus_refinement": "Follow-up UI change passes the selected exact quote rather than the whole hit body"
+    "quote_focus_refinement": "Live verified: selected answer quote equals the source drawer quote, 46 characters, same source version."
   },
   "screenshots": [
     "output/playwright/research-recovery/current-assessment.jpg",
     "output/playwright/research-recovery/originals-before-answer.jpg",
-    "output/playwright/research-recovery/rag-answer.jpg"
+    "output/playwright/research-recovery/rag-answer.jpg",
+    "output/playwright/research-recovery/exact-citation.jpg"
   ],
-  "background_index_initial_attempt": "Timed out in original 180s worker budget; partial windows retained. Changed to three resumable batches per job; live continuation is next."
+  "background_index_initial_attempt": "Timed out in original 180s worker budget; partial windows retained. Changed to three resumable batches per job; live continuation is next.",
+  "final_readback": {
+    "checked_at": "2026-10-16T14:17:37.041Z",
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "context_version": 14,
+    "exact_answer_quote_matched": true,
+    "selected_quote_characters": 46,
+    "source_version_and_continuous_quote_validated": true,
+    "visible_alerts": 0,
+    "full_research_rounds_started": 0
+  },
+  "background_index_final": "completed; initial cancelled receipt preserved"
 }

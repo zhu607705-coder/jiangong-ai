@@ -3877,8 +3877,8 @@
     }
   },
   "research_recovery_20261016": {
-    "status": "implementation_verified_pending_deployment",
-    "updated_at": "2026-10-16T13:56:54.234121+00:00",
+    "status": "completed_deployed_and_live_verified",
+    "updated_at": "2026-10-16T14:18:58.828958+00:00",
     "baseline_commit": "cfb4e4523ac58f4392fdd73aa15043354c6c813b",
     "request": "落实用户粘贴的检索与六维研判审计：恢复与状态、独立六维成果、原文先返回、后台索引、情报衔接及评测。",
     "decisions": [
@@ -3900,9 +3900,31 @@
         "business_fact_writes": 0
       },
       "build": "TypeScript and Vite production build passed",
-      "build_log": "research/test_results/research-recovery-build-20261016.log"
+      "build_log": "research/test_results/research-recovery-build-20261016.log",
+      "incremental_followup": {
+        "tests": 19,
+        "log": "research/test_results/research-recovery-incremental-final-20261016.log"
+      },
+      "citation_navigation_followup": {
+        "tests": 9,
+        "log": "research/test_results/research-recovery-citation-navigation-final-20261016.log"
+      },
+      "final_browser": {
+        "checked_at": "2026-10-16T14:17:37.041Z",
+        "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+        "context_version": 14,
+        "exact_answer_quote_matched": true,
+        "selected_quote_characters": 46,
+        "source_version_and_continuous_quote_validated": true,
+        "visible_alerts": 0,
+        "full_research_rounds_started": 0
+      },
+      "model_question_live": "Public elevator-trusteeship question answered with exact original quote and a same-version source drawer; no new full research round."
     },
     "changed_files": [
+      "agent/mission.md",
+      "agent/state.json",
+      "agent/tasks.json",
       "apps/host/experience.ts",
       "apps/host/generated/contracts.ts",
       "apps/host/map-screening.ts",
@@ -3910,21 +3932,44 @@
       "apps/host/renewal-mode.ts",
       "apps/host/research-rounds.ts",
       "apps/host/server.ts",
+      "apps/workspace/src/App.tsx",
       "apps/workspace/src/components/StrategyCurrentAssessment.tsx",
       "apps/workspace/src/components/StrategyOverview.tsx",
       "apps/workspace/src/imports/RagEvidenceSearch.tsx",
       "apps/workspace/src/imports/rag-evidence-search.css",
+      "apps/workspace/src/imports/retrieval-navigation.ts",
       "apps/workspace/src/maps/PreliminaryCard.tsx",
       "apps/workspace/src/maps/map.css",
       "apps/workspace/src/maps/screening-stream.ts",
+      "docs/研判状态与检索恢复_20261016.md",
       "packages/contracts/schema.json",
       "packages/experience/hybrid-retrieval.ts",
       "packages/experience/retrieval.ts",
       "packages/intelligence/repository.ts",
       "packages/intelligence/service.ts",
+      "packages/maps/analysis-completion.ts",
+      "packages/retrofit/strategy-assessment.ts",
       "packages/retrofit/strategy.ts",
+      "research/test_results/research-recovery-browser-20261016.json",
+      "research/test_results/research-recovery-build-20261016.log",
+      "research/test_results/research-recovery-citation-final-20261016.log",
+      "research/test_results/research-recovery-citation-navigation-final-20261016.log",
+      "research/test_results/research-recovery-deployment-baseline-20261016.json",
+      "research/test_results/research-recovery-focused-20261016.log",
+      "research/test_results/research-recovery-hybrid-final-20261016.log",
+      "research/test_results/research-recovery-incremental-final-20261016.log",
+      "research/test_results/research-recovery-incremental-live-20261016.json",
+      "research/test_results/research-recovery-live-readback-20261016.json",
+      "research/test_results/research-recovery-retrieval-evaluation-20261016.json",
+      "research/test_results/research-recovery-runtime-deployment-20261016.json",
+      "research/test_results/research-recovery-runtime-initial-deployment-20261016.json",
+      "research/test_results/research-recovery-ui-deployment-20261016.json",
+      "research/test_results/research-recovery-ui-initial-deployment-20261016.json",
       "runtime/dsh/live-session.ts",
+      "runtime/dsh/model-call-trace.ts",
       "runtime/workflows/renewal-research.ts",
+      "scripts/deploy-research-recovery.py",
+      "scripts/evaluate-research-retrieval.ts",
       "services/capabilities/generated/contracts.py",
       "services/capabilities/research.ts",
       "services/map-screening/analyst.ts",
@@ -3933,6 +3978,9 @@
       "tests/contracts/hybrid-rag.test.ts",
       "tests/contracts/map-screening.test.ts",
       "tests/contracts/rag-api-ui.test.ts",
+      "tests/contracts/research-index-worker.test.ts",
+      "tests/contracts/research-recovery.test.ts",
+      "tests/contracts/retrieval-navigation.test.ts",
       "tests/contracts/strategy-failure.test.ts",
       "tests/contracts/strategy-reasoning-assessment.test.ts",
       "tests/contracts/strategy-stream-api.test.ts",
@@ -3941,11 +3989,25 @@
     "artifacts": [
       "docs/研判状态与检索恢复_20261016.md",
       "research/test_results/research-recovery-retrieval-evaluation-20261016.json",
-      "scripts/deploy-research-recovery.py"
+      "scripts/deploy-research-recovery.py",
+      "research/test_results/research-recovery-runtime-deployment-20261016.json",
+      "research/test_results/research-recovery-ui-deployment-20261016.json",
+      "research/test_results/research-recovery-browser-20261016.json",
+      "research/test_results/research-recovery-incremental-live-20261016.json"
     ],
-    "unresolved_questions": [
-      "Actual new host/UI deployment and browser readback are pending. Source recall still misses one of eight target-source questions; do not claim end-to-end accuracy improvement."
-    ],
-    "next_runnable_task": "Finish production build, commit immutable candidate, deploy the scoped runtime patch and UI with drift checks, verify actual source-first responses and browser UI, then merge."
+    "unresolved_questions": [],
+    "next_runnable_task": "No further deployment or repair steps required for this change; preserve the documented source-recall case for later ranking evaluation.",
+    "deployment": {
+      "runtime_commit": "d985ab668b1a8aa14fce23bcf8aab7110eb231ea",
+      "ui_commit": "69c59f40ec556f6fda61d79048a8f995379116c9",
+      "origin": "https://laneanew.cn/",
+      "project_metadata_unchanged": 35,
+      "background_index_live": "completed",
+      "legacy_deployed_ui_preserved": true
+    },
+    "known_limitations": [
+      "Eight archived source-location questions are 7/8 for both candidate protocols; no claim of general answer-accuracy improvement.",
+      "Original partial model output cannot be invented for older failed runs that saved no readable structured fields."
+    ]
   }
 }

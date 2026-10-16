@@ -1785,7 +1785,7 @@
         "T-CREATION-RESEARCH-RELIABILITY-20261016"
       ],
       "goal": "修复执行完成与证据覆盖耦合、部分六维丢失、重试、RAG等待和情报复用，保留原Harness。",
-      "status": "in_progress",
+      "status": "completed",
       "write_scope": [
         "services/map-screening",
         "apps/host",
@@ -1803,7 +1803,9 @@
         "agent/state.json"
       ],
       "definition_of_done": "定向行为回归、生产构建、源文件漂移保护、真实服务器与页面读回分别有记录；模型/业务结论不以工程测试冒充，原用户资料及权限保持。",
-      "evidence_log": "research/test_results/research-recovery-focused-20261016.log"
+      "evidence_log": "research/test_results/research-recovery-focused-20261016.log",
+      "deployment_evidence": "research/test_results/research-recovery-runtime-deployment-20261016.json",
+      "browser_evidence": "research/test_results/research-recovery-browser-20261016.json"
     }
   ]
 }
