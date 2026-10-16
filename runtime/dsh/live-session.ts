@@ -42,7 +42,7 @@ export async function installRenewalStructuredToolChoice(ctx: Context, scope: As
   ctx.deepseekLlmApiExtensions.register('tool_choice', {
     prepare(request) {
       const tools = request.body.tools, thinking = request.body.thinking,active=scope.getStore(),outputType=active?.outputType
-      if (!outputType||!['RenewalStrategy','RenewalResearchPlan','RenewalResearchNote'].includes(outputType)||!Array.isArray(tools)
+      if (!outputType||!['RenewalStrategy','RenewalResearchPlan','RenewalResearchNote','RagQueryPlan','RagSemanticIndex','RagSemanticSelection','RagAnswer'].includes(outputType)||!Array.isArray(tools)
         || !thinking || typeof thinking !== 'object' || Array.isArray(thinking) || thinking.type !== 'disabled') return
       const names=tools.map(tool=>tool&&typeof tool==='object'&&!Array.isArray(tool)?tool.name:undefined)
       if(names.length===1&&names[0]==='structured_output')return {value:{type:'tool',name:'structured_output'}}

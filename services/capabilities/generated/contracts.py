@@ -2386,6 +2386,105 @@ class RenewalStrategy(BaseModel):
     next_checks: list[NextCheck] = Field(..., max_length=5)
 
 
+class Query(RootModel[str]):
+    root: str = Field(..., max_length=140, min_length=1)
+
+
+class Concept(RootModel[str]):
+    root: str = Field(..., max_length=50, min_length=1)
+
+
+class Subquestion(RootModel[str]):
+    root: str = Field(..., max_length=160, min_length=1)
+
+
+class RagQueryPlan(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    queries: list[Query] = Field(..., max_length=3)
+    concepts: list[Concept] = Field(..., max_length=12)
+    subquestions: list[Subquestion] = Field(..., max_length=4)
+
+
+class Concept1(RootModel[str]):
+    root: str = Field(..., max_length=40, min_length=1)
+
+
+class Question(RootModel[str]):
+    root: str = Field(..., max_length=100, min_length=1)
+
+
+class Entry(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    source_id: str = Field(..., max_length=100, min_length=1)
+    summary: str = Field(..., max_length=2000, min_length=1)
+    concepts: list[Concept1] = Field(..., max_length=12)
+    questions: list[Question] = Field(..., max_length=3)
+
+
+class RagSemanticIndex(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    entries: list[Entry] = Field(..., max_length=12)
+
+
+class Match(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    source_id: str = Field(..., max_length=100, min_length=1)
+    reason: str = Field(..., max_length=160, min_length=1)
+
+
+class RagSemanticSelection(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    matches: list[Match] = Field(..., max_length=15)
+
+
+class Citation(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    source_id: str = Field(..., max_length=100, min_length=1)
+    quote: str = Field(..., max_length=500, min_length=1)
+
+
+class Claim(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    text: str = Field(..., max_length=280, min_length=1)
+    citations: list[Citation] = Field(..., max_length=3)
+
+
+class MissingItem1(RootModel[str]):
+    root: str = Field(..., max_length=160, min_length=1)
+
+
+class PublicQuery(RootModel[str]):
+    root: str = Field(..., max_length=160, min_length=1)
+
+
+class InternalRequest(RootModel[str]):
+    root: str = Field(..., max_length=200, min_length=1)
+
+
+class RagAnswer(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    claims: list[Claim] = Field(..., max_length=5)
+    missing: list[MissingItem1] = Field(..., max_length=5)
+    public_queries: list[PublicQuery] = Field(..., max_length=3)
+    internal_requests: list[InternalRequest] = Field(..., max_length=4)
+
+
 class OperationsTimeBlock(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
