@@ -14,6 +14,7 @@ import {Store} from '../../apps/host/store'
 import {registerRagRetrieval} from '../../apps/host/rag-retrieval'
 import type {KnowledgePipelineService} from '../../packages/experience/pipeline'
 import {ExperienceError} from '../../packages/experience/errors'
+import {validate} from '../../packages/contracts/validate'
 
 let db:PGlite,repository:SemanticIndexRepository
 beforeEach(()=>{db=new PGlite();repository=new SemanticIndexRepository(db as unknown as Database)})
@@ -22,6 +23,12 @@ const source=(id:string,text:string,patch:Partial<Source>={}):Source=>({id,title
 const project=(sources:Source[],owner='owner'):ProjectRecord=>({id:'HYBRID-A',owner_id:owner,name:'测试社区',context_version:1,created_at:'',updated_at:'',input:{...structuredClone(fixture),project_id:'HYBRID-A',synthetic:false,sources,facts:[],context_rules:[],events:[]} as ProjectInput})
 const bundle=(p:ProjectRecord)=>buildRagExport({projectId:p.id,documents:[],rawDocuments:[],cards:[],sources:p.input.sources})
 const options=()=>({signal:new AbortController().signal})
+it('keeps a valid index summary above 240 characters instead of losing an entire batch',()=>{
+  const summary='原文包含分期改造范围、资金承担和维护安排，索引保留范围及否定。'.repeat(12)
+  const result={entries:[{source_id:'W-PUBLIC',summary,concepts:['资金承担'],questions:['谁承担改造资金']} ]}
+  expect(summary.length).toBeGreaterThan(240)
+  expect(validate('RagSemanticIndex',result)).toEqual(result)
+})
 const keyword:RetrievalRanker=async(p,q)=>({matches:p.sources.filter(row=>q.includes('助餐')&&row.untrusted_text?.includes('助餐')).map(row=>({source_id:row.id,score:1}))})
 function model(patch:{badQuote?:boolean;fail?:string}={}) {
   const prompts:string[]=[],types:string[]=[]

@@ -6832,7 +6832,7 @@
               "summary": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 240
+                "maxLength": 2000
               },
               "concepts": {
                 "type": "array",

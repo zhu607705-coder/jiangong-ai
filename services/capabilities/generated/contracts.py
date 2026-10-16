@@ -2420,7 +2420,7 @@ class Entry(BaseModel):
         extra='forbid',
     )
     source_id: str = Field(..., max_length=100, min_length=1)
-    summary: str = Field(..., max_length=240, min_length=1)
+    summary: str = Field(..., max_length=2000, min_length=1)
     concepts: list[Concept1] = Field(..., max_length=12)
     questions: list[Question] = Field(..., max_length=3)
 
