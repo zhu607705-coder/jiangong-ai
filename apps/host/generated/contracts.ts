@@ -234,6 +234,59 @@ export interface KnowledgeQuery {
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "MapScoreEstimates".
+ */
+export interface MapScoreEstimates {
+  /**
+   * @maxItems 6
+   */
+  dimensions: RenewalReasonedDimension[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RenewalReasonedDimension".
+ */
+export interface RenewalReasonedDimension {
+  key: "demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources";
+  level: "low" | "medium" | "high";
+  basis: "logical_inference" | "scenario_assumption";
+  /**
+   * @minItems 1
+   * @maxItems 3
+   */
+  premises: string[];
+  /**
+   * @maxItems 3
+   */
+  assumptions: string[];
+  reason: string;
+  verification: string;
+  /**
+   * @maxItems 4
+   */
+  evidence_refs: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "DecisionResearchRouting".
+ */
+export interface DecisionResearchRouting {
+  policy: "decision-research-routing-v1";
+  request_id: string;
+  /**
+   * @maxItems 3
+   */
+  tasks: {
+    role: "building_delivery" | "cost_value" | "residents_operations";
+    effort: "skip" | "brief" | "standard" | "deep";
+    confidence: number;
+  }[];
+  input_hash: string;
+  duration_ms: number;
+  input_tokens: number;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
  * via the `definition` "RenewalResearchPlan".
  */
 export interface RenewalResearchPlan {
@@ -304,30 +357,6 @@ export interface RenewalResearchNote {
       basis: string;
     }[];
   }[];
-}
-/**
- * This interface was referenced by `ProjectInput`'s JSON-Schema
- * via the `definition` "RenewalReasonedDimension".
- */
-export interface RenewalReasonedDimension {
-  key: "demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources";
-  level: "low" | "medium" | "high";
-  basis: "logical_inference" | "scenario_assumption";
-  /**
-   * @minItems 1
-   * @maxItems 3
-   */
-  premises: string[];
-  /**
-   * @maxItems 3
-   */
-  assumptions: string[];
-  reason: string;
-  verification: string;
-  /**
-   * @maxItems 4
-   */
-  evidence_refs: string[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -736,6 +765,8 @@ export interface DecisionSupport {
   error_code: string | null;
   dashboard?: DecisionDashboard;
   renewal_mode?: RenewalModeAssessment;
+  provisional_dashboard?: DecisionDashboard;
+  research_routing?: DecisionResearchRouting;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -1439,6 +1470,7 @@ export interface MapScreenAnalysis {
     evidence_revision: string;
     missing_dimensions: ("demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources")[];
   };
+  provisional_dashboard?: DecisionDashboard;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

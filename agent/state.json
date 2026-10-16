@@ -4009,5 +4009,30 @@
       "Eight archived source-location questions are 7/8 for both candidate protocols; no claim of general answer-accuracy improvement.",
       "Original partial model output cannot be invented for older failed runs that saved no readable structured fields."
     ]
+  },
+  "decision_fast_estimates_20261016": {
+    "unresolved_questions": [],
+    "changed_files": [
+      "packages/decision/fast-analysis.ts",
+      "services/capabilities/decision-model.ts",
+      "services/map-screening/analyst.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "runtime/workflows/renewal-research.ts",
+      "runtime/workflows/renewal-research-effort.ts",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/components/DecisionDashboard.tsx"
+    ],
+    "tests": {
+      "focused": "222 passed in 16 files",
+      "build": "passed TypeScript and Vite",
+      "live": "pending"
+    },
+    "status": "implemented_focused_tests_passed_deployment_pending",
+    "as_of": "2026-10-16",
+    "artifacts": [
+      "docs/Decision快速研判与推理暂估_20261016.md",
+      "research/test_results/decision-estimates-focused-20261016.log"
+    ],
+    "next_runnable_task": "Finish production build, deploy scoped changes, read back real Decision scores and UI, then merge."
   }
 }

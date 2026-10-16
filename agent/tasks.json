@@ -1806,6 +1806,29 @@
       "evidence_log": "research/test_results/research-recovery-focused-20261016.log",
       "deployment_evidence": "research/test_results/research-recovery-runtime-deployment-20261016.json",
       "browser_evidence": "research/test_results/research-recovery-browser-20261016.json"
+    },
+    {
+      "definition_of_done": "定向回归和构建通过，真实Decision调用与部署界面分别核对，保留原文/暂估及资料权限的区别。",
+      "id": "DECISION-FAST-ESTIMATES-20261016",
+      "depends_on": [],
+      "goal": "初筛零命中仍提供推理评分，复用Decision分流减少重复专家规划。",
+      "evidence_log": "research/test_results/decision-estimates-focused-20261016.log",
+      "write_scope": [
+        "packages/decision",
+        "packages/contracts",
+        "packages/maps",
+        "packages/experience/retrieval.ts",
+        "packages/retrofit/strategy.ts",
+        "services/capabilities",
+        "services/map-screening",
+        "runtime/workflows",
+        "apps/workspace/src",
+        "apps/host/generated",
+        "tests/contracts",
+        "scripts/deploy-research-recovery.py",
+        "docs/Decision快速研判与推理暂估_20261016.md",
+        "agent"
+      ]
     }
   ]
 }

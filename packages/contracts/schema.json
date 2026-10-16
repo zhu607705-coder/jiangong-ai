@@ -4,6 +4,90 @@
   "title": "ProjectInput",
   "$ref": "#/definitions/ProjectInput",
   "definitions": {
+    "MapScoreEstimates": {
+      "type": "object",
+      "properties": {
+        "dimensions": {
+          "type": "array",
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/definitions/RenewalReasonedDimension"
+          }
+        }
+      },
+      "required": [
+        "dimensions"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionResearchRouting": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "const": "decision-research-routing-v1"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "tasks": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": [
+                  "building_delivery",
+                  "cost_value",
+                  "residents_operations"
+                ]
+              },
+              "effort": {
+                "type": "string",
+                "enum": [
+                  "skip",
+                  "brief",
+                  "standard",
+                  "deep"
+                ]
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "role",
+              "effort",
+              "confidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "input_hash": {
+          "type": "string"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "policy",
+        "request_id",
+        "tasks",
+        "input_hash",
+        "duration_ms",
+        "input_tokens"
+      ],
+      "additionalProperties": false
+    },
     "RenewalResearchPlan": {
       "type": "object", "additionalProperties": false,
       "properties": {
@@ -2879,6 +2963,9 @@
             "missing_dimensions"
           ],
           "additionalProperties": false
+        },
+        "provisional_dashboard": {
+          "$ref": "#/definitions/DecisionDashboard"
         }
       },
       "required": [
@@ -3452,8 +3539,18 @@
     "DecisionSupport": {
       "type": "object",
       "properties": {
-        "error_detail": {"type":"string","maxLength":2000},
-        "format_notes": {"type":"array","items":{"type":"string","maxLength":500},"maxItems":32},
+        "error_detail": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "format_notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "maxItems": 32
+        },
         "status": {
           "type": "string",
           "enum": [
@@ -3632,6 +3729,12 @@
         },
         "renewal_mode": {
           "$ref": "#/definitions/RenewalModeAssessment"
+        },
+        "provisional_dashboard": {
+          "$ref": "#/definitions/DecisionDashboard"
+        },
+        "research_routing": {
+          "$ref": "#/definitions/DecisionResearchRouting"
         }
       },
       "required": [

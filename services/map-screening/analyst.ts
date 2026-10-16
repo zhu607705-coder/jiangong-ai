@@ -13,7 +13,7 @@ import { LiveSession } from '../../runtime/dsh/live-session'
 import { config } from '../../apps/host/config'
 import { hasUnqualifiedAssurance } from '../../packages/decision/model-policy'
 import { INVESTIGATION_GAPS, SCREEN_PROFILES, usableMapEvidence } from '../../packages/maps/screening-policy'
-import type { MapPreliminaryAssessment, MapScreenAnalysis, MapScreenContext, MapScreenProfile, DecisionSupport } from '../../apps/host/generated/contracts'
+import type { MapPreliminaryAssessment, MapScreenAnalysis, MapScreenContext, MapScreenProfile, DecisionSupport,DecisionDashboard,MapScoreEstimates } from '../../apps/host/generated/contracts'
 import { assertBriefProse, selectReferenceCases } from '../../runtime/skills/investment-brief'
 import { decisionFactors } from '../../packages/maps/decision-factors'
 import { publicMapContext, researchSubject } from '../../packages/maps/public-context'
@@ -23,6 +23,7 @@ import { decisionErrorMessage } from '../../packages/decision/route-labels'
 import { mapDecisionInput, DECISION_ACTIONS } from '../../packages/decision/structured-route'
 import { dashboardDimensions, dashboardPolicy } from '../../packages/decision/dashboard'
 import type {MapAnalysisAction} from '../../packages/maps/analysis-completion'
+import {reasonedProvisionalDashboard,estimationScenarios} from '../../packages/decision/fast-analysis'
 
 export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: MapScreenContext, external: Source[] = [], records:PublicRecord[]=snapshot.research_records||[], asOf=snapshot.created_at,profile?:MapScreenProfile): MapPreliminaryAssessment {
   const context={...snapshot,created_at:asOf}
@@ -86,19 +87,49 @@ export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: M
   return result
 }
 
+export async function quickMapContext(context:MapScreenContext,profile:MapScreenProfile,signal:AbortSignal,emit:ResearchSink=()=>{},previous?:MapScreenAnalysis):Promise<MapScreenAnalysis>{
+  const current=publicMapContext(context),created_at=new Date().toISOString()
+  const permittedSources=previous?.research_sources?.filter(source=>source.visibility==='public'&&source.data_class==='public'&&!source.synthetic)||[]
+  const permittedIds=new Set([...permittedSources.map(source=>source.id),...current.local_projects.flatMap(project=>project.sources.flatMap(source=>[source.id,`${project.project_id}:${source.id}`]))])
+  const permittedRecords=previous?.research_records?.filter(record=>permittedIds.has(record.source_id))||[]
+  let grounded:MapPreliminaryAssessment|undefined
+  if(previous?.assessment&&previous.context_id===context.id&&previous.profile===profile&&!previous.refresh_required)try{grounded=groundMapAssessment(previous.assessment,context,permittedSources,permittedRecords,created_at,profile)}catch{/* Keep raw history; the quick pass starts from the current public context. */}
+  const assessment:MapPreliminaryAssessment={summary:`先比较${SCREEN_PROFILES[profile].label}的更新条件，形成初步推理评分。`,opportunities:[],cautions:[],unknowns:[],next_steps:['补充本对象的调查、设施与资金台账后更新评分。'],dimension_evidence:grounded?.dimension_evidence||[]}
+  const input=mapDecisionInput({...current,created_at},SCREEN_PROFILES[profile].label,profile)
+  input.dashboard={purpose:SCREEN_PROFILES[profile].label,evidence:assessment.dimension_evidence||[],profile}
+  input.estimation={purpose:SCREEN_PROFILES[profile].label,profile,context:{target:current.target,address:context.address,city:context.city}}
+  input.researchPlanning=true
+  input.sourceIds=[...new Set([...input.sourceIds,...permittedSources.map(source=>source.id)])]
+  emit({type:'progress',stage:'decision',status:'running',message:'快速判断六维适配、缺项优先级与后续研究力度'})
+  const decision=await evaluateDecision(input,signal)
+  emit({type:'progress',stage:'decision',status:decision.status==='completed'?'completed':'partial',message:decision.provisional_dashboard?'初步推理评分已返回，可继续补查资料':'快速判断已返回，保留已取得内容'})
+  return {context_id:context.id,profile,created_at,status:decision.status==='completed'?'completed':'failed',assessment,decision_support:decision,model_calls:[],reason:decision.status==='completed'?null:decisionErrorMessage(decision.error_code,decision.error_detail),research_sources:permittedSources,research_records:permittedRecords,research:previous?.research?{...previous.research,reused:true}:undefined}
+}
+
 export async function analyzeMapContext(context:MapScreenContext,profile:MapScreenProfile,signal:AbortSignal,emit:ResearchSink=()=>{},previous?:MapScreenAnalysis,action?:MapAnalysisAction):Promise<MapScreenAnalysis>{
   const base={context_id:context.id,profile,created_at:new Date().toISOString()}
   const neighborhood=profile==='neighborhood'
   const direction=neighborhood?'按老旧小区改造研究居民家庭、基础/完善/提升类改造、公共服务缺口、鉴定消防与管网、居民协商和实施主体、资金来源与工程成本、物业长效维护。区分居民需求与商业客流；人口统计保留时点和空间范围；提出停车、养老托育或加装电梯等具体内容时写明对应居民与工程条件。':'校园应查实际修缮采购、运营与使用安排，不预设拆迁或用途变更。'
   const dimensions=dashboardDimensions(dashboardPolicy(profile)).map(d=>`${d.key}${d.label}`).join('、')
+  let quickFailure:DecisionSupport|undefined
+  if(action==='reevaluate'&&config.decisionEnabled){
+    try{
+      const quick=await quickMapContext(context,profile,signal,emit,previous)
+      const hasScores=[...(quick.decision_support?.dashboard?.dimensions||[]),...(quick.decision_support?.provisional_dashboard?.dimensions||[])].some(row=>row.value!==null)
+      if(quick.status==='completed'&&hasScores||!config.modelConfigured)return quick
+      quickFailure=quick.decision_support
+    }catch{signal.throwIfAborted()}
+  }
   if(!config.modelConfigured)return {...base,status:'unavailable',assessment:null,model_calls:[],reason:'请配置模型接口。'}
   const budget=AbortSignal.any([signal,AbortSignal.timeout(110000)])
   const live=await LiveSession.open('MAP-AI-'+randomUUID(),budget)
   let research:PublicResearch={sources:[],records:[],receipts:[],trace:{status:'not_applicable',queries:[],source_ids:[],warnings:[],reused:false}}
-  let decisionSupport:DecisionSupport|undefined
+  let decisionSupport:DecisionSupport|undefined=quickFailure
+  let provisionalDashboard:DecisionDashboard|undefined
   let assessment:MapPreliminaryAssessment|undefined
   const previousMatches=!!previous?.assessment&&previous.context_id===context.id&&previous.profile===profile
   let reuse=action!=='supplement'&&previousMatches&&!previous!.refresh_required
+  if(reuse&&previous?.provisional_dashboard)provisionalDashboard=structuredClone(previous.provisional_dashboard)
   let refreshEvidence=action==='supplement'||previousMatches&&!!previous!.refresh_required
   const calls=()=>[...live.calls]
   const partial=():MapScreenAnalysis=>({...base,status:'partial',assessment:assessment!,model_calls:calls(),reason:'简报已完成，评分尚未完成。',research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace})
@@ -112,7 +143,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
         emit({type:'progress',stage:'sources',status:'completed',message:'复用已完成的简报与依据'})
       }catch{
         budget.throwIfAborted()
-        reuse=false;refreshEvidence=true
+        reuse=false;refreshEvidence=true;provisionalDashboard=undefined
         research={sources:[],records:[],receipts:[],trace:{status:'not_applicable',queries:[],source_ids:[],warnings:[],reused:false}}
         emit({type:'progress',stage:'sources',status:'running',message:'原简报依据已变化，重新取得当前资料'})
       }
@@ -171,7 +202,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
     }
     await emit({type:'brief',result:partial()})
     emit({type:'progress',stage:'brief',status:'completed',message:assessment!.summary})
-    if(config.decisionEnabled){
+    if(config.decisionEnabled&&!decisionSupport){
       await emit({type:'progress',stage:'decision',status:'running',message:'评估六维方案适配'})
       const asOf=new Date().toISOString()
       assessment=groundMapAssessment(assessment!,context,external,research.records,asOf,profile)
@@ -183,13 +214,22 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
 
       input.sourceIds=[...input.sourceIds,...external.map(s=>s.id)]
       input.dashboard={purpose:assessment!.summary,evidence:assessment!.dimension_evidence||[],profile}
+      input.estimation={purpose:assessment!.summary,profile,context:{target:publicContext.target,address:context.address,city:context.city,place_leads:places}}
       decisionSupport=await live.runReadCapability('qwen_research_route',s=>evaluateDecision(input,s))
       const scored=decisionSupport.status==='completed'&&decisionSupport.dashboard?.status==='completed'
       emit({type:'progress',stage:'decision',status:scored?'completed':'partial',message:scored?'六维研判已更新':'本轮仅展示已取得的建议与依据'})
       // Keep the actual object-specific action. A generic router checklist must not overwrite it.
     }
+    if(!provisionalDashboard&&!decisionSupport?.provisional_dashboard&&(!decisionSupport?.dashboard||decisionSupport.dashboard.dimensions.some(row=>row.value===null))){
+      try{
+        budget.throwIfAborted()
+        emit({type:'progress',stage:'decision',status:'running',message:'正在按明确情景形成初步推理评分'})
+        const response=await live.call<MapScoreEstimates>('map_score_estimates',`为当前对象形成六维初步推理分。无合格原文仍应给出可比较的条件暂估，不补造真实人口、年代、鉴定、资金或居民表决。各维采用low/medium/high，说明premises、assumptions、reason和verification；无本对象直接依据时用scenario_assumption并明确假设，evidence_refs可空。不得用固定中分填齐，也不把暂估用作批准。各维尽量简洁，覆盖${dimensions}。\n<untrusted_context>${JSON.stringify({target:publicContext.target,address:context.address,city:context.city,proposal:assessment?.summary,scenarios:estimationScenarios({purpose:assessment?.summary||'',profile})})}</untrusted_context>`,'MapScoreEstimates',[],undefined,{evidenceIds},undefined,{signal:budget,maxOutputTokens:3500})
+        provisionalDashboard=reasonedProvisionalDashboard(response.value.dimensions,profile,assessment?.summary||'',live.calls.at(-1)?.returned_model||config.DEEPSEEK_MODEL,response.sessionId)
+      }catch{signal.throwIfAborted()}
+    }
     const completed=!decisionSupport||decisionSupport.status==='completed'
-    return {...base,status:completed?'completed':'failed',assessment:assessment!,model_calls:calls(),reason:completed?null:decisionErrorMessage(decisionSupport?.error_code,decisionSupport?.error_detail),...(decisionSupport?{decision_support:decisionSupport}:{}),research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace}
+    return {...base,status:completed?'completed':'failed',assessment:assessment!,model_calls:calls(),reason:completed?null:decisionErrorMessage(decisionSupport?.error_code,decisionSupport?.error_detail),...(decisionSupport?{decision_support:decisionSupport}:{}),...(provisionalDashboard?{provisional_dashboard:provisionalDashboard}:{}),research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace}
   }catch{
     signal.throwIfAborted()
     return {...base,status:'failed',assessment:assessment||null,model_calls:calls(),reason:assessment?'简报已保留，后续判断未完成，可重试评分。':budget.aborted?'本轮研究已停止。':'本轮研判未完成，请重试。',research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace,...(decisionSupport?{decision_support:decisionSupport}:{})}

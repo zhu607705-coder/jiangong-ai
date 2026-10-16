@@ -162,7 +162,7 @@ export class MapScreeningService {
     const key = [id, profile, RESEARCH_POLICY, dashboardPolicy(profile), BRIEF_SKILL_VERSION].join(':'), cached = await this.restore(context,profile)
     if (!action&&cached?.status === 'completed') { emit({type:'progress',stage:'sources',status:'completed',message:'读取已保存研判；可主动补查或按现有资料重评'}); return structuredClone(cached) }
     if(action==='reevaluate'&&cached?.refresh_required)throw new Error('CONTEXT_EXPIRED')
-    if (!context.target.label && !context.address && context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
+    if (action!=='reevaluate'&&!context.target.label && !context.address && context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，可先按情景做快速初筛，再补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return cached?.assessment?{...structuredClone(cached),status:'partial',reason:'上一轮研究正在结束，请稍后重试评分。'}:{ context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
     this.activeAnalyses++; this.analyzing.add(key)
     try {
@@ -196,6 +196,7 @@ export class MapScreeningService {
       signal.throwIfAborted()
       this.refreshConditions(context,analysis,profile)
       if(!analysis.decision_support&&cached?.decision_support&&!cached.refresh_required&&this.currentScores(context,cached))analysis.decision_support=structuredClone(cached.decision_support)
+      if(!analysis.provisional_dashboard&&cached?.provisional_dashboard&&!cached.refresh_required)analysis.provisional_dashboard=structuredClone(cached.provisional_dashboard)
       if(analysis.status==='completed'&&analysis.decision_support&&analysis.decision_support.status!=='completed'){
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }

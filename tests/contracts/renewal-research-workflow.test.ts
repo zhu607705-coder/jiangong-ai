@@ -443,3 +443,21 @@ it('recovers a truncated specialist before synthesis with more output room under
   expect(experts[1].execution!.signal).toBe(experts[0].execution!.signal)
   expect(result.trace.tasks[0]).toMatchObject({status:'completed',attempts:2})
 })
+
+it('uses the Decision routing result instead of a separate DSH planner and applies brief effort to the expert',async()=>{
+ const row=source(1)
+ const {live,calls}=await session(async call=>{
+  expect(call.outputType).toBe('RenewalResearchNote')
+  const result=await read(call,['s1']);expect(result.isError).toBe(false)
+  return {...note(1,row),task_id:'fast-building_delivery'}
+ })
+ const decisionRoute={policy:'decision-research-routing-v1' as const,request_id:'FAST',input_hash:'snapshot',duration_ms:10,input_tokens:100,tasks:[{role:'building_delivery' as const,effort:'brief' as const,confidence:.9},{role:'cost_value' as const,effort:'skip' as const,confidence:.9},{role:'residents_operations' as const,effort:'skip' as const,confidence:.9}]}
+ const result=await runRenewalResearch(live,[row],{projectName:'本小区',signal:new AbortController().signal,decisionRoute})
+ expect(calls).toHaveLength(1)
+ expect(calls[0].outputType).toBe('RenewalResearchNote')
+ expect(calls[0].execution?.maxOutputTokens).toBe(3000)
+ expect(calls[0].prompt).toContain('简短分析')
+ expect(result.trace.planner_backend).toBe('decision')
+ expect(result.trace.decision_routing?.request_id).toBe('FAST')
+ expect(result.trace.plan?.tasks[0].source_ids).toEqual([row.id])
+})

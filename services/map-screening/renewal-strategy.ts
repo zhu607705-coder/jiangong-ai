@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { randomUUID,createHash } from 'node:crypto'
 import type { DecisionInput } from '../../packages/decision/structured-route'
 import type { ProjectInput, RenewalStrategy, DecisionSupport } from '../../apps/host/generated/contracts'
 import { LiveSession } from '../../runtime/dsh/live-session'
@@ -9,7 +9,7 @@ import { STRATEGY_POLICY, reviewStrategyContent, strategyFailure, strategyPrompt
 import { ContractError, validate as validateContract } from '../../packages/contracts/validate'
 import { projectRenewalModeInput, evaluateRenewalModeGate, renewalCommunitySources } from '../../packages/retrofit/renewal-mode'
 import { renewalResearchRounds } from '../../packages/retrofit/renewal-research-plan'
-import { evaluateDecision } from '../capabilities/decision-model'
+import { evaluateDecision,decisionRequestBody } from '../capabilities/decision-model'
 import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 import { runRenewalResearch } from '../../runtime/workflows/renewal-research'
 import { loadRenewalAgentProfile } from '../../runtime/agents/renewal/profiles'
@@ -140,15 +140,22 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     base.sources = sources
     if (!synthetic && config.searchConfigured && !options.savedResearch) progress({ stage: 'research', status: 'completed', message: `已整理 ${sources.length} 份对象依据与对标资料。`, source_count: sources.length, query_count: base.research?.queries.length || 0 })
     progress({ stage: 'model', status: 'running', message: '正在综合原文，提出更新取舍、投入阶段与财务及社会效果建议。', source_count: sources.length })
-    if (!base.decision && config.decisionEnabled) {
-      try {base.decision=await live.runReadCapability('renewal_research_route',toolSignal=>evaluateDecision(input,toolSignal))}
+    const promptSources = options.researchWorkflow?sources:strategyPromptSources(sources,workReferenceIds), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
+    const routingInput:DecisionInput=options.researchWorkflow?{...input,researchPlanning:true,state:{evidence:input.state,public_research_catalog:promptSources.filter(source=>source.visibility!=='internal'&&source.data_class!=='internal').map(source=>({id:source.id,title:source.title,role:source.role,preview:source.text.slice(0,220)}))}}:input
+    const routingHash=createHash('sha256').update(JSON.stringify(decisionRequestBody(routingInput))).digest('hex')
+    if (config.decisionEnabled&&(!base.decision||options.researchWorkflow&&base.decision.research_routing?.input_hash!==routingHash)) {
+      try {
+        progress({stage:'model',status:'running',message:'正在快速判断研究重点与各专题所需力度。'})
+        const fast=await live.runReadCapability('renewal_research_route',toolSignal=>evaluateDecision(routingInput,toolSignal))
+        if(!base.decision||base.decision.status!=='completed')base.decision=fast
+        else if(fast.research_routing)base.decision={...base.decision,research_routing:fast.research_routing}
+      }
       catch {budget.throwIfAborted();progress({stage:'model',status:'running',message:'模式服务本次未完成，先依据已有资料形成候选方案；模式条件保留待核。'})}
     }
-    const promptSources = options.researchWorkflow?sources:strategyPromptSources(sources,workReferenceIds), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
     let workflow:Awaited<ReturnType<typeof runRenewalResearch>>|null=null
     let researchDetailsUnavailable=false
     if(options.researchWorkflow) {
-      try {workflow=await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,deadlineAt:started+600000,onProgress:event=>progress({stage:'model',status:'running',message:event.message,source_count:promptSources.length,workflow:event.workflow})})}
+      try {workflow=await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,deadlineAt:started+600000,decisionRoute:base.decision?.research_routing?.input_hash===routingHash?base.decision.research_routing:undefined,onProgress:event=>progress({stage:'model',status:'running',message:event.message,source_count:promptSources.length,workflow:event.workflow})})}
       catch {budget.throwIfAborted();researchDetailsUnavailable=true;progress({stage:'model',status:'running',message:'专题记录本次未完成，改用已取得原文直接综合方案，并列出后续补查项。'})}
     }
     if(workflow)base.workflow={...workflow.trace,notes:workflow.notes}

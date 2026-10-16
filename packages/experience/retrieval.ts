@@ -144,11 +144,12 @@ export function queryObjectCompatible(question:string,text:string):boolean {
 }
 
 /** Shared by direct questions and expert source reading; topics are preferences. */
-export function passageQueryMatches(question:string,title:string,text:string):boolean {
+export function passageQueryMatches(question:string,title:string,text:string,options:{bodyOnly?:boolean}={}):boolean {
   if(!queryObjectCompatible(question,title+'\n'+text))return false
-  const query=expandRetrievalQuery(question),joined=(title+'\n'+text).toLowerCase()
+  const query=expandRetrievalQuery(question),topics=retrievalTopics(question),joined=(options.bodyOnly?text:title+'\n'+text).toLowerCase()
+  if(options.bodyOnly&&topics.explicit&&!topics.matches(text))return false
   const terms=[...searchTokens(query.rank_query),...query.query_expansions.flatMap(row=>row.added_term.split(/\s+/)),...(question.trim().length>=2?[question.trim()]:[])]
-  return terms.some(term=>!questionWords.has(term)&&!genericWords.has(term)&&term.length>1&&joined.includes(term))
+  return terms.some(term=>!questionWords.has(term)&&!genericWords.has(term)&&(term.length>1||!topics.explicit&&['户','幢'].includes(term))&&joined.includes(term))
     ||retrievalTopics(question).explicit&&retrievalTopics(question).matches(joined)
 }
 

@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/decision-estimates
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_PLAN_SCOPE"}
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > a failed small planner readiness call prevents experts from starting
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_MODEL_FAILED"}
+
+stderr | tests/contracts/decision-model.test.ts > Qwen System One protocol > reports missing configuration without networking or leaking transport error text
+{"event":"decision_request_failed","category":"Error"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains a valid current dimension independently when the work-package contract fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"same-snapshot","diagnostic":{"code":"MODEL_SCHEMA_INVALID"},"source_count":4,"query_count":0,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500}
+
+······························································································································································································································
+
+ Test Files  16 passed (16)
+      Tests  222 passed (222)
+   Start at  22:59:42
+   Duration  18.41s (transform 1.10s, setup 0ms, import 7.75s, tests 8.76s, environment 1ms)
+
