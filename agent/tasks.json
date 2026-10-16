@@ -1702,6 +1702,28 @@
       "definition_of_done": "共享色板替代旧零散颜色，隔离构建通过，主要色对对比合格；UI-only部署不覆盖后台热修，求是村首屏新样式可见且无alert或页面溢出。",
       "evidence_log": "research/test_results/blue-theme-deployment-20261016.json",
       "ui_proof": "output/playwright/blue-theme/qiushi-blue-overview-20261016.png"
+    },
+    {
+      "id": "T-DECISION-COLOR-20261016",
+      "depends_on": [
+        "T-BLUE-WORKBENCH-20261016"
+      ],
+      "goal": "让关键条件、弱项和投入阶段具有红橙绿重点标注，并保留状态文字与实际判断。",
+      "status": "completed",
+      "write_scope": [
+        "apps/workspace/src/components/ProjectOverview.tsx",
+        "apps/workspace/src/components/DecisionDashboard.tsx",
+        "apps/workspace/src/components/DecisionBrief.tsx",
+        "apps/workspace/src/components/decision-emphasis.ts",
+        "apps/workspace/src/components/CommunityOperationsPlayground.tsx",
+        "apps/workspace/src/maps/RenewalModePanel.tsx",
+        "apps/workspace/src/workbench-polish.css",
+        "docs/界面配色与可读性.md",
+        "tests/contracts/decision-emphasis.test.ts"
+      ],
+      "definition_of_done": "已知冲突及未满足条件、未知资料、确认条件呈现不同颜色；不混淆拆建必要性与可行前提；定向检查及构建通过，UI-only上线与页面核对完成。",
+      "evidence_log": "research/test_results/decision-emphasis-deployment-20261016.json",
+      "ui_proof": "output/playwright/decision-emphasis/qiushi-key-conditions-20261016.png"
     }
   ]
 }

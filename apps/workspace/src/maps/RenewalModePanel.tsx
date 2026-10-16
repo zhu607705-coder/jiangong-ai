@@ -7,6 +7,7 @@ import { MODE_LABELS, evaluateRenewalModeGate, type RenewalModeInput, type Renew
 import { decisionErrorMessage } from '../../../../packages/decision/route-labels'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 import RenewalResearchEvidence from './RenewalResearchEvidence'
+import { renewalCheckEmphasis } from '../components/decision-emphasis'
 import './RenewalModePanel.css'
 
 const money = (value: number) => value >= 1e8 ? `${(value / 1e8).toLocaleString('zh-CN', { maximumFractionDigits: 3 })} 亿元` : `${(value / 10000).toLocaleString('zh-CN', { maximumFractionDigits: 4 })} 万元`
@@ -72,13 +73,13 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
       <strong>{direction === 'comprehensive' ? '综合整治优先研究' : direction === 'rebuild' ? '原拆原建优先论证' : gate.rebuild_allowed ? '先完成两方案取舍' : MODE_LABELS.investigate}</strong>
       <dl className="renewal-decision-brief"><div className="renewal-main-reason"><dt>主要原因</dt><dd>{directionSummary.replace(/^综合整治优先研究[：，]\s*/, '')}</dd></div><div className="renewal-next"><dt>下一步</dt><dd>{gate.next_step}</dd></div></dl>
       <details className="renewal-gate" aria-label="判定标准与条件">
-        <summary><strong>判定标准与条件</strong><span className="renewal-gate-counts"><span>拆建条件已满足 {conditionCounts.met}/{gate.checks.length}</span><span>待核 {conditionCounts.unknown}</span>{conditionCounts.unmet > 0 && <span>未满足 {conditionCounts.unmet}</span>}{conditionCounts.conflict > 0 && <span>冲突 {conditionCounts.conflict}</span>}</span><IconChevronDown size={17} aria-hidden="true"/></summary>
+        <summary><strong>判定标准与条件</strong><span className="renewal-gate-counts"><span className="decision-status-badge" data-tone="success">拆建条件已满足 {conditionCounts.met}/{gate.checks.length}</span>{conditionCounts.unknown > 0 && <span className="decision-status-badge" data-tone="warning">待核 {conditionCounts.unknown}</span>}{conditionCounts.unmet > 0 && <span className="decision-status-badge" data-tone={gate.checks.some(row => row.group === 'feasibility' && row.state === 'unmet') ? 'danger' : 'neutral'}>未满足 {conditionCounts.unmet}</span>}{conditionCounts.conflict > 0 && <span className="decision-status-badge" data-tone="danger">冲突 {conditionCounts.conflict}</span>}</span><IconChevronDown size={17} aria-hidden="true"/></summary>
         <h4>何时切换为原拆原建优先论证</h4>
         <p>先核实本对象拆建必要性和八项实施前提，再比较投入与使用效果。待核项保留为未知，逐项列明所需材料。</p>
         {(['necessity','feasibility'] as const).map(group => <div className="renewal-gate-group" key={group}>
           <h5>{group === 'necessity' ? '1. 本对象拆建必要性' : '2. 拆建实施可行前提'}</h5>
-          <ul>{gate.checks.filter(row => row.group === group).map(row => <li key={row.kind} data-state={row.state}>
-            <div className="renewal-gate-item"><span>{row.label}</span><strong>{row.state === 'met' ? group === 'necessity' ? '已触发' : '已满足' : row.state === 'unmet' ? group === 'necessity' ? '未触发' : '未满足' : row.state === 'conflict' ? '记录冲突' : '未知'}</strong></div>
+          <ul>{gate.checks.filter(row => row.group === group).map(row => <li key={row.kind} data-state={row.state} data-tone={renewalCheckEmphasis(row).tone}>
+            <div className="renewal-gate-item"><span>{row.label}</span><strong className="decision-status-badge" data-tone={renewalCheckEmphasis(row).tone}>{row.state === 'met' ? group === 'necessity' ? '已触发' : '已满足' : row.state === 'unmet' ? group === 'necessity' ? '未触发' : '未满足' : row.state === 'conflict' ? '记录冲突' : '未知'}</strong></div>
             <details><summary>核验要求{row.source_ids.length ? ` · ${row.source_ids.length} 份依据` : ' · 待补依据'}</summary><p>{row.detail}</p>
               {row.source_ids.map(id => { const source = screening.evidence.find(item => item.source_id === id); return <p className="renewal-gate-source" key={id}>{source?.url && /^https?:\/\//.test(source.url) ? <a href={source.url} target="_blank" rel="noreferrer">{source.title} ↗</a> : source?.title || id}</p> })}
               {!!row.locators.length && <p className="renewal-gate-source">原文定位：{row.locators.join('、')}</p>}
@@ -114,10 +115,11 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
         <p className="renewal-standard-intro">项目初筛标准 v2 · 逐栋核实结构和实施条件，按同一范围、价格年与使用目标比较两方案投入及效果。</p>
         {screening.standards.map(row => {
           const rows = row.kinds.map(kind => condition(kind)).filter(Boolean)
-          const status = rows.some(item => item?.state === 'conflict') ? '存在分歧' : rows.some(item => item?.state === 'restricted') ? '有限制记录' : rows.every(item => item?.state === 'supported') ? '已有条件记录' : '安排专项核查'
-          return <article className="renewal-standard" key={row.key}>
+          const tone = rows.some(item => item?.state === 'conflict' || item?.state === 'restricted') ? 'danger' : rows.length === row.kinds.length && rows.every(item => item?.state === 'supported') ? 'success' : 'warning'
+          const status = rows.some(item => item?.state === 'conflict') ? '存在分歧' : rows.some(item => item?.state === 'restricted') ? '有限制记录' : tone === 'success' ? '已有条件记录' : '安排专项核查'
+          return <article className="renewal-standard" data-tone={tone} key={row.key}>
             <button aria-expanded={openStandard === row.key} onClick={() => setOpenStandard(openStandard === row.key ? '' : row.key)}><strong>{row.label}</strong><span>{status}</span><IconChevronDown size={16}/></button>
-            {openStandard === row.key && <div><p>{row.task}</p>{row.kinds.map(kind => <p className="renewal-condition" key={kind}>{conditionLabels[kind]}：{condition(kind)?.state === 'supported' ? '已登记满足' : condition(kind)?.state === 'restricted' ? '已登记不满足' : condition(kind)?.state === 'conflict' ? '记录冲突' : unknownConditions[kind] || '尚缺本对象对应确认记录'}</p>)}
+            {openStandard === row.key && <div><p>{row.task}</p>{row.kinds.map(kind => <p className="renewal-condition" data-state={condition(kind)?.state || 'unknown'} key={kind}>{conditionLabels[kind]}：{condition(kind)?.state === 'supported' ? '已登记满足' : condition(kind)?.state === 'restricted' ? '已登记不满足' : condition(kind)?.state === 'conflict' ? '记录冲突' : unknownConditions[kind] || '尚缺本对象对应确认记录'}</p>)}
               {!!rows.flatMap(item => item?.locators || []).length && <p>原文定位：{rows.flatMap(item => item?.locators || []).join('、')}</p>}
               {row.key === 'funding' && <RenewalResearchEvidence input={screening}/>}
             </div>}
