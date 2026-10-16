@@ -1,3 +1,4 @@
+import StrategyContentNotice from './StrategyContentNotice'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 import type { ResearchMaterial, ResearchRound } from '../../../../packages/retrofit/research-rounds'
@@ -44,6 +45,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
   const nextNumber = Math.max(0, ...ordered.map(round => round.round_number)) + 1
   const latestReview = baseline?.result?.strategy?.round_review
   const missing = baseline?.missing_materials || []
+  const requestedMaterials=baseline?.result?.content_review?missing.filter(item=>item.topic!=='后续资料补充'):missing
   const question = baseline ? `第 ${baseline.round_number} 轮之后，还可以补充哪些项目资料？` : '研判之前，有没有企业或项目内部资料？'
   const actionable = !busy && !loading && !error
   useEffect(() => { setConsent(false) }, [revision, baseline?.id])
@@ -62,9 +64,11 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
       <header><span>研判协作助手 · {projectName}</span><h3>{question}</h3></header>
       {synthetic && <p className="research-round-notice">合成演示 · 本项目文件、轮次与模型输出均为模拟情景，不写入真实项目。</p>}
       <p>{baseline ? `保留首轮基线，沿用第 ${baseline.round_number} 轮结果；新增文件后再形成独立的第 ${nextNumber} 轮。` : `公开资料可以支持第一轮判断；${categories}能帮助核实项目真实条件。`}</p>
-      <div className="research-source-count"><span>现有公开资料 {sourceCounts.public} 份</span><span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
+      <div className="research-source-count"><span>已导入公开文件 {sourceCounts.public} 份</span>{!!baseline?.result?.sources.length&&<span>本轮研判来源 {baseline.result.sources.length} 份</span>}<span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
       {loading && <p role="status">正在读取已保存的研判轮次与项目文件…</p>}
       {error && <div className="research-round-notice" role="alert"><p>{error}</p><button disabled={busy || loading} onClick={onReload}>重新读取轮次</button></div>}
+      {baseline?.result?.content_review&&<StrategyContentNotice packet={baseline.result} details/>}
+      {!!requestedMaterials.length&&<section aria-label="下一轮建议补充资料"><h4>本轮建议补充资料</h4><ul className="research-round-gap-list">{requestedMaterials.map((item,index)=><li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p></li>)}</ul></section>}
       <div className="research-intake-actions">
         <button disabled={!actionable} aria-pressed={uploadOpen} onClick={() => void prepareUpload()}>有，补充内部资料</button>
         <button disabled={!actionable} onClick={() => void useExisting()}>{baseline ? '暂不补充，查看已完成研判' : candidate ? '暂不补充，保留现有方案作为首轮' : '暂不补充，先用现有公开资料开展首轮研判'}</button>
@@ -82,7 +86,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
     {!intakeOnly && !!ordered.length && <section className="research-rounds" aria-label="研判轮次与变化"><header><span>首轮基线 → 新增资料 → 补充研判</span><h3>每轮结论和变化都保留</h3></header>
       <div className="research-round-cards">{ordered.map(round => <article key={round.id} data-round-id={round.id} data-current={round.id === baseline?.id}><header><strong>第 {round.round_number} 轮{round.id === first?.id ? ' · 首轮基线' : ''}</strong><span>{statusLabels[round.status]}</span></header><h4>{round.result?.strategy?.headline || (round.status === 'failed' ? '本轮尚未形成完整结论' : '等待本轮研判结果')}</h4><p>{round.result?.strategy?.decision_brief?.renewal.conclusion || round.result?.strategy?.summary || '完成后将保留本轮判断与依据。'}</p><p className="research-round-date">资料 v{round.context_version} · {dateLabel(round.created_at)}{round.origin === 'adopted_history' ? ' · 采纳已保存方案' : ''}</p><details className="research-round-materials"><summary>本轮资料 · {round.materials.length} 份文件</summary><ul className="research-material-list">{round.materials.map(material => <li key={`${material.document_id}:${material.version}`}><strong>{material.file_name}{material.added_in_round ? ' · 本轮新增' : ''}</strong><span>{materialLabel(material.material_category)} · 资料日期 {material.source_date || '未登记'} · {material.visibility === 'internal' ? '项目内部' : '公开'}</span></li>)}</ul>{!round.materials.length && <p>本轮以已取得的公开来源研判，来源原文保存在报告中。</p>}</details>{round.result?.strategy && <details><summary>查看本轮完整原始报告与引用</summary><RoundArchive result={round.result}/></details>}{round.error && <p className="research-round-notice">本轮未完成，原有轮次仍保留，可补充资料后重新开展。</p>}</article>)}</div>
       {first && baseline && first.id !== baseline.id && <section className="research-round-changes" aria-label="相对首轮的判断变化"><h4>相对首轮，判断怎样变化</h4>{latestReview ? <><p>{latestReview.summary}</p>{latestReview.changes.map((change, index) => <article key={`${change.topic}:${index}`}><h5>{change.topic}</h5><dl><div><dt>此前</dt><dd>{change.before}</dd></div><div><dt>本轮</dt><dd>{change.after}</dd></div></dl><p>变化原因：{change.reason}</p>{!!change.evidence_refs.length && <button className="research-text-button" onClick={() => onEvidence(change.evidence_refs)}>查看新增判断依据</button>}</article>)}</> : <><p>以下并列保留两轮原文结论。</p><dl><div><dt>首轮</dt><dd>{first.result?.strategy?.headline}</dd></div><div><dt>最新一轮</dt><dd>{baseline.result?.strategy?.headline}</dd></div></dl></>}</section>}
-      {!!missing.length && <section aria-label="下一轮建议补充资料"><h4>下一轮建议补充什么</h4><ul className="research-round-gap-list">{missing.map((item, index) => <li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p>{!!item.evidence_refs.length && <button className="research-text-button" onClick={() => onEvidence(item.evidence_refs)}>查看缺项对应依据</button>}</li>)}</ul>{!historyOnly && <button className="research-text-button" disabled={!actionable} onClick={() => setUploadOpen(true)}>按这些缺项补充内部资料 ↑</button>}</section>}
+      {historyOnly&&!!missing.length && <section aria-label="下一轮建议补充资料"><h4>下一轮建议补充什么</h4><ul className="research-round-gap-list">{missing.map((item, index) => <li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p>{!!item.evidence_refs.length && <button className="research-text-button" onClick={() => onEvidence(item.evidence_refs)}>查看缺项对应依据</button>}</li>)}</ul>{!historyOnly && <button className="research-text-button" disabled={!actionable} onClick={() => setUploadOpen(true)}>按这些缺项补充内部资料 ↑</button>}</section>}
     </section>}
     {historyOnly && !ordered.length && <p className="research-round-notice">本项目尚无已保存研判轮次。可在研判总览采纳已有方案作为首轮，或使用现有资料开展首轮研判。</p>}
   </>

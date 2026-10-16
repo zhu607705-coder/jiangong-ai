@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { StrategyProgress } from '../../../../packages/retrofit/strategy'
 import './strategy-research-progress.css'
 
-const STAGES: Record<StrategyProgress['stage'], string> = { sources: '读取项目资料', research: '检索与整理来源', model: '研究两条更新路径', validation: '核对原文与条件', result: '形成完整方案' }
+const STAGES: Record<StrategyProgress['stage'], string> = { sources: '读取项目资料', research: '检索与整理来源', model: '研究两条更新路径', validation: '整理方案与待核项', result: '形成完整方案' }
 const PHASES = { planning: '制定专题研究分工', specialists: '专家并行研究', compression: '压缩与整理上下文', synthesis: '综合形成决策方案' }
 const ROLES: Record<string, string> = { building_delivery: '建筑与实施专家', cost_value: '投入与价值专家', residents_operations: '居民需求与运营专家' }
 const STATUS = { pending: '等待执行', running: '进行中', completed: '已完成', failed: '未完成', skipped: '本轮跳过', recorded: '已有执行记录', stopped: '已停止' }

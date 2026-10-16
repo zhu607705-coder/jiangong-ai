@@ -3645,5 +3645,30 @@
     "runtime_recovery": "per-specialist truncation/schema recovery with more capacity within same deadline; semantic citation retry before synthesis; no request-count caps",
     "integration_test_log": "research/test_results/creation-rounds-integration-20261016.log",
     "final_runtime_log": "research/test_results/creation-reliability-final-runtime-20261016.log"
+  },
+  "advisory_plan_review_20261016": {
+    "status": "deployed_actual_output_recovered_material_queue_verified",
+    "request": "内容核验问题返回方案、待核清单与继续搜索阅读指引，不再丢弃完整模型输出",
+    "changed_files": [
+      "packages/retrofit/strategy.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "apps/host/strategy-publication.ts",
+      "apps/host/research-rounds.ts",
+      "apps/workspace/src/components/StrategyContentNotice.tsx",
+      "scripts/recover-renewal-strategy.ts"
+    ],
+    "tests": [
+      "research/test_results/advisory-plan-focused-20261016.log",
+      "research/test_results/advisory-plan-actual-replay-20261016.json"
+    ],
+    "next_runnable_task": "按用户要求人工补充材料后开展下一轮；本次无需重新调用模型。",
+    "provider_calls_added": 0,
+    "recovered_round_id": "ROUND-5da9eb80-6feb-4b04-9180-227afd2887f1",
+    "material_requests": 6,
+    "evidence": [
+      "research/test_results/advisory-plan-campus-recovery-20261016.json",
+      "research/test_results/advisory-plan-runtime-deployment-20261016.json",
+      "research/test_results/advisory-plan-ui-deployment-20261016.json"
+    ]
   }
 }

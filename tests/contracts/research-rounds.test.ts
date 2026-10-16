@@ -163,7 +163,7 @@ it('keeps a failed first attempt and permits a new baseline attempt without inve
   expect(retry).toMatchObject({round_number:2,status:'completed',parent_round_id:null,first_round_id:retry.id})
   expect((await service.list(p)).rounds.map(round=>round.status)).toEqual(['failed','completed'])
 })
-it('repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis',async()=>{
+it('preserves the synthetic round identity and flags inconsistent survey wording without blocking the plan',async()=>{
   let p=await project(undefined,true)
   p=await document(p.id,'DOC-NEEDS','演示资料：模拟问卷中助餐需求比例75%，加梯需求比例62.5%，并非真实问卷数据。')
   const first=await run(await createRound(p,['DOC-NEEDS']))
@@ -176,11 +176,10 @@ it('repairs synthetic second-round survey claims through the existing DSH repair
   const withPlanner=vi.fn().mockImplementation((...args:unknown[])=>args[2]==='RenewalResearchPlan'?Promise.resolve({value:{summary:'Offline fixture plan.',tasks:[]}}):call(...args))
   ports.open.mockResolvedValueOnce({ctx:{tools:{register:vi.fn(),schemas:()=>[]}},calls:[],close:async()=>{},call:withPlanner})
   const second=await run(await createRound(p,['DOC-NEEDS'],first))
-  expect(second.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(second.status).toBe('completed');expect(call).toHaveBeenCalledTimes(1)
   expect(call.mock.calls[0][1]).toContain('居民样本、问卷、访谈和统计比例均为隔离模拟')
-  expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
-  expect(call.mock.calls[1][1]).toContain('STRATEGY_SYNTHETIC_IDENTITY_MISMATCH')
-  expect(second.result?.strategy?.decision_brief?.investment.reason).toBe(repaired.decision_brief!.investment.reason)
+  expect(second.result?.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_SYNTHETIC_IDENTITY_MISMATCH'}))
+  expect(second.result?.strategy?.decision_brief?.investment.reason).toBe(mistaken.decision_brief!.investment.reason)
   expect(second.result?.strategy?.rationale[0].quote).toBe(selected.text)
   expect(second.result?.strategy?.round_review?.changes[0].evidence_refs).toContain('DOC-NEEDS')
 })

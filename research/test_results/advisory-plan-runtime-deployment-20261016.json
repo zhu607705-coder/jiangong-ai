@@ -1,0 +1,51 @@
+{
+  "status": "owned_runtime_deployed",
+  "commit": "7bc545a874fc00a63880a4f7ffd751e8528d9d3e",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/backups/advisory-plan-7bc545a874fc00a63880a4f7ffd751e8528d9d3e-20261016T045506Z",
+  "changed_files": [
+    "packages/retrofit/strategy.ts",
+    "services/map-screening/renewal-strategy.ts",
+    "apps/host/strategy-publication.ts",
+    "apps/host/research-rounds.ts",
+    "scripts/recover-renewal-strategy.ts"
+  ],
+  "file_hashes_after": {
+    "packages/retrofit/strategy.ts": "fd298c0490808356cad61aba36ac8d2efd841e9a1dc8536a82d524ac074a9e2c",
+    "services/map-screening/renewal-strategy.ts": "863296eb09efd44a0b26f95a6d1134fdf5626ee5a18b5427837aa6ca4b116f5d",
+    "apps/host/strategy-publication.ts": "837b23aea80ac4e3239aa61b37a7d5119729b97d592a0ff4f3b61f6ad745e651",
+    "apps/host/research-rounds.ts": "c5eb97aa44d3e37870d751df24035bdec4a2019437dc560e64c5b7ab5c2c36ce",
+    "scripts/recover-renewal-strategy.ts": "0a557687bc14ee3cd3c72027fae3c1299ce930364bc229bc6c0f92a6282b6cd8"
+  },
+  "protected_files_before": {
+    "apps/host/server.ts": "8d86ed85a9c8235c495cda22a6ed66e02c396cef56a283afd977c7d16f20b778",
+    "apps/host/renewal-mode.ts": "151b4b84d47c0e540b92672eee9e5ee24a18a740841cce5e2716eed59298ba83",
+    "packages/retrofit/renewal-mode.ts": "529e9d740e28a6e917842f04e7dc3860b1ec86b311c46c851c7799785945b59c",
+    "runtime/dsh/live-session.ts": "54180c2a517e747e7df46732880218604b45bc5ee369d0e6db5d8de4d499f134",
+    "runtime/dsh/json-format-repair.ts": "35871ae11ddcee21c7b1ed839026a3e6e9a7e1126b40cb3545690b226059c716",
+    "runtime/workflows/renewal-research.ts": "26bad23521cadc8ed5c7559a448105c1ddcc694cf5354f18961723ffb8b54d88",
+    "apps/host/admin-auth.ts": "83c95320c1581c50edb68ca1b6286de814718a7090f43d73dd429edab4dd5f4d",
+    "apps/host/config.ts": "f4d7fb37d126677f502030969d4d3645f09804f7c21120c5ce2af748f7d332e0",
+    "packages/corpus/corpus.ts": "0d8d16b5292a8c6474b102dc6e649325006c5be746c439a66f3f836fd471cdcb"
+  },
+  "protected_files_after": {
+    "apps/host/server.ts": "8d86ed85a9c8235c495cda22a6ed66e02c396cef56a283afd977c7d16f20b778",
+    "apps/host/renewal-mode.ts": "151b4b84d47c0e540b92672eee9e5ee24a18a740841cce5e2716eed59298ba83",
+    "packages/retrofit/renewal-mode.ts": "529e9d740e28a6e917842f04e7dc3860b1ec86b311c46c851c7799785945b59c",
+    "runtime/dsh/live-session.ts": "54180c2a517e747e7df46732880218604b45bc5ee369d0e6db5d8de4d499f134",
+    "runtime/dsh/json-format-repair.ts": "35871ae11ddcee21c7b1ed839026a3e6e9a7e1126b40cb3545690b226059c716",
+    "runtime/workflows/renewal-research.ts": "26bad23521cadc8ed5c7559a448105c1ddcc694cf5354f18961723ffb8b54d88",
+    "apps/host/admin-auth.ts": "83c95320c1581c50edb68ca1b6286de814718a7090f43d73dd429edab4dd5f4d",
+    "apps/host/config.ts": "f4d7fb37d126677f502030969d4d3645f09804f7c21120c5ce2af748f7d332e0",
+    "packages/corpus/corpus.ts": "0d8d16b5292a8c6474b102dc6e649325006c5be746c439a66f3f836fd471cdcb"
+  },
+  "nginx_unchanged": true,
+  "project_input_unchanged": true,
+  "host_pid_before": "48657",
+  "host_pid_after": "48948",
+  "provider_calls": 0,
+  "project_writes": 0,
+  "mode_readable": true,
+  "saved_mode_present": false,
+  "checked_at": "2026-10-16T04:55:08.897245+00:00"
+}

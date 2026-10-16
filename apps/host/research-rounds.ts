@@ -6,7 +6,7 @@ import type { Store, ProjectRecord, Database } from './store'
 import { config } from './config'
 import { validate } from '../../packages/contracts/validate'
 import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
-import { STRATEGY_POLICY, validateStrategy, strategyFailureMessage, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
+import { STRATEGY_POLICY, validateStrategy, strategySupplementRequests, strategyFailureMessage, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
 import { RESEARCH_MATERIAL_CATEGORIES, type ResearchMaterial, type ResearchMaterialMetadata, type ResearchRound, type ResearchRoundsResponse, type ResearchRoundStreamEvent } from '../../packages/retrofit/research-rounds'
 
 const sourceDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10) === value)
@@ -72,7 +72,7 @@ export class ResearchRoundsService {
       try {
         if (!payload.strategy||payload.sources.some(source=>source.visibility==='internal'||source.data_class==='internal')) continue
         validate<RenewalStrategy>('RenewalStrategy',payload.strategy)
-        validateStrategy(payload.strategy,payload.sources,projectRenewalModeInput(project.input).conditions,!!payload.strategy.decision_brief)
+        if(payload.content_review?.policy!=='advisory-v1') validateStrategy(payload.strategy,payload.sources,projectRenewalModeInput(project.input).conditions,!!payload.strategy.decision_brief)
         const result=copy(payload); delete result.publication
         return result
       } catch { /* Invalid historical output is never promoted to a baseline. */ }
@@ -109,7 +109,7 @@ export class ResearchRoundsService {
       if(requiresParent) fail(409,'ROUND_BASELINE_EXISTS','本项目已有研究轮次，请刷新。')
       return {id,project_id:project.id,round_number:number,context_version:result.context_version,input_hash:result.input_hash,parent_round_id:null,parent_input_hash:null,parent_context_version:null,
         first_round_id:id,first_input_hash:result.input_hash,first_context_version:result.context_version,origin:'adopted_history',status:'completed',material_intake:'not_recorded',allow_internal_ai:false,
-        materials:[],missing_materials:result.strategy?.round_review?.missing_materials||result.strategy?.next_checks.map(row=>({topic:row.title,request:row.detail,reason:'历史研究列出的待核事项。',evidence_refs:row.evidence_refs}))||[],result,error:null,created_at:now,updated_at:now}
+        materials:[],missing_materials:[...(result.strategy?.round_review?.missing_materials||result.strategy?.next_checks.map(row=>({topic:row.title,request:row.detail,reason:'历史研究列出的待核事项。',evidence_refs:row.evidence_refs}))||[]),...strategySupplementRequests(result.content_review)],result,error:null,created_at:now,updated_at:now}
     },null)
   }
   async create(project:ProjectRecord,raw:unknown):Promise<ResearchRound> {
@@ -154,7 +154,7 @@ export class ResearchRoundsService {
       })
       const result=await this.runner({...project,input:snapshot},round.input_hash,signal,{round_id:round.id,round_number:round.round_number,allow_internal_ai:round.allow_internal_ai,materials:round.materials,sources,parent:parent?{id:parent.id,input_hash:parent.input_hash,context_version:parent.context_version,result:parent.result}:null,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version},onProgress)
       // Preserve the actual output for audit even when a later upload makes it obsolete.
-      round.result=result; round.missing_materials=result.strategy?.round_review?.missing_materials||[]
+      round.result=result; round.missing_materials=[...(result.strategy?.round_review?.missing_materials||[]),...strategySupplementRequests(result.content_review)]
       const current=await this.requireProject(project.id)
       if(current.context_version!==round.context_version) {round.status='obsolete';round.error='研究期间项目资料已变化，本轮结果保留为历史，请按当前资料创建新轮次。'}
       else {round.status=result.status==='completed'?'completed':'failed';round.error=result.status==='completed'?null:strategyFailureMessage(result)}

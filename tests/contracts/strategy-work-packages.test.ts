@@ -114,7 +114,7 @@ it('requires three separate internal-data definitions with usable collection den
   expect(()=>check(complete)).toThrow('STRATEGY_INTERNAL_DATA_PACKAGE_MISMATCH')
   expect(check(strategy()).internal_data_requests?.map(row=>row.key)).toEqual(['resident_wellbeing','elevator_usage','meal_attendance'])
 })
-it('uses the existing DSH repair to fill actual work packages and keeps selected archive interventions in reference scope',async()=>{
+it('returns incomplete work packages with a follow-up list and preserves reference scope',async()=>{
   const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
   input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
   const incomplete=strategy();for(const path of incomplete.paths)delete path.work_packages;delete incomplete.internal_data_requests
@@ -122,13 +122,12 @@ it('uses the existing DSH repair to fill actual work packages and keeps selected
   const call=vi.fn().mockResolvedValueOnce({value:incomplete}).mockResolvedValueOnce({value:completed})
   ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
   const result=await researchRenewalStrategy(project,0,input,'v6-fixture',false,new AbortController().signal,null,{referenceSources:[archive]})
-  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
-  expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
-  expect(call.mock.calls[1][1]).toContain('STRATEGY_WORK_PACKAGES_REQUIRED')
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(1)
+  expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_WORK_PACKAGES_REQUIRED'}))
   expect(call.mock.calls[0][1]).toContain('雨污分流、给水管改造及泵站')
   expect(call.mock.calls[0][1]).toContain('不将这些采集任务代替工程和服务措施')
   expect(result.sources.find(row=>row.id===archive.id)?.role).toBe('reference')
-  expect(result.strategy?.paths[0].work_packages).toEqual(completed.paths[0].work_packages)
+  expect(result.strategy?.paths[0].work_packages).toBeUndefined()
   expect(fetch).not.toHaveBeenCalled()
 })
 it('reserves a bounded prompt excerpt for concrete archive references without enlarging the existing source budget',()=>{
@@ -174,24 +173,14 @@ it('projects unrequested round history away and repairs the actual failed JSON u
   const original=JSON.stringify(mistaken),call=vi.fn().mockResolvedValueOnce({value:mistaken}).mockResolvedValueOnce({value:corrected})
   ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
   const result=await researchRenewalStrategy(project,0,input,'projection-fixture',false,new AbortController().signal,null)
-  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(1)
   expect(result.strategy?.round_review).toBeUndefined()
-  expect(call.mock.calls[0][1]).toContain('未输入历史首轮或上一轮分析，不输出round_review')
-  const repair=call.mock.calls[1][1] as string,previous=JSON.parse(repair.match(/<previous_strategy_output>(.*?)<\/previous_strategy_output>/s)![1])
-  const modelSources=JSON.parse((call.mock.calls[0][1] as string).match(/<untrusted_sources>(.*?)<\/untrusted_sources>/s)![1]) as StrategySource[]
-  const alias=modelSources.find(row=>row.text===source.text)!.id
-  expect(repair).toContain('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
-  expect(previous.paths[0].work_packages[0].quote).toBe(mistaken.paths[0].work_packages![0].quote)
-  expect(previous.round_review).toBeUndefined()
-  const workChecks=JSON.parse(repair.match(/<work_package_validation>(.*?)<\/work_package_validation>/s)![1])
-  expect(workChecks.find((work:{id:string})=>work.id===mistaken.paths[0].work_packages![0].id)).toMatchObject({source_id:alias,quote:mistaken.paths[0].work_packages![0].quote,error_code:'STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH'})
-  expect(repair).toContain('幸福度自评');expect(repair).toContain('业主同意率另作程序意愿指标')
-  expect(repair).toContain('去重就餐人数（人）和用餐人次（人次）');expect(repair).toContain('运行台数与有效运行日')
-  expect(repair).toContain('当前完成状态保持待核')
-  const choices=JSON.parse(repair.match(/<repair_quote_candidates>(.*?)<\/repair_quote_candidates>/s)![1])
-  expect(choices.some((row:{source_id:string;quotes:string[]})=>row.source_id===alias&&row.quotes.includes(source.text))).toBe(true)
+  expect(result.strategy?.paths[0].work_packages![0].quote).toBe(mistaken.paths[0].work_packages![0].quote)
+  expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH'}))
+  expect(result.content_review?.follow_up.reading_focus.join('')).toContain('全文')
   expect(JSON.stringify(mistaken)).toBe(original);expect(fetch).not.toHaveBeenCalled()
 })
+
 it('projects invented comparisons out of a parentless later attempt while retaining the existing work-plan repair',async()=>{
   const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
   input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
@@ -205,17 +194,14 @@ it('projects invented comparisons out of a parentless later attempt while retain
   ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
   const roundContext:ResearchRoundContext={round_id:'ROUND-ATTEMPT-5',round_number:5,parent:null,allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-ATTEMPT-5',first_input_hash:'current',first_context_version:0}
   const result=await researchRenewalStrategy(project,0,input,'current',false,new AbortController().signal,null,{roundContext,referenceSources:[reference]})
-  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
-  expect(call.mock.calls[0][1]).toContain('第5次研究尝试');expect(call.mock.calls[0][1]).toContain('未选择历史AI分析作为对照')
-  const repairPrompt=call.mock.calls[1][1] as string
-  expect(repairPrompt).toContain('STRATEGY_WORK_PACKAGES_REQUIRED')
-  expect(repairPrompt).not.toContain('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
-  expect(result.strategy?.round_review).toEqual({...repaired.round_review,changes:[]})
-  expect(result.strategy?.paths).toEqual(repaired.paths)
-  expect(result.strategy?.reasoning_dimensions).toHaveLength(6)
-  expect(validateStrategy(result.strategy!,result.sources,[],true,true,true,true)).toBe(result.strategy)
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(1)
+  expect(call.mock.calls[0][1]).toContain('第5次研究尝试')
+  expect(result.strategy?.round_review).toEqual({...initial.round_review,changes:[]})
+  expect(result.strategy?.paths).toEqual(initial.paths)
+  expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_WORK_PACKAGES_REQUIRED'}))
   expect(JSON.stringify({initial,repaired})).toBe(frozen);expect(fetch).not.toHaveBeenCalled()
 })
+
 it('keeps real-parent comparisons subject to their original object evidence gate',async()=>{
   const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
   input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
@@ -225,9 +211,8 @@ it('keeps real-parent comparisons subject to their original object evidence gate
   const parent:StrategyPacket={project_id:project.project_id,context_version:0,input_hash:'prior',created_at:'2026-10-15T00:00:00Z',synthetic:false,status:'completed',strategy:strategy(),sources:[source],decision:null,model_calls:[],research:null,error:null}
   const roundContext:ResearchRoundContext={round_id:'ROUND-WITH-PARENT',round_number:6,parent:{id:'ROUND-PRIOR',input_hash:'prior',context_version:0,result:parent},allow_internal_ai:false,materials:[],sources:[],first_round_id:'ROUND-PRIOR',first_input_hash:'prior',first_context_version:0}
   const result=await researchRenewalStrategy(project,0,input,'current',false,new AbortController().signal,null,{roundContext,referenceSources:[reference]})
-  expect(result.status).toBe('failed');expect(result.diagnostic?.code).toBe('STRATEGY_EVIDENCE_INVALID')
-  expect(call).toHaveBeenCalledTimes(2)
-  expect(call.mock.calls[1][1]).toContain('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+  expect(result.status).toBe('completed');expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING'}))
+  expect(call).toHaveBeenCalledTimes(1)
   expect(value.round_review.changes).toHaveLength(1);expect(fetch).not.toHaveBeenCalled()
 })
 it('round-trips scoped reference fields without changing quotes, locators or work identities and rejects unknown IDs',()=>{
@@ -286,10 +271,9 @@ it('uses the production workflow opt-in and replaces synthesis raw bodies with v
   const prompt=call.mock.calls[0][1] as string,catalog=JSON.parse(prompt.match(/<untrusted_sources>(.*?)<\/untrusted_sources>/s)![1])
   expect(catalog.every((row:object)=>!('text' in row))).toBe(true)
   expect(prompt).not.toContain('LONG_BODY_SENTINEL');expect(prompt).toContain(source.text)
-  expect(prompt).toContain('reasoning_dimensions完整六项');expect(result.strategy?.reasoning_dimensions).toHaveLength(6)
-  expect(call).toHaveBeenCalledTimes(2)
-  expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
-  expect(call.mock.calls[1][1]).toContain('STRATEGY_REASONING_DIMENSIONS_REQUIRED')
+  expect(prompt).toContain('reasoning_dimensions完整六项');expect(result.strategy?.reasoning_dimensions).toBeUndefined()
+  expect(call).toHaveBeenCalledTimes(1)
+  expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_REASONING_DIMENSIONS_REQUIRED'}))
   expect(result.sources.find(row=>row.id===source.id)?.text).toBe(raw)
   expect(result.workflow?.synthesis_context_chars).toBeLessThan(result.workflow!.input_characters)
   expect(result.workflow?.synthesis_quote_candidate_chars).toBeGreaterThan(0)
@@ -297,5 +281,18 @@ it('uses the production workflow opt-in and replaces synthesis raw bodies with v
   expect(call.mock.calls[0][6]).toMatchObject({role:'synthesis'})
   expect(events.some(event=>event.workflow?.phase==='planning')).toBe(true)
   expect(events.some(event=>event.workflow?.phase==='synthesis'&&event.status==='running')).toBe(true)
+  expect(fetch).not.toHaveBeenCalled()
+})
+
+it('continues direct synthesis from acquired sources when the expert workflow cannot prepare',async()=>{
+  const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
+  input.renewalMode!.evidence=[{source_id:source.id,title:source.title,quote:source.text,url:null,published_at:source.published_at!,locator:source.locator}]
+  ports.workflow.mockRejectedValueOnce(new Error('RENEWAL_RESEARCH_PREFLIGHT_FAILED'))
+  const call=vi.fn().mockResolvedValue({value:strategy()})
+  ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
+  const result=await researchRenewalStrategy(project,0,input,'workflow-fallback',false,new AbortController().signal,null,{researchWorkflow:true})
+  expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(1)
+  expect(result.sources).toContainEqual(expect.objectContaining({id:source.id,text:source.text}))
+  expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_RESEARCH_DETAILS_UNAVAILABLE'}))
   expect(fetch).not.toHaveBeenCalled()
 })
