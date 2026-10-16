@@ -326,18 +326,18 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
     </div>}
 
     {(selection || projectPreview && project) && <aside className={`atlas-inspector glass-panel ${expanded ? 'is-expanded' : ''} ${selection ? 'with-assessment' : ''}`} aria-label={expanded ? '地点详细信息' : '选中对象简要信息'}>
+      <div className="atlas-inspector-scroll">
       <div className="map-card-heading"><span className="map-eyebrow">{projectPreview ? '项目' : expanded ? '地点详情' : '已选位置'}</span><button className="map-icon-button" onClick={clearSelection} aria-label="取消选中"><IconX size={18} /></button></div>
       {projectPreview && project ? <>
         <div className="atlas-selection-icon"><IconBuildingSkyscraper size={27} stroke={1.4} /></div><h2>{project.name}</h2><p>{project.input.scope.name}</p>
         <div className="atlas-selection-tags"><span>{project.input.synthetic ? '合成项目' : '研究项目'}</span><span>经验 v{project.context_version}</span></div>
-        {project.input.business_profile==='neighborhood'&&<RenewalModePanel key={project.id} endpoint={`/projects/${encodeURIComponent(project.id)}/renewal-mode`} contextVersion={project.context_version} input={projectRenewalModeInput(project.input)} decision={project.runs?.find(run=>run.decision)?.decision?.decision_support} onInvestigate={()=>onOpenProject()}/>}
+        {project.input.business_profile==='neighborhood'&&<RenewalModePanel compact key={project.id} endpoint={`/projects/${encodeURIComponent(project.id)}/renewal-mode`} contextVersion={project.context_version} input={projectRenewalModeInput(project.input)} decision={project.runs?.find(run=>run.decision)?.decision?.decision_support} onInvestigate={()=>onOpenProject()}/>}
         {projectResearch && <div className="preliminary-research" aria-label="对象初步调研"><h4>初步调研 · 截止 {project.input.as_of}</h4>
           {projectResearch.lines.map((line, index) => <p key={index}>{line.text}{!!line.sourceRefs.length && onEvidence && <button className="claim-source" onClick={() => onEvidence(line.sourceRefs.map(ref => ref.startsWith(`${project.id}:`) ? ref.slice(project.id.length + 1) : ref))}>依据</button>}</p>)}
         </div>}
         <div className="atlas-facts"><div><span>已有来源</span><strong>{new Set([...project.input.sources, ...(project.runs?.find(r => r.decision)?.decision?.sources || [])].map(s => s.id)).size}<small> 份</small></strong></div><div><span>研究边界</span><strong>{project.input.scope.geometry && !project.input.synthetic ? '已提供' : '待补充'}</strong></div></div>
         <p className="atlas-evidence-note">打开研判后可查看项目资料、实施路径与调查清单。</p>
         {project.runs?.find(r => r.decision)?.decision && <p className="project-last-summary">上次研判：{project.runs.find(r => r.decision)!.decision!.summary}</p>}
-        <button className="map-primary" onClick={() => onOpenProject()}>进入项目研判 <IconArrowRight size={17} /></button>
       </> : selection && <>
         {expanded && <div className="atlas-selection-icon"><IconMapPin size={28} stroke={1.4} /></div>}<h2>{selection.name}</h2><p>{selection.address || ''}</p>
         <div className="atlas-selection-tags"><span>{selection.category?.split(';')[0] || (selection.kind === 'poi' ? '地图地点' : '坐标点')}</span></div>
@@ -357,18 +357,20 @@ export default function MapWorkspace({ ready, interactionBlocked, project, focus
             setScreenResult(prev=>prev?{...prev,cells:classifyCells(prev.cells.map(update),theme,profile)}:prev)
             if(context.address)setSelection(current=>current?.id===id?{...current,address:context.address!}:current)
           }} /></div>
-        {!expanded ? <div className="assessment-actions"><button className="map-primary" disabled={!canWrite} title={!canWrite?'管理员登录后可建立项目':undefined} onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button><button className="map-text-button" onClick={() => void openDetails()}>查看地点详情</button></div> : <>
+        {expanded && <>
           <div className="atlas-detail-divider" />
           {detailLoading && <p role="status" className="atlas-detail-loading">正在读取地点资料…</p>}
+          <a className="map-text-button" href={`https://uri.amap.com/marker?position=${selection.longitude},${selection.latitude}&name=${encodeURIComponent(selection.name)}&coordinate=gaode&callnative=0`} target="_blank" rel="noreferrer">高德查看 <IconExternalLink size={13}/></a>
           {detailsError && <div className="map-error" role="alert">{detailsError}<button className="map-text-button" onClick={() => void openDetails()}>重试</button></div>}
           {details && <><dl className="atlas-detail-fields"><div><dt>详细地址</dt><dd>{details.address || '该地点未返回详细地址'}</dd></div><div><dt>地点分类</dt><dd>{details.category}</dd></div>{details.telephone && <div><dt>联系电话</dt><dd>{details.telephone}</dd></div>}</dl>
             {details.photos.length > 0 && <div className="atlas-photos">{details.photos.map(photo => <img key={photo.url} src={photo.url} alt={photo.title || `${selection.name}的地点照片`} loading="lazy" referrerPolicy="no-referrer" />)}</div>}
             </>}
-          <button className="map-primary" disabled={!canWrite} title={!canWrite?'管理员登录后可建立项目':undefined} onClick={createSelectedProject}>建立项目 <IconArrowRight size={17} /></button>
-          <div className="atlas-detail-actions"><button className="map-text-button" onClick={() => { selectionVersion.current++; setExpanded(false); setDetailLoading(false) }}><IconArrowLeft size={14} />返回简要信息</button>
-            <a href={`https://uri.amap.com/marker?position=${selection.longitude},${selection.latitude}&name=${encodeURIComponent(selection.name)}&coordinate=gaode&callnative=0`} target="_blank" rel="noreferrer">高德查看 <IconExternalLink size={13} /></a></div>
         </>}
       </>}
+      </div>
+      <footer className="atlas-inspector-footer">
+        {projectPreview&&project?<button className="map-primary" onClick={()=>onOpenProject()}>进入项目研判 <IconArrowRight size={17}/></button>:selection&&<><button className="map-primary" disabled={!canWrite} onClick={createSelectedProject}>建立项目 <IconArrowRight size={17}/></button>{expanded?<button className="map-text-button" onClick={()=>{selectionVersion.current++;setExpanded(false);setDetailLoading(false)}}>返回简要信息</button>:<button className="map-text-button" onClick={()=>void openDetails()}>查看地点详情</button>}</>}
+      </footer>
     </aside>}
 
     {notice && <div className="atlas-notice glass-panel" role="status"><span>{notice}</span><button className="map-icon-button" onClick={() => setNotice('')} aria-label="关闭地图提示"><IconX size={15} /></button></div>}

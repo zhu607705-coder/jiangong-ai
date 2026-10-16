@@ -32,6 +32,14 @@ test('before an actual mode decision, no default direction or result conditions 
   expect(document.querySelector('button')?.textContent).toContain('开始判定改造模式')
 })
 
+test('map selection uses a short summary and retains full conditions behind an explicit detail entry',async()=>{
+  const {document}=await renderMode({endpoint:'/projects/test/renewal-mode',input:input(),compact:true,decision:oldRebuild})
+  expect(document.querySelector('.renewal-map-conclusion')?.textContent).toBe('综合整治优先研究')
+  expect(document.querySelector('.renewal-map-stats')?.textContent).toContain('待核 9')
+  expect(document.querySelector('.renewal-map-details')?.hasAttribute('open')).toBe(false)
+  expect(document.querySelectorAll('.renewal-map-details .renewal-gate li').length).toBe(9)
+})
+
 test('a Decision attached to overall research does not substitute for an explicit mode judgement', async () => {
   const { document } = await renderMode({endpoint:'/projects/test/renewal-mode',input:input(),decision:oldRebuild},null)
   expect(document.querySelector('.renewal-mode-result')).toBeNull()
