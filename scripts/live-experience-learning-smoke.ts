@@ -15,7 +15,7 @@ const directory=await mkdtemp(join(tmpdir(),'haizhizi-learning-protocol-'))
 const store=await Store.open(directory)
 const text='材料类型：完全合成的接口样例，不是实际项目。\n举措：给水立管更新\n决策问题：如何安排给水立管更新顺序。\n提议方案：先处理爆管频发楼栋，再安排其他楼栋。\n实际决策：先更新一号楼给水立管。\n实施：一号楼已更换老化给水立管。\n结果：一个观察月内未记录爆管。\n实践规则：给水立管更新先核对爆管台账，再按楼栋安排分期施工。'
 try {
-  const input=projectInput({...structuredClone(fixture),project_id:'TEST-LEARNING-PROTOCOL',synthetic:true,mode:'enterprise',as_of:new Date().toISOString().slice(0,10),sources:[{id:'TEST-LEARNING-DOC',title:'合成接口原件',visibility:'internal',data_class:'synthetic',synthetic:true,hash:hash(text),untrusted_text:text,content_status:'uploaded'}]})
+  const input=projectInput({...structuredClone(fixture),project_id:'TEST-LEARNING-PROTOCOL',synthetic:true,mode:'enterprise',facts:[],context_rules:[],events:[],as_of:new Date().toISOString().slice(0,10),sources:[{id:'TEST-LEARNING-DOC',title:'合成接口原件',visibility:'internal',data_class:'synthetic',synthetic:true,hash:hash(text),untrusted_text:text,content_status:'uploaded'}]})
   await store.db.query('INSERT INTO projects(id,name,owner_id,input) VALUES($1,$2,$3,$4)',[input.project_id,'隔离学习协议样例',config.ownerId,JSON.stringify(input)])
   await store.db.query('INSERT INTO documents(id,project_id,file_name,blob_name,sha256,parser_result) VALUES($1,$2,$3,$4,$5,$6)',['TEST-LEARNING-DOC',input.project_id,'合成学习样例.txt','protocol-only',hash(text),JSON.stringify({status:'extracted',source_hash:hash(text),text})])
   const experience=new ExperienceService(store);await experience.initialize()
