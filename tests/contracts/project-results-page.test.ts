@@ -7,6 +7,8 @@ import type { DecisionPacket, RenewalStrategy, Source } from '../../apps/host/ge
 import type { Project } from '../../apps/workspace/src/api'
 import type { ResearchRound } from '../../packages/retrofit/research-rounds'
 import type { StrategyPacket } from '../../packages/retrofit/strategy'
+import { recoveredResearchRound } from '../../packages/retrofit/research-round-recovery'
+import ResearchRoundsPanel from '../../apps/workspace/src/components/ResearchRoundsPanel'
 import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
 import ProjectResultsPage, { renderStrategyReportMarkdown } from '../../apps/workspace/src/components/ProjectResultsPage'
 
@@ -276,4 +278,51 @@ test('direct Markdown export rejects a foreign project or a different real/synth
   expect(() => renderStrategyReportMarkdown(p, packet(project('P-OTHER')))).toThrow()
   const simulated = packet(p); simulated.synthetic = true
   expect(() => renderStrategyReportMarkdown(p, simulated)).toThrow()
+})
+
+
+function recoveryPair() {
+  const failed:StrategyPacket={...packet(),input_hash:'failed-input',status:'failed',strategy:null,error:'方案引用或适用条件未通过核验，本轮未发布方案。',diagnostic:{code:'STRATEGY_EVIDENCE_INVALID'}}
+  const originalRound=round(failed,{id:'ROUND-FAILED',status:'failed',error:failed.error})
+  const restored=packet();restored.input_hash='restored-input';restored.created_at='2026-10-16T04:52:38Z'
+  restored.content_review={policy:'advisory-v1',status:'needs_review',checked_at:restored.created_at,issues:[{code:'STRATEGY_OBJECT_EVIDENCE_MISSING',path:'preferred_mode',message:'补充本对象原文'}],follow_up:{search_queries:[],reading_focus:[],internal_data:[]},recovered_from:{round_id:originalRound.id,session_id:'actual-session',candidate_sha256:'actual-output-hash'}}
+  const recovered=round(restored,{id:'ROUND-RECOVERY',round_number:2,origin:'adopted_history',created_at:restored.created_at,updated_at:restored.created_at})
+  return {failed,originalRound,restored,recovered,rounds:[originalRound,recovered]}
+}
+test('a recovered original attempt shows the usable plan and recovery link while preserving its raw record',async()=>{
+  const data=recoveryPair(),frozen=JSON.stringify(data.rounds)
+  await render(data.failed,project(),data.rounds)
+  const originalCard=container.querySelector<HTMLElement>('[aria-label="研究轮次 1"]')!
+  expect(originalCard.classList.contains('status-recovered')).toBe(true)
+  expect(originalCard.textContent).toContain('方案已恢复')
+  expect(originalCard.textContent).toContain(data.restored.strategy!.headline)
+  expect(originalCard.querySelector('a')?.getAttribute('href')).toBe('#research-record-ROUND-RECOVERY')
+  expect(container.textContent).toContain('第 1 轮的恢复记录')
+  expect(container.textContent).not.toMatch(/本轮未发布方案|该轮尚未保存完整方案|本轮未完成/)
+  expect(container.querySelector('.project-results-failure')).toBeNull()
+  expect(originalCard.querySelector('details.project-results-original-record')?.hasAttribute('open')).toBe(false)
+  await click('导出 JSON',originalCard)
+  expect(JSON.parse(await downloads[0].text())).toEqual(data.restored)
+  await click('导出原始运行 JSON',originalCard)
+  expect(JSON.parse(await downloads[1].text())).toEqual(data.failed)
+  expect(JSON.stringify(data.rounds)).toBe(frozen)
+  expect(renderStrategyReportMarkdown(project(),data.restored)).toContain('结果形成方式：恢复已有模型输出。')
+})
+test('a later result is only a recovery when project, source round, material baseline and data class match',()=>{
+  const data=recoveryPair()
+  expect(recoveredResearchRound(data.originalRound,data.rounds)?.id).toBe(data.recovered.id)
+  for(const patch of [{project_id:'OTHER'}, {context_version:5},{status:'failed' as const},{result:{...data.restored,project_id:'OTHER'}},{result:{...data.restored,synthetic:true}},{result:{...data.restored,context_version:5}},{result:{...data.restored,content_review:undefined}}]) {
+    expect(recoveredResearchRound(data.originalRound,[{...data.recovered,...patch}])).toBeUndefined()
+  }
+})
+test('the version and material history also uses the recovered plan without showing an ongoing failure',async()=>{
+  const data=recoveryPair(),frozen=JSON.stringify(data.rounds)
+  await act(async()=>root.render(createElement(ResearchRoundsPanel,{projectName:'求是村',revision:4,rounds:data.rounds,historyOnly:true,onEvidence:vi.fn()})))
+  const first=container.querySelector('[data-round-id="ROUND-FAILED"]')!
+  expect(first.textContent).toContain('方案已恢复')
+  expect(first.textContent).toContain(data.restored.strategy!.headline)
+  expect(first.textContent).not.toContain('本轮尚未形成完整结论')
+  expect(first.querySelector('details')?.hasAttribute('open')).toBe(false)
+  expect(container.textContent).not.toContain('本轮未完成，原有轮次仍保留')
+  expect(JSON.stringify(data.rounds)).toBe(frozen)
 })

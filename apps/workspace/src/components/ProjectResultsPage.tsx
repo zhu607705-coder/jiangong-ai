@@ -3,6 +3,7 @@ import { useId } from 'react'
 import type { DecisionPacket } from '../../../host/generated/contracts'
 import type { Project } from '../api'
 import type { ResearchRound } from '../../../../packages/retrofit/research-rounds'
+import { recoveredResearchRound,recoverySourceRound } from '../../../../packages/retrofit/research-round-recovery'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 import { MODE_LABELS } from '../../../../packages/retrofit/renewal-mode'
 import './ProjectResultsPage.css'
@@ -38,6 +39,7 @@ export function renderStrategyReportMarkdown(project: Project, packet: StrategyP
   const lines = [`# ${strategy?.headline || '本轮研究记录'}`, '', `项目：${project.name}（${packet.project_id}）`,
     `生成时点：${packet.created_at}`, `资料基线：v${packet.context_version}`, `项目当前资料版本：v${project.context_version}`,
     `结果状态：${packetLabels[packet.status]}`, `资料类型：${packet.synthetic ? '模拟项目' : '项目资料'}`, `结果标识：${packet.input_hash}`, '']
+  if(packet.content_review?.recovered_from)lines.push('结果形成方式：恢复已有模型输出。','')
   if (packet.error) lines.push('本轮记录：' + packet.error, '')
   if(packet.content_review?.issues.length) lines.push('## 待核清单','',...packet.content_review.issues.map(issue=>`- ${issue.message}（${issue.path}）`),'')
   if (strategy) {
@@ -87,11 +89,11 @@ function download(name: string, text: string, type: string) {
   link.href = url; link.download = name; link.hidden = true; document.body.append(link); link.click(); link.remove()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
-function ExportButtons({ project, packet }: { project: Project; packet: StrategyPacket }) {
+function ExportButtons({ project, packet,original=false }: { project: Project; packet: StrategyPacket;original?:boolean }) {
   const name = `${project.name}-资料v${packet.context_version}-${packet.input_hash.slice(0, 10)}`.replace(/[\\/:*?"<>|\p{Cc}]/gu, '_')
   return <div className="project-results-exports">
-    <button type="button" onClick={() => download(`${name}.md`, renderStrategyReportMarkdown(project, packet), 'text/markdown;charset=utf-8')}>导出 Markdown</button>
-    <button type="button" onClick={() => download(`${name}.json`, JSON.stringify(packet, null, 2) + '\n', 'application/json;charset=utf-8')}>导出 JSON</button>
+    <button type="button" onClick={() => download(`${name}.md`, renderStrategyReportMarkdown(project, packet), 'text/markdown;charset=utf-8')}>{original?'导出原始运行 Markdown':'导出 Markdown'}</button>
+    <button type="button" onClick={() => download(`${name}.json`, JSON.stringify(packet, null, 2) + '\n', 'application/json;charset=utf-8')}>{original?'导出原始运行 JSON':'导出 JSON'}</button>
   </div>
 }
 function ResultBaseline({ project, packet }: { project: Project; packet: StrategyPacket }) {
@@ -122,7 +124,8 @@ export default function ProjectResultsPage({ project, packet, rounds = [], legac
   const saved = candidates.find(result => result.context_version === project.context_version)
     || candidates[0] || null
   const legacy = legacyPacket?.project_id === project.id && legacyPacket.synthetic === project.input.synthetic ? legacyPacket : null
-  const currentFailure = belongs(project, packet) && packet.status !== 'completed' ? packet : null
+  const recoveredFailure=localRounds.some(round=>round.result?.input_hash===packet?.input_hash&&!!recoveredResearchRound(round,localRounds))
+  const currentFailure = belongs(project, packet) && packet.status !== 'completed'&&!recoveredFailure ? packet : null
   return <section className="project-results-page" aria-labelledby={headingId}>
     <header className="project-results-header"><div><h2 id={headingId}>成果管理</h2><p>查看本项目实际保存的方案、资料基线和研究轮次，保留旧报告及其对应来源。</p></div>
       <div className="project-results-navigation"><button type="button" onClick={() => onNavigate('results', 'history')}>版本变化</button><button type="button" onClick={onRunDetails}>运行详情</button></div></header>
@@ -136,14 +139,19 @@ export default function ProjectResultsPage({ project, packet, rounds = [], legac
       <button type="button" className="project-results-main-action" onClick={() => onNavigate('assessment', 'direction')}>进入改造研判</button></section>}
     {localRounds.length > 0 && <section className="project-results-rounds" aria-label="研究轮次与历史报告"><h3>研究轮次与历史报告</h3>
       <div className="project-results-round-list">{localRounds.map(round => {
-        const result = belongs(project, round.result) ? round.result : null
-        return <article className={`project-results-round status-${round.status}`} key={round.id} aria-label={`研究轮次 ${round.round_number}`}>
-          <header><h4>第 {round.round_number} 轮</h4><span>{roundLabels[round.status]}</span></header>
-          <p className="project-results-round-meta">资料基线 v{round.context_version} · 保存于 <time dateTime={round.created_at}>{timestamp(round.created_at)}</time></p>
+        const raw=belongs(project,round.result)?round.result:null
+        const recovered=recoveredResearchRound(round,localRounds),source=recoverySourceRound(round,localRounds)
+        const result=recovered?.result||raw
+        return <article id={`research-record-${round.id}`} className={`project-results-round status-${recovered?'recovered':round.status}`} key={round.id} aria-label={`研究轮次 ${round.round_number}`} tabIndex={-1}>
+          <header><h4>{source?`第 ${source.round_number} 轮的恢复记录`:`第 ${round.round_number} 轮`}</h4><span>{recovered?'方案已恢复':source?'恢复结果已保存':roundLabels[round.status]}</span></header>
+          <p className="project-results-round-meta">资料基线 v{round.context_version} · {source?'恢复保存于':'记录于'} <time dateTime={round.created_at}>{timestamp(round.created_at)}</time></p>
           {result?.strategy ? <h5>{result.strategy.headline}</h5> : <p>该轮尚未保存完整方案。</p>}
-          {round.error && <p className="project-results-round-error">{round.error}</p>}
-          <p className="project-results-round-id">轮次 ID：{round.id}{round.parent_round_id ? ` · 上一轮：${round.parent_round_id}` : ' · 首轮记录'}</p>
-          {result && <ExportButtons project={project} packet={result} />}
+          {recovered&&<p className="project-results-recovered-note">完整方案已恢复保存，可查看报告与导出。<a href={`#research-record-${recovered.id}`}>查看恢复记录 →</a></p>}
+          {source&&<p className="project-results-recovered-note">沿用第 {source.round_number} 轮已取得的模型输出，保存完整方案与后续补充资料。</p>}
+          {!recovered&&round.error&&<p className="project-results-round-error">{round.error}</p>}
+          {recovered&&raw?<details className="project-results-original-record"><summary>查看原始运行记录</summary><p>最初运行在内容核对阶段停止，现已有对应的完整恢复结果。</p><p className="project-results-round-id">原记录：{round.id}</p><ExportButtons project={project} packet={raw} original/></details>:<p className="project-results-round-id">记录 ID：{round.id}{round.parent_round_id ? ` · 上一轮：${round.parent_round_id}` : source?' · 恢复保存':' · 首轮记录'}</p>}
+          {result&&<ExportButtons project={project} packet={result}/>}
+          {result?.strategy&&(recovered||source)&&<SavedResearchReport project={project} packet={result}/>}
         </article>
       })}</div>
     </section>}

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/results-recovery-display
+
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  16:53:17
+   Duration  4.25s (transform 459ms, setup 0ms, import 3.34s, tests 265ms, environment 0ms)
+

@@ -3708,5 +3708,22 @@
     "ui_source_commit": "c0ffdf40b933e2c93f35f02c7bce58be30d6be34",
     "browser_evidence": "research/test_results/experience-learning-browser-20261016.json",
     "production_project_writes": 0
+  },
+  "results_recovery_display_20261016": {
+    "as_of": "2026-10-16",
+    "status": "implemented_25_scoped_checks_and_build_passed_release_pending",
+    "request": "成果与版本的旧失败记录按已保存恢复关联展示完整方案、报告和正确导出；原始记录保留在详情",
+    "changed_files": [
+      "packages/retrofit/research-round-recovery.ts",
+      "apps/workspace/src/components/ProjectResultsPage.tsx",
+      "apps/workspace/src/components/ProjectResultsPage.css",
+      "apps/workspace/src/components/ResearchRoundsPanel.tsx",
+      "tests/contracts/project-results-page.test.ts"
+    ],
+    "evidence": [
+      "research/test_results/results-recovery-focused-20261016.log",
+      "research/test_results/results-recovery-build-20261016.log"
+    ],
+    "next_runnable_task": "按当前在线地图界面基线发布静态资源，浏览器检查指定成果页及恢复导出。"
   }
 }
