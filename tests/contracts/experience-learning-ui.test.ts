@@ -37,7 +37,7 @@ test('one intake sends the whole chat and files through upload, then shows skill
     })
     await act(async()=>{[...container.querySelectorAll('button')].find(button=>button.textContent==='导入并自动构建')!.click()})
     expect(uploads).toHaveLength(2);expect(await uploads[1].text()).toBe(long)
-    expect(requests.find(item=>item.path.endsWith('/learn'))?.body).toMatchObject({document_ids:['D1','D2'],use_model:true})
+    expect(requests.find(item=>item.path.endsWith('/learn'))?.body).toMatchObject({document_ids:['D1','D2'],use_model:true,allow_internal_ai:true})
     expect(container.textContent).toContain('已整理 1 条经验')
     await act(async()=>{[...container.querySelectorAll<HTMLButtonElement>('nav button')].find(button=>button.textContent==='技能蒸馏')!.click()})
     expect(container.textContent).toContain('分栋管网更新技能');expect(container.textContent).toContain('采用本版技能')

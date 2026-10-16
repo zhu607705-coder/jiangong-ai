@@ -10,7 +10,7 @@ const message=(error:unknown)=>error instanceof Error?error.message:'本轮整�
 function save(text:string,name:string,type='text/markdown;charset=utf-8') {const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
 export default function ExperienceLearningIntake({projectId,synthetic,onChanged,onOpenDetails}:{projectId:string;synthetic:boolean;onChanged:()=>Promise<void>|void;onOpenDetails:()=>void}) {
   const [files,setFiles]=useState<File[]>([]),[text,setText]=useState(''),[title,setTitle]=useState('项目沟通记录')
-  const [useModel,setUseModel]=useState(true),[allowInternal,setAllowInternal]=useState(false),[busy,setBusy]=useState(false),[applying,setApplying]=useState('')
+  const [useModel,setUseModel]=useState(true),[busy,setBusy]=useState(false),[applying,setApplying]=useState('')
   const [phase,setPhase]=useState(''),[events,setEvents]=useState<string[]>([]),[error,setError]=useState(''),[result,setResult]=useState<ExperienceLearningResult|null>(null)
   const [tab,setTab]=useState<'cards'|'skills'|'rules'>('cards'),[applied,setApplied]=useState<string[]>([])
   const [availability,setAvailability]=useState<{model_configured:boolean;internal_model_enabled:boolean}|null>(null)
@@ -37,7 +37,7 @@ export default function ExperienceLearningIntake({projectId,synthetic,onChanged,
         ids.push(document.id);log(`已保存原件：${file.name}`)
       }
       if(!ids.length)throw new Error(warnings.join('；')||'尚无已保存的原件，请重试导入。')
-      const response=await fetch(`/api${base}/learn`,{method:'POST',credentials:'same-origin',signal:abort.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify({document_ids:ids,use_model:useModel,allow_internal_ai:allowInternal})})
+      const response=await fetch(`/api${base}/learn`,{method:'POST',credentials:'same-origin',signal:abort.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify({document_ids:ids,use_model:useModel,allow_internal_ai:useModel})})
       if(!response.ok){const value=await response.json().catch(()=>({}));throw new Error(value.detail||'原件已导入，自动整理暂未完成。')}
       await consumeStream<ExperienceLearningEvent>(response,abort.signal,event=>{
         if(active.current!==scope)return
@@ -68,7 +68,7 @@ export default function ExperienceLearningIntake({projectId,synthetic,onChanged,
   return <section className="experience-learning" aria-label="导入并自动沉淀经验">
     <header><div><span>从一次项目工作，积累下一次判断的依据</span><h3>直接放入文件或聊天记录</h3><p>自动整理决策、做法和结果，继续生成技能与规则更新对比。</p></div><button type="button" onClick={onOpenDetails}>查看知识与技能版本 →</button></header>
     <div className="learning-inputs"><label className="learning-file-drop">选择项目文件<input type="file" multiple accept=".txt,.md,.csv,.pdf,.docx,.xlsx" disabled={busy} onChange={event=>setFiles(Array.from(event.target.files||[]))}/><span>支持 PDF、Word、Excel、TXT、Markdown、CSV；每份 ≤10MB。</span>{!!files.length&&<strong>已选 {files.length} 份：{files.map(file=>file.name).join('、')}</strong>}</label><div><label>聊天记录或复盘原文<textarea aria-label="聊天记录或复盘原文" rows={6} value={text} maxLength={1000000} disabled={busy} onChange={event=>setText(event.target.value)} placeholder="可直接粘贴长段聊天、会议纪要或项目复盘，保留发言和上下文。"/></label><label className="learning-title">记录名称<input value={title} maxLength={120} disabled={busy} onChange={event=>setTitle(event.target.value)}/></label></div></div>
-    <div className="learning-options"><label><input type="checkbox" checked={useModel} disabled={busy} onChange={event=>setUseModel(event.target.checked)}/>使用已配置模型自动分析</label>{useModel&&<label><input type="checkbox" checked={allowInternal} disabled={busy||availability?.internal_model_enabled===false} onChange={event=>setAllowInternal(event.target.checked)}/>允许本轮所选内部原文发送给已配置模型</label>}{availability?.internal_model_enabled===false&&<span>服务器当前对内部材料采用本地整理，原件仍可导入。</span>}</div>
+    <div className="learning-options"><label><input type="checkbox" checked={useModel} disabled={busy} onChange={event=>setUseModel(event.target.checked)}/>使用已配置模型分析本轮材料（会发送所选原文）</label>{availability?.internal_model_enabled===false&&<span>服务器当前对内部材料采用本地整理，原件仍可导入。</span>}</div>
     <div className="learning-actions"><button type="button" disabled={busy||(!files.length&&!text.trim())} onClick={()=>void learn()}>{busy?'正在构建…':'导入并自动构建'}</button>{busy&&<button type="button" onClick={()=>controller.current?.abort()}>停止本轮</button>}<span>原件、经验、技能与规则分别保存，更新保留版本。</span></div>
     {!!phase&&<ol className="learning-phases" aria-label="自动沉淀进度">{phases.map(([key,label],index)=><li key={key} data-active={phase===key} data-complete={phase==='complete'||phases.findIndex(([value])=>value===phase)>index}><span>{index+1}</span>{label}</li>)}</ol>}
     {events.length>0&&<p className="learning-status" role="status">{events.at(-1)}</p>}{error&&<p className="learning-error" role="alert">{error}</p>}
