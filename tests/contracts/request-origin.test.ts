@@ -24,6 +24,23 @@ describe('explicit workbench request origins', () => {
     expect(policy.allowedHosts.has('workbench.example:8443')).toBe(true)
     expect(policy.allowedOrigins.has('https://workbench.example:8443')).toBe(true)
   })
+  it('accepts the named domain and www alias while preserving IP access', () => {
+    const policy = requestOriginPolicy(4310, 5173, 'http://10.70.223.113', 'http://laneanew.cn, http://www.laneanew.cn')
+    expect(policy.publicOrigin).toBe('http://10.70.223.113')
+    for (const host of ['10.70.223.113', 'laneanew.cn', 'www.laneanew.cn']) {
+      expect(policy.allowedHosts.has(host)).toBe(true)
+      expect(policy.allowedOrigins.has(`http://${host}`)).toBe(true)
+    }
+    expect(policy.allowedHosts.has('attacker.laneanew.cn')).toBe(false)
+    expect(policy.allowedOrigins.has('https://laneanew.cn')).toBe(false)
+    expect(policy.allowedHosts.has('laneanew.cn:4310')).toBe(false)
+  })
+  it.each(['https://*.laneanew.cn', 'http://user:password@laneanew.cn', 'http://laneanew.cn/path'])('rejects unsafe domain aliases: %s', value => {
+    expect(() => requestOriginPolicy(4310, 5173, 'http://10.70.223.113', value)).toThrow('TRUSTED_PUBLIC_ORIGINS')
+  })
+  it('does not enable remote aliases without the primary deployment origin', () => {
+    expect(() => requestOriginPolicy(4310, 5173, '', 'http://laneanew.cn')).toThrow('requires TRUSTED_PUBLIC_ORIGIN')
+  })
   it.each([
     'not an origin', 'ftp://10.70.223.113', 'http://user:password@10.70.223.113',
     'http://10.70.223.113/path', 'http://10.70.223.113?token=value',

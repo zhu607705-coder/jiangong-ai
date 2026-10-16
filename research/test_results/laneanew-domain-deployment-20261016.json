@@ -1,0 +1,21 @@
+{
+  "configured_at": "20261016T095013Z",
+  "domain": "laneanew.cn",
+  "aliases": [
+    "www.laneanew.cn"
+  ],
+  "target_ip": "10.70.223.113",
+  "access_scope": "campus_collaborative",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/domain-backups/20261016T095013Z",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "ui_unchanged": true,
+  "checked_projects_before_restart": 35,
+  "model_calls": 0,
+  "nginx_before_sha256": "8f8066d8aee6b83e76a7c3e2873b0633a40e311c31c6c7e257ea00fd120be616",
+  "nginx_after_sha256": "eab0c61ae35f465dd068913cbd7d21c7bbb3d33d9e87b0c214355b78d80e6e36",
+  "source_sha256": {
+    "apps/host/config.ts": "3488849eb3b49c5df91e1a8debacd6b7f523dc952a46a475edb65291a628e4e8",
+    "apps/host/request-origin.ts": "f4727404c744b40ebcc766075fba71cfd8224b1523bb5dcb4c00dfceff34f3d7"
+  },
+  "host_main_pid": "54304"
+}

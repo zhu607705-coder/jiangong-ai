@@ -1,0 +1,6 @@
+{
+  "checked_at": "2026-10-16T09:53:08.037491+00:00",
+  "source": "campus server live dig and curl without proxy",
+  "stdout": "10.70.223.113\n10.70.223.113\nlaneanew.cn.\t\t550\tIN\tA\t10.70.223.113\nroot_http_status=200\nwww_http_status=200\n",
+  "stderr": ""
+}
