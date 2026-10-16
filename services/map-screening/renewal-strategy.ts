@@ -138,7 +138,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     progress({ stage: 'model', status: 'running', message: '正在综合原文，提出更新取舍、投入阶段与财务及社会效果建议。', source_count: sources.length })
     if (!base.decision && config.decisionEnabled) base.decision = await live.runReadCapability('renewal_research_route', toolSignal => evaluateDecision(input, toolSignal))
     const promptSources = options.researchWorkflow?sources:strategyPromptSources(sources,workReferenceIds), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
-    const workflow=options.researchWorkflow?await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,onProgress:event=>progress({stage:'model',status:'running',message:event.message,source_count:promptSources.length,workflow:event.workflow})}):null
+    const workflow=options.researchWorkflow?await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,deadlineAt:started+600000,onProgress:event=>progress({stage:'model',status:'running',message:event.message,source_count:promptSources.length,workflow:event.workflow})}):null
     if(workflow)base.workflow={...workflow.trace,notes:workflow.notes}
     const references=strategyModelReferences(promptSources),modelSources=references.sources
     const quoteChoices=JSON.stringify(sourceQuoteCandidates(modelSources))
@@ -197,7 +197,7 @@ ${workflow?'另须填写reasoning_dimensions完整六项，key依次覆盖demand
 材料使用：role=current支撑本对象现况；reference用于方法、社区背景和对标目标。数量、费用与阶段保留来源的对象范围和时点，分项估算、合同、结算及整体预算分别列。结构鉴定、居民决议、资金到账等事实逐项取自原文。${demo ? '本次所有现况数值取自SIM-STRATEGY-BASE，明确完整模拟；整治和拆建分别采用各自的演示预算。' : synthetic ? '本轮是隔离的演示资料研究，所有构造内容明确为模拟，按所选演示文件分析，不替换为其他完整模拟社区的底表。' : '社会效果可提出带前提的预期，实际成效和人口金额取自所列来源。'}
 输出组织：decision_brief在前，接headline、summary、preferred_mode、rationale、两条paths（含work_packages）、六条dimensions、internal_data_requests和next_checks。headline直接点明本项目建议；summary控制在140字内。每块brief的conclusion尽量65字内、reason100字内，financial/social各110字内。rationale写2至3个核心判断，每条quote逐字复制同一来源一段连续原句或归档字段，保留必要限定。两路径各写1至2项actions摘要、1至2项requirements；next_checks写2项最影响决策的核查。六维key不重复，每个描述尽量50字内，保留对象、动作与实现条件。各举措和维度均引用evidence_refs。具体内容优先放分项表，避免在多个字段重复同一段。只调用structured_output。
 <untrusted_sources>${JSON.stringify(modelSourcePayload)}</untrusted_sources>
-${synthesisContextJson?'<untrusted_research_context>'+synthesisContextJson+'</untrusted_research_context>':''}
+${synthesisContextJson?'专家记录中的quote_ref指向同源UTF-16字符范围；原句只保存一次，见evidence_windows。引用时从对应窗口逐字复制原句，不能把quote_ref标识当作原文。\n<untrusted_research_context>'+synthesisContextJson+'</untrusted_research_context>':''}
 以下是从同一批source直接截取的少量连续原句候选，source_id与locator保持对应；可选用候选，也可从同一source正文选其他连续短句。quantity_basis=source时所选quote本身必须含该数量和单位，否则quantity设null、quantity_basis设unknown，scope和delivery也不将该数量写成已知工程量。
 <source_quote_candidates>${quoteChoices}</source_quote_candidates>
 ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+JSON.stringify(references.encodeKnown(sources[0].text.split("\n").filter(line=>line.length>=16&&line.length<=360).map(quote=>({source_id:sources[0].id,quote})).slice(0,24))):""}

@@ -128,19 +128,34 @@ describe('bounded native DSH renewal research workflow', () => {
     expect(result.contextValue.source_catalog.map(source => source.source_id)).toEqual(sources.map(source => source.id))
   })
 
-  it('enforces source-ID enum, a two-read budget, and removal of the real native tools after settlement', async () => {
+  it('enforces source-ID scope while allowing continued reads after two pages and removing settled tools', async () => {
     const { live } = await session(async call => {
       if (call.outputType === 'RenewalResearchPlan') return { summary: '只核第一项资料。', tasks: [task(1)] }
       const denied = await read(call, ['s2']); expect(denied.isError).toBe(true)
       expect(JSON.stringify(denied)).not.toContain(source(2).text)
       expect((await read(call, ['s1'])).isError).toBe(false)
       expect((await read(call, ['s1'])).isError).toBe(false)
-      const exhausted = await read(call, ['s1']); expect(exhausted.isError).toBe(true)
-      expect(JSON.stringify(exhausted)).toContain('RENEWAL_RESEARCH_TOOL_BUDGET')
+      expect((await read(call, ['s1'])).isError).toBe(false)
       return note(1)
     })
     const result = await runRenewalResearch(live, [source(1), source(2)], { projectName: '本小区', signal: new AbortController().signal })
     expect(result.notes).toHaveLength(1); expect(live.ctx.tools.schemas()).toEqual([])
+    expect(result.trace.tasks[0].retrieval?.calls).toBe(3)
+  })
+
+  it('binds location from the verified read source without changing the borrowed model note', async () => {
+    const row=source(1),returned=note(1)
+    returned.observations[0].locator='model:incorrect-copy'
+    Object.freeze(returned.observations[0])
+    const {live}=await session(async call=>{
+      if(call.outputType==='RenewalResearchPlan')return {summary:'核对投入来源。',tasks:[task(1,'cost_value')]}
+      expect((await read(call,['s1'])).isError).toBe(false)
+      return returned
+    })
+    const result=await runRenewalResearch(live,[row],{projectName:'本小区',signal:new AbortController().signal})
+    expect(result.trace.tasks[0].status).toBe('completed')
+    expect(result.notes[0].observations[0].locator).toBe(row.locator)
+    expect(returned.observations[0].locator).toBe('model:incorrect-copy')
   })
 
   it('paginates a large source within the complete serialized output cap', async () => {
@@ -201,8 +216,7 @@ describe('bounded native DSH renewal research workflow', () => {
     expect(result.notes[0].observations[0].quote).toBe(original.text)
     expect(result.context).not.toContain('外部并发改动')
     const foreign = await session(async () => ({ summary: '不合法跨项目分工。', tasks: [{ ...task(1), source_ids: ['FOREIGN-PROJECT'] }] }))
-    const rejected = await runRenewalResearch(foreign.live, [original], { projectName: '本小区', signal: new AbortController().signal })
-    expect(rejected.trace).toMatchObject({ planner_status: 'failed', planner_error: 'RENEWAL_RESEARCH_PLAN_SCOPE', tasks: [] })
+    await expect(runRenewalResearch(foreign.live, [original], { projectName: '本小区', signal: new AbortController().signal })).rejects.toThrow('RENEWAL_RESEARCH_PREFLIGHT_FAILED')
     expect(foreign.calls).toHaveLength(1)
   })
 
@@ -388,4 +402,29 @@ describe('bounded native DSH renewal research workflow', () => {
     const result = await runRenewalResearch(live, [source(1)], { projectName: '本小区', signal: new AbortController().signal })
     expect(result.trace.tasks[0]).toMatchObject({ status: 'completed', retrieval: { calls: 1 } })
   })
+})
+
+it('repairs a specialist citation in its own stage and retains each quote exactly once in compact context',async()=>{
+  let attempts=0
+  const {live,calls}=await session(async call=>{
+    if(call.outputType==='RenewalResearchPlan')return {summary:'只核一项依据。',tasks:[task(1)]}
+    await read(call,['s1'])
+    const value=note(1);if(++attempts===1)value.observations[0].quote='模型误写且原文没有这一句。'
+    return value
+  })
+  const result=await runRenewalResearch(live,[source(1,1000)],{projectName:'本小区',signal:new AbortController().signal})
+  expect(attempts).toBe(2);expect(result.trace.tasks[0]).toMatchObject({status:'completed',attempts:2})
+  expect(calls.at(-1)?.prompt).toContain('本专家结果刚被同一校验器拒绝')
+  const observation=result.contextValue.untrusted_expert_notes[0].observations[0]
+  expect(observation).not.toHaveProperty('quote')
+  const window=result.contextValue.evidence_windows.find(window=>window.source_id===observation.source_id)!
+  const ref=observation.quote_ref
+  expect(window.text.slice(ref.start_char-window.start_char,ref.end_char-window.start_char)).toBe(result.notes[0].observations[0].quote)
+  expect(result.trace.retained_quotes).toBe(result.trace.quoted_passages)
+  expect(result.trace.compression_ratio).toBeLessThan(1)
+})
+it('a failed small planner readiness call prevents experts from starting',async()=>{
+  const {live,calls}=await session(async()=>{throw new Error('LIVE_STAGE_FAILED:planner:error:TRANSPORT')})
+  await expect(runRenewalResearch(live,[source(1)],{projectName:'本小区',signal:new AbortController().signal})).rejects.toThrow('RENEWAL_RESEARCH_PREFLIGHT_FAILED')
+  expect(calls).toHaveLength(1);expect(calls[0].outputType).toBe('RenewalResearchPlan')
 })

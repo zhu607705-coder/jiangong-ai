@@ -145,6 +145,23 @@ it('preserves the existing max-tokens failure marker', async () => {
   expect(start).toHaveBeenCalledTimes(1)
 })
 
+it('repairs captured tool JSON locally before requesting another model response', async () => {
+  const {live,start,dispose}=callFixture([])
+  Object.assign(live,{runId:'MAP-AI-STRATEGY-local-json-repair'})
+  const raw='{"task_id":"task-1","summary":"将"补助"与"自筹"分别核算。","observations":[],"missing_data":[]}'
+  start.mockImplementation(async()=>{
+    const scope=(live as unknown as {stageScope:AsyncLocalStorage<CallScope & {toolBlocks:unknown[];providerFailureMessage:string}>}).stageScope.getStore()!
+    scope.toolBlocks=[{name:'structured_output',arguments:raw}]
+    scope.providerFailureMessage='DeepSeek Messages stream: tool input is invalid JSON'
+    live.calls.push({stage:scope.stage,requested_model:'deepseek-flash',returned_model:null,finish_reason:'error',error_code:'MALFORMED_RESPONSE',input_tokens:0,output_tokens:0,duration_ms:1,session_id:null})
+    return {id:'locally-repaired-child',result:Promise.resolve({stopReason:'error',diagnostic:'MALFORMED_RESPONSE'}),dispose}
+  })
+  const result=await live.call<{summary:string}>('renewal_research_expert_1_2_cost_value','fixture','RenewalResearchNote')
+  expect(result.value.summary).toBe('将"补助"与"自筹"分别核算。')
+  expect(start).toHaveBeenCalledOnce()
+  expect(live.calls[0]).toMatchObject({finish_reason:'error',error_code:'MALFORMED_RESPONSE',session_id:'locally-repaired-child',input_tokens:0,output_tokens:0})
+})
+
 it('keeps one contract correction and exposes its final schema failure with the original cause', async () => {
   const { live, start, observed } = callFixture([{ stopReason: 'completed', structured: {} }, { stopReason: 'completed', structured: {} }])
   const error = await live.call('renewal_strategy', 'fixture', 'RenewalStrategy').catch((error: unknown) => error)
@@ -174,33 +191,25 @@ function budgetFixture(runId='MAP-AI-STRATEGY-isolated-budget',signal=new AbortC
   const request=(stage:string)=>internal.stageScope.run({stage,outputType:'RenewalStrategy'},()=>internal.reserveModelRequest())
   return {live,internal,request}
 }
-it('replays the failed production request sequence while reserving native synthesis and repair calls',()=>{
+it('allows the real expert format-retry sequence and synthesis without a request-count rejection',()=>{
   const {request,internal}=budgetFixture()
   request('renewal_research_plan_1')
   const building='renewal_research_expert_1_1_building_delivery',cost='renewal_research_expert_1_2_cost_value',residents='renewal_research_expert_1_3_residents_operations'
-  // The real failed run used 1 planner + 3 + 3 + 3 native requests, then
-  // 2 resident format-retry requests. A specialist now owns only four.
+  // Two reads, a malformed response and recovery must not exhaust a role quota.
   for(const stage of [building,residents,cost,building,residents,cost,building,cost,residents])request(stage)
   request(residents+'_format_retry')
-  expect(()=>request(residents+'_format_retry')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
-  expect(internal.modelRequests).toBe(11)
-  for(const stage of ['renewal_strategy','renewal_strategy_contract_retry','renewal_strategy_quote_repair','renewal_strategy_quote_repair_contract_retry'])expect(()=>request(stage)).not.toThrow()
-  expect(internal.modelRequests).toBe(15)
-})
-it('admits synthesis after twelve research requests and bounds every retry family without cross-task borrowing',()=>{
-  const {request,internal}=budgetFixture()
-  request('renewal_research_plan_7');request('renewal_research_plan_7_contract_retry')
-  const experts=['renewal_research_expert_7_1_building_delivery','renewal_research_expert_7_2_cost_value','renewal_research_expert_7_3_residents_operations']
-  for(const expert of experts.slice(0,2))for(let i=0;i<4;i++)request(expert)
-  request(experts[2]);request(experts[2])
+  expect(()=>request(residents+'_format_retry')).not.toThrow()
   expect(internal.modelRequests).toBe(12)
-  request('renewal_strategy');request('renewal_strategy_contract_retry')
-  request(experts[2]);request(experts[2]+'_format_retry')
-  expect(()=>request(experts[0]+'_format_retry')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
-  expect(()=>request('renewal_research_expert_7_4_cost_value')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
-  request('renewal_strategy_quote_repair');request('renewal_strategy_quote_repair_contract_retry')
-  expect(internal.modelRequests).toBe(18)
-  expect(()=>request('renewal_strategy')).toThrow('RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+  for(const stage of ['renewal_strategy','renewal_strategy_contract_retry','renewal_strategy_quote_repair','renewal_strategy_quote_repair_contract_retry'])expect(()=>request(stage)).not.toThrow()
+  expect(internal.modelRequests).toBe(16)
+})
+it('has no renewal planner, expert or synthesis request-count cap',()=>{
+  const {request,internal}=budgetFixture()
+  for(let i=0;i<4;i++)request('renewal_research_plan_7_contract_retry')
+  const experts=['renewal_research_expert_7_1_building_delivery','renewal_research_expert_7_2_cost_value','renewal_research_expert_7_3_residents_operations']
+  for(const expert of experts)for(let i=0;i<16;i++)request(expert+'_format_retry')
+  for(let i=0;i<8;i++)request('renewal_strategy_quote_repair_contract_retry')
+  expect(internal.modelRequests).toBe(60)
 })
 it.each([['MAP-AI-unrelated',6],['OTHER-unrelated',20]] as const)('preserves the existing %s request limit', (runId,limit)=>{
   const {request,internal}=budgetFixture(runId)
@@ -214,13 +223,26 @@ it('retains cancellation as cancellation instead of labelling it budget exhausti
   expect(()=>request('renewal_strategy')).toThrowError(expect.objectContaining({name:'AbortError'}))
   expect(internal.modelRequests).toBe(0)
 })
-it('preserves the local stage-budget code when native DSH wraps the rejected request as UNKNOWN',async()=>{
+it('preserves unrelated map budget diagnostics when native DSH wraps the rejection as UNKNOWN',async()=>{
   const {live,start,dispose}=callFixture([])
-  Object.assign(live,{runId:'MAP-AI-STRATEGY-budget-wrapper',modelRequests:4,modelRequestsByFamily:new Map([['synthesis',4]])})
+  Object.assign(live,{runId:'MAP-AI-unrelated-budget-wrapper',modelRequests:6})
   start.mockImplementation(async()=>{
     try {(live as unknown as {reserveModelRequest:()=>void}).reserveModelRequest()} catch { /* Native turn/end retains UNKNOWN, not our exception type. */ }
     return {id:'budget-rejected-child',result:Promise.resolve({stopReason:'error',diagnostic:'UNKNOWN'}),dispose}
   })
-  await expect(live.call('renewal_strategy_quote_repair','fixture','RenewalStrategy')).rejects.toThrow('LIVE_STAGE_FAILED:renewal_strategy_quote_repair:error:RUN_MODEL_STAGE_BUDGET_EXCEEDED')
+  await expect(live.call('renewal_strategy_quote_repair','fixture','RenewalStrategy')).rejects.toThrow('LIVE_STAGE_FAILED:renewal_strategy_quote_repair:error:RUN_MODEL_BUDGET_EXCEEDED')
   expect(start).toHaveBeenCalledOnce()
+})
+
+it('passes specialist-specific output capacity and cancellation through the native DSH child',async()=>{
+  const {live,start}=callFixture([{stopReason:'completed',structured:{task_id:'task',summary:'契约探测',observations:[],missing_data:[]}}])
+  const controller=new AbortController()
+  await live.call('renewal_research_expert_1_1_building_delivery','fixture','RenewalResearchNote',[],undefined,{},undefined,{signal:controller.signal,maxOutputTokens:6500})
+  expect(start.mock.calls[0][1]).toMatchObject({agentOptions:{maxTokens:6500}})
+  expect((start.mock.calls[0][1].signal as AbortSignal).aborted).toBe(false)
+})
+it('does not start a native child after the specialist deadline has already aborted',async()=>{
+  const {live,start}=callFixture([]),controller=new AbortController();controller.abort()
+  await expect(live.call('renewal_research_expert_1_1_building_delivery','fixture','RenewalResearchNote',[],undefined,{},undefined,{signal:controller.signal,maxOutputTokens:6500})).rejects.toMatchObject({name:'AbortError'})
+  expect(start).not.toHaveBeenCalled()
 })

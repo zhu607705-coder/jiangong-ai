@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/creation-research-reliability
+
+
+ Test Files  7 passed (7)
+      Tests  75 passed (75)
+   Start at  11:18:32
+   Duration  4.47s (transform 1.08s, setup 0ms, import 2.10s, tests 1.56s, environment 0ms)
+

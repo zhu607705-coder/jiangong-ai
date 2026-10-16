@@ -1750,6 +1750,33 @@
       "definition_of_done": "无Decision时无默认模式，真实阶段流与重试取消/版本变化保护可复现；未满足和待审核可见；顶部无调试链接，报告仅在成功项目结果出现；隔离构建与服务器验收完成。",
       "evidence_log": "research/test_results/mode-lifecycle-runtime-deployment-20261016.json",
       "ui_proof": "output/playwright/mode-lifecycle/qiushi-before-judgement-20261016.png"
+    },
+    {
+      "id": "T-CREATION-RESEARCH-RELIABILITY-20261016",
+      "depends_on": [
+        "T-MODE-LIFECYCLE-20261016"
+      ],
+      "goal": "处理创建窗口与HTTP浏览器兼容，前置专家准备检查、局部修复、按任务分配力度并验证压缩引用完整性。",
+      "status": "implementing",
+      "write_scope": [
+        "apps/host/server.ts",
+        "apps/host/project-creation.ts",
+        "apps/workspace/src/App.tsx",
+        "apps/workspace/src/workbench-polish.css",
+        "runtime/dsh/live-session.ts",
+        "runtime/dsh/json-format-repair.ts",
+        "runtime/workflows/renewal-research.ts",
+        "runtime/workflows/renewal-research-effort.ts",
+        "runtime/agents/renewal/AGENTS.md",
+        "services/map-screening/renewal-strategy.ts",
+        "packages/retrofit/strategy.ts",
+        "scripts/live-smoke.ts",
+        "tests/contracts/project-creation*",
+        "tests/contracts/renewal-research*",
+        "tests/contracts/renewal-structured-request.test.ts",
+        "tests/contracts/json-format-repair.test.ts"
+      ],
+      "definition_of_done": "创建重试不重复、错误在窗口可见；准备检查和专家局部恢复可复现，压缩引文可还原，保留原硬约束与无调用次数上限政策；服务端定点发布和协议检查/页面验收有记录。"
     }
   ]
 }

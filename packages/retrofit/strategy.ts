@@ -24,13 +24,14 @@ export type StrategyWorkflowTrace = {
   planner_profile?:{role:string;sha256:string};
   tasks:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];source_ids:string[];status:'completed'|'failed';error_code?:string;profile?:{role:string;sha256:string};
     retrieval?:{calls:number;query_matches:number;read_windows:{source_id:string;start_char:number;end_char:number;characters:number;query?:string|null;matched:boolean}[]};
-    reasoning?:'direct_evidence'|'mixed'|'reasoned_fallback'|'not_produced'}[];
+    reasoning?:'direct_evidence'|'mixed'|'reasoned_fallback'|'not_produced';attempts?:number;effort?:{maxOutputTokens:number;timeoutMs:number;sourceCharacters:number;synthesisReserveMs:number}}[];
   input_characters:number;source_characters:number;retained_source_characters:number;output_characters:number;
   compression:'reduced'|'retained';method:'evidence_windows_and_untrusted_notes';notes?:RenewalResearchNote[];
   synthesis_quote_candidate_chars?:number;synthesis_context_chars?:number;synthesis_profile?:{role:string;sha256:string}
+  quoted_passages?:number;retained_quotes?:number;expanded_input_characters?:number;compression_ratio?:number
 }
 
-export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_OUTPUT_TRUNCATED' | 'MODEL_STRUCTURED_OUTPUT_MISSING' | 'MODEL_SCHEMA_INVALID' | 'MODEL_REQUEST_BUDGET_EXHAUSTED' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
+export type StrategyDiagnostic = { code: 'MODEL_NOT_CONFIGURED' | 'MODEL_PROVIDER_FAILED' | 'MODEL_OUTPUT_INVALID' | 'MODEL_OUTPUT_TRUNCATED' | 'MODEL_STRUCTURED_OUTPUT_MISSING' | 'MODEL_SCHEMA_INVALID' | 'MODEL_REQUEST_BUDGET_EXHAUSTED' | 'MODEL_RATE_LIMITED' | 'MODEL_AUTH_FAILED' | 'MODEL_TIMEOUT' | 'RESEARCH_FAILED' | 'RESEARCH_PREFLIGHT_FAILED' | 'RESEARCH_COMPRESSION_INVALID' | 'STRATEGY_EVIDENCE_INVALID' | 'STRATEGY_FAILED';
   stage?: string; stop_reason?: string; provider_code?: string }
 export type StrategyProgress = { type: 'progress'; stage: 'sources' | 'research' | 'model' | 'validation' | 'result';
   status: 'running' | 'completed' | 'skipped' | 'failed'; message: string; source_count?: number; query_count?: number; round?: number; round_count?: number;workflow?:StrategyWorkflowProgress }
@@ -49,6 +50,8 @@ const diagnosticMessages: Record<StrategyDiagnostic['code'], string> = {
   MODEL_AUTH_FAILED: '模型服务未通过身份验证，本轮方案生成未完成。',
   MODEL_TIMEOUT: '本轮方案研究超时，尚未生成完整方案。',
   RESEARCH_FAILED: '公开资料检索未完成，本轮整体更新方案尚未生成。',
+  RESEARCH_PREFLIGHT_FAILED: '运行准备检查未通过，尚未进入专家调研。请核对模型连接、角色文件与输出格式。',
+  RESEARCH_COMPRESSION_INVALID: '上下文压缩未保留全部引用原句，已停止进入最终综合，原资料和专家记录保留。',
   STRATEGY_EVIDENCE_INVALID: '方案引用或适用条件未通过核验，本轮未发布方案。',
   STRATEGY_FAILED: '本轮方案生成未完成，暂未形成可展示的整体更新方案。',
 }
@@ -66,7 +69,9 @@ export function strategyFailure(error: unknown, calls: readonly ModelCall[], opt
   const rawCode = explicitBudget || call?.error_code || parsed?.[3]
   const provider = rawCode && providerCodes.has(rawCode) ? rawCode : undefined
   let code: StrategyDiagnostic['code'] = 'STRATEGY_FAILED'
-  if (message === 'MODEL_NOT_CONFIGURED') code = 'MODEL_NOT_CONFIGURED'
+  if (message === 'RENEWAL_RESEARCH_PREFLIGHT_FAILED') code = 'RESEARCH_PREFLIGHT_FAILED'
+  else if (message === 'RENEWAL_RESEARCH_COMPRESSION_EVIDENCE_LOSS') code = 'RESEARCH_COMPRESSION_INVALID'
+  else if (message === 'MODEL_NOT_CONFIGURED') code = 'MODEL_NOT_CONFIGURED'
   else if (options.timedOut || provider === 'TIMEOUT') code = 'MODEL_TIMEOUT'
   else if (provider === 'AUTH' || provider === 'INVALID_CREDENTIAL') code = 'MODEL_AUTH_FAILED'
   else if (provider === 'RATE_LIMIT') code = 'MODEL_RATE_LIMITED'

@@ -30,6 +30,7 @@ import { describeWorkbenchDatabase } from './database-schema'
 import { publicProjectInput } from './public-project'
 import { installQiushiDemoReplay, qiushiDemoReadOnly } from './qiushi-demo'
 import { QIUSHI_SOURCE_PROJECT_ID } from '../../packages/retrofit/qiushi-demo'
+import { saveProjectCreation } from './project-creation'
 
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message) } }
 const store = await Store.open(config.dataDir, config.DATABASE_URL)
@@ -113,8 +114,9 @@ app.post('/api/projects', async (req, res) => {
   // Every imported fixture becomes an isolated project; source fixture IDs are not global storage IDs.
   if (body.fixture) input.project_id = `P-${randomUUID()}`
   for (const rule of input.context_rules) rule.project_id = input.project_id
-  await store.db.query('INSERT INTO projects(id,owner_id,name,input) VALUES($1,$2,$3,$4)', [input.project_id, config.ownerId, body.name || input.scope.name, JSON.stringify(input)])
-  res.status(201).json(await requireProject(input.project_id))
+  const saved = await saveProjectCreation(store, config.ownerId, body.name || input.scope.name, input)
+  if (saved.status === 409) throw new ApiError(409, 'PROJECT_DRAFT_CONFLICT', '这个创建请求已有不同内容的项目，请在项目空间中查看，或关闭窗口后重新新建。')
+  res.status(saved.status).json(saved.project)
 })
 app.get('/api/projects/:id', async (req, res) => {
   const project = await requireProject(req.params.id)
