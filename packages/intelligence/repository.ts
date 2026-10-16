@@ -9,7 +9,7 @@ export interface IntelDatabase {
   exec(sql:string):Promise<unknown>
   transaction<T>(body:(db:IntelDatabase)=>Promise<T>):Promise<T>
 }
-export type Job={id:string;kind:'collect'|'analyze';subject:string;status:string;payload:Record<string,unknown>;error:string|null;created_at:string}
+export type Job={id:string;kind:'collect'|'analyze'|'rag_index';subject:string;status:string;payload:Record<string,unknown>;error:string|null;created_at:string}
 export type ReceiptResult={value:unknown;model:string;usage?:unknown}
 export type Review={document_id:string;version:string;family_id:string;split:'development'|'holdout'|'train';selected:boolean|null;category:string|null;note:string;allowed_use:'local_eval'|'local_sft';permission:string;reviewer:string;reviewed_at:string}
 export const MIGRATION=`

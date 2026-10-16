@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/research-recovery
+
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"fe61faa62a8ac4d086cbd2d42a31efded2fc23dde13683048443bb90107dfae0","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"0893c6f6c430ecfc7fc328a9cd683df8742d0187603854ffae68c2952629621c","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/renewal-structured-request.test.ts > repairs captured tool JSON locally before requesting another model response
+{"event":"renewal_tool_json_format_repaired","stage":"renewal_research_expert_1_2_cost_value","session_id":"locally-repaired-child","edits":["escaped_inner_quotes"],"original_sha256":"fa47955eec157652e151bf889a47851e4893690fa01b83c726d08165eb73a901","native_failure_preserved":true}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains a valid current dimension independently when the work-package contract fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"same-snapshot","diagnostic":{"code":"MODEL_SCHEMA_INVALID"},"source_count":4,"query_count":0,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500}
+
+··········································································································································································································································
+
+ Test Files  17 passed (17)
+      Tests  234 passed (234)
+   Start at  21:53:52
+   Duration  22.86s (transform 1.47s, setup 0ms, import 6.52s, tests 14.34s, environment 1ms)
+

@@ -18,7 +18,7 @@ export function visibleText(html:string,_url:string):string {
   const article=new Readability(document as unknown as Document,{charThreshold:100}).parse()
   return (article?.textContent||document.body?.textContent||document.documentElement?.textContent||'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim().slice(0,30000)
 }
-export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;seedSources?:Source[];intelligence?:boolean}
+export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;seedSources?:Source[];intelligence?:boolean;intelligencePolicy?:{readExisting:boolean;rememberNew:boolean;checkFreshness:boolean}}
 export type PublicResearch={sources:Source[];records:PublicRecord[];receipts:AdapterReceipt[];trace:ResearchTrace}
 type SearchHit={url:string;title?:string;snippet?:string;publishedAt?:string}
 // Transport injection keeps contract tests offline; production reuses DSH Web.
@@ -40,15 +40,16 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
   try{
     // Injected transports do not implicitly read a live global corpus in tests/replays.
     const useIntelligence=request.intelligence??!web
-    const local=useIntelligence?await recallIntelligence(request,signal):[]
+    const policy=request.intelligencePolicy||{readExisting:useIntelligence,rememberNew:useIntelligence,checkFreshness:true}
+    const local=policy.readExisting?await recallIntelligence(request,signal):[]
     localCount=local.length
     if(local.length){
       emit({type:'progress',stage:'search',status:'running',message:'先读取已沉淀的相关原文'})
       // Skip only a fresh, matching source-domain query. General discovery is retained.
-      queries=queries.filter(q=>{
+      queries=policy.checkFreshness?queries.filter(q=>{
         const domain=q.match(/site:([\w.-]+)/)?.[1]
         return !domain||!local.some(s=>{const host=s.url?new URL(s.url).hostname:'';return (host===domain||host.endsWith('.'+domain))&&s.untrusted_text&&s.date_status==='verified'&&Date.now()-Date.parse(s.retrieved_at||'')<6*3600000})
-      })
+      }):queries
     }
     if(ctx){await mountPublicWeb(ctx,{maxSearchUses:queries.length});web=ctx.web as unknown as ResearchWeb}
     for(const original of [...seed,...local]){
@@ -130,7 +131,7 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       }
     }
     emit({type:'progress',stage:'adapters',status:finalRecords.length&&!warnings.length?'completed':'partial',message:finalRecords.length?'已提取项目、金额与统计口径':'已整理原文依据'})
-    if(useIntelligence)await rememberIntelligence(sources,request.city)
+    if(policy.rememberNew)await rememberIntelligence(sources,request.city)
     return {sources,records:finalRecords,receipts:finalReceipts,trace:{status:usable?(warnings.length?'partial':'success'):'partial',queries,source_ids:[...ids],warnings,reused:localCount>0&&queries.length===0}}
   }finally{if(ctx)await ctx.fiber.dispose()}
 }

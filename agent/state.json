@@ -3875,5 +3875,77 @@
       "root_renewal_environment": "/etc/letsencrypt/haizhizi-renew.env",
       "local_sanitized_evidence": "research/test_results/laneanew-server-direct-renewal-20261016.json"
     }
+  },
+  "research_recovery_20261016": {
+    "status": "implementation_verified_pending_deployment",
+    "updated_at": "2026-10-16T13:56:54.234121+00:00",
+    "baseline_commit": "cfb4e4523ac58f4392fdd73aa15043354c6c813b",
+    "request": "落实用户粘贴的检索与六维研判审计：恢复与状态、独立六维成果、原文先返回、后台索引、情报衔接及评测。",
+    "decisions": [
+      "Keep the existing DSH runtime and intel_jobs worker",
+      "Execution completion, evidence coverage and source currency are separate",
+      "Readable partial dimensions do not imply an overall published strategy",
+      "Query processing does not build the complete semantic index",
+      "Internal model use stays explicitly consented; metadata-only index tasks carry owner/version fingerprints"
+    ],
+    "verification": {
+      "focused_contract_tests": 234,
+      "focused_test_files": 17,
+      "focused_log": "research/test_results/research-recovery-focused-20261016.log",
+      "archived_public_source_recall": {
+        "questions": 8,
+        "strict_body_topics": 7,
+        "shared_context_recall": 7,
+        "model_calls": 0,
+        "business_fact_writes": 0
+      },
+      "build": "TypeScript and Vite production build passed",
+      "build_log": "research/test_results/research-recovery-build-20261016.log"
+    },
+    "changed_files": [
+      "apps/host/experience.ts",
+      "apps/host/generated/contracts.ts",
+      "apps/host/map-screening.ts",
+      "apps/host/rag-retrieval.ts",
+      "apps/host/renewal-mode.ts",
+      "apps/host/research-rounds.ts",
+      "apps/host/server.ts",
+      "apps/workspace/src/components/StrategyCurrentAssessment.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "apps/workspace/src/imports/rag-evidence-search.css",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/maps/map.css",
+      "apps/workspace/src/maps/screening-stream.ts",
+      "packages/contracts/schema.json",
+      "packages/experience/hybrid-retrieval.ts",
+      "packages/experience/retrieval.ts",
+      "packages/intelligence/repository.ts",
+      "packages/intelligence/service.ts",
+      "packages/retrofit/strategy.ts",
+      "runtime/dsh/live-session.ts",
+      "runtime/workflows/renewal-research.ts",
+      "services/capabilities/generated/contracts.py",
+      "services/capabilities/research.ts",
+      "services/map-screening/analyst.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "services/map-screening/service.ts",
+      "tests/contracts/hybrid-rag.test.ts",
+      "tests/contracts/map-screening.test.ts",
+      "tests/contracts/rag-api-ui.test.ts",
+      "tests/contracts/strategy-failure.test.ts",
+      "tests/contracts/strategy-reasoning-assessment.test.ts",
+      "tests/contracts/strategy-stream-api.test.ts",
+      "tests/contracts/strategy-workspace.test.ts"
+    ],
+    "artifacts": [
+      "docs/研判状态与检索恢复_20261016.md",
+      "research/test_results/research-recovery-retrieval-evaluation-20261016.json",
+      "scripts/deploy-research-recovery.py"
+    ],
+    "unresolved_questions": [
+      "Actual new host/UI deployment and browser readback are pending. Source recall still misses one of eight target-source questions; do not claim end-to-end accuracy improvement."
+    ],
+    "next_runnable_task": "Finish production build, commit immutable candidate, deploy the scoped runtime patch and UI with drift checks, verify actual source-first responses and browser UI, then merge."
   }
 }

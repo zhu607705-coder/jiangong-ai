@@ -1,3 +1,4 @@
+import {observeModelStream} from './model-call-trace'
 import { Context } from '@deepseek-ai/cordis'
 import LlmRuntime, { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 import type { ToolCallId } from '@deepseek-ai/dsh-llm'
@@ -34,7 +35,7 @@ declare module '@deepseek-ai/dsh-deepseek-llm-api-extensions' {
 
 type LiveCallScope = { stage: string; outputType: string;allowedTools?:readonly string[];budgetError?:'RUN_MODEL_BUDGET_EXCEEDED'|'RUN_MODEL_STAGE_BUDGET_EXCEEDED';
   toolBlocks?:{name:string;arguments:string}[];providerFailureMessage?:string }
-export type LiveCallExecution = { signal?: AbortSignal; maxOutputTokens?: number }
+export type LiveCallExecution = { signal?: AbortSignal; maxOutputTokens?: number; onStructured?:(value:unknown)=>void }
 
 /** Contribute through the installed adapter extension seam, without changing other requests. */
 export async function installRenewalStructuredToolChoice(ctx: Context, scope: AsyncLocalStorage<LiveCallScope>) {
@@ -89,29 +90,9 @@ export class LiveSession {
         const scope=live.stageScope.getStore()
         if(scope){scope.toolBlocks=[];scope.providerFailureMessage=undefined}
         live.reserveModelRequest()
-        const start = Date.now()
-        const call: ModelCall = { stage: live.stageScope.getStore()?.stage || 'unknown', requested_model: request.model, returned_model: null, finish_reason: 'missing', input_tokens: 0, output_tokens: 0, duration_ms: 0, session_id: null }
-        for await (const chunk of next()) {
+        yield* observeModelStream(request.model,scope?.stage||'unknown',live.signal,next,call=>live.calls.push(call),chunk=>{
           if(scope&&chunk.type==='block-end'&&chunk.block.type==='tool-call')scope.toolBlocks!.push({name:chunk.block.name,arguments:chunk.block.arguments})
-          if (chunk.type === 'usage') {
-            call.cache_read_tokens = Math.max(call.cache_read_tokens || 0, chunk.usage.cacheReadTokens || 0)
-            call.cache_write_tokens = Math.max(call.cache_write_tokens || 0, chunk.usage.cacheWriteTokens || 0)
-            call.input_tokens = Math.max(call.input_tokens, (chunk.usage.inputTokens || 0) + (chunk.usage.cacheReadTokens || 0) + (chunk.usage.cacheWriteTokens || 0))
-            call.output_tokens = Math.max(call.output_tokens, chunk.usage.outputTokens || 0)
-          }
-          if (chunk.type === 'finish') {
-            call.finish_reason = chunk.reason.kind
-            const response = chunk.replayState?.response as { model?: string } | undefined
-            call.returned_model = response?.model || null
-            if (chunk.reason.kind === 'error') {
-              call.error_code = chunk.reason.failure.code || 'MODEL_ERROR'
-              if(scope)scope.providerFailureMessage=chunk.reason.failure.message
-            }
-          }
-          // Do not copy provider reasoning into product traces; the provider is configured off.
-          yield chunk
-        }
-        call.duration_ms = Date.now() - start; live.calls.push(call)
+        },message=>{if(scope)scope.providerFailureMessage=message})
       })
       const sessionId = SessionId(runId)
       live.parent = await ctx.sessionPersistence.stat(sessionId)
@@ -175,6 +156,7 @@ export class LiveSession {
         throw new Error(`LIVE_STAGE_FAILED:${stage}:${outcome.stopReason}:${failure?.error_code || outcome.diagnostic || 'no structured result'}`)
       }
       // Sequential stages own calls deterministically. Parallel specialists provide tool-specific labels in events.
+      execution.onStructured?.(structured)
       try {
         const layout=normalizeResearchNoteLayout(outputType,structured)
         if(layout.edits.length)console.warn(JSON.stringify({event:'renewal_note_layout_normalized',stage,session_id:String(child.id),fields:layout.edits,all_text_preserved:true}))

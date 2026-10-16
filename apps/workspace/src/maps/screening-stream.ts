@@ -11,8 +11,8 @@ export async function scanMap(bounds: MapScreenBounds, profile: MapScreenProfile
   }
   await consumeStream<ScreenEvent>(response,signal,receive)
 }
-export async function analyzeSelection(contextId:string,profile:MapScreenProfile,signal:AbortSignal,receive:(event:ResearchEvent)=>void){
-  const response=await fetch('/api/maps/screening/analysis',{method:'POST',credentials:'same-origin',signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify({context_id:contextId,profile})})
+export async function analyzeSelection(contextId:string,profile:MapScreenProfile,signal:AbortSignal,receive:(event:ResearchEvent)=>void,action?:'supplement'|'reevaluate'){
+  const response=await fetch('/api/maps/screening/analysis',{method:'POST',credentials:'same-origin',signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify({context_id:contextId,profile,...(action?{action}:{})})})
   if(!response.ok||!response.body){const e=await response.json().catch(()=>({}));throw Error(e.detail||'研究未启动。')}
   // Compatibility with older hosts is explicit; no simulated streaming.
   if(response.headers.get('content-type')?.includes('application/json')){receive({type:'complete',result:await response.json()});return}

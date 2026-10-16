@@ -126,11 +126,11 @@ class Basis(StrEnum):
 
 
 class Premise1(RootModel[str]):
-    root: str = Field(..., max_length=180, min_length=1)
+    root: str = Field(..., min_length=1)
 
 
 class Assumption1(RootModel[str]):
-    root: str = Field(..., max_length=180, min_length=1)
+    root: str = Field(..., min_length=1)
 
 
 class RenewalReasonedDimension(BaseModel):
@@ -142,8 +142,8 @@ class RenewalReasonedDimension(BaseModel):
     basis: Basis
     premises: list[Premise1] = Field(..., max_length=3, min_length=1)
     assumptions: list[Assumption1] = Field(..., max_length=3)
-    reason: str = Field(..., max_length=240, min_length=1)
-    verification: str = Field(..., max_length=180, min_length=1)
+    reason: str = Field(..., min_length=1)
+    verification: str = Field(..., min_length=1)
     evidence_refs: list[EvidenceRef] = Field(..., max_length=4)
 
 
@@ -165,28 +165,24 @@ class Priority(StrEnum):
     reserve = 'reserve'
 
 
-class Precondition(RootModel[str]):
-    root: str = Field(..., max_length=200)
-
-
 class RenewalWorkPackage(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
     id: str = Field(..., max_length=80, min_length=1)
-    target: str = Field(..., max_length=160, min_length=1)
+    target: str = Field(..., min_length=1)
     target_basis: TargetBasis
     source_id: str = Field(..., min_length=1)
-    quote: str = Field(..., max_length=600, min_length=8)
+    quote: str = Field(..., min_length=8)
     locator: str = Field(..., max_length=300, min_length=1)
-    intervention: str = Field(..., max_length=260, min_length=1)
-    scope: str = Field(..., max_length=220, min_length=1)
+    intervention: str = Field(..., min_length=1)
+    scope: str = Field(..., min_length=1)
     quantity: float | None = Field(..., ge=0.0)
     unit: str | None = Field(..., max_length=40)
     quantity_basis: QuantityBasis
-    delivery: str = Field(..., max_length=220, min_length=1)
+    delivery: str = Field(..., min_length=1)
     priority: Priority
-    preconditions: list[Precondition] = Field(..., max_length=5)
+    preconditions: list[str] = Field(..., max_length=5)
     evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
 
 
@@ -207,12 +203,12 @@ class RenewalInternalDataRequest(BaseModel):
     )
     id: str = Field(..., max_length=80, min_length=1)
     key: Key1
-    metric: str = Field(..., max_length=120, min_length=1)
-    purpose: str = Field(..., max_length=240, min_length=1)
-    collection_method: str = Field(..., max_length=300, min_length=1)
+    metric: str = Field(..., min_length=1)
+    purpose: str = Field(..., min_length=1)
+    collection_method: str = Field(..., min_length=1)
     unit: str = Field(..., max_length=100, min_length=1)
-    period: str = Field(..., max_length=160, min_length=1)
-    denominator: str = Field(..., max_length=180, min_length=1)
+    period: str = Field(..., min_length=1)
+    denominator: str = Field(..., min_length=1)
     related_package_ids: list[RelatedPackageId] = Field(..., max_length=8)
     evidence_refs: list[str] = Field(..., max_length=8)
 
@@ -789,6 +785,11 @@ class ModelContext(BaseModel):
     unclassified: list[str]
 
 
+class UsageStatus(StrEnum):
+    unknown = 'unknown'
+    reported = 'reported'
+
+
 class ModelCall(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -804,6 +805,7 @@ class ModelCall(BaseModel):
     cache_read_tokens: int | None = Field(None, ge=0)
     cache_write_tokens: int | None = Field(None, ge=0)
     error_code: str | None = None
+    usage_status: UsageStatus | None = None
 
 
 class Status8(StrEnum):
@@ -952,6 +954,44 @@ class Status11(StrEnum):
 
 class Reason(RootModel[str]):
     root: str = Field(..., max_length=240)
+
+
+class Execution(StrEnum):
+    completed = 'completed'
+    failed = 'failed'
+    cancelled = 'cancelled'
+    incomplete = 'incomplete'
+
+
+class Evidence(StrEnum):
+    complete = 'complete'
+    partial = 'partial'
+    missing = 'missing'
+
+
+class Version(StrEnum):
+    current = 'current'
+    stale = 'stale'
+
+
+class MissingDimension(StrEnum):
+    demand = 'demand'
+    supply = 'supply'
+    adaptation = 'adaptation'
+    implementation = 'implementation'
+    operations = 'operations'
+    resources = 'resources'
+
+
+class Completion(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    execution: Execution
+    evidence: Evidence
+    version: Version
+    evidence_revision: str
+    missing_dimensions: list[MissingDimension]
 
 
 class Tier(StrEnum):
@@ -2170,10 +2210,10 @@ class Change(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    topic: str = Field(..., max_length=100, min_length=1)
-    before: str = Field(..., max_length=300, min_length=1)
-    after: str = Field(..., max_length=300, min_length=1)
-    reason: str = Field(..., max_length=400, min_length=1)
+    topic: str = Field(..., min_length=1)
+    before: str = Field(..., min_length=1)
+    after: str = Field(..., min_length=1)
+    reason: str = Field(..., min_length=1)
     evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
 
 
@@ -2181,9 +2221,9 @@ class MissingMaterial(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    topic: str = Field(..., max_length=100, min_length=1)
-    request: str = Field(..., max_length=300, min_length=1)
-    reason: str = Field(..., max_length=400, min_length=1)
+    topic: str = Field(..., min_length=1)
+    request: str = Field(..., min_length=1)
+    reason: str = Field(..., min_length=1)
     evidence_refs: list[str] = Field(..., max_length=8)
 
 
@@ -2191,7 +2231,7 @@ class RoundReview(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    summary: str = Field(..., max_length=600, min_length=1)
+    summary: str = Field(..., min_length=1)
     changes: list[Change] = Field(..., max_length=8)
     missing_materials: list[MissingMaterial] = Field(..., max_length=8)
 
@@ -2200,8 +2240,8 @@ class Renewal(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    conclusion: str = Field(..., max_length=120, min_length=1)
-    reason: str = Field(..., max_length=300, min_length=1)
+    conclusion: str = Field(..., min_length=1)
+    reason: str = Field(..., min_length=1)
     evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
 
 
@@ -2215,8 +2255,8 @@ class Investment(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    conclusion: str = Field(..., max_length=120, min_length=1)
-    reason: str = Field(..., max_length=300, min_length=1)
+    conclusion: str = Field(..., min_length=1)
+    reason: str = Field(..., min_length=1)
     stage: Stage
     evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
 
@@ -2225,8 +2265,8 @@ class Returns(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    financial: str = Field(..., max_length=260, min_length=1)
-    social: str = Field(..., max_length=260, min_length=1)
+    financial: str = Field(..., min_length=1)
+    social: str = Field(..., min_length=1)
     evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
 
 
@@ -2249,9 +2289,9 @@ class RationaleItem(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    point: str = Field(..., max_length=200)
+    point: str
     source_id: str
-    quote: str = Field(..., max_length=1000)
+    quote: str
 
 
 class Mode2(StrEnum):
@@ -2263,13 +2303,9 @@ class Action2(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    title: str = Field(..., max_length=80)
-    detail: str = Field(..., max_length=240)
+    title: str
+    detail: str
     evidence_refs: list[str] = Field(..., max_length=8)
-
-
-class Requirement(RootModel[str]):
-    root: str = Field(..., max_length=160)
 
 
 class Path(BaseModel):
@@ -2278,10 +2314,10 @@ class Path(BaseModel):
     )
     mode: Mode2
     work_packages: list[RenewalWorkPackage] | None = Field(None, max_length=6)
-    title: str = Field(..., max_length=100)
-    description: str = Field(..., max_length=360)
+    title: str
+    description: str
     actions: list[Action2] = Field(..., max_length=5)
-    requirements: list[Requirement] = Field(..., max_length=5)
+    requirements: list[str] = Field(..., max_length=5)
 
 
 class Key6(StrEnum):
@@ -2319,11 +2355,11 @@ class Dimension1(BaseModel):
         extra='forbid',
     )
     key: Key6
-    current: str = Field(..., max_length=240)
+    current: str
     current_level: CurrentLevel
-    comprehensive: str = Field(..., max_length=240)
+    comprehensive: str
     comprehensive_level: ComprehensiveLevel
-    rebuild: str = Field(..., max_length=240)
+    rebuild: str
     rebuild_level: RebuildLevel
     evidence_refs: list[str] = Field(..., max_length=8)
 
@@ -2332,8 +2368,8 @@ class NextCheck(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    title: str = Field(..., max_length=80)
-    detail: str = Field(..., max_length=240)
+    title: str
+    detail: str
     evidence_refs: list[str] = Field(..., max_length=8)
 
 
@@ -2349,8 +2385,8 @@ class RenewalStrategy(BaseModel):
     )
     round_review: RoundReview | None = None
     decision_brief: DecisionBrief | None = None
-    headline: str = Field(..., max_length=120)
-    summary: str = Field(..., max_length=600)
+    headline: str
+    summary: str
     preferred_mode: PreferredMode
     rationale: list[RationaleItem] = Field(..., max_length=6)
     paths: list[Path] = Field(..., max_length=2)
@@ -2838,6 +2874,7 @@ class MapScreenAnalysis(BaseModel):
     research: ResearchTrace | None = None
     reused_from_context_id: str | None = Field(None, max_length=100)
     refresh_required: bool | None = None
+    completion: Completion | None = None
 
 
 class MapScreenCell(BaseModel):

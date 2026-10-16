@@ -16,7 +16,7 @@ export type StrategyDemoReplay = { kind: 'validated_model_replay'; source_projec
 export type StrategyContentIssue = { code: string; path: string; message: string }
 export type StrategyContentReview = { policy: 'advisory-v1'; status: 'clear' | 'needs_review'; checked_at: string; issues: StrategyContentIssue[]; follow_up: { search_queries:string[]; reading_focus:string[]; internal_data:string[] };
   recovered_from?: { round_id: string; session_id: string; candidate_sha256: string } }
-export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';
+export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';current_assessment?:import('./strategy-assessment').CurrentAssessment;
   strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; content_review?: StrategyContentReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
 
 export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compression'|'synthesis';

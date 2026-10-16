@@ -1,0 +1,26 @@
+{
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "files": {
+    "apps/host/experience.ts": "eb46706fbcb1f6e773b13313a83acbd7976346de1de25f86202df9fc48408b93",
+    "apps/host/generated/contracts.ts": "0d160dac7f75a63cd697b546cf42eb1205aaa37f11de55fba3fb6636d86b951f",
+    "apps/host/map-screening.ts": "1d478306ba3288f1ca8c767e2315567458dc7dfeff6cc3660dc9e5683b7e6c31",
+    "apps/host/rag-retrieval.ts": "3f41e01f7db9b3a0e9d49643d5e8dea9c8603ac6e72c7660979d4648232f34c7",
+    "apps/host/server.ts": "232de15b254c5a1dda885b7ff34da748d02f9a54166d85c3142a64cef50a470f",
+    "packages/contracts/schema.json": "fa6cff44559785881e698830d7e9c9ff14120408c1f980e505c6488f90a1bd82",
+    "packages/experience/hybrid-retrieval.ts": "66a0412fbbeae553b11dee5a62acad27b0b8039efec7ce9f75d22d53cb56868b",
+    "packages/experience/retrieval.ts": "272c42829487af1c12ac8f7f9c679c66575905c2265e517d0da744a19ff8ab83",
+    "packages/intelligence/repository.ts": "f82931c5b3ac6c2cc0d419d7f3d63e77975a4a2e0fc7a609c0db1336e325537a",
+    "packages/intelligence/service.ts": "c0378f6cffdbb963069b711fd3c0dac9da8e182928e0d193b541f7f2c4a9ce06",
+    "packages/retrofit/strategy.ts": "9223246b64ddac3733c5f5bdb9ac2ceec3ff0dd13036fa68753ca1e8e2a2030e",
+    "runtime/dsh/live-session.ts": "028f705bba8a913007a8d024a7e73013f4d0036aafe19db21b1e49e2334d1359",
+    "runtime/workflows/renewal-research.ts": "42d04d984b78aba8deff988d439451797d1ce8ae4b0fc20c179c3b98cd660a05",
+    "services/capabilities/generated/contracts.py": "271ed05655a5fab8bc75d993785c5efc979a7e1c23e26b834e0db1afe7444856",
+    "services/capabilities/research.ts": "2e65ecdd03f9af2771676162a3ce50898ecf14e84b28c919b88bfca76e0b58a1",
+    "services/map-screening/analyst.ts": "d273dc96d9b4319886b1bf95f09cae4e394172e87090d691e376b2dc0a1a93f1",
+    "services/map-screening/renewal-strategy.ts": "75344114cb2c44f1644e73047ada6cd7325d90181dfb52fdc3c1f0b3881471a9",
+    "services/map-screening/service.ts": "8b51c702ea74cd5a13fcd900c3ac8d8a253d96d55771130ff50626576ea8ac05",
+    "runtime/dsh/model-call-trace.ts": null,
+    "packages/maps/analysis-completion.ts": null,
+    "packages/retrofit/strategy-assessment.ts": null
+  }
+}

@@ -1778,6 +1778,32 @@
       ],
       "definition_of_done": "创建重试不重复、错误在窗口可见；准备检查和专家局部恢复可复现，压缩引文可还原，保留原硬约束与无调用次数上限政策；服务端定点发布和协议检查/页面验收有记录。",
       "evidence_log": "research/test_results/creation-reliability-runtime-deployment-20261016.json"
+    },
+    {
+      "id": "T-RESEARCH-RECOVERY-20261016",
+      "depends_on": [
+        "T-CREATION-RESEARCH-RELIABILITY-20261016"
+      ],
+      "goal": "修复执行完成与证据覆盖耦合、部分六维丢失、重试、RAG等待和情报复用，保留原Harness。",
+      "status": "in_progress",
+      "write_scope": [
+        "services/map-screening",
+        "apps/host",
+        "apps/workspace/src",
+        "packages/experience",
+        "packages/intelligence",
+        "packages/retrofit/strategy-assessment.ts",
+        "runtime/dsh",
+        "runtime/workflows/renewal-research.ts",
+        "packages/contracts/schema.json",
+        "tests/contracts",
+        "scripts/evaluate-research-retrieval.ts",
+        "scripts/deploy-research-recovery.py",
+        "docs/研判状态与检索恢复_20261016.md",
+        "agent/state.json"
+      ],
+      "definition_of_done": "定向行为回归、生产构建、源文件漂移保护、真实服务器与页面读回分别有记录；模型/业务结论不以工程测试冒充，原用户资料及权限保持。",
+      "evidence_log": "research/test_results/research-recovery-focused-20261016.log"
     }
   ]
 }

@@ -57,7 +57,7 @@ test('a genuine fallback opens the six model reasoning levels; selecting dimensi
 })
 
 test('old or incomplete reasoning does not invent a chart or empty switch; complete measured views remain the default', () => {
-  for (const change of [(value: StrategyPacket) => { delete value.strategy!.reasoning_dimensions }, (value: StrategyPacket) => { value.strategy!.reasoning_dimensions!.pop() }]) {
+  for (const change of [(value: StrategyPacket) => { delete value.strategy!.reasoning_dimensions }]) {
     const value = packet(); change(value)
     const document = parseHTML(renderToStaticMarkup(createElement(StrategyCurrentAssessment, props(value)))).document
     expect(document.querySelector('.strategy-assessment-switch')).toBeNull()
@@ -85,4 +85,13 @@ test('the actual assessment/current route shows the fallback chart without a wor
     expect(transport.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true)
     expect(value.strategy!.dimensions.every(row => row.current_level === 'unknown')).toBe(true)
   } finally { await act(async () => app.root.unmount()) }
+})
+
+test('a partial reasoning artifact preserves available model levels and leaves the missing axis unknown',()=>{
+ const value=packet();value.strategy!.reasoning_dimensions!.pop()
+ const document=parseHTML(renderToStaticMarkup(createElement(StrategyCurrentAssessment,props(value)))).document
+ expect(document.querySelector('.strategy-assessment-switch')).not.toBeNull()
+ expect(document.querySelector('.strategy-current-assessment')?.getAttribute('data-assessment-view')).toBe('reasoning')
+ expect(document.querySelector('svg[role=img]')?.getAttribute('aria-label')).toContain('5个维度已评估')
+ expect(document.querySelector('.strategy-reasoning-tag')?.textContent).toContain('5/6')
 })

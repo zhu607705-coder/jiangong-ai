@@ -1,8 +1,9 @@
+import {queryScore} from '../intelligence/domain'
 import type {ProjectRecord} from '../../apps/host/store'
 import type {RagQueryPlan,RagSemanticIndex,RagSemanticSelection,RagAnswer} from '../../apps/host/generated/contracts'
 import type {ParsedDocument} from './document-slices'
 import type {RagExportBundle} from './rag-export'
-import {prepareRetrievalCandidates,retrieveProjectEvidence,retrievalTopics,type RetrievalRequest,type RetrievalResponse,type RetrievalRanker,type RetrievalCandidate,type RetrievalHit,type RetrievalAssistance} from './retrieval'
+import {prepareRetrievalCandidates,retrieveProjectEvidence,retrievalTopics,queryObjectCompatible,readRetrievalContext,type RetrievalRequest,type RetrievalResponse,type RetrievalRanker,type RetrievalCandidate,type RetrievalHit,type RetrievalAssistance} from './retrieval'
 import {semanticWindows,SemanticIndexRepository,type SemanticWindow,type SemanticEntry} from './semantic-index'
 
 export interface RagModelPort {
@@ -12,7 +13,7 @@ export interface RagModelPort {
   close():Promise<void>
 }
 type ModelFactory=(signal:AbortSignal)=>Promise<RagModelPort>
-type Options={signal:AbortSignal;allowInternalAI?:boolean}
+type Options={signal:AbortSignal;allowInternalAI?:boolean;onOriginals?:(result:RetrievalResponse)=>void}
 const unique=(items:string[])=>[...new Set(items.filter(Boolean))]
 const publicForAI=(candidate:RetrievalCandidate)=>candidate.source.visibility==='public'&&candidate.source.data_class==='public'
 const aiCandidates=(candidates:RetrievalCandidate[],allowInternal:boolean)=>candidates.filter(candidate=>publicForAI(candidate)||allowInternal)
@@ -59,11 +60,20 @@ export class HybridRetrievalService {
   async retrieve(project:ProjectRecord,bundle:RagExportBundle,originals:ParsedDocument[],request:RetrievalRequest,options:Options):Promise<RetrievalResponse> {
     options.signal.throwIfAborted()
     const prepared=prepareRetrievalCandidates(project,bundle,originals,request)
-    const candidates=prepared.candidates,byId=new Map(candidates.map(candidate=>[candidate.id,candidate]))
+    const candidates=prepared.candidates.filter(candidate=>queryObjectCompatible(request.question,candidate.file_name+'\n'+candidate.text)),byId=new Map(candidates.map(candidate=>[candidate.id,candidate]))
     const assistance:RetrievalAssistance={status:'keyword_fallback',model:null,calls:0,answer:[],public_queries:[],internal_requests:[],reading_guidance:[],index:{eligible:0,indexed:0,pending:0,reused:0},warnings:[]}
     const permittedWindows=semanticWindows(aiCandidates(candidates,!!options.allowInternalAI))
     assistance.index.eligible=permittedWindows.length;assistance.index.pending=permittedWindows.length
     let model:RagModelPort|null=null,plan:RagQueryPlan={queries:[],concepts:[],subquestions:[]}
+    const lexicalRanker:RetrievalRanker=async(input,query,limit)=>{
+      try{return await this.ranker(input,query,limit)}catch{
+        options.signal.throwIfAborted()
+        assistance.warnings.push('本地检索服务本次未响应，按已有原文词项返回可阅读结果。')
+        return {matches:input.sources.map(source=>({source_id:source.id,score:queryScore({title:source.title,text:source.untrusted_text||''},query)})).filter(row=>row.score>0).sort((a,b)=>b.score-a.score).slice(0,limit||30)}
+      }
+    }
+    const immediate=await retrieveProjectEvidence(project,bundle,originals,request,lexicalRanker,{relaxTopics:true,recallLimit:30})
+    options.onOriginals?.({...immediate,hits:immediate.hits.slice(0,request.limit||5).map(hit=>({...hit,context:readRetrievalContext(hit,candidates)}))})
     try {
       if(this.modelFactory) {
         try {
@@ -73,7 +83,7 @@ export class HybridRetrievalService {
       } else assistance.warnings.push('模型API尚未配置，当前使用关键词与同义词检索。')
       options.signal.throwIfAborted()
       const queries=unique([request.question,...plan.queries]).slice(0,4)
-      const lexical=await Promise.allSettled(queries.map(question=>retrieveProjectEvidence(project,bundle,originals,{...request,question},this.ranker,{relaxTopics:true,recallLimit:30})))
+      const lexical=await Promise.allSettled(queries.map(question=>question===request.question?Promise.resolve(immediate):retrieveProjectEvidence(project,bundle,originals,{...request,question},lexicalRanker,{relaxTopics:true,recallLimit:30})))
       const lexicalResults=lexical.flatMap(result=>result.status==='fulfilled'?[result.value]:[])
       options.signal.throwIfAborted()
       if(lexicalResults.length<lexical.length)assistance.warnings.push('部分关键词请求未完成，保留其他召回结果。')
@@ -85,19 +95,26 @@ export class HybridRetrievalService {
         if(excerpt)row.hit.matched_excerpt=excerpt
         ranked.set(candidate.id,row)
       }
-      for(const result of lexicalResults)result.hits.forEach((hit,rank)=>vote(hit,rank,1/queries.length,'keyword'))
+      for(const result of lexicalResults)result.hits.forEach((hit,rank)=>{if(byId.has(hit.id))vote(hit,rank,1/queries.length,'keyword')})
       if(model) {
         const allowed=aiCandidates(candidates,!!options.allowInternalAI),windows=permittedWindows
         if(allowed.length<candidates.length)assistance.warnings.push('未获本次AI处理授权的材料只在本地参与关键词检索。')
-        const indexSignal=AbortSignal.any([options.signal,AbortSignal.timeout(45000)])
-        const indexed=await this.indexWindows(project,windows,model,indexSignal).catch(()=>({entries:[] as SemanticEntry[],eligible:windows.length,indexed:0,pending:windows.length,reused:0,warnings:['索引存储暂不可用，继续返回原文关键词结果。']}))
-        assistance.index={eligible:indexed.eligible,indexed:indexed.indexed,pending:indexed.pending,reused:indexed.reused}
-        assistance.warnings.push(...indexed.warnings)
+        // Query handling only reads existing indexes. Construction belongs to the durable background job.
+        const cached=await this.repository.load(project,windows,model.name).catch(()=>[] as SemanticEntry[])
+        assistance.index={eligible:windows.length,indexed:cached.length,pending:windows.length-cached.length,reused:cached.length}
+        if(assistance.index.pending)assistance.warnings.push('部分语义索引待后台补充，现有原文已可阅读。')
+        const cachedIds=new Set(cached.map(entry=>entry.source_id))
+        const pool:SemanticEntry[]=[...cached,...windows.filter(window=>!cachedIds.has(window.id)).map(window=>({source_id:window.id,candidate_id:window.candidate_id,version:window.version,locator:window.locator,start:window.start,end:window.end,summary:window.text.slice(0,700),concepts:[],questions:[]}))]
+        const semanticQuery=[request.question,...plan.queries,...plan.concepts].join(' ')
+        pool.sort((a,b)=>queryScore({title:b.summary,text:[...b.concepts,...b.questions].join(' ')},semanticQuery)-queryScore({title:a.summary,text:[...a.concepts,...a.questions].join(' ')},semanticQuery)||a.source_id.localeCompare(b.source_id))
+        let catalogChars=0
+        const bounded=pool.slice(0,60).filter(entry=>{const size=JSON.stringify(entry).length;if(catalogChars+size>24000)return false;catalogChars+=size;return true})
+        if(bounded.length<pool.length)assistance.warnings.push('本次只对有界候选进行语义判读，未让模型逐批扫描全库。')
         let semanticCompleted=false
         const semanticSeen=new Set<string>()
-        for(let start=0;start<indexed.entries.length;start+=60) {
+        for(let start=0;start<bounded.length;start+=60) {
           if(options.signal.aborted)break
-          const catalog=indexed.entries.slice(start,start+60),entries=new Map(catalog.map(entry=>[entry.source_id,entry]))
+          const catalog=bounded.slice(start,start+60),entries=new Map(catalog.map(entry=>[entry.source_id,entry]))
           try {
             const selected=await model.call<RagSemanticSelection>('RagSemanticSelection',basePrompt+'\n按语义关联选择真正有助于回答问题的索引项，最多15条，相关性降序。无关联可为空；不要仅因项目相同选入。source_id只能来自目录。\n'+JSON.stringify({question:request.question,subquestions:plan.subquestions,concepts:plan.concepts,untrusted_index:catalog}),options.signal)
             semanticCompleted=true
@@ -109,7 +126,7 @@ export class HybridRetrievalService {
             })
           } catch {assistance.warnings.push('部分语义召回未完成，保留关键词与已取得的语义结果。')}
         }
-        assistance.status=semanticCompleted?(indexed.pending?'partial':'api'):'keyword_fallback'
+        assistance.status=semanticCompleted?(assistance.index.pending||bounded.length<pool.length?'partial':'api'):'keyword_fallback'
       }
       const topics=retrievalTopics(request.question)
       const hits=[...ranked.values()].map(row=>({ ...row.hit,score:row.score+(topics.explicit&&topics.matches(row.hit.text)?0.001:0),
@@ -123,11 +140,13 @@ export class HybridRetrievalService {
         for(const neighbor of [siblings[position-1],siblings[position+1]])if(neighbor&&!hits.some(row=>row.id===neighbor.id)&&!context.some(row=>row.id===neighbor.id))context.push({...neighbor,score:0,match_reasons:[...neighbor.match_reasons,'相邻原文上下文，需结合直接命中阅读']})
       }
       hits.push(...context.slice(0,Math.max(0,(request.limit||5)-hits.length)))
+      for(const hit of hits)hit.context=readRetrievalContext(hit,candidates)
       const quoteText=(hit:RetrievalHit)=>hit.matched_excerpt||hit.text.slice(0,6000)
       const answerHits=hits.filter(hit=>publicForAI(hit)||options.allowInternalAI)
+      const answerContext=answerHits.flatMap(hit=>hit.context||[]).filter((row,index,all)=>all.findIndex(other=>other.id===row.id)===index)
       if(model&&answerHits.length&&!options.signal.aborted)try {
-        const answer=await model.call<RagAnswer>('RagAnswer',basePrompt+'\n用最多5条简短结论回答。每条结论至少引用一条所给原文中的连续quote，source_id使用对应片段ID。没有依据的内容只写入missing，不写入claims；若仅有参考案例，说明适用范围。另给不含内部敏感信息的公开检索问法、阅读重点与需内部补充的资料。\n'+JSON.stringify({question:request.question,untrusted_passages:answerHits.map(hit=>({source_id:hit.id,title:hit.file_name,locator:hit.locator,source_kind:hit.source_kind,text:quoteText(hit)}))}),options.signal)
-        const allowedQuotes=new Map(answerHits.map(hit=>[hit.id,quoteText(hit)]))
+        const answer=await model.call<RagAnswer>('RagAnswer',basePrompt+'\n用最多5条简短结论回答。每条结论至少引用一条所给原文中的连续quote，source_id使用对应片段ID。没有依据的内容只写入missing，不写入claims；若仅有参考案例，说明适用范围。另给不含内部敏感信息的公开检索问法、阅读重点与需内部补充的资料。\n'+JSON.stringify({question:request.question,untrusted_passages:[...answerHits.map(hit=>({source_id:hit.id,title:hit.file_name,locator:hit.locator,source_kind:hit.source_kind,text:quoteText(hit)})),...answerContext.map(row=>({source_id:row.id,locator:row.locator,text:row.text,relationship:row.relationship}))]}),options.signal)
+        const allowedQuotes=new Map([...answerHits.map(hit=>[hit.id,quoteText(hit)] as const),...answerContext.map(row=>[row.id,row.text] as const)])
         for(const claim of answer.claims) {
           const citations=claim.citations.filter(citation=>citation.quote.trim().length>=4&&allowedQuotes.get(citation.source_id)?.includes(citation.quote))
           if(citations.length&&citations.length===claim.citations.length)assistance.answer.push({text:claim.text,citations:citations.map(citation=>({hit_id:citation.source_id,quote:citation.quote}))})

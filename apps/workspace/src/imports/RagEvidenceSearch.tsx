@@ -1,3 +1,4 @@
+import {consumeStream} from '../maps/screening-stream'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../api'
 import type { RetrievalHit, RetrievalRequest, RetrievalResponse } from '../../../../packages/experience/retrieval'
@@ -17,6 +18,8 @@ const scopeSummary = (query: RetrievalRequest) => [query.measure_key ? measures[
 
 export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence, variant = 'page', initialQuestion, onLocateHit, decisionLocations, onNavigateDecision, decisionLinksState = 'ready', featureLocations, onNavigateFeature }: Props) {
   const floating = variant === 'floating'
+  const resultRoot=useRef<HTMLDivElement|null>(null)
+  function inspectTrace(target:'scope'|'hits'|'citations'){const element=resultRoot.current?.querySelector<HTMLElement>(target==='scope'?'.rag-scope-details':target==='hits'?'article':'.rag-answer');if(element?.tagName==='DETAILS')(element as HTMLDetailsElement).open=true;element?.scrollIntoView?.({block:'nearest',behavior:'smooth'})}
   const [question, setQuestion] = useState(initialQuestion ?? '')
   const [measure, setMeasure] = useState(''), [object, setObject] = useState(''), [stage, setStage] = useState(''), [asOf, setAsOf] = useState(''), [includeAI, setIncludeAI] = useState(false)
   const [result, setResult] = useState<RetrievalResponse | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState('')
@@ -30,12 +33,30 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
   useEffect(() => {
     if (!request || request.projectId !== projectId || request.revision !== revision) return
     const controller = new AbortController(); setBusy(true); setError(''); setResult(null)
-    void api<RetrievalResponse>(`/projects/${encodeURIComponent(projectId)}/knowledge/retrieve`, request.query, controller.signal)
-      .then(value => { if (!controller.signal.aborted) setResult(value) })
+    const search=async()=>{
+      if(!request.query.use_ai)return api<RetrievalResponse>(`/projects/${encodeURIComponent(projectId)}/knowledge/retrieve`,request.query,controller.signal)
+      const response=await fetch(`/api/projects/${encodeURIComponent(projectId)}/knowledge/retrieve`,{method:'POST',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify(request.query)})
+      if(!response.ok){const error=await response.json().catch(()=>({}));throw new Error(error.detail||'检索未完成')}
+      if(!response.headers.get('content-type')?.includes('application/x-ndjson'))return response.json() as Promise<RetrievalResponse>
+      let complete:RetrievalResponse|undefined
+      await consumeStream<{type:'originals'|'complete';result:RetrievalResponse}|{type:'error';message:string}>(response,controller.signal,event=>{
+        if(event.type==='error'){setError(event.message);return}
+        setResult(event.result)
+        if(event.type==='complete')complete=event.result
+      })
+      return complete
+    }
+    void search().then(value=>{if(value&&!controller.signal.aborted)setResult(value)})
       .catch(cause => { if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : '检索未完成') })
       .finally(() => { if (!controller.signal.aborted) setBusy(false) })
     return () => controller.abort()
   }, [projectId, revision, request])
+  function citationHit(id:string):RetrievalHit|undefined{
+    const direct=result?.hits.find(hit=>hit.id===id)
+    if(direct)return direct
+    const parent=result?.hits.find(hit=>hit.context?.some(row=>row.id===id)),context=parent?.context?.find(row=>row.id===id)
+    return parent&&context?{...parent,id:context.id,locator:context.locator,text:context.text,matched_excerpt:undefined,context:[],measure_links:[],matched_measure_links:[],measure_mentions:[],stages:[],objects:[],review_statuses:[]}:undefined
+  }
   const query: RetrievalRequest = { question: question.trim(), ...(measure.trim() ? { measure_key: measure.trim() } : {}), ...(object.trim() ? { object_ref: object.trim() } : {}), ...(stage.trim() ? { stage: stage.trim() } : {}), ...(asOf ? { as_of: asOf } : {}), include_ai: includeAI, limit: 5,use_ai:useAI,allow_internal_ai:allowInternalAI }
   const filtered = !!(measure || object || stage || asOf || includeAI)
   function search(unrestricted = false) {
@@ -71,12 +92,19 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
       { label: '资金投入', question: '更新资金由谁承担，投资和运营费用有什么依据？' },
       { label: '更新模式', question: '综合整治与原拆原建各有哪些实施条件和依据？' },
     ].map(example => <button type="button" key={example.label} onClick={() => { clearFilters(); setQuestion(example.question); setRequest(null); setResult(null) }}>{example.label}</button>)}</div>
+    {busy&&result&&<p role="status">已找到 {result.hits.length} 条原文，可以先阅读；语义补充仍在进行。</p>}
     {error && <p role="alert">{error}</p>}
-    {result?.project_id === projectId && request?.revision === revision && <div className="rag-search-results">
+    {result?.project_id === projectId && request?.revision === revision && <div ref={resultRoot} className="rag-search-results">
+      <nav className="rag-evidence-process" aria-label="本次资料使用过程">
+        <button type="button" onClick={()=>inspectTrace('scope')}><span>资料范围</span><strong>{result.candidate_counts.documents+(result.candidate_counts.source_texts||0)}</strong></button>
+        <button type="button" onClick={()=>inspectTrace('scope')}><span>可检索原文</span><strong>{result.candidate_counts.eligible_chunks}</strong></button>
+        <button type="button" onClick={()=>inspectTrace('hits')} disabled={!result.hits.length}><span>本轮命中</span><strong>{result.hits.length}</strong></button>
+        <button type="button" onClick={()=>inspectTrace('citations')} disabled={!result.assistance?.answer.length}><span>回答引文</span><strong>{new Set(result.assistance?.answer.flatMap(row=>row.citations.map(cite=>JSON.stringify(cite)))||[]).size}</strong></button>
+      </nav>
       <p role="status">{result.hits.length}条命中 · {result.candidate_counts.documents}份导入文件{result.candidate_counts.source_texts !== undefined && ` · ${result.candidate_counts.source_texts}份已收集来源`}{!floating && ` · ${result.candidate_counts.eligible_chunks}个符合范围的原文片段`}</p>
       <div className="rag-submitted-scope"><strong>本次问题：{result.question}</strong><p>{request && scopeSummary(request.query)}</p></div>
       {result.assistance&&<section className="rag-answer" aria-label="资料回答与后续查证"><header><h3>{result.assistance.answer.length?'资料回答':'继续寻找依据'}</h3><span>{result.method==='api_semantic_bm25'?'语义＋关键词':'关键词检索'}</span></header>
-        {result.assistance.answer.map((claim,index)=><div key={index}><p>{claim.text}</p>{claim.citations.map((citation,i)=>{const hit=result.hits.find(hit=>hit.id===citation.hit_id);return hit&&<div className="rag-answer-citation" key={`${citation.hit_id}:${i}`}><blockquote>{citation.quote}</blockquote><button type="button" onClick={()=>onLocateHit?onLocateHit(hit):onEvidence?.([hit.source.id])}>原文依据 · {hit.file_name} · {hit.locator} →</button></div>})}</div>)}
+        {result.assistance.answer.map((claim,index)=><div key={index}><p>{claim.text}</p>{claim.citations.map((citation,i)=>{const hit=citationHit(citation.hit_id);return hit&&<div className="rag-answer-citation" key={`${citation.hit_id}:${i}`}><blockquote>{citation.quote}</blockquote><button type="button" onClick={()=>onLocateHit?onLocateHit(hit):onEvidence?.([hit.source.id])}>原文依据 · {hit.file_name} · {hit.locator} →</button></div>})}</div>)}
         {!!result.assistance.reading_guidance.length&&<div><strong>继续阅读</strong><ul>{result.assistance.reading_guidance.map(text=><li key={text}>{text}</li>)}</ul></div>}
         {!!result.assistance.public_queries.length&&<div><strong>公开资料补查</strong>{result.assistance.public_queries.map(text=><a key={text} href={`https://www.bing.com/search?q=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">{text} ↗</a>)}</div>}
         {!!result.assistance.internal_requests.length&&<details><summary>需要内部补充的资料</summary><ul>{result.assistance.internal_requests.map(text=><li key={text}>{text}</li>)}</ul></details>}
@@ -91,6 +119,7 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
           <p>原文定位：{hit.locator} · {hit.source_date ? `来源 ${hit.source_date}` : '原来源日期未登记'}{hit.content_status === 'excerpt' ? ' · 已收集摘录' : hit.content_status === 'full_text' ? ' · 已获取正文' : ''}</p>
           <p>{hit.review_statuses.map(value => statuses[value as keyof typeof statuses] || value).join(' / ') || '原文提及，尚未形成已审核字段'}</p>
           <blockquote>{floating && excerpt.length > 280 ? `${excerpt.slice(0, 280)}…` : excerpt}</blockquote>
+          {!!hit.context?.length&&<details className="rag-structural-context"><summary>查看所属标题、表头与相邻原文</summary>{hit.context.map(row=><div key={row.id}><strong>{row.relationship==='heading'?'所属标题':row.relationship==='table_header'?'对应表头':'相邻原文'} · {row.locator}</strong><blockquote>{row.text}</blockquote><button type="button" onClick={()=>{const selected=citationHit(row.id);if(selected)onLocateHit?.(selected)}}>定位这一段原文 →</button></div>)}</details>}
           {floating && excerpt.length > 280 && <details><summary>展开完整原文片段</summary><blockquote>{excerpt}</blockquote></details>}
           <div className="rag-hit-basis"><strong>命中依据</strong><p>{hit.match_reasons.length ? hit.match_reasons.join('；') : '按本次问题检索得到的原文片段，可打开定位核对。'}</p></div>
           <div className="rag-hit-actions">{onLocateHit ? <button type="button" onClick={() => onLocateHit(hit)}>定位这段原文 →</button> : onEvidence && <button type="button" onClick={() => onEvidence([hit.source.id])}>定位项目材料</button>}{hit.source.url && /^https?:\/\//i.test(hit.source.url) && <a href={hit.source.url} target="_blank" rel="noreferrer">打开原来源 ↗</a>}</div>
@@ -99,7 +128,7 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
         </article>
       })}
       {!result.hits.length && <div className="rag-empty-results"><p>本次范围没有匹配原文。可更换问题中的具体对象或事项，或清除已设定的筛选后重查。</p>{filtered && <button type="button" onClick={() => search(true)}>清除筛选并重查</button>}{onEvidence && <button type="button" onClick={() => onEvidence([])}>查看当前项目全部资料</button>}</div>}
-      <details><summary>{floating ? '查看检索范围与未采用资料' : `本次检索的范围检查与排除原因 · ${result.skipped.length}项`}</summary><p>{result.score_meaning} {result.ranking_note}</p><p>实际检索词：{result.rank_query}</p>{result.query_expansions.map(item => <p key={item.added_term}>{item.matched_terms.join(' / ')} → {item.added_term}：{item.reason}</p>)}{result.skipped.map((skip, index) => <p key={index}>{skip.document_id}{skip.locator ? ` · ${skip.locator}` : ''}：{skip.reason}</p>)}</details>
+      <details className="rag-scope-details"><summary>{floating ? '查看检索范围与未采用资料' : `本次检索的范围检查与排除原因 · ${result.skipped.length}项`}</summary><p>{result.score_meaning} {result.ranking_note}</p><p>实际检索词：{result.rank_query}</p>{result.query_expansions.map(item => <p key={item.added_term}>{item.matched_terms.join(' / ')} → {item.added_term}：{item.reason}</p>)}{result.skipped.map((skip, index) => <p key={index}>{skip.document_id}{skip.locator ? ` · ${skip.locator}` : ''}：{skip.reason}</p>)}</details>
     </div>}
   </section>
 }

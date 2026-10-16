@@ -1,0 +1,10 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/research-recovery
+
+················
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  21:58:13
+   Duration  6.31s (transform 190ms, setup 0ms, import 547ms, tests 5.65s, environment 0ms)
+

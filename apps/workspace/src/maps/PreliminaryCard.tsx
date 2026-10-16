@@ -14,6 +14,7 @@ import { analyzeSelection } from './screening-stream'
 import { buildPreliminaryResearch } from '../../../../packages/maps/preliminary-research'
 import { mapRenewalModeInput } from '../../../../packages/retrofit/renewal-mode'
 import RenewalModePanel from './RenewalModePanel'
+import {withAnalysisCompletion} from '../../../../packages/maps/analysis-completion'
 
 export default function PreliminaryCard({ selection, profile, cell, onContext, onProfile, onOpenProject, onAssessment }: {
   selection: PlaceSelection; profile: MapScreenProfile; theme: MapScreenTheme; cell: MapScreenCell | null;
@@ -24,6 +25,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const [stage,setStage]=useState<'context'|'analysis'|'done'>('context'),[error,setError]=useState(''),[retry,setRetry]=useState(0)
   const [sourcesOpen,setSourcesOpen]=useState(false),[progress,setProgress]=useState<ResearchProgress[]>([])
   const [tasksOpen,setTasksOpen]=useState(false)
+  const [attemptState,setAttemptState]=useState<'cancelled'|'failed'|null>(null)
   const analysisAbort=useRef<AbortController|null>(null)
   const callbacks=useRef({onContext,onAssessment});callbacks.current={onContext,onAssessment}
   const restoreAbort=useRef<AbortController|null>(null),viewIdentity=useRef('')
@@ -52,7 +54,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     callbacks.current.onAssessment?.(snapshot.id,result)
   }
   useEffect(()=>{
-    analysisAbort.current?.abort();setAnalysis(null);setProgress([]);setError('');setStage(s=>s==='analysis'?'done':s)
+    analysisAbort.current?.abort();setAnalysis(null);setProgress([]);setError('');setAttemptState(null);setStage(s=>s==='analysis'?'done':s)
     if(!context)return
     const controller=new AbortController(),identity=viewIdentity.current
     restoreAbort.current=controller
@@ -63,20 +65,20 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     }).catch(()=>{})
     return()=>controller.abort()
   },[profile,context?.id])
-  async function analyze(){
+  async function analyze(action?:'supplement'|'reevaluate'){
     if(!context||stage==='analysis'||!canWrite)return
     restoreAbort.current?.abort()
     const controller=new AbortController();analysisAbort.current=controller
     const identity=viewIdentity.current
-    setStage('analysis');setError('');setProgress([])
+    setStage('analysis');setError('');setProgress([]);setAttemptState(null)
     try{
       await analyzeSelection(context.id,profile,controller.signal,event=>{
         if(controller.signal.aborted||analysisAbort.current!==controller||viewIdentity.current!==identity)return
         if(event.type==='progress')setProgress(old=>[...old,event].slice(-40))
         if(event.type==='error')setError(event.message)
         if(event.type==='brief'||event.type==='complete')receiveStudy(event.result,context)
-      })
-    }catch(e){if(!controller.signal.aborted)setError(e instanceof Error?e.message:'研究未完成。')}
+      },action)
+    }catch(e){if(!controller.signal.aborted){setAttemptState('failed');setError(e instanceof Error?e.message:'研究未完成。')}}
     finally{if(!controller.signal.aborted&&analysisAbort.current===controller)setStage('done')}
   }
   const model=analysis?.assessment,local=context?.local_projects.filter(p=>p.relation==='within_scope')||[]
@@ -89,6 +91,9 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const preview=context&&profile==='neighborhood'?buildPreliminaryResearch(context,{sources:analysis?.research_sources,records:analysis?.research_records}):null
   const projectAdvice=profile==='neighborhood'?local.filter(p=>p.business_profile==='neighborhood'&&(context?.target.object_ref===`project:${p.project_id}`||context?.target.boundary_source===`project:${p.project_id}`)).map(p=>p.neighborhood_action).filter(Boolean):[]
   const labels=factorLabels(profile)
+  const completion=analysis&&context?withAnalysisCompletion(analysis,context).completion:null
+  if(completion&&attemptState)completion.execution=attemptState
+  const missingLabels=completion?.missing_dimensions.map(key=>profile==='neighborhood'?({demand:'居民需求',supply:'公共服务',adaptation:'居住工程',implementation:'实施协同',operations:'长效维护',resources:'资金交付'})[key]:key)||[]
   return <section ref={card} className="initial-assessment" aria-label="区域初步分析">
     {stage==='context'&&<p role="status">正在读取所选位置…</p>}
     {!canWrite&&!context&&stage!=='context'&&<p>公开浏览可查看已保存项目；此位置尚无可读取的研究资料，管理员登录后可研究。</p>}
@@ -113,7 +118,8 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
         {model.next_steps.slice(0,1).map((step,i)=><p className="next-action" key={i}><strong>下一步</strong>{step}</p>)}
       </div>:stage!=='analysis'&&!preview&&<div className="selection-signals">{signals.length?signals.map(s=><article key={s.title}><h4>{s.title}</h4><p className="signal-observation">{s.observation}</p><p>{s.implication}</p></article>):<p>研究这处空间的具体参与路径。</p>}</div>}
       <div className="assessment-ai-action"><select aria-label="初判研究方向" value={profile} disabled={stage==='analysis'} onChange={e=>onProfile(e.target.value as MapScreenProfile)}><option value="neighborhood">{SCREEN_PROFILES.neighborhood.label}</option><optgroup label="其他方向（历史通用）">{Object.entries(SCREEN_PROFILES).filter(([id])=>id!=="neighborhood").map(([id,p])=><option key={id} value={id}>{p.label}</option>)}</optgroup></select>
-        {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setStage('done');setError(model?'简报已保留，评分已停止。':'已停止，已取得的过程保留。')}}>停止</button>:<button onClick={()=>void analyze()} disabled={!canWrite||!!model&&analysis?.status==='completed'&&!analysis.refresh_required} title={!canWrite?'管理员登录后可研究':undefined}><IconSparkles size={15}/>{analysis?.refresh_required?'重新取证':model?(analysis?.status==='completed'?'已研判':'重试评分'):'研判此处'}</button>}</div>
+        {stage==='analysis'?<button onClick={()=>{analysisAbort.current?.abort();setAttemptState('cancelled');setStage('done');setError(model?'简报已保留，评分已停止。':'已停止，已取得的过程保留。')}}>停止</button>:model?<><button onClick={()=>void analyze('supplement')} disabled={!canWrite}>补查缺失资料</button><button onClick={()=>void analyze('reevaluate')} disabled={!canWrite||analysis?.refresh_required}>按现有资料重评</button></>:<button onClick={()=>void analyze()} disabled={!canWrite}><IconSparkles size={15}/>研判此处</button>}</div>
+      {completion&&<div className="assessment-completion" data-evidence={completion.evidence} data-execution={completion.execution} role="status"><strong>{completion.execution==='cancelled'?'本轮已停止，已有成果保留':completion.execution==='completed'?'本轮处理已完成':completion.execution==='failed'?'本轮更新未完成，已取得成果保留':'已取得部分成果'}</strong><p>{completion.evidence==='complete'?'六维均已有依据':missingLabels.length===6?'当前六维尚缺可评分的对象依据':`已有 ${6-missingLabels.length} 个维度依据；${missingLabels.join('、')}待补查`} · {completion.version==='stale'?'资料已变化，需更新':'对应当前资料快照'}</p></div>}
       <ResearchActivity events={progress} running={stage==='analysis'}/>
       {analysis?.decision_support?.dashboard&&<DecisionDashboard value={analysis.decision_support.dashboard} onEvidence={showEvidence}/>}
       <button className="assessment-source-toggle" aria-expanded={sourcesOpen} onClick={()=>setSourcesOpen(v=>!v)}>查看依据 <IconChevronDown size={14}/></button>

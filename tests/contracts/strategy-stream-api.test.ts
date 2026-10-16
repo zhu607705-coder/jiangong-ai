@@ -86,3 +86,22 @@ it('reports a failed refresh without replacing a completed cached result', async
   const saved = await fetch(origin + '/api/projects/P-STREAM/renewal-strategy').then(response => response.json())
   expect(saved.status).toBe('completed')
 })
+
+it('re-evaluates an existing same-snapshot public packet without requiring another public search',async()=>{
+ await fetch(origin+'/api/projects/P-STREAM/renewal-strategy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh:true})})
+ const hash=research.mock.calls[0][3]
+ const sources=[{id:'OBJECT',title:'对象原文',text:'本对象供水设施按原范围研究。',role:'current' as const,url:null,published_at:null,locator:'line:1'}]
+ cache={...result,input_hash:hash,created_at:new Date().toISOString(),sources,research:{status:'partial',queries:['已执行检索'],source_ids:['OBJECT'],warnings:[],reused:false}}
+ const response=await fetch(origin+'/api/projects/P-STREAM/renewal-strategy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({research_action:'reevaluate',expected_context_version:1})})
+ expect(response.status).toBe(200)
+ expect(research.mock.calls.at(-1)?.[7].savedResearch).toEqual({sources,research:cache.research})
+})
+
+it('routes internal packet re-evaluation back to explicit material consent instead of sending it again',async()=>{
+ await fetch(origin+'/api/projects/P-STREAM/renewal-strategy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh:true})})
+ cache={...result,input_hash:research.mock.calls[0][3],sources:[{id:'PRIVATE',title:'内部问卷',text:'PRIVATE_CANARY',visibility:'internal',data_class:'internal',role:'current',url:null,published_at:null,locator:'line:1'}]}
+ const response=await fetch(origin+'/api/projects/P-STREAM/renewal-strategy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({research_action:'reevaluate'})})
+ expect(response.status).toBe(422)
+ expect((await response.json()).detail).toContain('确认本轮 AI')
+ expect(research).toHaveBeenCalledTimes(1)
+})
