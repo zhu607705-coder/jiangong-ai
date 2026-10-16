@@ -4046,5 +4046,40 @@
       "origin": "https://laneanew.cn/",
       "project_metadata_unchanged": 36
     }
+  },
+  "decision_project_guidance_20261016": {
+    "status": "implemented_verified_deployment_pending",
+    "as_of": "2026-10-16",
+    "changed_files": [
+      "agent/mission.md",
+      "agent/state.json",
+      "agent/tasks.json",
+      "apps/host/server.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/ConcreteWorkPlan.tsx",
+      "apps/workspace/src/components/ProjectOverview.tsx",
+      "apps/workspace/src/components/ProjectTasksPage.tsx",
+      "apps/workspace/src/components/strategy-direction-text.ts",
+      "docs/Decision快速研判与推理暂估_20261016.md",
+      "research/reuse_manifest.json",
+      "packages/decision/project-guidance.ts",
+      "services/capabilities/project-decision.ts",
+      "apps/host/project-decision.ts",
+      "apps/workspace/src/components/ProjectDecisionGuidance.tsx",
+      "apps/workspace/src/components/project-decision-guidance.css",
+      "packages/retrofit/project-tasks.ts",
+      "packages/retrofit/direction-text.ts"
+    ],
+    "tests": {
+      "focused": "47 passed in 8 files",
+      "production_build": "passed TypeScript and Vite"
+    },
+    "artifacts": [
+      "docs/Decision快速研判与推理暂估_20261016.md",
+      "research/test_results/decision-project-guidance-focused-20261016.log",
+      "research/test_results/decision-project-guidance-build-20261016.log"
+    ],
+    "unresolved_questions": [],
+    "next_runnable_task": "Complete build, deploy, verify real project guidance and page navigation, merge."
   }
 }

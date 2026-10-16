@@ -362,5 +362,22 @@
       "isolation": "No parallel scheduler, parser, search client or general context system; no real fact or ledger mutation. Synthetic strategy results use a separate cache identity.",
       "license": "Local adaptations; existing upstream package licensing and attribution retained."
     }
-  }
+  },
+  "local_adaptations": [
+    {
+      "id": "project-decision-guidance-20261016",
+      "reuse": [
+        "services/capabilities/decision-model.ts:requestDecisionQuestions",
+        "services/capabilities/decision-model.ts:parseDecisionChoice",
+        "packages/decision/probabilities.ts",
+        "apps/host/strategy-publication.ts:readPublishedStrategy",
+        "packages/retrofit/decision-priorities.ts:PRIORITY_PRESETS"
+      ],
+      "moved_shared_functions": [
+        "apps/workspace/src/components/ProjectTasksPage.tsx:buildProjectTasks -> packages/retrofit/project-tasks.ts",
+        "apps/workspace/src/components/strategy-direction-text.ts -> packages/retrofit/direction-text.ts"
+      ],
+      "scope": "Six project-page choices and stable-ID priority ordering; existing DSH, Store and authenticated API retained."
+    }
+  ]
 }
