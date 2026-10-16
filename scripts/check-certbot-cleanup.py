@@ -6,6 +6,7 @@ import importlib.util
 import pathlib
 import sys
 import unittest
+from unittest.mock import patch
 
 source = pathlib.Path(sys.argv.pop(1))
 spec = importlib.util.spec_from_file_location('haizhizi_certbot', source)
@@ -30,6 +31,28 @@ class FakeDNS:
 
 
 class CleanupTests(unittest.TestCase):
+    def test_dns_transport_uses_only_the_declared_route(self):
+        class Session:
+            trust_env = True
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                pass
+            def get(self, url, **kwargs):
+                self.trust_env_at_request = self.trust_env
+                self.options = kwargs
+                return 'response'
+        direct = Session()
+        with patch.dict(module.os.environ, {'HAIZHIZI_DNS_PROXY': '', 'HTTPS_PROXY': 'http://unrelated.invalid:8080'}), patch.object(module.requests, 'Session', return_value=direct):
+            self.assertEqual(module.AliyunTransport.get('https://alidns.aliyuncs.com/'), 'response')
+        self.assertFalse(direct.trust_env_at_request)
+        self.assertEqual(direct.options['proxies'], {})
+        configured = Session()
+        with patch.dict(module.os.environ, {'HAIZHIZI_DNS_PROXY': 'http://127.0.0.1:17897'}), patch.object(module.requests, 'Session', return_value=configured):
+            module.AliyunTransport.get('https://alidns.aliyuncs.com/')
+        self.assertFalse(configured.trust_env_at_request)
+        self.assertEqual(configured.options['proxies'], {'https': 'http://127.0.0.1:17897'})
+
     def test_only_exact_challenge_is_removed(self):
         client = FakeDNS()
         module.delete_exact_challenge(client, 'laneanew.cn', '_acme-challenge.laneanew.cn', 'our-challenge')

@@ -1,0 +1,77 @@
+{
+  "checked_at": "2026-10-16T12:25:50.095144+00:00",
+  "scope": "server-independent certificate renewal for existing campus HTTPS deployment",
+  "server": "10.70.223.113",
+  "campus_authentication": {
+    "user_confirmed_completed": true,
+    "official_portal_observed_login_ip": "10.70.223.113",
+    "current_not_online_error": false,
+    "status_payload_retained": false,
+    "password_collected": false
+  },
+  "install": {
+    "backup": "/home/zhuhangcheng/apps/haizhizi/shared/https-backups/direct-20261016T122028Z",
+    "wrapper_sha256": "39e9f3b09e2acd6a16fbaffbed70b9cec196dee9ee4a6605675fe9b93ca59667",
+    "dns_proxy_config": "direct",
+    "credentials_mode": "0o600"
+  },
+  "direct_renewal": {
+    "started_at": "2026-10-16T12:22:58.986301+00:00",
+    "finished_at": "2026-10-16T12:24:16.861104+00:00",
+    "elapsed_seconds": 77.87,
+    "server": "10.70.223.113",
+    "route": "direct; six standard proxy variables unset; HAIZHIZI_DNS_PROXY empty",
+    "command": "sudo -n env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u http_proxy -u https_proxy -u all_proxy HAIZHIZI_DNS_PROXY= /opt/certbot/bin/python /opt/certbot/haizhizi-certbot.py renew --cert-name laneanew.cn --dry-run --run-deploy-hooks --non-interactive --no-random-sleep-on-renew",
+    "exit_code": 0,
+    "output": "\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\nProcessing /etc/letsencrypt/renewal/laneanew.cn.conf\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\nSaving debug log to /var/log/letsencrypt/letsencrypt.log\nSimulating renewal of an existing certificate for laneanew.cn and www.laneanew.cn\nWaiting 60 seconds for DNS changes to propagate\nHook 'deploy-hook' ran with error output:\n nginx: the configuration file /etc/nginx/nginx.conf syntax is ok\n nginx: configuration file /etc/nginx/nginx.conf test is successful\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\nCongratulations, all simulated renewals succeeded: \n  /etc/letsencrypt/live/laneanew.cn/fullchain.pem (success)\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n",
+    "deploy_hook_requested": true,
+    "initial_attempt": "Stopped only the exact dry-run process during its 427 second random delay; no challenge had started. Re-run disables random delay only for this manual check."
+  },
+  "readback_after_temporary_tunnel_stopped": {
+    "checked_at": "2026-10-16T12:24:49.684553+00:00",
+    "server": "10.70.223.113",
+    "campus_auth_not_online_error": false,
+    "campus_auth_response_bytes": 110,
+    "direct_authenticated_dns_api": true,
+    "a_records_preserved": true,
+    "challenge_txt_records_cleaned": true,
+    "renewal_env": "HAIZHIZI_DNS_PROXY=",
+    "credentials_owner_uid": 0,
+    "credentials_mode": "0o600",
+    "https": {
+      "https://laneanew.cn/": 200,
+      "https://www.laneanew.cn/": 200
+    },
+    "service": "Result=success\nExecMainStatus=0",
+    "timer": "NextElapseUSecRealtime=Fri 2026-10-16 16:19:42 UTC\nActiveState=active\nUnitFileState=enabled",
+    "nginx": "active",
+    "production_certificate_dates": "notBefore=Oct 16 09:56:56 2026 GMT\nnotAfter=Jan 14 09:56:55 2027 GMT",
+    "standard_proxy_env_cleared": true,
+    "password_collected": false
+  },
+  "focused_checks": {
+    "command": "sudo -n /opt/certbot/bin/python /home/zhuhangcheng/apps/haizhizi/shared/check-certbot-direct-candidate.py /home/zhuhangcheng/apps/haizhizi/shared/haizhizi-certbot-direct-candidate.py",
+    "passed": 4,
+    "coverage": [
+      "exact name/type/value TXT cleanup",
+      "out-of-domain cleanup rejection",
+      "missing challenge preservation",
+      "explicit direct/proxy transport ignores ambient proxy"
+    ]
+  },
+  "temporary_authentication_tunnel": {
+    "listen": "127.0.0.1:52282",
+    "closed_at": "2026-10-16T12:24:14.5168974+00:00",
+    "stopped": true,
+    "identity_verified_by": "PID, exact UTC creation time, ssh process name and task command arguments",
+    "existing_reverse_proxy_17897": "preserved; no longer used by Certbot"
+  },
+  "boundaries": {
+    "app_restarted": false,
+    "new_model_runs": 0,
+    "project_data_changed": false,
+    "new_production_certificate_requested": false,
+    "campus_credentials_in_app_config": false
+  },
+  "operating_dependency": "Server campus authentication must remain valid; renewal no longer depends on the desktop proxy or SSH reverse tunnel."
+}

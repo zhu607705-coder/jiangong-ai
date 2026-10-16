@@ -3731,8 +3731,8 @@
     "provider_calls": 0
   },
   "campus_domain_20261016": {
-    "status": "https_deployed_certbot_renewal_verified_with_proxy_dependency",
-    "updated_at": "2026-10-16T09:58:37.154042+00:00",
+    "status": "https_deployed_server_direct_renewal_verified",
+    "updated_at": "2026-10-16T12:25:50.095144+00:00",
     "domain": "laneanew.cn",
     "aliases": [
       "www.laneanew.cn"
@@ -3765,16 +3765,15 @@
       "research/test_results/laneanew-domain-deployment-20261016.json",
       "research/test_results/laneanew-domain-http-readback-20261016.json",
       "research/test_results/laneanew-domain-dns-20261016.json",
-      "output/domain-configuration/laneanew-dns-records.jpg"
+      "output/domain-configuration/laneanew-dns-records.jpg",
+      "research/test_results/laneanew-server-direct-renewal-20261016.json"
     ],
-    "pending": [
-      "DNS API renewal depends on the existing desktop proxy and SSH tunnel; independent server IPv4 egress remains unavailable."
-    ],
-    "next_runnable_task": "No further HTTPS installation work. Keep the DNS proxy path available during renewal; replace it with server-independent egress if later authorized and available."
+    "pending": [],
+    "next_runnable_task": "No installation work remains; the server timer handles normal renewal while campus authentication remains valid."
   },
   "campus_https_20261016": {
-    "status": "deployed_and_verified_with_proxy_dependency",
-    "updated_at": "2026-10-16T11:23:41.912095+00:00",
+    "status": "deployed_and_verified_server_direct",
+    "updated_at": "2026-10-16T12:25:50.095144+00:00",
     "domains": [
       "https://laneanew.cn/",
       "https://www.laneanew.cn/"
@@ -3795,7 +3794,9 @@
       "enabled": true,
       "schedule": "00:00 and 12:00 Asia/Shanghai plus up to 1h randomized delay",
       "service_exit_code": 0,
-      "dependency": "Existing desktop proxy and SSH reverse tunnel on server loopback 127.0.0.1:17897 must be available during DNS renewal; website serving is independent."
+      "dependency": "Server campus authentication; no desktop proxy or SSH tunnel required.",
+      "transport": "direct; ambient proxies disabled",
+      "direct_staging_simulation_passed": true
     },
     "credential": {
       "ram_user": "haizhizi-acme",
@@ -3811,7 +3812,7 @@
       "https_hosts_verified": 2,
       "project_count_read": 35,
       "csrf_and_origin_protection_preserved": true,
-      "cleanup_regressions_passed": 3,
+      "cleanup_regressions_passed": 4,
       "model_calls": 0,
       "projects_created": 0,
       "chrome_https_page_verified": true
@@ -3823,13 +3824,56 @@
       "research/test_results/laneanew-certbot-renewal-20261016.json",
       "output/domain-configuration/laneanew-https-workbench.jpg",
       "research/test_results/laneanew-server-network-20261016.json",
-      "research/test_results/laneanew-certbot-cleanup-20261016.json"
+      "research/test_results/laneanew-certbot-cleanup-20261016.json",
+      "research/test_results/laneanew-server-direct-renewal-20261016.json"
     ],
-    "next_runnable_task": "User asked for server independence; waiting for the authorized campus-network account/official fixed-proxy method. Do not collect a password in chat. Keep the working HTTPS site and verified renewal configuration intact.",
+    "next_runnable_task": "No installation work remains; normal timer operation continues on the server.",
     "network_diagnosis": {
-      "campus_ipv4_auth": "not_online_error",
+      "campus_ipv4_auth": "authenticated; direct signed Aliyun DNS query succeeded",
       "local_output": "ACCEPT",
       "ufw": "inactive"
+    }
+  },
+  "campus_network_direct_20261016": {
+    "status": "completed_and_live_verified",
+    "updated_at": "2026-10-16T12:25:50.095144+00:00",
+    "server": "10.70.223.113",
+    "user_has_authorized_campus_account": true,
+    "credential_handling": "User enters existing campus credentials only in the official university portal in a temporary incognito browser profile; the agent does not collect or store them.",
+    "temporary_auth_route": {
+      "kind": "SSH local SOCKS forward bound to 127.0.0.1",
+      "portal": "https://net.zju.edu.cn/srun_portal_pc?ac_id=60&theme=zju",
+      "observed_login_ip": "10.70.223.113",
+      "local_state": "output/campus-network-auth/session.json",
+      "stopped": true,
+      "closed_at": "2026-10-16T12:24:14.5168974+00:00"
+    },
+    "next_runnable_task": "No remaining deployment work; the server timer handles renewal while campus authentication remains valid.",
+    "changed_files": [
+      "scripts/haizhizi-certbot.py",
+      "scripts/check-certbot-cleanup.py",
+      "docs/校园网域名配置.md",
+      "research/test_results/laneanew-server-direct-renewal-20261016.json",
+      "agent/state.json"
+    ],
+    "verification": {
+      "focused_checks_passed": 4,
+      "direct_signed_dns_query": true,
+      "direct_staging_renewal_exit_code": 0,
+      "deploy_hook_passed": true,
+      "timer": "enabled and active",
+      "service_exit_code": 0,
+      "both_https_entries": 200,
+      "temporary_auth_tunnel_stopped": true
+    },
+    "evidence": [
+      "research/test_results/laneanew-server-direct-renewal-20261016.json"
+    ],
+    "unresolved_questions": [],
+    "artifact_references": {
+      "server_backup": "/home/zhuhangcheng/apps/haizhizi/shared/https-backups/direct-20261016T122028Z",
+      "root_renewal_environment": "/etc/letsencrypt/haizhizi-renew.env",
+      "local_sanitized_evidence": "research/test_results/laneanew-server-direct-renewal-20261016.json"
     }
   }
 }

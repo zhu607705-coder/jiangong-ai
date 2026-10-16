@@ -21,7 +21,9 @@ class AliyunTransport:
         proxy = os.environ.get('HAIZHIZI_DNS_PROXY', '')
         if proxy and proxy != 'http://127.0.0.1:17897':
             raise errors.PluginError('Unexpected DNS proxy configuration')
-        return requests.get(url, timeout=(10, 40), proxies={'https': proxy} if proxy else {}, **kwargs)
+        with requests.Session() as session:
+            session.trust_env = False
+            return session.get(url, timeout=(10, 40), proxies={'https': proxy} if proxy else {}, **kwargs)
 
 
 def delete_exact_challenge(client, domain, record_name, value):
