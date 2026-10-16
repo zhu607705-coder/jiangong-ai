@@ -57,6 +57,7 @@ function errorCode(error: unknown): string {
   if (error instanceof Error && error.message.startsWith('LIVE_STAGE_FAILED:')) {
     if (error.message.includes(':max-tokens:')) return 'RENEWAL_RESEARCH_TRUNCATED'
     if (error.message.endsWith(':NO_STRUCTURED_OUTPUT')) return 'RENEWAL_RESEARCH_NO_STRUCTURED'
+    if (error.message.includes(':MALFORMED_RESPONSE')) return 'RENEWAL_RESEARCH_FORMAT'
   }
   return error instanceof Error && /^RENEWAL_RESEARCH_[A-Z_]+$/.test(error.message)
     ? error.message : 'RENEWAL_RESEARCH_MODEL_FAILED'
@@ -234,6 +235,7 @@ export async function runRenewalResearch(live: Pick<LiveSession, 'ctx' | 'call'>
       const profile = profiles.get(task.role)!
       const effort=taskEfforts[index]
       if(effort.timeoutMs<1000)throw new Error('RENEWAL_RESEARCH_TIME_RESERVED_FOR_SYNTHESIS')
+      const taskDeadlineAt=Date.now()+effort.timeoutMs
       const taskSignal=AbortSignal.any([options.signal,AbortSignal.timeout(effort.timeoutMs)])
       taskProfiles[index] = { role: profile.role, sha256: profile.sha256 }
       const encodedTask = references.encodeKnown(task), allowed = new Set(encodedTask.source_ids), readWindows: ReadWindow[] = []
@@ -269,9 +271,22 @@ export async function runRenewalResearch(live: Pick<LiveSession, 'ctx' | 'call'>
         + '检索无匹配或没有直接观察时，observations可为空，但仍须提出1至3项reasoned_proposals；写kind=logical_inference或scenario、premises(1至3条)、assumptions(0至3条，scenario必须至少1条)、conclusion(最多300字)、verification(最多240字)、evidence_refs(无直接依据可为空)。可选parameters最多4项，每项name/value/unit/low/high/basis，有限数且low<=value<=high，明确单位、取值依据和敏感范围。估算量及假设不能写成已确认工程量、已落实资金或通过结构、拆建与施工准入的证据。无命中后继续提供条件化措施，不伪造quote、来源、事实或正式批准。不要输出思考过程，仅调用structured_output。\n'
         + `<untrusted_task_catalog>${JSON.stringify(references.sources.filter(source => allowed.has(source.id)).map(metadata))}</untrusted_task_catalog>`
       let feedback='',lastFailure=''
+      const nativeFailures=new Set<string>()
       while(true){
       taskSignal.throwIfAborted();taskAttempts[index]=(taskAttempts[index]||0)+1
-      const response=await live.call<RenewalResearchNote>(`renewal_research_expert_${run}_${index+1}_${task.role}${taskAttempts[index]>1?`_evidence_retry_${taskAttempts[index]}`:''}`,expertPrompt+feedback,'RenewalResearchNote',[toolName],undefined,{evidenceIds:[...allowed]},profile,{signal:taskSignal,maxOutputTokens:effort.maxOutputTokens})
+      let response:{value:RenewalResearchNote;sessionId:string}
+      try{
+        response=await live.call<RenewalResearchNote>(`renewal_research_expert_${run}_${index+1}_${task.role}${taskAttempts[index]>1?`_evidence_retry_${taskAttempts[index]}`:''}`,expertPrompt+feedback,'RenewalResearchNote',[toolName],undefined,{evidenceIds:[...allowed]},profile,{signal:taskSignal,maxOutputTokens:effort.maxOutputTokens})
+      }catch(error){
+        taskSignal.throwIfAborted()
+        const code=errorCode(error),signature=code+':'+effort.maxOutputTokens
+        const next=Math.min(12000,Math.max(effort.maxOutputTokens+2000,Math.ceil(effort.maxOutputTokens*1.5/500)*500))
+        if(!/^RENEWAL_RESEARCH_(?:TRUNCATED|SCHEMA|NO_STRUCTURED|FORMAT)$/.test(code)||next===effort.maxOutputTokens||nativeFailures.has(signature)||taskDeadlineAt-Date.now()<5000)throw error
+        nativeFailures.add(signature);effort.maxOutputTokens=next
+        feedback='\n本专家的结构化输出尚未完成：'+code+'。本任务已增加输出空间；请立即按RenewalResearchNote完整返回，压缩重复说明，保留原句、条件与参数，禁止把截断内容补写成事实。仍只用原只读工具与structured_output。'
+        progress({stage:'specialists',status:'running',task_id:task.id,message:`${roleLabels[task.role]}输出未完整返回，正在本专家环节补全并增加输出空间。`})
+        continue
+      }
       try{
       const aliased = validate<RenewalResearchNote>('RenewalResearchNote', response.value)
       if (aliased.task_id !== task.id) throw new Error('RENEWAL_RESEARCH_TASK_MISMATCH')

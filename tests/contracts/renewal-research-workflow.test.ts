@@ -6,11 +6,11 @@ import type { ToolCallId } from '@deepseek-ai/dsh-llm'
 import type { RenewalResearchNote, RenewalResearchPlan } from '../../apps/host/generated/contracts'
 import type { ModelPresentationPolicy } from '../../packages/contracts/validate'
 import type { RenewalAgentProfile } from '../../runtime/agents/renewal/profiles'
-import type { LiveSession } from '../../runtime/dsh/live-session'
+import type { LiveSession, LiveCallExecution } from '../../runtime/dsh/live-session'
 import { runRenewalResearch, type RenewalResearchProgress } from '../../runtime/workflows/renewal-research'
 import { strategyConstructionAllowed, type StrategySource } from '../../packages/retrofit/strategy'
 
-type Call = { ctx: Context; stage: string; prompt: string; outputType: string; allowedTools: string[]; profile?: RenewalAgentProfile }
+type Call = { ctx: Context; stage: string; prompt: string; outputType: string; allowedTools: string[]; profile?: RenewalAgentProfile; execution?:LiveCallExecution }
 const contexts: Context[] = []
 afterEach(async () => { await Promise.all(contexts.splice(0).map(ctx => ctx.fiber.dispose())) })
 
@@ -19,8 +19,8 @@ async function session(reply: (call: Call) => Promise<unknown>) {
   await ctx.plugin(SystemPrompt, { personaPrefix: 'test', personaSuffix: '' }); await ctx.plugin(ToolRuntime)
   const calls: Call[] = []
   const live: Pick<LiveSession, 'ctx' | 'call'> = { ctx, async call<T>(stage: string, prompt: string, outputType: string, allowedTools: string[] = [],
-    _candidateIds?: readonly string[], _presentationPolicy: ModelPresentationPolicy = {}, profile?: RenewalAgentProfile) {
-    const call = { ctx, stage, prompt, outputType, allowedTools, profile }; calls.push(call)
+    _candidateIds?: readonly string[], _presentationPolicy: ModelPresentationPolicy = {}, profile?: RenewalAgentProfile,execution?:LiveCallExecution) {
+    const call = { ctx, stage, prompt, outputType, allowedTools, profile, execution }; calls.push(call)
     return { value: await reply(call) as T, sessionId: `fixture-${calls.length}` }
   } }
   return { live, calls }
@@ -427,4 +427,19 @@ it('a failed small planner readiness call prevents experts from starting',async(
   const {live,calls}=await session(async()=>{throw new Error('LIVE_STAGE_FAILED:planner:error:TRANSPORT')})
   await expect(runRenewalResearch(live,[source(1)],{projectName:'本小区',signal:new AbortController().signal})).rejects.toThrow('RENEWAL_RESEARCH_PREFLIGHT_FAILED')
   expect(calls).toHaveLength(1);expect(calls[0].outputType).toBe('RenewalResearchPlan')
+})
+
+it('recovers a truncated specialist before synthesis with more output room under the same deadline',async()=>{
+  let attempts=0
+  const {live,calls}=await session(async call=>{
+    if(call.outputType==='RenewalResearchPlan')return {summary:'核对一项依据',tasks:[task(1)]}
+    if(++attempts===1)throw new Error('LIVE_STAGE_FAILED:expert:max-tokens:no structured result')
+    await read(call,['s1']);return note(1)
+  })
+  const result=await runRenewalResearch(live,[source(1)],{projectName:'本小区',signal:new AbortController().signal})
+  const experts=calls.filter(call=>call.outputType==='RenewalResearchNote')
+  expect(experts).toHaveLength(2)
+  expect(experts[1].execution!.maxOutputTokens).toBeGreaterThan(experts[0].execution!.maxOutputTokens!)
+  expect(experts[1].execution!.signal).toBe(experts[0].execution!.signal)
+  expect(result.trace.tasks[0]).toMatchObject({status:'completed',attempts:2})
 })

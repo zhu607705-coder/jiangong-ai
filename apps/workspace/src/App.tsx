@@ -583,6 +583,11 @@ export default function App() {
       setBusy(false);
     }
   }
+  function openBlankProject(){
+    if(busy)return;
+    if(!access.canWrite){window.location.assign('/admin/login');return}
+    creationDraftId.current=null;setCreateError('');setMapAnchor(undefined);setMapEvidence(null);setProjectName('');setRegionName('');setGeometryText('');setCreateOpen(true);
+  }
   async function uploadMaterial(file: File, metadata?: MaterialUploadMetadata) {
     if (!project || busy || !canWrite) return;
     const projectId = project.id;
@@ -789,7 +794,7 @@ export default function App() {
       onProjectPage={page => navigateProject(page)}
       availableProjectPages={availableProjectPages}
       scrollContainerRef={scrollContainer}
-      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={() => setCreateOpen(true)} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
+      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={openBlankProject} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
       project={project}
       projects={projects}
       stages={stages}
@@ -808,12 +813,14 @@ export default function App() {
           } finally { setLoadingTarget(null); }
         })
       }
-      onCreate={() => { if (!access.canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
+      onCreate={openBlankProject}
       mapView={<MapWorkspace ready={!loading && globalView === 'map'} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
       onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setRouteSection(undefined); setDetailsOpen(true); setGlobalView('project'); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
+          if(busy)return;
+          creationDraftId.current=null;setCreateError('');
           const clean=context?publicMapContext(context):null
           const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
           setMapAnchor(toProjectAnchor({...place,name:publicName||'地图选点'}));setMapEvidence(clean)
@@ -872,7 +879,7 @@ export default function App() {
               <IconPlayerPlay size={17} />
               打开合成示范
             </button>
-            <button className="secondary" disabled={!canWrite} onClick={() => setCreateOpen(true)}>
+            <button className="secondary" disabled={!canWrite} onClick={openBlankProject}>
               <IconPlus size={17} />
               新建真实项目
             </button>
