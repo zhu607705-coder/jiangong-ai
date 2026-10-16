@@ -82,3 +82,11 @@ test('transparent feature shortcuts remain separate from saved citation relation
   expect(click).toHaveBeenCalledOnce()
   expect(findRetrievalFeatureElement(document as unknown as Document, shortcuts[0])?.className).toBe('construction-cost-library')
 })
+
+test('selected answer quotations retain the full source version check but focus only the continuous chosen sentence',async()=>{
+ const full=source.untrusted_text!,selected='每台每月300元'
+ const result=await sourceHitFocus(source,{...hit,text:full,matched_excerpt:selected})
+ expect(result).toMatchObject({status:'matched',quote:selected})
+ expect(await sourceHitFocus(source,{...hit,text:full,matched_excerpt:'每台每月200元'})).toEqual({status:'quote-mismatch'})
+ expect(await sourceHitFocus(source,{...hit,text:full,matched_excerpt:selected,version:'old'})).toEqual({status:'version-mismatch'})
+})

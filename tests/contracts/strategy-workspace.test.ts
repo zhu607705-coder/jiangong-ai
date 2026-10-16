@@ -39,6 +39,26 @@ async function mount(initial: { page: 'assessment' | 'scheme'; section: string; 
   return { container, root, transport, navigate, evidence, choose, reported, cleanup: () => act(async () => root.unmount()) }
 }
 
+test('the six-dimensional page remains accessible before any successful result',async()=>{
+ const app=await mount({page:'assessment',section:'current'},null,{collaborative:true})
+ try{
+  expect(app.container.querySelectorAll('.strategy-current-assessment .strategy-dimension-cards article')).toHaveLength(6)
+  expect(app.container.querySelector('.single-scheme-workspace,.scheme-comparison')).toBeNull()
+  expect(app.transport.mock.calls.every(([,init])=>!init?.method||init.method==='GET')).toBe(true)
+ }finally{await app.cleanup()}
+})
+
+test('partial six-dimensional output stays visible when the overall strategy is failed',async()=>{
+  const artifact={input_hash:saved.input_hash,context_version:saved.context_version,created_at:saved.created_at,status:'partial' as const,dimensions:[{key:'demand' as const,current:'保留本对象需求调查结论。',current_level:'medium' as const,evidence_refs:['CURRENT']}],reasoning_dimensions:[],issues:[]}
+  const app=await mount({page:'assessment',section:'current'},{...saved,status:'failed',strategy:null,current_assessment:artifact})
+  try{
+    expect(app.container.querySelector('.strategy-current-assessment')?.textContent).toContain('保留本对象需求调查结论')
+    expect(app.container.querySelector('.strategy-current-assessment')?.textContent).toContain('独立保留')
+    expect(app.container.querySelectorAll('.strategy-dimension-cards article')).toHaveLength(6)
+    expect(app.container.querySelector('.scheme-comparison')).toBeNull()
+  }finally{await app.cleanup()}
+})
+
 test('current assessment is directly accessible without a mode and does not mount scheme or operations businesses', async () => {
   const app = await mount({ page: 'assessment', section: 'current' })
   try {
@@ -98,7 +118,6 @@ test('mode screening precedes the AI summary, manual direction and internal inta
 })
 
 test.each([
-  { page: 'assessment', section: 'current' },
   { page: 'assessment', section: 'cases' },
   { page: 'scheme', section: 'detail', scheme: 'comprehensive' },
 ] as const)('without a completed result $page/$section keeps screening and intake while omitting empty dependent businesses', async location => {

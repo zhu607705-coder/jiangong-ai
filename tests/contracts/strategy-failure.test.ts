@@ -59,6 +59,18 @@ describe('safe strategy failure diagnostics', () => {
       expect(strategyFailure(new Error(code),[]).diagnostic.code).toBe('MODEL_REQUEST_BUDGET_EXHAUSTED')
     }
   })
+  it('retains a valid current dimension independently when the work-package contract fails',async()=>{
+    const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput
+    const input=projectDecisionInput(project)
+    input.renewalMode!.evidence=[{source_id:'CURRENT',title:'对象原文',quote:'本小区现有供水设施需要分项改善。',published_at:'2026-10-15',url:null,locator:'line:1'}]
+    ports.open.mockResolvedValue({calls:[call],close:vi.fn(async()=>{}),call:async(_stage:unknown,_prompt:unknown,_type:unknown,_tools:unknown,_ids:unknown,_presentation:unknown,_profile:unknown,execution:any)=>{
+      execution.onStructured({dimensions:[{key:'adaptation',current:'本对象供水设施需改善。',current_level:'medium',evidence_refs:['s1']}],paths:[{work_packages:'invalid'}]})
+      throw new Error('LIVE_SCHEMA_FAILED:renewal_strategy_contract_retry')
+    }})
+    const result=await researchRenewalStrategy(project,0,input,'same-snapshot',false,new AbortController().signal,null)
+    expect(result.status).toBe('failed');expect(result.strategy).toBeNull()
+    expect(result.current_assessment).toMatchObject({input_hash:'same-snapshot',context_version:0,status:'partial',dimensions:[{key:'adaptation',current_level:'medium',evidence_refs:['CURRENT']}]})
+  })
   it('retains acquired sources, research records and usage when the model transport fails', async () => {
     const project = { ...structuredClone(fixture), business_profile: 'neighborhood' } as ProjectInput
     const input = projectDecisionInput(project)

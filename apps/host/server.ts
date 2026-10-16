@@ -64,7 +64,7 @@ app.use(['/api', '/_AMapService'], (req, res, next) => {
 })
 app.use(qiushiDemoReadOnly)
 const intelligence = registerIntelligence(app,store)
-const experience = await registerExperience(app,store,requireProject)
+const experience = await registerExperience(app,store,requireProject,intelligence)
 await registerCommunityOperations(app,store,requireProject)
 const costLibrary = await registerConstructionCosts(app,store,requireProject)
 registerAmap(app, amapSettings)
@@ -74,7 +74,7 @@ if (await store.project(QIUSHI_SOURCE_PROJECT_ID, config.ownerId)) await install
 app.get('/api/ready', async (_req, res) => {
   let capability = false
   try { capability = (await fetch(`${config.capabilityUrl}/health`, { signal: AbortSignal.timeout(1500) })).ok } catch { /* explicit unavailable status below */ }
-  res.status(capability ? 200 : 503).json({ status: capability ? 'ok' : 'degraded', database: store.kind, capabilities: capability, live_model: config.modelConfigured ? 'configured_not_verified' : 'blocked_external', live_search: config.searchConfigured ? 'configured_not_verified' : 'blocked_external' })
+  res.status(capability ? 200 : 503).json({ protocol_version:'research-recovery-v1',release_commit:/^[a-f0-9]{40}$/.test(process.env.HZZ_RELEASE_COMMIT||'')?process.env.HZZ_RELEASE_COMMIT:null,status: capability ? 'ok' : 'degraded', database: store.kind, capabilities: capability, live_model: config.modelConfigured ? 'configured_not_verified' : 'blocked_external', live_search: config.searchConfigured ? 'configured_not_verified' : 'blocked_external' })
 })
 app.get('/api/admin/database-schema', async (req,res,next) => {
   try {
@@ -262,6 +262,7 @@ app.post('/api/projects/:id/documents', upload.single('file'), async (req, res) 
     committed = true
     await researchRounds.recordMaterialMetadata(await requireProject(project.id), id, materialMetadata)
     res.status(201).json({ id, file_name: fileName, parser_result: parsed })
+    void requireProject(project.id).then(experience.queueRagIndex).catch(()=>console.warn('RAG_BACKGROUND_INDEX_QUEUE_FAILED'))
   } catch (error) { if (!committed) await unlink(path); throw error }
 })
 app.get('/api/projects/:id/documents', async (req, res) => { await requireProject(req.params.id); res.json((await store.db.query('SELECT id,file_name,parser_result,created_at FROM documents WHERE project_id=$1', [req.params.id])).rows) })

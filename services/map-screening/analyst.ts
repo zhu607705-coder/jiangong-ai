@@ -22,6 +22,7 @@ import { evaluateDecision } from '../capabilities/decision-model'
 import { decisionErrorMessage } from '../../packages/decision/route-labels'
 import { mapDecisionInput, DECISION_ACTIONS } from '../../packages/decision/structured-route'
 import { dashboardDimensions, dashboardPolicy } from '../../packages/decision/dashboard'
+import type {MapAnalysisAction} from '../../packages/maps/analysis-completion'
 
 export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: MapScreenContext, external: Source[] = [], records:PublicRecord[]=snapshot.research_records||[], asOf=snapshot.created_at,profile?:MapScreenProfile): MapPreliminaryAssessment {
   const context={...snapshot,created_at:asOf}
@@ -85,7 +86,7 @@ export function groundMapAssessment(value: MapPreliminaryAssessment, snapshot: M
   return result
 }
 
-export async function analyzeMapContext(context:MapScreenContext,profile:MapScreenProfile,signal:AbortSignal,emit:ResearchSink=()=>{},previous?:MapScreenAnalysis):Promise<MapScreenAnalysis>{
+export async function analyzeMapContext(context:MapScreenContext,profile:MapScreenProfile,signal:AbortSignal,emit:ResearchSink=()=>{},previous?:MapScreenAnalysis,action?:MapAnalysisAction):Promise<MapScreenAnalysis>{
   const base={context_id:context.id,profile,created_at:new Date().toISOString()}
   const neighborhood=profile==='neighborhood'
   const direction=neighborhood?'按老旧小区改造研究居民家庭、基础/完善/提升类改造、公共服务缺口、鉴定消防与管网、居民协商和实施主体、资金来源与工程成本、物业长效维护。区分居民需求与商业客流；人口统计保留时点和空间范围；提出停车、养老托育或加装电梯等具体内容时写明对应居民与工程条件。':'校园应查实际修缮采购、运营与使用安排，不预设拆迁或用途变更。'
@@ -97,9 +98,9 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
   let decisionSupport:DecisionSupport|undefined
   let assessment:MapPreliminaryAssessment|undefined
   const previousMatches=!!previous?.assessment&&previous.context_id===context.id&&previous.profile===profile
-  let reuse=previousMatches&&!previous!.refresh_required
-  let refreshEvidence=previousMatches&&!!previous!.refresh_required
-  const calls=()=>[...(reuse?previous!.model_calls:[]),...live.calls]
+  let reuse=action!=='supplement'&&previousMatches&&!previous!.refresh_required
+  let refreshEvidence=action==='supplement'||previousMatches&&!!previous!.refresh_required
+  const calls=()=>[...live.calls]
   const partial=():MapScreenAnalysis=>({...base,status:'partial',assessment:assessment!,model_calls:calls(),reason:'简报已完成，评分尚未完成。',research_sources:research.sources,research_records:research.records,adapter_receipts:research.receipts,research:research.trace})
   try{
     const publicContext=publicMapContext(context),name=researchSubject(publicContext)
@@ -116,7 +117,7 @@ export async function analyzeMapContext(context:MapScreenContext,profile:MapScre
         emit({type:'progress',stage:'sources',status:'running',message:'原简报依据已变化，重新取得当前资料'})
       }
     }
-    if(!reuse&&name&&config.searchConfigured){
+    if(!reuse&&action!=='reevaluate'&&name&&config.searchConfigured){
       emit({type:'progress',stage:'sources',status:'running',message:'核对研究对象与公开数据入口'})
       const queries=publicSearchPlan(name,SCREEN_PROFILES[profile].label)
       const intelligenceRevision=await intelligenceScopeRevision({name,city:context.city||undefined,purpose:SCREEN_PROFILES[profile].label,asOf:base.created_at})

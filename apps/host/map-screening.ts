@@ -59,12 +59,12 @@ export function registerMapScreening(app: Express, settings: AmapSettings, store
   app.post('/api/maps/screening/analysis', async (req, res) => {
     let streaming=false
     try {
-      const body=z.object({context_id:z.string().max(100),profile:profileSchema}).strict().parse(req.body)
+      const body=z.object({context_id:z.string().max(100),profile:profileSchema,action:z.enum(['supplement','reevaluate']).optional()}).strict().parse(req.body)
       streaming=req.headers.accept?.includes('application/x-ndjson')||false
       const signal=requestSignal(req,res,115000)
       if(streaming){res.type('application/x-ndjson');res.setHeader('Cache-Control','no-store');res.setHeader('X-Accel-Buffering','no');res.flushHeaders()}
       const emit=(event:unknown)=>{if(streaming&&!res.destroyed&&!res.writableEnded)res.write(JSON.stringify(event)+'\n')}
-      const result=await service.analyze(body.context_id,body.profile,signal,emit)
+      const result=await service.analyze(body.context_id,body.profile,signal,emit,body.action)
       if(!res.destroyed){if(streaming){emit({type:'complete',result});res.end()}else res.json(result)}
     } catch(error){
       if(streaming){if(!res.destroyed){res.write(JSON.stringify({type:'error',message:'本轮研究已结束，请刷新资料后重试。'})+'\n');res.end()}}

@@ -30,3 +30,5 @@
 .rag-answer header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}.rag-answer h3{margin:0;font-size:19px}.rag-answer header span{font-size:14px}
 .rag-answer>div,.rag-answer>details{margin-top:14px}.rag-answer a{display:block;margin:8px 0;color:var(--color-primary);overflow-wrap:anywhere}.rag-answer summary{cursor:pointer;font-weight:600}
 .rag-answer-citation button{text-align:left;font-size:14px;overflow-wrap:anywhere}.rag-answer .rag-answer-citation blockquote{margin:8px 0;padding:8px 12px;font-size:15px}
+
+.rag-evidence-process{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}.rag-evidence-process button{display:grid;gap:7px;text-align:left;padding:14px;background:var(--color-primary-soft);border-color:var(--color-primary-line)}.rag-evidence-process span{font-size:15px}.rag-evidence-process strong{font-size:24px;color:var(--color-primary)}.rag-evidence-process button:disabled{opacity:.65;cursor:default}.rag-structural-context>div{margin:14px 0;padding-top:10px;border-top:1px solid var(--color-line)}@media(max-width:600px){.rag-evidence-process{grid-template-columns:1fr 1fr}}

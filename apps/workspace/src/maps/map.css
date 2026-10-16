@@ -603,3 +603,5 @@
 .atlas-inspector .initial-assessment{margin:12px 0}.atlas-inspector .initial-assessment .renewal-mode-panel{min-width:0}.atlas-view:has(.atlas-inspector) .atlas-navigation{right:456px}
 body:has(.atlas-inspector) .floating-evidence-search:not(.is-open){right:456px}
 @media(max-width:900px){.map-shell .atlas-inspector{left:88px;right:16px;top:auto;bottom:20px;width:auto;max-height:62dvh}.atlas-inspector-scroll{padding:16px}.atlas-view:has(.atlas-inspector) .atlas-navigation{right:16px;top:180px;bottom:auto}body:has(.atlas-inspector) .floating-evidence-search:not(.is-open){right:16px;bottom:calc(62dvh + 36px)}}
+
+.assessment-ai-action{flex-wrap:wrap}.assessment-completion{margin:14px 0;padding:14px 16px;border:1px solid var(--color-primary-line);border-radius:12px;background:var(--color-primary-soft);font-size:16px;line-height:1.65}.assessment-completion p{margin:6px 0 0}.assessment-completion[data-evidence=partial],.assessment-completion[data-evidence=missing]{border-color:var(--color-warning-line,var(--color-line));background:var(--color-warning-soft)}.assessment-completion[data-execution=failed] strong{color:var(--color-danger,var(--color-warning))}

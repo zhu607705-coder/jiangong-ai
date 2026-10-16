@@ -42,7 +42,7 @@ import FloatingEvidenceSearch from './imports/FloatingEvidenceSearch';
 import type { RetrievalHit } from '../../../packages/experience/retrieval';
 import type { StrategyPacket, PublicStrategyIndexResponse } from '../../../packages/retrofit/strategy';
 import { initialWorkbenchProject, publicDecisionHref, readWorkbenchLink, resolveProjectLocation, PROJECT_PAGES, writeWorkbenchLink, type WorkbenchView, type ProjectPage, type SchemePane } from './public-decisions';
-import { findRetrievalDecisionElement, findRetrievalFeatureElement, focusRetrievalElement, retrievalDecisionLocations, retrievalFeatureLocations, retrievalSourceIds, sourceHitFocus, type RetrievalDecisionLocation, type RetrievalFeatureLocation, type SourceHitFocusResult } from './imports/retrieval-navigation';
+import { findRetrievalDecisionElement, findRetrievalFeatureElement, focusRetrievalElement, retrievalDecisionLocations, retrievalFeatureLocations, retrievalSourceIds, retrievalQuote, sourceHitFocus, type RetrievalDecisionLocation, type RetrievalFeatureLocation, type SourceHitFocusResult } from './imports/retrieval-navigation';
 import NeighborhoodPanel, { createNeighborhoodDraft, type NeighborhoodDraft } from './components/NeighborhoodPanel';
 import CommunityOperationsPanel from './components/CommunityOperationsPanel';
 import CompleteCommunityDemo from './components/CompleteCommunityDemo';
@@ -359,8 +359,10 @@ export default function App() {
   }
   function locateEvidence(hit: RetrievalHit) {
     if (!project) return;
+    const quote=retrievalQuote(hit);
+    if(!quote){setError('所选引用不在命中原文内，请重新定位原文。');return;}
     const referenceId = retrievalSourceIds(hit).find(id => displayedSources.some(source => id === source.id || id === `${project.id}:${source.id}`)) || hit.document_id || hit.source.id;
-    setEvidenceDrawer({projectId:project.id,packet:currentStrategyPacket,refs:[{source_id:referenceId,quote:hit.text,locator:hit.locator,version:hit.version}]});
+    setEvidenceDrawer({projectId:project.id,packet:currentStrategyPacket,refs:[{source_id:referenceId,quote,locator:hit.locator,version:hit.version}]});
     return;
   }
   useEffect(() => {

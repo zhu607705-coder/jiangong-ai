@@ -1,3 +1,5 @@
+import type {IntelligenceService} from '../../packages/intelligence/service'
+import {hash,canonical} from '../../packages/intelligence/domain'
 import type { Express, Request, Response } from 'express'
 import { z } from 'zod'
 import type { ProjectRecord, Store } from './store'
@@ -49,9 +51,28 @@ async function openRagModel(signal:AbortSignal):Promise<RagModelPort> {
     call:async<T>(type:string,prompt:string,callSignal:AbortSignal)=>(await live.call<T>('rag_'+type,prompt,type,[],undefined,undefined,undefined,{signal:callSignal,maxOutputTokens:type==='RagSemanticIndex'?4500:2500})).value}
 }
 
-export function registerRagRetrieval(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>, options: { pipeline: Pick<KnowledgePipelineService, 'state'>; ranker?: RetrievalRanker; modelFactory?:((signal:AbortSignal)=>Promise<RagModelPort>)|null }) {
+export function registerRagRetrieval(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>, options: { pipeline: Pick<KnowledgePipelineService, 'state'>; ranker?: RetrievalRanker; modelFactory?:((signal:AbortSignal)=>Promise<RagModelPort>)|null; background?:IntelligenceService }) {
   const hybrid=new HybridRetrievalService(new SemanticIndexRepository(store.db),options.ranker||capabilityRetrievalRanker,
     options.modelFactory===undefined?(config.modelConfigured?openRagModel:null):options.modelFactory)
+  const fingerprint=(project:ProjectRecord)=>hash(canonical(project.input.sources.map(source=>[source.id,source.visibility,source.data_class,source.hash,source.untrusted_text])))
+  async function indexBundle(project:ProjectRecord){
+    const state=await options.pipeline.state(project)
+    return {state,bundle:buildRagExport({projectId:project.id,documents:state.documents.map(document=>({...normalizeImportDocument(document),hash:document.sha256})),rawDocuments:state.documents,cards:state.cards,sources:project.input.sources})}
+  }
+  // Reuse intel_jobs and its existing worker. Queue contains IDs/version hashes, never document text or credentials.
+  async function queueIndex(project:ProjectRecord){
+    if(!options.background||!config.modelConfigured||project.input.synthetic)return
+    await options.background.ready
+    const saved=await withResearchOriginals(store,project),version=fingerprint(saved)
+    await options.background.repo.enqueue('rag_index',hash(canonical([saved.owner_id,saved.id,version])),{project_id:saved.id,owner_id:saved.owner_id,context_version:saved.context_version,source_fingerprint:version})
+  }
+  options.background?.registerJobHandler('rag_index',async(job,signal)=>{
+    const project=await withResearchOriginals(store,await requireProject(String(job.payload.project_id)))
+    if(project.owner_id!==job.payload.owner_id||project.context_version!==job.payload.context_version||fingerprint(project)!==job.payload.source_fingerprint)throw new Error('RAG_INDEX_SNAPSHOT_CHANGED')
+    const {state,bundle}=await indexBundle(project)
+    const result=await hybrid.index(project,bundle,state.documents,{question:''},{signal,allowInternalAI:false,maxIndexBatches:3})
+    return {pending:result.pending>0,progress:result.indexed>result.reused}
+  })
   const signalFor=(request:Request,response:Response)=>{
     const controller=new AbortController()
     request.once('aborted',()=>controller.abort())
@@ -66,11 +87,14 @@ export function registerRagRetrieval(app: Express, store: Store, requireProject:
       const bundle = buildRagExport({ projectId: project.id, documents: state.documents.map(document => ({
         ...normalizeImportDocument(document), hash: document.sha256,
       })), rawDocuments: state.documents, cards: state.cards, sources: project.input.sources })
-      const result=use_ai?await hybrid.retrieve(project,bundle,state.documents,body,{signal:signalFor(request,response),allowInternalAI:allow_internal_ai&&config.ALLOW_INTERNAL_MODEL==='true'})
+      const streaming=use_ai&&request.headers.accept?.includes('application/x-ndjson')
+      const emit=(event:unknown)=>{if(streaming&&!response.destroyed&&!response.writableEnded)response.write(JSON.stringify(event)+'\n')}
+      if(streaming){response.type('application/x-ndjson');response.setHeader('Cache-Control','no-store');response.setHeader('X-Accel-Buffering','no');response.flushHeaders()}
+      const result=use_ai?await hybrid.retrieve(project,bundle,state.documents,body,{signal:signalFor(request,response),allowInternalAI:allow_internal_ai&&config.ALLOW_INTERNAL_MODEL==='true',onOriginals:originals=>{emit({type:'originals',result:originals});void queueIndex(project).catch(()=>console.warn('RAG_BACKGROUND_INDEX_QUEUE_FAILED'))}})
         :await retrieveProjectEvidence(project,bundle,state.documents,body,options.ranker||capabilityRetrievalRanker)
-      if(!response.destroyed)response.json(result)
+      if(!response.destroyed){if(streaming){emit({type:'complete',result});response.end()}else response.json(result)}
     } catch (error) {
-      if (response.headersSent) return
+      if (response.headersSent) {if(!response.destroyed){response.write(JSON.stringify({type:'error',message:'语义补充未完成，已找到的原文仍可阅读。'})+'\n');response.end()}return}
       if (error instanceof z.ZodError) { response.status(422).json({ code: 'VALIDATION_ERROR', detail: error.message }); return }
       const value = error as { status?: number; code?: string; message?: string }
       if (error instanceof ExperienceError || Number.isInteger(value.status) && typeof value.code === 'string') {
@@ -95,4 +119,5 @@ export function registerRagRetrieval(app: Express, store: Store, requireProject:
       response.status(error instanceof z.ZodError?422:value.status||503).json({detail:error instanceof z.ZodError?'索引请求格式不正确。':'语义索引暂未完成，可继续检索原文并稍后重试。'})
     }
   })
+  return {queueIndex}
 }

@@ -25,7 +25,8 @@ export type RetrievalCandidate = {
   measure_mentions: NonNullable<RagChunk['measure_mentions']>;
   stages: string[]; objects: string[]; review_statuses: string[]; match_reasons: string[];
 }
-export type RetrievalHit = RetrievalCandidate & { score: number; matched_excerpt?: string }
+export type RetrievalContext = {id:string;document_id:string;version:string;locator:string;text:string;relationship:'heading'|'table_header'|'neighbor'}
+export type RetrievalHit = RetrievalCandidate & { score: number; matched_excerpt?: string;context?:RetrievalContext[] }
 export type RetrievalAnswerClaim = { text:string; citations:{hit_id:string;quote:string}[] }
 export type RetrievalAssistance = {
   status:'api'|'partial'|'keyword_fallback'; model:string|null; calls:number;
@@ -133,6 +134,37 @@ function locationNumber(value: string): string {
 function buildingLocations(text: string): BuildingLocation[] {
   const pattern = new RegExp(`(?<![\\d${locationNumerals}])第?([\\d${locationNumerals}]{1,12})\\s*(?:幢|栋|号楼)(?:\\s*[-—/·]?\\s*的?第?([\\d${locationNumerals}]{1,12})\\s*单元)?`, 'gu')
   return [...text.normalize('NFKC').matchAll(pattern)].map(match => ({ building: locationNumber(match[1]), unit: match[2] ? locationNumber(match[2]) : null, literal: match[0] }))
+}
+
+/** Explicitly different building/unit identities cannot be rescued by semantic similarity. */
+export function queryObjectCompatible(question:string,text:string):boolean {
+  const wanted=buildingLocations(question),actual=buildingLocations(text)
+  if(!wanted.length||!actual.length)return true
+  return wanted.some(w=>actual.some(a=>a.building===w.building&&(w.unit===null||a.unit===null||a.unit===w.unit)))
+}
+
+/** Shared by direct questions and expert source reading; topics are preferences. */
+export function passageQueryMatches(question:string,title:string,text:string):boolean {
+  if(!queryObjectCompatible(question,title+'\n'+text))return false
+  const query=expandRetrievalQuery(question),joined=(title+'\n'+text).toLowerCase()
+  const terms=[...searchTokens(query.rank_query),...query.query_expansions.flatMap(row=>row.added_term.split(/\s+/)),...(question.trim().length>=2?[question.trim()]:[])]
+  return terms.some(term=>!questionWords.has(term)&&!genericWords.has(term)&&term.length>1&&joined.includes(term))
+    ||retrievalTopics(question).explicit&&retrievalTopics(question).matches(joined)
+}
+
+/** Context stays in separate original slices; never concatenate it into a verbatim quote. */
+export function readRetrievalContext(hit:RetrievalCandidate,candidates:readonly RetrievalCandidate[]):RetrievalContext[] {
+  const siblings=candidates.filter(row=>row.document_id===hit.document_id&&row.version===hit.version)
+  const index=siblings.findIndex(row=>row.id===hit.id),table=hit.locator.match(/^(table:\d+)\/row:/)?.[1]
+  const heading=siblings.slice(0,index).reverse().find(row=>/^\s*#{1,6}\s|(?:标题|项目名称)\s*[：:=]/m.test(row.text))
+  const header=table?siblings.find(row=>row.locator===table+'/row:1'):undefined
+  const selections=[{row:heading,relationship:'heading' as const},{row:header,relationship:'table_header' as const},...[-1,1].map(n=>({row:siblings[index+n],relationship:'neighbor' as const}))]
+  const seen=new Set([hit.id])
+  return selections.flatMap(({row,relationship})=>{
+    if(!row||seen.has(row.id)||row.text.length>5000)return []
+    seen.add(row.id)
+    return [{id:row.id,document_id:row.document_id,version:row.version,locator:row.locator,text:row.text,relationship}]
+  })
 }
 
 const annotationIdentity = (link: RagMeasureLink) => JSON.stringify([link.card_id, link.card_revision, link.review_status,
@@ -347,8 +379,9 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
     return locations.some(wanted => recorded.some(actual => actual.building === wanted.building && (wanted.unit === null || actual.unit === wanted.unit)))
   }
   const relevant = prepared.candidates.filter(candidate => {
+    if(!queryObjectCompatible(request.question,candidate.file_name+'\n'+candidate.text))return false
     const text = candidate.text.toLowerCase(), bodyTerms = locations.length ? attributeTerms : terms
-    if(options.relaxTopics) return terms.some(term=>`${candidate.file_name}\n${text}`.toLowerCase().includes(term)) || topics.explicit&&topics.matches(candidate.text) || locationMatch(candidate)
+    if(options.relaxTopics) return passageQueryMatches(request.question,candidate.file_name,[candidate.text,...readRetrievalContext(candidate,prepared.candidates).map(row=>row.text)].join('\n')) || locationMatch(candidate)
     return topics.matches(candidate.text) && (topics.explicit || bodyTerms.some(term => text.includes(term)))
       || locationMatch(candidate) && attributeTerms.some(term => text.includes(term))
   })
@@ -356,7 +389,10 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
   let rankCalls = 0
   const rank = async (candidates: RetrievalCandidate[]): Promise<RetrievalHit[]> => {
     rankCalls++
-    const input = { ...project.input, facts: [], context_rules: [], events: [], sources: candidates.map(virtualSource) }
+    const input = { ...project.input, facts: [], context_rules: [], events: [], sources: candidates.map(candidate=>{
+      const source=virtualSource(candidate)
+      return options.relaxTopics?{...source,untrusted_text:[candidate.text,...readRetrievalContext(candidate,prepared.candidates).map(row=>row.text)].join('\n')}:source
+    }) }
     const ranked = await ranker(input, query.rank_query,options.recallLimit)
     const byId = new Map(candidates.map(candidate => [candidate.id, candidate])), seen = new Set<string>()
     return ranked.matches.flatMap(match => {

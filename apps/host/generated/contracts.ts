@@ -683,6 +683,7 @@ export interface ModelCall {
   cache_read_tokens?: number;
   cache_write_tokens?: number;
   error_code?: string;
+  usage_status?: "unknown" | "reported";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -1431,6 +1432,13 @@ export interface MapScreenAnalysis {
   research?: ResearchTrace;
   reused_from_context_id?: string;
   refresh_required?: boolean;
+  completion?: {
+    execution: "completed" | "failed" | "cancelled" | "incomplete";
+    evidence: "complete" | "partial" | "missing";
+    version: "current" | "stale";
+    evidence_revision: string;
+    missing_dimensions: ("demand" | "supply" | "adaptation" | "implementation" | "operations" | "resources")[];
+  };
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema

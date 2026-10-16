@@ -244,6 +244,25 @@ describe('public model evidence boundary', () => {
 
 describe('persisted object research', () => {
   const brief=(ctx:MapScreenContext,profile:MapScreenAnalysis['profile'],status:MapScreenAnalysis['status']='partial'):MapScreenAnalysis=>({context_id:ctx.id,profile,status,created_at:new Date().toISOString(),reason:null,model_calls:[],assessment:{summary:'调查单栋设备维护。',opportunities:[{text:'按原文调查维护范围。',evidence_refs:['S']}],cautions:[],unknowns:[],next_steps:['核对采购窗口。']},research_sources:[{...publicSource,id:'S'}],research_records:[]})
+  it.each(['supplement','reevaluate'] as const)('allows explicit %s after a completed execution with missing dimensions',async action=>{
+    const {engine,analyst}=await service(),signal=new AbortController().signal
+    const ctx=await engine.context(point,signal)
+    analyst.mockImplementation(async(c,p)=>brief(c,p,'completed'))
+    const first=await engine.analyze(ctx.id,'balanced',signal)
+    expect(first.completion).toMatchObject({execution:'completed',evidence:'missing',version:'current'})
+    expect(first.completion?.missing_dimensions).toHaveLength(6)
+    await engine.analyze(ctx.id,'balanced',signal)
+    expect(analyst).toHaveBeenCalledTimes(1)
+    await engine.analyze(ctx.id,'balanced',signal,()=>{},action)
+    expect(analyst).toHaveBeenCalledTimes(2)
+    expect(analyst.mock.calls[1][5]).toBe(action)
+    expect(analyst.mock.calls[1][4]?.assessment?.summary).toBe(first.assessment?.summary)
+    analyst.mockImplementation(async(c,p)=>({...brief(c,p,'failed'),assessment:null,research_sources:[]}))
+    const failed=await engine.analyze(ctx.id,'balanced',signal,()=>{},action)
+    expect(failed.status).toBe('failed')
+    expect(failed.assessment?.summary).toBe(first.assessment?.summary)
+    expect(failed.research_sources?.map(source=>source.id)).toContain('S')
+  })
   it.each([true,false])('revalidates expired canonical facts even when every model score is null: positive=%s',async(positive)=>{
     vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-28T08:00:00Z'))
     const p=project('FACT-CACHE',true)

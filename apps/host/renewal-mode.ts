@@ -17,6 +17,7 @@ import { ResearchRoundsService, ResearchRoundError, registerResearchRoundRoutes 
 
 export type ModeContextLoader = (id: string, signal: AbortSignal) => Promise<DecisionInput>
 const bodySchema = z.object({ expected_context_version: z.number().int().nonnegative().optional(), refresh: z.boolean().optional() }).strict()
+const strategyBodySchema=bodySchema.extend({research_action:z.enum(['supplement','reevaluate']).optional()}).strict()
 function requestSignal(req: Request, res: Response, timeoutMs = 240000) {
   const controller = new AbortController()
   req.once('aborted', () => controller.abort())
@@ -144,20 +145,26 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const project = await requireProject(String(req.params.id)), signal = requestSignal(req,res,610000)
       if (project.input.business_profile !== 'neighborhood') return res.status(422).json({ detail:'请在老旧小区项目中研究更新方案。' })
       const query = z.object({ demo:z.enum(['true','false']).default('false') }).strict().parse(req.query)
-      const body = method==='post'?bodySchema.parse(req.body):{}
+      const body = method==='post'?strategyBodySchema.parse(req.body):strategyBodySchema.parse({})
       if (body.expected_context_version!==undefined && body.expected_context_version!==project.context_version) return res.status(409).json({detail:'项目资料已变化，请刷新方案。'})
       const {input,hash:modeHash} = await prepareMode(projectDecisionInput(project.input),library)
       const hash = strategyHash(modeHash,project.context_version,query.demo)
       const cached = (await store.db.query<{payload:StrategyPacket}>('SELECT payload FROM renewal_strategy_assessments WHERE owner_id=$1 AND project_id=$2 AND input_hash=$3',[config.ownerId,project.id,hash])).rows[0]?.payload
       if (method==='get') { res.json(await readPublishedStrategy(store,project,hash,query.demo==='true')||(cached?.status==='completed'?null:cached)||null); return }
-      if (cached&&!body.refresh) { res.json(cached); return }
+      if (cached&&!body.refresh&&!body.research_action) { res.json(cached); return }
       key='strategy:'+project.id+':'+hash
       if (running.has(key)||running.size>=2) {key=undefined;return res.status(409).json({detail:'方案研究正在进行，请稍后查看。'})}
       running.add(key)
       const prior = (await store.db.query<{payload:DecisionSupport}>('SELECT payload FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3',[config.ownerId,project.id,modeHash])).rows[0]?.payload||null
       streaming = req.headers.accept?.includes('application/x-ndjson') || false
       if (streaming) { res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Accel-Buffering', 'no'); res.flushHeaders() }
-      const savedResearch = cached?.status==='failed' && cached.project_id===project.id && cached.context_version===project.context_version && cached.input_hash===hash && cached.synthetic===(query.demo==='true')
+      const explicitReevaluation=body.research_action==='reevaluate'
+      if(explicitReevaluation&&cached&&(cached.project_id!==project.id||cached.context_version!==project.context_version||cached.input_hash!==hash||cached.synthetic!==(query.demo==='true')))throw new Error('STRATEGY_SNAPSHOT_MISMATCH')
+      if(explicitReevaluation&&cached?.sources.some(source=>source.visibility==='internal'||source.data_class==='internal')){
+        if(streaming){emit({type:'error',message:'请在资料补充中重新选择内部文件并确认本轮 AI 使用范围，再开始研判。'});res.end();return}
+        res.status(422).json({detail:'请在资料补充中选择内部文件并确认本轮 AI 使用范围。'});return
+      }
+      const savedResearch = explicitReevaluation?{sources:cached?.sources||[],research:cached?.research||null}:cached?.status==='failed' && cached.project_id===project.id && cached.context_version===project.context_version && cached.input_hash===hash && cached.synthetic===(query.demo==='true')
         && Date.now()-Date.parse(cached.created_at)<20*60_000 && (cached.model_calls.some(call=>call.finish_reason==='max-tokens')||cached.diagnostic?.code==='STRATEGY_EVIDENCE_INVALID') && cached.research?.queries.length
         && cached.sources.length && cached.sources.every(source=>source.visibility!=='internal'&&source.data_class!=='internal') ? {sources:cached.sources,research:cached.research} : undefined
       const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch,researchWorkflow:true})

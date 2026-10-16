@@ -5,7 +5,7 @@ import type { Store } from '../../apps/host/store'
 import { config } from '../../apps/host/config'
 import { projectInput } from '../contracts/validate'
 import type { Source } from '../../apps/host/generated/contracts'
-import { IntelRepository,type Review } from './repository'
+import { IntelRepository,type Review,type Job } from './repository'
 import { channelOf,rankEntries,hash,canonical,type Channel,type Query,type Entry } from './domain'
 import { materialFromSource,evidenceSource,summaryOf } from './material'
 import { collectChannel } from './collectors'
@@ -25,6 +25,8 @@ export class IntelligenceService {
   private active:{id:string;controller:AbortController}|undefined
   private timer:ReturnType<typeof setInterval>|undefined
   private uninstall:(()=>void)|undefined
+  private jobHandlers=new Map<string,(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>>()
+  registerJobHandler(kind:'rag_index',handler:(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>){this.jobHandlers.set(kind,handler)}
   constructor(readonly store:Store){this.repo=new IntelRepository(store.db);this.ready=this.initialize()}
   private async initialize(){
     await this.repo.initialize()
@@ -44,7 +46,13 @@ export class IntelligenceService {
       const job=await this.repo.claim();if(!job)return
       const controller=new AbortController(),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(180000)]);this.active={id:job.id,controller}
       try{
-        if(job.kind==='collect'){
+        if(job.kind==='rag_index'){
+          const handler=this.jobHandlers.get(job.kind)
+          if(!handler)throw new Error('RAG_INDEX_HANDLER_UNAVAILABLE')
+          const result=await handler(job,signal)
+          signal.throwIfAborted();await this.repo.endJob(job.id,result.pending?'partial':'completed')
+          if(result.pending&&result.progress)await this.repo.enqueue(job.kind,job.subject,job.payload)
+        }else if(job.kind==='collect'){
           const c=job.payload.channel?channelOf(job.payload.channel):await this.repo.channel(job.subject);if(!c)throw new Error('CHANNEL_NOT_FOUND')
           const result=await collectChannel(c,signal,async source=>{
             const m=materialFromSource(source,c),created=await this.repo.put(m)

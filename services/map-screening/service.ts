@@ -12,6 +12,7 @@ import { applyDecisionGuards } from '../../packages/decision/structured-route'
 import { decisionPolicy, DECISION_THRESHOLDS } from '../../packages/decision/structured-route'
 import { mapDecisionInput } from '../../packages/decision/structured-route'
 import { dashboardPolicy } from '../../packages/decision/dashboard'
+import {withAnalysisCompletion,type MapAnalysisAction} from '../../packages/maps/analysis-completion'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -23,7 +24,7 @@ import { targetContains, evidenceAt, type ProjectEvidenceSnapshot } from './proj
 
 import { validateRegionTopology, type RegionResolver, type TopologyValidator } from './regions'
 
-export type ContextAnalyst = (context: MapScreenContext, profile: MapScreenProfile, signal: AbortSignal, emit?: ResearchSink, previous?:MapScreenAnalysis) => Promise<MapScreenAnalysis>
+export type ContextAnalyst = (context: MapScreenContext, profile: MapScreenProfile, signal: AbortSignal, emit?: ResearchSink, previous?:MapScreenAnalysis, action?:MapAnalysisAction) => Promise<MapScreenAnalysis>
 const stamp = () => new Date().toISOString()
 
 export function normalizeEvidence(key: typeof EVIDENCE_GROUPS[number], raw: any, sourceId: string): MapScreenEvidence {
@@ -156,10 +157,11 @@ export class MapScreeningService {
     return mapDecisionInput(await this.loadContext(id,signal),'先判定改造模式，再进行六维研判','neighborhood')
   }
 
-  async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal, emit: ResearchSink = () => {}): Promise<MapScreenAnalysis> {
+  async analyze(id: string, profile: MapScreenProfile, signal: AbortSignal, emit: ResearchSink = () => {}, action?:MapAnalysisAction): Promise<MapScreenAnalysis> {
     const context=await this.loadContext(id,signal,true)
     const key = [id, profile, RESEARCH_POLICY, dashboardPolicy(profile), BRIEF_SKILL_VERSION].join(':'), cached = await this.restore(context,profile)
-    if (cached?.status === 'completed') { emit({type:'progress',stage:'sources',status:'completed',message:'复用本次研判'}); return structuredClone(cached) }
+    if (!action&&cached?.status === 'completed') { emit({type:'progress',stage:'sources',status:'completed',message:'读取已保存研判；可主动补查或按现有资料重评'}); return structuredClone(cached) }
+    if(action==='reevaluate'&&cached?.refresh_required)throw new Error('CONTEXT_EXPIRED')
     if (!context.target.label && !context.address && context.groups.filter(usableMapEvidence).length < 2 && !context.local_projects.some(p => p.sources.some(s => s.visibility === 'public' && s.content_status !== 'metadata_only' && s.untrusted_text))) return { context_id: id, profile, status: 'insufficient_data', assessment: null, model_calls: [], reason: '可用资料较少，请补充项目材料。', created_at: stamp() }
     if (this.activeAnalyses >= 2 || this.analyzing.has(key)) return cached?.assessment?{...structuredClone(cached),status:'partial',reason:'上一轮研究正在结束，请稍后重试评分。'}:{ context_id: id, profile, status: 'unavailable', assessment: null, model_calls: [], reason: '已有初筛解读正在运行，请稍后重试。', created_at: stamp() }
     this.activeAnalyses++; this.analyzing.add(key)
@@ -181,11 +183,19 @@ export class MapScreeningService {
         })()
         return emit(event)
       }
-      const analysis = validate<MapScreenAnalysis>('MapScreenAnalysis', await this.analyst(context, profile, signal, receive,cached||undefined))
+      const analysis = validate<MapScreenAnalysis>('MapScreenAnalysis', await this.analyst(context, profile, signal, receive,cached||undefined,action))
+      // A failed attempt must not erase already available same-snapshot results.
+      if(cached?.assessment&&!analysis.assessment){
+        analysis.assessment=structuredClone(cached.assessment)
+        analysis.research_sources=analysis.research_sources?.length?analysis.research_sources:cached.research_sources
+        analysis.research_records=analysis.research_records?.length?analysis.research_records:cached.research_records
+        analysis.reason='本轮更新未完成，已保留上轮简报与依据。可补查资料或按现有资料重评。'
+      }
       signal.throwIfAborted()
       if ((await this.loadEvidence()).revision !== context.project_revision) throw new Error('CONTEXT_EXPIRED')
       signal.throwIfAborted()
       this.refreshConditions(context,analysis,profile)
+      if(!analysis.decision_support&&cached?.decision_support&&!cached.refresh_required&&this.currentScores(context,cached))analysis.decision_support=structuredClone(cached.decision_support)
       if(analysis.status==='completed'&&analysis.decision_support&&analysis.decision_support.status!=='completed'){
         analysis.status='failed';analysis.reason='简报已保留，结构化判断暂未完成，可重试评分。'
       }
@@ -276,6 +286,8 @@ export class MapScreeningService {
   }
 
   private async remember(context:MapScreenContext,profile:MapScreenProfile,analysis:MapScreenAnalysis){
+    Object.assign(analysis,withAnalysisCompletion(analysis,context))
+    await this.save('analysis-attempts',context.id+'-'+profile+'-'+Date.now(),analysis)
     await this.save('analyses',context.id+'-'+profile,analysis)
     if(analysis.assessment)await this.save('scope-analyses',this.scopeKey(context,profile),{
       saved_at:stamp(),analysis,decision_signature:this.decisionSignature(profile),
@@ -340,7 +352,7 @@ export class MapScreeningService {
         analysis.status='partial';delete analysis.decision_support;analysis.reason='简报已恢复，判断配置已更新，可重新评分。'
       }
       if(persistContext)await this.save('contexts',context.id,context)
-      return analysis
+      return withAnalysisCompletion(analysis,context)
     }catch{return null}
   }
 

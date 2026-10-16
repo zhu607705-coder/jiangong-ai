@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-10-16T14:09:59.534056+00:00",
+  "origin": "https://laneanew.cn/",
+  "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+  "context_version": 14,
+  "assessment": {
+    "route": "assessment/current",
+    "visible_dimensions": 6,
+    "scored_dimensions": 4,
+    "supplement_and_reevaluate_buttons_visible": true,
+    "unrequested_full_research_runs": 0
+  },
+  "rag": {
+    "question": "求是村电梯托管费每台每月是多少，来源怎么说？",
+    "public_ai_enabled": true,
+    "internal_ai_checkbox": false,
+    "original_hits_visible_before_ai_answer": 5,
+    "scope_counts": {
+      "documents": 2,
+      "saved_sources": 96,
+      "eligible_passages": 107
+    },
+    "real_model_answer_received": true,
+    "fact_checked": {
+      "amount_yuan_per_elevator_per_month": 300,
+      "reported_source_date": "2023-12-28"
+    },
+    "source_title": "西湖区三方协同为居民幸福加码",
+    "source_version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+    "source_drawer_opened": true,
+    "same_source_and_citation_version": true,
+    "quote_focus_refinement": "Live verified: selected answer quote equals the source drawer quote, 46 characters, same source version."
+  },
+  "screenshots": [
+    "output/playwright/research-recovery/current-assessment.jpg",
+    "output/playwright/research-recovery/originals-before-answer.jpg",
+    "output/playwright/research-recovery/rag-answer.jpg",
+    "output/playwright/research-recovery/exact-citation.jpg"
+  ],
+  "background_index_initial_attempt": "Timed out in original 180s worker budget; partial windows retained. Changed to three resumable batches per job; live continuation is next.",
+  "final_readback": {
+    "checked_at": "2026-10-16T14:17:37.041Z",
+    "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+    "context_version": 14,
+    "exact_answer_quote_matched": true,
+    "selected_quote_characters": 46,
+    "source_version_and_continuous_quote_validated": true,
+    "visible_alerts": 0,
+    "full_research_rounds_started": 0
+  },
+  "background_index_final": "completed; initial cancelled receipt preserved"
+}

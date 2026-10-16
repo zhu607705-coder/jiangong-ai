@@ -66,7 +66,11 @@ export function retrievalDecisionLocations(hit: RetrievalHit, projectId: string,
 }
 
 export type SourceHitFocusResult = { status: 'matched'; before: string; quote: string; after: string } | { status: 'version-mismatch' | 'quote-mismatch' | 'version-unverified' }
-export async function sourceHitFocus(source: Source, hit: Pick<RetrievalHit, 'source' | 'version' | 'text' | 'evidence_kind' | 'version_origin'>, cryptoProvider: { subtle?: Pick<SubtleCrypto, 'digest'> } | undefined = globalThis.crypto): Promise<SourceHitFocusResult> {
+export function retrievalQuote(hit:Pick<RetrievalHit,'text'|'matched_excerpt'>):string|null {
+  const quote=(hit.matched_excerpt??hit.text).trim()
+  return quote&&hit.text.includes(quote)?quote:null
+}
+export async function sourceHitFocus(source: Source, hit: Pick<RetrievalHit, 'source' | 'version' | 'text' | 'matched_excerpt' | 'evidence_kind' | 'version_origin'>, cryptoProvider: { subtle?: Pick<SubtleCrypto, 'digest'> } | undefined = globalThis.crypto): Promise<SourceHitFocusResult> {
   const registered = source.hash || (hit.version_origin !== 'text_sha256' ? source.raw_hash : undefined)
   if (registered && registered !== hit.version) return { status: 'version-mismatch' }
   if (!registered) {
@@ -77,8 +81,8 @@ export async function sourceHitFocus(source: Source, hit: Pick<RetrievalHit, 'so
     }
     if (digest ? digest !== hit.version : source.untrusted_text !== hit.text) return { status: 'version-mismatch' }
   }
-  const quote = hit.text.trim(), text = source.untrusted_text || '', start = quote ? text.indexOf(quote) : -1
-  if (start < 0) return { status: 'quote-mismatch' }
+  const quote = retrievalQuote(hit), text = source.untrusted_text || '', start = quote ? text.indexOf(quote) : -1
+  if (!quote||start < 0) return { status: 'quote-mismatch' }
   return { status: 'matched', before: text.slice(0, start), quote, after: text.slice(start + quote.length) }
 }
 

@@ -51,6 +51,7 @@ function model(patch:{badQuote?:boolean;fail?:string}={}) {
 it('recalls a semantic-only passage and answers with its exact original locator; repeats reuse the versioned index',async()=>{
   const p=project([source('MEAL','长者助餐服务覆盖36人。')]),before=JSON.stringify(p),fake=model()
   const service=new HybridRetrievalService(repository,async()=>({matches:[]}),async()=>fake.port)
+  await service.index(p,bundle(p),[],{question:''},options())
   const result=await service.retrieve(p,bundle(p),[],{question:'晚餐去哪里'},options())
   expect(result.method).toBe('api_semantic_bm25');expect(result.question).toBe('晚餐去哪里')
   expect(result.hits).toHaveLength(1);expect(result.hits[0].source.id).toBe('MEAL')
@@ -126,12 +127,12 @@ it('indexes every window of long source bodies and binds each to its exact chara
   expect(windows.every(window=>window.text===candidates[0].text.slice(window.start,window.end))).toBe(true)
 })
 
-it('returns a partial index and continues keyword search if the indexing API fails',async()=>{
+it('keeps query handling independent of missing or failing index construction',async()=>{
   const p=project([source('MEAL','长者助餐服务覆盖36人。')]),fake=model({fail:'RagSemanticIndex'})
   const service=new HybridRetrievalService(repository,keyword,async()=>fake.port)
   const result=await service.retrieve(p,bundle(p),[],{question:'助餐'},options())
   expect(result.hits).toHaveLength(1);expect(result.assistance?.index.pending).toBe(1)
-  expect(result.assistance?.warnings.join()).toContain('索引未完成')
+  expect(result.assistance?.warnings.join()).toContain('待后台');expect(fake.types).not.toContain('RagSemanticIndex')
 })
 
 it('serves index creation and hybrid answers through the owner-scoped HTTP API',async()=>{
@@ -156,4 +157,69 @@ it('serves index creation and hybrid answers through the owner-scoped HTTP API',
     expect((await post(p.id+'/knowledge/retrieve',{question:'助餐',project_id:'FOREIGN'})).status).toBe(422)
     expect(fake.types).toHaveLength(count)
   } finally {await new Promise<void>(resolve=>server.close(()=>resolve()))}
+})
+
+it('publishes original hits before any waiting model stage and does not build an index during the question',async()=>{
+  const p=project([source('MEAL','长者助餐服务覆盖36人。')]),fake=model()
+  let release!:()=>void
+  const gate=new Promise<void>(resolve=>{release=resolve}),originals:unknown[]=[]
+  const service=new HybridRetrievalService(repository,keyword,async()=>{await gate;return fake.port})
+  const pending=service.retrieve(p,bundle(p),[],{question:'助餐'},{...options(),onOriginals:result=>originals.push(result)})
+  await vi.waitFor(()=>expect(originals).toHaveLength(1))
+  expect((originals[0] as any).hits[0].source.id).toBe('MEAL')
+  expect(fake.types).toEqual([])
+  release();await pending
+  expect(fake.types).not.toContain('RagSemanticIndex')
+})
+
+it('excludes an explicitly different unit from semantic selection',async()=>{
+ const p=project([source('UNIT2','该单元加装电梯预算80万元。',{title:'75幢2单元电梯预算'})]),fake=model()
+ const result=await new HybridRetrievalService(repository,async input=>({matches:input.sources.map(source=>({source_id:source.id,score:1}))}),async()=>fake.port).retrieve(p,bundle(p),[],{question:'75幢1单元加电梯多少钱'},options())
+ expect(result.hits).toEqual([])
+ expect(fake.prompts.join()).not.toContain('该单元加装电梯预算80万元')
+})
+
+it('streams original HTTP results while the model is still waiting',async()=>{
+ const p=project([source('MEAL','长者助餐服务覆盖36人。')]),fake=model(),app=express()
+ app.use(express.json())
+ let release!:()=>void
+ const gate=new Promise<void>(resolve=>{release=resolve})
+ registerRagRetrieval(app,new Store(db as unknown as Database,'PGlite'),async()=>p,{ranker:keyword,modelFactory:async()=>{await gate;return fake.port},pipeline:{state:async()=>({documents:[],cards:[]})} as any})
+ const server=app.listen(0);await new Promise<void>(resolve=>server.once('listening',resolve))
+ try{
+  const response=await fetch(`http://127.0.0.1:${(server.address() as {port:number}).port}/api/projects/${p.id}/knowledge/retrieve`,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/x-ndjson'},body:JSON.stringify({question:'助餐',use_ai:true})})
+  expect(response.headers.get('content-type')).toContain('application/x-ndjson')
+  const reader=response.body!.getReader(),first=await reader.read(),text=new TextDecoder().decode(first.value)
+  expect(text).toContain('"type":"originals"');expect(text).toContain('长者助餐服务覆盖36人')
+  expect(fake.types).toEqual([])
+  release()
+  let tail='';while(true){const next=await reader.read();if(next.done)break;tail+=new TextDecoder().decode(next.value)}
+  expect(tail).toContain('"type":"complete"');expect(fake.types).not.toContain('RagSemanticIndex')
+ }finally{release();await new Promise<void>(resolve=>server.close(()=>resolve()))}
+})
+
+it('keeps readable original results when the local capability ranker is unavailable',async()=>{
+ const p=project([source('MEAL','长者助餐服务覆盖36人。')])
+ const result=await new HybridRetrievalService(repository,async()=>{throw new Error('CAPABILITY_DOWN')},null).retrieve(p,bundle(p),[],{question:'助餐'},options())
+ expect(result.hits[0].source.id).toBe('MEAL')
+ expect(result.assistance?.warnings.join()).toContain('本地检索服务本次未响应')
+})
+
+it('a rewritten question cannot admit another unit excluded by the original question',async()=>{
+ const p=project([source('UNIT1','预算54万元。',{title:'75幢1单元电梯方案'}),source('UNIT2','预算80万元。',{title:'75幢2单元电梯方案'})]),fake=model()
+ const original=fake.port.call
+ fake.port.call=async<T>(type:string,prompt:string,signal:AbortSignal)=>type==='RagQueryPlan'?{queries:['75幢2单元电梯预算'],concepts:[],subquestions:[]} as T:original<T>(type,prompt,signal)
+ const ranker:RetrievalRanker=async(input)=>({matches:input.sources.map(source=>({source_id:source.id,score:1}))})
+ const result=await new HybridRetrievalService(repository,ranker,async()=>fake.port).retrieve(p,bundle(p),[],{question:'75幢1单元电梯预算'},options())
+ expect(result.hits.map(hit=>hit.source.id)).toEqual(['UNIT1'])
+})
+
+it('returns a resumable partial index before the worker deadline and skips the completed windows next time',async()=>{
+ const p=project(Array.from({length:20},(_,index)=>source('WINDOW-'+index,'公开助餐记录'+index))),fake=model()
+ const service=new HybridRetrievalService(repository,keyword,async()=>fake.port)
+ const first=await service.index(p,bundle(p),[],{question:''},{...options(),maxIndexBatches:3})
+ expect(first).toMatchObject({status:'partial',indexed:18,pending:2,reused:0})
+ const next=await service.index(p,bundle(p),[],{question:''},{...options(),maxIndexBatches:3})
+ expect(next).toMatchObject({status:'ready',indexed:20,pending:0,reused:18})
+ expect(fake.types.filter(type=>type==='RagSemanticIndex')).toHaveLength(4)
 })

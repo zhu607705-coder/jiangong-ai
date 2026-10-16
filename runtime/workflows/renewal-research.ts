@@ -2,7 +2,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { RenewalResearchNote, RenewalResearchPlan } from '../../apps/host/generated/contracts'
 import { ContractError, validate, modelSchema } from '../../packages/contracts/validate'
 import { chunkDocument } from '../../packages/corpus/corpus'
-import { expandRetrievalQuery, retrievalTopics } from '../../packages/experience/retrieval'
+import { expandRetrievalQuery, passageQueryMatches } from '../../packages/experience/retrieval'
 import { queryScore, searchTokens } from '../../packages/intelligence/domain'
 import { strategyModelReferences, type StrategySource } from '../../packages/retrofit/strategy'
 import { loadRenewalAgentProfile, type RenewalAgentProfile } from '../agents/renewal/profiles'
@@ -87,8 +87,8 @@ const boundary = (text: string, offset: number) => offset <= 0 || offset >= text
 
 /** Existing corpus chunking and lexical ranking over this task's frozen manifest only. */
 function readSourcePages(sources: readonly StrategySource[], query: string, offset: number, limit: number) {
-  const expanded = expandRetrievalQuery(query), terms = searchTokens(expanded.rank_query), topics = retrievalTopics(query)
-  const bodyMatch = (text: string) => topics.matches(text) && terms.some(term => text.toLowerCase().includes(term))
+  const expanded = expandRetrievalQuery(query)
+  const bodyMatch = (text: string,title='') => passageQueryMatches(query,title,text)
   const candidates: { source: StrategySource; start: number; end: number; score: number }[] = []
   for (const source of sources) {
     if (!boundary(source.text, offset)) throw new Error('RENEWAL_RESEARCH_OFFSET_BOUNDARY')
@@ -103,9 +103,11 @@ function readSourcePages(sources: readonly StrategySource[], query: string, offs
     for (const char of source.text) positions.push(positions[positions.length - 1] + char.length)
     const chunks = chunkDocument({ id: source.id, text: source.text, content_status: 'body', group_id: `renewal-runtime:${source.id}`, split: 'development' })
     for (const chunk of chunks) {
-      const start = Math.max(offset, positions[chunk.char_start]), end = positions[chunk.char_end]
+      let start = Math.max(offset, positions[chunk.char_start]-200), end = Math.min(source.text.length,positions[chunk.char_end]+200)
+      if(!boundary(source.text,start))start++
+      if(!boundary(source.text,end))end--
       const text = source.text.slice(start, end)
-      if (start < end && bodyMatch(text)) candidates.push({ source, start, end, score: queryScore({ title: source.title, text }, expanded.rank_query) })
+      if (start < end && bodyMatch(text,source.title)) candidates.push({ source, start, end, score: queryScore({ title: source.title, text }, expanded.rank_query) })
     }
   }
   if (query) candidates.sort((a, b) => b.score - a.score || sources.indexOf(a.source) - sources.indexOf(b.source) || a.start - b.start)
@@ -122,7 +124,7 @@ function readSourcePages(sources: readonly StrategySource[], query: string, offs
       let end = Math.min(candidate.end, start + count)
       if (!boundary(source.text, end)) end--
       return { ...source, text: source.text.slice(start, end), start_char: start, end_char: end,
-        source_characters: source.text.length, excerpt: true, matched: !!query && bodyMatch(source.text.slice(start, end)) }
+        source_characters: source.text.length, excerpt: true, matched: !!query && bodyMatch(source.text.slice(start, end),source.title) }
     }
     let low = 0, high = Math.min(remaining, candidate.end - start)
     // The hard cap includes JSON escaping and metadata, not merely body length.

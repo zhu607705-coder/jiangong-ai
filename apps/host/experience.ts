@@ -1,3 +1,4 @@
+import type {IntelligenceService} from '../../packages/intelligence/service'
 import type { Express, Request, Response } from 'express'
 import { z } from 'zod'
 import type { ProjectRecord, Store } from './store'
@@ -16,13 +17,13 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 }, '资料时点必须是有效日期')
 
 /** Mounted after the host's session/CSRF checks, using its project ownership gate. */
-export async function registerExperience(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>): Promise<ExperienceService> {
+export async function registerExperience(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>, background?:IntelligenceService): Promise<ExperienceService & {queueRagIndex:(project:ProjectRecord)=>Promise<void>}> {
   const service = new ExperienceService(store)
   await service.initialize()
   const pipeline = new KnowledgePipelineService(store, service)
   await pipeline.initialize()
   const learning=new ExperienceLearningService(service,pipeline)
-  registerRagRetrieval(app, store, requireProject, { pipeline })
+  const rag=registerRagRetrieval(app, store, requireProject, { pipeline, background })
   const route = (operation: (request: Request, response: Response) => Promise<unknown>) => async (request: Request, response: Response) => {
     try { await operation(request, response) }
     catch (error) {
@@ -110,6 +111,7 @@ export async function registerExperience(app: Express, store: Store, requireProj
     const project = await requireProject(String(request.params.id))
     const body = z.object({ source_id: z.string().min(1) }).strict().parse(request.body)
     response.status(201).json(await pipeline.importPublicDocument(project, body.source_id))
+    void requireProject(project.id).then(rag.queueIndex).catch(()=>console.warn('RAG_BACKGROUND_INDEX_QUEUE_FAILED'))
   }))
   app.post('/api/projects/:id/knowledge/extract', route(async (request, response) => {
     const project = await requireProject(String(request.params.id))
@@ -155,5 +157,5 @@ export async function registerExperience(app: Express, store: Store, requireProj
     const kind = z.enum(['policies', 'skills']).parse(request.params.kind)
     response.json(await pipeline.repository.history(kind === 'policies' ? 'policy' : 'skill', project.id, String(request.params.recordId)))
   }))
-  return service
+  return Object.assign(service,{queueRagIndex:rag.queueIndex})
 }

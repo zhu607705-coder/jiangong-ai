@@ -13,6 +13,7 @@ import { evaluateDecision } from '../capabilities/decision-model'
 import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 import { runRenewalResearch } from '../../runtime/workflows/renewal-research'
 import { loadRenewalAgentProfile } from '../../runtime/agents/renewal/profiles'
+import {captureCurrentAssessment} from '../../packages/retrofit/strategy-assessment'
 
 /** Small contiguous quote choices, using the same line/excerpt approach as the demo prompt. */
 function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:readonly string[]=[]) {
@@ -99,7 +100,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
         }
         const fetched = new Set<string>()
         progress({ stage: 'research', status: 'running', message: `第 ${index + 1}/${rounds.length} 轮：${round.label}。`, query_count: base.research.queries.length, source_count: sources.length, round: index + 1, round_count: rounds.length })
-        const research = await live.runReadCapability(`renewal_public_research_${round.key}`, toolSignal => collectSelectedEvidence({ name, city: project.scope.city || '杭州', purpose: '老旧小区改造模式、综合整治与原拆原建比选', asOf: base.created_at, intelligence:false }, toolSignal, event => {
+        const research = await live.runReadCapability(`renewal_public_research_${round.key}`, toolSignal => collectSelectedEvidence({ name, city: project.scope.city || '杭州', purpose: '老旧小区改造模式、综合整治与原拆原建比选', asOf: base.created_at, intelligencePolicy:{readExisting:true,rememberNew:true,checkFreshness:true} }, toolSignal, event => {
           if (event.stage === 'fetch' && event.status === 'completed' && event.source_id) fetched.add(event.source_id)
           progress({ stage: 'research', status: 'running', message: event.stage === 'fetch' ? `第 ${index + 1}/${rounds.length} 轮已取得 ${fetched.size} 份公开来源，继续核对正文。` : `第 ${index + 1}/${rounds.length} 轮正在检索并整理公开来源。`, source_count: sources.length + fetched.size, query_count: base.research!.queries.length, round: index + 1, round_count: rounds.length })
         }, undefined, round.queries)).catch(error=>{
@@ -216,7 +217,12 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     const presentation={...(!round?{omitOptionalFields:['round_review']}:{}),evidenceIds:references.ids}
     const synthesisProfile=options.researchWorkflow?await loadRenewalAgentProfile('synthesis').catch(()=>undefined):undefined
     if(base.workflow&&synthesisProfile)base.workflow.synthesis_profile={role:synthesisProfile.role,sha256:synthesisProfile.sha256}
-    let response = await live.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined,presentation,synthesisProfile)
+    const retainAssessment=(raw:unknown)=>{
+      const candidate=captureCurrentAssessment(references.restoreKnown(raw),base,promptSources)
+      if(candidate&&(!base.current_assessment||candidate.dimensions.length>=base.current_assessment.dimensions.length)){base.current_assessment=candidate;progress({stage:'model',status:'running',message:`已独立保留 ${candidate.dimensions.length}/6 个维度分析，继续整理具体方案。`})}
+    }
+    let response = await live.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined,presentation,synthesisProfile,{onStructured:retainAssessment})
+    retainAssessment(response.value)
     response={...response,value:projectStrategyOutput(response.value,round)}
     progress({ stage: 'model', status: 'completed', message: '已取得模型方案，正在整理待核项与后续取证指引。' })
     progress({ stage: 'validation', status: 'running', message: '核对三部分决策、两条路径、六个维度及原文引用。' })
