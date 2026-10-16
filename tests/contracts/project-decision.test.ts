@@ -24,6 +24,7 @@ it('uses one Decision request for six page actions and ranked tasks, with select
  expect(result.measures[0].title).toContain('SERVICE')
  expect(result.materials[0].title).toBe('资金落实')
  expect(Object.keys(projectGuidanceQuestions(input)).length).toBeLessThanOrEqual(16)
+ expect((projectGuidanceQuestions(input).stage_results as any).criteria).not.toHaveProperty('first_round')
 })
 
 it('isolates private sources, facts and derived analysis while retaining the existing-plan status',()=>{

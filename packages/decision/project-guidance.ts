@@ -87,7 +87,7 @@ const boundary='这些问题只辅助安排分析和工作顺序，不签发安�
 export function projectGuidanceQuestions(input:ReturnType<typeof projectGuidanceInput>){
  const questions:Record<string,unknown>={}
  for(const page of GUIDANCE_PAGES){
-  const options=Object.entries(GUIDANCE_OPTIONS[page]).filter(([key])=>!(page==='overview'&&key==='compare_plans'&&!input.state.has_current_strategy)&&!(page==='results'&&key==='compare_versions'&&(!input.state.has_previous_strategy||!input.state.has_current_strategy))&&!(page==='results'&&key==='prepare_report'&&!input.state.has_current_strategy))
+  const options=Object.entries(GUIDANCE_OPTIONS[page]).filter(([key])=>!(page==='overview'&&key==='compare_plans'&&!input.state.has_current_strategy)&&!(page==='results'&&key==='compare_versions'&&(!input.state.has_previous_strategy||!input.state.has_current_strategy))&&!(page==='results'&&key==='prepare_report'&&!input.state.has_current_strategy)&&!(page==='results'&&key==='first_round'&&input.state.has_current_strategy))
   questions['stage_'+page]={type:'choice',instructions:`${boundary}在“${PAGE_LABELS[page]}”当前最值得先进行哪项工作？方案缺少时不要声称方案已形成。`,criteria:Object.fromEntries(options.map(([key,value])=>[key,value.label+'：'+value.reason]))}
  }
  for(const [kind,rows] of [['measure',input.measures],['material',input.materials]] as const)rows.forEach((row,index)=>{questions[`${kind}_${index}`]={type:'score',instructions:`${boundary}根据state中的${kind==='measure'?'改造举措':'待补材料'} ${JSON.stringify(row.id)}，评估其对当前目标和判断的优先程度；比较实质作用、实施顺序与资料能否改变结论，评分是顺序参考。`,criteria:['目前作用较小，可后续处理','有一定作用，可排后续','有明确作用，常规推进','较可能改变当前取舍，优先处理','影响重大或需先处理的关键事项']}})
