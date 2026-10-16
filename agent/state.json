@@ -3488,8 +3488,8 @@
     "preserved_live_compatibility": "Stable d5 includes the already-live typed scenario basis hotfix OPS-434S; textual keyword gate remains removed."
   },
   "blue_workbench_theme_20261016": {
-    "status": "deployed_visual_verified_pending_merge",
-    "updated_at": "2026-10-15T16:29:51.140450+00:00",
+    "status": "completed",
+    "updated_at": "2026-10-16T00:41:00+08:00",
     "branch": "codex/blue-workbench-polish",
     "base_commit": "b20be073448c78607781218be74d5bf3f0c210b6",
     "request": "Reference screenshot blue-white palette; comprehensive UI color/readability/layout repair; manual operation retained",
@@ -3513,7 +3513,9 @@
       "explicit_font_sizes_below_12px": 0
     },
     "deployment_policy": "UI assets atomically exchanged only; six backend hotfix files and hostPID44088 unchanged, Nginx unchanged, no database operation/provider call; old assets retained and backup available",
-    "next_runnable_task": "Record final evidence, wait required PR39 checks, merge exact head; no further UI interaction needed.",
+    "next_runnable_task": "None for this visual task; user operates the deployed page manually.",
+    "merge_commit": "5628f41774c30277d97573e6442fc69d892b3552",
+    "merge_checks": "PR39 exact head 3db10ed: Map workspace quality and Intelligence integration review both SUCCESS; merged",
     "implementation_commit": "7ddd154520fed9c8e554a8f6d190a8014a2afe5c",
     "deployment_receipt": "research/test_results/blue-theme-deployment-20261016.json",
     "build_log": "research/test_results/blue-theme-isolated-build-20261016.log",
@@ -3529,5 +3531,25 @@
       "horizontal_page_overflow": false,
       "manual_operation_retained": true
     }
+  },
+  "decision_color_emphasis_20261016": {
+    "status": "implemented_pending_build_and_deployment",
+    "updated_at": "2026-10-16T09:39:39.135076+08:00",
+    "branch": "codex/semantic-highlights",
+    "request": "Highlight decision-critical facts using red/amber/green, with blue operations and violet scenarios, based on existing fields",
+    "reuse": "ProjectOverview, RenewalModePanel, DecisionDashboard and shared semantic tokens; existing mode gate and 1-5 scores unchanged",
+    "next_runnable_task": "Build isolated commit and deploy static UI only; read-only browser check; merge exact checked head.",
+    "changed_files": [
+      "ProjectOverview.tsx",
+      "RenewalModePanel.tsx",
+      "DecisionDashboard.tsx",
+      "DecisionBrief.tsx",
+      "CommunityOperationsPlayground.tsx",
+      "decision-emphasis.ts",
+      "workbench-polish.css",
+      "docs/界面配色与可读性.md"
+    ],
+    "tests": "18/18 targeted rendering and mapping checks passed",
+    "evidence_log": "research/test_results/decision-emphasis-focused-20261016.log"
   }
 }

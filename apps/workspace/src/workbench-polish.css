@@ -66,6 +66,58 @@ button:disabled { opacity: .62; }
 .radar-point { fill: var(--chart-blue); }
 .dimension-meter .filled { background: var(--chart-blue); }
 
+/* Color identifies the consequence, while the visible label states its meaning. */
+[data-tone=danger] { --emphasis: var(--color-danger); --emphasis-soft: var(--color-danger-soft); --emphasis-line: var(--color-danger-line); }
+[data-tone=warning] { --emphasis: var(--color-warning); --emphasis-soft: var(--color-warning-soft); --emphasis-line: var(--color-warning-line); }
+[data-tone=success] { --emphasis: var(--color-success); --emphasis-soft: var(--color-success-soft); --emphasis-line: var(--color-success-line); }
+[data-tone=neutral] { --emphasis: var(--color-muted); --emphasis-soft: var(--color-surface-soft); --emphasis-line: var(--color-line); }
+.decision-status-badge, .renewal-gate .renewal-gate-item>strong.decision-status-badge, .renewal-gate-counts>.decision-status-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border: 1px solid var(--emphasis-line);
+  border-radius: 7px; font-size: 14px; font-weight: 650; line-height: 1.5;
+  color: var(--emphasis); background: var(--emphasis-soft);
+}
+.decision-status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.project-overview-condition-list { display: grid; gap: 12px; }
+.decision-condition-card { padding: 15px 17px; border: 1px solid var(--emphasis-line); border-left: 4px solid var(--emphasis); border-radius: 10px; background: var(--emphasis-soft); }
+.decision-condition-card>header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.decision-condition-card>header h3 { font-size: 17px; color: var(--emphasis); margin: 3px 0; }
+.decision-condition-card>p { margin: 9px 0 0; font-size: 15px; line-height: 1.8; color: var(--color-ink); }
+.project-overview-investigation-label { margin: 22px 0 5px; font-size: 16px; color: var(--color-warning); }
+.project-overview-investigations>header h2::before { background: var(--color-warning-accent); }
+.project-overview-hero--checks, .project-overview-hero--stale { border-left-color: var(--color-warning-accent); }
+.project-overview-hero--failed { border-left-color: var(--color-danger); }
+.project-overview-hero--candidates { border-left-color: var(--color-success); }
+.project-overview-hero--candidates .project-overview-status>span:first-child { color: var(--color-success); background: var(--color-success-soft); }
+.project-overview-investment[data-stage=preliminary] { border-color: var(--color-warning-accent); background: var(--color-warning-soft); border-radius: 0 8px 8px 0; padding: 10px 13px; }
+.project-overview-investment[data-stage=hold] { border-color: var(--color-danger); background: var(--color-danger-soft); color: var(--color-danger); border-radius: 0 8px 8px 0; padding: 10px 13px; }
+.project-overview-investment[data-stage=construction] { border-color: var(--color-primary); }
+.decision-questions .decision-investment-stage[data-stage=preliminary] { background: var(--color-warning-soft); color: var(--color-warning) !important; border: 1px solid var(--color-warning-line); }
+.decision-questions .decision-investment-stage[data-stage=hold] { background: var(--color-danger-soft); color: var(--color-danger) !important; border: 1px solid var(--color-danger-line); }
+.decision-questions .decision-investment-stage[data-stage=construction] { background: var(--color-primary-soft); color: var(--color-primary) !important; border: 1px solid var(--color-primary-line); }
+.renewal-direction.is-investigate { background: var(--color-warning-soft); border-left-color: var(--color-warning-accent); }
+.renewal-direction.is-investigate>strong { color: var(--color-warning); }
+.renewal-gate li[data-tone] { background: var(--emphasis-soft); border: 1px solid var(--emphasis-line); border-left: 3px solid var(--emphasis); border-radius: 8px; padding: 12px 14px; margin: 9px 0; }
+.renewal-standard[data-tone] { border-left: 3px solid var(--emphasis); padding-left: 12px; }
+.renewal-standard[data-tone]>button span { color: var(--emphasis); background: var(--emphasis-soft); border: 1px solid var(--emphasis-line); border-radius: 6px; padding: 3px 8px; font-weight: 600; }
+.renewal-mode-panel .renewal-condition[data-state=restricted], .renewal-mode-panel .renewal-condition[data-state=conflict] { color: var(--color-danger); }
+.renewal-mode-panel .renewal-condition[data-state=unknown] { color: var(--color-warning); }
+.renewal-mode-panel .renewal-condition[data-state=supported] { color: var(--color-success); }
+.decision-dashboard .dimension-readout>button[data-tone] { border-color: var(--emphasis-line); border-left: 3px solid var(--emphasis); background: var(--emphasis-soft); }
+.decision-dashboard .dimension-readout>button[data-tone]>strong, .decision-dashboard .dimension-readout>button[data-tone]>.dimension-emphasis-label { color: var(--emphasis); }
+.decision-dashboard .dimension-emphasis-label { grid-column: 1/-1; font-size: 13px; line-height: 1.4; font-weight: 600; }
+.decision-dashboard .dimension-readout>button[data-tone] .dimension-meter .filled { background: var(--emphasis); }
+.decision-dashboard .dimension-readout>button[data-tone] .dimension-pair-after { border-color: var(--emphasis); background: var(--emphasis); }
+.decision-dashboard .dimension-readout>button[data-tone][aria-pressed=true] { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.decision-dashboard .radar-point[data-tone] { fill: var(--emphasis); stroke: white; stroke-width: 1px; }
+.cwp-priority--first { color: var(--color-primary); background: var(--color-primary-soft); border: 1px solid var(--color-primary-line); }
+.cwp-target-basis--scenario, .project-overview-status>span.project-overview-synthetic { background: var(--color-violet-soft); color: var(--color-violet); }
+.cwp-shared-conditions { border-left: 4px solid var(--color-warning-accent); background: var(--color-warning-soft); }
+.cwp-shared-conditions>strong, .cwp-data-requests h4, .cwp-unlinked-requests h4 { color: var(--color-warning); }
+.playground-result-heading[data-tone]>h3 { color: var(--emphasis); }
+.playground-kpis>div[data-tone] { background: var(--emphasis-soft); border-color: var(--emphasis-line); border-left: 4px solid var(--emphasis); }
+.playground-kpis>div[data-tone]>strong, .playground-plan-metrics dd.is-deficit { color: var(--emphasis, var(--color-danger)); }
+.playground-service-copy>.playground-service-status[data-tone] { color: var(--emphasis); background: var(--emphasis-soft); padding: 3px 7px; border-radius: 5px; font-weight: 600; }
+
 @media (max-width: 760px) {
   .map-shell.workspace-frame .workspace-frame-header { min-height: 58px; padding: 10px 14px; }
   .map-shell.workspace-frame .research-drawer .workspace-columns>main { padding: 20px 16px 30px; }
