@@ -3729,5 +3729,48 @@
     "browser_evidence": "research/test_results/results-recovery-browser-20261016.json",
     "database_operations": 0,
     "provider_calls": 0
+  },
+  "campus_domain_20261016": {
+    "status": "http_completed_https_deferred_by_user",
+    "updated_at": "2026-10-16T09:58:37.154042+00:00",
+    "domain": "laneanew.cn",
+    "aliases": [
+      "www.laneanew.cn"
+    ],
+    "target_ip": "10.70.223.113",
+    "scope": "campus_collaborative",
+    "changes": [
+      "Aliyun @ and www A records, TTL 600",
+      "Nginx server_name aliases",
+      "existing Host/Origin policy extended by explicit TRUSTED_PUBLIC_ORIGINS"
+    ],
+    "tests": {
+      "command": "npx vitest run tests/contracts/request-origin.test.ts tests/contracts/collaborative-config.test.ts --reporter=dot",
+      "passed": 19,
+      "real_dns_http": {
+        "apex": 200,
+        "www": 200
+      },
+      "host_session_project_read": [
+        200,
+        200,
+        200
+      ],
+      "foreign_origin_and_csrf_rejected": true,
+      "ui_index_unchanged": true,
+      "model_calls": 0,
+      "projects_created": 0
+    },
+    "evidence": [
+      "research/test_results/laneanew-domain-deployment-20261016.json",
+      "research/test_results/laneanew-domain-http-readback-20261016.json",
+      "research/test_results/laneanew-domain-dns-20261016.json",
+      "output/domain-configuration/laneanew-dns-records.jpg"
+    ],
+    "pending": [
+      "HTTPS deferred by explicit user choice; zero-cost certificate quota retained, application not submitted",
+      "Chrome automation returned ERR_BLOCKED_BY_CLIENT, then blank domain page; browser rendering not verified"
+    ],
+    "next_runnable_task": "No further HTTP setup needed. Resume HTTPS only when requested, beginning with certificate contact entry."
   }
 }

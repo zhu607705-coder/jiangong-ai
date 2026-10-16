@@ -1,0 +1,6 @@
+Command: npx vitest run tests/contracts/request-origin.test.ts tests/contracts/collaborative-config.test.ts --reporter=dot
+Vitest v4.1.11
+Test Files: 2 passed (2)
+Tests: 19 passed (19)
+Start at: 17:46:58 (Asia/Shanghai)
+Duration: 1.39s

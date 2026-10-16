@@ -11,6 +11,7 @@ const env = z.object({
   WORKSPACE_PORT: z.coerce.number().int().default(5173),
   // Exposed deployments declare the exact origin and the intended access mode.
   TRUSTED_PUBLIC_ORIGIN: z.string().default(''),
+  TRUSTED_PUBLIC_ORIGINS: z.string().default(''),
   ADMIN_USERNAME: z.string().regex(/^[A-Za-z0-9_.-]{3,64}$/).default('admin'),
   ADMIN_PASSWORD_HASH: z.string().refine(value => !value || /^scrypt\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(value), 'ADMIN_PASSWORD_HASH must be a scrypt password hash.').default(''),
   ADMIN_SESSION_TTL_SECONDS: z.coerce.number().int().min(300).max(86400).default(28800),
@@ -32,7 +33,7 @@ if (!collaborativeWorkspace && env.PUBLIC_READ_ONLY === 'true' && (!env.TRUSTED_
 
 export const config = {
   ...env, collaborativeWorkspace, dataDir: resolve(env.DATA_DIR), ownerId: 'local-operator',
-  requestOrigins: requestOriginPolicy(env.PORT, env.WORKSPACE_PORT, env.TRUSTED_PUBLIC_ORIGIN),
+  requestOrigins: requestOriginPolicy(env.PORT, env.WORKSPACE_PORT, env.TRUSTED_PUBLIC_ORIGIN, env.TRUSTED_PUBLIC_ORIGINS),
   capabilityUrl: `http://127.0.0.1:${env.CAPABILITY_PORT}`,
   capabilityToken: process.env.CAPABILITY_TOKEN || randomBytes(32).toString('hex'),
   modelConfigured: Boolean(process.env.DEEPSEEK_API_KEY),

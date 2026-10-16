@@ -1,0 +1,45 @@
+{
+  "results": [
+    {
+      "host": "10.70.223.113",
+      "transport": "direct campus IP with original Host/Origin",
+      "page": 200,
+      "index_sha256": "ddb7d11716287d64f2466662ae6828b1b0ad841b7299eca27624beb82eb4edf3",
+      "session": 200,
+      "deployment": "campus_collaborative",
+      "project_read": 200,
+      "project_count": 35,
+      "safe_invalid_post": 422,
+      "foreign_origin_rejected": 403,
+      "missing_csrf_rejected": 403
+    },
+    {
+      "host": "laneanew.cn",
+      "transport": "direct campus IP with original Host/Origin",
+      "page": 200,
+      "index_sha256": "ddb7d11716287d64f2466662ae6828b1b0ad841b7299eca27624beb82eb4edf3",
+      "session": 200,
+      "deployment": "campus_collaborative",
+      "project_read": 200,
+      "project_count": 35,
+      "safe_invalid_post": 422,
+      "foreign_origin_rejected": 403,
+      "missing_csrf_rejected": 403
+    },
+    {
+      "host": "www.laneanew.cn",
+      "transport": "direct campus IP with original Host/Origin",
+      "page": 200,
+      "index_sha256": "ddb7d11716287d64f2466662ae6828b1b0ad841b7299eca27624beb82eb4edf3",
+      "session": 200,
+      "deployment": "campus_collaborative",
+      "project_read": 200,
+      "project_count": 35,
+      "safe_invalid_post": 422,
+      "foreign_origin_rejected": 403,
+      "missing_csrf_rejected": 403
+    }
+  ],
+  "model_calls": 0,
+  "projects_created": 0
+}

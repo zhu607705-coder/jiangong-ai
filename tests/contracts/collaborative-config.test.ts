@@ -9,6 +9,7 @@ beforeEach(() => {
   vi.resetModules()
   vi.stubEnv('HOST', '127.0.0.1')
   vi.stubEnv('TRUSTED_PUBLIC_ORIGIN', '')
+  vi.stubEnv('TRUSTED_PUBLIC_ORIGINS', '')
   vi.stubEnv('ADMIN_PASSWORD_HASH', '')
   vi.stubEnv('PUBLIC_READ_ONLY', 'false')
   vi.stubEnv('COLLABORATIVE_WORKSPACE', 'false')
@@ -26,10 +27,13 @@ describe('explicit campus collaborative configuration', () => {
   it('accepts an explicit collaborative origin without requiring administrator credentials', async () => {
     vi.stubEnv('TRUSTED_PUBLIC_ORIGIN', 'http://10.70.223.113')
     vi.stubEnv('COLLABORATIVE_WORKSPACE', 'true')
+    vi.stubEnv('TRUSTED_PUBLIC_ORIGINS', 'http://laneanew.cn,http://www.laneanew.cn')
     const { config } = await import('../../apps/host/config')
     expect(config.collaborativeWorkspace).toBe(true)
     expect(config.HOST).toBe('127.0.0.1')
     expect(config.requestOrigins.allowedOrigins.has('http://10.70.223.113')).toBe(true)
+    expect(config.requestOrigins.allowedHosts.has('laneanew.cn')).toBe(true)
+    expect(config.requestOrigins.allowedOrigins.has('http://www.laneanew.cn')).toBe(true)
   })
   it('requires a declared origin and preserves stored credentials instead of deleting them', async () => {
     vi.stubEnv('COLLABORATIVE_WORKSPACE', 'true')
