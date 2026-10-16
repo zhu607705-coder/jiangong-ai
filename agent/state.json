@@ -3731,7 +3731,7 @@
     "provider_calls": 0
   },
   "campus_domain_20261016": {
-    "status": "http_completed_https_deferred_by_user",
+    "status": "https_deployed_certbot_renewal_verified_with_proxy_dependency",
     "updated_at": "2026-10-16T09:58:37.154042+00:00",
     "domain": "laneanew.cn",
     "aliases": [
@@ -3768,9 +3768,68 @@
       "output/domain-configuration/laneanew-dns-records.jpg"
     ],
     "pending": [
-      "HTTPS deferred by explicit user choice; zero-cost certificate quota retained, application not submitted",
-      "Chrome automation returned ERR_BLOCKED_BY_CLIENT, then blank domain page; browser rendering not verified"
+      "DNS API renewal depends on the existing desktop proxy and SSH tunnel; independent server IPv4 egress remains unavailable."
     ],
-    "next_runnable_task": "No further HTTP setup needed. Resume HTTPS only when requested, beginning with certificate contact entry."
+    "next_runnable_task": "No further HTTPS installation work. Keep the DNS proxy path available during renewal; replace it with server-independent egress if later authorized and available."
+  },
+  "campus_https_20261016": {
+    "status": "deployed_and_verified_with_proxy_dependency",
+    "updated_at": "2026-10-16T11:23:41.912095+00:00",
+    "domains": [
+      "https://laneanew.cn/",
+      "https://www.laneanew.cn/"
+    ],
+    "scope": "campus_collaborative",
+    "certificate": {
+      "issuer": "Lets Encrypt YE1",
+      "expires_at_beijing": "2027-01-14T17:56:55+08:00",
+      "trust_chain_and_hostname_verified": true
+    },
+    "renewal": {
+      "certbot": "5.8.0",
+      "dns_plugin": "certbot-dns-aliyun 2.0.0",
+      "authenticator": "dns-aliyun",
+      "staging_simulation_passed": true,
+      "deploy_hook_passed": true,
+      "timer": "haizhizi-certbot-renew.timer",
+      "enabled": true,
+      "schedule": "00:00 and 12:00 Asia/Shanghai plus up to 1h randomized delay",
+      "service_exit_code": 0,
+      "dependency": "Existing desktop proxy and SSH reverse tunnel on server loopback 127.0.0.1:17897 must be available during DNS renewal; website serving is independent."
+    },
+    "credential": {
+      "ram_user": "haizhizi-acme",
+      "console_login": false,
+      "policy": "docs/deploy/laneanew-acme-dns-policy.json",
+      "server_path": "/etc/letsencrypt/aliyun.ini",
+      "owner": "root",
+      "mode": "0600",
+      "cloud_temp_copies_removed": true,
+      "secret_values_in_artifacts": false
+    },
+    "checks": {
+      "https_hosts_verified": 2,
+      "project_count_read": 35,
+      "csrf_and_origin_protection_preserved": true,
+      "cleanup_regressions_passed": 3,
+      "model_calls": 0,
+      "projects_created": 0,
+      "chrome_https_page_verified": true
+    },
+    "evidence": [
+      "research/test_results/laneanew-https-deployment-20261016.json",
+      "research/test_results/laneanew-https-readback-20261016.json",
+      "research/test_results/laneanew-acme-dns-auth-20261016.json",
+      "research/test_results/laneanew-certbot-renewal-20261016.json",
+      "output/domain-configuration/laneanew-https-workbench.jpg",
+      "research/test_results/laneanew-server-network-20261016.json",
+      "research/test_results/laneanew-certbot-cleanup-20261016.json"
+    ],
+    "next_runnable_task": "User asked for server independence; waiting for the authorized campus-network account/official fixed-proxy method. Do not collect a password in chat. Keep the working HTTPS site and verified renewal configuration intact.",
+    "network_diagnosis": {
+      "campus_ipv4_auth": "not_online_error",
+      "local_output": "ACCEPT",
+      "ufw": "inactive"
+    }
   }
 }

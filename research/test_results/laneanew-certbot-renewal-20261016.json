@@ -1,0 +1,18 @@
+{
+  "verified_at": "2026-10-16T11:22:40.050914+00:00",
+  "certbot_version": "5.8.0",
+  "aliyun_plugin_version": "2.0.0",
+  "reconfigure_exit_code": 0,
+  "staging_renewal_simulation_passed": true,
+  "deploy_hook_nginx_test_and_reload_passed": true,
+  "timer_enabled": true,
+  "timer_active": true,
+  "schedule": "Asia/Shanghai 00:00 and 12:00, randomized delay up to one hour",
+  "service_exit_code": 0,
+  "credential_owner": "root",
+  "credential_mode": "0600",
+  "private_credentials_logged": false,
+  "cloud_temporary_copies_removed": true,
+  "dependency": "Aliyun DNS API currently uses the existing SSH reverse proxy 127.0.0.1:17897; the desktop proxy and SSH tunnel must be online during DNS renewal. Normal HTTPS serving is independent.",
+  "status_readback": "Result=success\nExecMainStatus=0\nenabled\nactive\nNEXT                            LEFT LAST PASSED UNIT                         ACTIVATES\nSat 2026-10-17 00:03:34 CST 4h 41min -         - haizhizi-certbot-renew.timer haizhizi-certbot-renew.service\n\n1 timers listed.\nauthenticator = dns-aliyun\nserver = https://acme-v02.api.letsencrypt.org/directory\ndns_aliyun_propagation_seconds = 60\ndns_aliyun_credentials = /etc/letsencrypt/aliyun.ini\nroot 600\n"
+}

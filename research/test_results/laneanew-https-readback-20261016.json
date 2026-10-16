@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-16T10:59:02.600809+00:00",
+  "results": [
+    {
+      "domain": "laneanew.cn",
+      "page": 200,
+      "session": 200,
+      "project_read": 200,
+      "project_count": 35,
+      "safe_invalid_post": 422,
+      "foreign_origin_rejected": 403,
+      "certificate_verified": true,
+      "certificate_expires": "Jan 14 09:56:55 2027 GMT",
+      "tls_protocol": "TLSv1.3",
+      "http_redirect_followed": true
+    },
+    {
+      "domain": "www.laneanew.cn",
+      "page": 200,
+      "session": 200,
+      "project_read": 200,
+      "project_count": 35,
+      "safe_invalid_post": 422,
+      "foreign_origin_rejected": 403,
+      "certificate_verified": true,
+      "certificate_expires": "Jan 14 09:56:55 2027 GMT",
+      "tls_protocol": "TLSv1.3",
+      "http_redirect_followed": true
+    }
+  ],
+  "ip_http_preserved": true,
+  "projects_created": 0,
+  "model_calls": 0,
+  "automatic_renewal_verified": true,
+  "renewal_evidence": "research/test_results/laneanew-certbot-renewal-20261016.json"
+}

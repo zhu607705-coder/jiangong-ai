@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-16T11:30:51.412753+00:00",
+  "server": "10.70.223.113",
+  "ipv4_campus_auth_endpoint": "https://net.zju.edu.cn/cgi-bin/rad_user_info",
+  "ipv4_auth_status": "not_online_error",
+  "local_output_policy": "ACCEPT",
+  "ufw": "inactive",
+  "letsencrypt_ipv6_direct": "HTTP 200",
+  "alidns_ipv4_direct": "TCP 443 timeout",
+  "alidns_via_existing_loopback_proxy": "HTTP 200 and authenticated DNS operations succeeded",
+  "required_for_desktop_independence": "Authorized campus-network authentication for this server, or a school-provided stable outbound proxy",
+  "network_authentication_attempted": false,
+  "password_collected": false
+}

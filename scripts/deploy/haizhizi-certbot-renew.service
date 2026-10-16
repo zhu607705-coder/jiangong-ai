@@ -1,0 +1,14 @@
+[Unit]
+Description=Renew laneanew.cn with the restricted Aliyun DNS account
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/letsencrypt/aliyun.ini
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/letsencrypt/haizhizi-renew.env
+ExecStart=/opt/certbot/bin/python /opt/certbot/haizhizi-certbot.py renew --cert-name laneanew.cn --quiet
+TimeoutStartSec=20min
+UMask=0077
+PrivateTmp=true
+NoNewPrivileges=true
