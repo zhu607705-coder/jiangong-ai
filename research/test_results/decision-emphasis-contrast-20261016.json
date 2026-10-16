@@ -1,0 +1,22 @@
+{
+  "danger": {
+    "foreground": "#ce3348",
+    "background": "#fff0f2",
+    "contrast": 4.533
+  },
+  "warning": {
+    "foreground": "#a15e08",
+    "background": "#fff7e9",
+    "contrast": 4.79
+  },
+  "success": {
+    "foreground": "#087f66",
+    "background": "#eafaf4",
+    "contrast": 4.596
+  },
+  "neutral": {
+    "foreground": "#5f7190",
+    "background": "#f7faff",
+    "contrast": 4.722
+  }
+}

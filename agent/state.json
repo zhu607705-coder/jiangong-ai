@@ -3533,12 +3533,12 @@
     }
   },
   "decision_color_emphasis_20261016": {
-    "status": "implemented_pending_build_and_deployment",
-    "updated_at": "2026-10-16T09:39:39.135076+08:00",
+    "status": "deployed_verified_pending_merge",
+    "updated_at": "2026-10-16T09:43:32.004826+08:00",
     "branch": "codex/semantic-highlights",
     "request": "Highlight decision-critical facts using red/amber/green, with blue operations and violet scenarios, based on existing fields",
     "reuse": "ProjectOverview, RenewalModePanel, DecisionDashboard and shared semantic tokens; existing mode gate and 1-5 scores unchanged",
-    "next_runnable_task": "Build isolated commit and deploy static UI only; read-only browser check; merge exact checked head.",
+    "next_runnable_task": "Wait PR40 required checks and merge exact head; no automated demonstration.",
     "changed_files": [
       "ProjectOverview.tsx",
       "RenewalModePanel.tsx",
@@ -3549,7 +3549,21 @@
       "workbench-polish.css",
       "docs/界面配色与可读性.md"
     ],
-    "tests": "18/18 targeted rendering and mapping checks passed",
-    "evidence_log": "research/test_results/decision-emphasis-focused-20261016.log"
+    "tests": "18/18 targeted tests passed; isolated TypeScript+Vite production build exit0",
+    "evidence_log": "research/test_results/decision-emphasis-focused-20261016.log",
+    "implementation_commit": "8b4813019cd4592a9af8e9b569a9126a876702fa",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/40",
+    "build_log": "research/test_results/decision-emphasis-build-20261016.log",
+    "deployment_receipt": "research/test_results/decision-emphasis-deployment-20261016.json",
+    "browser_readback": "research/test_results/decision-emphasis-browser-20261016.json",
+    "screenshot": "output/playwright/decision-emphasis/qiushi-key-conditions-20261016.png",
+    "verification": {
+      "status_color_pairs": "4/4 contrast >=4.5",
+      "live_conditions": "3 unknown conditions rendered orange with matching labels; neutral subject headings",
+      "page_alerts": 0,
+      "horizontal_overflow": false,
+      "backend_hashes_and_pid": "unchanged",
+      "database_and_provider_operations": 0
+    }
   }
 }

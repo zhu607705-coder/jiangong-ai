@@ -1,0 +1,37 @@
+{
+  "alerts": 0,
+  "cards": [
+    {
+      "background": "rgb(255, 247, 233)",
+      "border": "rgb(161, 94, 8)",
+      "heading": "安全鉴定与修缮可行性",
+      "label": "待核实",
+      "labelColor": "rgb(161, 94, 8)",
+      "tone": "warning"
+    },
+    {
+      "background": "rgb(255, 247, 233)",
+      "border": "rgb(161, 94, 8)",
+      "heading": "建设资金与现金流",
+      "label": "待核实",
+      "labelColor": "rgb(161, 94, 8)",
+      "tone": "warning"
+    },
+    {
+      "background": "rgb(255, 247, 233)",
+      "border": "rgb(161, 94, 8)",
+      "heading": "维护责任与预算",
+      "label": "待核实",
+      "labelColor": "rgb(161, 94, 8)",
+      "tone": "warning"
+    }
+  ],
+  "investment": [
+    {
+      "background": "rgb(255, 247, 233)",
+      "stage": "preliminary"
+    }
+  ],
+  "overflow": false,
+  "url": "http://10.70.223.113/?project=DEMO-QIUSHI-20261015&view=overview"
+}

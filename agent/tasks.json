@@ -1709,7 +1709,7 @@
         "T-BLUE-WORKBENCH-20261016"
       ],
       "goal": "让关键条件、弱项和投入阶段具有红橙绿重点标注，并保留状态文字与实际判断。",
-      "status": "implementing",
+      "status": "completed",
       "write_scope": [
         "apps/workspace/src/components/ProjectOverview.tsx",
         "apps/workspace/src/components/DecisionDashboard.tsx",
@@ -1721,7 +1721,9 @@
         "docs/界面配色与可读性.md",
         "tests/contracts/decision-emphasis.test.ts"
       ],
-      "definition_of_done": "已知冲突及未满足条件、未知资料、确认条件呈现不同颜色；不混淆拆建必要性与可行前提；定向检查及构建通过，UI-only上线与页面核对完成。"
+      "definition_of_done": "已知冲突及未满足条件、未知资料、确认条件呈现不同颜色；不混淆拆建必要性与可行前提；定向检查及构建通过，UI-only上线与页面核对完成。",
+      "evidence_log": "research/test_results/decision-emphasis-deployment-20261016.json",
+      "ui_proof": "output/playwright/decision-emphasis/qiushi-key-conditions-20261016.png"
     }
   ]
 }
