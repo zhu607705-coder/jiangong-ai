@@ -11,6 +11,7 @@ export type RetrievalRequest = {
   question: string; measure_key?: string; object_ref?: string; stage?: string;
   source_kind?: RetrievalSourceKind; include_ai?: boolean;
   review_status?: 'draft' | 'approved' | 'rejected'; as_of?: string; limit?: number;
+  use_ai?:boolean;allow_internal_ai?:boolean;
 }
 export type RetrievalSkip = { document_id: string; locator?: string; code: string; reason: string }
 type RagChunk = RagDocumentExport['chunks'][number]
@@ -24,17 +25,24 @@ export type RetrievalCandidate = {
   measure_mentions: NonNullable<RagChunk['measure_mentions']>;
   stages: string[]; objects: string[]; review_statuses: string[]; match_reasons: string[];
 }
-export type RetrievalHit = RetrievalCandidate & { score: number }
+export type RetrievalHit = RetrievalCandidate & { score: number; matched_excerpt?: string }
+export type RetrievalAnswerClaim = { text:string; citations:{hit_id:string;quote:string}[] }
+export type RetrievalAssistance = {
+  status:'api'|'partial'|'keyword_fallback'; model:string|null; calls:number;
+  answer:RetrievalAnswerClaim[]; public_queries:string[]; internal_requests:string[]; reading_guidance:string[];
+  index:{eligible:number;indexed:number;pending:number;reused:number}; warnings:string[];
+}
 export type RetrievalQueryExpansion = { matched_terms: string[]; added_term: string; reason: string }
 export type RetrievalResponse = {
   project_id: string; question: string; rank_query: string; query_expansions: RetrievalQueryExpansion[]; as_of: string | null; hits: RetrievalHit[];
   candidate_counts: { documents: number; parsed_chunks: number; eligible_chunks: number; ranked_chunks: number; batches: number; unresolved_references: number;
     source_texts?: number; eligible_source_texts?: number };
-  skipped: RetrievalSkip[]; method: 'metadata_gated_bm25' | 'metadata_gated_batched_bm25';
+  skipped: RetrievalSkip[]; method: 'metadata_gated_bm25' | 'metadata_gated_batched_bm25' | 'api_semantic_bm25' | 'keyword_fallback';
+  assistance?:RetrievalAssistance;
   score_meaning: string; ranking_note: string; content_role: 'untrusted_source_material'; fact_writes: 0;
 }
 export type RankMatch = { source_id: string; score: number }
-export type RetrievalRanker = (project: ProjectRecord['input'], query: string) => Promise<{ matches: RankMatch[] }>
+export type RetrievalRanker = (project: ProjectRecord['input'], query: string, limit?:number) => Promise<{ matches: RankMatch[] }>
 
 const sourceKind = (document: Pick<RagDocumentExport, 'data_kind'>): RetrievalSourceKind => ({
   public_original: 'public_original', ai_research_draft: 'ai_draft', synthetic_example: 'synthetic',
@@ -60,6 +68,11 @@ export function expandRetrievalQuery(question: string): { rank_query: string; qu
     { terms: ['花多少钱', '要多少钱', '花费多少'], added_term: '费用 投资 预算', reason: '日常费用问法对应工程材料中的费用、投资和预算词汇；仅扩展查找措辞，不推断金额。' },
     { terms: ['老人', '老年人', '长者'], added_term: '养老 老年 社区服务 邻里', reason: '老人的日常活动可能记在养老、老年、社区服务或邻里材料中；仅扩展查找词汇，不认定设施已适用。' },
     { terms: ['停车难', '找不到车位', '车位不够', '车位不足'], added_term: '停车 车位 泊位', reason: '停车困难在材料中可能用停车、车位或泊位记录；保留原问题并补充相应设施词汇。' },
+    { terms: ['吃饭', '食堂', '用餐', '助餐'], added_term: '助餐 社区食堂 长者食堂 就餐 人次', reason: '补充助餐与食堂的常用表达。' },
+    { terms: ['幸福', '满意', '过得怎么样', '住得舒服'], added_term: '幸福感 满意度 问卷 居住体验', reason: '补充居民感受和调查量表的表达。' },
+    { terms: ['上楼', '乘梯', '电梯怎么', '电梯的', '加梯怎么'], added_term: '电梯 加装电梯 无障碍 使用频次 维保 托管', reason: '补充出行设施、运行与维护的表达。' },
+    { terms: ['漏水', '水压', '停水'], added_term: '给水 管网 供水 渗漏 水泵', reason: '补充供水故障和设施名称。' },
+    { terms: ['充电', '电动车'], added_term: '充电设施 充电桩 非机动车 消防', reason: '补充非机动车和充电设施表达。' },
   ]
   const query_expansions = rules.flatMap(rule => {
     const matched_terms = rule.terms.filter(term => question.includes(term))
@@ -311,7 +324,7 @@ function batches(candidates: RetrievalCandidate[]): RetrievalCandidate[][] {
 }
 
 /** Reuse the single Python BM25 capability; no embedding store, model prompt or fact write is introduced. */
-export async function retrieveProjectEvidence(project: ProjectRecord, bundle: RagExportBundle, originals: ParsedDocument[], request: RetrievalRequest, ranker: RetrievalRanker): Promise<RetrievalResponse> {
+export async function retrieveProjectEvidence(project: ProjectRecord, bundle: RagExportBundle, originals: ParsedDocument[], request: RetrievalRequest, ranker: RetrievalRanker, options:{relaxTopics?:boolean;recallLimit?:number}={}): Promise<RetrievalResponse> {
   const prepared = prepareRetrievalCandidates(project, bundle, originals, request)
   const query = expandRetrievalQuery(request.question)
   const topics = retrievalTopics(request.question), terms = retrievalTerms(project, query, topics.explicit)
@@ -335,6 +348,7 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
   }
   const relevant = prepared.candidates.filter(candidate => {
     const text = candidate.text.toLowerCase(), bodyTerms = locations.length ? attributeTerms : terms
+    if(options.relaxTopics) return terms.some(term=>`${candidate.file_name}\n${text}`.toLowerCase().includes(term)) || topics.explicit&&topics.matches(candidate.text) || locationMatch(candidate)
     return topics.matches(candidate.text) && (topics.explicit || bodyTerms.some(term => text.includes(term)))
       || locationMatch(candidate) && attributeTerms.some(term => text.includes(term))
   })
@@ -343,18 +357,18 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
   const rank = async (candidates: RetrievalCandidate[]): Promise<RetrievalHit[]> => {
     rankCalls++
     const input = { ...project.input, facts: [], context_rules: [], events: [], sources: candidates.map(virtualSource) }
-    const ranked = await ranker(input, query.rank_query)
+    const ranked = await ranker(input, query.rank_query,options.recallLimit)
     const byId = new Map(candidates.map(candidate => [candidate.id, candidate])), seen = new Set<string>()
     return ranked.matches.flatMap(match => {
       const candidate = byId.get(match.source_id)
       if (!candidate || !Number.isFinite(match.score) || seen.has(match.source_id)) return []
       seen.add(match.source_id)
       return [{ ...candidate, score: match.score, match_reasons: [...candidate.match_reasons,
-        '明确主题先核正文，计数单位不替代设施主题；通过后仍由现有BM25排序',
+        options.relaxTopics?'关键词同时查找标题与正文，自动主题用于关联提示':'明确主题先核正文，计数单位不替代设施主题；通过后仍由现有BM25排序',
         ...(priority(candidate) === -1 ? ['问题中的楼幢、单元与同一项目来源的完整定位对应；正文支持所问属性，优先查找但不改变原文阶段或审核状态'] : []),
         priority(candidate) === 0 ? '来源登记为对象范围，且来源标题或对象标识与当前项目匹配，优先查找'
           : priority(candidate) === 1 ? '来源登记为社区范围，且来源标题或对象标识与当前项目匹配，随后查找' : '地区、外部案例或范围待核资料作为参考保留'] }]
-    }).slice(0, 5)
+    }).slice(0, options.recallLimit||5)
   }
   const finalists: RetrievalHit[] = []
   let batched = false
@@ -375,7 +389,7 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
     finalists.push(...scoped)
   }
   return { project_id: project.id, question: request.question, ...query, as_of: request.as_of || null,
-    hits: finalists.slice(0, request.limit || 5), candidate_counts: { documents: bundle.documents.length,
+    hits: finalists.slice(0, options.recallLimit||request.limit || 5), candidate_counts: { documents: bundle.documents.length,
       parsed_chunks: prepared.parsedChunks, eligible_chunks: prepared.candidates.length, ranked_chunks: relevant.length,
       batches: rankCalls, unresolved_references: bundle.unresolved_references.length,
       source_texts: prepared.sourceTexts, eligible_source_texts: prepared.candidates.filter(candidate => candidate.evidence_kind === 'source_text').length }, skipped: prepared.skipped,

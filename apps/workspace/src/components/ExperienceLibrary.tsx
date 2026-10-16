@@ -1,3 +1,4 @@
+import ExperienceLearningIntake from './ExperienceLearningIntake'
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperienceCard, ExperienceDraft, ExperienceEvidence, ExperienceField, ProjectInput, KnowledgeQuery } from '../../../host/generated/contracts'
 import { documentSlices, type DocumentSlice, type ParsedDocument } from '../../../../packages/experience/document-slices'
@@ -251,12 +252,15 @@ export default function ExperienceLibrary({ projectId, revision, synthetic, asOf
     finally { if (activeKey.current === key) setBusy('') }
   }
 
+  const intake=<ExperienceLearningIntake projectId={projectId} synthetic={synthetic} onChanged={async()=>{
+    await onProjectUpdated()
+  }} onOpenDetails={()=>setPipelineOpen(true)}/>
   const heading = <header className="experience-heading"><div><small>PROJECT EXPERIENCE</small><h3>项目经验沉淀</h3><p>将调研报告、测算表、会议纪要和复盘材料中的一次决策整理为经验卡，保留原文依据。</p></div>
     <span className="experience-mode-badge">{synthetic ? '合成资料演示' : '项目资料'}</span></header>
-  if (isLoading || loaded.error) return <section className="experience-library" aria-label="项目经验沉淀">{heading}
+  if (isLoading || loaded.error) return <section className="experience-library" aria-label="项目经验沉淀">{heading}{intake}
     {isLoading ? <WaitingScene compact variant="research" title="正在读取项目经验" detail="读取历史材料、经验草稿与审核记录…" /> : <p role="alert">项目经验暂不可读：{loaded.error}</p>}</section>
 
-  return <section className="experience-library" aria-label="项目经验沉淀">{heading}
+  return <section className="experience-library" aria-label="项目经验沉淀">{heading}{intake}
     <div className="experience-tabs"><button type="button" aria-expanded={pipelineOpen} onClick={() => setPipelineOpen(current => !current)}>原文举措、导师因素政策与技能蒸馏</button></div>
     {pipelineOpen && <Suspense fallback={<p role="status">正在加载知识沉淀操作…</p>}><KnowledgePipelinePanel projectId={projectId} revision={revision} onChanged={async type => {
       const key = requestKey, generation = viewGeneration.current

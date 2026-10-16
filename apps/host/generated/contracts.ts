@@ -35,9 +35,6 @@ export interface ProjectInput {
    * @maxItems 5000
    */
   facts: Fact[];
-  /**
-   * @maxItems 1000
-   */
   sources: Source[];
   /**
    * @maxItems 1000
@@ -703,6 +700,11 @@ export interface ResearchTrace {
  * via the `definition` "DecisionSupport".
  */
 export interface DecisionSupport {
+  error_detail?: string;
+  /**
+   * @maxItems 32
+   */
+  format_notes?: string[];
   status: "completed" | "unavailable" | "failed";
   provider: "qwen_systemone";
   model: string;
@@ -2207,4 +2209,87 @@ export interface RenewalStrategy {
      */
     evidence_refs: string[];
   }[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RagQueryPlan".
+ */
+export interface RagQueryPlan {
+  /**
+   * @maxItems 3
+   */
+  queries: string[];
+  /**
+   * @maxItems 12
+   */
+  concepts: string[];
+  /**
+   * @maxItems 4
+   */
+  subquestions: string[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RagSemanticIndex".
+ */
+export interface RagSemanticIndex {
+  /**
+   * @maxItems 12
+   */
+  entries: {
+    source_id: string;
+    summary: string;
+    /**
+     * @maxItems 12
+     */
+    concepts: string[];
+    /**
+     * @maxItems 3
+     */
+    questions: string[];
+  }[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RagSemanticSelection".
+ */
+export interface RagSemanticSelection {
+  /**
+   * @maxItems 15
+   */
+  matches: {
+    source_id: string;
+    reason: string;
+  }[];
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "RagAnswer".
+ */
+export interface RagAnswer {
+  /**
+   * @maxItems 5
+   */
+  claims: {
+    text: string;
+    /**
+     * @maxItems 3
+     */
+    citations: {
+      source_id: string;
+      quote: string;
+    }[];
+  }[];
+  /**
+   * @maxItems 5
+   */
+  missing: string[];
+  /**
+   * @maxItems 3
+   */
+  public_queries: string[];
+  /**
+   * @maxItems 4
+   */
+  internal_requests: string[];
 }

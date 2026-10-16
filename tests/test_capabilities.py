@@ -133,3 +133,14 @@ def test_sql_operation_budget_interrupts_expensive_select():
             executor.execute_sql("SELECT count(*) FROM evidence a CROSS JOIN evidence b CROSS JOIN evidence c CROSS JOIN evidence d")
     finally:
         executor.close()
+
+
+def test_retrieval_recall_limit_preserves_default_and_expands_hybrid_candidates():
+    p = fixture()
+    template = copy.deepcopy(p["sources"][0])
+    p["sources"] = [dict(template, id=f"RECALL-{i}", title="供水改造公告",
+                         visibility="public", data_class="public", synthetic=False,
+                         url=f"https://example.org/recall/{i}", untrusted_text="供水管网改造安排。")
+                    for i in range(12)]
+    assert len(retrieval_query(p, "供水", False)["matches"]) == 5
+    assert len(retrieval_query(p, "供水", False, limit=30)["matches"]) == 12

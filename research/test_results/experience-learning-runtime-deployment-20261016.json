@@ -1,0 +1,59 @@
+{
+  "status": "owned_runtime_deployed",
+  "commit": "ba14170b8101c399fe10f864a3709bc42529459c",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/backups/experience-learning-ba14170b8101c399fe10f864a3709bc42529459c-20261016T054218Z",
+  "changed_files": [
+    "apps/host/experience.ts",
+    "packages/experience/service.ts",
+    "packages/experience/pipeline.ts",
+    "packages/experience/repository.ts",
+    "packages/experience/knowledge-repository.ts",
+    "packages/experience/skill-distillation.ts",
+    "packages/experience/learning.ts",
+    "packages/experience/learning-windows.ts",
+    "scripts/live-experience-learning-smoke.ts"
+  ],
+  "file_hashes_after": {
+    "apps/host/experience.ts": "5fcf43582ccea9ce2c716c6cf4bf5a644a2af2fe2d3410383fb37426524907c1",
+    "packages/experience/service.ts": "30c8d2b1bdc0ba756a840016b1c1605343a95ef484c208ecbfc5201368ac5306",
+    "packages/experience/pipeline.ts": "1d7e4900bfafc50120d6447d8c9f8ca4017c23d1bbd18e7c642e229f64472bde",
+    "packages/experience/repository.ts": "01b9fde819d4164577b8a7963997ec352a0b315a5e017f182cdef324db81299c",
+    "packages/experience/knowledge-repository.ts": "fae75c499555f54835498be939ebf2a6373a2501aed8df3860e11eb601c7812d",
+    "packages/experience/skill-distillation.ts": "0d72e2a8bfff57b9c0639a3b77ff025ae8af8c5817c21e1468b454a9b4a73a02",
+    "packages/experience/learning.ts": "a463c966fe9de37477880c357fa56d373cda5c2c1a3a61709121c3d9c7e7fe23",
+    "packages/experience/learning-windows.ts": "4a66945edf5b2f12d5436f434735ae13de500d2c8e34dc7b447415217fe94699",
+    "scripts/live-experience-learning-smoke.ts": "4a36b57104a4f11b540f0a8ef198f9668534d09bd6269afe3406383b83a54567"
+  },
+  "protected_files_before": {
+    "apps/host/server.ts": "8d86ed85a9c8235c495cda22a6ed66e02c396cef56a283afd977c7d16f20b778",
+    "apps/host/renewal-mode.ts": "151b4b84d47c0e540b92672eee9e5ee24a18a740841cce5e2716eed59298ba83",
+    "apps/host/rag-retrieval.ts": "3f41e01f7db9b3a0e9d49643d5e8dea9c8603ac6e72c7660979d4648232f34c7",
+    "packages/retrofit/strategy.ts": "fd298c0490808356cad61aba36ac8d2efd841e9a1dc8536a82d524ac074a9e2c",
+    "runtime/dsh/live-session.ts": "6837547bac9328beb1bdc90b99366a62e8ec4ab1182b68642a5b39d2d02ddcef",
+    "packages/experience/retrieval.ts": "43afff20ab535490a854dd3e40e904e96c988336a3fb352bc0f63221f6f41e06",
+    "apps/host/admin-auth.ts": "83c95320c1581c50edb68ca1b6286de814718a7090f43d73dd429edab4dd5f4d",
+    "apps/host/config.ts": "f4d7fb37d126677f502030969d4d3645f09804f7c21120c5ce2af748f7d332e0",
+    "packages/corpus/corpus.ts": "0d8d16b5292a8c6474b102dc6e649325006c5be746c439a66f3f836fd471cdcb"
+  },
+  "protected_files_after": {
+    "apps/host/server.ts": "8d86ed85a9c8235c495cda22a6ed66e02c396cef56a283afd977c7d16f20b778",
+    "apps/host/renewal-mode.ts": "151b4b84d47c0e540b92672eee9e5ee24a18a740841cce5e2716eed59298ba83",
+    "apps/host/rag-retrieval.ts": "3f41e01f7db9b3a0e9d49643d5e8dea9c8603ac6e72c7660979d4648232f34c7",
+    "packages/retrofit/strategy.ts": "fd298c0490808356cad61aba36ac8d2efd841e9a1dc8536a82d524ac074a9e2c",
+    "runtime/dsh/live-session.ts": "6837547bac9328beb1bdc90b99366a62e8ec4ab1182b68642a5b39d2d02ddcef",
+    "packages/experience/retrieval.ts": "43afff20ab535490a854dd3e40e904e96c988336a3fb352bc0f63221f6f41e06",
+    "apps/host/admin-auth.ts": "83c95320c1581c50edb68ca1b6286de814718a7090f43d73dd429edab4dd5f4d",
+    "apps/host/config.ts": "f4d7fb37d126677f502030969d4d3645f09804f7c21120c5ce2af748f7d332e0",
+    "packages/corpus/corpus.ts": "0d8d16b5292a8c6474b102dc6e649325006c5be746c439a66f3f836fd471cdcb"
+  },
+  "nginx_unchanged": true,
+  "project_input_unchanged": true,
+  "host_pid_before": "51075",
+  "host_pid_after": "51351",
+  "provider_calls": 0,
+  "project_writes": 0,
+  "mode_readable": true,
+  "saved_mode_present": false,
+  "checked_at": "2026-10-16T05:42:20.776660+00:00"
+}

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/experience-learning
+
+
+ Test Files  4 passed (4)
+      Tests  53 passed (53)
+   Start at  13:30:44
+   Duration  60.09s (transform 459ms, setup 0ms, import 1.76s, tests 57.86s, environment 0ms)
+

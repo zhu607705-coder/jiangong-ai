@@ -4,7 +4,7 @@ import { factorLabels } from '../../../../packages/maps/decision-factors'
 
 export function DecisionRoute({value, details=false, profile}: {value?:DecisionSupport;details?:boolean;profile?:MapScreenProfile}) {
   if(!value) return null
-  if(value.status!=='completed' || !value.answers || !value.action || !value.priority) return details ? <div className="decision-route-details"><strong>Qwen 判断未完成</strong><p>{decisionErrorMessage(value.error_code)}</p><small>{value.duration_ms > 0 ? `已等待 ${(value.duration_ms / 1000).toFixed(1)} 秒 · ` : ''}{value.error_code}</small></div> : null
+  if(value.status!=='completed' || !value.answers || !value.action || !value.priority) return details ? <div className="decision-route-details"><strong>Qwen 判断未完成</strong><p>{decisionErrorMessage(value.error_code,value.error_detail)}</p><small>{value.duration_ms > 0 ? `已等待 ${(value.duration_ms / 1000).toFixed(1)} 秒 · ` : ''}{value.error_code}</small></div> : null
   const labels = factorLabels(value.policy_version ? (value.policy_version.includes('neighborhood') ? 'neighborhood' : 'balanced') : profile)
   if(!details) return <div className="decision-route" aria-label="本轮判断操作"><strong>{DECISION_ACTIONS[value.action]}</strong><span>优先核查 · {labels[value.priority]}</span></div>
   return <div className="decision-route-details"><strong>结构化判断依据</strong><p>{value.model} · {value.duration_ms} ms</p>
