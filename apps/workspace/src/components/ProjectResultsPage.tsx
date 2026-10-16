@@ -1,3 +1,4 @@
+import StrategyContentNotice from './StrategyContentNotice'
 import { useId } from 'react'
 import type { DecisionPacket } from '../../../host/generated/contracts'
 import type { Project } from '../api'
@@ -38,6 +39,7 @@ export function renderStrategyReportMarkdown(project: Project, packet: StrategyP
     `生成时点：${packet.created_at}`, `资料基线：v${packet.context_version}`, `项目当前资料版本：v${project.context_version}`,
     `结果状态：${packetLabels[packet.status]}`, `资料类型：${packet.synthetic ? '模拟项目' : '项目资料'}`, `结果标识：${packet.input_hash}`, '']
   if (packet.error) lines.push('本轮记录：' + packet.error, '')
+  if(packet.content_review?.issues.length) lines.push('## 待核清单','',...packet.content_review.issues.map(issue=>`- ${issue.message}（${issue.path}）`),'')
   if (strategy) {
     lines.push(strategy.summary, '')
     const brief = strategy.decision_brief
@@ -103,6 +105,7 @@ function SavedResearchReport({ project, packet }: { project: Project; packet: St
   const strategy=packet.strategy!,brief=strategy.decision_brief
   return <details className="project-results-report"><summary>查看本轮调研报告</summary><article aria-label="本项目调研报告">
     <header><span>{project.name} · 资料 v{packet.context_version} · {timestamp(packet.created_at)}</span><h3>{strategy.headline}</h3><p>{strategy.summary}</p></header>
+    <StrategyContentNotice packet={packet}/>
     {brief&&<section><h4>更新判断与投入安排</h4><h5>{brief.renewal.conclusion}</h5><p>{brief.renewal.reason}</p><h5>{brief.investment.conclusion}</h5><p>{stageLabels[brief.investment.stage]} · {brief.investment.reason}</p><h4>预期财务与社会效果</h4><p><strong>财务效果：</strong>{brief.returns.financial}</p><p><strong>社会效果：</strong>{brief.returns.social}</p></section>}
     {strategy.paths.map(path=><section key={path.mode}><h4>{MODE_LABELS[path.mode]} · {path.title}</h4><p>{path.description}</p>{path.work_packages?.length?<div className="project-report-table-scroll"><table><thead><tr><th>对象与范围</th><th>具体改造做法</th><th>工程量口径</th><th>预期交付</th><th>实施前提</th></tr></thead><tbody>{path.work_packages.map(row=><tr key={row.id}><th>{row.target}<p>{row.scope}</p></th><td>{row.intervention}</td><td>{row.quantity===null?'待测量':`${row.quantity} ${row.unit}`}<small>{row.quantity_basis==='scenario'?'情景设定':row.quantity_basis==='unknown'?'待核工程量':'原文记载'}</small></td><td>{row.delivery}</td><td>{row.preconditions.join('；')}</td></tr>)}</tbody></table></div>:<ul>{path.actions.map((row,index)=><li key={index}><strong>{row.title}</strong><p>{row.detail}</p></li>)}</ul>}</section>)}
     {!!strategy.next_checks.length&&<section><h4>下一步调查与补充材料</h4><ul>{strategy.next_checks.map((row,index)=><li key={index}><strong>{row.title}</strong><p>{row.detail}</p></li>)}</ul></section>}
@@ -126,7 +129,7 @@ export default function ProjectResultsPage({ project, packet, rounds = [], legac
     {currentFailure && <p className="project-results-failure" role="status">{packetLabels[currentFailure.status]}：{currentFailure.error || '本轮没有形成完整方案，原有报告继续保留。'}</p>}
     {saved ? <article className="project-results-primary" aria-label="已保存方案">
       <div className="project-results-tags"><span>完整结果已保存</span>{saved.synthetic && <span>模拟项目</span>}</div>
-      <h3>{saved.strategy!.headline}</h3><p>{saved.strategy!.summary}</p><ResultBaseline project={project} packet={saved} />
+      <h3>{saved.strategy!.headline}</h3><p>{saved.strategy!.summary}</p><StrategyContentNotice packet={saved}/><ResultBaseline project={project} packet={saved} />
       <div className="project-results-card-actions"><button type="button" className="project-results-main-action" onClick={() => onNavigate('scenarios', 'compare')}>查看方案</button><ExportButtons project={project} packet={saved} /></div>
       <SavedResearchReport project={project} packet={saved}/>
     </article> : <section className="project-results-empty" aria-label="暂无整体方案"><h3>尚无已保存的整体更新方案</h3><p>先核对本项目资料与条件，再开始改造研判。已有运行记录和归档文件仍可查看。</p>

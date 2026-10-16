@@ -9,7 +9,7 @@ function completedFor(packet: StrategyPacket, project: ProjectRecord, synthetic:
   if (!packet || packet.status !== 'completed' || packet.project_id !== project.id || packet.context_version !== project.context_version || packet.synthetic !== synthetic || !packet.strategy) return false
   try {
     validate<RenewalStrategy>('RenewalStrategy', packet.strategy)
-    validateStrategy(packet.strategy, packet.sources, projectRenewalModeInput(project.input).conditions, !!packet.strategy.decision_brief)
+    if(packet.content_review?.policy!=='advisory-v1') validateStrategy(packet.strategy, packet.sources, projectRenewalModeInput(project.input).conditions, !!packet.strategy.decision_brief)
     return true
   } catch { return false }
 }

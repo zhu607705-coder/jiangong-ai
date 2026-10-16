@@ -86,6 +86,17 @@ describe('owner and version bound published strategies', () => {
     expect((await readPublishedStrategy(store, target, 'current-hash', false))?.input_hash).toBe('older-complete')
     expect((await listPublishedStrategies(store, owner, async () => 'current-hash'))[0].input_hash).toBe('older-complete')
   })
+  it('publishes a schema-valid reviewed plan with findings while retaining owner and version binding',async()=>{
+    const target=await project(),saved=packet(target,'reviewed')
+    saved.strategy!.rationale[0].quote='待核对的模型引文。'
+    saved.content_review={policy:'advisory-v1',status:'needs_review',checked_at:new Date().toISOString(),issues:[{code:'STRATEGY_QUOTE_MISMATCH',path:'rationale.0',message:'核对原句'}],follow_up:{search_queries:[],reading_focus:['阅读原文'],internal_data:[]}}
+    await save(target,saved)
+    const read=await readPublishedStrategy(store,target,'reviewed',false)
+    expect(read?.strategy?.rationale[0].quote).toBe(saved.strategy!.rationale[0].quote)
+    expect(read?.content_review?.status).toBe('needs_review')
+    expect((await listPublishedStrategies(store,owner,async()=>'reviewed'))[0].project_id).toBe(target.id)
+    expect(await readPublishedStrategy(store,{...target,context_version:target.context_version+1},'reviewed',false)).toBeNull()
+  })
   it('indexes only real completed current-version workbench projects without copying conclusions', async () => {
     const target = await project(), sibling = await project(), otherOwner = await project(undefined, 'other-owner'), synthetic = await project(undefined, owner, 0, true)
     await save(target, packet(target, 'current-hash'))

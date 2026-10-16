@@ -1,7 +1,7 @@
 import type { ModelCall, RenewalStrategy, DecisionSupport, ResearchTrace, RenewalResearchPlan, RenewalResearchNote } from '../../apps/host/generated/contracts'
 import { evaluateRenewalModeGate, type ModeCondition } from './renewal-mode'
 
-export const STRATEGY_POLICY = 'renewal-strategy-overview-v7'
+export const STRATEGY_POLICY = 'renewal-strategy-overview-v8-advisory'
 export type StrategySource = { id: string; title: string; text: string; url: string | null; published_at: string | null; role: 'current' | 'reference'; locator: string;
   visibility?: 'public' | 'internal'; data_class?: 'public' | 'internal' | 'synthetic' | 'semi_synthetic'; document_id?: string; document_version?: string; project_id?: string;
   material_category?: import('./research-rounds').ResearchMaterialCategory; source_date?: string | null }
@@ -13,8 +13,11 @@ export type StrategyReview = { kind: 'source_and_metric_review'; reviewed_at: st
 export type StrategyDemoReplay = { kind: 'validated_model_replay'; source_project_id: string; source_round_id: string;
   source_packet_sha256: string; source_structured_sha256: string; model_generated_at: string; validated_at: string;
   transformation: 'clear_nonexistent_parent_comparison'; validation_policy: string }
+export type StrategyContentIssue = { code: string; path: string; message: string }
+export type StrategyContentReview = { policy: 'advisory-v1'; status: 'clear' | 'needs_review'; checked_at: string; issues: StrategyContentIssue[]; follow_up: { search_queries:string[]; reading_focus:string[]; internal_data:string[] };
+  recovered_from?: { round_id: string; session_id: string; candidate_sha256: string } }
 export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';
-  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
+  strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; content_review?: StrategyContentReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
 
 export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compression'|'synthesis';
   tasks?:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];status:'pending'|'running'|'completed'|'failed';source_count:number;summary?:string}[];
@@ -172,66 +175,77 @@ export function strategyConstructionAllowed(mode: RenewalStrategy['preferred_mod
   if (mode==='rebuild') return gate.rebuild_allowed&&gate.checks.every(row=>citedAtObject(row.kind,row.kind!=='structure_repairable'))
   return mode==='comprehensive'&&gate.checks.find(row=>row.kind==='structure_repairable')?.state==='unmet'&&citedAtObject('structure_repairable',true)
 }
-export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false, requireRoundReview = false, requireWorkPlan = false, requireReasoningDimensions = false) {
-  if (value.paths.length !== 2 || new Set(value.paths.map(path => path.mode)).size !== 2 || value.dimensions.length !== 6 || new Set(value.dimensions.map(row => row.key)).size !== 6) throw new Error('STRATEGY_INCOMPLETE')
+export function validateStrategy(value: RenewalStrategy, sources: StrategySource[], conditions:ModeCondition[] = [], requireBrief = false, requireRoundReview = false, requireWorkPlan = false, requireReasoningDimensions = false, onIssue?: (code:string,path:string)=>void) {
+  let path = 'strategy'
+  const reject = (code:string) => { if(onIssue) onIssue(code,path); else throw new Error(code) }
+  if (value.paths.length !== 2 || new Set(value.paths.map(path => path.mode)).size !== 2 || value.dimensions.length !== 6 || new Set(value.dimensions.map(row => row.key)).size !== 6) reject('STRATEGY_INCOMPLETE')
   const ids = new Set(sources.map(source => source.id))
   const reasoned=value.reasoning_dimensions,dimensionKeys=['demand','supply','adaptation','implementation','operations','resources']
-  if(requireReasoningDimensions&&!reasoned)throw new Error('STRATEGY_REASONING_DIMENSIONS_REQUIRED')
+  if(requireReasoningDimensions&&!reasoned)reject('STRATEGY_REASONING_DIMENSIONS_REQUIRED')
   if(reasoned) {
-    if(reasoned.length!==6||new Set(reasoned.map(row=>row.key)).size!==6||reasoned.some(row=>!dimensionKeys.includes(row.key)))throw new Error('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
+    if(reasoned.length!==6||new Set(reasoned.map(row=>row.key)).size!==6||reasoned.some(row=>!dimensionKeys.includes(row.key)))reject('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
     for(const row of reasoned) {
-      if(!['low','medium','high'].includes(row.level)||!['logical_inference','scenario_assumption'].includes(row.basis)||!Array.isArray(row.premises)||!row.premises.length||row.premises.some(text=>!text.trim())||!Array.isArray(row.assumptions)||row.assumptions.some(text=>!text.trim())||!row.reason?.trim()||!row.verification?.trim())throw new Error('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
-      if(row.basis==='scenario_assumption'&&!row.assumptions.length)throw new Error('STRATEGY_REASONING_ASSUMPTIONS_REQUIRED')
-      if(!Array.isArray(row.evidence_refs)||row.evidence_refs.some(id=>!ids.has(id)))throw new Error('STRATEGY_SOURCE_MISMATCH')
+      if(!['low','medium','high'].includes(row.level)||!['logical_inference','scenario_assumption'].includes(row.basis)||!Array.isArray(row.premises)||!row.premises.length||row.premises.some(text=>!text.trim())||!Array.isArray(row.assumptions)||row.assumptions.some(text=>!text.trim())||!row.reason?.trim()||!row.verification?.trim())reject('STRATEGY_REASONING_DIMENSIONS_INCOMPLETE')
+      if(row.basis==='scenario_assumption'&&!row.assumptions.length)reject('STRATEGY_REASONING_ASSUMPTIONS_REQUIRED')
+      if(!Array.isArray(row.evidence_refs)||row.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
     }
   }
-  for (const row of value.rationale) {
+  for (const [index,row] of value.rationale.entries()) {
+    path = `rationale.${index}`
     const source = sources.find(source => source.id === row.source_id)
-    if (!source || row.quote.trim().length < 8 || !literal(source.text).includes(literal(row.quote))) throw new Error('STRATEGY_QUOTE_MISMATCH')
+    if (!source || row.quote.trim().length < 8 || !literal(source.text).includes(literal(row.quote))) reject('STRATEGY_QUOTE_MISMATCH')
   }
-  for (const row of [...value.paths.flatMap(path => path.actions), ...value.dimensions, ...value.next_checks]) if (row.evidence_refs.some(id => !ids.has(id))) throw new Error('STRATEGY_SOURCE_MISMATCH')
-  if (!value.rationale.some(row => sources.find(source => source.id === row.source_id)?.role === 'current')) throw new Error('STRATEGY_OBJECT_EVIDENCE_MISSING')
-  if (value.preferred_mode==='comprehensive'&&conditions.some(row=>row.kind==='structure_repairable'&&row.value===false)||value.preferred_mode==='rebuild'&&conditions.some(row=>row.kind==='demolition_permitted'&&row.value===false)) throw new Error('STRATEGY_MODE_RESTRICTED')
-  if (value.preferred_mode==='rebuild'&&!evaluateRenewalModeGate({conditions}).rebuild_allowed) throw new Error('STRATEGY_REBUILD_GATE_UNMET')
+  path = 'evidence_refs'
+  for (const row of [...value.paths.flatMap(path => path.actions), ...value.dimensions, ...value.next_checks]) if (row.evidence_refs.some(id => !ids.has(id))) reject('STRATEGY_SOURCE_MISMATCH')
+  path = 'preferred_mode'
+  if (!value.rationale.some(row => sources.find(source => source.id === row.source_id)?.role === 'current')) reject('STRATEGY_OBJECT_EVIDENCE_MISSING')
+  if (value.preferred_mode==='comprehensive'&&conditions.some(row=>row.kind==='structure_repairable'&&row.value===false)||value.preferred_mode==='rebuild'&&conditions.some(row=>row.kind==='demolition_permitted'&&row.value===false)) reject('STRATEGY_MODE_RESTRICTED')
+  if (value.preferred_mode==='rebuild'&&!evaluateRenewalModeGate({conditions}).rebuild_allowed) reject('STRATEGY_REBUILD_GATE_UNMET')
+  path = 'decision_brief'
   const brief = value.decision_brief
-  if (requireBrief && !brief) throw new Error('STRATEGY_DECISION_BRIEF_REQUIRED')
+  if (requireBrief && !brief) reject('STRATEGY_DECISION_BRIEF_REQUIRED')
   if (brief) {
     const texts = [brief.renewal?.conclusion, brief.renewal?.reason, brief.investment?.conclusion, brief.investment?.reason, brief.returns?.financial, brief.returns?.social]
-    if (texts.some(text => typeof text !== 'string' || !text.trim()) || !['preliminary','construction','hold'].includes(brief.investment?.stage)) throw new Error('STRATEGY_BRIEF_INCOMPLETE')
+    if (texts.some(text => typeof text !== 'string' || !text.trim()) || !['preliminary','construction','hold'].includes(brief.investment?.stage)) reject('STRATEGY_BRIEF_INCOMPLETE')
     for (const row of [brief.renewal, brief.investment, brief.returns]) {
-      if (!Array.isArray(row.evidence_refs) || !row.evidence_refs.length) throw new Error('STRATEGY_BRIEF_EVIDENCE_MISSING')
-      if (row.evidence_refs.some(id => typeof id !== 'string' || !id.trim() || !ids.has(id))) throw new Error('STRATEGY_SOURCE_MISMATCH')
+      if (!Array.isArray(row.evidence_refs) || !row.evidence_refs.length) reject('STRATEGY_BRIEF_EVIDENCE_MISSING')
+      if (row.evidence_refs.some(id => typeof id !== 'string' || !id.trim() || !ids.has(id))) reject('STRATEGY_SOURCE_MISMATCH')
     }
-    if (requireBrief&&brief.investment.stage==='construction'&&!strategyConstructionAllowed(value.preferred_mode,conditions,sources)) throw new Error('STRATEGY_CONSTRUCTION_GATE_UNMET')
+    if (requireBrief&&brief.investment.stage==='construction'&&!strategyConstructionAllowed(value.preferred_mode,conditions,sources)) reject('STRATEGY_CONSTRUCTION_GATE_UNMET')
   }
   if (requireBrief) for (const mode of ['comprehensive','rebuild'] as const) {
-    const path = value.paths.find(path=>path.mode===mode)!
-    const text = [path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail]),...path.requirements,...(path.work_packages?.flatMap(work=>[work.target,work.intervention,work.scope,work.delivery,...work.preconditions])||[]),...value.dimensions.map(dimension=>dimension[mode])].map(literal).join('\n')
-    if ((mode==='comprehensive'?/原拆原建|整体拆建|整体拆除重建/:/综合整治/).test(text)) throw new Error('STRATEGY_PATH_DIRECTION_MIXED')
+    const directionPath = value.paths.find(item=>item.mode===mode)
+    if (!directionPath) continue
+    path = `paths.${mode}`
+    const text = [directionPath.title,directionPath.description,...directionPath.actions.flatMap(action=>[action.title,action.detail]),...directionPath.requirements,...(directionPath.work_packages?.flatMap(work=>[work.target,work.intervention,work.scope,work.delivery,...work.preconditions])||[]),...value.dimensions.map(dimension=>dimension[mode])].map(literal).join('\n')
+    if ((mode==='comprehensive'?/原拆原建|整体拆建|整体拆除重建/:/综合整治/).test(text)) reject('STRATEGY_PATH_DIRECTION_MIXED')
   }
+  path = 'round_review'
   const review = value.round_review
-  if (requireRoundReview && !review) throw new Error('STRATEGY_ROUND_REVIEW_REQUIRED')
+  if (requireRoundReview && !review) reject('STRATEGY_ROUND_REVIEW_REQUIRED')
   if (review) {
-    if (!review.summary?.trim()) throw new Error('STRATEGY_ROUND_REVIEW_INCOMPLETE')
+    if (!review.summary?.trim()) reject('STRATEGY_ROUND_REVIEW_INCOMPLETE')
     for (const change of review.changes) {
       const selectedDocuments=sources.filter(source=>source.document_id)
-      if (![change.topic,change.before,change.after,change.reason].every(text=>typeof text==='string'&&text.trim()) || !change.evidence_refs.some(id=>(selectedDocuments.length?selectedDocuments:sources.filter(source=>source.role==='current')).some(source=>source.id===id))) throw new Error('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
+      if (![change.topic,change.before,change.after,change.reason].every(text=>typeof text==='string'&&text.trim()) || !change.evidence_refs.some(id=>(selectedDocuments.length?selectedDocuments:sources.filter(source=>source.role==='current')).some(source=>source.id===id))) reject('STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING')
     }
-    for (const item of review.missing_materials) if (![item.topic,item.request,item.reason].every(text=>typeof text==='string'&&text.trim())) throw new Error('STRATEGY_ROUND_REVIEW_INCOMPLETE')
-    for (const item of [...review.changes,...review.missing_materials]) if (item.evidence_refs.some(id=>!ids.has(id))) throw new Error('STRATEGY_SOURCE_MISMATCH')
+    for (const item of review.missing_materials) if (![item.topic,item.request,item.reason].every(text=>typeof text==='string'&&text.trim())) reject('STRATEGY_ROUND_REVIEW_INCOMPLETE')
+    for (const item of [...review.changes,...review.missing_materials]) if (item.evidence_refs.some(id=>!ids.has(id))) reject('STRATEGY_SOURCE_MISMATCH')
   }
   const workIds=new Set<string>()
-  for(const path of value.paths) {
-    if(requireWorkPlan&&(!path.work_packages||path.work_packages.length<2))throw new Error('STRATEGY_WORK_PACKAGES_REQUIRED')
-    for(const work of path.work_packages||[]) {
+  for(const directionPath of value.paths) {
+    path = `paths.${directionPath.mode}`
+    if(requireWorkPlan&&(!directionPath.work_packages||directionPath.work_packages.length<2))reject('STRATEGY_WORK_PACKAGES_REQUIRED')
+    for(const work of directionPath.work_packages||[]) {
+      path = `paths.${directionPath.mode}.work_packages.${work.id}`
       const texts=[work.id,work.target,work.source_id,work.locator,work.intervention,work.scope,work.delivery]
-      if(texts.some(text=>typeof text!=='string'||!text.trim())||workIds.has(work.id)||!['object_source','project_scope','scenario'].includes(work.target_basis)||!['first','next','reserve'].includes(work.priority)||!Array.isArray(work.preconditions)||work.preconditions.some(text=>!text.trim()))throw new Error('STRATEGY_WORK_PACKAGE_INCOMPLETE')
+      if(texts.some(text=>typeof text!=='string'||!text.trim())||workIds.has(work.id)||!['object_source','project_scope','scenario'].includes(work.target_basis)||!['first','next','reserve'].includes(work.priority)||!Array.isArray(work.preconditions)||work.preconditions.some(text=>!text.trim()))reject('STRATEGY_WORK_PACKAGE_INCOMPLETE')
       workIds.add(work.id)
-      if(!work.evidence_refs?.length||!work.evidence_refs.includes(work.source_id)||work.evidence_refs.some(id=>!ids.has(id)))throw new Error('STRATEGY_SOURCE_MISMATCH')
+      if(!work.evidence_refs?.length||!work.evidence_refs.includes(work.source_id)||work.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
       const source=sources.find(source=>source.id===work.source_id)!
-      if(typeof work.quote!=='string'||work.quote.length<8||!source.text.replace(/\r\n/g,'\n').includes(work.quote.replace(/\r\n/g,'\n')))throw new Error('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
-      if(work.locator!==source.locator)throw new Error('STRATEGY_WORK_PACKAGE_LOCATOR_MISMATCH')
-      if(work.target_basis==='object_source'&&source.role!=='current')throw new Error('STRATEGY_WORK_PACKAGE_TARGET_SCOPE')
+      if(typeof work.quote!=='string'||work.quote.length<8||!source?.text.replace(/\r\n/g,'\n').includes(work.quote.replace(/\r\n/g,'\n')))reject('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
+      if(work.locator!==source?.locator)reject('STRATEGY_WORK_PACKAGE_LOCATOR_MISMATCH')
+      if(work.target_basis==='object_source'&&source?.role!=='current')reject('STRATEGY_WORK_PACKAGE_TARGET_SCOPE')
       const action=work.intervention.trim()
       const taskPatterns=[
         /^(?:调查|调研|鉴定|登记|核实|核查|勘察|测绘|协商|论证|收集|搜集|审核|评估|研究)/,
@@ -239,27 +253,98 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
         /^(?:新增|建设|建立|配置).{0,30}(?:问卷|台账|调查表|材料目录)[。；，,]*$/,
         /^(?:对|针对)[^，。；,]{1,40}(?:开展|进行|组织)(?:调查|调研|鉴定|登记|核实|核查|勘察|测绘|协商|论证|评估)/,
       ]
-      if(taskPatterns.some(pattern=>pattern.test(action)))throw new Error('STRATEGY_WORK_PACKAGE_TASK_ONLY')
-      if(!['source','scenario','unknown'].includes(work.quantity_basis)||work.quantity_basis==='unknown'&&work.quantity!==null||work.quantity_basis!=='unknown'&&(work.quantity===null||!Number.isFinite(work.quantity)||work.quantity<0||!work.unit?.trim()))throw new Error('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+      if(taskPatterns.some(pattern=>pattern.test(action)))reject('STRATEGY_WORK_PACKAGE_TASK_ONLY')
+      if(!['source','scenario','unknown'].includes(work.quantity_basis)||work.quantity_basis==='unknown'&&work.quantity!==null||work.quantity_basis!=='unknown'&&(work.quantity===null||!Number.isFinite(work.quantity)||work.quantity<0||!work.unit?.trim()))reject('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
       // Typed basis fields identify scenarios; their wording is not an admission condition.
-      if(work.quantity_basis==='source') {
+      if(work.quantity_basis==='source'&&work.unit?.trim()&&work.quantity!==null) {
         const quantity=String(work.quantity).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
         const unit=work.unit!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/平方米|平米|㎡|m²|m2/gi,'(?:平方米|平米|㎡|m²|m2)')
         const quoted=work.quote.replace(/\s+/g,'').replace(/(?<=\d),(?=\d{3}(?:\D|$))/g,'')
         const matches=[...quoted.matchAll(new RegExp(`(?<![\\d.])${quantity}${unit}`,'g'))]
         const supported=matches.some(match=>!['幢','栋','号楼'].includes(work.unit!)||!/^[(（]?\d+单元/.test(quoted.slice(match.index!+match[0].length)))
-        if(source.role!=='current'||!supported)throw new Error('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
+        if(source?.role!=='current'||!supported)reject('STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH')
       }
     }
   }
+  path = 'internal_data_requests'
   const requests=value.internal_data_requests
-  if(requireWorkPlan&&(!requests||!['resident_wellbeing','elevator_usage','meal_attendance'].every(key=>requests.some(request=>request.key===key))))throw new Error('STRATEGY_INTERNAL_DATA_REQUESTS_REQUIRED')
+  if(requireWorkPlan&&(!requests||!['resident_wellbeing','elevator_usage','meal_attendance'].every(key=>requests.some(request=>request.key===key))))reject('STRATEGY_INTERNAL_DATA_REQUESTS_REQUIRED')
   const requestIds=new Set<string>()
   for(const request of requests||[]) {
-    if([request.id,request.metric,request.purpose,request.collection_method,request.unit,request.period,request.denominator].some(text=>typeof text!=='string'||!text.trim())||requestIds.has(request.id))throw new Error('STRATEGY_INTERNAL_DATA_REQUEST_INCOMPLETE')
+    path = `internal_data_requests.${request.id}`
+    if([request.id,request.metric,request.purpose,request.collection_method,request.unit,request.period,request.denominator].some(text=>typeof text!=='string'||!text.trim())||requestIds.has(request.id))reject('STRATEGY_INTERNAL_DATA_REQUEST_INCOMPLETE')
     requestIds.add(request.id)
-    if(request.related_package_ids.some(id=>!workIds.has(id)))throw new Error('STRATEGY_INTERNAL_DATA_PACKAGE_MISMATCH')
-    if(request.evidence_refs.some(id=>!ids.has(id)))throw new Error('STRATEGY_SOURCE_MISMATCH')
+    if(request.related_package_ids.some(id=>!workIds.has(id)))reject('STRATEGY_INTERNAL_DATA_PACKAGE_MISMATCH')
+    if(request.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
   }
   return value
+}
+
+/** Content findings guide review; they never discard a schema-valid model plan. */
+export function reviewStrategyContent(value:RenewalStrategy,sources:StrategySource[],conditions:ModeCondition[]=[],options:{requireRoundReview?:boolean;hasParent?:boolean;requireReasoningDimensions?:boolean;synthetic?:boolean;projectName?:string}={}):StrategyContentReview {
+  const messages:Record<string,string> = {
+    STRATEGY_INCOMPLETE:'方案路径或六维内容需补齐。',
+    STRATEGY_QUOTE_MISMATCH:'判断所引原句需与来源逐字核对。',
+    STRATEGY_SOURCE_MISMATCH:'部分引用编号尚未对应本轮来源，请核对出处。',
+    STRATEGY_OBJECT_EVIDENCE_MISSING:'目前主要依据对标资料；需补充本对象原文验证方案适用性。',
+    STRATEGY_MODE_RESTRICTED:'模型提出的方向与已登记条件有差异，需复核。',
+    STRATEGY_REBUILD_GATE_UNMET:'模型提出拆建方向，部分拆建条件仍未满足或待核。',
+    STRATEGY_CONSTRUCTION_GATE_UNMET:'模型提出工程投入建议，结构、资金等实施条件仍需核实。',
+    STRATEGY_PATH_DIRECTION_MIXED:'单路径内容含另一方向的描述，需整理。',
+    STRATEGY_DECISION_BRIEF_REQUIRED:'需补齐决策摘要。',
+    STRATEGY_BRIEF_INCOMPLETE:'决策摘要部分内容待补齐。',
+    STRATEGY_BRIEF_EVIDENCE_MISSING:'决策摘要的引用依据待补充。',
+    STRATEGY_ROUND_REVIEW_REQUIRED:'本轮资料变化说明待补充。',
+    STRATEGY_ROUND_REVIEW_INCOMPLETE:'轮次变化说明有待完善。',
+    STRATEGY_ROUND_CHANGE_EVIDENCE_MISSING:'版本变化的依据需核对。',
+    STRATEGY_ROUND_COMPARISON_MISSING:'尚未说明与上一轮方案的具体变化。',
+    STRATEGY_WORK_PACKAGES_REQUIRED:'路径分项需要进一步细化。',
+    STRATEGY_WORK_PACKAGE_INCOMPLETE:'分项字段或编号需要整理。',
+    STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH:'分项所引原句需与来源核对。',
+    STRATEGY_WORK_PACKAGE_LOCATOR_MISMATCH:'分项引用的原文位置需核对。',
+    STRATEGY_WORK_PACKAGE_TARGET_SCOPE:'分项对象来自参考案例，需验证本项目适用范围。',
+    STRATEGY_WORK_PACKAGE_TASK_ONLY:'分项偏向调查任务，具体改造动作待细化。',
+    STRATEGY_WORK_PACKAGE_QUANTITY_MISMATCH:'分项数量、单位或其原文依据需核对。',
+    STRATEGY_INTERNAL_DATA_REQUESTS_REQUIRED:'需补充居民感受、电梯使用和食堂就餐的内部调查安排。',
+    STRATEGY_INTERNAL_DATA_REQUEST_INCOMPLETE:'内部调查口径需完善。',
+    STRATEGY_INTERNAL_DATA_PACKAGE_MISMATCH:'调查任务与方案分项的关联需核对。',
+    STRATEGY_REASONING_DIMENSIONS_REQUIRED:'六维推理记录待补充。',
+    STRATEGY_REASONING_DIMENSIONS_INCOMPLETE:'六维推理说明需补齐。',
+    STRATEGY_REASONING_ASSUMPTIONS_REQUIRED:'情景推理的假设需补充。',
+    STRATEGY_RELOCATION_ASSUMPTION_REQUIRED:'搬迁安排需结合施工组织核实。',
+    STRATEGY_SYNTHETIC_IDENTITY_MISMATCH:'模拟项目的部分文字误称真实调查，请结合模拟标记阅读。',
+  }
+  const issues:StrategyContentIssue[]=[]
+  const add=(code:string,path:string)=>{if(!issues.some(issue=>issue.code===code&&issue.path===path))issues.push({code,path,message:messages[code]||'本项内容需要复核。'})}
+  validateStrategy(value,sources,conditions,true,!!options.requireRoundReview,true,!!options.requireReasoningDimensions,add)
+  if(options.hasParent&&!value.round_review?.changes.length)add('STRATEGY_ROUND_COMPARISON_MISSING','round_review')
+  const analysis=[value.headline,value.summary,...value.rationale.map(row=>row.point),...Object.values(value.decision_brief||{}).flatMap(row=>Object.entries(row).filter(([key])=>key!=='evidence_refs').map(([,text])=>String(text))),
+    ...value.paths.flatMap(path=>[path.title,path.description,...path.actions.flatMap(action=>[action.title,action.detail]),...path.requirements,...(path.work_packages?.flatMap(work=>[work.target,work.intervention,work.scope,work.delivery,...work.preconditions])||[])]),...value.dimensions.flatMap(row=>[row.current,row.comprehensive,row.rebuild]),
+    value.round_review?.summary,...(value.round_review?.changes.flatMap(row=>[row.after,row.reason])||[]),...(value.reasoning_dimensions?.flatMap(row=>[...row.premises,...row.assumptions,row.reason,row.verification])||[])]
+  const relocationClaim=/(?:无需|不需要?|不用)(?:居民)?(?:整体)?搬迁/
+  const relocationCondition=/假设|前提|待核|待确认|需确认|若|如果|条件下|不能认定|尚未确认|施工组织.{0,8}(?:确认|核实)/
+  if(analysis.some(text=>text?.split(/[。！？!?\n]/).some(sentence=>relocationClaim.test(sentence.replace(/\s+/g,''))&&!relocationCondition.test(sentence))))add('STRATEGY_RELOCATION_ASSUMPTION_REQUIRED','analysis')
+  if(options.synthetic) {
+    const claim=String.raw`真实(?:问卷(?:数据|调查|结果)|居民(?:调研|调查|访谈))`
+    const denied=new RegExp(String.raw`(?:并非|不是|不属于|不能视为|不代表|尚无|未取得|未获得)\s*${claim}`,'g')
+    if(analysis.some(text=>text&&new RegExp(claim).test(text.replace(denied,''))))add('STRATEGY_SYNTHETIC_IDENTITY_MISMATCH','analysis')
+  }
+  const name=options.projectName||'本项目'
+  const codes=new Set(issues.map(issue=>issue.code))
+  const search_queries:string[]=[],reading_focus:string[]=[],internal_data:string[]=[]
+  if(codes.has('STRATEGY_OBJECT_EVIDENCE_MISSING')) {
+    search_queries.push(`${name} 改造 工程公告 实施范围`,`${name} 房屋安全鉴定 规划 居民协商`)
+    reading_focus.push('优先阅读本对象的官方公告和附件，记录楼幢、范围、日期及实施阶段。')
+    internal_data.push('本对象档案、鉴定报告和已实施工程清单。')
+  }
+  if(issues.some(issue=>/QUOTE|LOCATOR|SOURCE_MISMATCH|QUANTITY/.test(issue.code)))reading_focus.push('回到所引资料全文和附件，对照原句、位置、数量与单位；未取得的数值列为待核参数。')
+  if(issues.some(issue=>/GATE|MODE_RESTRICTED|RELOCATION/.test(issue.code))) {
+    search_queries.push(`${name} 更新 资金 结构 规划 安置 条件`)
+    reading_focus.push('核对鉴定结论、规划条件、居民决议、资金证明与施工组织。')
+    internal_data.push('结构鉴定、资金落实证明、业主表决及安置安排。')
+  }
+  if(issues.some(issue=>/INTERNAL_DATA|TASK_ONLY|WORK_PACKAGES_REQUIRED/.test(issue.code)))internal_data.push('居民幸福度与满意度问卷、分幢电梯运行统计、食堂去重就餐人数及用餐人次。')
+  if(issues.length&&!reading_focus.length)reading_focus.push('对照方案待核清单，补读关联原文并补充缺失材料，再形成下一版。')
+  return {policy:'advisory-v1',status:issues.length?'needs_review':'clear',checked_at:new Date().toISOString(),issues,follow_up:{search_queries,reading_focus,internal_data}}
+
 }

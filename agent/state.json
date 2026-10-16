@@ -3645,5 +3645,22 @@
     "runtime_recovery": "per-specialist truncation/schema recovery with more capacity within same deadline; semantic citation retry before synthesis; no request-count caps",
     "integration_test_log": "research/test_results/creation-rounds-integration-20261016.log",
     "final_runtime_log": "research/test_results/creation-reliability-final-runtime-20261016.log"
+  },
+  "advisory_plan_review_20261016": {
+    "status": "implemented_local_verified_deployment_pending",
+    "request": "内容核验问题返回方案、待核清单与继续搜索阅读指引，不再丢弃完整模型输出",
+    "changed_files": [
+      "packages/retrofit/strategy.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "apps/host/strategy-publication.ts",
+      "apps/host/research-rounds.ts",
+      "apps/workspace/src/components/StrategyContentNotice.tsx",
+      "scripts/recover-renewal-strategy.ts"
+    ],
+    "tests": [
+      "research/test_results/advisory-plan-focused-20261016.log",
+      "research/test_results/advisory-plan-actual-replay-20261016.json"
+    ],
+    "next_runnable_task": "发布原服务模块和前端，独立恢复指定失败输出；读回新方案并保留原失败轮。"
   }
 }

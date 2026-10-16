@@ -1,0 +1,35 @@
+{
+  "status": "actual_failed_output_replayed",
+  "project_id": "P-f47555b1-0175-4d49-85cf-1d56b17fcee1",
+  "source_round_id": "ROUND-0819f4fc-568a-4300-9fba-5943476b45a1",
+  "source_diagnostic": {
+    "code": "STRATEGY_EVIDENCE_INVALID"
+  },
+  "native_session": "18edea23-eb28-4d0f-94e8-a08f10c5d6d6",
+  "candidate_sha256": "f4c0c35824ef9f7308c549991c5e2d65dcb6a94d6f51c39acfbac6e3a2ecb22b",
+  "headline": "浙大路18-1号：先分栋定级，整治类分项先行，拆建留作条件化备选",
+  "work_packages": [
+    3,
+    3
+  ],
+  "dimensions": 6,
+  "source_count": 10,
+  "source_roles": [
+    "reference"
+  ],
+  "issues": [
+    {
+      "code": "STRATEGY_OBJECT_EVIDENCE_MISSING",
+      "path": "preferred_mode",
+      "message": "目前主要依据对标资料；需补充本对象原文验证方案适用性。"
+    },
+    {
+      "code": "STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH",
+      "path": "paths.comprehensive.work_packages.C2",
+      "message": "分项所引原句需与来源核对。"
+    }
+  ],
+  "provider_calls": 0,
+  "project_writes": 0,
+  "original_failed_round_unchanged": true
+}

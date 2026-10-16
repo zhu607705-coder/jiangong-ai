@@ -32,12 +32,12 @@ afterEach(() => { Object.assign(config, initial); vi.restoreAllMocks() })
 
 describe('source-grounded DeepSeek decision brief', () => {
   it('keeps old strategies compatible while requiring the brief for new research', () => {
-    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v7')
+    expect(STRATEGY_POLICY).toBe('renewal-strategy-overview-v8-advisory')
     const legacy=proposal();for(const path of legacy.paths)delete path.work_packages;delete legacy.internal_data_requests
     expect(validateStrategy(legacy, [source])).toBeTruthy()
     expect(() => validateStrategy(proposal(), [source], [], true)).toThrow('STRATEGY_DECISION_BRIEF_REQUIRED')
   })
-  it('repairs unconditional relocation claims including the not-needing-whole-relocation variants', async () => {
+  it('returns relocation claims with a specific review finding without a repair request', async () => {
     for(const claim of ['分项更新不需整体搬迁。','居民无需整体搬迁。','居民不用整体搬迁。']) {
       const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput
       const input=projectDecisionInput(project)
@@ -51,10 +51,9 @@ describe('source-grounded DeepSeek decision brief', () => {
       const call=vi.fn().mockResolvedValueOnce({value:mistaken}).mockResolvedValueOnce({value:repaired})
       ports.open.mockResolvedValueOnce({calls:[],call,close:vi.fn(async()=>{})})
       const result=await researchRenewalStrategy(project,0,input,'relocation-fixture',false,new AbortController().signal,null)
-      expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
-      expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
-      expect(call.mock.calls[1][1]).toContain('STRATEGY_RELOCATION_ASSUMPTION_REQUIRED')
-      expect(result.strategy?.decision_brief?.returns.social).toBe(repaired.decision_brief.returns.social)
+      expect(result.status).toBe('completed');expect(call).toHaveBeenCalledTimes(1)
+      expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_RELOCATION_ASSUMPTION_REQUIRED'}))
+      expect(result.strategy?.decision_brief?.returns.social).toBe(mistaken.decision_brief.returns.social)
     }
   })
   it('accepts same-sentence relocation assumptions while preserving source quotes and historical before text', async () => {
@@ -97,7 +96,7 @@ describe('source-grounded DeepSeek decision brief', () => {
     value.preferred_mode = 'rebuild'
     expect(() => validateStrategy(value, [source], [], true)).toThrow('STRATEGY_REBUILD_GATE_UNMET')
   })
-  it('returns the model-authored project decisions and repairs an omitted brief through the same DSH call seam', async () => {
+  it('returns model-authored paths and a follow-up finding when the brief is omitted', async () => {
     const project = { ...structuredClone(fixture), business_profile: 'neighborhood' } as ProjectInput
     const input = projectDecisionInput(project)
     input.renewalMode!.evidence = [{ source_id: source.id, title: source.title, quote: source.text, url: null, published_at: '2023-08-18', locator: source.locator }]
@@ -106,24 +105,24 @@ describe('source-grounded DeepSeek decision brief', () => {
     const close = vi.fn(async () => {})
     ports.open.mockResolvedValue({ calls: [], call, close })
     const result = await researchRenewalStrategy(project, 0, input, 'fixture-hash', false, new AbortController().signal, null)
-    expect(result.status).toBe('completed'); expect(result.strategy?.decision_brief).toEqual(completed.decision_brief)
-    expect(call).toHaveBeenCalledTimes(2)
+    expect(result.status).toBe('completed'); expect(result.strategy?.paths).toEqual(proposal().paths);expect(result.strategy?.decision_brief).toBeUndefined()
+    expect(call).toHaveBeenCalledTimes(1)
     expect(call.mock.calls[0][1]).toContain('decision_brief')
     expect(call.mock.calls[0][1]).toContain('投入阶段')
     expect(call.mock.calls[0][1]).toContain('两路比较集中在decision_brief和rationale')
-    expect(call.mock.calls[1][1]).toContain('STRATEGY_DECISION_BRIEF_REQUIRED')
+    expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_DECISION_BRIEF_REQUIRED'}))
     expect(close).toHaveBeenCalledOnce(); expect(fetch).not.toHaveBeenCalled()
   })
-  it('fails a new research result that still omits the brief after the bounded repair', async () => {
+  it('preserves a usable plan with an omitted brief and no extra provider call', async () => {
     const project = { ...structuredClone(fixture), business_profile: 'neighborhood' } as ProjectInput
     const input = projectDecisionInput(project)
     input.renewalMode!.evidence = [{ source_id: source.id, title: source.title, quote: source.text, url: null, published_at: '2023-08-18', locator: source.locator }]
     const call = vi.fn().mockResolvedValue({ value: proposal(), sessionId: 'MOCK-LEGACY-ONLY' })
     ports.open.mockResolvedValue({ calls: [], call, close: vi.fn(async () => {}) })
     const result = await researchRenewalStrategy(project, 0, input, 'fixture-hash', false, new AbortController().signal, null)
-    expect(call).toHaveBeenCalledTimes(2)
-    expect(result).toMatchObject({ status: 'failed', strategy: null, diagnostic: { code: 'MODEL_OUTPUT_INVALID' } })
-    expect(result.error).not.toContain('STRATEGY_DECISION_BRIEF_REQUIRED')
+    expect(call).toHaveBeenCalledTimes(1)
+    expect(result).toMatchObject({status:'completed',error:null,content_review:{status:'needs_review'}})
+    expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_DECISION_BRIEF_REQUIRED'}))
     expect(fetch).not.toHaveBeenCalled()
   })
   it('requires cited object funding and repairability before admitting construction investment',()=>{
@@ -135,7 +134,7 @@ describe('source-grounded DeepSeek decision brief', () => {
     expect(()=>validateStrategy(value,[source,{...verified,role:'reference'}],conditions,true)).toThrow('STRATEGY_CONSTRUCTION_GATE_UNMET')
     expect(()=>validateStrategy(value,[source,verified],conditions.map(row=>({...row,locators:[]})),true)).toThrow('STRATEGY_CONSTRUCTION_GATE_UNMET')
   })
-  it('repairs a historical preparation mistaken for construction while preserving the proposed route and measures',async()=>{
+  it('returns a construction suggestion with unmet implementation conditions as a review finding',async()=>{
     const project={...structuredClone(fixture),business_profile:'neighborhood'} as ProjectInput,input=projectDecisionInput(project)
     input.renewalMode!.conditions=[]
     input.renewalMode!.evidence=[{source_id:source.id,title:'浙大求是社区推进二次供水改造',quote:source.text+'有关工作人员表示，亚运会召开之后将进场施工。',url:null,published_at:'2023-08-18',locator:source.locator},
@@ -146,12 +145,13 @@ describe('source-grounded DeepSeek decision brief', () => {
     ports.open.mockResolvedValue({calls:[],call,close:vi.fn(async()=>{})})
     const log=vi.spyOn(console,'warn').mockImplementation(()=>{})
     const result=await researchRenewalStrategy(project,0,input,'fixture-hash',false,new AbortController().signal,null)
-    expect(result.status).toBe('completed');expect(result.strategy?.decision_brief?.investment.stage).toBe('preliminary')
+    expect(result.status).toBe('completed');expect(result.strategy?.decision_brief?.investment.stage).toBe('construction')
     expect(result.strategy?.headline).toBe(corrected.headline);expect(result.strategy?.paths).toEqual(corrected.paths)
     expect(call.mock.calls[0][1]).toContain('2023年求是村二次供水原文记载的是进场准备')
     expect(call.mock.calls[0][1]).toContain('2024年75幢1单元加梯原文是征求意见草案')
-    expect(call.mock.calls[1][1]).toContain('STRATEGY_CONSTRUCTION_GATE_UNMET')
-    expect(log).toHaveBeenCalledWith(expect.stringContaining('STRATEGY_CONSTRUCTION_GATE_UNMET'))
+    expect(call).toHaveBeenCalledTimes(1)
+    expect(result.content_review?.issues).toContainEqual(expect.objectContaining({code:'STRATEGY_CONSTRUCTION_GATE_UNMET'}))
+    expect(result.content_review?.follow_up.search_queries.length).toBeGreaterThan(0)
     expect(fetch).not.toHaveBeenCalled()
   })
   it('keeps cross-route comparisons out of individual paths and future targets without censoring the global brief or current text',()=>{

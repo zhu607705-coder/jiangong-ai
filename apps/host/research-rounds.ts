@@ -72,7 +72,7 @@ export class ResearchRoundsService {
       try {
         if (!payload.strategy||payload.sources.some(source=>source.visibility==='internal'||source.data_class==='internal')) continue
         validate<RenewalStrategy>('RenewalStrategy',payload.strategy)
-        validateStrategy(payload.strategy,payload.sources,projectRenewalModeInput(project.input).conditions,!!payload.strategy.decision_brief)
+        if(payload.content_review?.policy!=='advisory-v1') validateStrategy(payload.strategy,payload.sources,projectRenewalModeInput(project.input).conditions,!!payload.strategy.decision_brief)
         const result=copy(payload); delete result.publication
         return result
       } catch { /* Invalid historical output is never promoted to a baseline. */ }
