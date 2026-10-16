@@ -5,6 +5,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--commit',required=True)
 parser.add_argument('--base',default='cfb4e4523ac58f4392fdd73aa15043354c6c813b')
 parser.add_argument('--known-hosts',required=True)
+parser.add_argument('--receipt',default='research/test_results/research-recovery-runtime-deployment-20261016.json')
 args=parser.parse_args()
 root=pathlib.Path.cwd()
 def git(*parts):return subprocess.check_output(['git',*parts],cwd=root)
@@ -100,6 +101,7 @@ response=subprocess.run(['ssh',*ssh,target,'python3 -c '+shlex.quote(code)],capt
 if response.returncode:
     print(response.stderr);raise SystemExit(response.returncode)
 result=json.loads(response.stdout)
-receipt=root/'research/test_results/research-recovery-runtime-deployment-20261016.json'
+receipt=root/args.receipt
+receipt.parent.mkdir(parents=True,exist_ok=True)
 receipt.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'commit':commit,'files':len(names),'projects':result['projects_count'],'protocol':result['readiness']['protocol_version'],'backup':result['backup']}))

@@ -4009,5 +4009,42 @@
       "Eight archived source-location questions are 7/8 for both candidate protocols; no claim of general answer-accuracy improvement.",
       "Original partial model output cannot be invented for older failed runs that saved no readable structured fields."
     ]
+  },
+  "decision_fast_estimates_20261016": {
+    "unresolved_questions": [],
+    "changed_files": [
+      "packages/decision/fast-analysis.ts",
+      "services/capabilities/decision-model.ts",
+      "services/map-screening/analyst.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "runtime/workflows/renewal-research.ts",
+      "runtime/workflows/renewal-research-effort.ts",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/components/DecisionDashboard.tsx"
+    ],
+    "tests": {
+      "focused": "222 passed in 16 files",
+      "build": "passed TypeScript and Vite",
+      "live": "Real Decision completed in 1329 ms; six provisional values; no DSH calls or external search",
+      "browser": "Six provisional badges, per-dimension assumptions and evidence-only toggle verified"
+    },
+    "status": "deployed_live_verified_merge_pending",
+    "as_of": "2026-10-16",
+    "artifacts": [
+      "docs/Decision快速研判与推理暂估_20261016.md",
+      "research/test_results/decision-estimates-focused-20261016.log",
+      "research/test_results/decision-estimates-runtime-deployment-20261016.json",
+      "research/test_results/decision-estimates-ui-deployment-20261016.json",
+      "research/test_results/decision-estimates-live-20261016.json",
+      "research/test_results/decision-estimates-browser-20261016.json"
+    ],
+    "next_runnable_task": "Merge authorized reviewed source and preserve unrelated root worktree edits.",
+    "updated_at": "2026-10-16T15:06:34.016411+00:00",
+    "deployment": {
+      "runtime_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
+      "ui_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
+      "origin": "https://laneanew.cn/",
+      "project_metadata_unchanged": 36
+    }
   }
 }

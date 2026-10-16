@@ -25,6 +25,7 @@ export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compres
 export type StrategyWorkflowTrace = {
   planner_status:'completed'|'failed'|'not_applicable';planner_error?:string;plan:RenewalResearchPlan|null;
   planner_profile?:{role:string;sha256:string};
+  planner_backend?:'decision'|'dsh';decision_routing?:import('../../apps/host/generated/contracts').DecisionResearchRouting;
   tasks:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];source_ids:string[];status:'completed'|'failed';error_code?:string;profile?:{role:string;sha256:string};
     retrieval?:{calls:number;query_matches:number;read_windows:{source_id:string;start_char:number;end_char:number;characters:number;query?:string|null;matched:boolean}[]};
     reasoning?:'direct_evidence'|'mixed'|'reasoned_fallback'|'not_produced';attempts?:number;effort?:{maxOutputTokens:number;timeoutMs:number;sourceCharacters:number;synthesisReserveMs:number}}[];

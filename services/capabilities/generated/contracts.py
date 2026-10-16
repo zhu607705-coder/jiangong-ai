@@ -16,11 +16,39 @@ class Role(StrEnum):
     residents_operations = 'residents_operations'
 
 
+class Effort(StrEnum):
+    skip = 'skip'
+    brief = 'brief'
+    standard = 'standard'
+    deep = 'deep'
+
+
+class Task(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    role: Role
+    effort: Effort
+    confidence: float = Field(..., ge=0.0, le=1.0)
+
+
+class DecisionResearchRouting(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    policy: Literal['decision-research-routing-v1']
+    request_id: str
+    tasks: list[Task] = Field(..., max_length=3)
+    input_hash: str
+    duration_ms: int = Field(..., ge=0)
+    input_tokens: int = Field(..., ge=0)
+
+
 class SourceId(RootModel[str]):
     root: str = Field(..., min_length=1)
 
 
-class Task(BaseModel):
+class Task1(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
@@ -35,7 +63,7 @@ class RenewalResearchPlan(BaseModel):
         extra='forbid',
     )
     summary: str = Field(..., max_length=400, min_length=1)
-    tasks: list[Task] = Field(..., max_length=3)
+    tasks: list[Task1] = Field(..., max_length=3)
 
 
 class Observation(BaseModel):
@@ -660,7 +688,7 @@ class RuntimeEvent(BaseModel):
     created_at: str
 
 
-class Role1(StrEnum):
+class Role2(StrEnum):
     investment_manager = 'investment_manager'
     planner = 'planner'
     executive = 'executive'
@@ -1773,7 +1801,7 @@ class ValueType(StrEnum):
     ordinal = 'ordinal'
 
 
-class Role2(StrEnum):
+class Role3(StrEnum):
     mandatory = 'mandatory'
     key = 'key'
     background = 'background'
@@ -1797,7 +1825,7 @@ class FactorDefinition(BaseModel):
     key: str = Field(..., max_length=80)
     label: str = Field(..., max_length=150)
     value_type: ValueType
-    role: Role2
+    role: Role3
     weight: float = Field(..., ge=0.0, le=100.0)
     unit: str | None
     scale: float | None = Field(..., gt=0.0)
@@ -2493,6 +2521,13 @@ class RagAnswer(BaseModel):
     internal_requests: list[InternalRequest] = Field(..., max_length=4)
 
 
+class MapScoreEstimates(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    dimensions: list[RenewalReasonedDimension] = Field(..., max_length=6)
+
+
 class OperationsTimeBlock(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -2585,7 +2620,7 @@ class ProjectInput(BaseModel):
     synthetic: bool
     purpose: str
     mode: Mode
-    role: Role1
+    role: Role2
     as_of: str = Field(..., pattern='^\\d{4}-\\d{2}-\\d{2}$')
     scope: Scope
     facts: list[Fact] = Field(..., max_length=5000)
@@ -2681,6 +2716,8 @@ class DecisionSupport(BaseModel):
     error_code: ErrorCode | None
     dashboard: DecisionDashboard | None = None
     renewal_mode: RenewalModeAssessment | None = None
+    provisional_dashboard: DecisionDashboard | None = None
+    research_routing: DecisionResearchRouting | None = None
 
 
 class ExperienceKnowledge(BaseModel):
@@ -2875,6 +2912,7 @@ class MapScreenAnalysis(BaseModel):
     reused_from_context_id: str | None = Field(None, max_length=100)
     refresh_required: bool | None = None
     completion: Completion | None = None
+    provisional_dashboard: DecisionDashboard | None = None
 
 
 class MapScreenCell(BaseModel):

@@ -20,6 +20,7 @@ import { SCREEN_PROFILES } from '../../packages/maps/screening-policy'
 
 const original={dataDir:config.dataDir,modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
 const directories:string[]=[]
+const fallbackEstimates={dimensions:['demand','supply','adaptation','implementation','operations','resources'].map(key=>({key,level:'medium',basis:'scenario_assumption',premises:['仅已知对象位置'],assumptions:['按小规模分项改善情景比较'],reason:'用于首次比较的条件估计',verification:'取得本对象台账后重评',evidence_refs:[]}))}
 afterEach(async()=>{vi.useRealTimers();Object.assign(config,original);vi.resetAllMocks();for(const dir of directories.splice(0))await rm(dir,{recursive:true,force:true})})
 
 describe('map analyst external-data boundary',()=>{
@@ -28,18 +29,19 @@ describe('map analyst external-data boundary',()=>{
     Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:false})
     const source={id:'DOC',title:'甲小区公开维护资料',data_class:'public',visibility:'public',synthetic:false,content_status:'full_text',untrusted_text:'甲小区居民设施维护安排已有公开资料。'}
     ports.collect.mockResolvedValue({sources:[source],records:[],receipts:[],trace:{status:'success',queries:[],source_ids:['DOC'],warnings:[],reused:false}})
-    const call=vi.fn(async(stage:string)=>({value:stage==='research_plan'?{queries:[]}:{summary:'研究甲小区设施维护。',opportunities:[],cautions:[],unknowns:[],next_steps:[]}}))
+    const call=vi.fn(async(stage:string)=>({value:stage==='map_score_estimates'?fallbackEstimates:{summary:'研究甲小区设施维护。',opportunities:[],cautions:[],unknowns:[],next_steps:[]}}))
     ports.open.mockResolvedValue({calls:[],close:async()=>{},call,runReadCapability:async(_name:string,fn:(signal:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
     const ctx={id:'CODE-FIRST',created_at:'2026-10-06T00:00:00Z',target:{label_origin:'public',label:'甲小区'},groups:[],local_projects:[]} as unknown as MapScreenContext
     const cold=await analyzeMapContext(ctx,profile,new AbortController().signal)
     expect(cold.status).toBe('completed')
     expect(ports.collect).toHaveBeenCalledTimes(1)
     expect(ports.collect.mock.calls[0][4]).toEqual(publicSearchPlan('甲小区',SCREEN_PROFILES[profile].label))
-    expect(call.mock.calls.map(([stage])=>stage)).toEqual(['map_initial_screen'])
+    expect(call.mock.calls.map(([stage])=>stage)).toEqual(['map_initial_screen','map_score_estimates'])
+    expect(cold.provisional_dashboard?.dimensions).toHaveLength(6)
     const warm=await analyzeMapContext(ctx,profile,new AbortController().signal)
     expect(warm.status).toBe('completed');expect(warm.research?.reused).toBe(true)
     expect(ports.collect).toHaveBeenCalledTimes(1)
-    expect(call.mock.calls.map(([stage])=>stage)).toEqual(['map_initial_screen','map_initial_screen'])
+    expect(call.mock.calls.map(([stage])=>stage)).toEqual(['map_initial_screen','map_score_estimates','map_initial_screen','map_score_estimates'])
   })
   it.each([false,true].flatMap(scored=>[false,true].flatMap(restartBeforeRefresh=>[false,true].map(omitFreshMoney=>({scored,restartBeforeRefresh,omitFreshMoney})))))(
     'refreshes known expiry across both file caches: %j',async({scored,restartBeforeRefresh,omitFreshMoney})=>{
@@ -244,16 +246,33 @@ describe('map analyst external-data boundary',()=>{
     Object.assign(config,{dataDir:dir,modelConfigured:true,searchConfigured:true,decisionEnabled:true})
     ports.collect.mockResolvedValue({sources:[],records:[],receipts:[],trace:{status:'partial',queries:[],source_ids:[],warnings:[],reused:false}})
     ports.decision.mockResolvedValueOnce({status:'failed',error_code:'DECISION_REQUEST_FAILED'}).mockResolvedValue({status:'completed'})
-    const call=vi.fn(async(stage:string)=>({value:stage==='research_plan'?{queries:[]}:{summary:'调查设备维护服务。',opportunities:[],cautions:[],unknowns:[],next_steps:[]}}))
+    const call=vi.fn(async(stage:string)=>({value:stage==='map_score_estimates'?fallbackEstimates:{summary:'调查设备维护服务。',opportunities:[],cautions:[],unknowns:[],next_steps:[]}}))
     ports.open.mockResolvedValue({calls:[],close:async()=>{},call,runReadCapability:async(_name:string,fn:(signal:AbortSignal)=>Promise<unknown>)=>fn(new AbortController().signal)})
     const ctx={id:'TEST',created_at:'2026-09-28T08:00:00Z',target:{label_origin:'public',label:'测试园区'},groups:[],local_projects:[]} as unknown as MapScreenContext
     const stages:string[]=[]
     const first=await analyzeMapContext(ctx,'balanced',new AbortController().signal,e=>{stages.push(e.type==='brief'?'structured-brief':e.stage+':'+e.status)})
     expect(first.status).toBe('failed')
+    expect(first.provisional_dashboard?.dimensions).toHaveLength(6)
     expect(stages.indexOf('structured-brief')).toBeLessThan(stages.indexOf('decision:running'))
     const callsBefore=call.mock.calls.length,searchBefore=ports.collect.mock.calls.length
     const next=await analyzeMapContext(ctx,'balanced',new AbortController().signal,()=>{},first)
     expect(next.status).toBe('completed');expect(next.assessment?.summary).toBe(first.assessment?.summary)
+    expect(next.provisional_dashboard).toEqual(first.provisional_dashboard)
     expect(call).toHaveBeenCalledTimes(callsBefore);expect(ports.collect).toHaveBeenCalledTimes(searchBefore);expect(ports.decision).toHaveBeenCalledTimes(2)
   })
+})
+
+it('uses Decision alone for the quick pass, keeps missing evidence distinct and does not send private context',async()=>{
+ Object.assign(config,{modelConfigured:false,decisionEnabled:true,searchConfigured:true})
+ const now=new Date().toISOString()
+ const ctx={id:'QUICK-CONTEXT',created_at:now,project_revision:'test',target:{kind:'point',longitude:120.1,latitude:30.2,radius_m:800,bounds:null,label:'测试小区',label_origin:'public'},address:'杭州测试位置',city:'杭州',groups:[],local_projects:[{project_id:'PRIVATE',relation:'within_scope',name:'PRIVATE_PROJECT_NAME',sources:[{id:'SECRET',visibility:'internal',data_class:'internal',synthetic:false,content_status:'uploaded',untrusted_text:'PRIVATE_CANARY'}],facts:[],rules:[]}]} as unknown as MapScreenContext
+ const dimensions=['demand','supply','adaptation','implementation','operations','resources'].map((key,index)=>({key,value:1.2+index*.5,confidence:.3,basis:'显式情景暂估，补查后更新。',evidence_refs:[]}))
+ ports.decision.mockResolvedValue({status:'completed',provider:'qwen_systemone',model:'decision-model-preview',policy_version:'test',input_hash:'quick',created_at:now,request_id:'QUICK',duration_ms:100,input_tokens:80,answers:null,action:'investigate',priority:'demand',next_step:'补充调查',guard_reasons:[],input_source_ids:[],thresholds:DECISION_THRESHOLDS,error_code:null,provisional_dashboard:{policy_version:'neighborhood-renovation-fit-v2',purpose:'推理暂估',model:'decision-model-preview',request_id:'QUICK',status:'completed',dimensions}})
+ const result=await analyzeMapContext(ctx,'neighborhood',new AbortController().signal,()=>{},undefined,'reevaluate')
+ expect(result.decision_support?.provisional_dashboard?.dimensions).toHaveLength(6)
+ expect(result.model_calls).toEqual([])
+ expect(ports.open).not.toHaveBeenCalled();expect(ports.collect).not.toHaveBeenCalled()
+ expect(ports.decision).toHaveBeenCalledTimes(1)
+ expect(JSON.stringify(ports.decision.mock.calls[0][0])).not.toMatch(/PRIVATE_CANARY|PRIVATE_PROJECT_NAME/)
+ expect(result.assessment?.dimension_evidence).toEqual([])
 })

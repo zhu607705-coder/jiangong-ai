@@ -22,7 +22,7 @@ export const INVESTIGATION_STEPS = {
 } as const
 export const NEIGHBORHOOD_INVESTIGATION_STEPS=Object.fromEntries(NEIGHBORHOOD_DIMENSION_POLICY.map(d=>[d.key,d.investigation])) as Record<ResearchDimension,string>
 export type ResearchDimension = keyof typeof FACTOR_LABELS | 'supply'
-export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]; dashboard?: DashboardInput;profile?:MapScreenProfile;neighborhoodAction?:RetrofitAdvice;renewalMode?:RenewalModeInput}
+export type DecisionInput = {state: unknown; factors: MapDecisionFactor[]; sourceIds: string[]; dashboard?: DashboardInput;estimation?:import('./fast-analysis').EstimationInput;researchPlanning?:boolean;profile?:MapScreenProfile;neighborhoodAction?:RetrofitAdvice;renewalMode?:RenewalModeInput}
 const essentials: ResearchDimension[] = ['implementation','adaptation','demand','operations','resources']
 
 export function mapDecisionInput(context: MapScreenContext, purpose: string,profile?:MapScreenProfile): DecisionInput {
