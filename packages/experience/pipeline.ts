@@ -25,7 +25,7 @@ export class KnowledgePipelineService {
     const [documents, cards, policies, skills] = await Promise.all([
       this.experience.repository.documents(project.id), this.experience.repository.list(project.id), this.repository.policies(project.id), this.repository.skills(project.id),
     ])
-    return { documents, cards, policies, skills, public_sources: project.input.synthetic ? [] : project.input.sources.filter(source => !source.id.startsWith('PUBLIC-DOCUMENT-') && source.visibility === 'public' && source.data_class === 'public' && !source.synthetic && !!source.untrusted_text?.trim() && source.content_status !== 'metadata_only').map(({ id, title, url, content_status }) => ({ id, title, url, content_status })) }
+    return { documents, cards, policies, skills, automation:{model_configured:config.modelConfigured,internal_model_enabled:config.ALLOW_INTERNAL_MODEL==='true'}, public_sources: project.input.synthetic ? [] : project.input.sources.filter(source => !source.id.startsWith('PUBLIC-DOCUMENT-') && source.visibility === 'public' && source.data_class === 'public' && !source.synthetic && !!source.untrusted_text?.trim() && source.content_status !== 'metadata_only').map(({ id, title, url, content_status }) => ({ id, title, url, content_status })) }
   }
   async importPublicDocument(project: ProjectRecord, sourceId: string) {
     const source = project.input.sources.find(source => source.id === sourceId)
@@ -107,14 +107,15 @@ export class KnowledgePipelineService {
     const grouping = validate('KnowledgeGrouping', groupKnowledge(current, policy))
     return { grouping, cards: current }
   }
-  async distill(project: ProjectRecord, ids: string[]): Promise<DistilledSkill> {
+  async distill(project: ProjectRecord, ids: string[], preview=false): Promise<DistilledSkill> {
     const selected = new Set(ids)
-    const cards = (await this.experience.repository.list(project.id)).filter(card => selected.has(card.id))
+    const cards = (await Promise.all([...selected].map(id=>this.experience.repository.get(project.id,id)))).filter((card):card is ExperienceCard=>!!card)
     if (cards.length !== selected.size) throw new ExperienceError(422, 'SKILL_CARD_SCOPE', '技能来源必须属于当前项目。')
     const documents = await this.experience.repository.documents(project.id)
     for (const card of cards) { normalizeDraft(draftOf(card)); validateEvidence(card, documents, project.id) }
-    const skill = compileKnowledgeSkill(cards, { id: `SKILL-${randomUUID()}`, projectId: project.id, now: new Date().toISOString() })
-    return this.repository.saveSkill(skill, undefined, 'distill', project.owner_id)
+    const skill = compileKnowledgeSkill(cards, { id: `SKILL-${randomUUID()}`, projectId: project.id, now: new Date().toISOString(),preview })
+    const same=(await this.repository.skills(project.id)).find(item=>item.measure_key===skill.measure_key&&JSON.stringify(item.card_refs.map(ref=>`${ref.card_id}:${ref.revision}`).sort())===JSON.stringify(skill.card_refs.map(ref=>`${ref.card_id}:${ref.revision}`).sort())&&item.status!=='rejected')
+    return same||this.repository.saveSkill(skill, undefined, 'distill', project.owner_id)
   }
   async reviewSkill(project: ProjectRecord, id: string, expected: number, status: 'approved' | 'rejected', note: string): Promise<DistilledSkill> {
     const old = await this.repository.skill(project.id, id)
@@ -125,18 +126,18 @@ export class KnowledgePipelineService {
     const next = validate<DistilledSkill>('DistilledSkill', { ...old, revision: old.revision + 1, status, review_note: note, reviewed_by: project.owner_id, reviewed_at: now, updated_at: now })
     return this.repository.saveSkill(next, expected, 'review', project.owner_id)
   }
-  private async checkSkillSources(project: ProjectRecord, skill: DistilledSkill): Promise<ExperienceCard[]> {
+  private async checkSkillSources(project: ProjectRecord, skill: DistilledSkill,preview=false): Promise<ExperienceCard[]> {
     const cards = await this.experience.repository.list(project.id)
-    if (!skillStillApplicable({ ...skill, status: 'approved' }, cards)) throw new ExperienceError(409, 'SKILL_SOURCE_STALE', '来源经验已更改或撤回审核，请重新蒸馏和复核。')
+    if (!(preview?skill.card_refs.length>0&&skill.card_refs.every(ref=>cards.some(card=>card.id===ref.card_id&&card.revision===ref.revision&&card.status!=='rejected'&&card.knowledge?.measure_key===skill.measure_key)):skillStillApplicable({ ...skill, status: 'approved' }, cards))) throw new ExperienceError(409, 'SKILL_SOURCE_STALE', '来源经验已更改或撤回审核，请重新蒸馏和复核。')
     const selected = cards.filter(card => skill.card_refs.some(ref => ref.card_id === card.id))
     const documents = await this.experience.repository.documents(project.id)
     for (const card of selected) { normalizeDraft(draftOf(card)); validateEvidence(card, documents, project.id) }
     return selected
   }
-  async exportSkill(project: ProjectRecord, id: string) {
+  async exportSkill(project: ProjectRecord, id: string,preview=false) {
     const skill = await this.repository.skill(project.id, id)
     if (!skill) throw new ExperienceError(404, 'SKILL_NOT_FOUND', '技能不存在或无权访问。')
-    await this.checkSkillSources(project, skill)
-    return { filename: `${skill.measure_key}-${skill.revision}-SKILL.md`, markdown: skillMarkdown(skill) }
+    await this.checkSkillSources(project, skill,preview)
+    return { filename: `${skill.measure_key}-${skill.revision}${preview?"-draft":""}-SKILL.md`, markdown: skillMarkdown(skill,preview) }
   }
 }

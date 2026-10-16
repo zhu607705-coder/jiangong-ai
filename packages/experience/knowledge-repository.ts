@@ -19,6 +19,11 @@ CREATE TABLE IF NOT EXISTS knowledge_skill_history (
   id TEXT NOT NULL REFERENCES knowledge_skills(id), revision INTEGER NOT NULL, payload JSONB NOT NULL,
   action TEXT NOT NULL, actor TEXT NOT NULL, recorded_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY(id,revision)
 );
+CREATE TABLE IF NOT EXISTS knowledge_learning_windows (
+  project_id TEXT NOT NULL REFERENCES projects(id), owner_id TEXT NOT NULL, document_id TEXT NOT NULL,
+  document_hash TEXT NOT NULL, window_hash TEXT NOT NULL, card_ids JSONB NOT NULL,
+  recorded_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY(project_id,document_id,document_hash,window_hash)
+);
 CREATE INDEX IF NOT EXISTS knowledge_policies_project ON knowledge_policies(project_id,updated_at DESC);
 CREATE INDEX IF NOT EXISTS knowledge_skills_project ON knowledge_skills(project_id,updated_at DESC);
 `

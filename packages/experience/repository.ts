@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS experience_knowledge_measure ON experience_history ((
 const searchable = (draft: ExperienceDraft) => searchTokens([draft.title, draft.project_type, draft.development_mode, draft.stage, ...draft.fields.map(field => field.value || ''), draft.knowledge?.measure_key || '', draft.knowledge?.measure_name || '', ...(draft.knowledge?.transfer_notes || [])].join(' ')).join(' ')
 const draftContent = ({ title, project_type, development_mode, stage, fields, knowledge }: ExperienceDraft) => canonical({ title, project_type, development_mode, stage, fields, ...(knowledge ? { knowledge } : {}) })
 export type SearchFilter = { q?: string; project_type?: string; development_mode?: string; stage?: string; as_of?: string; exclude_project?: string; synthetic?: boolean; limit?: number; kind?: 'case' | 'rule' }
-export type KnowledgeFilter = { as_of: string; synthetic: boolean; mode: ProjectInput['mode']; measure_key?: string; limit?: number; exclude_project?: string }
+export type KnowledgeFilter = { include_project_rules?:boolean; as_of: string; synthetic: boolean; mode: ProjectInput['mode']; measure_key?: string; limit?: number; exclude_project?: string }
 export type KnowledgeMaterial = { documents: ParsedDocument[]; sources: Source[] }
 
 /** Source identity follows the existing ingest document identifier, never a card's claimed visibility. */
@@ -151,8 +151,8 @@ export class ExperienceRepository {
       WHERE p.owner_id=$2 AND (p.input->>'synthetic')::boolean=$3 AND h.payload->>'status'='approved'
       AND h.payload->'knowledge'->>'kind' IN ('case','rule')
       AND ($4::text='' OR h.payload->'knowledge'->>'measure_key'=$4)
-      AND ($5::text='' OR c.project_id<>$5)
-      ORDER BY h.recorded_at DESC,c.id LIMIT 100 OFFSET $6`, [`${filter.as_of}T23:59:59.999Z`, ownerId, filter.synthetic, filter.measure_key || '', filter.exclude_project || '', offset])
+      AND ($5::text='' OR c.project_id<>$5 OR ($7::boolean AND h.payload->'knowledge'->>'kind'='rule'))
+      ORDER BY h.recorded_at DESC,c.id LIMIT 100 OFFSET $6`, [`${filter.as_of}T23:59:59.999Z`, ownerId, filter.synthetic, filter.measure_key || '', filter.exclude_project || '', offset,!!filter.include_project_rules])
       const cards = result.rows.map(row => row.payload)
       if (!cards.length) break
       if (offset >= 2000) throw new ExperienceError(422, 'KNOWLEDGE_SEARCH_TOO_BROAD', '知识候选超过本轮2000项核验预算，请按举措编号缩小范围后匹配；不能将未检索部分当作未命中。')

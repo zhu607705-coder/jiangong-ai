@@ -6,6 +6,7 @@ import { ExperienceError } from '../../packages/experience/domain'
 import { ExperienceService } from '../../packages/experience/service'
 import { KnowledgePipelineService } from '../../packages/experience/pipeline'
 import { registerRagRetrieval } from './rag-retrieval'
+import { ExperienceLearningService } from '../../packages/experience/learning'
 
 const revision = z.number().int().min(1)
 const version = z.number().int().min(0)
@@ -20,6 +21,7 @@ export async function registerExperience(app: Express, store: Store, requireProj
   await service.initialize()
   const pipeline = new KnowledgePipelineService(store, service)
   await pipeline.initialize()
+  const learning=new ExperienceLearningService(service,pipeline)
   registerRagRetrieval(app, store, requireProject, { pipeline })
   const route = (operation: (request: Request, response: Response) => Promise<unknown>) => async (request: Request, response: Response) => {
     try { await operation(request, response) }
@@ -78,6 +80,27 @@ export async function registerExperience(app: Express, store: Store, requireProj
   app.get('/api/projects/:id/knowledge/pipeline', route(async (request, response) => {
     response.json(await pipeline.state(await requireProject(String(request.params.id))))
   }))
+  app.post('/api/projects/:id/knowledge/learn', route(async(request,response)=>{
+    const project=await requireProject(String(request.params.id))
+    const body=z.object({document_ids:z.array(z.string().min(1)).min(1).max(10),use_model:z.boolean().default(true),allow_internal_ai:z.boolean().default(false)}).strict().parse(request.body)
+    const controller=new AbortController(),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(600000)])
+    request.once('aborted',()=>controller.abort());response.once('close',()=>{if(!response.writableEnded)controller.abort()})
+    const stream=request.headers.accept?.includes('application/x-ndjson')
+    if(stream){response.type('application/x-ndjson');response.setHeader('Cache-Control','no-store');response.setHeader('X-Accel-Buffering','no');response.flushHeaders()}
+    const emit=(event:import('../../packages/experience/learning').ExperienceLearningEvent)=>{if(stream&&!response.destroyed&&!response.writableEnded)response.write(JSON.stringify(event)+'\n')}
+    try {
+      const result=await learning.learn(project,[...new Set(body.document_ids)],body.use_model,body.allow_internal_ai,signal,emit)
+      if(!response.destroyed){if(stream){emit({type:'complete',result});response.end()}else response.status(201).json(result)}
+    } catch(error) {
+      if(!stream)throw error
+      emit({type:'error',message:error instanceof ExperienceError?error.message:'原件已保存，本轮自动整理未完成，可以继续处理。'});response.end()
+    }
+  }))
+  app.post('/api/projects/:id/knowledge/rule-updates/apply',route(async(request,response)=>{
+    const project=await requireProject(String(request.params.id))
+    const body=z.object({candidate_id:z.string().min(1),expected_candidate_revision:revision,target_id:z.string().min(1).optional(),expected_target_revision:revision.optional()}).strict().parse(request.body)
+    response.json(await learning.applyRule(project,body.candidate_id,body.expected_candidate_revision,body.target_id,body.expected_target_revision))
+  }))
   app.post('/api/projects/:id/knowledge/chunks', route(async (request, response) => {
     const project = await requireProject(String(request.params.id))
     const body = z.object({ document_id: z.string().min(1) }).strict().parse(request.body)
@@ -113,13 +136,19 @@ export async function registerExperience(app: Express, store: Store, requireProj
     const body = z.object({ card_ids: z.array(z.string().min(1)).min(1).max(20) }).strict().parse(request.body)
     response.status(201).json(await pipeline.distill(project, body.card_ids))
   }))
+  app.post('/api/projects/:id/knowledge/skills/:skillId/activate',route(async(request,response)=>{
+    const project=await requireProject(String(request.params.id))
+    const body=z.object({expected_revision:revision}).strict().parse(request.body)
+    response.json(await learning.applySkill(project,String(request.params.skillId),body.expected_revision))
+  }))
   app.post('/api/projects/:id/knowledge/skills/:skillId/review', route(async (request, response) => {
     const project = await requireProject(String(request.params.id))
     const body = z.object({ expected_revision: revision, status: z.enum(['approved', 'rejected']), note: z.string().trim().min(1).max(2000) }).strict().parse(request.body)
     response.json(await pipeline.reviewSkill(project, String(request.params.skillId), body.expected_revision, body.status, body.note))
   }))
   app.get('/api/projects/:id/knowledge/skills/:skillId/export', route(async (request, response) => {
-    response.json(await pipeline.exportSkill(await requireProject(String(request.params.id)), String(request.params.skillId)))
+    const query=z.object({preview:z.enum(['true','false']).optional()}).strict().parse(request.query)
+    response.json(await pipeline.exportSkill(await requireProject(String(request.params.id)), String(request.params.skillId),query.preview==='true'))
   }))
   app.get('/api/projects/:id/knowledge/:kind/:recordId/history', route(async (request, response) => {
     const project = await requireProject(String(request.params.id))

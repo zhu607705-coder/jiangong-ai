@@ -3670,5 +3670,29 @@
       "research/test_results/advisory-plan-runtime-deployment-20261016.json",
       "research/test_results/advisory-plan-ui-deployment-20261016.json"
     ]
+  },
+  "experience_file_chat_learning": {
+    "as_of": "2026-10-16",
+    "status": "implemented_scoped_tests_passed_deployment_pending",
+    "request": "文件和长聊天直接导入，自动构建经验、技能与规则更新对比；采用后进入后续知识检索",
+    "changed_files": [
+      "apps/host/experience.ts",
+      "packages/experience/learning.ts",
+      "packages/experience/learning-windows.ts",
+      "packages/experience/service.ts",
+      "packages/experience/repository.ts",
+      "packages/experience/pipeline.ts",
+      "packages/experience/knowledge-repository.ts",
+      "packages/experience/skill-distillation.ts",
+      "apps/workspace/src/components/ExperienceLibrary.tsx",
+      "apps/workspace/src/components/ExperienceLearningIntake.tsx",
+      "apps/workspace/src/components/experience-learning.css"
+    ],
+    "checks": [
+      "research/test_results/experience-learning-integration-20261016.log",
+      "research/test_results/experience-learning-final-20261016.log",
+      "research/test_results/experience-learning-ui-20261016.log"
+    ],
+    "next_runnable_task": "隔离构建、同一校园服务器部署、自身合成材料的原生模型协议验证与只读界面验收。"
   }
 }
