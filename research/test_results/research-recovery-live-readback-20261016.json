@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-16T14:06:30.477438+00:00",
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "4d9b907ba5eefc23c9485acdf9183ca75a03764f",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "rag_index_jobs": [
+    {
+      "kind": "rag_index",
+      "status": "cancelled",
+      "error": "INTELLIGENCE_JOB_FAILED",
+      "project_id": "P-0529974d-63fe-4ae8-804d-e5efb049f60a",
+      "context_version": 14
+    }
+  ],
+  "project_count": 35
+}

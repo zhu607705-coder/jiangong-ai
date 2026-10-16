@@ -213,3 +213,13 @@ it('a rewritten question cannot admit another unit excluded by the original ques
  const result=await new HybridRetrievalService(repository,ranker,async()=>fake.port).retrieve(p,bundle(p),[],{question:'75幢1单元电梯预算'},options())
  expect(result.hits.map(hit=>hit.source.id)).toEqual(['UNIT1'])
 })
+
+it('returns a resumable partial index before the worker deadline and skips the completed windows next time',async()=>{
+ const p=project(Array.from({length:20},(_,index)=>source('WINDOW-'+index,'公开助餐记录'+index))),fake=model()
+ const service=new HybridRetrievalService(repository,keyword,async()=>fake.port)
+ const first=await service.index(p,bundle(p),[],{question:''},{...options(),maxIndexBatches:3})
+ expect(first).toMatchObject({status:'partial',indexed:18,pending:2,reused:0})
+ const next=await service.index(p,bundle(p),[],{question:''},{...options(),maxIndexBatches:3})
+ expect(next).toMatchObject({status:'ready',indexed:20,pending:0,reused:18})
+ expect(fake.types.filter(type=>type==='RagSemanticIndex')).toHaveLength(4)
+})

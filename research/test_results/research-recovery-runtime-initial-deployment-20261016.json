@@ -1,0 +1,113 @@
+{
+  "deployed_at": "2026-10-16T13:59:02.059330+00:00",
+  "commit": "4d9b907ba5eefc23c9485acdf9183ca75a03764f",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261016T135858Z",
+  "runtime_files": {
+    "apps/host/experience.ts": {
+      "before": "eb46706fbcb1f6e773b13313a83acbd7976346de1de25f86202df9fc48408b93",
+      "after": "be3486cee00df27deb56812b8d973acc9bdf941d9e29aaf17317c643dbfed4fd"
+    },
+    "apps/host/generated/contracts.ts": {
+      "before": "0d160dac7f75a63cd697b546cf42eb1205aaa37f11de55fba3fb6636d86b951f",
+      "after": "f75ef01d54921c59b028e7f4743a9bf8442b7862c5d37941b03a53197480b5c7"
+    },
+    "apps/host/map-screening.ts": {
+      "before": "1d478306ba3288f1ca8c767e2315567458dc7dfeff6cc3660dc9e5683b7e6c31",
+      "after": "468208f64eed3af3f7af982a9aacc3bd1e7e6f2fb733149eea4baab25b5dd017"
+    },
+    "apps/host/rag-retrieval.ts": {
+      "before": "3f41e01f7db9b3a0e9d49643d5e8dea9c8603ac6e72c7660979d4648232f34c7",
+      "after": "e9d5c4f71ffe0ad7f69d6ccb0d265f437a0860a39429e86fc936b1fe466093c5"
+    },
+    "apps/host/renewal-mode.ts": {
+      "before": "b8f16750812ab114979652d7f26337947501bd148d684744dbee6df7ac6579fd",
+      "after": "b606b4541add486955e41461f9f4bef40df61c4eb9c8b918c3db6e5f022e51f1"
+    },
+    "apps/host/research-rounds.ts": {
+      "before": "d6b1ba85835a5bd2e0fad990e4f29be206d4408b78cc80d16be5b6a8db60c888",
+      "after": "f8fdb48ac0f01b5d450a3c1de2945edb6a23f7810c78e6f08a91e24747176a2b"
+    },
+    "apps/host/server.ts": {
+      "before": "232de15b254c5a1dda885b7ff34da748d02f9a54166d85c3142a64cef50a470f",
+      "after": "d955de29854f3d70079c1af5d59cdf969007bcac1e127aad60d34ea5e3ddf3ab"
+    },
+    "packages/contracts/schema.json": {
+      "before": "fa6cff44559785881e698830d7e9c9ff14120408c1f980e505c6488f90a1bd82",
+      "after": "cd8f1285c4ace30f3bd3384a9254c7e40df5c2a77447c4053aaddb6a50afaebb"
+    },
+    "packages/experience/hybrid-retrieval.ts": {
+      "before": "66a0412fbbeae553b11dee5a62acad27b0b8039efec7ce9f75d22d53cb56868b",
+      "after": "3fc265ce81d91a614a59ff26a29d8cc2452ca435e3c9d429af48d87d71220286"
+    },
+    "packages/experience/retrieval.ts": {
+      "before": "272c42829487af1c12ac8f7f9c679c66575905c2265e517d0da744a19ff8ab83",
+      "after": "7a7883d8fd5df6f72ec4e8ab4c46ac96819880c48bc02f639f0858285643ccfe"
+    },
+    "packages/intelligence/repository.ts": {
+      "before": "f82931c5b3ac6c2cc0d419d7f3d63e77975a4a2e0fc7a609c0db1336e325537a",
+      "after": "b3426855182bab87d88ea72c13f28d5d06ae25ca9dde219c1279e6daa746a79f"
+    },
+    "packages/intelligence/service.ts": {
+      "before": "c0378f6cffdbb963069b711fd3c0dac9da8e182928e0d193b541f7f2c4a9ce06",
+      "after": "75763211afc2741a33490bb1d3100117c83dbd8d9aa2c222248f7697fc5c2183"
+    },
+    "packages/maps/analysis-completion.ts": {
+      "before": null,
+      "after": "8a15cd80386a2efb09cb2fbf9fb99210b9062d7711d31069946bdb501448ca22"
+    },
+    "packages/retrofit/strategy-assessment.ts": {
+      "before": null,
+      "after": "47663b5440256f61f35956973ce1c032c5f68860059e0332a23346401d2585f9"
+    },
+    "packages/retrofit/strategy.ts": {
+      "before": "9223246b64ddac3733c5f5bdb9ac2ceec3ff0dd13036fa68753ca1e8e2a2030e",
+      "after": "4471adb5a2631d0cb33c270f9290c39880bebdecc8947e8512cfca2c933b512f"
+    },
+    "runtime/dsh/live-session.ts": {
+      "before": "028f705bba8a913007a8d024a7e73013f4d0036aafe19db21b1e49e2334d1359",
+      "after": "9b3b1d86492865c0156615757423f952dd46c1b58aea02e889b8bdd2e9e1a55f"
+    },
+    "runtime/dsh/model-call-trace.ts": {
+      "before": null,
+      "after": "f10ff7b2b26274c8a5ef776b5301b86842485b8f1f75b61232feb05108b1c873"
+    },
+    "runtime/workflows/renewal-research.ts": {
+      "before": "42d04d984b78aba8deff988d439451797d1ce8ae4b0fc20c179c3b98cd660a05",
+      "after": "7a6f0a3fda72d2a41453746fb7a379567f99e78932b6e5af2e5bc5de6a1afd32"
+    },
+    "services/capabilities/generated/contracts.py": {
+      "before": "271ed05655a5fab8bc75d993785c5efc979a7e1c23e26b834e0db1afe7444856",
+      "after": "67c7802af9cff623e360c6682fc15b8f809ff46c34e51f171711b0d69219db78"
+    },
+    "services/capabilities/research.ts": {
+      "before": "2e65ecdd03f9af2771676162a3ce50898ecf14e84b28c919b88bfca76e0b58a1",
+      "after": "82702d2c91c7822209b3a66b3749a1cb27df0603b6189ddde3d3812a2b529d69"
+    },
+    "services/map-screening/analyst.ts": {
+      "before": "d273dc96d9b4319886b1bf95f09cae4e394172e87090d691e376b2dc0a1a93f1",
+      "after": "91f2f8e2f3d9d45217167e47a7044925521b0e619586887ff235d7b1bedee61d"
+    },
+    "services/map-screening/renewal-strategy.ts": {
+      "before": "75344114cb2c44f1644e73047ada6cd7325d90181dfb52fdc3c1f0b3881471a9",
+      "after": "82fe3b5a09113ea001d84ee668c2e2c0e7c1bce65d455120ffd2156412a94880"
+    },
+    "services/map-screening/service.ts": {
+      "before": "8b51c702ea74cd5a13fcd900c3ac8d8a253d96d55771130ff50626576ea8ac05",
+      "after": "b9ab34ba0eb0556c6682b04681f78e20d647ced30b1e62607ef4336c1217c2b7"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "4d9b907ba5eefc23c9485acdf9183ca75a03764f",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_count": 35,
+  "project_metadata_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

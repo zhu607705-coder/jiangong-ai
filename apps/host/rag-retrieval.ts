@@ -70,7 +70,7 @@ export function registerRagRetrieval(app: Express, store: Store, requireProject:
     const project=await withResearchOriginals(store,await requireProject(String(job.payload.project_id)))
     if(project.owner_id!==job.payload.owner_id||project.context_version!==job.payload.context_version||fingerprint(project)!==job.payload.source_fingerprint)throw new Error('RAG_INDEX_SNAPSHOT_CHANGED')
     const {state,bundle}=await indexBundle(project)
-    const result=await hybrid.index(project,bundle,state.documents,{question:''},{signal,allowInternalAI:false})
+    const result=await hybrid.index(project,bundle,state.documents,{question:''},{signal,allowInternalAI:false,maxIndexBatches:3})
     return {pending:result.pending>0,progress:result.indexed>result.reused}
   })
   const signalFor=(request:Request,response:Response)=>{
