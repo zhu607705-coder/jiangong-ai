@@ -25,5 +25,5 @@ export async function evaluateProjectGuidance(input:GuidanceInput,inputHash:stri
   }).sort((a,b)=>b.score-a.score)}
   base.measures=rank('measure',input.measures);base.materials=rank('material',input.materials)
   return {...base,status:issues.length?'partial':'completed',request_id:raw.request_id,input_tokens:raw.usage.input_tokens,duration_ms:Date.now()-started}
- }catch{signal.throwIfAborted();return {...base,duration_ms:Date.now()-started,error:'本次快速工作判断未更新，已有方案和资料可继续使用；稍后可重试。'}}
+ }catch(error){signal.throwIfAborted();const message=error instanceof Error?error.message:'';const code=/^DECISION_(TIMEOUT|INPUT_LIMIT|HTTP_\d{3}|INVALID_RESPONSE|REQUEST_FAILED|NOT_CONFIGURED)$/.test(message)?message:'GUIDANCE_REQUEST_FAILED';console.warn(JSON.stringify({event:'project_guidance_failed',code,input_hash:inputHash,duration_ms:Date.now()-started,input_bytes:Buffer.byteLength(JSON.stringify(input.state)),question_count:Object.keys(questions).length}));return {...base,duration_ms:Date.now()-started,error:'本次快速工作判断未更新，已有方案和资料可继续使用；稍后可重试。'}}
 }
