@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-16T03:36:55.506Z",
+  "model": {
+    "status": "success",
+    "reason": "Native source tool used 1 time(s); structured note validated; provider requests=2; native error records=0; project writes=0.",
+    "requested_model": "deepseek-flash"
+  },
+  "search": {
+    "status": "not_run",
+    "reason": "This check only covers the native structured reader; no external search or project operation."
+  },
+  "exit_code": 0,
+  "project_writes": 0,
+  "scope": "native_structured_reader_only"
+}

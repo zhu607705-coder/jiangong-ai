@@ -65,7 +65,7 @@ beforeEach(async()=>{
   Object.assign(config,{modelConfigured:true,searchConfigured:false,decisionEnabled:false,ALLOW_INTERNAL_MODEL:'true'})
   const db=new PGlite();await db.exec(readFileSync('packages/contracts/migrations/001_initial.sql','utf8'));store=new Store(db as unknown as Database,'in-memory isolated test')
   ports.search.mockResolvedValue({sources:[],trace:{status:'success',queries:[],source_ids:[],warnings:[],reused:true}})
-  ports.open.mockImplementation(async()=>({calls:[],close:async()=>{},runReadCapability:async(_stage:string,run:(signal:AbortSignal)=>unknown)=>run(new AbortController().signal),call:async(_stage:string,prompt:string,outputType:string)=>{
+  ports.open.mockImplementation(async()=>({ctx:{tools:{register:vi.fn(),schemas:()=>[]}},calls:[],close:async()=>{},runReadCapability:async(_stage:string,run:(signal:AbortSignal)=>unknown)=>run(new AbortController().signal),call:async(_stage:string,prompt:string,outputType:string)=>{
     if(outputType==='RenewalResearchPlan')return {value:{summary:'Offline fixture needs no expert decomposition.',tasks:[]}}
     ports.prompts.push(prompt)
     const catalog=JSON.parse(prompt.match(/<untrusted_sources>(.*?)<\/untrusted_sources>/s)![1])
@@ -174,7 +174,7 @@ it('repairs synthetic second-round survey claims through the existing DSH repair
   repaired.decision_brief!.investment.reason='模拟问卷中助餐75%高于加梯62.5%，优先核查助餐运营和供水分项预算。'
   const call=vi.fn().mockResolvedValueOnce({value:mistaken}).mockResolvedValueOnce({value:repaired})
   const withPlanner=vi.fn().mockImplementation((...args:unknown[])=>args[2]==='RenewalResearchPlan'?Promise.resolve({value:{summary:'Offline fixture plan.',tasks:[]}}):call(...args))
-  ports.open.mockResolvedValueOnce({calls:[],close:async()=>{},call:withPlanner})
+  ports.open.mockResolvedValueOnce({ctx:{tools:{register:vi.fn(),schemas:()=>[]}},calls:[],close:async()=>{},call:withPlanner})
   const second=await run(await createRound(p,['DOC-NEEDS'],first))
   expect(second.status).toBe('completed');expect(call).toHaveBeenCalledTimes(2)
   expect(call.mock.calls[0][1]).toContain('居民样本、问卷、访谈和统计比例均为隔离模拟')

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { randomUUID } from './uuid';
+import { projectInput as validateProjectCreationInput, ContractError } from '../../../packages/contracts/validate';
 import { useWorkbenchAccess, WorkbenchAccessContext } from './AdminAccess';
 import { isQiushiDemoProject, QIUSHI_SOURCE_PROJECT_ID } from '../../../packages/retrofit/qiushi-demo';
 import {
@@ -240,6 +241,9 @@ export default function App() {
     [projectName, setProjectName] = useState(""),
     [regionName, setRegionName] = useState(""),
     [geometryText, setGeometryText] = useState("");
+  const [createError,setCreateError]=useState('');
+  const creationDraftId=useRef<string|null>(null);
+  useEffect(()=>{if(!createOpen){creationDraftId.current=null;setCreateError('')}},[createOpen]);
   const [followups, setFollowups] = useState<{ title: string }[]>([]);
   const [projectExtras, setProjectExtras] = useState({ loading: false, diffError: false, followupsError: false });
   const [businessProfile, setBusinessProfile] = useState<'neighborhood'|'general'>('neighborhood');
@@ -450,9 +454,9 @@ export default function App() {
     attempt();
     return () => { observer.disconnect(); clearTimeout(timeout); cancelAnimationFrame(frame); focused?.removeAttribute('data-retrieval-focused'); };
   }, [project?.id, project?.context_version, tab, decisionFocus?.token, currentDirection]);
-  async function loadProject(id: string) {
+  async function loadProject(id: string, created?: Project) {
     const version = ++projectLoadVersion.current;
-    const p = await api<Project>(`/projects/${encodeURIComponent(id)}`);
+    const p = created || await api<Project>(`/projects/${encodeURIComponent(id)}`);
     if (version !== projectLoadVersion.current) return p;
     setProject(p);
     try { localStorage.setItem("hzz_project", id); } catch {}
@@ -578,6 +582,11 @@ export default function App() {
     } finally {
       setBusy(false);
     }
+  }
+  function openBlankProject(){
+    if(busy)return;
+    if(!access.canWrite){window.location.assign('/admin/login');return}
+    creationDraftId.current=null;setCreateError('');setMapAnchor(undefined);setMapEvidence(null);setProjectName('');setRegionName('');setGeometryText('');setCreateOpen(true);
   }
   async function uploadMaterial(file: File, metadata?: MaterialUploadMetadata) {
     if (!project || busy || !canWrite) return;
@@ -785,7 +794,7 @@ export default function App() {
       onProjectPage={page => navigateProject(page)}
       availableProjectPages={availableProjectPages}
       scrollContainerRef={scrollContainer}
-      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={() => setCreateOpen(true)} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
+      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={openBlankProject} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
       project={project}
       projects={projects}
       stages={stages}
@@ -804,17 +813,19 @@ export default function App() {
           } finally { setLoadingTarget(null); }
         })
       }
-      onCreate={() => { if (!access.canWrite) { window.location.assign('/admin/login'); return; } setMapAnchor(undefined); setMapEvidence(null); setProjectName(''); setRegionName(''); setGeometryText(''); setCreateOpen(true); }}
+      onCreate={openBlankProject}
       mapView={<MapWorkspace ready={!loading && globalView === 'map'} interactionBlocked={detailsOpen || loading || !!loadingTarget} project={project} focusProject={mapFocus} settingsRequest={mapSettings}
         onAskEvidence={() => setAskEvidenceRequest(value => value + 1)}
         onEvidence={refs => { openEvidence(refs); setDetailsOpen(true); }}
       onOpenProject={id => { void (async () => { if (id && id !== project?.id) { setLoadingTarget(id); try { await loadProject(id) } finally { setLoadingTarget(null) } } setTab('overview'); setRouteSection(undefined); setDetailsOpen(true); setGlobalView('project'); if (id || project?.id) writeWorkbenchLink(id || project!.id, 'overview'); })().catch(e => setError(e.message)); }}
         onCreateFromPlace={(place, context) => {
+          if(busy)return;
+          creationDraftId.current=null;setCreateError('');
           const clean=context?publicMapContext(context):null
           const publicName=clean?.target.label||clean?.address||place.address||(place.poi_id?place.name:'')
           setMapAnchor(toProjectAnchor({...place,name:publicName||'地图选点'}));setMapEvidence(clean)
           setProjectName(publicName?`${publicName} · 片区研究`.slice(0,120):'地图选点研究')
-          setRegionName([...new Set([clean?.city||place.city,publicName].filter(Boolean))].join(' ').slice(0,120))
+          setRegionName([...new Set([clean?.city||place.city,publicName||place.name||'地图选点'].filter(Boolean))].join(' ').slice(0,120))
           setGeometryText('');setCreateOpen(true)
         }} />}
       detailsOpen={detailsOpen}
@@ -868,7 +879,7 @@ export default function App() {
               <IconPlayerPlay size={17} />
               打开合成示范
             </button>
-            <button className="secondary" disabled={!canWrite} onClick={() => setCreateOpen(true)}>
+            <button className="secondary" disabled={!canWrite} onClick={openBlankProject}>
               <IconPlus size={17} />
               新建真实项目
             </button>
@@ -1581,7 +1592,7 @@ export default function App() {
         {!replay&&project?.input.business_profile==='neighborhood'&&<section><h3>演示情景</h3><p>演示输入单独标记，用于展示完整参数下的方案和运营测算。</p><button className="secondary" onClick={()=>{const next=demoSessionActive?null:project.id;setCompleteDemoProject(next);setDirectionSelection(null);setSettingsOpen(false);setTab('scenarios');setRouteSection('compare');setGlobalView('project');setDetailsOpen(true);try{if(next)localStorage.setItem('hzz-complete-demo-project',next);else localStorage.removeItem('hzz-complete-demo-project');}catch{}}}>{demoSessionActive?'返回项目资料':'打开完整模拟情景'}</button></section>}
       </>:<><section><h3>{project?.name||'当前项目'}</h3><p>资料基线 v{project?.context_version||0}</p>{run?.status==='failed'&&<p role="alert">本轮运行未完成：{run.error_code||'请查看已保存阶段'}</p>}{overviewStrategy?.error&&<p role="alert">{overviewStrategy.error}</p>}<p>{running?'研究进行中':overviewStrategy?.status==='completed'?'已有完整保存成果':'当前尚无完整保存成果'}</p>{overviewStrategy?.model_calls.map((call,index)=><article key={index}><strong>{call.stage} · {call.returned_model||call.requested_model}</strong><p>耗时 {(call.duration_ms/1000).toFixed(1)} 秒 · 输入 {call.input_tokens} / 输出 {call.output_tokens} tokens</p></article>)}</section><section><h3>已保存运行与阶段</h3>{rail}</section></>}</aside></div>,document.body)}
       {createOpen && createPortal(
-        <div className="modal-backdrop" onClick={() => setCreateOpen(false)}>
+        <div className="modal-backdrop" onClick={() => {if(!busy)setCreateOpen(false)}}>
           <section
             className="modal"
             role="dialog"
@@ -1594,6 +1605,7 @@ export default function App() {
               <button
                 className="icon-button"
                 aria-label="关闭新建窗口"
+                disabled={busy}
                 onClick={() => setCreateOpen(false)}
               >
                 <IconX size={21} />
@@ -1603,15 +1615,25 @@ export default function App() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                if(busy)return;
+                setCreateError('');
+                if(!regionName.trim()){setCreateError('请填写研究小区或片区名称。');return}
                 void action(async () => {
+                  try {
+                  let providedGeometry:unknown;
+                  if(geometryText.trim()){
+                    try{const value=JSON.parse(geometryText);providedGeometry=value?.type==='Feature'?value.geometry:value}
+                    catch{throw new Error('范围 JSON 格式不正确，请检查括号和坐标，或先清空范围后创建。')}
+                  }
+                  await api('/session');
                   const geometry = geometryText.trim()
-                    ? JSON.parse(geometryText)
+                    ? providedGeometry as ProjectInput['scope']['geometry']
                     : mapEvidence?.target.geometry
                       ? (await api<{geometry:NonNullable<ProjectInput['scope']['geometry']>}>('/maps/geometry/wgs84',{geometry:mapEvidence.target.geometry})).geometry
                       : null;
                   const input: ProjectInput = {
                     schema_version: "2.0",
-                    project_id: `P-${randomUUID()}`,
+                    project_id: creationDraftId.current || (creationDraftId.current=`P-${randomUUID()}`),
                     synthetic: false,
                     purpose: "preconstruction_research",
                     business_profile: businessProfile,
@@ -1639,17 +1661,20 @@ export default function App() {
                     ],
                     events: [],
                   };
+                  try{validateProjectCreationInput(input)}catch(error){throw new Error(error instanceof ContractError?'项目资料格式不正确，请核对研究名称、GeoJSON 范围坐标和资料日期。':error instanceof Error?error.message:'项目输入检查未完成。')}
                   const p = await api<Project>("/projects", {
                     input,
                     name: projectName.trim() || regionName.trim(),
                   });
-                  await refreshProjects();
-                  await loadProject(p.id);
+                  setProjects(current=>[p,...current.filter(row=>row.id!==p.id)]);
+                  await loadProject(p.id,p);
                   setCreateOpen(false);
                   setTab("evidence"); setRouteSection("files");
                   setDetailsOpen(true); setGlobalView("project");
                   setMapAnchor(undefined);
                   setMapEvidence(null);
+                  void refreshProjects().catch(()=>setNotice('项目已创建，项目列表暂未刷新，可稍后重新打开项目空间。'));
+                  }catch(error){setCreateError(error instanceof Error?error.message:'项目创建未完成，请重试。');throw error}
                 });
               }}
             >
@@ -1670,6 +1695,7 @@ export default function App() {
               <input
                 id="region-name"
                 required
+                onInvalid={e=>{e.preventDefault();setCreateError('请填写研究小区或片区名称。')}}
                 value={regionName}
                 onChange={(e) => setRegionName(e.target.value)}
                 maxLength={120}
@@ -1688,12 +1714,13 @@ export default function App() {
                 AI 生成与搜索可能存在错误
               </div>
               {mapAnchor && <div className="note-line">已关联地图位置：{mapAnchor.name}。{mapEvidence?.target.geometry?'所选边界将作为项目范围。':mapEvidence?'将同时带入本次区位初筛资料。':''}<button type="button" className="text-button" onClick={() => { setMapAnchor(undefined); setMapEvidence(null) }}>解除关联</button></div>}
+              {createError&&<div className="project-create-error" role="alert">{createError}</div>}
               <button
                 className="primary full-width"
                 disabled={busy}
                 type="submit"
               >
-                创建真实项目 <IconArrowRight size={17} />
+                {busy?'正在创建项目…':'创建真实项目'} <IconArrowRight size={17} />
               </button>
             </form>
             <div className="modal-divider">或运行工程样例</div>

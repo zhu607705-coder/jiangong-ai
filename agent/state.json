@@ -3569,7 +3569,7 @@
     "merge_checks": "PR40 exact facfaee head; both required workflows SUCCESS, merged"
   },
   "mode_lifecycle_and_reports_20261016": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "updated_at": "2026-10-16T10:54:27.092938+08:00",
     "branch": "codex/mode-judgement-lifecycle",
     "request": "No mode verdict before real Decision; real progress, explicit unmet/unknown/review states; remove global debug links and bind report to completed project research",
@@ -3601,11 +3601,49 @@
       "project_input": "unchanged",
       "live_model_calls": 0
     },
-    "next_runnable_task": "Wait exact PR41 head checks and merge; user starts judgement manually.",
+    "next_runnable_task": "Completed; current creation and expert reliability work is isolated in .cache/creation-research-reliability.",
     "origin_fix": "Only explicit_mode caches restore a mode verdict. Overall-research props and strategy/legacy cache origins remain separate. Existing records retained; one origin column added.",
     "origin_tests": "7 files 48 cases plus 3 integration files 29 cases; isolated TypeScript+Vite build exit0",
     "origin_build_log": "research/test_results/mode-origin-build-20261016.log",
     "origin_ui_deployment": "research/test_results/mode-origin-ui-deployment-20261016.json",
-    "new_project_browser_proof": "output/playwright/mode-lifecycle/new-project-no-inherited-verdict-20261016.png"
+    "new_project_browser_proof": "output/playwright/mode-lifecycle/new-project-no-inherited-verdict-20261016.png",
+    "merge_commit": "8c03c2c7270bab21a7d26d8d72c8c013b4944e20",
+    "merge_checks": "PR41 exact 43bd608, both required workflows SUCCESS; merged"
+  },
+  "creation_and_expert_reliability_20261016": {
+    "status": "deployed_verified_pending_merge",
+    "updated_at": "2026-10-16T11:56:16.225148+08:00",
+    "branch": "codex/creation-research-reliability",
+    "worktree": "D:\\建工ai\\.cache\\creation-research-reliability",
+    "request": "Project creation and Chrome compatibility; earlier expert readiness checks, context compression quality, and adaptive effort per specialist",
+    "preserved_live_prerequisites": [
+      "runtime/dsh/live-session.ts",
+      "runtime/dsh/json-format-repair.ts",
+      "runtime/workflows/renewal-research.ts",
+      "runtime/agents/renewal/AGENTS.md",
+      "tests/contracts/renewal-research-workflow.test.ts",
+      "tests/contracts/renewal-structured-request.test.ts",
+      "tests/contracts/json-format-repair.test.ts"
+    ],
+    "findings": [
+      "HTTP-IP UUID fallback already exists; do not assume it is the current failure",
+      "Unnamed map selection can leave required region name empty; JSON geometry errors are not shown inside the modal",
+      "Create POST followed by failed refresh can leave a created project looking failed; inspect idempotent recovery",
+      "Existing planner/experts use uniform3500 output tokens; workflow only keeps failed specialist for final repair; no model-call count caps per OPS435S"
+    ],
+    "next_runnable_task": "Wait exact PR42 checks, merge, consolidate canonical main preserving unrelated working changes.",
+    "tests": "7 files 75 cases passed; production build passed",
+    "test_log": "research/test_results/creation-reliability-focused-20261016.log",
+    "build_log": "research/test_results/creation-reliability-build-20261016.log",
+    "verification_scope": "actual PGlite, isolated UI/native ports, build, actual campus UI required-field error, actual server structured-reader protocol; standalone Chrome unavailable",
+    "implementation_commit": "c5bc347483e0d1d0bc095a07d3ff37bee2e1dd18",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/42",
+    "runtime_deployment": "research/test_results/creation-reliability-runtime-deployment-20261016.json",
+    "ui_deployment": "research/test_results/creation-reliability-ui-deployment-20261016.json",
+    "native_probe": "research/test_results/creation-reliability-native-probe-20261016.json",
+    "native_probe_result": "success: 1 actual native reader invocation, 2 provider requests, 0 native error records, 0 project writes",
+    "runtime_recovery": "per-specialist truncation/schema recovery with more capacity within same deadline; semantic citation retry before synthesis; no request-count caps",
+    "integration_test_log": "research/test_results/creation-rounds-integration-20261016.log",
+    "final_runtime_log": "research/test_results/creation-reliability-final-runtime-20261016.log"
   }
 }

@@ -1,0 +1,27 @@
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6545 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                      0.51 kB │ gzip:   0.38 kB
+dist/assets/KnowledgeAgentReport-znkVSlVW.css        6.66 kB │ gzip:   1.44 kB
+dist/assets/KnowledgeWorkbench-B02dDSju.css          8.29 kB │ gzip:   1.82 kB
+dist/assets/KnowledgePipelinePanel-CbPY0HV6.css      8.81 kB │ gzip:   1.90 kB
+dist/assets/index-BP-OW16f.css                     358.86 kB │ gzip:  54.93 kB
+dist/assets/index-BbT_szam.js                        5.29 kB │ gzip:   1.79 kB
+dist/assets/correction-report-BUMXvzL5.js            7.30 kB │ gzip:   3.56 kB
+dist/assets/KnowledgeAgentReport-HY9PbvWP.js        10.51 kB │ gzip:   3.58 kB
+dist/assets/KnowledgeWorkbench-6xCU5aVT.js          17.56 kB │ gzip:   6.80 kB
+dist/assets/KnowledgePipelinePanel-CgK-ibaz.js      33.57 kB │ gzip:  10.66 kB
+dist/assets/index-C0u8wfp9.js                    1,123.52 kB │ gzip: 343.87 kB
+dist/assets/history-records-B99qh1CF.js          6,854.12 kB │ gzip: 584.74 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.82s
