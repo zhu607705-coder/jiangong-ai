@@ -35,5 +35,15 @@ export function publicMapContext(context: MapScreenContext): MapScreenContext {
 export function handoffPublicSources(context:MapScreenContext):Source[]{
   const clean=publicMapContext(context)
   const all=[...(clean.research_sources||[]).map(s=>withSourceRecords(s,clean.research_records||[])),...clean.local_projects.flatMap(p=>p.sources.map(s=>({...s,id:`${p.project_id}:${s.id}`,locator:`${p.relation}:${s.locator||s.url||s.id}`})))]
-  return [...new Map(all.filter(s=>s.content_status!=='metadata_only').map(s=>[s.id,s])).values()]
+  const originals=new Map<string,Source>()
+  for(const source of all.filter(s=>s.content_status!=='metadata_only')) {
+    // Only project-namespace wrappers are ignored. Distinct pages, excerpts,
+    // versions, evidence scopes and structured records remain independent.
+    const locator=source.locator?.replace(/^(?:(?:within_scope|city_background):)+/,'')
+    const key=JSON.stringify([source.url||source.hash||source.id,source.hash,source.untrusted_text,locator,source.evidence_scope,source.object_refs,
+      source.raw_hash,source.public_records?.map(({source_id:_namespace,...record})=>record),source.published_at,source.date_status,source.expires_at,source.license,source.parse_status,source.body_truncated,source.records_truncated,source.content_status])
+    const previous=originals.get(key)
+    if(!previous||source.id.length<previous.id.length)originals.set(key,source)
+  }
+  return [...originals.values()]
 }

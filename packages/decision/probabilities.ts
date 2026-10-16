@@ -2,6 +2,17 @@
 // Check whether a normalized distribution can exist within the reported rounding
 // intervals, rather than treating the rounded sum or mean as exact.
 const EPSILON=1e-9
+/** Some System One answers omit zero-probability labels. Only close an already
+ * unit-mass distribution over known options; missing nonzero mass is never invented. */
+export function completeProbabilityMap(value:unknown,options:readonly string[]):Record<string,number>|null {
+  if(!value||typeof value!=='object'||Array.isArray(value))return null
+  const entries=Object.entries(value)
+  if(!entries.length||entries.some(([key,p])=>!options.includes(key)||typeof p!=='number'||!Number.isFinite(p)||p<0||p>1))return null
+  const missing=options.filter(key=>!Object.hasOwn(value,key))
+  if(missing.length&&Math.abs(entries.reduce((sum,[,p])=>sum+Number(p),0)-1)>EPSILON)return null
+  const dense=Object.fromEntries(options.map(key=>[key,(value as Record<string,number>)[key]??0]))
+  return validProbabilityMass(Object.values(dense))?dense:null
+}
 function decimals(value:number):number {
   const [coefficient,exponent='0']=String(value).split('e')
   return Math.max(0,(coefficient.split('.')[1]?.length||0)-Number(exponent))

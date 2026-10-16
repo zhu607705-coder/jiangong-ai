@@ -7,7 +7,7 @@ import { join, extname } from 'node:path'
 import { z } from 'zod'
 import { config } from './config'
 import { Store, type RunRecord, type ProjectRecord } from './store'
-import { ContractError, projectInput } from '../../packages/contracts/validate'
+import { ContractError, projectInput,contractErrorMessage } from '../../packages/contracts/validate'
 import { compileContext, applyContextPatch } from '../../packages/context/compiler'
 import { compileModelContext } from '../../packages/context/model-compiler'
 import { revisionDiff } from '../../packages/decision/evaluate'
@@ -279,7 +279,8 @@ app.get('/api/projects/:id/followups', async (req, res) => { await requireProjec
 app.use(express.static('apps/workspace/dist'))
 app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (res.headersSent) return res.end()
-  if (error instanceof z.ZodError || error instanceof ContractError) return res.status(422).json({ code: 'VALIDATION_ERROR', detail: error.message })
+  if (error instanceof ContractError) return res.status(422).json({ code: 'VALIDATION_ERROR', detail: contractErrorMessage(error) })
+  if (error instanceof z.ZodError) return res.status(422).json({ code: 'VALIDATION_ERROR', detail: error.message })
   if (error instanceof ApiError || error instanceof ExperienceError) return res.status(error.status).json({ code: error.code, detail: error.message })
   if (error instanceof DocumentParseError) return res.status(422).json({ code: 'PARSE_FAILED', detail: error.message })
   if (error instanceof multer.MulterError) return res.status(413).json({ code: error.code, detail: '材料超过 10 MB 限制或上传格式不正确' })
