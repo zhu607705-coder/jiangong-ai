@@ -6,7 +6,6 @@
     "code": "STRATEGY_EVIDENCE_INVALID"
   },
   "native_session": "18edea23-eb28-4d0f-94e8-a08f10c5d6d6",
-  "candidate_sha256": "f4c0c35824ef9f7308c549991c5e2d65dcb6a94d6f51c39acfbac6e3a2ecb22b",
   "headline": "浙大路18-1号：先分栋定级，整治类分项先行，拆建留作条件化备选",
   "work_packages": [
     3,
@@ -31,5 +30,7 @@
   ],
   "provider_calls": 0,
   "project_writes": 0,
-  "original_failed_round_unchanged": true
+  "original_failed_round_unchanged": true,
+  "local_candidate_file_sha256": "f4c0c35824ef9f7308c549991c5e2d65dcb6a94d6f51c39acfbac6e3a2ecb22b",
+  "native_candidate_sha256": "f4c0c35824ef9f7308c549991c5e2d65dcb6a94d6f51c39acfbac6e3a2ecb22b"
 }

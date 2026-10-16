@@ -64,7 +64,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
       <header><span>研判协作助手 · {projectName}</span><h3>{question}</h3></header>
       {synthetic && <p className="research-round-notice">合成演示 · 本项目文件、轮次与模型输出均为模拟情景，不写入真实项目。</p>}
       <p>{baseline ? `保留首轮基线，沿用第 ${baseline.round_number} 轮结果；新增文件后再形成独立的第 ${nextNumber} 轮。` : `公开资料可以支持第一轮判断；${categories}能帮助核实项目真实条件。`}</p>
-      <div className="research-source-count"><span>现有公开资料 {sourceCounts.public} 份</span><span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
+      <div className="research-source-count"><span>已导入公开文件 {sourceCounts.public} 份</span>{!!baseline?.result?.sources.length&&<span>本轮研判来源 {baseline.result.sources.length} 份</span>}<span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
       {loading && <p role="status">正在读取已保存的研判轮次与项目文件…</p>}
       {error && <div className="research-round-notice" role="alert"><p>{error}</p><button disabled={busy || loading} onClick={onReload}>重新读取轮次</button></div>}
       {baseline?.result?.content_review&&<StrategyContentNotice packet={baseline.result} details/>}

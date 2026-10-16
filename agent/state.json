@@ -3647,7 +3647,7 @@
     "final_runtime_log": "research/test_results/creation-reliability-final-runtime-20261016.log"
   },
   "advisory_plan_review_20261016": {
-    "status": "implemented_local_verified_deployment_pending",
+    "status": "deployed_actual_output_recovered_material_queue_verified",
     "request": "内容核验问题返回方案、待核清单与继续搜索阅读指引，不再丢弃完整模型输出",
     "changed_files": [
       "packages/retrofit/strategy.ts",
@@ -3661,6 +3661,14 @@
       "research/test_results/advisory-plan-focused-20261016.log",
       "research/test_results/advisory-plan-actual-replay-20261016.json"
     ],
-    "next_runnable_task": "发布原服务模块和前端，独立恢复指定失败输出；读回新方案并保留原失败轮。"
+    "next_runnable_task": "按用户要求人工补充材料后开展下一轮；本次无需重新调用模型。",
+    "provider_calls_added": 0,
+    "recovered_round_id": "ROUND-5da9eb80-6feb-4b04-9180-227afd2887f1",
+    "material_requests": 6,
+    "evidence": [
+      "research/test_results/advisory-plan-campus-recovery-20261016.json",
+      "research/test_results/advisory-plan-runtime-deployment-20261016.json",
+      "research/test_results/advisory-plan-ui-deployment-20261016.json"
+    ]
   }
 }
