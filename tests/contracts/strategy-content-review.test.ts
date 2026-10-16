@@ -1,5 +1,5 @@
 import { describe,it,expect } from 'vitest'
-import { reviewStrategyContent, strategyModelReferences, validateStrategy, type StrategySource } from '../../packages/retrofit/strategy'
+import { reviewStrategyContent, strategySupplementRequests, strategyModelReferences, validateStrategy, type StrategySource } from '../../packages/retrofit/strategy'
 import type { RenewalStrategy } from '../../apps/host/generated/contracts'
 import { withConcreteWorkPlan } from './fixtures/strategy-work-plan'
 
@@ -18,6 +18,8 @@ describe('nonblocking strategy content review',()=>{
     const review=reviewStrategyContent(value,[source],[],{projectName:'浙大路18-1号'})
     expect(review.issues.map(issue=>issue.code)).toEqual(expect.arrayContaining(['STRATEGY_OBJECT_EVIDENCE_MISSING','STRATEGY_CONSTRUCTION_GATE_UNMET','STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH']))
     expect(review.follow_up.search_queries[0]).toContain('浙大路18-1号')
+    expect(strategySupplementRequests(review)).toHaveLength(review.issues.length)
+    expect(strategySupplementRequests(review)[0]).toMatchObject({topic:'后续资料补充',evidence_refs:[]})
     expect(review.follow_up.reading_focus.join('')).toContain('全文')
     expect(value.preferred_mode).toBe(before.preferred_mode)
     expect(value.decision_brief!.investment.stage).toBe('construction')

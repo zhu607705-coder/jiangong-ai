@@ -109,7 +109,7 @@ export class ResearchRoundsService {
       if(requiresParent) fail(409,'ROUND_BASELINE_EXISTS','本项目已有研究轮次，请刷新。')
       return {id,project_id:project.id,round_number:number,context_version:result.context_version,input_hash:result.input_hash,parent_round_id:null,parent_input_hash:null,parent_context_version:null,
         first_round_id:id,first_input_hash:result.input_hash,first_context_version:result.context_version,origin:'adopted_history',status:'completed',material_intake:'not_recorded',allow_internal_ai:false,
-        materials:[],missing_materials:result.strategy?.round_review?.missing_materials||result.strategy?.next_checks.map(row=>({topic:row.title,request:row.detail,reason:'历史研究列出的待核事项。',evidence_refs:row.evidence_refs}))||[],result,error:null,created_at:now,updated_at:now}
+        materials:[],missing_materials:[...(result.strategy?.round_review?.missing_materials||result.strategy?.next_checks.map(row=>({topic:row.title,request:row.detail,reason:'历史研究列出的待核事项。',evidence_refs:row.evidence_refs}))||[]),...strategySupplementRequests(result.content_review)],result,error:null,created_at:now,updated_at:now}
     },null)
   }
   async create(project:ProjectRecord,raw:unknown):Promise<ResearchRound> {
