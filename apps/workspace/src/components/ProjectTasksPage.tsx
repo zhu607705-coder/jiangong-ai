@@ -3,64 +3,20 @@ import { createPortal } from 'react-dom'
 import { IconArrowRight, IconCheck, IconClipboardList, IconFileSearch, IconHistory } from '@tabler/icons-react'
 import type { Project } from '../api'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
-import type { ResearchMissingMaterial, ResearchRound } from '../../../../packages/retrofit/research-rounds'
-import type { RenewalInternalDataRequest } from '../../../host/generated/contracts'
-import { currentDirectionText, type StrategyDirection } from './strategy-direction-text'
+import type { ResearchRound } from '../../../../packages/retrofit/research-rounds'
+import { type StrategyDirection } from './strategy-direction-text'
 import './ProjectTasksPage.css'
 
-export type ProjectTaskProgress = 'not_started' | 'in_progress' | 'material_received'
-export type ProjectInvestigationTask = {
-  id: string; title: string; request: string; reason: string; evidence_refs: string[];
-  kinds: ('next_check' | 'missing_material' | 'internal_data')[]; progress_keys: string[];
-  internal_data?: RenewalInternalDataRequest & { related_objects: string[]; scope: 'project' | 'scheme' | 'unresolved' };
-}
+import {buildProjectTasks,type ProjectTaskProgress,type ProjectInvestigationTask} from '../../../../packages/retrofit/project-tasks'
+import {useProjectDecisionGuidance,orderByDecision} from './ProjectDecisionGuidance'
+export {buildProjectTasks,type ProjectTaskProgress,type ProjectInvestigationTask} from '../../../../packages/retrofit/project-tasks'
+
 export type ProjectTasksPageProps = {
   project: Project; packet: StrategyPacket | null; rounds?: ResearchRound[];
   direction?: StrategyDirection | null; section?: 'current' | 'history';
   onEvidence: (refs: string[], packet?: StrategyPacket) => void; onSupplement: () => void;
 }
 const progressLabels: Record<ProjectTaskProgress, string> = { not_started: '尚未开展', in_progress: '正在调查', material_received: '材料已取得' }
-const normalize = (text: string) => text.normalize('NFKC').replace(/[\s\p{P}\p{S}]/gu, '')
-
-/** The API owns the requests. Display filtering and exact duplicate merging do not modify its saved text. */
-export function buildProjectTasks(packet: StrategyPacket | null, direction?: StrategyDirection | null, extraMissing: ResearchMissingMaterial[] = []): ProjectInvestigationTask[] {
-  if (!packet?.strategy || packet.status !== 'completed') return []
-  const tasks: ProjectInvestigationTask[] = []
-  const visible = (text: string) => direction ? currentDirectionText(text, direction) : text.trim()
-  const insert = (task: ProjectInvestigationTask) => {
-    const duplicate = tasks.find(existing => normalize(existing.title) === normalize(task.title) && normalize(existing.request) === normalize(task.request)
-      || normalize(task.request).length >= 12 && normalize(existing.request) === normalize(task.request))
-    if (!duplicate) { tasks.push(task); return }
-    duplicate.evidence_refs = [...new Set([...duplicate.evidence_refs, ...task.evidence_refs])]
-    duplicate.kinds = [...new Set([...duplicate.kinds, ...task.kinds])]
-    duplicate.progress_keys = [...new Set([...duplicate.progress_keys, ...task.progress_keys])]
-    if (task.reason && !duplicate.reason.includes(task.reason)) duplicate.reason = [duplicate.reason, task.reason].filter(Boolean).join('\n')
-  }
-  packet.strategy.next_checks.forEach((check, index) => {
-    const title = visible(check.title), request = visible(check.detail)
-    if (!title || !request) return
-    const id = `${packet.input_hash}:${index}`
-    insert({ id, title, request, reason: '', evidence_refs: [...check.evidence_refs], kinds: ['next_check'], progress_keys: [id] })
-  })
-  for (const item of [...(packet.strategy.round_review?.missing_materials || []), ...extraMissing]) {
-    const title = visible(item.topic), request = visible(item.request)
-    if (!title || !request) continue
-    const id = `${packet.input_hash}:missing:${encodeURIComponent(`${normalize(item.topic)}:${normalize(item.request)}`)}`
-    insert({ id, title, request, reason: visible(item.reason), evidence_refs: [...item.evidence_refs], kinds: ['missing_material'], progress_keys: [id] })
-  }
-  const packages = packet.strategy.paths.flatMap(path => (path.work_packages || []).map(item => ({ mode: path.mode, item })))
-  for (const item of packet.strategy.internal_data_requests || []) {
-    const related = packages.filter(row => item.related_package_ids.includes(row.item.id))
-    const own = direction ? related.filter(row => row.mode === direction) : related
-    if (direction && item.related_package_ids.length && !own.length) continue
-    const title = visible(item.metric), request = visible(item.collection_method), id = `${packet.input_hash}:internal:${item.id}`
-    if (!title || !request || tasks.some(task => task.id === id)) continue
-    // Structured collection plans retain their own key, even when a general missing-file task has the same wording.
-    tasks.push({ id, title, request, reason: visible(item.purpose), evidence_refs: [...item.evidence_refs], kinds: ['internal_data'], progress_keys: [id],
-      internal_data: { ...item, related_package_ids: [...item.related_package_ids], evidence_refs: [...item.evidence_refs], related_objects: [...new Set(own.map(row => row.item.target))], scope: !item.related_package_ids.length ? 'project' : own.length ? 'scheme' : 'unresolved' } })
-  }
-  return tasks
-}
 
 function readProgress(key: string): Record<string, ProjectTaskProgress> {
   try {
@@ -129,7 +85,8 @@ export default function ProjectTasksPage({ project, packet, rounds = [], directi
   const history = [...validRounds].filter(round => round.input_hash !== current?.input_hash).sort((a, b) => b.round_number - a.round_number)
   const selectedRound = section === 'history' ? history.find(round => round.id === historyId) || history[0] : validRounds.find(round => round.input_hash === current?.input_hash && round.context_version === current?.context_version)
   const activePacket = section === 'history' ? selectedRound?.result || null : current
-  const tasks = useMemo(() => buildProjectTasks(activePacket, direction, selectedRound?.missing_materials || []), [activePacket, direction, selectedRound])
+  const guidance=useProjectDecisionGuidance(activePacket?.input_hash)
+  const tasks = useMemo(() => {const rows=buildProjectTasks(activePacket,direction,selectedRound?.missing_materials||[]);return section==='current'&&guidance?orderByDecision(rows,guidance.materials,row=>row.id):rows}, [activePacket, direction, selectedRound,section,guidance])
   const selected = tasks.find(task => task.id === opened)
   const counts = { all: tasks.length, received: tasks.filter(task => taskProgress(task, progress) === 'material_received').length, ongoing: tasks.filter(task => taskProgress(task, progress) === 'in_progress').length }
   function update(task: ProjectInvestigationTask, value: ProjectTaskProgress) {
@@ -146,6 +103,7 @@ export default function ProjectTasksPage({ project, packet, rounds = [], directi
   }
   return <section className="project-tasks-page" aria-label={section === 'history' ? '历史调查记录' : '当前调查任务'} data-direction={direction || 'unselected'}>
     <header className="project-tasks-heading"><div><span>{section === 'history' ? <IconHistory size={20}/> : <IconClipboardList size={20}/>}调查任务</span><h2>{section === 'history' ? '回看每轮提出的调查要求' : '把关键缺项转成下一次行动'}</h2><p>{section === 'history' ? '按当轮资料基线查看任务和引用，原判断持续保留。' : '查看需要取得的资料，记录本机进度，再补充文件开展下一轮判断。'}</p></div>{section === 'current' && <button type="button" className="project-task-primary" onClick={onSupplement}>补充项目资料 <IconArrowRight size={18}/></button>}</header>
+    {guidance&&section==='current'&&<p className="pdg-task-badge">已按 Decision 的资料优先级排序 · 调查进度保留</p>}
     <div className="project-task-summary"><div><strong>{counts.all}</strong><span>本轮调查事项</span></div><div><strong>{counts.ongoing}</strong><span>正在调查</span></div><div><strong>{counts.received}</strong><span>材料已取得 · 本机</span></div><p>{direction ? `工作方向：${direction === 'comprehensive' ? '综合整治' : '原拆原建'}` : '尚未选择工作方向 · 展示当轮全部核查'}{activePacket && <span>依据资料 v{activePacket.context_version}{activePacket.context_version !== project.context_version ? ` · 当前资料 v${project.context_version}` : ''}</span>}</p></div>
     {section === 'history' && history.length > 0 && <label className="project-task-history-selector">选择历史研判<select aria-label="选择历史调查轮次" value={selectedRound?.id || ''} onChange={event => { setHistoryId(event.target.value); setOpened(null) }}>{history.map(round => <option key={round.id} value={round.id}>第 {round.round_number} 轮 · 资料 v{round.context_version} · {dateLabel(round.created_at)}</option>)}</select></label>}
     {saveError && <p className="project-task-notice" role="alert">{saveError}</p>}

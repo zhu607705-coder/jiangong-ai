@@ -1,0 +1,10 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/decision-project-guidance
+
+················································
+
+ Test Files  8 passed (8)
+      Tests  48 passed (48)
+   Start at  23:48:06
+   Duration  4.46s (transform 626ms, setup 0ms, import 2.96s, tests 555ms, environment 0ms)
+

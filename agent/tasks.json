@@ -1829,6 +1829,26 @@
         "docs/Decision快速研判与推理暂估_20261016.md",
         "agent"
       ]
+    },
+    {
+      "id": "DECISION-PROJECT-GUIDANCE-20261016",
+      "depends_on": [
+        "DECISION-FAST-ESTIMATES-20261016"
+      ],
+      "goal": "将Decision扩展到六页工作重点、举措与调查优先序和实际页面跳转。",
+      "write_scope": [
+        "packages/decision",
+        "packages/retrofit",
+        "services/capabilities/project-decision.ts",
+        "apps/host",
+        "apps/workspace/src",
+        "tests/contracts",
+        "agent",
+        "research/reuse_manifest.json",
+        "docs/Decision快速研判与推理暂估_20261016.md"
+      ],
+      "definition_of_done": "相关行为回归、生产构建、真实模型、页面排序和跳转分别验收；项目资料保持且不新增方案准入门槛。",
+      "evidence_log": "research/test_results/decision-project-guidance-focused-20261016.log"
     }
   ]
 }

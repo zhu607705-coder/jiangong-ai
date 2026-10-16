@@ -25,6 +25,7 @@ import WorkspaceFrame, { type WorkspaceGlobalView } from "./components/Workspace
 import { GlobalProjects, GlobalKnowledge } from './components/GlobalWorkspace';
 import GlobalKnowledgeCatalog from './components/GlobalKnowledgeCatalog';
 import ProjectOverview from './components/ProjectOverview';
+import ProjectDecisionGuidance from './components/ProjectDecisionGuidance';
 import ProjectEvidenceDrawer, { type ProjectEvidenceReference } from './components/ProjectEvidenceDrawer';
 import ProjectTasksPage from './components/ProjectTasksPage';
 import ProjectResultsPage from './components/ProjectResultsPage';
@@ -905,7 +906,7 @@ export default function App() {
           </div>
         </section>
       ) : (
-        <>
+        <ProjectDecisionGuidance project={project} page={location.page} direction={currentDirection} packetHash={overviewStrategy?.input_hash} onNavigate={target=>navigateProject(target.page,target.section,target.pane)}>
           {!['overview','assessment','scenarios'].includes(location.page) && <header className="workspace-page-heading"><span>{project.name} · 资料 v{project.context_version}</span><h1>{PROJECT_PAGES.find(page=>page.id===location.page)?.label}</h1></header>}
           {(project.input.synthetic || completeDemoActive) && <p className="workspace-data-badge">模拟资料 · {completeDemoActive ? '杭州样本社区演示情景' : project.input.scope.name}</p>}
           {['evidence','actions','results'].includes(location.page) && <nav className="workspace-section-nav" aria-label="页面工作区">{(location.page==='evidence'?[['files','资料与证据'],['profile','对象档案'],['context','项目经验与约束']]:location.page==='actions'?[['current','当前调查'],['history','历史记录']]:[['reports','成果管理'],['history','版本变化']]).map(([section,label])=><button key={section} aria-current={location.section===section?'page':undefined} onClick={()=>navigateProject(location.page,section)}>{label}</button>)}</nav>}
@@ -1578,7 +1579,7 @@ export default function App() {
               )}
             </section></details>
           )}
-        </>
+</ProjectDecisionGuidance>
       )}
       {!loading && !loadingTarget && !createOpen && createPortal(<FloatingEvidenceSearch
         projectId={project?.id} revision={project?.context_version} projectName={project?.name} pageContext={PROJECT_PAGES.find(page=>page.id===location.page)?.label} projects={projects}

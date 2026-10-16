@@ -5,6 +5,7 @@ import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 import type { ResearchRound } from '../../../../packages/retrofit/research-rounds'
 import ProjectLocationMap from './ProjectLocationMap'
 import { renewalCheckEmphasis } from './decision-emphasis'
+import {useProjectDecisionGuidance} from './ProjectDecisionGuidance'
 import './ProjectOverview.css'
 
 export type ProjectOverviewPage = 'overview' | 'evidence' | 'assessment' | 'scenarios' | 'actions' | 'results' | 'map'
@@ -45,6 +46,7 @@ const conditionTitles:Record<string,string>={structure_repairable:'安全鉴定�
 export default function ProjectOverview(props:ProjectOverviewProps) {
   const {project,currentDirection,onNavigate,onEvidence}=props
   const {packet,strategy,savedRound,stale,failed,state,needsChecks,gate}=projectOverviewState(props)
+  const guidance=useProjectDecisionGuidance(packet?.input_hash)
   const hasMaterials=project.input.sources.some(source=>source.untrusted_text?.trim()||source.parse_status==='extracted')
   const headline=strategy?.decision_brief?.renewal.conclusion||strategy?.headline||(props.loading?'正在读取本项目的研究状态':hasMaterials?'已有资料，进入改造研判':'先补充本项目的研究资料')
   const lead=strategy?.decision_brief?.renewal.reason||strategy?.summary||(hasMaterials?'在改造研判中查看已有条件、补充内部材料并开始研究。':'可先导入居民需求、鉴定或费用材料，再开展项目研判。')
@@ -59,7 +61,8 @@ export default function ProjectOverview(props:ProjectOverviewProps) {
     checks:{label:'查看关键核查项',page:'actions',section:'current'},candidates:{label:'比较候选方案',page:'scenarios',section:'compare'},
     empty:hasMaterials?{label:'进入改造研判',page:'assessment',section:'direction'}:{label:'补充项目资料',page:'evidence',section:'materials'},
   }
-  const primary=statusAction[state]
+  const suggested=guidance?.stages.overview
+  const primary=suggested&&!stale&&!failed?{label:suggested.label,page:suggested.target.page,section:suggested.target.section}:statusAction[state]
   const researchLabel=needsChecks?'先核查':strategy?MODE_LABELS[strategy.preferred_mode]:'待研判'
   const unknown=strategy?.dimensions.filter(row=>row.current_level==='unknown').length||0
   const conditionDirection=currentDirection||strategy?.preferred_mode

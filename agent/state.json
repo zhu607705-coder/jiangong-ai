@@ -4046,5 +4046,62 @@
       "origin": "https://laneanew.cn/",
       "project_metadata_unchanged": 36
     }
+  },
+  "decision_project_guidance_20261016": {
+    "status": "deployed_live_and_browser_verified_merge_pending",
+    "as_of": "2026-10-16",
+    "changed_files": [
+      "agent/mission.md",
+      "agent/state.json",
+      "agent/tasks.json",
+      "apps/host/server.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/ConcreteWorkPlan.tsx",
+      "apps/workspace/src/components/ProjectOverview.tsx",
+      "apps/workspace/src/components/ProjectTasksPage.tsx",
+      "apps/workspace/src/components/strategy-direction-text.ts",
+      "docs/Decision快速研判与推理暂估_20261016.md",
+      "research/reuse_manifest.json",
+      "packages/decision/project-guidance.ts",
+      "services/capabilities/project-decision.ts",
+      "apps/host/project-decision.ts",
+      "apps/workspace/src/components/ProjectDecisionGuidance.tsx",
+      "apps/workspace/src/components/project-decision-guidance.css",
+      "packages/retrofit/project-tasks.ts",
+      "packages/retrofit/direction-text.ts"
+    ],
+    "tests": {
+      "focused": "48 passed in 8 files; final state consistency 6 passed",
+      "production_build": "TypeScript and Vite passed; final backend typecheck passed",
+      "live": "918 ms; six page choices, five measures, five material priorities; project and rounds hashes unchanged",
+      "browser": "Real overview CTA -> scheme comparison; shared actions-page guidance and actual task order verified"
+    },
+    "artifacts": [
+      "docs/Decision快速研判与推理暂估_20261016.md",
+      "research/test_results/decision-project-guidance-focused-20261016.log",
+      "research/test_results/decision-project-guidance-build-20261016.log",
+      "research/test_results/decision-project-guidance-live-20261016.json",
+      "research/test_results/decision-project-guidance-cached-readback-20261016.json",
+      "research/test_results/decision-project-guidance-final-runtime-deployment-20261016.json",
+      "research/test_results/decision-project-guidance-compact-ui-deployment-20261016.json",
+      "research/test_results/decision-project-guidance-browser-20261016.json"
+    ],
+    "unresolved_questions": [],
+    "next_runnable_task": "Merge authorized branch and preserve unrelated root changes.",
+    "updated_at": "2026-10-16T15:51:36.089514+00:00",
+    "deployment": {
+      "runtime_commit": "2e41aca94ab1a530266a123caef48fc48cdc4b9a",
+      "ui_commit": "cc5b7d311d3eadbe805f20edbc7785047fbd9607",
+      "origin": "https://laneanew.cn/",
+      "project_metadata_unchanged": 36
+    },
+    "implementation_notes": [
+      "Read the latest current-version completed research round before standalone published cache, matching the UI.",
+      "Six page choices plus ten ranking slots respect the deployment's 16-question limit; unranked items stay in the original lists.",
+      "Extra Decision request uses public sources and public-derived analysis; private analysis not transmitted."
+    ],
+    "known_limitations": [
+      "Project P-0e40c5dd scope is registered as Tianjin while its existing analysis contains Hangzhou case material; this change preserves project inputs and does not certify the historical analysis factual identity."
+    ]
   }
 }
