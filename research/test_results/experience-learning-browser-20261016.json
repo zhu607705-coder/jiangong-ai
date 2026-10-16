@@ -1,0 +1,13 @@
+{
+  "status": "verified_on_campus_server",
+  "url": "http://10.70.223.113/?project=P-f47555b1-0175-4d49-85cf-1d56b17fcee1&view=context",
+  "file_intake_visible": true,
+  "long_chat_intake_visible": true,
+  "automatic_build_visible": true,
+  "single_model_choice_visible": true,
+  "knowledge_versions_entry_visible": true,
+  "existing_search_visible": true,
+  "readonly_verification": true,
+  "production_project_writes": 0,
+  "screenshot": "D:/建工ai/output/playwright/experience-learning/experience-intake-20261016.png"
+}

@@ -3673,7 +3673,7 @@
   },
   "experience_file_chat_learning": {
     "as_of": "2026-10-16",
-    "status": "implemented_scoped_tests_passed_deployment_pending",
+    "status": "campus_deployed_native_api_browser_verified_ready_for_merge",
     "request": "文件和长聊天直接导入，自动构建经验、技能与规则更新对比；采用后进入后续知识检索",
     "changed_files": [
       "apps/host/experience.ts",
@@ -3693,6 +3693,20 @@
       "research/test_results/experience-learning-final-20261016.log",
       "research/test_results/experience-learning-ui-20261016.log"
     ],
-    "next_runnable_task": "隔离构建、同一校园服务器部署、自身合成材料的原生模型协议验证与只读界面验收。"
+    "next_runnable_task": "合并PR44；用户从资料与条件的项目经验与约束入口手动导入实际材料。",
+    "native_result": "1 actual provider call produced 2 experience cards, 1 skill, 1 rule candidate in isolated synthetic database; replay used 0 model calls",
+    "preserved_deployed_sources": [
+      "fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23",
+      "0746c89ce6d6bd31be6f3de19f7d60145f8d682f"
+    ],
+    "guard": "scripts/deploy-campus-ui.ps1",
+    "evidence": [
+      "research/test_results/experience-learning-native-20261016.json",
+      "research/test_results/experience-learning-ui-deployment-20261016.json",
+      "research/test_results/experience-learning-ui-overwrite-guard-20261016.json"
+    ],
+    "ui_source_commit": "c0ffdf40b933e2c93f35f02c7bce58be30d6be34",
+    "browser_evidence": "research/test_results/experience-learning-browser-20261016.json",
+    "production_project_writes": 0
   }
 }
