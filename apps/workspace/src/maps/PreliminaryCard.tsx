@@ -94,7 +94,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
     {!canWrite&&!context&&stage!=='context'&&<p>公开浏览可查看已保存项目；此位置尚无可读取的研究资料，管理员登录后可研究。</p>}
     {context&&<>
       {cell&&<div className="screening-tier" style={{'--tier-color':screenTiers(profile)[cell.tier].color} as React.CSSProperties}><i/>{screenTiers(profile)[cell.tier].label}</div>}
-      {profile==='neighborhood'&&<RenewalModePanel key={context.id} endpoint={`/maps/screening/renewal-mode/${encodeURIComponent(context.id)}`} input={mapRenewalModeInput({...context,research_sources:analysis?.research_sources||context.research_sources})} decision={analysis?.decision_support} onInvestigate={local.length===1?()=>onOpenProject(local[0].project_id):undefined}/>}
+      {profile==='neighborhood'&&<RenewalModePanel compact key={context.id} endpoint={`/maps/screening/renewal-mode/${encodeURIComponent(context.id)}`} input={mapRenewalModeInput({...context,research_sources:analysis?.research_sources||context.research_sources})} decision={analysis?.decision_support} onInvestigate={local.length===1?()=>onOpenProject(local[0].project_id):undefined}/>}
       {preview&&<div className="preliminary-research" aria-label="对象初步调研">
         <h4>初步调研</h4>
         {preview.lines.map((line,index)=><p key={index}>{line.text}{!!line.sourceRefs.length&&<button className="claim-source" onClick={()=>showEvidence(line.sourceRefs)} title={cite(line.sourceRefs)}>依据</button>}</p>)}

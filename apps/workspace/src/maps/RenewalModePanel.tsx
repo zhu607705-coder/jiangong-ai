@@ -85,7 +85,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
   const reviewQueue=reviews?.key===identity.current?reviews:null
   const projectRoute=endpoint.match(/^\/projects\/([^/]+)\/renewal-mode$/)
   const phaseLabels={inputs:'整理判定输入',decision:'Decision 模式比较',validation:'条件核验与保存'}
-  return <section className="renewal-mode-panel" aria-label="改造模式判定">
+  const fullPanel = <section className="renewal-mode-panel" aria-label="改造模式判定">
     <header><span className="renewal-step">先判模式</span><h3>改造模式判定</h3><span className="renewal-stage">{screening.synthetic?'模拟 · ':''}{running?'判定进行中':hasResult?'Decision 判定结果':'等待开始判定'}</span></header>
     {!hasResult&&!running&&<div className="renewal-mode-intro"><IconBuildingCommunity size={32}/><div><h4>{attempted?'本次判定尚未形成结果':'开始判定改造模式'}</h4><p>核对本对象资料，由 Decision 比较更新方向，再按条件逐项核验。</p></div><button className="renewal-start" onClick={()=>void judge()} disabled={!canWrite}>开始判定改造模式</button></div>}
     {(running||progress.length>0)&&<section className="renewal-run-progress" aria-label="模式判定进度" aria-live="polite"><header><h4>{running?'正在判定改造模式':hasResult?'本次判定已完成':'本次判定阶段记录'}</h4>{running&&<button onClick={()=>{requestController.current?.abort();setRunning(false);setNotice('本次判定已停止，可重新开始。')}}>停止判定</button>}</header><ol>{(['inputs','decision','validation'] as const).map((phase,index)=>{const event=progress.find(row=>row.phase===phase),state=event?.state==='running'&&!running?'interrupted':event?.state||(running&&index===0?'running':'pending');return <li key={phase} data-state={state}><b>{state==='completed'?'✓':String(index+1).padStart(2,'0')}</b><div><strong>{phaseLabels[phase]}</strong><p>{event?.message||(state==='running'?'已提交请求，正在整理本对象资料。':'等待上一环节完成')}{event?.source_count!==undefined&&` 本对象原文 ${event.source_count} 份 · 条件 ${event.condition_count} 项。`}</p></div></li>})}</ol></section>}
@@ -174,4 +174,17 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
     </details>
     </div>}
   </section>
+  if(!compact)return fullPanel
+  return <section className="renewal-mode-panel renewal-map-summary" aria-label="改造模式判定">
+    <header><h3>改造方向初判</h3><span>{running?'判定中':hasResult?'已形成初判':result?.status==='failed'?'本次未完成':'尚未判定'}</span></header>
+    <div className="renewal-map-body">
+      {hasResult?<><strong className="renewal-map-conclusion">{direction==='comprehensive'?'综合整治优先研究':direction==='rebuild'?'原拆原建优先论证':'先补充关键条件'}</strong><p>{directionSummary}</p><div className="renewal-map-stats"><span>满足 {conditionCounts.met}/{gate.checks.length}</span><span>待核 {conditionCounts.unknown}</span>{conditionCounts.unmet>0&&<span>未满足 {conditionCounts.unmet}</span>}{conditionCounts.conflict>0&&<span>冲突 {conditionCounts.conflict}</span>}</div></>:<p>先核对本对象条件，再给出改造方向建议。</p>}
+      {running&&<div className="renewal-map-progress" role="status"><strong>{progress.at(-1)?.phase==='validation'?'正在核对与保存':progress.at(-1)?.phase==='inputs'?'正在整理资料':'Decision正在比较'}</strong><p>{progress.at(-1)?.message||'请求已提交，正在读取本对象资料。'}</p></div>}
+      {(error||result&&result.status!=='completed')&&<p className="renewal-error" role="alert">{error||decisionErrorMessage(result?.error_code,result?.error_detail)}</p>}
+      {notice&&<p role="status">{notice}</p>}
+      <button type="button" className="renewal-start" disabled={!canWrite||running} onClick={()=>void judge()}>{running?'正在判定…':hasResult?'更新模式初判':'开始判定改造模式'}</button>
+    </div>
+    <details className="renewal-map-details"><summary>判定条件、过程与原文依据</summary>{fullPanel}</details>
+  </section>
+
 }
