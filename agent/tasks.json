@@ -1731,7 +1731,7 @@
         "T-DECISION-COLOR-20261016"
       ],
       "goal": "先实际判定后显示模式结论，呈现实阶段及条件/审核状态，报告绑定项目在线调研成果。",
-      "status": "implementing",
+      "status": "completed",
       "write_scope": [
         "apps/host/renewal-mode.ts",
         "packages/retrofit/renewal-mode.ts",
@@ -1747,7 +1747,9 @@
         "tests/contracts/project-results-page.test.ts",
         "docs/改造模式判定与报告呈现.md"
       ],
-      "definition_of_done": "无Decision时无默认模式，真实阶段流与重试取消/版本变化保护可复现；未满足和待审核可见；顶部无调试链接，报告仅在成功项目结果出现；隔离构建与服务器验收完成。"
+      "definition_of_done": "无Decision时无默认模式，真实阶段流与重试取消/版本变化保护可复现；未满足和待审核可见；顶部无调试链接，报告仅在成功项目结果出现；隔离构建与服务器验收完成。",
+      "evidence_log": "research/test_results/mode-lifecycle-runtime-deployment-20261016.json",
+      "ui_proof": "output/playwright/mode-lifecycle/qiushi-before-judgement-20261016.png"
     }
   ]
 }

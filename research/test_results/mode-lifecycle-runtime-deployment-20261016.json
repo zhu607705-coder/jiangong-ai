@@ -1,0 +1,39 @@
+{
+  "status": "owned_runtime_deployed",
+  "commit": "a561a921d17e846c134fa30851029c4140616279",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/backups/mode-lifecycle-a561a921d17e846c134fa30851029c4140616279-20261016T020958Z",
+  "changed_files": [
+    "apps/host/renewal-mode.ts",
+    "packages/retrofit/renewal-mode.ts"
+  ],
+  "file_hashes_after": {
+    "apps/host/renewal-mode.ts": "324ff2a8a73db7d4cb1620600f064b7d6437c94ce75f8737cbce474cb34869d2",
+    "packages/retrofit/renewal-mode.ts": "d061ecda7d6e5de4a9bcc7443189129a63952a1a4befd235b7735e450ca06cc0"
+  },
+  "protected_files_before": {
+    "apps/host/server.ts": "53c05663913f2e73fa76db03feae2724fa67961ac10c7b7e0eb5d52f91dbfa93",
+    "packages/retrofit/strategy.ts": "3a498cc4d361a6afdd7a87bcedc2e04b2d71308664a7abf0bead8c761874fcc4",
+    "runtime/dsh/live-session.ts": "7d666b7ad4a9186e40e00b513cf42e1743c65a0f46648c9669724954558e8d78",
+    "runtime/dsh/json-format-repair.ts": "fd8b75711ab71d30c6a1f5eeb0876701c60317c9190fb7fbebe93abe8e91b893",
+    "runtime/workflows/renewal-research.ts": "fe3d7916c2933623b84216402b016fd55f32499c46b8f271e7ac0397587e849e",
+    "runtime/agents/renewal/AGENTS.md": "43d34387addb581e175200f9010cb1504451d066209eb3566fe619104fff9d88"
+  },
+  "protected_files_after": {
+    "apps/host/server.ts": "53c05663913f2e73fa76db03feae2724fa67961ac10c7b7e0eb5d52f91dbfa93",
+    "packages/retrofit/strategy.ts": "3a498cc4d361a6afdd7a87bcedc2e04b2d71308664a7abf0bead8c761874fcc4",
+    "runtime/dsh/live-session.ts": "7d666b7ad4a9186e40e00b513cf42e1743c65a0f46648c9669724954558e8d78",
+    "runtime/dsh/json-format-repair.ts": "fd8b75711ab71d30c6a1f5eeb0876701c60317c9190fb7fbebe93abe8e91b893",
+    "runtime/workflows/renewal-research.ts": "fe3d7916c2933623b84216402b016fd55f32499c46b8f271e7ac0397587e849e",
+    "runtime/agents/renewal/AGENTS.md": "43d34387addb581e175200f9010cb1504451d066209eb3566fe619104fff9d88"
+  },
+  "nginx_unchanged": true,
+  "project_input_unchanged": true,
+  "host_pid_before": "44088",
+  "host_pid_after": "46434",
+  "provider_calls": 0,
+  "project_writes": 0,
+  "mode_readable": true,
+  "saved_mode_present": false,
+  "checked_at": "2026-10-16T02:10:01.650553+00:00"
+}

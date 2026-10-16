@@ -3569,8 +3569,8 @@
     "merge_checks": "PR40 exact facfaee head; both required workflows SUCCESS, merged"
   },
   "mode_lifecycle_and_reports_20261016": {
-    "status": "implemented_pending_verification",
-    "updated_at": "2026-10-16T10:03:09.330578+08:00",
+    "status": "deployed_verified_pending_merge",
+    "updated_at": "2026-10-16T10:13:00+08:00",
     "branch": "codex/mode-judgement-lifecycle",
     "request": "No mode verdict before real Decision; real progress, explicit unmet/unknown/review states; remove global debug links and bind report to completed project research",
     "reuse": "Existing Decision evaluation, gate, optional NDJSON endpoint and consumeStream, experience draft read, saved StrategyPacket report exports",
@@ -3583,7 +3583,24 @@
       "apps/workspace/src/components/ProjectResultsPage.tsx",
       "apps/workspace/src/components/ProjectResultsPage.css"
     ],
-    "tests": "62 targeted cases passed; separate abort lifetime for the review read; no live model request",
-    "next_runnable_task": "Build isolated commit; deploy only owned host module/type additions and UI, preserve all server hotfixes; inspect real idle state and merge."
+    "tests": "isolated source: 7 files, 62 cases passed; TypeScript+Vite build exit0",
+    "implementation_commit": "a561a921d17e846c134fa30851029c4140616279",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/41",
+    "build_log": "research/test_results/mode-lifecycle-build-20261016.log",
+    "runtime_deployment": "research/test_results/mode-lifecycle-runtime-deployment-20261016.json",
+    "ui_deployment": "research/test_results/mode-lifecycle-ui-deployment-20261016.json",
+    "browser_readback": "research/test_results/mode-lifecycle-browser-20261016.json",
+    "screenshot": "output/playwright/mode-lifecycle/qiushi-before-judgement-20261016.png",
+    "verification": {
+      "before_decision": "actual project 0 result panels, 0 direction headings, start button visible",
+      "global_debug_links": "removed",
+      "fixed_report_links": 0,
+      "page_alerts": 0,
+      "page_horizontal_overflow": false,
+      "backend_hotfix_hashes": "six protected files unchanged",
+      "project_input": "unchanged",
+      "live_model_calls": 0
+    },
+    "next_runnable_task": "Wait exact PR41 head checks and merge; user starts judgement manually."
   }
 }

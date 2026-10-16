@@ -1,9 +1,9 @@
 
- RUN  v4.1.11 D:/建工ai
+ RUN  v4.1.11 D:/建工ai/.cache/blue-workbench-release
 
 
  Test Files  7 passed (7)
       Tests  62 passed (62)
-   Start at  10:03:32
-   Duration  3.99s (transform 903ms, setup 0ms, import 2.80s, tests 388ms, environment 0ms)
+   Start at  10:11:25
+   Duration  3.92s (transform 873ms, setup 0ms, import 2.73s, tests 386ms, environment 0ms)
 
