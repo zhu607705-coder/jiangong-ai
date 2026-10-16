@@ -1,7 +1,7 @@
 import type { DecisionDashboard, DimensionEvidence, MapScreenProfile, ResearchDimension } from '../../apps/host/generated/contracts'
-import { validProbabilityMass, compatibleExpectedScore } from './probabilities'
 import {NEIGHBORHOOD_DIMENSION_POLICY} from '../retrofit/policy'
 import {MODEL_SIGNAL_THRESHOLDS} from './thresholds'
+import {completeProbabilityMap,compatibleExpectedScore} from './probabilities'
 
 export const DASHBOARD_POLICY='opportunity-fit-v2'
 export const NEIGHBORHOOD_DASHBOARD_POLICY='neighborhood-renovation-fit-v2'
@@ -31,18 +31,19 @@ export type DashboardInput={purpose:string;evidence:DimensionEvidence[];profile?
 export function dashboardQuestions(input:DashboardInput):Record<string,unknown>{
   return Object.fromEntries(dashboardDimensions(dashboardPolicy(input.profile)).filter(d=>input.evidence.some(e=>e.key===d.key)).map(d=>['fit_'+d.key,{type:'score',instructions:`评价当前方案“${input.purpose}”的${d.label}，只用dashboard_evidence中该维度原文。${d.question} 已截止或已成交的采购只能支持历史需求和进入机制，不能视为当前可投。评分衡量方案适配，不给资料数量打分。六维等级仅用于比较同一方案，三类行动建议由证据与硬约束另行判定，不能由雷达总分推出。`,criteria:d.levels}]))
 }
-export function parseDashboard(raw:any,input:DashboardInput):DecisionDashboard{
+export function parseDashboard(raw:any,input:DashboardInput,options:{onIssue?:(key:string)=>void}={}):DecisionDashboard{
   let missing=false
   const policy=dashboardPolicy(input.profile)
   const dimensions=dashboardDimensions(policy).map(d=>{
     const evidence=input.evidence.filter(e=>e.key===d.key),answer=raw.answers?.['fit_'+d.key]
     const base={key:d.key,value:null as number|null,confidence:null as number|null,evidence_refs:evidence.map(e=>e.source_id),basis:evidence[0]?.basis||''}
     if(!evidence.length){missing=true;return base}
-    if(answer?.type!=='score'||!Number.isFinite(answer.score)||answer.score<0||answer.score>4||!Number.isFinite(answer.confidence)||answer.confidence<0||answer.confidence>1)throw new Error('DECISION_INVALID_RESPONSE')
-    const probabilities=answer.probabilities,keys=Object.keys(probabilities||{}).sort()
-    if(Array.isArray(probabilities)||keys.join()!=='0,1,2,3,4'||!validProbabilityMass(keys.map(k=>probabilities[k])))throw new Error('DECISION_INVALID_RESPONSE')
+    const invalid=()=>{if(!options.onIssue)throw new Error('DECISION_INVALID_RESPONSE');options.onIssue(d.label);missing=true;return base}
+    if(answer?.type!=='score'||!Number.isFinite(answer.score)||answer.score<0||answer.score>4||!Number.isFinite(answer.confidence)||answer.confidence<0||answer.confidence>1)return invalid()
+    const probabilities=completeProbabilityMap(answer.probabilities,['0','1','2','3','4'])
+    if(!probabilities)return invalid()
     // System One's score is the 0-based probability-weighted expected level.
-    if(!compatibleExpectedScore(answer.score,keys.map(k=>probabilities[k])))throw new Error('DECISION_INVALID_RESPONSE')
+    if(!compatibleExpectedScore(answer.score,Object.values(probabilities)))return invalid()
     if(answer.confidence<MODEL_SIGNAL_THRESHOLDS.dashboard_display.min_confidence){missing=true;return base}
     return {...base,value:Math.round((answer.score+1)*10)/10,confidence:answer.confidence}
   })

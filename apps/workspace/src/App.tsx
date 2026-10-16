@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { randomUUID } from './uuid';
-import { projectInput as validateProjectCreationInput, ContractError } from '../../../packages/contracts/validate';
+import { projectInput as validateProjectCreationInput, ContractError,contractErrorMessage } from '../../../packages/contracts/validate';
 import { useWorkbenchAccess, WorkbenchAccessContext } from './AdminAccess';
 import { isQiushiDemoProject, QIUSHI_SOURCE_PROJECT_ID } from '../../../packages/retrofit/qiushi-demo';
 import {
@@ -1661,7 +1661,7 @@ export default function App() {
                     ],
                     events: [],
                   };
-                  try{validateProjectCreationInput(input)}catch(error){throw new Error(error instanceof ContractError?'项目资料格式不正确，请核对研究名称、GeoJSON 范围坐标和资料日期。':error instanceof Error?error.message:'项目输入检查未完成。')}
+                  try{validateProjectCreationInput(input)}catch(error){throw new Error(error instanceof ContractError?contractErrorMessage(error):error instanceof Error?error.message:'项目输入检查未完成。')}
                   const p = await api<Project>("/projects", {
                     input,
                     name: projectName.trim() || regionName.trim(),

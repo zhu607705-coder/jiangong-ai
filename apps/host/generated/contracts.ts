@@ -35,9 +35,6 @@ export interface ProjectInput {
    * @maxItems 5000
    */
   facts: Fact[];
-  /**
-   * @maxItems 1000
-   */
   sources: Source[];
   /**
    * @maxItems 1000
@@ -703,6 +700,11 @@ export interface ResearchTrace {
  * via the `definition` "DecisionSupport".
  */
 export interface DecisionSupport {
+  error_detail?: string;
+  /**
+   * @maxItems 32
+   */
+  format_notes?: string[];
   status: "completed" | "unavailable" | "failed";
   provider: "qwen_systemone";
   model: string;

@@ -1,4 +1,4 @@
-import Ajv from 'ajv'
+import Ajv, {type ErrorObject} from 'ajv'
 import addFormats from 'ajv-formats'
 import schema from './schema.json'
 import type { ProjectInput, DecisionPacket } from '../../apps/host/generated/contracts'
@@ -8,13 +8,28 @@ addFormats(ajv)
 ajv.addSchema(schema)
 export class ContractError extends Error {
   readonly code = 'INVALID_CONTRACT'
-  constructor(message: string) { super(message) }
+  constructor(message: string,readonly issues:readonly ErrorObject[] = []) { super(message) }
 }
 export function validate<T>(type: string, value: unknown): T {
   const validator = ajv.getSchema(`${schema.$id}#/definitions/${type}`)
   if (!validator) throw new Error(`Unknown contract: ${type}`)
-  if (!validator(value)) throw new ContractError(ajv.errorsText(validator.errors, { separator: '; ' }))
+  if (!validator(value)) throw new ContractError(ajv.errorsText(validator.errors, { separator: '; ' }),structuredClone(validator.errors||[]))
   return value as T
+}
+/** Field diagnostics contain schema paths only, never submitted source bodies or credentials. */
+export function contractErrorMessage(error:ContractError):string {
+  const labels:Record<string,string>={scope:'研究范围',name:'名称',geometry:'范围坐标',coordinates:'坐标',as_of:'资料日期',sources:'带入资料',map_anchor:'地图位置',longitude:'经度',latitude:'纬度',coordinate_encoding:'坐标系',candidate_ids:'研究路径',business_profile:'业务方向',data_class:'资料类别',public_records:'原文结构化记录'}
+  const notes=error.issues.slice(0,3).map(issue=>{
+    const path=issue.instancePath.split('/').filter(Boolean).map(part=>labels[part]||(/^\d+$/.test(part)?`第${Number(part)+1}项`:part)).join(' → ')||'项目资料'
+    if(issue.keyword==='maxItems')return `${path}条目超过当前接口容量（${issue.params.limit}）。`
+    if(issue.keyword==='maxLength')return `${path}文字过长（最多${issue.params.limit}字）。`
+    if(issue.keyword==='required')return `${path}缺少${labels[issue.params.missingProperty]||issue.params.missingProperty}。`
+    if(issue.keyword==='additionalProperties')return `${path}包含不支持的字段${issue.params.additionalProperty}。`
+    if(issue.keyword==='minimum'||issue.keyword==='maximum')return `${path}超出有效数值范围。`
+    if(issue.keyword==='minLength')return `${path}不能为空。`
+    return `${path}格式不符合要求${issue.keyword==='pattern'&&issue.instancePath==='/as_of'?'，请使用YYYY-MM-DD日期':''}。`
+  })
+  return [...new Set(notes)].join(' ')||error.message
 }
 export function projectInput(value: unknown): ProjectInput {
   const project = validate<ProjectInput>('ProjectInput', value)
