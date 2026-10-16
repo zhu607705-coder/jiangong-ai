@@ -60,11 +60,11 @@ describe('admin access protocol and entry gate', () => {
       if (label) expect(dom.document.querySelector('.admin-session-bar')?.textContent).toContain(label)
       else expect(dom.document.querySelector('.admin-session-bar')).toBeNull()
       if (canWrite === 'false') expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '管理员登录')?.getAttribute('href')).toBe('/admin/login')
-      if (label) expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === (label === '校园协作' ? '查看决策方案' : '查看公开决策方案'))?.getAttribute('href')).toBe('/?view=published')
+      expect(dom.document.querySelector('.admin-public-decisions')).toBeNull()
+      expect(dom.document.querySelector('.admin-session-report')).toBeNull()
       if (label === '校园协作') {
         expect(dom.document.querySelector('[data-role]')?.getAttribute('data-role')).toBe('admin')
         expect(dom.document.querySelector('header')?.getAttribute('aria-label')).toBe('校园协作工作台')
-        expect(dom.document.querySelector('.admin-session-report')?.getAttribute('href')).toContain('/deliverables/')
         expect(dom.document.body.textContent).not.toMatch(/管理员|只读|退出登录/)
         expect([...dom.document.querySelectorAll('a')].some(link => link.getAttribute('href')?.startsWith('/admin/'))).toBe(false)
         expect([...dom.document.querySelectorAll('a')].find(link => link.textContent === '数据库结构')?.getAttribute('href')).toBe('/api/admin/database-schema')

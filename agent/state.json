@@ -3533,12 +3533,12 @@
     }
   },
   "decision_color_emphasis_20261016": {
-    "status": "deployed_verified_pending_merge",
-    "updated_at": "2026-10-16T09:43:32.004826+08:00",
+    "status": "completed",
+    "updated_at": "2026-10-16T09:51:04.664082+08:00",
     "branch": "codex/semantic-highlights",
     "request": "Highlight decision-critical facts using red/amber/green, with blue operations and violet scenarios, based on existing fields",
     "reuse": "ProjectOverview, RenewalModePanel, DecisionDashboard and shared semantic tokens; existing mode gate and 1-5 scores unchanged",
-    "next_runnable_task": "Wait PR40 required checks and merge exact head; no automated demonstration.",
+    "next_runnable_task": "None for this task; deployed UI ready for manual operation.",
     "changed_files": [
       "ProjectOverview.tsx",
       "RenewalModePanel.tsx",
@@ -3564,6 +3564,48 @@
       "horizontal_overflow": false,
       "backend_hashes_and_pid": "unchanged",
       "database_and_provider_operations": 0
-    }
+    },
+    "merge_commit": "e1a7a1d9d7c27af320600a300cbbfba082c1b1ce",
+    "merge_checks": "PR40 exact facfaee head; both required workflows SUCCESS, merged"
+  },
+  "mode_lifecycle_and_reports_20261016": {
+    "status": "deployed_verified_pending_merge",
+    "updated_at": "2026-10-16T10:54:27.092938+08:00",
+    "branch": "codex/mode-judgement-lifecycle",
+    "request": "No mode verdict before real Decision; real progress, explicit unmet/unknown/review states; remove global debug links and bind report to completed project research",
+    "reuse": "Existing Decision evaluation, gate, optional NDJSON endpoint and consumeStream, experience draft read, saved StrategyPacket report exports",
+    "files": [
+      "apps/host/renewal-mode.ts",
+      "packages/retrofit/renewal-mode.ts",
+      "apps/workspace/src/maps/RenewalModePanel.tsx",
+      "apps/workspace/src/maps/RenewalModePanel.css",
+      "apps/workspace/src/AdminAccess.tsx",
+      "apps/workspace/src/components/ProjectResultsPage.tsx",
+      "apps/workspace/src/components/ProjectResultsPage.css"
+    ],
+    "tests": "isolated source: 7 files, 62 cases passed; TypeScript+Vite build exit0",
+    "implementation_commit": "98e1f75218526c5e1efa2fa5134531ab2db3aac0",
+    "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/41",
+    "build_log": "research/test_results/mode-lifecycle-build-20261016.log",
+    "runtime_deployment": "research/test_results/mode-lifecycle-runtime-deployment-20261016.json",
+    "ui_deployment": "research/test_results/mode-lifecycle-ui-deployment-20261016.json",
+    "browser_readback": "research/test_results/mode-lifecycle-browser-20261016.json",
+    "screenshot": "output/playwright/mode-lifecycle/qiushi-before-judgement-20261016.png",
+    "verification": {
+      "before_decision": "actual project 0 result panels, 0 direction headings, start button visible",
+      "global_debug_links": "removed",
+      "fixed_report_links": 0,
+      "page_alerts": 0,
+      "page_horizontal_overflow": false,
+      "backend_hotfix_hashes": "six protected files unchanged",
+      "project_input": "unchanged",
+      "live_model_calls": 0
+    },
+    "next_runnable_task": "Wait exact PR41 head checks and merge; user starts judgement manually.",
+    "origin_fix": "Only explicit_mode caches restore a mode verdict. Overall-research props and strategy/legacy cache origins remain separate. Existing records retained; one origin column added.",
+    "origin_tests": "7 files 48 cases plus 3 integration files 29 cases; isolated TypeScript+Vite build exit0",
+    "origin_build_log": "research/test_results/mode-origin-build-20261016.log",
+    "origin_ui_deployment": "research/test_results/mode-origin-ui-deployment-20261016.json",
+    "new_project_browser_proof": "output/playwright/mode-lifecycle/new-project-no-inherited-verdict-20261016.png"
   }
 }

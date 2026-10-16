@@ -53,6 +53,7 @@ test.each([
     if (path.endsWith('/followups') || path.endsWith('/documents')) return Promise.resolve([])
     if (path.includes('/renewal-strategy')) return Promise.resolve(strategy)
     if (path.endsWith('/renewal-mode')) return Promise.resolve({ screening: projectRenewalModeInput(project.input), decision: null })
+    if (path.endsWith('/experiences?status=draft')) return Promise.resolve({ cards: [] })
     if (path === '/maps/config') return Promise.resolve({ configured: false })
     if (path.endsWith('/knowledge/retrieve')) return Promise.resolve(retrieved)
     if (path.endsWith('/knowledge/groups')) return Promise.resolve({ groups: [], documents: [] })

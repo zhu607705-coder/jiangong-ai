@@ -91,7 +91,7 @@ test('mode screening precedes the AI summary, manual direction and internal inta
     expect(order[1].classList.contains('decision-brief')).toBe(true)
     expect(order[2].classList.contains('strategy-direction-selection')).toBe(true)
     expect(order[3].classList.contains('research-intake')).toBe(true)
-    expect(app.container.querySelector('.renewal-stage')?.textContent).toBe('证据条件初筛')
+    expect(app.container.querySelector('.renewal-stage')?.textContent).toBe('等待开始判定')
     expect(app.reported).toHaveBeenCalledWith(saved)
     expect(app.reported.mock.calls.some(([result]) => result === null)).toBe(false)
   } finally { await app.cleanup() }
@@ -105,8 +105,9 @@ test.each([
   const app = await mount(location, null, { collaborative: true })
   try {
     expect(app.container.querySelector('.renewal-mode-panel')).not.toBeNull()
-    expect(app.container.querySelector('.renewal-stage')?.textContent).toBe('证据条件初筛')
-    expect(app.container.querySelectorAll('.renewal-gate [data-state=unknown]').length).toBeGreaterThan(0)
+    expect(app.container.querySelector('.renewal-stage')?.textContent).toBe('等待开始判定')
+    expect(app.container.querySelector('.renewal-mode-result')).toBeNull()
+    expect(app.container.querySelector('.renewal-mode-intro button')?.textContent).toContain('开始判定改造模式')
     expect(app.container.querySelector('.research-intake')).not.toBeNull()
     expect(app.container.querySelector('.decision-brief,.strategy-direction-selection,.strategy-current-assessment,.strategy-related-cases,.scheme-comparison,.single-scheme-workspace,.strategy-scheme-entries')).toBeNull()
     expect(app.container.textContent).not.toMatch(/旧版建议|尚无本版本完整方案|尚无对应现况评价/)

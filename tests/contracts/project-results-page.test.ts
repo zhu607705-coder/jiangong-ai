@@ -218,12 +218,16 @@ test('failed and obsolete rounds remain visible while a completed older round st
   expect(exportedPacket(JSON.parse(await downloads[0].text()))).toEqual(old)
 })
 
-test('the campus PDF is bound to the exact real project id rather than its shared display name', async () => {
+test('reports come from a completed project result and never link to the fixed debugging PDF', async () => {
   const pdf = 'deliverables/求是村_旧改深度调研与行动计划.pdf'
   const campus = project(CAMPUS_ID)
   await render(packet(campus), campus)
   const links = () => [...container.querySelectorAll<HTMLAnchorElement>('a')].filter(link => decodeURI(link.getAttribute('href') || '').includes(pdf))
-  expect(links()).toHaveLength(1)
+  expect(links()).toHaveLength(0)
+  expect(container.querySelector('.project-results-report')).not.toBeNull()
+  expect(container.querySelector('.project-results-report')?.textContent).toContain(packet(campus).strategy!.headline)
+  await render(null, campus)
+  expect(container.querySelector('.project-results-report')).toBeNull()
   await render(packet(), project())
   expect(links()).toHaveLength(0)
   campus.input.synthetic = true
