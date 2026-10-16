@@ -12,6 +12,14 @@ const input = () => projectRenewalModeInput({ ...fixture, business_profile: 'nei
 const oldRebuild = { status: 'completed', renewal_mode: { direction: 'rebuild', status: 'preliminary', summary: '原拆原建优先开展前期论证。',
   model_choice: { choice: 'rebuild', confidence: .99, probabilities: { rebuild: .99 } }, priority_constraint: { choice: 'safety' }, reasons: [], source_ids: [], next_step: '既有模型任务' } } as unknown as DecisionSupport
 
+test('before an actual mode decision, no default direction or result conditions are presented', () => {
+  const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: input() })))
+  expect(document.querySelector('.renewal-direction')).toBeNull()
+  expect(document.querySelector('.renewal-mode-result')).toBeNull()
+  expect(document.toString()).not.toContain('综合整治优先研究')
+  expect(document.querySelector('button')?.textContent).toContain('开始判定改造模式')
+})
+
 test('the program applies the same satisfied gate even when the saved model suggests another direction', () => {
   const screening = input()
   for (const condition of screening.conditions) Object.assign(condition, {
@@ -32,7 +40,7 @@ test('a cached model demolition preference cannot replace the current evidence g
   expect(document.querySelector('.renewal-main-reason')?.textContent).toContain('逐栋核实结构')
   expect(document.querySelector('.renewal-next')?.textContent).toContain('逐栋安全鉴定')
   expect(document.querySelector('.renewal-gate')?.tagName).toBe('DETAILS')
-  expect(document.querySelector('.renewal-gate')?.hasAttribute('open')).toBe(false)
+  expect(document.querySelector('.renewal-gate')?.hasAttribute('open')).toBe(true)
   expect(document.querySelector('.renewal-gate>summary')?.textContent).toContain('已满足 0/9')
   expect(document.querySelector('.renewal-gate>summary')?.textContent).toContain('待核 9')
   expect(document.querySelectorAll('.renewal-gate li[data-state="unknown"]').length).toBe(9)
@@ -63,7 +71,7 @@ test('the condition summary counts actual satisfied, unknown, unmet and conflict
   set('rights_clear', true, 'supported')
   set('funding_secured', false, 'restricted')
   set('demolition_permitted', null, 'conflict')
-  const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: screening })))
+  const { document } = parseHTML(renderToStaticMarkup(createElement(RenewalModePanel, { endpoint: '/projects/test/renewal-mode', input: screening, decision: oldRebuild })))
   const summary = document.querySelector('.renewal-gate>summary')?.textContent
   expect(summary).toContain('已满足 2/9'); expect(summary).toContain('待核 5')
   expect(summary).toContain('未满足 1'); expect(summary).toContain('冲突 1')

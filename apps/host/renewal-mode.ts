@@ -6,7 +6,7 @@ import { config } from './config'
 import type { ConstructionCostLibrary } from '../../packages/construction-costs/library'
 import { projectDecisionInput, type DecisionInput } from '../../packages/decision/structured-route'
 import type { DecisionSupport } from './generated/contracts'
-import type { RenewalModePacket, ModeHistory } from '../../packages/retrofit/renewal-mode'
+import type { RenewalModePacket, RenewalModeStreamEvent, ModeHistory } from '../../packages/retrofit/renewal-mode'
 import { evaluateDecision, decisionCacheDescriptor } from '../../services/capabilities/decision-model'
 import { renewalHistory } from '../../services/map-screening/renewal-history'
 import { validate } from '../../packages/contracts/validate'
@@ -79,6 +79,8 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
   const running = new Set<string>()
   for (const map of [false, true]) for (const method of ['get', 'post'] as const) app[method](map ? '/api/maps/screening/renewal-mode/:id' : '/api/projects/:id/renewal-mode', async (req, res, next) => {
     let key: string | undefined
+    let streaming = false
+    const emit = (event: RenewalModeStreamEvent) => { if (streaming && !res.destroyed) res.write(JSON.stringify(event) + '\n') }
     try {
       const id = String(req.params.id), signal = requestSignal(req, res), body = method === 'post' ? bodySchema.parse(req.body) : {}
       const project = map ? null : await requireProject(id)
@@ -87,22 +89,44 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const { input, hash } = await prepareMode(project ? projectDecisionInput(project.input) : await loadMap(id, signal), library)
       const cached = (await store.db.query<{ payload: DecisionSupport }>('SELECT payload FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3', [config.ownerId, id, hash])).rows[0]?.payload
       let decision = cached ? validate<DecisionSupport>('DecisionSupport', cached) : null
-      if (method === 'post' && (body.refresh || !decision)) {
+      const shouldEvaluate = method === 'post' && (body.refresh || !decision)
+      if (shouldEvaluate) {
         if (!config.decisionEnabled) return res.status(424).json({ detail: '请先在模型设置中启用 decision。' })
         key = id + ':' + hash
         if (running.has(key) || running.size >= 2) { key = undefined; return res.status(409).json({ detail: '模式判定正在进行，请稍后查看。' }) }
         running.add(key)
+      }
+      streaming = method === 'post' && !!req.headers.accept?.includes('application/x-ndjson')
+      if (streaming) { res.type('application/x-ndjson'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Accel-Buffering', 'no'); res.flushHeaders() }
+      emit({ type: 'progress', phase: 'inputs', state: 'completed', message: '已核对研究对象、资料版本和判定输入。', source_count: input.renewalMode!.evidence.length, condition_count: input.renewalMode!.conditions.length })
+      if (shouldEvaluate) {
+        emit({ type: 'progress', phase: 'decision', state: 'running', message: 'Decision 正在比较改造模式、关键条件和对应依据。' })
         decision = await evaluateDecision(input, signal)
         signal.throwIfAborted()
+        if (decision.status === 'completed') {
+          emit({ type: 'progress', phase: 'decision', state: 'completed', message: 'Decision 已返回模式初判与依据选择。' })
+          emit({ type: 'progress', phase: 'validation', state: 'running', message: '正在复核资料版本、实施条件并保存本次判定。' })
+        }
         // Recheck the exact snapshot before saving or displaying an asynchronous result.
-        if (project && (await requireProject(id)).context_version !== project.context_version) return res.status(409).json({ detail: '判定期间项目资料已变化，请刷新后重新判定。' })
+        if (project && (await requireProject(id)).context_version !== project.context_version) {
+          if (streaming) { emit({ type: 'error', message: '判定期间项目资料已变化，请刷新后重新判定。' }); res.end(); return }
+          return res.status(409).json({ detail: '判定期间项目资料已变化，请刷新后重新判定。' })
+        }
         if (map) await loadMap(id, signal)
         if (decision.status === 'completed') await store.db.query('INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()', [config.ownerId, id, hash, JSON.stringify(decision)])
+      } else if (decision?.status === 'completed') {
+        emit({ type: 'progress', phase: 'decision', state: 'completed', message: '已读取本资料版本保存的 Decision 判定。' })
       }
-      if (!res.destroyed) res.json({ screening: input.renewalMode!, decision } satisfies RenewalModePacket)
+      if (decision?.status === 'completed') emit({ type: 'progress', phase: 'validation', state: 'completed', message: '判定与资料版本核对完成，结果已保存。' })
+      const result: RenewalModePacket = { screening: input.renewalMode!, decision }
+      if (!res.destroyed) {
+        if (streaming) { emit({ type: 'complete', result }); res.end() }
+        else res.json(result)
+      }
     } catch (error) {
       if (res.destroyed) return
-      if (error instanceof z.ZodError) res.status(422).json({ detail: '模式判定请求格式不正确。' })
+      if (streaming) { emit({ type: 'error', message: '本次模式判定未完成，已取得的阶段记录保留，请稍后重试。' }); res.end() }
+      else if (error instanceof z.ZodError) res.status(422).json({ detail: '模式判定请求格式不正确。' })
       else if (error instanceof Error && error.message.startsWith('CONTEXT_')) res.status(409).json({ detail: '地图资料已变化或过期，请刷新小窗。' })
       else next(error)
     } finally { if (key) running.delete(key) }

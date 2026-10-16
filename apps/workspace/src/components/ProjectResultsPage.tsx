@@ -14,7 +14,6 @@ export type ProjectResultsPageProps = {
   onNavigate: (page: 'assessment' | 'scenarios' | 'results', section?: string, pane?: string) => void
   onRunDetails: () => void
 }
-const qiushiProjectId = 'P-0529974d-63fe-4ae8-804d-e5efb049f60a'
 const roundLabels: Record<ResearchRound['status'], string> = { draft: '草稿', running: '研究中', completed: '本轮已完成', failed: '本轮未完成', obsolete: '资料已变化' }
 const packetLabels: Record<StrategyPacket['status'], string> = { completed: '完整结果已保存', failed: '本轮未完成', unavailable: '尚无可用结果' }
 const stageLabels = { preliminary: '前期研究', construction: '工程实施', hold: '暂缓' }
@@ -100,6 +99,17 @@ function ResultBaseline({ project, packet }: { project: Project; packet: Strateg
     <div><dt>版本状态</dt><dd>{oldVersion ? '旧资料版本结果' : packet.publication?.is_current === false ? '同资料版本保存快照' : '与当前资料一致'}</dd></div></dl>
 }
 
+function SavedResearchReport({ project, packet }: { project: Project; packet: StrategyPacket }) {
+  const strategy=packet.strategy!,brief=strategy.decision_brief
+  return <details className="project-results-report"><summary>查看本轮调研报告</summary><article aria-label="本项目调研报告">
+    <header><span>{project.name} · 资料 v{packet.context_version} · {timestamp(packet.created_at)}</span><h3>{strategy.headline}</h3><p>{strategy.summary}</p></header>
+    {brief&&<section><h4>更新判断与投入安排</h4><h5>{brief.renewal.conclusion}</h5><p>{brief.renewal.reason}</p><h5>{brief.investment.conclusion}</h5><p>{stageLabels[brief.investment.stage]} · {brief.investment.reason}</p><h4>预期财务与社会效果</h4><p><strong>财务效果：</strong>{brief.returns.financial}</p><p><strong>社会效果：</strong>{brief.returns.social}</p></section>}
+    {strategy.paths.map(path=><section key={path.mode}><h4>{MODE_LABELS[path.mode]} · {path.title}</h4><p>{path.description}</p>{path.work_packages?.length?<div className="project-report-table-scroll"><table><thead><tr><th>对象与范围</th><th>具体改造做法</th><th>工程量口径</th><th>预期交付</th><th>实施前提</th></tr></thead><tbody>{path.work_packages.map(row=><tr key={row.id}><th>{row.target}<p>{row.scope}</p></th><td>{row.intervention}</td><td>{row.quantity===null?'待测量':`${row.quantity} ${row.unit}`}<small>{row.quantity_basis==='scenario'?'情景设定':row.quantity_basis==='unknown'?'待核工程量':'原文记载'}</small></td><td>{row.delivery}</td><td>{row.preconditions.join('；')}</td></tr>)}</tbody></table></div>:<ul>{path.actions.map((row,index)=><li key={index}><strong>{row.title}</strong><p>{row.detail}</p></li>)}</ul>}</section>)}
+    {!!strategy.next_checks.length&&<section><h4>下一步调查与补充材料</h4><ul>{strategy.next_checks.map((row,index)=><li key={index}><strong>{row.title}</strong><p>{row.detail}</p></li>)}</ul></section>}
+    <section><h4>本轮引用来源</h4><ol>{packet.sources.map(source=><li key={source.id}><strong>{source.title}</strong><p>{source.role==='current'?'本对象资料':'案例参考'} · {source.published_at||'日期未登记'} · {source.locator}</p>{source.url&&/^https?:\/\//.test(source.url)&&<a href={source.url} target="_blank" rel="noreferrer">查看来源 ↗</a>}</li>)}</ol></section>
+  </article></details>
+}
+
 export default function ProjectResultsPage({ project, packet, rounds = [], legacyPacket, onNavigate, onRunDetails }: ProjectResultsPageProps) {
   const headingId = useId()
   const localRounds = rounds.filter(round => round.project_id === project.id).slice().sort((a, b) => a.round_number - b.round_number)
@@ -118,6 +128,7 @@ export default function ProjectResultsPage({ project, packet, rounds = [], legac
       <div className="project-results-tags"><span>完整结果已保存</span>{saved.synthetic && <span>模拟项目</span>}</div>
       <h3>{saved.strategy!.headline}</h3><p>{saved.strategy!.summary}</p><ResultBaseline project={project} packet={saved} />
       <div className="project-results-card-actions"><button type="button" className="project-results-main-action" onClick={() => onNavigate('scenarios', 'compare')}>查看方案</button><ExportButtons project={project} packet={saved} /></div>
+      <SavedResearchReport project={project} packet={saved}/>
     </article> : <section className="project-results-empty" aria-label="暂无整体方案"><h3>尚无已保存的整体更新方案</h3><p>先核对本项目资料与条件，再开始改造研判。已有运行记录和归档文件仍可查看。</p>
       <button type="button" className="project-results-main-action" onClick={() => onNavigate('assessment', 'direction')}>进入改造研判</button></section>}
     {localRounds.length > 0 && <section className="project-results-rounds" aria-label="研究轮次与历史报告"><h3>研究轮次与历史报告</h3>
@@ -135,8 +146,5 @@ export default function ProjectResultsPage({ project, packet, rounds = [], legac
     </section>}
     {legacy && <article className="project-results-archive" aria-label="旧版运行报告"><h3>旧版运行报告</h3><p>运行版本 {legacy.revision} · 资料基线 v{legacy.context_version} · <time dateTime={legacy.created_at}>{timestamp(legacy.created_at)}</time></p>
       <p>{legacy.summary}</p><a href={`/api/runs/${encodeURIComponent(legacy.run_id)}/report`} download>导出旧版研判报告</a></article>}
-    {project.id === qiushiProjectId && !project.input.synthetic && <article className="project-results-archive" aria-label="归档研究报告"><h3>求是村归档调研报告</h3>
-      <p>该文件绑定本项目，作为归档调研材料保留；本次方案按上方实际保存结果导出。</p>
-      <a href={`/deliverables/${encodeURIComponent('求是村_旧改深度调研与行动计划.pdf')}`} target="_blank" rel="noreferrer">打开归档调研报告 PDF</a></article>}
   </section>
 }

@@ -29,6 +29,11 @@ export type RenewalModeInput = {
   history?: ModeHistory
 }
 export type RenewalModePacket = { screening: RenewalModeInput; decision: DecisionSupport | null }
+export type RenewalModeProgress = {
+  type: 'progress'; phase: 'inputs' | 'decision' | 'validation'; state: 'running' | 'completed'; message: string;
+  source_count?: number; condition_count?: number
+}
+export type RenewalModeStreamEvent = RenewalModeProgress | { type: 'complete'; result: RenewalModePacket } | { type: 'error'; message: string }
 export type RenewalModeGateCheck = {
   kind: string; label: string; group: 'necessity' | 'feasibility'; state: 'met' | 'unmet' | 'unknown' | 'conflict';
   detail: string; source_ids: string[]; locators: string[]

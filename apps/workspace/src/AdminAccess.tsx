@@ -150,8 +150,6 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
       <header className={`admin-session-bar${collaborative ? ' campus-session-bar' : ''}`} aria-label={collaborative ? '校园协作工作台' : auth.role === 'viewer' ? '公开浏览权限' : '管理员会话'}>
         <span><span className="admin-session-dot" />{collaborative ? '校园协作' : auth.role === 'viewer' ? '公开浏览 · 只读' : auth.enabled ? <>管理员 <strong>{auth.username}</strong></> : null}</span>
         <div>
-          <a className="admin-public-decisions" href="/?view=published">{collaborative ? '查看决策方案' : '查看公开决策方案'}</a>
-          <a className="admin-session-report" href={`/deliverables/${encodeURIComponent('求是村_旧改深度调研与行动计划.pdf')}`} target="_blank" rel="noreferrer">求是村报告</a>
           {(collaborative || auth.role === 'admin') && <a href="/api/admin/database-schema">数据库结构</a>}
           {!collaborative && (auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <>
             {logoutError && <span role="alert">{logoutError}</span>}

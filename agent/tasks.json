@@ -1724,6 +1724,30 @@
       "definition_of_done": "已知冲突及未满足条件、未知资料、确认条件呈现不同颜色；不混淆拆建必要性与可行前提；定向检查及构建通过，UI-only上线与页面核对完成。",
       "evidence_log": "research/test_results/decision-emphasis-deployment-20261016.json",
       "ui_proof": "output/playwright/decision-emphasis/qiushi-key-conditions-20261016.png"
+    },
+    {
+      "id": "T-MODE-LIFECYCLE-20261016",
+      "depends_on": [
+        "T-DECISION-COLOR-20261016"
+      ],
+      "goal": "先实际判定后显示模式结论，呈现实阶段及条件/审核状态，报告绑定项目在线调研成果。",
+      "status": "implementing",
+      "write_scope": [
+        "apps/host/renewal-mode.ts",
+        "packages/retrofit/renewal-mode.ts",
+        "apps/workspace/src/maps/RenewalModePanel.tsx",
+        "apps/workspace/src/maps/RenewalModePanel.css",
+        "apps/workspace/src/AdminAccess.tsx",
+        "apps/workspace/src/components/ProjectResultsPage.tsx",
+        "apps/workspace/src/components/ProjectResultsPage.css",
+        "tests/contracts/renewal-mode-panel.test.ts",
+        "tests/contracts/renewal-mode-lifecycle.test.ts",
+        "tests/contracts/renewal-mode-stream.test.ts",
+        "tests/contracts/admin-access.test.ts",
+        "tests/contracts/project-results-page.test.ts",
+        "docs/改造模式判定与报告呈现.md"
+      ],
+      "definition_of_done": "无Decision时无默认模式，真实阶段流与重试取消/版本变化保护可复现；未满足和待审核可见；顶部无调试链接，报告仅在成功项目结果出现；隔离构建与服务器验收完成。"
     }
   ]
 }
