@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-16T15:06:34.018382+00:00",
+  "origin": "https://laneanew.cn/",
+  "context_id": "MAPCTX-2bffc26e-5b0c-424d-b1f3-f0a10b4f5720",
+  "verified": [
+    "six provisional values visible",
+    "amber estimate badges",
+    "assumptions and verification guidance on dimension click",
+    "evidence-only view remains unscored",
+    "no full project research started"
+  ],
+  "scores": [
+    3.1,
+    2.7,
+    3.2,
+    3.5,
+    3.2,
+    3.1
+  ],
+  "screenshots": [
+    "D:/建工ai/output/playwright/decision-estimates/provisional-scores.jpg",
+    "D:/建工ai/output/playwright/decision-estimates/evidence-view.jpg"
+  ]
+}

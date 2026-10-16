@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-10-16T15:05:08.451414+00:00",
+  "release_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
+  "context_id": "MAPCTX-2bffc26e-5b0c-424d-b1f3-f0a10b4f5720",
+  "created_at": "2026-10-16T15:03:56.860Z",
+  "status": "completed",
+  "decision_request_id": "4c1efa5d-85bd-4b58-a739-108789d1a5df",
+  "decision_duration_ms": 1329,
+  "decision_input_tokens": 13149,
+  "scores": [
+    {
+      "key": "demand",
+      "value": 3.1,
+      "confidence": 0.73,
+      "evidence_refs": [],
+      "basis": "推理暂估\n比较目标：老旧小区改造\n情景假设：以既有居民日常使用与适老需求作为比较情景，用问卷和实际使用量回填。\n对应标准：具体居民群体与需求已有依据\n补查重点：哪些居民家庭的日常居住困难需要优先改善？"
+    },
+    {
+      "key": "supply",
+      "value": 2.7,
+      "confidence": 0.86,
+      "evidence_refs": [],
+      "basis": "推理暂估\n比较目标：老旧小区改造\n情景假设：以现有公共服务可持续使用并逐步补足缺口作为情景，用容量和覆盖台账回填。\n对应标准：有可核查的服务改善方向\n补查重点：现有养老、托育、医疗、停车及活动空间缺口如何补齐？"
+    },
+    {
+      "key": "adaptation",
+      "value": 3.2,
+      "confidence": 0.94,
+      "evidence_refs": [],
+      "basis": "推理暂估\n比较目标：老旧小区改造\n情景假设：暂比较设施与空间的改善潜力，结构、消防等专业条件另按鉴定与设计核对。\n对应标准：存在可研究的工程适配路径\n补查重点：基础、完善、提升改造与鉴定、消防、管网条件是否匹配？"
+    },
+    {
+      "key": "implementation",
+      "value": 3.5,
+      "confidence": 0.85,
+      "evidence_refs": [],
+      "basis": "推理暂估\n比较目标：老旧小区改造\n情景假设：以依法协商并明确责任主体的筹备情景比较，用权属、决议与实施安排回填。\n对应标准：居民协商与实施主体已有线索\n补查重点：居民协商、实施主体和施工期间安排是否支持推进？"
+    },
+    {
+      "key": "operations",
+      "value": 3.2,
+      "confidence": 0.78,
+      "evidence_refs": [],
+      "basis": "推理暂估\n比较目标：老旧小区改造\n情景假设：以形成持续服务与运维责任为情景，用合同、服务量和实际收支回填。\n对应标准：已有物业或设施维护主体\n补查重点：改造后设施由谁维护，责任、费用和居民参与怎样持续？"
+    },
+    {
+      "key": "resources",
+      "value": 3.1,
+      "confidence": 0.89,
+      "evidence_refs": [],
+      "basis": "推理暂估\n比较目标：老旧小区改造\n情景假设：以分期筹资和控制投入为比较情景，用同口径预算、资金安排和到账资料回填。\n对应标准：资金来源或分期路径有依据\n补查重点：资金来源、居民负担、工程成本、分期与企业交付是否匹配？"
+    }
+  ],
+  "research_routing": {
+    "policy": "decision-research-routing-v1",
+    "request_id": "4c1efa5d-85bd-4b58-a739-108789d1a5df",
+    "input_hash": "29cbb79f4c4d7fbce12bf0cf6c37996652fa22c3282094a8ce78fb3a76d66f0d",
+    "duration_ms": 1329,
+    "input_tokens": 13149,
+    "tasks": [
+      {
+        "role": "building_delivery",
+        "effort": "brief",
+        "confidence": 0.26
+      },
+      {
+        "role": "cost_value",
+        "effort": "brief",
+        "confidence": 0.29
+      },
+      {
+        "role": "residents_operations",
+        "effort": "brief",
+        "confidence": 0.26
+      }
+    ]
+  },
+  "completion": {
+    "execution": "completed",
+    "evidence": "missing",
+    "version": "current",
+    "evidence_revision": "d0ebf25382f1310720b845370cece22aa8db66b14874fbd83de9695a1f299880",
+    "missing_dimensions": [
+      "demand",
+      "supply",
+      "adaptation",
+      "implementation",
+      "operations",
+      "resources"
+    ]
+  },
+  "action": "investigate",
+  "deepseek_calls": 0,
+  "external_searches": 0,
+  "readback_only": true,
+  "scope": "One explicit public-map conditional screening; not a full project rerun or measured decision accuracy."
+}

@@ -4025,14 +4025,26 @@
     "tests": {
       "focused": "222 passed in 16 files",
       "build": "passed TypeScript and Vite",
-      "live": "pending"
+      "live": "Real Decision completed in 1329 ms; six provisional values; no DSH calls or external search",
+      "browser": "Six provisional badges, per-dimension assumptions and evidence-only toggle verified"
     },
-    "status": "implemented_focused_tests_passed_deployment_pending",
+    "status": "deployed_live_verified_merge_pending",
     "as_of": "2026-10-16",
     "artifacts": [
       "docs/Decision快速研判与推理暂估_20261016.md",
-      "research/test_results/decision-estimates-focused-20261016.log"
+      "research/test_results/decision-estimates-focused-20261016.log",
+      "research/test_results/decision-estimates-runtime-deployment-20261016.json",
+      "research/test_results/decision-estimates-ui-deployment-20261016.json",
+      "research/test_results/decision-estimates-live-20261016.json",
+      "research/test_results/decision-estimates-browser-20261016.json"
     ],
-    "next_runnable_task": "Finish production build, deploy scoped changes, read back real Decision scores and UI, then merge."
+    "next_runnable_task": "Merge authorized reviewed source and preserve unrelated root worktree edits.",
+    "updated_at": "2026-10-16T15:06:34.016411+00:00",
+    "deployment": {
+      "runtime_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
+      "ui_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
+      "origin": "https://laneanew.cn/",
+      "project_metadata_unchanged": 36
+    }
   }
 }
