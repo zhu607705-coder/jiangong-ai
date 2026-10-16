@@ -86,6 +86,7 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
     if (replay && path.endsWith('/community-operations')) return Promise.resolve({ scenarios: [{ id: 'UI-OPS-FIXTURE', project_id: replayProject.id, context_version: 14, input_hash: 'ui-only-snapshot', created_at: replayed.created_at, input: markOperationsDirection(buildCompleteCommunityDemo().operations,'comprehensive'), result: operationFixture }], observations: [], comparisons: [] })
     if (replay && path.endsWith('/community-operations/preview')) return Promise.resolve(operationFixture)
     if (path.endsWith('/renewal-mode')) return Promise.resolve({ screening: projectRenewalModeInput(path.includes(savedProject.id) ? savedProject.input : emptyProject.input), decision: null })
+    if (path.endsWith('/experiences?status=draft')) return Promise.resolve({ cards: [] })
     if (path === '/maps/config') return Promise.resolve({ configured: false })
     throw new Error(`Unexpected request ${path}`)
   })
