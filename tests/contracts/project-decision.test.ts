@@ -57,11 +57,12 @@ it('does not route missing plans into empty scheme detail pages or manufacture a
 it('GET only restores a matching snapshot; POST caches once and rejects a changed project without model work',async()=>{
  config.decisionEnabled=true
  const project=structuredClone(guideProject),packet=guidePacket(),cache=new Map<string,any>()
- let changedDuring=false,reads=0
+ let changedDuring=false,reads=0,roundOnly=false
  const store={db:{exec:vi.fn(),query:vi.fn(async(sql:string,params:unknown[])=>{
   if(sql.startsWith('INSERT INTO project_decision_guidance')){cache.set(String(params[2]),JSON.parse(String(params[3])));return {rows:[]}}
   if(sql.includes('FROM project_decision_guidance'))return {rows:cache.has(String(params[2]))?[{payload:cache.get(String(params[2]))}]:[]}
-  if(sql.includes('renewal_strategy_assessments'))return {rows:[{payload:packet,saved_at:packet.created_at}]}
+  if(sql.includes('renewal_strategy_assessments'))return {rows:roundOnly?[]:[{payload:packet,saved_at:packet.created_at}]}
+  if(sql.includes('renewal_research_rounds'))return {rows:roundOnly?[{payload:{project_id:project.id,status:'completed',round_number:1,context_version:2,input_hash:packet.input_hash,result:packet}}]:[]}
   return {rows:[]}
  })}} as unknown as Store
  const evaluate=vi.fn(async(...args:Parameters<typeof evaluateProjectGuidance>)=>evaluateProjectGuidance(args[0],args[1],args[2],async(state,questions)=>guideResponse(state,questions)))
@@ -78,7 +79,10 @@ it('GET only restores a matching snapshot; POST caches once and rejects a change
  project.context_version=3
  expect((await send(request)).status).toBe(409);expect(evaluate).toHaveBeenCalledTimes(1)
  expect(await (await fetch(url+'?direction=comprehensive')).json()).toBeNull()
- project.context_version=2;changedDuring=true;reads=0
+ project.context_version=2;roundOnly=true
+ const restored=await (await send({...request,refresh:true})).json()
+ expect(restored.measures).toHaveLength(2);expect(restored.strategy_hash).toBe(packet.input_hash)
+ changedDuring=true;reads=0
  expect((await send({...request,refresh:true})).status).toBe(409)
  expect(cache.size).toBe(1)
 })

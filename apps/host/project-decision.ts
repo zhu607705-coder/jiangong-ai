@@ -15,8 +15,11 @@ export async function registerProjectDecision(app:Express,store:Store,requirePro
  await store.db.exec(`CREATE TABLE IF NOT EXISTS project_decision_guidance(owner_id TEXT NOT NULL,project_id TEXT NOT NULL REFERENCES projects(id),input_hash TEXT NOT NULL,payload JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(owner_id,project_id,input_hash));`)
  const active=new Set<string>()
  async function prepare(project:ProjectRecord,direction:'comprehensive'|'rebuild'|null,preference:'balanced'|'residents'|'funding'){
-  const [packet,rows]=await Promise.all([readPublishedStrategy(store,project,'',project.input.synthetic),store.db.query<{payload:ResearchRound}>('SELECT payload FROM renewal_research_rounds WHERE owner_id=$1 AND project_id=$2 ORDER BY round_number DESC LIMIT 8',[project.owner_id,project.id])])
-  const input=projectGuidanceInput(project.input,project.context_version,packet,rows.rows.map(row=>row.payload),direction,preference)
+  const [published,rows]=await Promise.all([readPublishedStrategy(store,project,'',project.input.synthetic),store.db.query<{payload:ResearchRound}>('SELECT payload FROM renewal_research_rounds WHERE owner_id=$1 AND project_id=$2 ORDER BY round_number DESC LIMIT 8',[project.owner_id,project.id])])
+  const rounds=rows.rows.map(row=>row.payload)
+  const latest=rounds.filter(round=>round.project_id===project.id&&round.status==='completed'&&round.context_version===project.context_version&&round.result?.project_id===project.id&&round.result.context_version===project.context_version&&round.input_hash===round.result.input_hash&&round.result.status==='completed'&&round.result.synthetic===project.input.synthetic&&!!round.result.strategy).sort((a,b)=>b.round_number-a.round_number)[0]?.result||null
+  const packet=latest||published
+  const input=projectGuidanceInput(project.input,project.context_version,packet,rounds,direction,preference)
   const hash=createHash('sha256').update(JSON.stringify({state:input.state,questions:projectGuidanceQuestions(input),model:config.QWEN_DECISION_MODEL,endpoint:config.QWEN_DECISION_ENDPOINT})).digest('hex')
   return {input,hash}
  }
