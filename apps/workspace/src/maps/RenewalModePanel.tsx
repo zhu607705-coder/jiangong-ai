@@ -23,7 +23,7 @@ const unknownConditions: Record<string, string> = {
   maintenance_entity_confirmed: '尚缺后续接管主体、维护资金和年度预算记录',
 }
 
-export default function RenewalModePanel({ endpoint, contextVersion, input, decision, strategy, compact=false, onInvestigate }: {
+export default function RenewalModePanel({ endpoint, contextVersion, input, strategy, compact=false, onInvestigate }: {
   endpoint: string; contextVersion?: number; input: RenewalModeInput; decision?: DecisionSupport | null; strategy?:StrategyPacket|null; compact?:boolean; onInvestigate?: () => void;
 }) {
   const { canWrite } = useWorkbenchAccess()
@@ -48,7 +48,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
     }).catch(e => { if (!controller.signal.aborted) setError(e instanceof Error ? e.message : '模式资料读取未完成。') })
     return () => { controller.abort(); reviewController.abort(); requestController.current?.abort() }
   }, [endpoint, contextVersion])
-  const screening = packet?.screening || input, result = packet?.decision || (!attempted?decision:null), mode = result?.status==='completed'?result.renewal_mode:null
+  const screening = packet?.screening || input, result = attempted||packet?.origin==='explicit_mode'?packet?.decision:null, mode = result?.status==='completed'?result.renewal_mode:null
   const hasResult = !running && !!mode
   const gate = evaluateRenewalModeGate(screening)
   const direction = gate.direction==='investigate'||mode?.direction==='investigate'?'investigate':gate.direction
@@ -68,7 +68,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, deci
     requestController.current = controller; setRunning(true); setAttempted(true); setError(''); setNotice(''); setProgress([])
     setSnapshot({key:currentIdentity,value:{screening,decision:null}})
     try {
-      const response=await fetch(`/api${endpoint}`,{method:'POST',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify({...(contextVersion===undefined?{}:{expected_context_version:contextVersion}),refresh:!!result})})
+      const response=await fetch(`/api${endpoint}`,{method:'POST',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify({...(contextVersion===undefined?{}:{expected_context_version:contextVersion}),refresh:!!result||attempted})})
       if(!response.ok){const body=await response.json().catch(()=>({}));if(response.status===401)window.dispatchEvent(new Event(ADMIN_LOGIN_REQUIRED_EVENT));if(response.status===403)window.dispatchEvent(new Event(ADMIN_LOGIN_REQUESTED_EVENT));throw new Error(body.detail||'模式判定未能启动。')}
       const accept=(event:RenewalModeStreamEvent)=>{
         if(controller.signal.aborted||currentIdentity!==identity.current)return

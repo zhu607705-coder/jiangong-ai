@@ -62,7 +62,8 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
   loadMap: ModeContextLoader) {
   await store.db.exec(`CREATE TABLE IF NOT EXISTS renewal_mode_assessments (
     owner_id TEXT NOT NULL, target_id TEXT NOT NULL, input_hash TEXT NOT NULL, payload JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY(owner_id,target_id,input_hash));`)
+    origin TEXT NOT NULL DEFAULT 'legacy', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY(owner_id,target_id,input_hash));`)
+  await store.db.exec("ALTER TABLE renewal_mode_assessments ADD COLUMN IF NOT EXISTS origin TEXT NOT NULL DEFAULT 'legacy'")
   await store.db.exec(`CREATE TABLE IF NOT EXISTS renewal_strategy_assessments (
     owner_id TEXT NOT NULL, project_id TEXT NOT NULL REFERENCES projects(id), input_hash TEXT NOT NULL,
     payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY(owner_id,project_id,input_hash));`)
@@ -87,9 +88,10 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       if (project && project.input.business_profile !== 'neighborhood') return res.status(422).json({ detail: '请在老旧小区项目中进行模式判定。' })
       if (project && body.expected_context_version !== undefined && body.expected_context_version !== project.context_version) return res.status(409).json({ detail: '项目资料已变化，请刷新后判定。' })
       const { input, hash } = await prepareMode(project ? projectDecisionInput(project.input) : await loadMap(id, signal), library)
-      const cached = (await store.db.query<{ payload: DecisionSupport }>('SELECT payload FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3', [config.ownerId, id, hash])).rows[0]?.payload
-      let decision = cached ? validate<DecisionSupport>('DecisionSupport', cached) : null
-      const shouldEvaluate = method === 'post' && (body.refresh || !decision)
+      const cached = (await store.db.query<{ payload: DecisionSupport; origin?:RenewalModePacket['origin'] }>('SELECT payload,origin FROM renewal_mode_assessments WHERE owner_id=$1 AND target_id=$2 AND input_hash=$3', [config.ownerId, id, hash])).rows[0]
+      let decision = cached ? validate<DecisionSupport>('DecisionSupport', cached.payload) : null
+      let origin = cached?.origin || 'legacy'
+      const shouldEvaluate = method === 'post' && (body.refresh || !decision || origin!=='explicit_mode')
       if (shouldEvaluate) {
         if (!config.decisionEnabled) return res.status(424).json({ detail: '请先在模型设置中启用 decision。' })
         key = id + ':' + hash
@@ -113,12 +115,15 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
           return res.status(409).json({ detail: '判定期间项目资料已变化，请刷新后重新判定。' })
         }
         if (map) await loadMap(id, signal)
-        if (decision.status === 'completed') await store.db.query('INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()', [config.ownerId, id, hash, JSON.stringify(decision)])
+        if (decision.status === 'completed') {
+          await store.db.query("INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload,origin) VALUES($1,$2,$3,$4,'explicit_mode') ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,origin=EXCLUDED.origin,created_at=now()", [config.ownerId, id, hash, JSON.stringify(decision)])
+          origin='explicit_mode'
+        }
       } else if (decision?.status === 'completed') {
         emit({ type: 'progress', phase: 'decision', state: 'completed', message: '已读取本资料版本保存的 Decision 判定。' })
       }
       if (decision?.status === 'completed') emit({ type: 'progress', phase: 'validation', state: 'completed', message: '判定与资料版本核对完成，结果已保存。' })
-      const result: RenewalModePacket = { screening: input.renewalMode!, decision }
+      const result: RenewalModePacket = { screening: input.renewalMode!, decision:method==='get'&&origin!=='explicit_mode'?null:decision, origin }
       if (!res.destroyed) {
         if (streaming) { emit({ type: 'complete', result }); res.end() }
         else res.json(result)
@@ -164,7 +169,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       if (!cached || cached.status !== 'completed' || result.status === 'completed') {
         await store.db.query('INSERT INTO renewal_strategy_assessments(owner_id,project_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[config.ownerId,project.id,hash,JSON.stringify(result)])
       }
-      if (result.decision?.status==='completed' && query.demo==='false') await store.db.query('INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[config.ownerId,project.id,modeHash,JSON.stringify(result.decision)])
+      if (result.decision?.status==='completed' && query.demo==='false') await store.db.query("INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload,origin) VALUES($1,$2,$3,$4,'strategy') ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,origin=EXCLUDED.origin,created_at=now() WHERE renewal_mode_assessments.origin<>'explicit_mode'",[config.ownerId,project.id,modeHash,JSON.stringify(result.decision)])
       if (!res.destroyed) { if (streaming) { emit({type:'complete',result}); res.end() } else res.json(result) }
     } catch(error) {
       if (!res.destroyed) {

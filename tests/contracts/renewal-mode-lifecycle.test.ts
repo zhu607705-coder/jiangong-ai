@@ -16,7 +16,7 @@ const input=()=>projectRenewalModeInput({...structuredClone(fixture),business_pr
 const decision=()=>structuredClone(replay.packet.decision) as DecisionSupport
 const emit=(event:unknown)=>stream.enqueue(new TextEncoder().encode(JSON.stringify(event)+'\n'))
 async function mount(cached:DecisionSupport|null=null){
-  read.mockImplementation(async(path:string)=>path.includes('/experiences')?{cards:[{id:'DRAFT-1',title:'居民意愿调查提取',status:'draft'}]}:{screening:input(),decision:cached})
+  read.mockImplementation(async(path:string)=>path.includes('/experiences')?{cards:[{id:'DRAFT-1',title:'居民意愿调查提取',status:'draft'}]}:{screening:input(),decision:cached,origin:'explicit_mode'})
   await act(async()=>root.render(createElement(WorkbenchAccessContext.Provider,{value:{role:'admin',canWrite:true}},createElement(RenewalModePanel,{endpoint:'/projects/P-MODE/renewal-mode',contextVersion:1,input:input()}))))
 }
 async function click(text:string){const button=[...container.querySelectorAll('button')].find(row=>row.textContent?.includes(text));expect(button).toBeDefined();await act(async()=>button!.click())}
