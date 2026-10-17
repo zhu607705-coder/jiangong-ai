@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-17T07:29:43.718620+00:00",
+  "project_id": "P-d397c757-5df1-4c59-a397-13cb95f763eb",
+  "runtime_commit": "035c348063758416ecde10d0905ee01816a54b4b",
+  "ui_commit": "8bdec71b8eef05a1aec7fe31828d2566212bf98e",
+  "observed": {
+    "public_cases": 11,
+    "official_cost_records": 20,
+    "workbook_pool": 1277,
+    "selected_workbook_rows": 24,
+    "topic_switch_meals_selected_liwan": true,
+    "two_column_decision_use_visible": true,
+    "case_card_stacked_layout_verified": true,
+    "proposal_topics_labelled": true,
+    "task_upload_control_visible": true,
+    "task_paste_control_visible": true,
+    "material_category_operations": true,
+    "empty_text_save_disabled": true,
+    "no_project_upload_or_research_started": true
+  },
+  "screenshots": [
+    "output/playwright/case-task/case-decision-pair.png",
+    "output/playwright/case-task/task-direct-import.png"
+  ]
+}

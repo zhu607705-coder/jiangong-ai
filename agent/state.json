@@ -4244,8 +4244,8 @@
     ]
   },
   "case_task_import_20261017": {
-    "status": "deployed_verifying",
-    "updated_at": "2026-10-17T07:16:26.273085+00:00",
+    "status": "deployed_verified",
+    "updated_at": "2026-10-17T07:29:43.718620+00:00",
     "requests": [
       "broaden and precisely match reference cases",
       "fix reversed/mixed context-compression character counts",
@@ -4266,18 +4266,20 @@
       "public case Markdown/JSON and existing parser/extractor/round reuse"
     ],
     "pending": [
-      "final sparse-context UI deployment and browser proof",
-      "merge PR55 preserving root edits"
+      "merge PR55"
     ],
     "worktree": "D:/建工ai/.cache/case-matching",
-    "next_runnable_task": "Commit immutable release, deploy runtime/data/UI and verify current project without starting research or uploading real data.",
+    "next_runnable_task": "Merge PR55 and reconcile root without overwriting unrelated changes.",
     "tests": [
       "56 focused cases passed; core source/tool tests13 passed",
       "7 real public URL fetches returned200; all8 new excerpts normalized-match",
       "production build passed",
       "map browser flow passed; Python220 passed",
       "full suite1690 passed/1 failure; the removed historical case evidence button was restored and its19 affected tests passed",
-      "final production build passed"
+      "final production build passed",
+      "task material real HTTP routes6 passed",
+      "final UI/HTTP21 passed; final intake UI10 passed",
+      "live browser topic switching, corrected stacked case layout, direct file/paste controls verified"
     ],
     "live": {
       "runtime_commit": "035c348063758416ecde10d0905ee01816a54b4b",
@@ -4291,6 +4293,16 @@
       "selected_workbook_rows": 24,
       "existing_project_research_calls": 0,
       "task_imports_route": "ok"
-    }
+    },
+    "ui_commit": "8bdec71b8eef05a1aec7fe31828d2566212bf98e",
+    "artifacts": [
+      "docs/对象与当前上下文合同.md",
+      "data/public_cases/renewal-case-cards-20261017.json",
+      "data/public_cases/renewal-case-reference-catalog.md",
+      "research/test_results/case-task-live-readback-20261017.json",
+      "research/test_results/case-task-browser-20261017.json",
+      "research/test_results/case-task-runtime-deployment-20261017.json",
+      "research/test_results/case-task-ui-final-deployment-20261017.json"
+    ]
   }
 }
