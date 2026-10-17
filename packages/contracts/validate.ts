@@ -67,7 +67,7 @@ export function ownedModelValue<T>(type: string, value: unknown,policy:ModelPres
 }
 
 /** Resolve our finite canonical definitions for DSH's object-root structured-output seam. */
-export type ModelPresentationPolicy = {omitOptionalFields?:readonly string[];evidenceIds?:readonly string[]}
+export type ModelPresentationPolicy = {omitOptionalFields?:readonly string[];evidenceIds?:readonly string[];investigationTaskIds?:readonly string[]}
 export function presentModelSchema(value: unknown, candidateIds?: readonly string[]): Record<string, unknown> {
   function present(value: unknown): unknown {
     if (!value || typeof value !== 'object') return value
@@ -114,6 +114,10 @@ export function modelSchema(name: string, candidateIds?: readonly string[], poli
     delete (result.properties as Record<string,unknown>)[field]
   }
   const evidenceIds=policy.evidenceIds
+  if(name==='InvestigationAdvice'&&policy.investigationTaskIds?.length){
+    const steps=(result.properties as any).steps
+    steps.items.properties.task_id={type:'string',enum:[...policy.investigationTaskIds]}
+  }
   if(evidenceIds) {
     const allowedReferences=[...evidenceIds]
     function closeReferences(node:any):void {

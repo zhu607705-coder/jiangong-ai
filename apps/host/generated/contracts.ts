@@ -2399,3 +2399,26 @@ export interface RagAnswer {
     verification: string;
   }[];
 }
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "InvestigationAdvice".
+ */
+export interface InvestigationAdvice {
+  summary: string;
+  /**
+   * @minItems 1
+   * @maxItems 3
+   */
+  steps: {
+    task_id: string;
+    action: string;
+    reason: string;
+    material: string;
+    channel: string;
+    completion_check: string;
+    /**
+     * @maxItems 6
+     */
+    evidence_refs: string[];
+  }[];
+}

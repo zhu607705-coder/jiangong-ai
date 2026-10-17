@@ -7839,6 +7839,81 @@
         "received_at",
         "offset_encoding"
       ]
+    },
+    "InvestigationAdvice": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240
+              },
+              "material": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "channel": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "completion_check": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240
+              },
+              "evidence_refs": {
+                "type": "array",
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 180
+                }
+              }
+            },
+            "required": [
+              "task_id",
+              "action",
+              "reason",
+              "material",
+              "channel",
+              "completion_check",
+              "evidence_refs"
+            ]
+          }
+        }
+      },
+      "required": [
+        "summary",
+        "steps"
+      ]
     }
   }
 }

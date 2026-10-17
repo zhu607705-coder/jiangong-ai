@@ -10,6 +10,7 @@ import './ProjectTasksPage.css'
 import {buildProjectTasks,taskObjectApplicability,type ProjectTaskProgress,type ProjectInvestigationTask} from '../../../../packages/retrofit/project-tasks'
 import {useProjectDecisionGuidance,orderByDecision} from './ProjectDecisionGuidance'
 import TaskMaterialImport,{type TaskUpload,type TaskExtract} from './TaskMaterialImport'
+import InvestigationAdvicePanel from './InvestigationAdvicePanel'
 export {buildProjectTasks,type ProjectTaskProgress,type ProjectInvestigationTask} from '../../../../packages/retrofit/project-tasks'
 
 export type ProjectTasksPageProps = {
@@ -116,7 +117,7 @@ export default function ProjectTasksPage({ project, packet, rounds = [], directi
   }
   return <section className="project-tasks-page" aria-label={section === 'history' ? '历史调查记录' : '当前调查任务'} data-direction={direction || 'unselected'}>
     <header className="project-tasks-heading"><div><span>{section === 'history' ? <IconHistory size={20}/> : <IconClipboardList size={20}/>}调查任务</span><h2>{section === 'history' ? '回看每轮提出的调查要求' : '把关键缺项转成下一次行动'}</h2><p>{section === 'history' ? '按当轮资料基线查看任务和引用，原判断持续保留。' : '打开任务即可导入文件或调查记录，查看提取字段与工具记录，再带入下一轮判断。'}</p></div>{section === 'current' && <button type="button" className="project-task-primary" onClick={onSupplement}>补充项目资料 <IconArrowRight size={18}/></button>}</header>
-    {!!reviewTasks.length&&<aside className="project-task-object-notice" role="status"><strong>先核对调查对象与范围</strong><p>当前登记对象：{project.input.scope.city?project.input.scope.city+' · ':''}{project.input.scope.map_anchor?.address||project.input.scope.name}。旧报告中部分要求存在对象差异，已列入下方待核区；原楼栋和户数保留在详情，不作为当前项目的采集基数。</p></aside>}
+    {!!reviewTasks.length&&<aside className="project-task-object-notice"><strong>先核对调查对象与范围</strong><p>当前登记对象：{project.input.scope.city?project.input.scope.city+' · ':''}{project.input.scope.map_anchor?.address||project.input.scope.name}。旧报告中部分要求存在对象差异，已列入下方待核区；原楼栋和户数保留在详情，不作为当前项目的采集基数。</p>{activePacket&&<InvestigationAdvicePanel project={project} packet={activePacket} direction={direction} onTask={id=>setOpened(id)} onEvidence={refs=>onEvidence(refs,activePacket)}/>}</aside>}
     {guidance&&section==='current'&&<p className="pdg-task-badge">已按 Decision 的资料优先级排序 · 调查进度保留</p>}
     <div className="project-task-summary"><div><strong>{counts.all}</strong><span>本轮调查事项</span></div><div><strong>{counts.ongoing}</strong><span>正在调查</span></div><div><strong>{counts.received}</strong><span>材料已取得 · 本机</span></div><p>{direction ? `工作方向：${direction === 'comprehensive' ? '综合整治' : '原拆原建'}` : '尚未选择工作方向 · 展示当轮全部核查'}{activePacket && <span>依据资料 v{activePacket.context_version}{activePacket.context_version !== project.context_version ? ` · 当前资料 v${project.context_version}` : ''}</span>}</p></div>
     {section === 'history' && history.length > 0 && <label className="project-task-history-selector">选择历史研判<select aria-label="选择历史调查轮次" value={selectedRound?.id || ''} onChange={event => { setHistoryId(event.target.value); setOpened(null) }}>{history.map(round => <option key={round.id} value={round.id}>第 {round.round_number} 轮 · 资料 v{round.context_version} · {dateLabel(round.created_at)}</option>)}</select></label>}

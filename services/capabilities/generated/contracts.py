@@ -2604,6 +2604,31 @@ class SourceRepresentation(BaseModel):
     offset_encoding: Literal['UTF-16']
 
 
+class EvidenceRef3(RootModel[str]):
+    root: str = Field(..., max_length=180, min_length=1)
+
+
+class Step(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    task_id: str = Field(..., max_length=40, min_length=1)
+    action: str = Field(..., max_length=240, min_length=1)
+    reason: str = Field(..., max_length=240, min_length=1)
+    material: str = Field(..., max_length=200, min_length=1)
+    channel: str = Field(..., max_length=200, min_length=1)
+    completion_check: str = Field(..., max_length=240, min_length=1)
+    evidence_refs: list[EvidenceRef3] = Field(..., max_length=6)
+
+
+class InvestigationAdvice(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    summary: str = Field(..., max_length=400, min_length=1)
+    steps: list[Step] = Field(..., max_length=3, min_length=1)
+
+
 class MapScoreEstimates(BaseModel):
     model_config = ConfigDict(
         extra='forbid',

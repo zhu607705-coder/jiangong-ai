@@ -483,6 +483,24 @@
         "raw-source guards and original parser",
         "per-task token budgets and actual returned_model values"
       ]
+    },
+    {
+      "id": "task-deepseek-advice-20261017",
+      "reuse": [
+        "LiveSession model call and canonical schema generator",
+        "existing project_decision_guidance owner/project/hash cache",
+        "backgroundWork shared promise/controller registry",
+        "readPublishedStrategy and public object binding",
+        "taskObjectApplicability and task/evidence drawer IDs"
+      ],
+      "new_domain_logic": [
+        "bounded typed investigation advice with exact existing-task aliases",
+        "public prompt projection, same-context cache/fencing and compact step UI"
+      ],
+      "unchanged": [
+        "original projects, saved strategies, tasks and documents",
+        "no new model client, search client, scheduler or private-data consent path"
+      ]
     }
   ]
 }
