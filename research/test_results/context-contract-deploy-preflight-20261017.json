@@ -1,0 +1,13 @@
+{
+  "ready": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "2e41aca94ab1a530266a123caef48fc48cdc4b9a",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects": 38,
+  "active_research_rounds": []
+}

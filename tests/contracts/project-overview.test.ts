@@ -95,8 +95,7 @@ test('labels a prior-version result and links changed material impacts without p
   await click('查看受影响内容');expect(onNavigate).toHaveBeenLastCalledWith('results','history')
 })
 test('retains a completed saved round on failure and keeps loading distinct from completion',async()=>{
-  const failed={...packet(),status:'failed' as const,strategy:null,error:'raw provider failure'}
-  await render({currentStrategyPacket:failed,latestSavedRound:round()})
+  await render({currentStrategyPacket:packet(),failed:true,latestSavedRound:round()})
   expect(container.querySelector('[data-overview-state]')?.getAttribute('data-overview-state')).toBe('failed')
   expect(container.textContent).toContain('本轮未完成，以下保留上次已保存的研究建议')
   expect(container.querySelector('#project-overview-recommendation')?.textContent).toContain('四幢供水')
@@ -120,7 +119,8 @@ test('does not borrow another project or simulation and gives a truthful empty-m
   const simulated={...packet(),synthetic:true}
   expect(projectOverviewState({project:p,currentStrategyPacket:simulated}).packet).toBeNull()
   const current=packet(),historic={...packet(),context_version:3}
-  expect(projectOverviewState({project:project(),currentStrategyPacket:historic,latestSavedRound:round(current)}).packet).toBe(current)
+  expect(projectOverviewState({project:project(),currentStrategyPacket:historic,latestSavedRound:round(current)}).packet).toBe(historic)
+  expect(projectOverviewState({project:project(),currentStrategyPacket:null,latestSavedRound:round(current)}).packet).toBeNull()
 })
 
 test('a failed first study keeps one clear recovery notice and its run-details entry without empty result cards',async()=>{

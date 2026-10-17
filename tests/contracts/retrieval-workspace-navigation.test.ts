@@ -45,6 +45,7 @@ test.each([
     alias_locators: [], source_kind: 'public_original', source_date: null, measure_links: [], matched_measure_links: [], measure_mentions: [], stages: [], objects: [], review_statuses: [], match_reasons: ['当前项目已收集来源中的托管费用记录'], score: 1 }
   const retrieved: RetrievalResponse = { project_id: project.id, question: '电梯托管费用如何确定，有哪些管理措施？', rank_query: '电梯托管费用', query_expansions: [], as_of: null, hits: [hit], candidate_counts: { documents: 0, source_texts: 1, eligible_source_texts: 1, parsed_chunks: 1, eligible_chunks: 1, ranked_chunks: 1, batches: 1, unresolved_references: 0 }, skipped: [], method: 'metadata_gated_bm25', score_meaning: '相关性', ranking_note: '', content_role: 'untrusted_source_material', fact_writes: 0 }
   apiMock.mockImplementation((path: string) => {
+    if(path.includes('/decision-guidance'))return Promise.resolve(null)
     if (path === '/session') return Promise.resolve({ model_configured: false })
     if (path === '/projects') return Promise.resolve([project])
     if (path === '/projects/public-decisions') return Promise.resolve({ items: [] })
@@ -60,6 +61,10 @@ test.each([
     if (path.endsWith('/knowledge/pipeline')) return Promise.resolve({ cards: [] })
     throw new Error(`Unexpected workbench request ${path}`)
   })
+  vi.stubGlobal('fetch',vi.fn(async(url:string,init:RequestInit)=>{
+    const result=await apiMock(url.replace(/^\/api/,''),JSON.parse(String(init.body)),init.signal)
+    return new Response(JSON.stringify({type:'complete',result})+'\n',{headers:{'Content-Type':'application/x-ndjson'}})
+  }))
   const root = createRoot(dom.document.getElementById('root')!)
   const click = async (predicate: (button: HTMLButtonElement) => boolean, within: ParentNode = dom.document as unknown as Document) => {
     const button = [...within.querySelectorAll<HTMLButtonElement>('button')].find(predicate)

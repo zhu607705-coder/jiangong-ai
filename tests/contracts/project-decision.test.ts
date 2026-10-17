@@ -63,6 +63,7 @@ it('GET only restores a matching snapshot; POST caches once and rejects a change
   if(sql.startsWith('INSERT INTO project_decision_guidance')){cache.set(String(params[2]),JSON.parse(String(params[3])));return {rows:[]}}
   if(sql.includes('FROM project_decision_guidance'))return {rows:cache.has(String(params[2]))?[{payload:cache.get(String(params[2]))}]:[]}
   if(sql.includes('renewal_strategy_assessments'))return {rows:roundOnly?[]:[{payload:packet,saved_at:packet.created_at}]}
+  if(sql.includes('to_regclass'))return {rows:[{present:true}]}
   if(sql.includes('renewal_research_rounds'))return {rows:roundOnly?[{payload:{project_id:project.id,status:'completed',round_number:1,context_version:2,input_hash:packet.input_hash,result:packet}}]:[]}
   return {rows:[]}
  })}} as unknown as Store

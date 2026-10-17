@@ -36,7 +36,19 @@ export class Store {
       db = new PGlite(join(directory, 'postgres')) as unknown as Database
     }
     await db.exec(await readFile('packages/contracts/migrations/001_initial.sql', 'utf8'))
-    return new Store(db, databaseUrl ? 'PostgreSQL' : 'PGlite (embedded PostgreSQL)')
+    const store = new Store(db, databaseUrl ? 'PostgreSQL' : 'PGlite (embedded PostgreSQL)')
+    await store.initializeAnalysisContext()
+    return store
+  }
+  async initializeAnalysisContext() {
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS project_analysis_heads (
+      owner_id TEXT NOT NULL, project_id TEXT NOT NULL REFERENCES projects(id), generation INTEGER NOT NULL,
+      requested_context_hash TEXT NOT NULL, active_attempt_id TEXT, PRIMARY KEY(owner_id,project_id));
+      CREATE TABLE IF NOT EXISTS project_analysis_attempts (
+      id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, project_id TEXT NOT NULL REFERENCES projects(id),
+      generation INTEGER NOT NULL, context_ref JSONB NOT NULL, round_id TEXT, payload JSONB,
+      status TEXT NOT NULL DEFAULT 'running', created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE(owner_id,project_id,generation));`)
   }
   async project(id: string, owner: string) { return (await this.db.query<ProjectRecord>('SELECT * FROM projects WHERE id=$1 AND owner_id=$2', [id, owner])).rows[0] }
   async projects(owner: string) { return (await this.db.query<ProjectRecord>('SELECT * FROM projects WHERE owner_id=$1 ORDER BY updated_at DESC', [owner])).rows }

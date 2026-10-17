@@ -69,6 +69,7 @@ async function mountWorkbench(search = '', snapshot = false, override?: Strategy
   // Existing simulation output is a UI transport fixture only; it is never seeded into a project or passed to a provider.
   const operationFixture = replay ? JSON.parse(readFileSync('research/test_results/complete-community-demo-calculations.json', 'utf8')).scenarios[1].result : null
   apiMock.mockImplementation((path: string) => {
+    if(path.includes('/decision-guidance'))return Promise.resolve(null)
     if (path === '/session') return Promise.resolve({ model_configured: true })
     if (path === '/projects') return Promise.resolve(replay ? [replayProject, emptyProject, savedProject] : [emptyProject, savedProject])
     if (path === '/projects/public-decisions') return Promise.resolve({ items: [published] })
@@ -440,9 +441,9 @@ test('a saved older-version round restores result pages after pending GETs witho
     expect(new URLSearchParams(app.location.search).get('view')).toBe('compare')
     expect(app.dom.document.querySelector('[data-project-page="results"]')?.getAttribute('aria-current')).toBe('page')
     await page(app, 'overview')
-    expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).toBe(old.strategy!.headline)
-    expect(app.dom.document.querySelector('.project-overview-result-meta')?.textContent).toContain('资料 v13')
-    expect(app.dom.document.querySelector('.project-overview-notice')?.textContent).toContain('当前资料为 v14')
+    expect(app.dom.document.querySelector('#project-overview-recommendation')?.textContent).not.toBe(old.strategy!.headline)
+    expect(app.dom.document.querySelector('.project-overview-result-meta')?.textContent||'').not.toContain('资料 v13')
+    expect(app.dom.document.querySelector('.project-overview')?.textContent).toContain('已有资料')
     expect(apiMock.mock.calls.every(([, body]) => body === undefined)).toBe(true)
   } finally { await app.cleanup() }
 })

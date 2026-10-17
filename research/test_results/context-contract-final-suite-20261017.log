@@ -1,0 +1,75 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run
+
+
+ RUN  v4.1.11 D:/建工ai/.cache/context-contract
+
+ ❯ tests/contracts/experience-learning.test.ts (5 tests | 1 failed) 10896ms
+     × reads beyond the former first 18000 characters and automatically creates draft skills and rule comparisons 2073ms
+ ❯ tests/contracts/corpus.test.ts (17 tests | 9 skipped) 114ms
+ ❯ tests/contracts/strategy-workspace.test.ts (11 tests | 1 failed) 100ms
+   × a completed saved result remains visible and available when another current read failed 5ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/corpus.test.ts > corpus build and supervised export
+Error: 公开 HTML 快照与采集凭证不一致。
+ ❯ buildCorpus packages/corpus/corpus.ts:195:74
+    193|       const metaFile = await localFile(rootDir, entry.metadata_path), …
+    194|       inputs.push({ path: metaFile.path, sha256: metaFile.sha256 })
+    195|       if (meta.sha256 !== file.sha256 || meta.http_status !== 200) thr…
+       |                                                                          ^
+    196|       const text = visibleText(file.data.toString('utf8'), meta.url)
+    197|       add({ id: 'SNAPSHOT-' + file.sha256.slice(0, 14), title: meta.ti…
+ ❯ tests/contracts/corpus.test.ts:90:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/experience-learning.test.ts > file/chat to experience, skill and rule versions > reads beyond the former first 18000 characters and automatically creates draft skills and rule comparisons
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ tests/contracts/experience-learning.test.ts:64:73
+     62|     expect(accepted.skills[0].card_refs[0].revision).toBe(2)
+     63|     const activated=await learning.applySkill(project,accepted.skills[…
+     64|     expect(activated.skill).toMatchObject({status:'approved',revision:…
+       |                                                                         ^
+     65|     const resolved=await experience.resolveKnowledge(project,{measure_…
+     66|     expect(resolved.skills?.some(skill=>skill.id===activated.skill.id)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/contracts/strategy-workspace.test.ts > a completed saved result remains visible and available when another current read failed
+AssertionError: expected undefined to be 'AI本项目综合整治与分期建议' // Object.is equality
+
+- Expected:
+"AI本项目综合整治与分期建议"
+
++ Received:
+undefined
+
+ ❯ tests/contracts/strategy-workspace.test.ts:158:76
+    156|   const app = await mount({ page: 'assessment', section: 'direction' }…
+    157|   try {
+    158|     expect(app.container.querySelector('.decision-brief h3')?.textCont…
+       |                                                                            ^
+    159|     expect(app.container.querySelector('.strategy-direction-selection'…
+    160|     expect([...app.container.querySelectorAll<HTMLButtonElement>('.str…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 130 passed (133)
+      Tests  2 failed | 1643 passed | 9 skipped (1654)
+   Start at  10:55:16
+   Duration  296.34s (transform 2.98s, setup 0ms, import 29.98s, tests 250.41s, environment 7ms)
+

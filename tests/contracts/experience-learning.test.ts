@@ -28,7 +28,9 @@ function draft(value=rule,docId=document.id,version=document.sha256,locator='lin
 }
 beforeEach(async()=>{
   directory=await mkdtemp(join(tmpdir(),'experience-learning-'));store=await Store.open(directory)
-  const input={...structuredClone(fixture),project_id:'LEARN-A',synthetic:true,as_of:'2026-10-16',mode:'enterprise',sources:[{id:document.id,title:document.file_name,synthetic:true,visibility:'internal',data_class:'synthetic',hash:document.sha256,untrusted_text:text,content_status:'uploaded'}]} as ProjectInput
+  // Learned history is timestamped by PostgreSQL; the fixture must query the same research day.
+  const researchDay=(await store.db.query<{day:string}>("SELECT to_char(CURRENT_TIMESTAMP AT TIME ZONE 'UTC','YYYY-MM-DD') AS day")).rows[0].day
+  const input={...structuredClone(fixture),project_id:'LEARN-A',synthetic:true,as_of:researchDay,mode:'enterprise',sources:[{id:document.id,title:document.file_name,synthetic:true,visibility:'internal',data_class:'synthetic',hash:document.sha256,untrusted_text:text,content_status:'uploaded'}]} as ProjectInput
   await store.db.query('INSERT INTO projects(id,name,owner_id,input) VALUES($1,$2,$3,$4)',[input.project_id,'合成经验链路测试',config.ownerId,JSON.stringify(input)])
   await store.db.query('INSERT INTO documents(id,project_id,file_name,blob_name,sha256,parser_result) VALUES($1,$2,$3,$4,$5,$6)',[document.id,input.project_id,document.file_name,'fixture-only',document.sha256,JSON.stringify(document.parser_result)])
   project=(await store.project(input.project_id,config.ownerId))!

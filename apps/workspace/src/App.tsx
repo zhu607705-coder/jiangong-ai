@@ -283,7 +283,7 @@ export default function App() {
   const currentStrategyPacket = directionPacket?.identity === directionIdentity ? directionPacket.packet : retrievalStrategy.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? retrievalStrategy.packet : null;
   const researchRecords = roundIndex.key === `${project?.id || ''}:${project?.context_version ?? ''}` ? roundIndex.data : null;
   const latestSavedRound = researchRecords?.rounds.filter(round => round.status === 'completed' && round.result?.strategy).sort((a,b) => b.round_number-a.round_number)[0] || null;
-  const overviewStrategy = currentStrategyPacket || latestSavedRound?.result || researchRecords?.baseline_candidate || null;
+  const overviewStrategy = currentStrategyPacket || null;
   const hasSavedNeighborhoodResult = completeDemoActive || [overviewStrategy, ...(researchRecords?.rounds.map(round => round.result) || [])].some(result =>
     result?.status === 'completed' && !!result.strategy && result.project_id === project?.id && result.synthetic === project?.input.synthetic);
   const availableProjectPages = project?.input.business_profile === 'neighborhood' && !hasSavedNeighborhoodResult
@@ -416,8 +416,7 @@ export default function App() {
       .then(([value,records]) => { if (!controller.signal.aborted) {
         const valid = records && Array.isArray(records.rounds) ? records : null;
         setRoundIndex({key:retrievalKey,data:valid});
-        const latest = valid?.rounds.filter(round => round.project_id === projectId && round.context_version === version && round.status === 'completed' && round.result?.strategy).sort((a,b)=>b.round_number-a.round_number)[0]?.result;
-        setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: latest || (value?.context_version === version ? value : null) });
+        setRetrievalStrategy({ key: retrievalKey, status: 'ready', packet: value?.context_version === version ? value : null });
       } })
       .catch(() => { if (!controller.signal.aborted) setRetrievalStrategy({ key: retrievalKey, status: 'unavailable', packet: null }); });
     return () => controller.abort();

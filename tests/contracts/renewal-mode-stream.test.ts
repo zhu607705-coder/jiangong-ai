@@ -15,7 +15,7 @@ let server:Server,origin:string,changed:boolean,inserts:number,cacheOrigin:'lega
 beforeEach(async()=>{
   changed=false;inserts=0;cacheOrigin=null;evaluate.mockReset().mockResolvedValue(structuredClone(replay.packet.decision))
   const project:ProjectRecord={id:'P-MODE-STREAM',name:'离线模式协议',owner_id:'fixture-owner',created_at:'2026-10-16T00:00:00Z',updated_at:'2026-10-16T00:00:00Z',context_version:1,input:{...structuredClone(fixture) as ProjectInput,project_id:'P-MODE-STREAM',business_profile:'neighborhood',sources:[],facts:[]}}
-  const store={db:{exec:vi.fn(),query:vi.fn(async(sql:string)=>{if(sql.startsWith('INSERT'))inserts++;return {rows:sql.startsWith('SELECT payload,origin')&&cacheOrigin?[{payload:structuredClone(replay.packet.decision),origin:cacheOrigin}]:[]}})}} as unknown as Store
+  const store={initializeAnalysisContext:vi.fn(),db:{exec:vi.fn(),query:vi.fn(async(sql:string)=>{if(sql.startsWith('INSERT'))inserts++;return {rows:sql.startsWith('SELECT payload,origin')&&cacheOrigin?[{payload:structuredClone(replay.packet.decision),origin:cacheOrigin}]:[]}})}} as unknown as Store
   const app=express();app.use(express.json());await registerRenewalMode(app,store,async()=>({...project,context_version:changed?2:1}),{} as ConstructionCostLibrary,vi.fn())
   await new Promise<void>(resolve=>{server=app.listen(0,'127.0.0.1',()=>resolve())});origin=`http://127.0.0.1:${(server.address() as {port:number}).port}`
 })

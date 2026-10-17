@@ -28,7 +28,8 @@ export function projectOverviewState(props: Omit<ProjectOverviewProps,'onNavigat
   const belongs=(packet:StrategyPacket|null|undefined):packet is StrategyPacket=>!!packet&&packet.project_id===project.id&&packet.synthetic===project.input.synthetic
   const completed=(packet:StrategyPacket|null|undefined):packet is StrategyPacket=>belongs(packet)&&packet.status==='completed'&&!!packet.strategy
   const savedRound=latestSavedRound?.project_id===project.id&&latestSavedRound.status==='completed'&&completed(latestSavedRound.result)?latestSavedRound:null
-  const candidates=[currentStrategyPacket,savedRound?.result].filter(completed)
+  // An explicit null from the current resolver must not be replaced by a historical round.
+  const candidates=(currentStrategyPacket===undefined?[savedRound?.result]:[currentStrategyPacket]).filter(completed)
   const packet=candidates.find(result=>result.context_version===project.context_version)||candidates.sort((a,b)=>b.context_version-a.context_version||Date.parse(b.created_at)-Date.parse(a.created_at))[0]||null
   const strategy=packet?.strategy||null
   const stale=!!props.stale||!!packet&&packet.context_version!==project.context_version

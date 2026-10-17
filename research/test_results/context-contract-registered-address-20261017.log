@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/context-contract
+
+
+ Test Files  5 passed (5)
+      Tests  52 passed (52)
+   Start at  11:02:24
+   Duration  22.97s (transform 296ms, setup 0ms, import 998ms, tests 21.35s, environment 0ms)
+

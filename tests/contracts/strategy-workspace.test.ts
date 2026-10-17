@@ -96,7 +96,8 @@ test('scheme comparison always opens both candidates and an explicit click chang
     expect(app.navigate).toHaveBeenLastCalledWith({ view: 'scenarios', section: 'detail', pane: 'content', scheme: 'rebuild' })
     expect(app.container.querySelector('.single-scheme-workspace')?.textContent).not.toContain('分项改善目标')
     await act(async () => app.root.render(createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(StrategyOverview, { project, demoActive: false, workspacePage: 'assessment', section: 'direction', directionSelection: { identity: 'WS:4:false', mode: 'rebuild' }, onDirectionSelect: app.choose, onNavigate: app.navigate, onEvidence: app.evidence, onInvestigate: vi.fn() }))))
-    await vi.waitFor(() => expect(app.container.querySelector('.strategy-working-status')?.textContent).toContain('系统核验方向：综合整治'))
+    await vi.waitFor(() => expect(app.container.querySelector('.strategy-working-status')?.textContent).toContain('当前工作方向：原拆原建'))
+    expect(app.container.querySelector('.strategy-working-status')?.textContent).not.toContain('系统核验方向')
     expect(app.container.querySelector('.strategy-working-status')?.textContent).toContain('当前工作方向：原拆原建')
     expect(app.container.querySelector('.decision-criteria')).toBeNull()
   } finally { await app.cleanup() }
@@ -150,10 +151,10 @@ test('a failed result shows Chinese recovery actions after screening and never p
   } finally { await app.cleanup() }
 })
 
-test('a completed saved result remains visible and available when another current read failed', async () => {
-  const failure: StrategyPacket = { ...saved, status: 'failed', strategy: null, error: 'LIVE_STAGE_FAILED:renewal_strategy:error:TRANSPORT' }
+test('the server-resolved saved result remains visible when the research history also contains a failed retry', async () => {
   const record: ResearchRound = { id: 'SAVED-OLD', project_id: project.id, round_number: 1, context_version: project.context_version, input_hash: saved.input_hash, parent_round_id: null, parent_input_hash: null, parent_context_version: null, first_round_id: 'SAVED-OLD', first_input_hash: saved.input_hash, first_context_version: saved.context_version, origin: 'adopted_history', status: 'completed', material_intake: 'not_recorded', allow_internal_ai: false, materials: [], missing_materials: [], result: saved, error: null, created_at: saved.created_at, updated_at: saved.created_at }
-  const app = await mount({ page: 'assessment', section: 'direction' }, failure, { collaborative: true, rounds: [record] })
+  const failedRetry:ResearchRound={...record,id:'FAILED-RETRY',round_number:2,status:'failed',result:null,error:'供应商暂时不可用'}
+  const app = await mount({ page: 'assessment', section: 'direction' }, saved, { collaborative: true, rounds: [record,failedRetry] })
   try {
     expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(saved.strategy!.headline)
     expect(app.container.querySelector('.strategy-direction-selection')).not.toBeNull()

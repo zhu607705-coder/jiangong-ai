@@ -13,6 +13,7 @@ import { validate } from '../../packages/contracts/validate'
 import { researchRenewalStrategy } from '../../services/map-screening/renewal-strategy'
 import { STRATEGY_POLICY, type StrategyPacket, type StrategyStreamEvent, type StrategySource } from '../../packages/retrofit/strategy'
 import { listPublishedStrategies, readPublishedStrategy } from './strategy-publication'
+import {beginProjectAnalysis,commitProjectAnalysis,type AnalysisTicket} from './project-context'
 import { ResearchRoundsService, ResearchRoundError, registerResearchRoundRoutes } from './research-rounds'
 
 export type ModeContextLoader = (id: string, signal: AbortSignal) => Promise<DecisionInput>
@@ -139,6 +140,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
   })
   for (const method of ['get','post'] as const) app[method]('/api/projects/:id/renewal-strategy', async (req,res,next) => {
     let key: string | undefined
+    let ticket:AnalysisTicket|undefined
     let streaming = false
     const emit = (event: StrategyStreamEvent) => { if (streaming && !res.destroyed && !res.writableEnded) res.write(JSON.stringify(event) + '\n') }
     try {
@@ -151,7 +153,10 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const hash = strategyHash(modeHash,project.context_version,query.demo)
       const cached = (await store.db.query<{payload:StrategyPacket}>('SELECT payload FROM renewal_strategy_assessments WHERE owner_id=$1 AND project_id=$2 AND input_hash=$3',[config.ownerId,project.id,hash])).rows[0]?.payload
       if (method==='get') { res.json(await readPublishedStrategy(store,project,hash,query.demo==='true')||(cached?.status==='completed'?null:cached)||null); return }
-      if (cached&&!body.refresh&&!body.research_action) { res.json(cached); return }
+      if (cached&&!body.refresh&&!body.research_action) {
+        const active=await readPublishedStrategy(store,project,hash,query.demo==='true')
+        if(active||cached.status!=='completed'){res.json(active||cached);return}
+      }
       key='strategy:'+project.id+':'+hash
       if (running.has(key)||running.size>=2) {key=undefined;return res.status(409).json({detail:'方案研究正在进行，请稍后查看。'})}
       running.add(key)
@@ -167,16 +172,24 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
       const savedResearch = explicitReevaluation?{sources:cached?.sources||[],research:cached?.research||null}:cached?.status==='failed' && cached.project_id===project.id && cached.context_version===project.context_version && cached.input_hash===hash && cached.synthetic===(query.demo==='true')
         && Date.now()-Date.parse(cached.created_at)<20*60_000 && (cached.model_calls.some(call=>call.finish_reason==='max-tokens')||cached.diagnostic?.code==='STRATEGY_EVIDENCE_INVALID') && cached.research?.queries.length
         && cached.sources.length && cached.sources.every(source=>source.visibility!=='internal'&&source.data_class!=='internal') ? {sources:cached.sources,research:cached.research} : undefined
-      const result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch,researchWorkflow:true})
+      // The isolated simulation path does not advance the real project's head.
+      if(query.demo==='false')ticket=await beginProjectAnalysis(store,project)
+      let result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch,researchWorkflow:true})
       signal.throwIfAborted()
-      if ((await requireProject(project.id)).context_version!==project.context_version) {
+      const changed=(await requireProject(project.id)).context_version!==project.context_version
+      if(ticket){
+        const committed=await commitProjectAnalysis(store,project,ticket,result,async(db,current,packet)=>{
+          if(current&&(!cached||cached.status!=='completed'||packet.status==='completed'))await db.query('INSERT INTO renewal_strategy_assessments(owner_id,project_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[project.owner_id,project.id,hash,JSON.stringify(packet)])
+        });result=committed.packet
+      }
+      if (changed) {
         if (streaming) { emit({type:'error',message:'研究期间资料已变化，请刷新后重新研究。'}); res.end(); return }
         return res.status(409).json({detail:'研究期间资料已变化，请刷新后重新研究。'})
       }
-      if (!cached || cached.status !== 'completed' || result.status === 'completed') {
+      if (!ticket&&(!cached || cached.status !== 'completed' || result.status === 'completed')) {
         await store.db.query('INSERT INTO renewal_strategy_assessments(owner_id,project_id,input_hash,payload) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,created_at=now()',[config.ownerId,project.id,hash,JSON.stringify(result)])
       }
-      if (result.decision?.status==='completed' && query.demo==='false') await store.db.query("INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload,origin) VALUES($1,$2,$3,$4,'strategy') ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,origin=EXCLUDED.origin,created_at=now() WHERE renewal_mode_assessments.origin<>'explicit_mode'",[config.ownerId,project.id,modeHash,JSON.stringify(result.decision)])
+      if (result.decision?.status==='completed' && query.demo==='false'&&result.current_context?.freshness!=='historical') await store.db.query("INSERT INTO renewal_mode_assessments(owner_id,target_id,input_hash,payload,origin) VALUES($1,$2,$3,$4,'strategy') ON CONFLICT(owner_id,target_id,input_hash) DO UPDATE SET payload=EXCLUDED.payload,origin=EXCLUDED.origin,created_at=now() WHERE renewal_mode_assessments.origin<>'explicit_mode'",[config.ownerId,project.id,modeHash,JSON.stringify(result.decision)])
       if (!res.destroyed) { if (streaming) { emit({type:'complete',result}); res.end() } else res.json(result) }
     } catch(error) {
       if (!res.destroyed) {
@@ -185,7 +198,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
         else next(error)
       }
     }
-    finally {if(key)running.delete(key)}
+    finally {if(key)running.delete(key);if(ticket)await store.db.query("UPDATE project_analysis_attempts SET status='failed' WHERE id=$1 AND status='running'",[ticket.id])}
   })
   const researchRounds = new ResearchRoundsService(store,requireProject,async(project,hash,signal,roundContext,onProgress)=>{
     const key='round:'+project.id

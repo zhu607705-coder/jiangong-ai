@@ -4,6 +4,7 @@ import type {ResearchRound} from '../retrofit/research-rounds'
 import {PRIORITY_PRESETS} from '../retrofit/decision-priorities'
 import {buildProjectTasks} from '../retrofit/project-tasks'
 import {currentDirectionText} from '../retrofit/direction-text'
+import {bindObjectPassage,bindStrategySource} from '../retrofit/object-binding'
 
 export const GUIDANCE_POLICY='project-decision-guidance-v1'
 export const GUIDANCE_PAGES=['overview','evidence','assessment','scenarios','actions','results'] as const
@@ -61,8 +62,9 @@ const publicSource=(source:{visibility?:string;data_class?:string})=>source.visi
 export function projectGuidanceInput(project:ProjectInput,version:number,packet:StrategyPacket|null,rounds:readonly ResearchRound[],direction:GuidanceDirection,preference:GuidancePreference){
  const permitted=(source:{visibility?:string;data_class?:string;synthetic?:boolean})=>publicSource(source)&&(project.synthetic||!source.synthetic&&!['synthetic','semi_synthetic'].includes(source.data_class||''))
  const denied=new Set(project.sources.filter(source=>!permitted(source)).map(source=>source.id))
- const allowed=new Set(project.sources.filter(permitted).map(source=>source.id))
- const safePacket=(value:StrategyPacket|null):StrategyPacket|null=>value?.project_id===project.project_id&&value.synthetic===project.synthetic&&value.sources.every(source=>permitted(source)&&!denied.has(source.id))?value:null
+ const objectEligible=(source:ProjectInput['sources'][number])=>bindObjectPassage(project,source.title,source.untrusted_text||'').relation!=='different_object'
+ const allowed=new Set(project.sources.filter(source=>permitted(source)&&objectEligible(source)).map(source=>source.id))
+ const safePacket=(value:StrategyPacket|null):StrategyPacket|null=>value?.project_id===project.project_id&&value.synthetic===project.synthetic&&value.sources.every(source=>permitted(source)&&!denied.has(source.id)&&bindStrategySource(source,project).object_binding?.relation!=='different_object')?value:null
  const current=safePacket(packet),strategy=current?.strategy
  current?.sources.forEach(source=>allowed.add(source.id))
  const safeRounds=rounds.filter(round=>round.project_id===project.project_id&&round.status==='completed'&&safePacket(round.result)).sort((a,b)=>a.round_number-b.round_number)
@@ -77,7 +79,7 @@ export function projectGuidanceInput(project:ProjectInput,version:number,packet:
  const measures=allMeasures.slice(0,Math.min(allMeasures.length,10-Math.min(allMaterials.length,5)))
  const materials=allMaterials.slice(0,10-measures.length)
  const preset=PRIORITY_PRESETS.find(row=>row.id===preference)!
- const publicSources=project.sources.filter(permitted)
+ const publicSources=project.sources.filter(source=>permitted(source)&&objectEligible(source))
  const brief=(value:StrategyPacket|null)=>!value?.strategy?null:{origin:'saved_model_analysis',hash:value.input_hash,version:value.context_version,created_at:value.created_at,...(direction?{path:value.strategy.paths.filter(row=>row.mode===direction).map(path=>({mode:path.mode,title:clean(path.title),description:clean(path.description),actions:path.actions.map(row=>({title:clean(row.title),detail:clean(row.detail)}))})),dimensions:value.strategy.dimensions.map(row=>({key:row.key,current:row.current,after:clean(row[direction])}))}:{headline:value.strategy.headline,summary:value.strategy.summary,preferred_mode:value.strategy.preferred_mode})}
  const state={policy:GUIDANCE_POLICY,project:{id:project.project_id,name:project.scope.name,city:project.scope.city,as_of:project.as_of,version,synthetic:project.synthetic},selected_direction:direction,goal:{preset:preference,label:preset.label,weights:preset.weights},has_current_strategy:!!packet?.strategy&&packet.context_version===version,internal_analysis_omitted:!!packet&&!current,has_previous_strategy:!!previous,current:brief(current),previous:brief(previous),source_catalog:[...publicSources.map(source=>({id:source.id,title:source.title,hash:source.hash,date:source.published_at,data_class:source.data_class,synthetic:source.synthetic,preview:source.untrusted_text?.slice(0,300)})),...(current?.sources.filter(source=>!publicSources.some(item=>item.id===source.id)).map(source=>({id:source.id,title:source.title,date:source.published_at,preview:source.text.slice(0,220)}))||[])].slice(0,32),measures,materials,conditions:project.facts.filter(fact=>allowed.has(fact.source_id)).slice(0,30)}
  return {state,measures,materials,source_count:state.source_catalog.length,strategy_hash:packet?.input_hash||null}

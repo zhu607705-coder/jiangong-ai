@@ -106,7 +106,7 @@ test('historical rebuild output stays a comparison until the current nine-condit
   const {container,root}=await render({...failed,status:'completed',strategy,error:null})
   try{
     await vi.waitFor(()=>expect(container.querySelector('.strategy-summary h3')?.textContent).toContain('综合整治'))
-    expect(container.querySelector('.strategy-direction-label')?.textContent).toBe('当前研究方向：综合整治')
+    expect(container.querySelector('.strategy-direction-label')?.textContent).toBe('当前工作方向：尚未选择')
     expect(container.querySelector('.strategy-summary')?.textContent).not.toContain('直接推荐整体拆建的旧标题')
     expect(container.querySelector('.strategy-search-record')?.textContent).toContain('历史模型原始方向')
   }finally{await act(async()=>root.unmount())}
