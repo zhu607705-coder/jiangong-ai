@@ -1,0 +1,58 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/functional-evaluation
+
+x······
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/project-tasks-page.test.ts > separates foreign-object legacy tasks from current object checks without changing stored IDs or locking material upload
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ tests/contracts/project-tasks-page.test.ts:57:44
+     55|  const original=JSON.stringify(value),ids=buildProjectTasks(value).map…
+     56|  await render({project:localProject,packet:value,onEvidence:vi.fn(),on…
+     57|  expect(query('.project-task-object-notice').textContent).toContain('天…
+       |                                            ^
+     58|  expect(query('.project-task-featured').textContent).toContain('项目地址')
+     59|  expect(query('.project-task-featured').textContent).not.toContain('32…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  19:04:08
+   Duration  612ms (transform 168ms, setup 0ms, import 429ms, tests 62ms, environment 0ms)
+
+
+
+ RUN  v4.1.11 D:/建工ai/.cache/functional-evaluation
+
+x·················
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/strategy-work-packages.test.ts > allows registered method references on a scenario target while still rejecting invented references, quotes and measured quantities
+AssertionError: expected [Function] to not throw an error but 'Error: STRATEGY_SOURCE_MISMATCH' was thrown
+
+- Expected:
+undefined
+
++ Received:
+"Error: STRATEGY_SOURCE_MISMATCH"
+
+ ❯ tests/contracts/strategy-work-packages.test.ts:29:47
+     27|  const work=value.paths[0].work_packages![0]
+     28|  Object.assign(work,{target_basis:'scenario',source_id:null,quote:'',l…
+     29|  expect(()=>check(value,[source,method])).not.toThrow()
+       |                                               ^
+     30|  work.evidence_refs=['INVENTED'];expect(()=>check(value,[source,method…
+     31|  work.evidence_refs=[method.id];work.quote='伪造本对象的原句';expect(()=>check…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 passed (18)
+   Start at  19:05:51
+   Duration  880ms (transform 352ms, setup 0ms, import 677ms, tests 78ms, environment 0ms)
+

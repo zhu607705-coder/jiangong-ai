@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-17T11:17:52.833865+00:00",
+  "url": "https://laneanew.cn/?project=P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de&view=actions&section=current",
+  "runtime_commit": "816660259079a96d988cf5cb79adff1085b073c2",
+  "current_object_label": "天津市滨海新区大沽街道建工新村",
+  "current_object_checks": 3,
+  "legacy_applicability_review_tasks": 12,
+  "foreign_source_badge_visible": true,
+  "old_original_requirements_preserved": true,
+  "upload_controls_visible": true,
+  "project_writes": 0,
+  "existing_project_research_started": false,
+  "screenshots": [
+    {
+      "path": "D:\\建工ai\\output\\playwright\\functional-evaluation\\task-object-scope.png",
+      "sha256": "f612d7057b6610c6d0ead53a39f28d99bf1377f57c07ad647c725e69f9571666"
+    },
+    {
+      "path": "D:\\建工ai\\output\\playwright\\functional-evaluation\\task-original-detail.png",
+      "sha256": "7d56e8fc7eeffa7429c24d2faa0d0e25507e56ff85408290536bb4c5f07a2705"
+    }
+  ]
+}

@@ -11,6 +11,18 @@ export type ProjectInvestigationTask = {
 }
 const normalize = (text: string) => text.normalize('NFKC').replace(/[\s\p{P}\p{S}]/gu, '')
 
+export function taskObjectApplicability(packet:StrategyPacket,task:ProjectInvestigationTask){
+  const packageIds=new Set(task.internal_data?.related_package_ids||[])
+  const related=packet.strategy?.paths.flatMap(path=>(path.work_packages||[]).filter(work=>packageIds.has(work.id)))||[]
+  const refs=new Set([...task.evidence_refs,...related.flatMap(work=>[...(work.evidence_refs||[]),...(work.source_id?[work.source_id]:[])])])
+  const foreign=packet.sources.filter(source=>refs.has(source.id)&&source.object_binding?.relation==='different_object')
+  const review=!!packet.current_context?.object_review_required||!!packet.content_review?.issues.some(issue=>issue.code==='OBJECT_LOCATION_CONFLICT')
+  if(foreign.length)return {state:'foreign_reference' as const,label:'旧报告要求 · 异地参考',reason:[...new Set(foreign.map(source=>source.object_binding!.reason))].join('；')}
+  if(review&&task.id.includes(':followup:')&&/地址|边界|对象登记|同名|研究范围|项目位置/.test(task.request))return {state:'object_check' as const,label:'当前对象优先核查',reason:'先确认当前项目的位置、范围和对应原文，再采用旧报告中的具体调查口径。'}
+  if(review)return {state:'needs_review' as const,label:'旧报告要求 · 对象待核',reason:'该报告存在对象范围冲突，本项楼栋、数量和采集口径需先核对是否适用于当前项目。'}
+  return {state:'unflagged' as const,label:'',reason:''}
+}
+
 /** The API owns the requests. Display filtering and exact duplicate merging do not modify its saved text. */
 export function buildProjectTasks(packet: StrategyPacket | null, direction?: StrategyDirection | null, extraMissing: ResearchMissingMaterial[] = []): ProjectInvestigationTask[] {
   if (!packet?.strategy || packet.status !== 'completed') return []

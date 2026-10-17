@@ -1,0 +1,101 @@
+{
+  "task_id": "task-method-reference-review",
+  "status": "completed",
+  "summary": "六条STRATEGY_SOURCE_MISMATCH均由validator把source_id=null与任何非空evidence_refs视为冲突而产生，并非引用ID不存在。保存回执中6个工作包均为project_scope/scenario、空quote、quantity=null/unknown，12次引用全部对应packet.sources中reference/comparable_case。现规则与提示词缺少“无本对象主引句但有方法参考”的区分。可在不放松字面引文、数量或零来源约束的前提下修正。",
+  "files_touched": [
+    "D:/建工ai/.cache/functional-evaluation/.cache/task-method-reference-review.json"
+  ],
+  "commands_run": [
+    "rg root AGENT_ERROR_RULES.md relevant OPS-RECOVERY-STATES, OPS-CONTEXT, OPS-DSH-SCHEMA-SUBSET, OPS-CASE-MATCH entries",
+    "Read research/test_results/online-renewal-effect-20261017.json summary, work-package fields, content_review issues and source role/binding metadata",
+    "Numbered reads packages/retrofit/strategy.ts:185-363",
+    "Numbered reads services/map-screening/renewal-strategy.ts:228-241",
+    "Numbered reads packages/contracts/schema.json:463-575 and generated RenewalWorkPackage type",
+    "Read existing strategy-work-packages, strategy-content-review and research-coverage-tools tests",
+    "PowerShell read-only membership audit of saved packet: 6 packages, 12 references, all refs present/comparable, 6 null primary and empty quotes",
+    "One attempted rg used nonexistent candidate paths; reran with discovered actual service path. No tests, network or model calls."
+  ],
+  "findings": [
+    {
+      "id": "METHOD-REF-01",
+      "priority": "P2",
+      "title": "六条引用编号警告为过宽规则触发，并非不存在的source ID",
+      "evidence": [
+        "packages/retrofit/strategy.ts:251: if(work.source_id===null){if(work.target_basis==='object_source'||work.quantity_basis==='source'||work.quote||work.evidence_refs.length)reject('STRATEGY_SOURCE_MISMATCH')}。",
+        "该分支没有检查evidence_refs内容是否存在；只要长度非零即告警。",
+        "同文件:296把该错误统一解释成“部分引用编号尚未对应本轮来源，请核对出处。”；:348由此还生成不必要的回源补读要求。",
+        "保存的online-renewal-effect-20261017.json中6条issues均位于工作包；6包全部source_id=null、quote=''、quantity=null、quantity_basis=unknown，target_basis为project_scope或scenario。",
+        "12次工作包引用全部可在同一packet.sources中定位，对应来源全部role=reference且object_binding.relation=comparable_case。"
+      ],
+      "judgment": "现有validator确实禁止这一形态，因此不是说当前规则已经接受它；但把合法存在的方法参考标为编号未对应来源，属于语义误报。以案例机制支撑候选动作，不等同用案例证明本对象楼栋或工程数量。",
+      "affected_package_ids": [
+        "PK-COMP-PIPE",
+        "PK-COMP-ACCESS",
+        "PK-COMP-LIFT",
+        "PK-REB-DEMO",
+        "PK-REB-TRANSIT",
+        "PK-REB-SERVICE"
+      ]
+    },
+    {
+      "id": "METHOD-REF-02",
+      "priority": "P2",
+      "title": "提示词混合了无任何来源与无本对象主引句两种情况",
+      "evidence": [
+        "services/map-screening/renewal-strategy.ts:229允许归档案例用于具体措施和组织机制参考，同时要求本项目与案例工程量分别记录。",
+        ":233“无可用原文时”同时要求source_id=null、quote空、evidence_refs空；“有来源的分项”又要求source_id入refs并给连续quote。",
+        ":234明确quantity_basis=source只取本对象current原文中的数值和单位，对标量不可移用。",
+        ":239允许专家logical_inference/scenario用于候选措施，并禁止把推导或假设写成引文。",
+        "packages/contracts/schema.json:482-495、550-556允许source_id为null、quote为空、evidence_refs为数组，不包含null primary与refs必空的交叉约束。"
+      ],
+      "judgment": "最小修复需要同时澄清提示词和语义validator，避免模型为了保留方法参考，被迫把某个案例设成主对象来源或删除全部参考。无需新增Schema字段或更改DSH Schema子集。"
+    },
+    {
+      "id": "METHOD-REF-03",
+      "priority": "P2",
+      "title": "删除长度条件前必须补上无条件引用存在性校验",
+      "evidence": [
+        "strategy.ts:252的ids检查只存在于非null source_id分支。",
+        "简单删除:251中的||work.evidence_refs.length后，source_id=null的工作包将能携带任意未知ID，而:206仅覆盖actions/dimensions/next_checks，并不覆盖work_packages。",
+        ":254-256当前已保留非null主引句逐字连续、定位相同及object_source仅current来源的检查。",
+        ":265-273当前保留quantity_basis三分与本对象原句数值、单位检查，不能为了清除告警而绕过。"
+      ],
+      "judgment": "适合把所有work.evidence_refs的存在性检查先于分支无条件执行，再分别校验主引句与对象依据。"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "D:/建工ai/.cache/functional-evaluation/research/test_results/online-renewal-effect-20261017.json",
+      "kind": "existing_isolated_live_receipt_read_only",
+      "summary": "76700ms; 12sources; 6workpackages; 6evidence_dimensions+6reasoning_dimensions; six work-package mismatch issues; no new live execution in this review"
+    },
+    {
+      "path": "D:/建工ai/.cache/functional-evaluation/.cache/task-method-reference-review.json",
+      "kind": "review_output"
+    }
+  ],
+  "questions_for_main": [],
+  "next_action": {
+    "owner": "main",
+    "minimal_safe_fix": [
+      "所有工作包先执行evidence_refs数组/ID存在性检查，无论source_id是否为null。建议显式校验string、非空及ids.has(id)。",
+      "source_id===null时允许已有sources中的方法参考refs，但继续禁止target_basis=object_source、quantity_basis=source及非空quote；locator使用scenario:project-scope，保持project_scope/scenario及明确假设。",
+      "source_id非null时继续要求主ID在refs中、存在来源、连续逐字quote和相同locator；object_source仍限本对象current，不更改数量检查或实施准入。",
+      "提示词明确：无本对象可引主句时可用project_scope/scenario、source_id=null和空quote，已有案例refs仅支持方法借鉴；sources=[]时所有refs仍为空。不得把参考案例的对象/数量改写成本项目事实。",
+      "原online回执保持不变，重评生成独立验证结果或仅在新测试断言修复效果，不把历史保存issues静默覆盖。"
+    ],
+    "suggested_pseudocode": [
+      "if(!Array.isArray(work.evidence_refs) || work.evidence_refs.some(id=>typeof id!=='string' || !id.trim() || !ids.has(id))) reject('STRATEGY_SOURCE_MISMATCH')",
+      "if(work.source_id===null){ if(work.target_basis==='object_source' || work.quantity_basis==='source' || work.quote) reject('STRATEGY_SOURCE_MISMATCH') }",
+      "else if(!work.evidence_refs?.length || !work.evidence_refs.includes(work.source_id)) reject('STRATEGY_SOURCE_MISMATCH')",
+      "Keep existing quote/locator/target-scope and quantity checks unchanged."
+    ],
+    "suggested_validation": [
+      "用保存回执在本地重评，六个合法方法参考工作包不再产生STRATEGY_SOURCE_MISMATCH；不能据此宣称方案适用性或真实决策准确率已经验证。",
+      "添加null primary+valid comparable refs正例与null primary+unknown ref反例。",
+      "保留sources=[]、source_id=null、refs=[]、空quote、project_scope/scenario、unknown/scenario quantity的零来源条件方案。",
+      "反例覆盖null primary但object_source、quantity_basis=source、非空quote；非null primary但refs缺主ID、未知主ID、错句或错locator。",
+      "继续运行现有参考案例数量不可转为source数量、幢号不等于楼栋数量、字面连续quote及施工准入回归。"
+    ]
+  }
+}

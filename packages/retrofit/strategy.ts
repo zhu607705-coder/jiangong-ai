@@ -248,7 +248,9 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
       const texts=[work.id,work.target,work.locator,work.intervention,work.scope,work.delivery]
       if(texts.some(text=>typeof text!=='string'||!text.trim())||workIds.has(work.id)||!['object_source','project_scope','scenario'].includes(work.target_basis)||!['first','next','reserve'].includes(work.priority)||!Array.isArray(work.preconditions)||work.preconditions.some(text=>!text.trim()))reject('STRATEGY_WORK_PACKAGE_INCOMPLETE')
       workIds.add(work.id)
-      if(work.source_id===null){if(work.target_basis==='object_source'||work.quantity_basis==='source'||work.quote||work.evidence_refs.length)reject('STRATEGY_SOURCE_MISMATCH')}
+      // Supporting cases may explain a proposal without proving its physical target or quantity.
+      if(work.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
+      if(work.source_id===null){if(work.target_basis==='object_source'||work.quantity_basis==='source'||work.quote)reject('STRATEGY_SOURCE_MISMATCH')}
       else if(!work.evidence_refs?.length||!work.evidence_refs.includes(work.source_id)||work.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
       const source=sources.find(source=>source.id===work.source_id)!
       if(work.source_id!==null&&(typeof work.quote!=='string'||work.quote.length<8||!source?.text.replace(/\r\n/g,'\n').includes(work.quote.replace(/\r\n/g,'\n'))))reject('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')

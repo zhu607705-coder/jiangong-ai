@@ -56,10 +56,14 @@ export function projectInput(value: unknown): ProjectInput {
 }
 export const decisionPacket = (value: unknown) => validate<DecisionPacket>('DecisionPacket', value)
 
-export function ownedModelValue<T>(type: string, value: unknown): T {
+export function ownedModelValue<T>(type: string, value: unknown,policy:ModelPresentationPolicy={}): T {
   // DSH structured results are borrowed and deeply frozen. Business validation
   // must work on an owned copy without changing the durable runtime artifact.
-  return validate<T>(type, structuredClone(value))
+  const owned=structuredClone(value)
+  // An empty evidence manifest fixes the citation list to [], supplied by the host.
+  // Do not ask a model to populate mandatory source_id fields with no legal source.
+  if(type==='RenewalStrategy'&&policy.evidenceIds?.length===0&&owned&&typeof owned==='object'&&!Array.isArray(owned)&&!Object.hasOwn(owned,'rationale'))Object.assign(owned,{rationale:[]})
+  return validate<T>(type, owned)
 }
 
 /** Resolve our finite canonical definitions for DSH's object-root structured-output seam. */
@@ -119,7 +123,10 @@ export function modelSchema(name: string, candidateIds?: readonly string[], poli
       for(const child of Object.values(node)) if(Array.isArray(child)) child.forEach(closeReferences); else closeReferences(child)
     }
     closeReferences(result)
-    if(!allowedReferences.length&&(result.properties as any)?.rationale)(result.properties as any).rationale.description='本轮没有可引用来源，必须返回空数组。'
+    if(!allowedReferences.length&&name==='RenewalStrategy'&&(result.properties as any)?.rationale){
+      delete (result.properties as Record<string,unknown>).rationale
+      result.required=(result.required as string[]).filter(field=>field!=='rationale')
+    }
   }
   if (name === 'ScenarioProposal') {
     const properties = result.properties as Record<string, Record<string, unknown>>

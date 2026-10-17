@@ -21,6 +21,16 @@ function strategy():RenewalStrategy {
   },source)
 }
 const check=(value:RenewalStrategy,sources=[source])=>validateStrategy(value,sources,[],true,false,true)
+
+it('allows registered method references on a scenario target while still rejecting invented references, quotes and measured quantities',()=>{
+ const value=strategy(),method={...source,id:'CASE-METHOD',role:'reference' as const}
+ const work=value.paths[0].work_packages![0]
+ Object.assign(work,{target_basis:'scenario',source_id:null,quote:'',locator:'scenario:project-scope',quantity:null,unit:null,quantity_basis:'unknown',evidence_refs:[method.id]})
+ expect(()=>check(value,[source,method])).not.toThrow()
+ work.evidence_refs=['INVENTED'];expect(()=>check(value,[source,method])).toThrow('STRATEGY_SOURCE_MISMATCH')
+ work.evidence_refs=[method.id];work.quote='伪造本对象的原句';expect(()=>check(value,[source,method])).toThrow('STRATEGY_SOURCE_MISMATCH')
+ work.quote='';work.quantity_basis='source';work.quantity=3;work.unit='栋';expect(()=>check(value,[source,method])).toThrow('STRATEGY_SOURCE_MISMATCH')
+})
 const original={modelConfigured:config.modelConfigured,searchConfigured:config.searchConfigured,decisionEnabled:config.decisionEnabled}
 beforeEach(()=>{vi.clearAllMocks();Object.assign(config,{modelConfigured:true,searchConfigured:false,decisionEnabled:false});vi.spyOn(globalThis,'fetch').mockRejectedValue(new Error('NO_EXTERNAL_CALLS'))})
 afterEach(()=>{Object.assign(config,original);vi.restoreAllMocks()})

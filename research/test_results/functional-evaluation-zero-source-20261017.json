@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-17T11:07:43.906Z",
+  "scope": "Isolated native zero-source protocol test; no real project or decision labels.",
+  "status": "completed",
+  "elapsed_ms": 46829,
+  "delivery": {
+    "run_status": "completed",
+    "evidence_status": "none",
+    "report_status": "conditional",
+    "renderer": "dsh"
+  },
+  "source_count": 0,
+  "dimensions": 6,
+  "reasoning_dimensions": 6,
+  "work_packages": 6,
+  "no_invented_citations": false,
+  "model_calls": [
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 9853,
+      "output_tokens": 4443,
+      "usage_status": "reported",
+      "duration_ms": 21583,
+      "session_id": "c49dddde-f2fc-4646-a95d-94f600a02d5f",
+      "cache_read_tokens": 1152,
+      "cache_write_tokens": 0
+    },
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 14383,
+      "output_tokens": 4391,
+      "usage_status": "reported",
+      "duration_ms": 13127,
+      "session_id": "c49dddde-f2fc-4646-a95d-94f600a02d5f",
+      "cache_read_tokens": 10496,
+      "cache_write_tokens": 0
+    },
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 18813,
+      "output_tokens": 4188,
+      "usage_status": "reported",
+      "duration_ms": 11903,
+      "session_id": "c49dddde-f2fc-4646-a95d-94f600a02d5f",
+      "cache_read_tokens": 18560,
+      "cache_write_tokens": 0
+    }
+  ],
+  "diagnostic": null,
+  "review_issue_codes": [
+    "STRATEGY_QUOTE_MISMATCH",
+    "STRATEGY_QUOTE_MISMATCH",
+    "STRATEGY_QUOTE_MISMATCH",
+    "STRATEGY_OBJECT_EVIDENCE_MISSING",
+    "STRATEGY_BRIEF_EVIDENCE_MISSING"
+  ],
+  "project_writes": 0
+}

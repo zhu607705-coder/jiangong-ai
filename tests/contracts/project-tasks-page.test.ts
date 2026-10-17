@@ -8,6 +8,7 @@ import type { Project } from '../../apps/workspace/src/api'
 import type { StrategyPacket } from '../../packages/retrofit/strategy'
 import type { ResearchRound } from '../../packages/retrofit/research-rounds'
 import ProjectTasksPage, { buildProjectTasks, type ProjectTasksPageProps } from '../../apps/workspace/src/components/ProjectTasksPage'
+import {taskObjectApplicability} from '../../packages/retrofit/project-tasks'
 
 const project: Project = { id: 'TASK-P', name: '调查测试社区', context_version: 2, input: { ...input, project_id: 'TASK-P', synthetic: false, sources: [] } as Project['input'] }
 function packet(version = 2): StrategyPacket {
@@ -45,6 +46,39 @@ beforeEach(() => {
   root = createRoot(window.document.getElementById('root')!)
 })
 afterEach(async () => { await act(async () => root.unmount()); vi.unstubAllGlobals(); vi.restoreAllMocks() })
+
+test('separates foreign-object legacy tasks from current object checks without changing stored IDs or locking material upload',async()=>{
+ const value=packet(),localProject={...project,input:{...project.input,scope:{...project.input.scope,name:'建工新村',city:'天津市'}}}
+ value.sources[0].object_binding={policy:'object-context-v1',project_id:project.id,city:'天津市',relation:'different_object',basis:'explicit_location_conflict',reason:'该资料记载杭州，当前项目登记为天津市。'}
+ value.sources[0].role='reference'
+ value.strategy!.next_checks=[{title:'居民户数核查',detail:'上传杭州4幢住宅、322户台账。',evidence_refs:['S1']}]
+ value.content_review={policy:'advisory-v1',status:'needs_review',checked_at:value.created_at,issues:[{code:'OBJECT_LOCATION_CONFLICT',path:'sources.S1',message:'对象地点冲突'}],follow_up:{search_queries:['天津市 建工新村 项目地址 工程范围'],reading_focus:[],internal_data:[]}}
+ const original=JSON.stringify(value),ids=buildProjectTasks(value).map(t=>t.id)
+ await render({project:localProject,packet:value,onEvidence:vi.fn(),onSupplement:vi.fn(),onUploadTask:vi.fn()})
+ expect(query('.project-task-object-notice').textContent).toContain('天津市')
+ expect(query('.project-task-featured').textContent).toContain('项目地址')
+ expect(query('.project-task-featured').textContent).not.toContain('322户')
+ expect(query('.project-task-object-review').textContent).toContain('旧报告调查 · 核对适用范围')
+ expect(query('.project-task-object-review').textContent).not.toContain('322户')
+ await act(async()=>query<HTMLButtonElement>('.project-task-object-review button[data-task-id]').click())
+ expect(query('[role=dialog]').textContent).toContain('旧报告原始要求 · 对象待核')
+ expect(query('[role=dialog]').textContent).toContain('322户')
+ expect(query('[role=dialog]').textContent).toContain('异地参考')
+ expect(query('[role=dialog]').textContent).toContain('该资料记载杭州')
+ expect(query('[role=dialog] input[type=file]')).not.toBeNull()
+ expect(buildProjectTasks(value).map(t=>t.id)).toEqual(ids);expect(JSON.stringify(value)).toBe(original)
+})
+
+test('carries foreign-object provenance through an internal task related package even without direct task refs',()=>{
+ const value=collectionPacket()
+ value.sources[0].object_binding={policy:'object-context-v1',project_id:project.id,city:'天津市',relation:'different_object',basis:'explicit_location_conflict',reason:'原楼栋属于杭州案例'}
+ value.sources[1].object_binding={...value.sources[0].object_binding}
+ const task=buildProjectTasks(value).find(task=>task.internal_data?.id==='LIFT')!
+ task.evidence_refs=['S2']
+ expect(taskObjectApplicability(value,task)).toMatchObject({state:'foreign_reference',reason:'原楼栋属于杭州案例'})
+ const projectTask=buildProjectTasks(value).find(task=>task.internal_data?.id==='WELLBEING')!
+ expect(taskObjectApplicability(value,projectTask).state).toBe('unflagged')
+})
 
 test('tasks merge exact API duplicates without changing original text or legacy progress indices', () => {
   const value = packet(), original = JSON.stringify(value)
