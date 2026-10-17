@@ -1,0 +1,101 @@
+{
+  "checked_at": "2026-10-17T12:16:52.174096+00:00",
+  "before_cached": false,
+  "result": {
+    "policy": "investigation-advice-v1",
+    "project_id": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+    "context_version": 0,
+    "strategy_hash": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961",
+    "strategy_created_at": "2026-10-16T14:28:46.073Z",
+    "input_hash": "advice:a26ab8e4c85c6c146310d8a59316b80080322c283086acdedbd2b7abde416db8",
+    "direction": null,
+    "created_at": "2026-10-17T12:16:52.065Z",
+    "duration_ms": 4966,
+    "reused": false,
+    "summary": "登记对象为天津市滨海新区大沽街道建工新村，而同名旧资料均指向杭州市西湖区文二路附近的建工新村（另涉日晖新村），两地为异地同名，旧资料的楼栋、户数、投资额与工期不可作为天津对象事实。最优先：向大沽街道与滨海新区住建部门核实建工新村的现用名称、四至边界与所属改造项目，同时保留有前提的六维暂估，两者并行。",
+    "steps": [
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E9%A1%B9%E7%9B%AE%E4%BD%8D%E7%BD%AE%E8%BE%B9%E7%95%8C%E5%8F%8A%E5%AF%B9%E5%BA%94%E8%B5%84%E6%96%99%E7%9A%84%E5%AF%B9%E8%B1%A1%E7%99%BB%E8%AE%B0",
+        "action": "调取内部登记底稿，逐字段核对建工新村的名称、四至、楼栋清单与所属项目编号，形成现行登记与地址差异的对照表。",
+        "material": "项目登记表、地址导出的原始字段（名称、四至边界、楼栋号、所属行政区与街道）、历史资料中记录的旧地址。",
+        "channel": "工作台内已登记的天津市滨海新区大沽街道建工新村项目原件；若登记字段为平台导入，则回到导入批次记录。",
+        "reason": "先确认现有登记地址本身的取值口径，避免把同名资料的地点直接套到天津对象，影响对象绑定与后续方案的调查范围。",
+        "completion_check": "对照表逐项标出名称、四至、楼栋清单哪些一致、哪些缺失、哪些存疑；行政区与街道保持原登记值，不做修订。",
+        "evidence_refs": [
+          "INTEL-61a63a010641:PUB-57a7477a91c59cfa",
+          "INTEL-1bac957606b6:PUB-d47d72ed48483453"
+        ],
+        "title": "补充内部资料"
+      },
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E5%A4%A9%E6%B4%A5%E5%B8%82%E5%BB%BA%E5%B7%A5%E6%96%B0%E6%9D%91%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E5%B7%A5%E7%A8%8B%E8%8C%83%E5%9B%B4",
+        "action": "在官方渠道检索“滨海新区 大沽街道 建工新村”，优先找能写出四至或相邻道路的条目，排除仅同名不含地名的页面。",
+        "material": "城建或住建部门发布的项目名单、社区公示、街道政务公开中的小区与楼栋清单、含四至描述的公开文本。",
+        "channel": "滨海新区、大沽街道政务公开栏目及相关公开名单；不使用杭州西湖区的同名招标页。",
+        "reason": "登记地址缺少边界原件，需要能佐证现用名称与范围的公开文本，才能把方案范围从假设改为可核对的对象。",
+        "completion_check": "每份命中资料须能明确写出地址或四至，并与登记值对照列出相同与冲突之处，无地址的仅登记为线索。",
+        "evidence_refs": [
+          "INTEL-218b8e52f563:PUB-82c312bf956e4603",
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6"
+        ],
+        "title": "继续公开检索"
+      },
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E6%A0%B8%E5%AF%B9%E5%90%8C%E5%90%8D%E8%B5%84%E6%96%99%E4%B8%AD%E7%9A%84%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E5%92%8C%E7%A0%94%E7%A9%B6%E8%8C%83%E5%9B%B4",
+        "action": "若找到编号与项目名一致但地址未见的文件，补读正文确认其实际地点与研究对象，再决定是否仅作异地经验参考。",
+        "material": "文件首页与项目信息栏、工程地点字段、范围说明条款、研究对象的行政区与街道记载。",
+        "channel": "文件发布单位的原文页面或附件，以及工作台已保存的快照原件。",
+        "reason": "同名资料多以编号和名称匹配，缺地址时易被误当作本对象事实，影响改造类别和居民范围判断。",
+        "completion_check": "在原文中定位地址字段并注明出处；凡指向其他城市者，只按经验与做法参考，不计入本对象的楼栋、户数与预算。",
+        "evidence_refs": [
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6",
+          "PUB-68388708cf4ae0d9",
+          "INTEL-5d50cffc79a1:PUB-dfbce596fb3115f1"
+        ],
+        "title": "补读关键原文"
+      }
+    ],
+    "source_count": 6,
+    "private_context_omitted": false,
+    "model_label": "DeepSeek-V4.1-Flash-1017",
+    "model_calls": [
+      {
+        "stage": "investigation_advice",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 6494,
+        "output_tokens": 738,
+        "usage_status": "reported",
+        "duration_ms": 4828,
+        "session_id": "b1fe7e58-e4d0-4217-b486-b04a74d1be06",
+        "cache_read_tokens": 1792,
+        "cache_write_tokens": 0
+      }
+    ]
+  },
+  "cache_read_reused": true,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "full_project_research_started": false,
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "9675c09726a2e6c61552b0aaaa3b44b8bd9631a4",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  }
+}

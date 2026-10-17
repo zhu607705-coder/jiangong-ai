@@ -6,7 +6,8 @@ import {readPublishedStrategy} from './strategy-publication'
 import {config} from './config'
 import {backgroundWork} from './background-work'
 import {investigationAdviceInput,type AdviceDirection,type InvestigationAdviceResult} from '../../packages/retrofit/investigation-advice'
-import {generateInvestigationAdvice} from '../../services/map-screening/investigation-advice'
+import {generateInvestigationAdvice,INVESTIGATION_ADVICE_INSTRUCTIONS} from '../../services/map-screening/investigation-advice'
+import {deepSeekModelDescriptor} from '../../runtime/dsh/deepseek-catalog'
 
 /** Reuse the existing owner/project/hash guidance cache and shared host work registry. */
 export async function registerProjectAdvice(app:Express,store:Store,requireProject:(id:string)=>Promise<ProjectRecord>,generate=generateInvestigationAdvice){
@@ -18,7 +19,7 @@ export async function registerProjectAdvice(app:Express,store:Store,requireProje
   const packet=await readPublishedStrategy(store,project,'',project.input.synthetic)
   if(!packet?.strategy)return null
   const input=investigationAdviceInput(project.input,project.context_version,packet,direction)
-  const hash='advice:'+createHash('sha256').update(JSON.stringify({input,model:config.DEEPSEEK_MODEL})).digest('hex')
+  const hash='advice:'+createHash('sha256').update(JSON.stringify({input,model:deepSeekModelDescriptor(config.DEEPSEEK_MODEL),instructions:INVESTIGATION_ADVICE_INSTRUCTIONS})).digest('hex')
   return {input,hash}
  }
  for(const method of ['get','post'] as const)app[method]('/api/projects/:id/investigation-advice',async(req,res,next)=>{

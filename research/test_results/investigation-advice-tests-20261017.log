@@ -8,6 +8,6 @@ stderr | tests/contracts/renewal-structured-request.test.ts > repairs captured t
 
  Test Files  5 passed (5)
       Tests  45 passed (45)
-   Start at  20:13:37
-   Duration  2.84s (transform 475ms, setup 0ms, import 1.70s, tests 495ms, environment 0ms)
+   Start at  20:17:52
+   Duration  2.72s (transform 441ms, setup 0ms, import 1.59s, tests 493ms, environment 0ms)
 
