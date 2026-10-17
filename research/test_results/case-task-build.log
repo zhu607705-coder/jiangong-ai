@@ -24,16 +24,16 @@ dist/assets/KnowledgeAgentReport-znkVSlVW.css        6.66 kB │ gzip:   1.44 kB
 dist/assets/KnowledgeWorkbench-B02dDSju.css          8.29 kB │ gzip:   1.82 kB
 dist/assets/KnowledgePipelinePanel-CbPY0HV6.css      8.81 kB │ gzip:   1.90 kB
 dist/assets/index-BVCHgTCg.css                     384.92 kB │ gzip:  59.28 kB
-dist/assets/index-DXDhWc7Y.js                        5.29 kB │ gzip:   1.79 kB
+dist/assets/index-LuFDABwm.js                        5.29 kB │ gzip:   1.79 kB
 dist/assets/correction-report-BUMXvzL5.js            7.30 kB │ gzip:   3.56 kB
-dist/assets/KnowledgeAgentReport-BBFlZxLK.js        10.51 kB │ gzip:   3.58 kB
-dist/assets/KnowledgeWorkbench-CX028XL1.js          17.56 kB │ gzip:   6.80 kB
-dist/assets/KnowledgePipelinePanel-D98TirxI.js      33.57 kB │ gzip:  10.66 kB
-dist/assets/index-DodfUF1e.js                    1,577.90 kB │ gzip: 444.15 kB
+dist/assets/KnowledgeAgentReport-LMtERfXl.js        10.51 kB │ gzip:   3.58 kB
+dist/assets/KnowledgeWorkbench-CZTW0leh.js          17.56 kB │ gzip:   6.80 kB
+dist/assets/KnowledgePipelinePanel-BJcQaXph.js      33.57 kB │ gzip:  10.66 kB
+dist/assets/index-UyV3sR4l.js                    1,578.11 kB │ gzip: 444.25 kB
 dist/assets/history-records-B99qh1CF.js          6,854.12 kB │ gzip: 584.74 kB
 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 5.17s
+✓ built in 5.32s
