@@ -1,0 +1,13 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/deepseek-search-1017
+
+stderr | tests/contracts/renewal-structured-request.test.ts > repairs captured tool JSON locally before requesting another model response
+{"event":"renewal_tool_json_format_repaired","stage":"renewal_research_expert_1_2_cost_value","session_id":"locally-repaired-child","edits":["escaped_inner_quotes"],"original_sha256":"fa47955eec157652e151bf889a47851e4893690fa01b83c726d08165eb73a901","native_failure_preserved":true}
+
+······················································
+
+ Test Files  4 passed (4)
+      Tests  54 passed (54)
+   Start at  18:53:36
+   Duration  5.17s (transform 423ms, setup 0ms, import 1.28s, tests 3.40s, environment 0ms)
+

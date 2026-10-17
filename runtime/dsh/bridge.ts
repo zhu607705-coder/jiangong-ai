@@ -15,6 +15,7 @@ import { OfflineAdapter } from './offline-adapter'
 import { roles, domainPersona, type RoleId } from '../roles'
 import type { CapabilityResult, ProjectInput } from '../../apps/host/generated/contracts'
 import { validate } from '../../packages/contracts/validate'
+import {DEEPSEEK_MODELS,canonicalDeepSeekModel} from './deepseek-catalog'
 
 export type BridgeOptions = {
   runId: string; sessionRoot: string; executionMode: 'offline' | 'live'; model: string;
@@ -41,7 +42,7 @@ export async function runSpecialists(options: BridgeOptions): Promise<Map<RoleId
     await ctx.plugin(Subagents, { maxDepth: 1 })
     await ctx.plugin(Spawn, { providerName: 'spawn' })
     if (options.executionMode === 'offline') ctx.llm.registerAdapter(['offline'], new OfflineAdapter())
-    else await ctx.plugin(DeepSeek, { apiKeyEnv: 'DEEPSEEK_API_KEY' })
+    else await ctx.plugin(DeepSeek, { apiKeyEnv: 'DEEPSEEK_API_KEY',models:DEEPSEEK_MODELS })
     // One bounded gate, on the existing DSH extension seam; no second agent loop.
     ctx.on('llm/stream', (request, next) => {
       if (++requests > 12 || options.signal.aborted) throw new Error('RUN_BUDGET_EXCEEDED')
@@ -60,7 +61,7 @@ export async function runSpecialists(options: BridgeOptions): Promise<Map<RoleId
         },
       }))
     }
-    const route = options.executionMode === 'offline' ? { provider: 'offline', model: 'engineering-tools-v1' } : { provider: 'deepseek-official', model: options.model }
+    const route = options.executionMode === 'offline' ? { provider: 'offline', model: 'engineering-tools-v1' } : { provider: 'deepseek-official', model: canonicalDeepSeekModel(options.model) }
     const parentId = SessionId(options.runId)
     const parentHandle = await ctx.sessionPersistence.stat(parentId)
       ? await ctx.agents.resume({ resumeSessionId: parentId })

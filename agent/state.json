@@ -4352,5 +4352,32 @@
       "research/test_results/context-compression-ui-deployment-20261017.json",
       "research/test_results/context-compression-deployed-replay-20261017.json"
     ]
+  },
+  "deepseek_search_model_1017": {
+    "status": "implemented_pending_deploy",
+    "updated_at": "2026-10-17T10:53:35.586945+00:00",
+    "request": [
+      "connect independent Search/Fetch following official docs",
+      "synchronize updated DSF model mapping"
+    ],
+    "worktree": "D:/建工ai/.cache/deepseek-search-1017",
+    "implemented": [
+      "original DSH Search/Fetch adapter retained and documented",
+      "concurrent/retry attempt budget and explicit exhaustion",
+      "Retry-After numeric/date and all transient5xx",
+      "persistent fallback provenance and safe Markdown404 original HTTP compatibility",
+      "1017 model catalog and canonical retired aliases in both original DSH paths",
+      "public safe readiness/session descriptor; real returned_model unchanged"
+    ],
+    "local_probe": {
+      "search_ms": 612,
+      "search_results": 3,
+      "reused_content": true,
+      "fetch_ms": 147,
+      "fetch_characters": 6402,
+      "dsh_calls": 1,
+      "real_project_runs": 0
+    },
+    "next_runnable_task": "Finish focused tests/build, deploy runtime and independently probe server Search/Fetch and DSH."
   }
 }

@@ -465,6 +465,24 @@
         "original sources, historical packets and permission lineage",
         "no additional model client or context runtime"
       ]
+    },
+    {
+      "id": "deepseek-search-model-1017",
+      "reuse": [
+        "runtime/dsh/deepseek-web-tools.ts standalone JSON adapter",
+        "runtime/dsh/public-web.ts existing DSH web seam",
+        "DeepSeek API-key plugin models configuration in live-session and bridge",
+        "original config and readiness/session routes"
+      ],
+      "new_domain_logic": [
+        "official1017 catalog descriptor and retired-alias normalization",
+        "retry/budget and fallback receipt corrections"
+      ],
+      "unchanged": [
+        "no new search client, scheduler or model content runtime",
+        "raw-source guards and original parser",
+        "per-task token budgets and actual returned_model values"
+      ]
     }
   ]
 }

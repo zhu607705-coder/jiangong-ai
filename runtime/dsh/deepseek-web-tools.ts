@@ -6,6 +6,11 @@ export type WebCallReceipt={id:string;operation:'search'|'fetch';provider:string
 type Legacy={search:(request:WebSearchRequest,signal?:AbortSignal)=>Promise<WebSearchResult>;fetch:(request:WebFetchRequest,signal?:AbortSignal)=>Promise<WebFetchResult>}
 export type FetchRepresentation=WebFetchResult&{representation?:SourceRepresentation;quality_warnings?:string[]}
 const digest=(text:string)=>createHash('sha256').update(text).digest('hex')
+export function deepSeekRetryDelay(value:string|null,attempt:number,now=Date.now()){
+  const seconds=value===null?NaN:Number(value),date=value===null?NaN:Date.parse(value)
+  const serverDelay=Number.isFinite(seconds)?seconds*1000:Number.isFinite(date)?date-now:0
+  return Math.min(60000,Math.max(350*2**(attempt-1),serverDelay))
+}
 const rateTails=new Map<string,Promise<void>>(),lastStart=new Map<string,number>(),domainTails=new Map<string,Promise<void>>()
 function waitFor(promise:Promise<void>,signal?:AbortSignal){return new Promise<void>((resolve,reject)=>{const abort=()=>reject(signal?.reason||new Error('ABORTED'));signal?.addEventListener('abort',abort,{once:true});promise.then(resolve,reject).finally(()=>signal?.removeEventListener('abort',abort));if(signal?.aborted)abort()})}
 function delay(ms:number,signal?:AbortSignal){return new Promise<void>((resolve,reject)=>{const done=()=>{signal?.removeEventListener('abort',abort);resolve()},timer=setTimeout(done,ms),abort=()=>{clearTimeout(timer);reject(signal?.reason||new Error('ABORTED'))};signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort()})}
@@ -20,18 +25,25 @@ export function compileSearchQueries(query:string):string[]{
 export class DeepSeekWebTools {
   readonly id='deepseek-tools';readonly receipts:WebCallReceipt[]=[]
   private contents=new Map<string,{title:string;content:string}>()
+  private searchRequests=0
   constructor(private settings:{key:()=>string;includeContent:boolean;maxSearchRequests:number;onReceipt?:(receipt:WebCallReceipt)=>Promise<void>},private legacy?:Legacy,private transport:typeof fetch=fetch){}
   available(){return !!this.settings.key()}
   private async record(value:WebCallReceipt){const index=this.receipts.findIndex(row=>row.id===value.id);if(index<0)this.receipts.push(value);else this.receipts[index]=value;await this.settings.onReceipt?.(value)}
+  private async recordFallback(operation:'search'|'fetch',body:unknown,fallback:string){
+    const hash=digest(JSON.stringify(body)),receipt=[...this.receipts].reverse().find(row=>row.operation===operation&&row.request_hash===hash)
+    if(receipt)await this.record({...receipt,fallback})
+  }
   private async request(operation:'search'|'fetch',body:unknown,signal?:AbortSignal):Promise<any>{
     const hash=digest(JSON.stringify(body)),key=this.settings.key();if(!key)throw new Error('DEEPSEEK_TOOLS_NOT_CONFIGURED')
     for(let attempt=1;attempt<=3;attempt++){
-      signal?.throwIfAborted();await rate(operation,signal);const started=Date.now(),receiptId=randomUUID();let status:number|null=null
+      signal?.throwIfAborted();await rate(operation,signal)
+      if(operation==='search'){if(this.searchRequests>=this.settings.maxSearchRequests)throw new Error('DEEPSEEK_TOOLS_SEARCH_BUDGET');this.searchRequests++}
+      const started=Date.now(),receiptId=randomUUID();let status:number|null=null
       await this.record({id:receiptId,operation,provider:this.id,request_hash:hash,status:null,outcome:'in_flight',billing_state:'unknown',duration_ms:0,attempt,result_count:0,estimated_cny:null})
       try{
         const response=await this.transport(`https://api.deepseek.com/v1/tools/${operation}`,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json','User-Agent':'haizhizi-research/0.3'},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)})
         status=response.status
-        if(!response.ok){await response.body?.cancel();await this.record({id:receiptId,operation,provider:this.id,request_hash:hash,status,outcome:'failed',billing_state:'expected_free',duration_ms:Date.now()-started,attempt,result_count:0,estimated_cny:0});if([408,429,500,502,503,504].includes(status)&&attempt<3){await delay(Math.min(15000,Math.max(Number(response.headers.get('Retry-After'))*1000||0,350*2**(attempt-1)+Math.floor(Math.random()*100))),signal);continue}throw new Error(`DEEPSEEK_TOOLS_HTTP_${status}`)}
+        if(!response.ok){await response.body?.cancel();await this.record({id:receiptId,operation,provider:this.id,request_hash:hash,status,outcome:'failed',billing_state:'expected_free',duration_ms:Date.now()-started,attempt,result_count:0,estimated_cny:0});if((status===408||status===429||status>=500&&status<=599)&&attempt<3){await delay(deepSeekRetryDelay(response.headers.get('Retry-After'),attempt),signal);continue}throw new Error(`DEEPSEEK_TOOLS_HTTP_${status}`)}
         const raw=await response.text();if(raw.length>2_000_000)throw new Error('DEEPSEEK_TOOLS_RESPONSE_TOO_LARGE')
         const data=JSON.parse(raw),count=operation==='search'?(Array.isArray(data.results)?data.results.length:0):typeof data.content==='string'&&data.content.trim()?1:0
         if(operation==='search'&&!Array.isArray(data.results)||operation==='fetch'&&typeof data.content!=='string')throw new Error('DEEPSEEK_TOOLS_SCHEMA')
@@ -42,13 +54,14 @@ export class DeepSeekWebTools {
   async search(request:WebSearchRequest,signal?:AbortSignal):Promise<WebSearchResult>{
     const sources:WebSearchResult['sources'][number][]=[],queries=compileSearchQueries(request.query)
     for(const query of queries){
-      if(this.receipts.filter(row=>row.operation==='search').length>=this.settings.maxSearchRequests)break
+      if(this.searchRequests>=this.settings.maxSearchRequests){if(sources.length)return {sources:sources.slice(0,request.maxResults||10),truncated:true};throw new Error('DEEPSEEK_TOOLS_SEARCH_BUDGET')}
+      const body={query,count:Math.max(1,Math.min(50,request.maxResults||10)),need_content:this.settings.includeContent,...([...request.query].length<=128?{ori_question:request.query}:{})}
       try{
-        const data=await this.request('search',{query,count:Math.max(1,Math.min(50,request.maxResults||10)),need_content:this.settings.includeContent,...([...request.query].length<=128?{ori_question:request.query}:{})},signal)
+        const data=await this.request('search',body,signal)
         for(const result of data.results){const url=safePublicUrl(result.url);if(!url||sources.some(row=>row.url===url))continue;if(typeof result.content==='string'&&result.content.trim())this.contents.set(url,{title:result.title||'',content:result.content});sources.push({url,title:String(result.title||''),snippet:String(result.snippet||''),...(result.date?{publishedAt:String(result.date)}:{})})}
       }catch(error){
         if(signal?.aborted)throw error
-        if(this.legacy&&!/HTTP_(?:400|401|402|403|413)/.test(String(error))){const result=await this.legacy.search({query,maxResults:request.maxResults},signal);sources.push(...result.sources);const receipt=this.receipts.at(-1);if(receipt)receipt.fallback='legacy-search'}else throw error
+        if(this.legacy&&!/HTTP_4\d\d|SEARCH_BUDGET/.test(String(error))){const result=await this.legacy.search({query,maxResults:request.maxResults},signal);sources.push(...result.sources);await this.recordFallback('search',body,'legacy-search')}else throw error
       }
     }
     return {sources:sources.slice(0,request.maxResults||10),truncated:sources.length>(request.maxResults||10)}
@@ -61,7 +74,7 @@ export class DeepSeekWebTools {
       if(/\.pdf(?:$|[?#])/i.test(url)&&this.legacy)return this.legacy.fetch(request,signal)
       const cached=this.settings.includeContent?this.contents.get(url):null
       let data:any
-      try{data=cached||await this.request('fetch',{url},signal)}catch(error){if(this.legacy&&!signal?.aborted&&!/HTTP_(?:403|404)/.test(String(error))){const original=await this.legacy.fetch(request,signal);return {...original,quality_warnings:['FETCH_API_UNAVAILABLE_ORIGINAL_HTTP']}}throw error}
+      try{data=cached||await this.request('fetch',{url},signal)}catch(error){if(this.legacy&&!signal?.aborted&&!/HTTP_403/.test(String(error))){const original=await this.legacy.fetch(request,signal);await this.recordFallback('fetch',{url},'original-http');return {...original,quality_warnings:['FETCH_API_UNAVAILABLE_ORIGINAL_HTTP']}}throw error}
       const raw=String(data.content||''),kind=cached?'search_content':'deepseek_markdown'
       if(!raw.trim())return {url,statusCode:404,body:{kind:'text',content:''},truncated:false}
       const warnings:string[]=[]
