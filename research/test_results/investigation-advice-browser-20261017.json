@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-17T12:21:18.017294+00:00",
+  "project_id": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+  "runtime_commit": "7e115f1e5e8fbaad2dc39e4fcfd4e754d18ab3c8",
+  "ui_commit": "9675c09726a2e6c61552b0aaaa3b44b8bd9631a4",
+  "summary_identifies_tianjin_hangzhou_conflict": true,
+  "step_tabs": 3,
+  "selected_step": "补充内部资料",
+  "exact_task_drawer_title": "补充内部资料",
+  "upload_controls_visible": true,
+  "model_request_on_reopen": false,
+  "screenshots": [
+    {
+      "path": "D:\\建工ai\\output\\playwright\\task-deepseek-advice\\advice-card.png",
+      "sha256": "8dcd16a729f0483b8e2a531174ae69631fcfe2cad30a62d709404842bfb59049"
+    },
+    {
+      "path": "D:\\建工ai\\output\\playwright\\task-deepseek-advice\\advice-task-link.png",
+      "sha256": "91db34ddd9af90de29b731aa61136e962a5188003003613c24be781409a3f2ee"
+    }
+  ]
+}
