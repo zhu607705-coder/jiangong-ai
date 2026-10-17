@@ -4184,5 +4184,36 @@
       "new_model_research_calls": 0,
       "screenshot": "output/playwright/context-contract/material-followups.png"
     }
+  },
+  "research_complete_20261017": {
+    "status": "in_progress",
+    "request": "一次完整落实Pro评审剩余三批改造，不在每个工单结束时停下",
+    "updated_at": "2026-10-17T04:37:49.759073+00:00",
+    "implemented": [
+      "shared background run registry and durable per-node leases/events/manifests/call receipts",
+      "native DSH expert checkpoints, public-only supplementation and affected-task replay",
+      "standalone Search/Fetch and content provider on ctx.web, cache/new/refresh separation",
+      "compound answer slots, money stages and source representation hashes",
+      "Decision typed batches, recorded ranking subset, evaluation/calibration helpers",
+      "conditional host report with six explicit scenario dimensions when synthesis unavailable",
+      "critical condition/negation/amount compression audit"
+    ],
+    "tests": [
+      "104 focused tests passed before final source-table and schema fixes",
+      "18 final source/schema/guidance tests passed",
+      "native DSH expert protocol completed: 3 actual model calls",
+      "native zero-source synthesis completed in 25306ms: six reasoning dimensions, five packages, no invented citations",
+      "frozen real public sources: 8/9 financial fields, every quote literal",
+      "Python 220 passed; production build passed",
+      "full initial run:1667 passed; all ten affected findings repaired (four provider error preservation, updated conditional delivery/condition UI, workflow compatibility and encoded-URL assertion)",
+      "browser map UI:36 checks + scan races + all eight geometry handoffs passed",
+      "Python e2e:16 passed; upstream unittest:45 passed"
+    ],
+    "pending": [
+      "complete full unit/browser regression",
+      "deployed runtime and UI readback, no project research triggered",
+      "merge and preserve unrelated root changes"
+    ],
+    "next_runnable_task": "Await release unit run, deploy committed runtime/UI, verify live data and merge."
   }
 }

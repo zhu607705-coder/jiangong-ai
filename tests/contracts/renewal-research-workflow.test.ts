@@ -82,7 +82,7 @@ describe('bounded native DSH renewal research workflow', () => {
       if (call.outputType === 'RenewalResearchPlan') return { summary: '按三类问题分工。', tasks: [task(1), task(2, 'cost_value'), task(3, 'residents_operations')] }
       const index = call.prompt.includes('"task-1"') ? 1 : call.prompt.includes('"task-2"') ? 2 : 3
       expect(call.profile?.role).toBe(['building_delivery', 'cost_value', 'residents_operations'][index - 1])
-      stages.add(call.stage); expect(call.allowedTools).toHaveLength(1)
+      stages.add(call.stage); expect(call.allowedTools).toHaveLength(2);expect(call.allowedTools[1]).toMatch(/^renewal_investigate_/)
       const result = await read(call, [`s${index}`]); expect(result.isError).toBe(false)
       const payload = JSON.parse(result.value as string)
       expect(payload.untrusted_sources).toHaveLength(1); expect(payload.untrusted_sources[0].id).toBe(`s${index}`)
@@ -236,7 +236,7 @@ describe('bounded native DSH renewal research workflow', () => {
     })
     const pending = runRenewalResearch(live, [source(1), source(2)], { projectName: '本小区', signal: controller.signal })
     await started.promise; controller.abort(new Error('fixture cancellation'))
-    await Promise.resolve(); expect(live.ctx.tools.schemas()).toHaveLength(2)
+    await Promise.resolve(); expect(live.ctx.tools.schemas()).toHaveLength(4)
     releaseSecond.resolve(); await expect(pending).rejects.toThrow('fixture cancellation')
     expect(completed).toBe(2); expect(live.ctx.tools.schemas()).toEqual([])
   })

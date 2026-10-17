@@ -9,12 +9,15 @@ import { STRATEGY_POLICY, reviewStrategyContent, strategyFailure, strategyPrompt
 import { ContractError, validate as validateContract } from '../../packages/contracts/validate'
 import { projectRenewalModeInput, evaluateRenewalModeGate, renewalCommunitySources } from '../../packages/retrofit/renewal-mode'
 import { renewalResearchRounds } from '../../packages/retrofit/renewal-research-plan'
-import { evaluateDecision,decisionRequestBody } from '../capabilities/decision-model'
+import { evaluateDecision,decisionRequestBody,withDecisionExecution } from '../capabilities/decision-model'
 import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 import { runRenewalResearch } from '../../runtime/workflows/renewal-research'
 import { loadRenewalAgentProfile } from '../../runtime/agents/renewal/profiles'
 import {captureCurrentAssessment} from '../../packages/retrofit/strategy-assessment'
 import {bindStrategySource,projectObjectLocation} from '../../packages/retrofit/object-binding'
+import {resolveAnswerSlots,DEFAULT_RESEARCH_QUESTIONS,costReferenceGroups,projectFinancialQuestion} from '../../packages/retrofit/research-coverage'
+import {conditionalReport} from '../../packages/retrofit/conditional-report'
+import {modelSchema} from '../../packages/contracts/validate'
 
 /** Small contiguous quote choices, using the same line/excerpt approach as the demo prompt. */
 function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:readonly string[]=[]) {
@@ -48,9 +51,11 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
   if (!config.modelConfigured) {
     const failure = strategyFailure(new Error('MODEL_NOT_CONFIGURED'), [])
     progress({ stage: 'result', status: 'failed', message: failure.error })
-    return { ...base, ...failure }
+    const fallbackSources=options.roundContext?.sources||project.sources.filter(source=>source.visibility==='public'&&source.untrusted_text).map(source=>bindStrategySource({id:source.id,title:source.title,text:source.untrusted_text!,url:source.url||null,published_at:source.published_at||null,locator:source.locator||'project:registered',role:'current'},project))
+    return conditionalReport(project,{...base,...failure,sources:fallbackSources},[],'当前模型未配置，先保留条件方案与资料补充路径')
   }
-  const started = Date.now(), budget = AbortSignal.any([signal, AbortSignal.timeout(600000)])
+  const execution=options.roundContext?.execution,deadlineAt=execution?.deadlineAt??Date.now()+900000
+  const started = Date.now(), budget = AbortSignal.any([signal, AbortSignal.timeout(Math.max(1,deadlineAt-Date.now()))])
   let live: LiveSession | undefined
   try {
     const round = options.roundContext
@@ -89,6 +94,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     base.sources = sources
     progress({ stage: 'sources', status: 'completed', message: `已读取 ${sources.length} 份对象依据，准备核对公开案例。`, source_count: sources.length })
     live = await LiveSession.open('MAP-AI-STRATEGY-' + randomUUID(), budget)
+    if(execution)live.attachExecution?.(execution)
     if(options.savedResearch) progress({stage:'research',status:'completed',message:'复用同资料版本已取得的公开来源与检索记录，本轮只重新生成方案。',source_count:sources.length,query_count:base.research?.queries.length||0})
     else if (!synthetic && config.searchConfigured) {
       const location=projectObjectLocation(project.scope)
@@ -103,10 +109,11 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
         }
         const fetched = new Set<string>()
         progress({ stage: 'research', status: 'running', message: `第 ${index + 1}/${rounds.length} 轮：${round.label}。`, query_count: base.research.queries.length, source_count: sources.length, round: index + 1, round_count: rounds.length })
-        const research = await live.runReadCapability(`renewal_public_research_${round.key}`, toolSignal => collectSelectedEvidence({ name, city: location.city || '', purpose: '老旧小区改造模式、综合整治与原拆原建比选', asOf: base.created_at, intelligencePolicy:{readExisting:true,rememberNew:true,checkFreshness:true} }, toolSignal, event => {
+        const acquire =()=> live!.runReadCapability(`renewal_public_research_${round.key}`, toolSignal => collectSelectedEvidence({ name, city: location.city || '', purpose: '老旧小区改造模式、综合整治与原拆原建比选', asOf: base.created_at,forceDiscovery:true,provider:execution?.provider,onWebCall:execution?receipt=>execution.recordWebCall(receipt):undefined,intelligencePolicy:{readExisting:true,rememberNew:true,checkFreshness:true} }, toolSignal, event => {
           if (event.stage === 'fetch' && event.status === 'completed' && event.source_id) fetched.add(event.source_id)
           progress({ stage: 'research', status: 'running', message: event.stage === 'fetch' ? `第 ${index + 1}/${rounds.length} 轮已取得 ${fetched.size} 份公开来源，继续核对正文。` : `第 ${index + 1}/${rounds.length} 轮正在检索并整理公开来源。`, source_count: sources.length + fetched.size, query_count: base.research!.queries.length, round: index + 1, round_count: rounds.length })
-        }, undefined, round.queries)).catch(error=>{
+        }, undefined, round.queries))
+        const research=await (execution?execution.run('acquire_evidence:'+round.key,{name,queries:round.queries,asOf:project.as_of,provider:execution.provider},acquire):acquire()).catch(error=>{
           budget.throwIfAborted()
           return {sources:[],trace:{status:'partial' as const,queries:round.queries,source_ids:[],warnings:['本轮公开检索未完成，保留主题供继续搜索与阅读。'],reused:false}}
         })
@@ -142,15 +149,18 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     }
     sources=sources.map(source=>bindStrategySource(source,project))
     base.sources = sources
+    if(execution){sources=await execution.run('freeze_sources',{project:project.project_id,hash,provider:execution.provider},async()=>sources);base.sources=sources;base.manifests=[await execution.manifest(sources,DEFAULT_RESEARCH_QUESTIONS.map(question=>question.id))]}
     if (!synthetic && config.searchConfigured && !options.savedResearch) progress({ stage: 'research', status: 'completed', message: `已整理 ${sources.length} 份对象依据与对标资料。`, source_count: sources.length, query_count: base.research?.queries.length || 0 })
     progress({ stage: 'model', status: 'running', message: '正在综合原文，提出更新取舍、投入阶段与财务及社会效果建议。', source_count: sources.length })
-    const promptSources = options.researchWorkflow?sources:strategyPromptSources(sources,workReferenceIds), gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
+    let promptSources = options.researchWorkflow?sources:strategyPromptSources(sources,workReferenceIds)
+    const gate = evaluateRenewalModeGate({ conditions: input.renewalMode!.conditions })
     const routingInput:DecisionInput=options.researchWorkflow?{...input,researchPlanning:true,state:{evidence:input.state,public_research_catalog:promptSources.filter(source=>source.visibility!=='internal'&&source.data_class!=='internal').map(source=>({id:source.id,title:source.title,role:source.role,preview:source.text.slice(0,220)}))}}:input
     const routingHash=createHash('sha256').update(JSON.stringify(decisionRequestBody(routingInput))).digest('hex')
     if (config.decisionEnabled&&(!base.decision||options.researchWorkflow&&base.decision.research_routing?.input_hash!==routingHash)) {
       try {
         progress({stage:'model',status:'running',message:'正在快速判断研究重点与各专题所需力度。'})
-        const fast=await live.runReadCapability('renewal_research_route',toolSignal=>evaluateDecision(routingInput,toolSignal))
+        const route=()=>live!.runReadCapability('renewal_research_route',toolSignal=>evaluateDecision(routingInput,toolSignal))
+        const fast=execution?await execution.run('route_research',{routingHash},()=>withDecisionExecution(execution,route)):await route()
         if(!base.decision||base.decision.status!=='completed')base.decision=fast
         else if(fast.research_routing)base.decision={...base.decision,research_routing:fast.research_routing}
       }
@@ -159,8 +169,26 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     let workflow:Awaited<ReturnType<typeof runRenewalResearch>>|null=null
     let researchDetailsUnavailable=false
     if(options.researchWorkflow) {
-      try {workflow=await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,deadlineAt:started+600000,decisionRoute:base.decision?.research_routing?.input_hash===routingHash?base.decision.research_routing:undefined,onProgress:event=>progress({stage:'model',status:'running',message:event.message,source_count:promptSources.length,workflow:event.workflow})})}
+      try {workflow=await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,deadlineAt,execution,privateContext:project.mode==='enterprise'&&project.context_rules.length>0,decisionRoute:base.decision?.research_routing?.input_hash===routingHash?base.decision.research_routing:undefined,onProgress:event=>progress({stage:'model',status:'running',message:event.message,source_count:promptSources.length,workflow:event.workflow})})}
       catch {budget.throwIfAborted();researchDetailsUnavailable=true;progress({stage:'model',status:'running',message:'专题记录本次未完成，改用已取得原文直接综合方案，并列出后续补查项。'})}
+    }
+    if(workflow){
+      base.investigation_requests=workflow.investigation_requests
+      const publicRequests=(workflow.investigation_requests||[]).filter(request=>request.visibility==='public')
+      const queries=[...new Set(publicRequests.flatMap(request=>request.suggested_queries))].slice(0,6).map(query=>`${projectObjectLocation(project.scope).city||''} ${project.scope.map_anchor?.name||project.scope.name} ${query}`)
+      if(!synthetic&&config.searchConfigured&&queries.length&&deadlineAt-Date.now()>180000){
+        progress({stage:'research',status:'running',message:`正在补查 ${publicRequests.length} 项具体缺项，保留已完成专家成果。`,source_count:sources.length})
+        const supplement=()=>collectSelectedEvidence({name:project.scope.name,city:projectObjectLocation(project.scope).city,purpose:'补查本对象尚未覆盖的问题',asOf:project.as_of,provider:execution?.provider,onWebCall:execution?receipt=>execution.recordWebCall(receipt):undefined,forceDiscovery:true,budget:{newEvidence:4,refresh:2}},budget,undefined,undefined,queries)
+        const more=await (execution?execution.run('supplement:1',{queries,manifest:base.manifests?.at(-1)?.id},supplement):supplement()).catch(()=>null)
+        const added=more?.sources.filter(source=>source.untrusted_text&&source.content_status!=='metadata_only'&&!sources.some(old=>old.id===source.id||old.url===source.url&&old.text===source.untrusted_text)).map(source=>bindStrategySource({id:source.id,title:source.title,text:source.untrusted_text!,url:source.url||null,published_at:source.published_at||null,role:'current',locator:source.locator||'public:excerpt'},project))||[]
+        if(added.length){
+          const oldIds=promptSources.map(source=>source.id),affected=new Set(publicRequests.map(request=>request.task_id));sources=[...sources,...added];promptSources=[...promptSources,...added];base.sources=sources
+          if(execution)base.manifests=[...(base.manifests||[]),await execution.manifest(sources,DEFAULT_RESEARCH_QUESTIONS.map(question=>question.id))]
+          const plan=workflow.plan?structuredClone(workflow.plan):undefined
+          for(const task of plan?.tasks||[])if(affected.has(task.id))task.source_ids=[...new Set([...task.source_ids,...added.map(source=>source.id)])].slice(-10)
+          workflow=await runRenewalResearch(live,promptSources,{projectName:project.scope.name,signal:budget,deadlineAt,execution,privateContext:project.mode==='enterprise'&&project.context_rules.length>0,reusePlan:plan,reusePlannerBackend:workflow.trace.planner_backend,planSourceIds:oldIds,onProgress:event=>progress({stage:'model',status:'running',message:event.message,workflow:event.workflow})})
+        }
+      }
     }
     if(workflow)base.workflow={...workflow.trace,notes:workflow.notes}
     const references=strategyModelReferences(promptSources),modelSources=references.sources
@@ -195,7 +223,7 @@ ${synthetic ? '本项目及所选文件中的居民样本、问卷、访谈和�
 历史公告已有实施对象不自动等于现年仍未建设，保留原时点和准备、草案、施工或验收阶段；若本轮有同对象后续完成记录，候选方案转为运行提升、维护或效果核实，已有设施不重复提出新建。没有后续记录时，当前完成状态保持待核。
 本阶段可以积极提出有依据的候选建设和服务措施；实施前提放在各分项preconditions，投资阶段仍按当前系统准入确定，条件未齐可保持preliminary并给出完整候选改造方案。原文只记载历史准备、征求意见或拟建时，按其原阶段解释。
 内部调查缺项单独填internal_data_requests。按会改变的决策优先列居民幸福度或满意度、分幢电梯利用率、食堂实际用餐人数等本项目确实缺少的数据，逐项说明采集方法、单位、时间窗口、样本分母和这项数据会怎样改变方案规模、顺序、服务配置或资金判断。已提供的问卷和台账先用于分析，再精确列仍缺的口径，不将这些采集任务代替工程和服务措施。`
-    const workPlanFields = `每条路径的work_packages填2至3项最重要分项，id在两条路径中唯一。逐项字段为：id,target,target_basis,source_id,quote,locator,intervention,scope,quantity,unit,quantity_basis,delivery,priority,preconditions,evidence_refs。target写具体幢/单元或设施；target_basis=object_source仅用于本对象current原文已登记对象，project_scope用于当前项目范围内的拟方案，scenario用于明确情景假设。source_id必须在evidence_refs中，locator逐字复制该source.locator，quote逐字复制同一来源内8至100字连续原句，含必要对象与数量限定。
+    const workPlanFields = `无可用原文时，rationale可空；work_packages中的source_id=null、quote为空、evidence_refs为空、locator=scenario:project-scope，target_basis用project_scope或scenario，并在preconditions写明假设，quantity_basis禁止用source。其余情况下每条路径的work_packages填2至3项最重要分项，id在两条路径中唯一。逐项字段为：id,target,target_basis,source_id,quote,locator,intervention,scope,quantity,unit,quantity_basis,delivery,priority,preconditions,evidence_refs。target写具体幢/单元或设施；target_basis=object_source仅用于本对象current原文已登记对象，project_scope用于当前项目范围内的拟方案，scenario用于明确情景假设。有来源的分项source_id必须在evidence_refs中，locator逐字复制该source.locator，quote逐字复制同一来源内8至100字连续原句，含必要对象与数量限定。
 quantity_basis=source只用于本对象current原文quote明确载明的数值和单位，quantity填相同数值；幢号、单元号与工程数量分别记录，例如“75幢1单元”是位置，不表示改造75幢。对标案例的量不作为本项目source数量。quantity_basis=scenario时在scope或preconditions明写假设及适用范围；未知数量用quantity=null、quantity_basis=unknown。unit只写计量单位，草案、估算等阶段保留在scope及quote。scope说明工程或服务边界，delivery说明改好后交付的设施或服务，priority用first/next/reserve。intervention约60字、scope/delivery各约40字；preconditions列1至2条具体实施前提。路径actions只作分项组合摘要，具体改法集中在work_packages。
 internal_data_requests至少分别覆盖resident_wellbeing、elevator_usage、meal_attendance三个key，各自记录id,key,metric,purpose,collection_method,unit,period,denominator,related_package_ids,evidence_refs。metric和purpose写要测什么与改变什么决策；单位、时间窗口和样本分母明确，已取得数据时精确写剩余核对口径或既有台账复核方法，不另造样本。resident_wellbeing分别定义居民幸福度自评与改造满意度题项、分值范围及有效答卷人数；业主同意率另作程序意愿指标，不能替代幸福度或满意度。elevator_usage分别记录乘梯次数、运行台数与有效运行日，说明是次/台/有效运行日还是服务住户覆盖口径。meal_attendance分别登记去重就餐人数（人）和用餐人次（人次），按餐次与日期统计并说明去重办法；活动参与人数不能当就餐人数，订餐与实际到餐也分别记录。related_package_ids只关联本次实际分项id，无直接对应则留空；每字段约20至45字。`
     const prompt = `你负责为“${synthetic && !round ? '杭州样本社区的完整模拟演示' : project.scope.name}”综合已保存原文和本轮公开资料，主动提出一组有取舍的项目候选决策。先判断本对象最值得解决的问题、两种更新路径的得失、钱应投向什么及由谁受益，再输出具体结论。Qwen结果是可参考的分流信息，你仍需独立解释本项目的证据和选择。
@@ -211,7 +239,7 @@ ${workPlanFields}
 当前工作台对construction投资建议采用以下系统准入：本对象有来源及定位支持的资金落实条件；综合整治另有结构可修复的有效条件，拆建采用完整拆建门。当前准入结果${JSON.stringify(constructionAdmission)}。通过后才建议进入对应工程实施；尚未通过时，仍提出具体的鉴定、设计、预算、居民协商或分项核实投入，明确投入对象与下一阶段触发条件。专业审批继续按原适用程序完成。
 ${historicalStages.join('')}本对象当前施工或验收状态采用后续明确记录确认；仅有上述历史准备或草案时，投资建议落在具体前期或分项核实，开工、招标和交付准备状态保持原文所载阶段。
 3. returns={financial,social,evidence_refs}：financial按政府/建设或运营主体/居民区分投入、补助、可实现现金收入及持续维护支出；social说明居民服务、工程条件、影响人群与实施代价。把已知局部金额、金额阶段和承担主体用起来，给出具体的价值判断；只有完整、同口径的收支数据才计算回报率，资产变化与现金收益分别解释。
-三部分每块evidence_refs至少一个，均引用本轮提供的source id。结论是本阶段供人比较和调整的建议；技术审批、资金承诺和施工准入由已登记条件约束，缺项写入对应路径的requirements和next_checks。
+三部分每块evidence_refs只用本轮真实source id；无原文时为空数组。结论是本阶段供人比较和调整的建议；技术审批、资金承诺和施工准入由已登记条件约束，缺项写入对应路径的requirements和next_checks。
 实施准入门：${gate.summary} ${JSON.stringify({rebuild_allowed:gate.rebuild_allowed,direction:gate.direction})}。preferred_mode在comprehensive/rebuild/compare中选择；仅rebuild_allowed=true可选rebuild，结构已明确不可修而拆建条件未齐时选compare。仍应在两条paths中提出可比较的方案和条件化目标。
 一次生成两套方向明确的研究成果，供使用者在首屏研判后选择。两路比较集中在decision_brief和rationale；每条path的title、description、actions、requirements只描述该方向，dimensions.comprehensive和dimensions.rebuild分别只写本方向的措施、目标及实现条件，便于按明确选择隔离展示。
 单路径字段直接写本方向的措施、效果与条件，不写另一模式名称，也不放另一模式的排除或比较句；跨路关系统一放decision_brief/rationale。综合整治字段不出现原拆原建、整体拆建、整体拆除重建，拆建字段不出现综合整治；各模式未来维度描述采用相同边界，原文引用与现况保持原貌。
@@ -232,7 +260,10 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
       const candidate=captureCurrentAssessment(references.restoreKnown(raw),base,promptSources)
       if(candidate&&(!base.current_assessment||candidate.dimensions.length>=base.current_assessment.dimensions.length)){base.current_assessment=candidate;progress({stage:'model',status:'running',message:`已独立保留 ${candidate.dimensions.length}/6 个维度分析，继续整理具体方案。`})}
     }
-    let response = await live.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined,presentation,synthesisProfile,{onStructured:retainAssessment})
+    base.lineage={source_ids:promptSources.map(source=>source.id),source_versions:Object.fromEntries(promptSources.map(source=>[source.id,createHash('sha256').update(source.text).digest('hex')])),contains_internal:project.mode==='enterprise'&&project.context_rules.length>0||promptSources.some(source=>source.visibility==='internal'||source.data_class==='internal'),authorized_view_hash:createHash('sha256').update(JSON.stringify(promptSources.map(source=>[source.id,source.visibility,source.data_class,source.document_version]))).digest('hex')}
+    const synthesize=()=>live!.call<RenewalStrategy>('renewal_strategy', prompt, 'RenewalStrategy', [], undefined,presentation,synthesisProfile,{onStructured:retainAssessment})
+    if(base.workflow){base.workflow.synthesis_prompt_chars=prompt.length+(synthesisProfile?.content.length||0);base.workflow.synthesis_schema_chars=JSON.stringify(modelSchema('RenewalStrategy',undefined,presentation)).length}
+    let response = execution?await execution.run('synthesize',{prompt,profile:synthesisProfile?.sha256,manifest:base.manifests?.at(-1)?.id},synthesize,{lineage:base.lineage}):await synthesize()
     retainAssessment(response.value)
     response={...response,value:projectStrategyOutput(response.value,round)}
     progress({ stage: 'model', status: 'completed', message: '已取得模型方案，正在整理待核项与后续取证指引。' })
@@ -243,6 +274,10 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     try { value=validateContract<RenewalStrategy>('RenewalStrategy',references.restoreKnown(response.value)) }
     catch(error) { if(error instanceof ContractError)throw new Error('LIVE_SCHEMA_FAILED:renewal_strategy',{cause:error});throw error }
     const content_review=reviewStrategyContent(value,promptSources,input.renewalMode!.conditions,{requireRoundReview:!!round,hasParent:!!round?.parent,requireReasoningDimensions:!!workflow,synthetic:synthetic&&!!round,projectName:project.scope.name})
+    for(const omitted of base.workflow?.compression_audit?.omitted||[]){
+      content_review.status='needs_review'
+      content_review.follow_up.reading_focus.push(`补读关键原文 ${omitted.source_id}：字符 ${omitted.start_char}—${omitted.end_char}，确认金额、否定条件及适用前提后更新方案。`)
+    }
     if(researchDetailsUnavailable) {
       content_review.status='needs_review'
       content_review.issues.push({code:'STRATEGY_RESEARCH_DETAILS_UNAVAILABLE',path:'workflow',message:'部分专题研究记录未完成，本方案由已有原文直接综合。'})
@@ -250,13 +285,19 @@ ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+J
     }
     progress({ stage: 'validation', status: 'completed', message: content_review.issues.length?`方案已保留，${content_review.issues.length}项内容列入待核清单，不阻断展示。`:'方案已整理完成。' })
     progress({ stage: 'result', status: 'completed', message: '整体更新方案已生成，正在保存本次结果。', source_count: sources.length })
-    return { ...base, status: 'completed', strategy:value, content_review, model_calls: [...live.calls] }
+    base.coverage=resolveAnswerSlots(projectFinancialQuestion(promptSources),promptSources)
+    base.cost_reference=execution?await execution.run('compute:cost_stages',{money:base.coverage.money},async()=>costReferenceGroups(base.coverage!.money)):costReferenceGroups(base.coverage.money)
+    return { ...base, status: 'completed', strategy:value, content_review, model_calls: [...live.calls],delivery:{run_status:'completed',evidence_status:!promptSources.length?'none':base.coverage.conflicting?'conflicting':base.coverage.supported===base.coverage.slots.length?'sufficient':'partial',report_status:content_review.issues.length||base.coverage.missing||base.coverage.conditional?'conditional':'ready',renderer:'dsh'} }
   } catch (error) {
     signal.throwIfAborted()
     const calls = [...(live?.calls || [])], failure = strategyFailure(error, calls, { stage, timedOut: budget.aborted })
     console.warn(JSON.stringify({ event: 'renewal_strategy_failed', project_id: project.project_id, context_version: version, input_hash: hash, diagnostic: failure.diagnostic,
-      source_count: base.sources.length, query_count: base.research?.queries.length || 0, model_calls: calls.length, model_duration_ms: calls.reduce((sum, call) => sum + call.duration_ms, 0) }))
+      source_count: base.sources.length, query_count: base.research?.queries.length || 0, model_calls: calls.length, model_duration_ms: calls.reduce((sum, call) => sum + call.duration_ms, 0),cause_type:error instanceof Error?error.name:'Error',location:error instanceof Error?error.stack?.split('\n').slice(1,3).join('\n'):undefined }))
     progress({ stage: live ? stage : 'result', status: 'failed', message: failure.error, source_count: base.sources.length })
-    return { ...base, status: 'failed', model_calls: calls, ...failure }
+    const saved=await execution?.completed('expert:').catch(()=>[])||[]
+    const notes=base.workflow?.notes||saved.map(row=>row.output.note).filter(Boolean)
+    const report=conditionalReport(project,{...base,model_calls:calls,diagnostic:failure.diagnostic},notes,failure.error)
+    progress({stage:'result',status:'completed',message:'已保存结构化条件方案、已有分析和后续资料请求。模型综合本次未完成，可基于已保存成果继续。',source_count:base.sources.length})
+    return report
   } finally { await live?.close() }
 }

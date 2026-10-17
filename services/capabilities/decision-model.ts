@@ -1,6 +1,11 @@
 import {NEIGHBORHOOD_DIMENSION_POLICY} from '../../packages/retrofit/policy'
 import { dashboardQuestions, parseDashboard } from '../../packages/decision/dashboard'
 import { completeProbabilityMap } from '../../packages/decision/probabilities'
+import {compatibleExpectedScore,validProbabilityMass} from '../../packages/decision/probabilities'
+import {AsyncLocalStorage} from 'node:async_hooks'
+import type {ResearchExecution} from '../../packages/retrofit/research-execution'
+const decisionExecution=new AsyncLocalStorage<ResearchExecution>()
+export function withDecisionExecution<T>(execution:ResearchExecution,run:()=>Promise<T>){return decisionExecution.run(execution,run)}
 import { createHash } from 'node:crypto'
 import { config } from '../../apps/host/config'
 import type { DecisionChoice, DecisionSupport, MapScreenProfile } from '../../apps/host/generated/contracts'
@@ -85,7 +90,7 @@ export async function evaluateDecision(input:DecisionInput, signal:AbortSignal, 
   if(!settings.apiKey || !settings.endpoint) return {...base,error_code:!settings.apiKey?'DECISION_KEY_MISSING':'DECISION_ENDPOINT_MISSING'}
   try {
     const groupedSettings=settings.timeoutMs===undefined&&(input.estimation||input.researchPlanning)?{...settings,timeoutMs:Math.max(config.QWEN_DECISION_TIMEOUT_MS,25000)}:settings
-    const raw=await requestDecisionQuestions(body.state,body.questions,signal,groupedSettings,transport)
+    const raw=await requestDecisionBatches(body.state,body.questions,signal,(state,questions,callSignal)=>requestDecisionQuestions(state,questions,callSignal,groupedSettings,transport))
     signal.throwIfAborted()
     const renewal=input.renewalMode
     const mode=renewal?modeAssessment(renewal,
@@ -119,6 +124,7 @@ export async function requestDecisionQuestions(state:unknown, questions:Record<s
   if(!settings.apiKey||!settings.endpoint)throw new Error('DECISION_NOT_CONFIGURED')
   if(settings.model!=='decision-model-preview')throw new Error('DECISION_MODEL_INVALID')
   if(Object.keys(questions).length<1||Object.keys(questions).length>16)throw new Error('DECISION_INPUT_LIMIT')
+  validateDecisionQuestions(questions)
   const body={model:settings.model,state,questions}
   const serialized=JSON.stringify(body)
   if(Buffer.byteLength(serialized)>160000) throw new Error('DECISION_INPUT_LIMIT')
@@ -131,6 +137,8 @@ export async function requestDecisionQuestions(state:unknown, questions:Record<s
   const requestSignal=AbortSignal.any([signal,deadline.signal])
   let response:Response|undefined
   let reader:ReadableStreamDefaultReader<Uint8Array>|undefined
+  const journal=decisionExecution.getStore(),receipt=await journal?.beginCall('decision','systemone',body)
+  let received:any
   const cancel=()=>{void (reader?reader.cancel():response?.body?.cancel())?.catch(()=>undefined)}
   requestSignal.addEventListener('abort',cancel,{once:true})
   const check=()=>{signal.throwIfAborted();if(deadline.signal.aborted)throw new Error('DECISION_TIMEOUT')}
@@ -142,6 +150,7 @@ export async function requestDecisionQuestions(state:unknown, questions:Record<s
     const parts:Uint8Array[]=[];let size=0
     while(true){const {done,value}=await reader.read();check();if(done)break;size+=value.length;if(size>100000)throw new Error('DECISION_RESPONSE_LIMIT');parts.push(value)}
     const raw=JSON.parse(Buffer.concat(parts).toString('utf8'))
+    received=raw
     if(raw?.model!==settings.model||typeof raw.request_id!=='string'||!raw.request_id||raw.request_id.length>200||!Number.isSafeInteger(raw.usage?.input_tokens)||raw.usage.input_tokens<0)throw new Error('DECISION_INVALID_RESPONSE')
     check();return normalizeDecisionProbabilities(raw,questions)
   } catch(error){
@@ -150,5 +159,39 @@ export async function requestDecisionQuestions(state:unknown, questions:Record<s
     throw error
   } finally {
     clearTimeout(timer);requestSignal.removeEventListener('abort',cancel);cancel()
+    if(receipt)await journal!.finishCall(receipt,received?{request_id:received.request_id,usage:received.usage,question_ids:Object.keys(questions)}:null,received?'received':response&&!response.ok?'failed':'unknown_outcome',received?'expected_charge':'unknown')
   }
+}
+
+export function validateDecisionQuestions(questions:Record<string,unknown>){
+  for(const [id,value] of Object.entries(questions)){
+    const question=value as {type?:string;criteria?:unknown;instructions?:unknown}
+    if(!id.trim()||!question||!['choice','noul','score'].includes(question.type||''))throw new Error('DECISION_QUESTION_INVALID')
+    if(question.type==='score'&&(!Array.isArray(question.criteria)||question.criteria.length<2||question.criteria.length>255||question.criteria.some(value=>typeof value!=='string'||!value.trim())))throw new Error('DECISION_CRITERIA_INVALID')
+    if(question.type==='choice'&&(!question.criteria||Array.isArray(question.criteria)||typeof question.criteria!=='object'||Object.keys(question.criteria).length<1||Object.keys(question.criteria).length>255||Object.values(question.criteria).some(value=>typeof value!=='string'||!value.trim())))throw new Error('DECISION_CRITERIA_INVALID')
+  }
+}
+export function validTypedDecisionAnswer(question:any,answer:any):boolean {
+  if(!answer||answer.type!==question.type)return false
+  if(question.type==='noul')return Number.isFinite(answer.noul)&&answer.noul>=0&&answer.noul<=1
+  const options=question.type==='score'?question.criteria.map((_:unknown,index:number)=>String(index)):Object.keys(question.criteria)
+  const probabilities=completeProbabilityMap(answer.probabilities,options)
+  if(!probabilities||!validProbabilityMass(Object.values(probabilities))||!Number.isFinite(answer.confidence)||answer.confidence<0||answer.confidence>1)return false
+  if(question.type==='choice')return options.includes(answer.choice)
+  return Number.isFinite(answer.score)&&answer.score>=0&&answer.score<=options.length-1&&compatibleExpectedScore(answer.score,options.map((key:string)=>probabilities[key]))&&(!answer.legend||options.every((key:string,index:number)=>answer.legend[key]===question.criteria[index]))
+}
+/** Ready, independent questions share a snapshot; partial batches never erase valid answers. */
+export async function requestDecisionBatches(state:unknown,questions:Record<string,unknown>,signal:AbortSignal,
+  model:(state:unknown,questions:Record<string,unknown>,signal:AbortSignal)=>Promise<any>=requestDecisionQuestions){
+  validateDecisionQuestions(questions)
+  const entries=Object.entries(questions),answers:Record<string,unknown>={},rawAnswers:Record<string,unknown>={},invalid:Record<string,string>={},batches:{question_ids:string[];request_id:string|null;status:string;input_tokens:number|null;latency_ms:number}[]=[]
+  let primary:any=null
+  const chunks=Array.from({length:Math.ceil(entries.length/16)},(_,index)=>Object.fromEntries(entries.slice(index*16,index*16+16)))
+  for(let start=0;start<chunks.length;start+=2)await Promise.all(chunks.slice(start,start+2).map(async batch=>{
+    const began=Date.now()
+    try{const raw=await model(state,batch,signal);primary??=raw;for(const [id,question] of Object.entries(batch)){if(raw?.answers?.[id]!==undefined)rawAnswers[id]=raw.answers[id];if(validTypedDecisionAnswer(question,raw?.answers?.[id]))answers[id]=raw.answers[id];else invalid[id]='INVALID_OR_MISSING_ANSWER'};batches.push({question_ids:Object.keys(batch),request_id:raw.request_id||null,status:'received',input_tokens:raw.usage?.input_tokens??null,latency_ms:Date.now()-began})}
+    catch(error){signal.throwIfAborted();for(const id of Object.keys(batch))invalid[id]=error instanceof Error&&/^DECISION_[A-Z_\d]+$/.test(error.message)?error.message:'BATCH_UNAVAILABLE';batches.push({question_ids:Object.keys(batch),request_id:null,status:'failed',input_tokens:null,latency_ms:Date.now()-began})}
+  }))
+  if(!batches.some(batch=>batch.status==='received'))throw new Error(Object.values(invalid)[0]||'DECISION_INVALID_RESPONSE')
+  return {...(primary||{model:'decision-model-preview',request_id:null}),answers,raw_answers:rawAnswers,invalid_answers:invalid,batches,usage:{input_tokens:batches.every(batch=>batch.input_tokens!==null)?batches.reduce((sum,batch)=>sum+(batch.input_tokens||0),0):null},calibration_status:'uncalibrated'}
 }

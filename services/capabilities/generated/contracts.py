@@ -48,6 +48,10 @@ class SourceId(RootModel[str]):
     root: str = Field(..., min_length=1)
 
 
+class QuestionId(RootModel[str]):
+    root: str = Field(..., min_length=1)
+
+
 class Task1(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -56,6 +60,7 @@ class Task1(BaseModel):
     role: Role
     question: str = Field(..., max_length=280, min_length=1)
     source_ids: list[SourceId] = Field(..., max_length=10, min_length=1)
+    question_ids: list[QuestionId] | None = Field(None, max_length=12)
 
 
 class RenewalResearchPlan(BaseModel):
@@ -122,6 +127,33 @@ class ReasonedProposal(BaseModel):
     parameters: list[Parameter] | None = Field(None, max_length=4)
 
 
+class MissingField(RootModel[str]):
+    root: str = Field(..., min_length=1)
+
+
+class SuggestedQuery(RootModel[str]):
+    root: str = Field(..., min_length=1)
+
+
+class DomainHint(RootModel[str]):
+    root: str = Field(..., min_length=1)
+
+
+class AffectedDecision(RootModel[str]):
+    root: str = Field(..., min_length=1)
+
+
+class InvestigationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    question_ids: list[QuestionId] = Field(..., max_length=6)
+    missing_fields: list[MissingField] = Field(..., max_length=6)
+    suggested_queries: list[SuggestedQuery] = Field(..., max_length=6)
+    domain_hints: list[DomainHint] = Field(..., max_length=6)
+    affected_decisions: list[AffectedDecision] = Field(..., max_length=6)
+
+
 class RenewalResearchNote(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -131,6 +163,9 @@ class RenewalResearchNote(BaseModel):
     observations: list[Observation] = Field(..., max_length=4)
     missing_data: list[MissingDatum] = Field(..., max_length=4)
     reasoned_proposals: list[ReasonedProposal] | None = Field(None, max_length=3)
+    investigation_requests: list[InvestigationRequest] | None = Field(
+        None, max_length=4
+    )
 
 
 class Key(StrEnum):
@@ -200,8 +235,8 @@ class RenewalWorkPackage(BaseModel):
     id: str = Field(..., max_length=80, min_length=1)
     target: str = Field(..., min_length=1)
     target_basis: TargetBasis
-    source_id: str = Field(..., min_length=1)
-    quote: str = Field(..., min_length=8)
+    source_id: SourceId | None
+    quote: str
     locator: str = Field(..., max_length=300, min_length=1)
     intervention: str = Field(..., min_length=1)
     scope: str = Field(..., min_length=1)
@@ -211,7 +246,7 @@ class RenewalWorkPackage(BaseModel):
     delivery: str = Field(..., min_length=1)
     priority: Priority
     preconditions: list[str] = Field(..., max_length=5)
-    evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
+    evidence_refs: list[str] = Field(..., max_length=8, min_length=0)
 
 
 class Key1(StrEnum):
@@ -843,6 +878,19 @@ class Status8(StrEnum):
     not_applicable = 'not_applicable'
 
 
+class Acquisition(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    provider: str = Field(..., min_length=1)
+    cached_sources: int = Field(..., ge=0)
+    new_sources: int = Field(..., ge=0)
+    refreshed_sources: int = Field(..., ge=0)
+    fetch_attempts: int = Field(..., ge=0)
+    new_evidence_budget: int = Field(..., ge=0)
+    refresh_budget: int = Field(..., ge=0)
+
+
 class ResearchTrace(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -852,6 +900,7 @@ class ResearchTrace(BaseModel):
     source_ids: list[str]
     warnings: list[str]
     reused: bool
+    acquisition: Acquisition | None = None
 
 
 class GeoPoint(BaseModel):
@@ -2242,7 +2291,7 @@ class Change(BaseModel):
     before: str = Field(..., min_length=1)
     after: str = Field(..., min_length=1)
     reason: str = Field(..., min_length=1)
-    evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
+    evidence_refs: list[str] = Field(..., max_length=8, min_length=0)
 
 
 class MissingMaterial(BaseModel):
@@ -2270,7 +2319,7 @@ class Renewal(BaseModel):
     )
     conclusion: str = Field(..., min_length=1)
     reason: str = Field(..., min_length=1)
-    evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
+    evidence_refs: list[str] = Field(..., max_length=8, min_length=0)
 
 
 class Stage(StrEnum):
@@ -2286,7 +2335,7 @@ class Investment(BaseModel):
     conclusion: str = Field(..., min_length=1)
     reason: str = Field(..., min_length=1)
     stage: Stage
-    evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
+    evidence_refs: list[str] = Field(..., max_length=8, min_length=0)
 
 
 class Returns(BaseModel):
@@ -2295,7 +2344,7 @@ class Returns(BaseModel):
     )
     financial: str = Field(..., min_length=1)
     social: str = Field(..., min_length=1)
-    evidence_refs: list[str] = Field(..., max_length=8, min_length=1)
+    evidence_refs: list[str] = Field(..., max_length=8, min_length=0)
 
 
 class DecisionBrief(BaseModel):
@@ -2511,6 +2560,15 @@ class InternalRequest(RootModel[str]):
     root: str = Field(..., max_length=200, min_length=1)
 
 
+class ReasonedGuidanceItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    conclusion: str = Field(..., min_length=1)
+    assumptions: list[Assumption1] = Field(..., max_length=4, min_length=1)
+    verification: str = Field(..., min_length=1)
+
+
 class RagAnswer(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -2519,6 +2577,31 @@ class RagAnswer(BaseModel):
     missing: list[MissingItem1] = Field(..., max_length=5)
     public_queries: list[PublicQuery] = Field(..., max_length=3)
     internal_requests: list[InternalRequest] = Field(..., max_length=4)
+    reasoned_guidance: list[ReasonedGuidanceItem] | None = Field(None, max_length=3)
+
+
+class Kind11(StrEnum):
+    raw_html = 'raw_html'
+    raw_text = 'raw_text'
+    deepseek_markdown = 'deepseek_markdown'
+    search_content = 'search_content'
+
+
+class OriginHash(RootModel[str]):
+    root: str = Field(..., min_length=1)
+
+
+class SourceRepresentation(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: str = Field(..., min_length=1)
+    kind: Kind11
+    sha256: str = Field(..., min_length=1)
+    origin_hash: OriginHash | None
+    extractor: str = Field(..., min_length=1)
+    received_at: str = Field(..., min_length=1)
+    offset_encoding: Literal['UTF-16']
 
 
 class MapScoreEstimates(BaseModel):
@@ -2587,6 +2670,9 @@ class Source(BaseModel):
         description='原始结构化记录快照，保留解析时的来源标识和原文哈希；读取时映射到当前来源命名空间。缺失表示未保留，空数组表示解析后无保留记录。',
         max_length=50,
     )
+    representations: list[SourceRepresentation] | None = None
+    representation_id: str | None = Field(None, min_length=1)
+    canonical_source_id: str | None = Field(None, min_length=1)
 
 
 class Scenario(BaseModel):

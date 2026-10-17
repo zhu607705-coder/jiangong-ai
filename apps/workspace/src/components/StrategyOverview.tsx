@@ -56,6 +56,8 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   const roundFlow=canWrite&&!demoActive
   const busy = activity !== null || roundMutation || materialBusy
   const controller = useRef<AbortController|null>(null), identity = `${project.id}:${project.context_version}:${demoActive}`
+  const activeRound=useRef<string|null>(null)
+  const observedRounds=useRef(new Set<string>())
   const selection=directionSelection===undefined?localSelection:directionSelection
   const path=selection?.identity===identity?selection.mode:null
   const visibleTab=path?tab:'direction'
@@ -139,6 +141,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       const created=await api<{round:ResearchRound}>(roundsEndpoint,input,abort.signal)
       if(abort.signal.aborted||currentIdentity.current!==key)return
       keepRound(created.round)
+      activeRound.current=created.round.id
       const response=await fetch(`/api${roundsEndpoint}/${encodeURIComponent(created.round.id)}/run`,{method:'POST',credentials:'same-origin',signal:abort.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:'{}'})
       if(!response.ok)throw new Error('ROUND_REQUEST_FAILED')
       let next:StrategyPacket|null=null
@@ -162,6 +165,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
     } catch {
       if(!abort.signal.aborted&&currentIdentity.current===key)setError('本轮补充研判未完成，首轮基线与已上传文件仍保留。可重新读取轮次后继续。')
     } finally {
+      activeRound.current=null
       if(!abort.signal.aborted&&currentIdentity.current===key){setActivity(null);void readRounds()}
     }
   }
@@ -196,6 +200,24 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
     finally{if(!abort.signal.aborted&&currentIdentity.current===key){setActivity(null);setRestoredIdentity(key)}}
   }
   useEffect(()=>{const readAbort=new AbortController();latestResult.current=null;setRestoredIdentity('');setResult(null);setReasoningResult(null);setTab(directionSelection?.identity===identity?'plan':'direction');setLocalSelection(null);setPhase('before');setSourceIds([]);setArchivedSources(null);setProgress([]);setRoundMutation(false);void research();if(roundFlow)void readRounds(readAbort.signal);return()=>{controller.current?.abort();readAbort.abort()}},[identity,canWrite])
+  const recoveringRound=rounds.rounds.find(round=>round.status==='running'&&round.context_version===project.context_version&&!!round.execution&&!round.execution.cancelled)
+  async function observeRound(round:ResearchRound,resume=false){
+    if(activeRound.current)return
+    const key=identity,abort=new AbortController();controller.current=abort;activeRound.current=round.id;setActivity('research');setStopped(false);setStartedAt(Date.now());setError('')
+    try{
+      if(resume)await api(`${roundsEndpoint}/${encodeURIComponent(round.id)}/resume`,{},abort.signal)
+      const response=await fetch(`/api${roundsEndpoint}/${encodeURIComponent(round.id)}/events`,{credentials:'same-origin',headers:{Accept:'application/x-ndjson'},signal:abort.signal})
+      if(!response.ok)throw new Error('ROUND_OBSERVER_UNAVAILABLE')
+      await consumeStream<ResearchRoundStreamEvent|{type:'heartbeat'}>(response,abort.signal,event=>{
+        if(abort.signal.aborted||currentIdentity.current!==key||event.type==='heartbeat')return
+        if(event.type==='progress')setProgress(values=>[...values,event])
+        else if(event.type==='complete'){keepRound(event.round);acceptResult(event.result,key)}
+        else{if(event.round)keepRound(event.round);setError(event.message)}
+      })
+    }catch{if(!abort.signal.aborted&&currentIdentity.current===key)setError('进度订阅暂时断开；任务继续执行，可重新读取本轮成果。')}
+    finally{if(currentIdentity.current===key){activeRound.current=null;if(!abort.signal.aborted){setActivity(null);void readRounds()}}}
+  }
+  useEffect(()=>{const key=identity+':'+recoveringRound?.id+':'+recoveringRound?.execution?.state;if(roundFlow&&recoveringRound&&!activity&&!stopped&&!activeRound.current&&!observedRounds.current.has(key)){observedRounds.current.add(key);void observeRound(recoveringRound)}},[identity,recoveringRound?.id,activity,stopped])
   useEffect(()=>{if(!materialRequest)return;setTab('direction');setIntakeVisible(true);const frame=requestAnimationFrame(()=>intakeAnchor.current?.scrollIntoView({block:'start',behavior:'smooth'}));return()=>cancelAnimationFrame(frame)},[materialRequest])
   useEffect(()=>{if(activity!=='research')return;const timer=setInterval(()=>setElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);return()=>clearInterval(timer)},[activity,startedAt])
   const resultMatches=!!result&&result.project_id===project.id&&result.context_version===project.context_version&&result.synthetic===(demoActive||project.input.synthetic)
@@ -225,7 +247,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
   const otherPublishedPlans = publishedPlans.filter(item => item.project_id !== project.id)
   const openSource=(refs:string[])=>{if(workspacePage){onEvidence(refs,result||undefined);return}setArchivedSources(null);setSourceIds(refs);const local=refs.filter(id=>project.input.sources.some(source=>source.id===id));if(local.length&&visibleTab==='assessment')onEvidence(local)}
   const openRoundEvidence=(refs:string[])=>{const packet=[...rounds.rounds].reverse().find(round=>round.result?.sources.some(source=>refs.includes(source.id)))?.result;if(workspacePage){onEvidence(refs,packet||undefined);return}setArchivedSources(packet?.sources||null);setSourceIds(refs)}
-  const stopResearch=()=>{controller.current?.abort();setActivity(null);setStopped(true)}
+  const stopResearch=()=>{const roundId=activeRound.current;controller.current?.abort();if(roundId)void api<{round:ResearchRound}>(`${roundsEndpoint}/${encodeURIComponent(roundId)}/cancel`,{}).then(value=>keepRound(value.round)).catch(()=>setError('停止请求未确认，请在运行记录中查看本轮状态。'));activeRound.current=null;setActivity(null);setStopped(true)}
   const progressPanel=(activity==='research'||progress.length>0||stopped)?<StrategyResearchProgress key={`${identity}:${startedAt}`} events={progress} elapsed={elapsed} onStop={stopResearch}/>:null
   function chooseDirection(mode:'comprehensive'|'rebuild'){setLocalSelection({identity,mode});onDirectionSelect?.(mode);setSourceIds([]);setPhase('before');if(!workspacePage)setTab('plan')}
   function openScheme(mode:'comprehensive'|'rebuild'){chooseDirection(mode);onNavigate?.({view:'scenarios',section:'detail',pane:'content',scheme:mode})}
@@ -251,7 +273,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       {activePage==='assessment'&&activeSection==='direction'&&<>
         {strategy&&<div className="strategy-working-status"><strong>当前工作方向：{path?MODE_LABELS[path]:'尚未选择'}</strong><span>资料基线 v{result?.context_version??project.context_version}</span></div>}
         {directionMain}
-        {roundFlow&&(!strategy||intakeVisible)&&<div ref={intakeAnchor}><ResearchRoundsPanel intakeOnly projectName={project.name} revision={project.context_version} synthetic={project.input.synthetic} rounds={rounds.rounds} materials={rounds.materials} candidate={rounds.baseline_candidate||(result?.status==='completed'&&result.strategy?result:null)} busy={busy} loading={roundState.key!==identity||roundState.loading} error={roundState.key===identity?roundState.error:''} sourceCounts={{public:project.input.sources.filter(source=>source.data_class==='public').length,internal:project.input.sources.filter(source=>source.data_class==='internal').length,synthetic:project.input.sources.filter(source=>source.synthetic).length}} onAdopt={async candidate=>{await adoptCandidate(candidate)}} onStart={startRound} onUpload={onUploadMaterial} onReadCurrent={()=>setIntakeVisible(false)} onEvidence={openRoundEvidence} onReload={()=>void readRounds()}/></div>}
+        {roundFlow&&(!strategy||intakeVisible)&&<div ref={intakeAnchor}><ResearchRoundsPanel onResume={round=>observeRound(round,true)} intakeOnly projectName={project.name} revision={project.context_version} synthetic={project.input.synthetic} rounds={rounds.rounds} materials={rounds.materials} candidate={rounds.baseline_candidate||(result?.status==='completed'&&result.strategy?result:null)} busy={busy} loading={roundState.key!==identity||roundState.loading} error={roundState.key===identity?roundState.error:''} sourceCounts={{public:project.input.sources.filter(source=>source.data_class==='public').length,internal:project.input.sources.filter(source=>source.data_class==='internal').length,synthetic:project.input.sources.filter(source=>source.synthetic).length}} onAdopt={async candidate=>{await adoptCandidate(candidate)}} onStart={startRound} onUpload={onUploadMaterial} onReadCurrent={()=>setIntakeVisible(false)} onEvidence={openRoundEvidence} onReload={()=>void readRounds()}/></div>}
         {result&&<details className="strategy-search-record"><summary>本次研判的资料基线与模型记录</summary><p>项目 {project.id} · 资料 v{result.context_version} · 方案 {result.input_hash}</p>{result.model_calls.map((call,index)=><p key={index}>{strategyStageLabel(call.stage)} · {call.returned_model||call.requested_model} · {strategyCallStatus(call.finish_reason)} · {(call.duration_ms/1000).toLocaleString('zh-CN')} 秒</p>)}</details>}
       </>}
       {activePage==='assessment'&&activeSection==='current'&&<StrategyCurrentAssessment key={`${identity}:${assessmentPacket?.input_hash||'pending'}`} result={assessmentPacket} contextVersion={project.context_version} dashboard={currentDashboard} demoActive={demoActive} descriptions={Object.entries(dimensions).map(([key,label])=>{const row=assessmentArtifact?.dimensions.find(item=>item.key===key),sim=demo.dimensions.find(item=>item.key===key);return {key,label,text:demoActive?sim?.before||'':row?.current||'需补充本对象资料；进入调查任务核对本维度所需的记录。',evidence_refs:row?.evidence_refs.filter(id=>assessmentPacket?.sources.some(source=>source.id===id))||(demoActive?['SIM-BASELINE']:[])}})} onEvidence={onEvidence} onSupplement={canWrite?()=>{setIntakeVisible(true);onNavigate?.({view:'assessment',section:'direction'})}:undefined} onReevaluate={canWrite&&!busy?()=>void research(true,false,'reevaluate'):undefined} onScheme={()=>onNavigate?.({view:'scenarios',section:'detail',...(workingMode?{scheme:workingMode}:{})})}/>}
@@ -264,7 +286,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
     <header className="strategy-top"><div><span>研判总览</span><h2>{visibleTab==='direction'?'改造方向判断':`${MODE_LABELS[path!]} · ${visibleTab==='plan'?'方案总览':visibleTab==='assessment'?'现况与改后评估':'社区运营推演'}`}</h2><p>{visibleTab==='direction'?'先补充项目资料，看 AI 分析和判断标准，再明确选择本次研究方向。':`当前研究方向：${MODE_LABELS[path!]} · ${project.name}`}</p></div>{visibleTab==='direction'?<button className="secondary" disabled={busy||!canWrite} title={!canWrite?'当前为公开成果浏览':undefined} onClick={()=>roundFlow?intakeAnchor.current?.scrollIntoView({block:'start',behavior:'smooth'}):void research(true,false)}><IconRefresh size={17}/>{roundFlow?'补充资料与分轮研判':canWrite&&!result?'开始研究':'重新检索与研判'}</button>:<button className="secondary" onClick={()=>{setSourceIds([]);setTab('direction')}}>返回方向判断</button>}</header>
     <nav className="strategy-subnav" aria-label="研判总览子页面">{([['direction','改造方向判断'],['plan','方案总览'],['assessment','现况与改后评估'],['operations','社区运营推演']] as const).map(([id,label])=><button key={id} disabled={id!=='direction'&&!path} aria-current={visibleTab===id?'page':undefined} onClick={()=>{setSourceIds([]);setTab(id)}}>{label}</button>)}</nav>
     {visibleTab==='direction'&&<section ref={summaryAnchor}>
-      {roundFlow?<div ref={intakeAnchor}><ResearchRoundsPanel projectName={project.name} revision={project.context_version} synthetic={project.input.synthetic} rounds={rounds.rounds} materials={rounds.materials} candidate={rounds.baseline_candidate||(result?.status==='completed'&&result.strategy?result:null)} busy={busy} loading={roundState.key!==identity||roundState.loading} error={roundState.key===identity?roundState.error:''} sourceCounts={{public:project.input.sources.filter(source=>source.data_class==='public').length,internal:project.input.sources.filter(source=>source.data_class==='internal').length,synthetic:project.input.sources.filter(source=>source.synthetic).length}} onAdopt={async candidate=>{await adoptCandidate(candidate)}} onStart={startRound} onUpload={onUploadMaterial} onReadCurrent={()=>(strategy?briefAnchor.current:intakeAnchor.current?.querySelector('.research-rounds'))?.scrollIntoView({block:'start',behavior:'smooth'})} onEvidence={openRoundEvidence} onReload={()=>void readRounds()}>{directionMain}</ResearchRoundsPanel></div>:directionMain}
+      {roundFlow?<div ref={intakeAnchor}><ResearchRoundsPanel onResume={round=>observeRound(round,true)} projectName={project.name} revision={project.context_version} synthetic={project.input.synthetic} rounds={rounds.rounds} materials={rounds.materials} candidate={rounds.baseline_candidate||(result?.status==='completed'&&result.strategy?result:null)} busy={busy} loading={roundState.key!==identity||roundState.loading} error={roundState.key===identity?roundState.error:''} sourceCounts={{public:project.input.sources.filter(source=>source.data_class==='public').length,internal:project.input.sources.filter(source=>source.data_class==='internal').length,synthetic:project.input.sources.filter(source=>source.synthetic).length}} onAdopt={async candidate=>{await adoptCandidate(candidate)}} onStart={startRound} onUpload={onUploadMaterial} onReadCurrent={()=>(strategy?briefAnchor.current:intakeAnchor.current?.querySelector('.research-rounds'))?.scrollIntoView({block:'start',behavior:'smooth'})} onEvidence={openRoundEvidence} onReload={()=>void readRounds()}>{directionMain}</ResearchRoundsPanel></div>:directionMain}
       <details className="strategy-research-summary" open={!strategy||demoActive}><summary>完整研究摘要与模型记录</summary>
       <article className={`strategy-summary${failed&&!busy?' is-failed':''}`}><div className="strategy-model-label">{strategy?(error?'上次已保存的整体更新方案':'已保存的整体更新方案'):busy?'方案研究 · 进行中':failed?'方案研究 · 生成失败':unavailable?'方案研究 · 暂不可生成':'方案研究 · 尚未生成'}{demoActive?' · 模拟':''}</div><h3>{heading}</h3><p>{guardedRebuild?modeGate.summary:leadSummary||(failureMessage&&!busy?'本轮尚未形成完整的方案总览，可继续查看项目原文、已取得资料和历史记录。':'先比较保留建筑的综合整治与原拆原建，再核对结构、规划、居民、资金和安置条件。')}</p>{!guardedRebuild&&restSummary&&<details className="strategy-summary-more"><summary>展开现况与完整说明</summary><p>{restSummary}</p></details>}
         {strategy&&<div className="strategy-direction-label">{demoActive?`模拟研究方向：${MODE_LABELS[strategy.preferred_mode]}`:`当前工作方向：${path?MODE_LABELS[path]:'尚未选择'}`}</div>}

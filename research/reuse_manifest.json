@@ -401,6 +401,30 @@
         "apps/workspace/src/components/strategy-direction-text.ts -> packages/retrofit/direction-text.ts"
       ],
       "scope": "Six project-page choices and stable-ID priority ordering; existing DSH, Store and authenticated API retained."
+    },
+    {
+      "id": "research-complete-20261017",
+      "reuse": [
+        "apps/host/server.ts:existing background controllers, now background-work.ts",
+        "apps/host/store.ts:single PGlite owner and short transactions",
+        "runtime/dsh/live-session.ts:existing native subagents, tools and streaming",
+        "runtime/dsh/public-web.ts:ctx.web provider seam and existing HTTP/search fallback",
+        "services/capabilities/research.ts:existing public source parser and source guards",
+        "packages/experience/hybrid-retrieval.ts:existing recall, rerank and quote validation",
+        "services/capabilities/decision-model.ts:existing System One transport"
+      ],
+      "new_domain_logic": [
+        "durable node receipts, fenced leases and immutable manifests",
+        "question-level answer slots and bounded host supplementation",
+        "Search/Fetch provider adapter using official raw JSON endpoints",
+        "typed <=16 batching, lineage-safe public notes and ordinal rubric metadata",
+        "literal compression audit and independent-label evaluation helpers"
+      ],
+      "unchanged": [
+        "DSH remains sole model content runtime",
+        "no new scheduler, parser framework or second database owner",
+        "original materials and old reports retained"
+      ]
     }
   ]
 }

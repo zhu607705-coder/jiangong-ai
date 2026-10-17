@@ -37,6 +37,19 @@ export function buildProjectTasks(packet: StrategyPacket | null, direction?: Str
     const id = `${packet.input_hash}:missing:${encodeURIComponent(`${normalize(item.topic)}:${normalize(item.request)}`)}`
     insert({ id, title, request, reason: visible(item.reason), evidence_refs: [...item.evidence_refs], kinds: ['missing_material'], progress_keys: [id] })
   }
+  const followUp=packet.content_review?.follow_up
+  const pending=[
+    ...(followUp?.search_queries||[]).map(request=>({title:'继续公开检索',request,reason:'补充本轮待核结论的现实来源。'})),
+    ...(followUp?.reading_focus||[]).map(request=>({title:'补读关键原文',request,reason:'核实引用、条件和压缩时未保留的关键片段。'})),
+    ...(followUp?.internal_data||[]).map(request=>({title:'补充内部资料',request,reason:'取得网络难以获得的项目台账或调查。'})),
+    ...(packet.investigation_requests||[]).map(item=>({title:item.visibility==='internal'?'补充内部调查':'补查专题缺项',request:item.suggested_queries.join('；')||item.missing_fields.join('；'),reason:item.affected_decisions.join('；')})),
+    ...(packet.coverage?.requests||[]).map(item=>({title:'补齐费用口径',request:item.suggested_queries.join('；'),reason:item.affected_decisions.join('；')})),
+  ]
+  for(const item of pending){
+    const request=visible(item.request);if(!request)continue
+    const id=`${packet.input_hash}:followup:${encodeURIComponent(normalize(request))}`
+    insert({id,title:item.title,request,reason:visible(item.reason),evidence_refs:[],kinds:['missing_material'],progress_keys:[id]})
+  }
   const packages = packet.strategy.paths.flatMap(path => (path.work_packages || []).map(item => ({ mode: path.mode, item })))
   for (const item of packet.strategy.internal_data_requests || []) {
     const related = packages.filter(row => item.related_package_ids.includes(row.item.id))

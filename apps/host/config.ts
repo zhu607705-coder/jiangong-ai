@@ -19,6 +19,7 @@ const env = z.object({
   COLLABORATIVE_WORKSPACE: z.enum(['true', 'false']).default('false'),
   DATA_DIR: z.string().default('data/local'), DATABASE_URL: z.string().optional(),
   DEEPSEEK_MODEL: z.string().default('deepseek-flash'),
+  RESEARCH_WEB_PROVIDER:z.enum(['legacy','deepseek_tools','deepseek_content']).default('deepseek_content'),
   QWEN_DECISION_ENABLED: z.enum(['true', 'false']).default('false'),
   QWEN_DECISION_MODEL: z.literal('decision-model-preview').default('decision-model-preview'),
   QWEN_DECISION_ENDPOINT: z.string().default(''),

@@ -1,0 +1,390 @@
+{
+  "checked_at": "2026-10-17T04:16:41.974Z",
+  "scope": "Fixed public queries, same acquisition budget, no project database or model judgement labels. Small protocol/coverage experiment, not non-inferiority evidence.",
+  "model_token_cost": "not included; legacy search uses model turns and may have unknown token fees",
+  "results": [
+    {
+      "provider": "legacy",
+      "case_id": "hz-jianggong",
+      "status": "completed",
+      "elapsed_ms": 9609,
+      "queries": [
+        "杭州 建工新村 机电配套 交易公告",
+        "杭州 建工新村 雨棚 改造 交易公告",
+        "杭州 建工新村 消防通道 改造 成交公告"
+      ],
+      "source_count": 4,
+      "paragraph_characters": 3812,
+      "table_like_sources": 0,
+      "reference_field_coverage": {
+        "slots": 9,
+        "covered": 0,
+        "conflicting": 0
+      },
+      "sources": [
+        {
+          "id": "PUB-68388708cf4ae0d9",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_ec8f87e7f83b44d1896bbacb84a85b7f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程交易公告 - 小额项目招投标",
+          "version": "c7fcb46b010546e214d59ffd969b38489b13e6226d62af6a8e8e3a18d5bd3329",
+          "representation_id": "REP-c7fcb46b010546e214d59ffd969b38489b13e6226d62af6a8e8e3a18d5bd3329",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-c291a805fb8420a6",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_99b222b75e054f36aa19f5d377cdf6f5.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程成交公示",
+          "version": "de9d8882e9782308199006cbcf2f4bcf95243ca7e4cd40ecc19e1bc056ba179a",
+          "representation_id": "REP-de9d8882e9782308199006cbcf2f4bcf95243ca7e4cd40ecc19e1bc056ba179a",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-acf64a65d22febf6",
+          "url": "https://www.hzxh.gov.cn/art/2024/11/8/art_1229556853_59042544.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目（一期）交易公告",
+          "version": "a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_id": "REP-a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-dfbce596fb3115f1",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_d202d49580994e47b15ae8b88715631f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目消防通道提升改造工程成交公示",
+          "version": "6cc6032fb69db32d19dc775eadfc56c35f3db873dd357e78dd5b9bb164ce989d",
+          "representation_id": "REP-6cc6032fb69db32d19dc775eadfc56c35f3db873dd357e78dd5b9bb164ce989d",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        }
+      ],
+      "call_latency": {
+        "n": 0,
+        "p50_ms": null,
+        "p95_ms": null
+      },
+      "known_expected_tool_cost_cny": 0,
+      "unknown_charge_calls": 0,
+      "calls": [],
+      "warnings": [
+        "SOURCE_BODY_TRUNCATED:PUB-c291a805fb8420a6",
+        "SOURCE_BODY_TRUNCATED:PUB-68388708cf4ae0d9",
+        "SOURCE_BODY_TRUNCATED:PUB-dfbce596fb3115f1",
+        "SOURCE_BODY_TRUNCATED:PUB-acf64a65d22febf6"
+      ]
+    },
+    {
+      "provider": "deepseek_tools",
+      "case_id": "hz-jianggong",
+      "status": "completed",
+      "elapsed_ms": 82719,
+      "queries": [
+        "杭州 建工新村 机电配套 交易公告",
+        "杭州 建工新村 雨棚 改造 交易公告",
+        "杭州 建工新村 消防通道 改造 成交公告"
+      ],
+      "source_count": 4,
+      "paragraph_characters": 5144,
+      "table_like_sources": 1,
+      "reference_field_coverage": {
+        "slots": 9,
+        "covered": 0,
+        "conflicting": 0
+      },
+      "sources": [
+        {
+          "id": "PUB-acf64a65d22febf6",
+          "url": "https://www.hzxh.gov.cn/art/2024/11/8/art_1229556853_59042544.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目（一期）交易公告",
+          "version": "a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_id": "REP-a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-68388708cf4ae0d9",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_ec8f87e7f83b44d1896bbacb84a85b7f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程交易公告 - 小额项目招投标",
+          "version": "e59aa04fa23f369070c3c1e7272baf3dd0e9800bf6fa2c98026679f4e2616c44",
+          "representation_id": "REP-e59aa04fa23f369070c3c1e7272baf3dd0e9800bf6fa2c98026679f4e2616c44",
+          "representation_kinds": [
+            "deepseek_markdown"
+          ],
+          "date_status": "search_only"
+        },
+        {
+          "id": "PUB-c291a805fb8420a6",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_99b222b75e054f36aa19f5d377cdf6f5.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程成交公示",
+          "version": "de9d8882e9782308199006cbcf2f4bcf95243ca7e4cd40ecc19e1bc056ba179a",
+          "representation_id": "REP-de9d8882e9782308199006cbcf2f4bcf95243ca7e4cd40ecc19e1bc056ba179a",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-dfbce596fb3115f1",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_d202d49580994e47b15ae8b88715631f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目消防通道提升改造工程成交公示",
+          "version": "6cc6032fb69db32d19dc775eadfc56c35f3db873dd357e78dd5b9bb164ce989d",
+          "representation_id": "REP-6cc6032fb69db32d19dc775eadfc56c35f3db873dd357e78dd5b9bb164ce989d",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        }
+      ],
+      "call_latency": {
+        "n": 7,
+        "p50_ms": 6137,
+        "p95_ms": 25016
+      },
+      "known_expected_tool_cost_cny": 0.02,
+      "unknown_charge_calls": 3,
+      "calls": [
+        {
+          "id": "81745e8c-27f0-44ce-a126-b0ae8b718499",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "fea1c13d870875c3c8eb9b0e65c99f48637f1e2ca9420d19e22e8f8ce7f2209e",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 311,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "16fd624b-1c93-4127-9d94-c40062221822",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "f777d8f58b262ab2805364639671d22e5a1bcb1067f004c07b9373bfa9f02a10",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 327,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "9c7f6c07-4753-4c12-9137-7672f673c3d4",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "173f47456e85f2710a7cb52fbb6d4bf274b93ffa9d922b0e5cbdddc095aeebf4",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 299,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "8d87ff73-17a9-4ed3-9f47-e9d5657d076c",
+          "operation": "fetch",
+          "provider": "deepseek-tools",
+          "request_hash": "d4a352ad701abae42b3846aebc588186d89601856cfc94c3df21e47da85d5379",
+          "status": null,
+          "outcome": "unknown_outcome",
+          "billing_state": "unknown",
+          "duration_ms": 25009,
+          "attempt": 1,
+          "result_count": 0,
+          "estimated_cny": null
+        },
+        {
+          "id": "bb52745c-ffac-40fe-a95a-42cce7362f6a",
+          "operation": "fetch",
+          "provider": "deepseek-tools",
+          "request_hash": "f9c8055641aac30386a50ac0e71f1ab1d7b4afc32bca762bb4d165c5517319a9",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 6137,
+          "attempt": 1,
+          "result_count": 1,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "c2799d13-6255-4c51-9c1b-8a19ac88968e",
+          "operation": "fetch",
+          "provider": "deepseek-tools",
+          "request_hash": "6379742e182f0ed32ad1f02da7e64167b423a4b372c8e9a48294362da987ddab",
+          "status": null,
+          "outcome": "unknown_outcome",
+          "billing_state": "unknown",
+          "duration_ms": 25001,
+          "attempt": 1,
+          "result_count": 0,
+          "estimated_cny": null
+        },
+        {
+          "id": "f8f74750-f551-4955-8c73-cfe2714527d6",
+          "operation": "fetch",
+          "provider": "deepseek-tools",
+          "request_hash": "0bb18c60d2605ea6dea57acc1f0b934d655e9321c17de9661455c5fa600e4fde",
+          "status": null,
+          "outcome": "unknown_outcome",
+          "billing_state": "unknown",
+          "duration_ms": 25016,
+          "attempt": 1,
+          "result_count": 0,
+          "estimated_cny": null
+        }
+      ],
+      "warnings": [
+        "SOURCE_BODY_TRUNCATED:PUB-acf64a65d22febf6",
+        "SOURCE_DATE_CONFLICT:PUB-acf64a65d22febf6",
+        "FETCH_API_UNAVAILABLE_ORIGINAL_HTTP:PUB-acf64a65d22febf6",
+        "SOURCE_BODY_TRUNCATED:PUB-c291a805fb8420a6",
+        "SOURCE_DATE_CONFLICT:PUB-c291a805fb8420a6",
+        "FETCH_API_UNAVAILABLE_ORIGINAL_HTTP:PUB-c291a805fb8420a6",
+        "SOURCE_BODY_TRUNCATED:PUB-dfbce596fb3115f1",
+        "FETCH_API_UNAVAILABLE_ORIGINAL_HTTP:PUB-dfbce596fb3115f1"
+      ]
+    },
+    {
+      "provider": "deepseek_content",
+      "case_id": "hz-jianggong",
+      "status": "completed",
+      "elapsed_ms": 1103,
+      "queries": [
+        "杭州 建工新村 机电配套 交易公告",
+        "杭州 建工新村 雨棚 改造 交易公告",
+        "杭州 建工新村 消防通道 改造 成交公告"
+      ],
+      "source_count": 4,
+      "paragraph_characters": 5653,
+      "table_like_sources": 3,
+      "reference_field_coverage": {
+        "slots": 9,
+        "covered": 0,
+        "conflicting": 0
+      },
+      "sources": [
+        {
+          "id": "PUB-acf64a65d22febf6",
+          "url": "https://www.hzxh.gov.cn/art/2024/11/8/art_1229556853_59042544.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目（一期）交易公告",
+          "version": "a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_id": "REP-a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-68388708cf4ae0d9",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_ec8f87e7f83b44d1896bbacb84a85b7f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程交易公告 - 小额项目招投标",
+          "version": "5fb4c946e5e0fa587f1481b0c35c2a8b86692be298a12a8baa063b3d026571d2",
+          "representation_id": "REP-5fb4c946e5e0fa587f1481b0c35c2a8b86692be298a12a8baa063b3d026571d2",
+          "representation_kinds": [
+            "search_content"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-c291a805fb8420a6",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_99b222b75e054f36aa19f5d377cdf6f5.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程成交公示",
+          "version": "f3d6d024223778807b8188118d8dabcab00e27cd47bba0cfbeb5b96a472829ca",
+          "representation_id": "REP-f3d6d024223778807b8188118d8dabcab00e27cd47bba0cfbeb5b96a472829ca",
+          "representation_kinds": [
+            "search_content"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-dfbce596fb3115f1",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_d202d49580994e47b15ae8b88715631f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目消防通道提升改造工程成交公示",
+          "version": "04dc2c1d50eb340338925bd009033257fffcd0b058887c74826c6d9b3276c338",
+          "representation_id": "REP-04dc2c1d50eb340338925bd009033257fffcd0b058887c74826c6d9b3276c338",
+          "representation_kinds": [
+            "search_content"
+          ],
+          "date_status": "verified"
+        }
+      ],
+      "call_latency": {
+        "n": 3,
+        "p50_ms": 321,
+        "p95_ms": 338
+      },
+      "known_expected_tool_cost_cny": 0.015,
+      "unknown_charge_calls": 0,
+      "calls": [
+        {
+          "id": "106f87f6-ff4f-48de-86eb-1ccaa5d61133",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "f4c1686498624b0fe1f6e80086978533111dc676115966123fe2d10dd2457354",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 338,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "af85ded9-3ec1-4eb8-9ba6-01942c7e57ae",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "792492da0c04545ea2679fc6c2156fa9798f53f8b7685ac7bbf3f88da76670f7",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 321,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "c7fdd892-33ea-4f67-9479-eb5378bb856b",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "dbe46785334dcc57d2c784e9db2c795f90dc748dc8bb9f289e354a978c8c104d",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 321,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        }
+      ],
+      "warnings": [
+        "SOURCE_BODY_TRUNCATED:PUB-acf64a65d22febf6",
+        "SOURCE_DATE_CONFLICT:PUB-acf64a65d22febf6",
+        "TABLE_STRUCTURE_UNCLEAR:PUB-acf64a65d22febf6",
+        "USED_ORIGINAL_HTTP:PUB-acf64a65d22febf6",
+        "SOURCE_DATE_CONFLICT:PUB-68388708cf4ae0d9",
+        "SOURCE_DATE_CONFLICT:PUB-c291a805fb8420a6"
+      ]
+    }
+  ]
+}

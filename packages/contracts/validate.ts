@@ -114,12 +114,12 @@ export function modelSchema(name: string, candidateIds?: readonly string[], poli
     const allowedReferences=[...evidenceIds]
     function closeReferences(node:any):void {
       if(!node || typeof node!=='object') return
-      if(node.properties?.evidence_refs) node.properties.evidence_refs.items={type:'string',enum:allowedReferences}
-      if(node.properties?.source_id) node.properties.source_id={...node.properties.source_id,enum:allowedReferences}
-      if(node.properties?.source_ids) node.properties.source_ids.items={type:'string',enum:allowedReferences}
+      for(const field of ['evidence_refs','source_ids'])if(node.properties?.[field]){node.properties[field].items=allowedReferences.length?{type:'string',enum:allowedReferences}:{type:'string'};if(!allowedReferences.length)node.properties[field].description='本轮没有可引用来源，必须返回空数组。'}
+      if(node.properties?.source_id){const nullable=node.properties.source_id.oneOf?.some((part:any)=>part.type==='null');if(nullable)node.properties.source_id=allowedReferences.length?{oneOf:[{type:'string',enum:allowedReferences},{type:'null'}]}:{type:'null'};else if(allowedReferences.length)node.properties.source_id={type:'string',enum:allowedReferences}}
       for(const child of Object.values(node)) if(Array.isArray(child)) child.forEach(closeReferences); else closeReferences(child)
     }
     closeReferences(result)
+    if(!allowedReferences.length&&(result.properties as any)?.rationale)(result.properties as any).rationale.description='本轮没有可引用来源，必须返回空数组。'
   }
   if (name === 'ScenarioProposal') {
     const properties = result.properties as Record<string, Record<string, unknown>>

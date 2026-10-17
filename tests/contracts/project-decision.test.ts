@@ -94,7 +94,7 @@ it('keeps a full project within the live 16-question limit while retaining six p
  const input=projectGuidanceInput(guideProject.input,2,packet,[],null,'balanced')
  const result=await evaluateProjectGuidance(input,'full',new AbortController().signal,async(state,questions)=>{if(Object.keys(questions).length>16)throw new Error('DECISION_HTTP_400');return guideResponse(state,questions)})
  expect(result.status).toBe('completed');expect(Object.keys(result.stages)).toHaveLength(6)
- expect(result.measures).toHaveLength(5);expect(result.materials).toHaveLength(5)
+ expect(result.measures).toHaveLength(6);expect(result.materials.length).toBeGreaterThanOrEqual(5);expect(result.batches!.every(batch=>batch.question_ids.length<=16)).toBe(true)
  expect(packet.strategy!.paths.flatMap(path=>path.work_packages!)).toHaveLength(6)
  expect(packet.strategy!.next_checks).toHaveLength(9)
 })

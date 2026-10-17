@@ -10,6 +10,10 @@ import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
 import { STRATEGY_POLICY, validateStrategy, strategySupplementRequests, strategyFailureMessage, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
 import { RESEARCH_MATERIAL_CATEGORIES, type ResearchMaterial, type ResearchMaterialMetadata, type ResearchRound, type ResearchRoundsResponse, type ResearchRoundStreamEvent } from '../../packages/retrofit/research-rounds'
 import {beginProjectAnalysis,commitProjectAnalysis,type AnalysisTicket} from './project-context'
+import {projectContextRef} from './project-context'
+import {backgroundWork} from './background-work'
+import {initializeResearchExecution,StoredResearchExecution} from './research-execution'
+import type {ResearchExecution} from '../../packages/retrofit/research-execution'
 
 const sourceDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10) === value)
 const metadataSchema = z.object({ material_category: z.enum(RESEARCH_MATERIAL_CATEGORIES).default('other'), source_date: sourceDate.nullable().default(null) })
@@ -21,7 +25,7 @@ const createSchema = z.object({ expected_context_version:z.number().int().nonneg
 const adoptSchema = z.object({ expected_context_version:z.number().int().nonnegative(), input_hash:z.string().min(1).max(200) }).strict()
 type StoredRound = { payload:ResearchRound; input_snapshot:ProjectInput|null }
 type DocumentRow = { id:string; file_name:string; sha256:string; parser_result:{status:string;text?:string}; metadata?:ResearchMaterialMetadata|null }
-export type ResearchRoundContext = { round_id:string; round_number:number; allow_internal_ai:boolean; materials:ResearchMaterial[]; sources:StrategySource[]; parent:Pick<ResearchRound,'id'|'context_version'|'input_hash'|'result'>|null; first_round_id:string; first_input_hash:string; first_context_version:number }
+export type ResearchRoundContext = { round_id:string; round_number:number; allow_internal_ai:boolean; materials:ResearchMaterial[]; sources:StrategySource[]; parent:Pick<ResearchRound,'id'|'context_version'|'input_hash'|'result'>|null; first_round_id:string; first_input_hash:string; first_context_version:number; execution?:ResearchExecution }
 type Runner = (project:ProjectRecord, hash:string, signal:AbortSignal, context:ResearchRoundContext, onProgress:(event:StrategyProgress)=>void) => Promise<StrategyPacket>
 export class ResearchRoundError extends Error { constructor(readonly status:number, readonly code:string, readonly detail:string) { super(detail) } }
 const fail = (status:number, code:string, detail:string):never => { throw new ResearchRoundError(status,code,detail) }
@@ -39,8 +43,16 @@ export class ResearchRoundsService {
       id TEXT PRIMARY KEY,owner_id TEXT NOT NULL,project_id TEXT NOT NULL REFERENCES projects(id),round_number INTEGER NOT NULL,
       payload JSONB NOT NULL,input_snapshot JSONB,created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
       UNIQUE(owner_id,project_id,round_number));`)
-    // A process restart must not leave a non-resumable HTTP request labelled as still running.
-    await this.store.db.query(`UPDATE renewal_research_rounds SET payload=jsonb_set(jsonb_set(payload,'{status}','"failed"'),'{error}',to_jsonb($1::text)) WHERE payload->>'status'='running'`,['研究服务已重启，本轮未完成；已保存的上一轮结果仍保留。'])
+    await initializeResearchExecution(this.store)
+    await this.store.db.query("UPDATE research_node_receipts SET status='interrupted',lease_until=now() WHERE status='running'")
+    await this.store.db.query("UPDATE research_call_receipts SET outcome='unknown_outcome',billing_state='unknown' WHERE outcome='in_flight'")
+    const interrupted=(await this.store.db.query<{payload:ResearchRound}>('SELECT payload FROM renewal_research_rounds WHERE payload->>\'status\'=\'running\'')).rows
+    for(const {payload:round} of interrupted){
+      const project=await this.requireProject(round.project_id).catch(()=>null)
+      if(!project)continue
+      if(round.execution&&!round.execution.cancelled){round.execution.state='interrupted';await this.save(project,round);if(config.modelConfigured)queueMicrotask(()=>{void this.start(project,round.id).catch(()=>undefined)})}
+      else{round.status='failed';round.error='此前研究未保存续跑快照，历史资料保留，可新建一轮继续。';await this.save(project,round)}
+    }
   }
   async recordMaterialMetadata(project:ProjectRecord, documentId:string, value:ResearchMaterialMetadata) {
     const metadata = metadataSchema.parse(value)
@@ -136,20 +148,43 @@ export class ResearchRoundsService {
       origin:'generated',status:'draft',material_intake:body.material_intake,allow_internal_ai:body.allow_internal_ai,materials,missing_materials:[],result:null,error:null,created_at:now,updated_at:now})},copy(project.input))
   }
   private async save(project:ProjectRecord,round:ResearchRound,db=this.store.db) { round.updated_at=new Date().toISOString(); await db.query('UPDATE renewal_research_rounds SET payload=$1 WHERE id=$2 AND owner_id=$3 AND project_id=$4',[JSON.stringify(round),round.id,project.owner_id,project.id]); return round }
-  async run(project:ProjectRecord,id:string,signal:AbortSignal,onProgress:(event:StrategyProgress)=>void):Promise<ResearchRound> {
+  async start(project:ProjectRecord,id:string):Promise<void> {
+    let round=(await this.stored(project,id)).payload
+    if(round.status==='completed')return
+    if(round.execution?.cancelled)fail(409,'ROUND_CANCELLED','此轮已明确停止，请保留记录并新建下一轮。')
+    if(!round.execution){const execution={state:'queued',deadline_at:new Date(Date.now()+900000).toISOString(),cancelled:false,provider:config.RESEARCH_WEB_PROVIDER};const queued=(await this.store.db.query<{payload:ResearchRound}>("UPDATE renewal_research_rounds SET payload=jsonb_set(payload,'{execution}',$4::jsonb) WHERE id=$1 AND owner_id=$2 AND project_id=$3 AND NOT(payload ? 'execution') RETURNING payload",[id,project.owner_id,project.id,JSON.stringify(execution)])).rows[0];round=queued?.payload||(await this.stored(project,id)).payload}
+    void backgroundWork.launch('research:'+id,Math.max(Date.parse(round.execution!.deadline_at)+30000,Date.now()+30000),signal=>this.executeRound(project,id,signal,event=>{void this.store.db.query('INSERT INTO research_round_events(owner_id,project_id,round_id,payload) VALUES($1,$2,$3,$4)',[project.owner_id,project.id,id,JSON.stringify(event)]).catch(()=>undefined)}))
+  }
+  async cancel(project:ProjectRecord,id:string){const round=(await this.stored(project,id)).payload;if(round.status==='completed')return round;round.status='failed';round.error='本轮研究已停止，已完成节点保留。';round.execution={...(round.execution||{deadline_at:new Date().toISOString()}),state:'cancelled',cancelled:true};await this.save(project,round);backgroundWork.cancel('research:'+id);return round}
+  async events(project:ProjectRecord,id:string,after=0){await this.stored(project,id);return (await this.store.db.query<{id:number;payload:unknown}>('SELECT id,payload FROM research_round_events WHERE owner_id=$1 AND project_id=$2 AND round_id=$3 AND id>$4 ORDER BY id',[project.owner_id,project.id,id,after])).rows}
+  async get(project:ProjectRecord,id:string){return (await this.stored(project,id)).payload}
+  async inspect(project:ProjectRecord,id:string){await this.stored(project,id);const [nodes,calls,manifests]=await Promise.all([this.store.db.query('SELECT node_key,status,attempt,reused,duration_ms,error_code FROM research_node_receipts WHERE owner_id=$1 AND project_id=$2 AND round_id=$3 ORDER BY started_at',[project.owner_id,project.id,id]),this.store.db.query('SELECT provider,operation_id,outcome,billing_state,duration_ms,usage FROM research_call_receipts WHERE owner_id=$1 AND project_id=$2 AND round_id=$3 ORDER BY started_at',[project.owner_id,project.id,id]),this.store.db.query('SELECT payload FROM research_manifest_versions WHERE owner_id=$1 AND project_id=$2 AND round_id=$3 ORDER BY (payload->>\'version\')::integer',[project.owner_id,project.id,id])]);return {nodes:nodes.rows,calls:calls.rows,manifests:manifests.rows}}
+  async run(project:ProjectRecord,id:string,_signal:AbortSignal,onProgress:(event:StrategyProgress)=>void):Promise<ResearchRound> {
+    await this.start(project,id)
+    let after=0
+    const flush=async()=>{for(const row of await this.events(project,id,after)){after=Number(row.id);if((row.payload as StrategyProgress).type==='progress')onProgress(row.payload as StrategyProgress)}}
+    const watch=setInterval(()=>{void flush().catch(()=>undefined)},250)
+    try{const result=await (backgroundWork.wait<ResearchRound>('research:'+id)||this.get(project,id));await flush();return result}finally{clearInterval(watch)}
+  }
+  private async executeRound(project:ProjectRecord,id:string,signal:AbortSignal,onProgress:(event:StrategyProgress)=>void):Promise<ResearchRound> {
     const stored=await this.stored(project,id),round=stored.payload
     if(round.status==='completed') return round
-    if(round.status!=='draft') fail(409,'ROUND_ALREADY_ATTEMPTED','本轮已运行或结束；请保留本轮记录并新建下一轮。')
+    if(round.status==='obsolete'||round.execution?.cancelled) fail(409,'ROUND_ALREADY_ATTEMPTED','此轮资料版本已变化或已停止，请保留记录并新建下一轮。')
     this.checkVersion(project,round.context_version)
     if(!stored.input_snapshot) return fail(422,'ROUND_SNAPSHOT_MISSING','历史采纳结果仅供对照，请创建新轮次研究。')
     const snapshot=stored.input_snapshot
     if(round.materials.some(material=>material.visibility==='internal')&&(!round.allow_internal_ai||config.ALLOW_INTERNAL_MODEL!=='true')) fail(424,'ROUND_INTERNAL_MODEL_DISABLED','所选内部材料需要本轮明确同意并启用 ALLOW_INTERNAL_MODEL。')
-    const claimed=(await this.store.db.query<{payload:ResearchRound}>(`UPDATE renewal_research_rounds SET payload=jsonb_set(payload,'{status}','"running"') WHERE id=$1 AND owner_id=$2 AND project_id=$3 AND payload->>'status'='draft' RETURNING payload`,[id,project.owner_id,project.id])).rows[0]
+    const claimed=(await this.store.db.query<{payload:ResearchRound}>(`UPDATE renewal_research_rounds SET payload=jsonb_set(payload,'{status}','"running"') WHERE id=$1 AND owner_id=$2 AND project_id=$3 AND payload->>'status' IN ('draft','failed','running') RETURNING payload`,[id,project.owner_id,project.id])).rows[0]
     if(!claimed) fail(409,'ROUND_RUNNING','本轮正在研究，请等待结果。')
     round.status='running'
     let ticket:AnalysisTicket|undefined
     try {
-      ticket=await beginProjectAnalysis(this.store,project,round.id)
+      if(round.execution?.ticket&&round.execution.ticket.context.input_hash!==projectContextRef(project).input_hash)fail(409,'ROUND_CONTEXT_CHANGED','对象或资料已变化，请创建新一轮研究；已有成果保留。')
+      ticket=round.execution?.ticket||await beginProjectAnalysis(this.store,project,round.id)
+      const resumed=!!round.execution?.ticket
+      round.execution={...(round.execution||{deadline_at:new Date(Date.now()+900000).toISOString(),cancelled:false}),ticket,state:'running'};await this.save(project,round)
+      const execution=new StoredResearchExecution(this.store,project,id,Date.parse(round.execution.deadline_at),resumed,signal,round.execution.provider||config.RESEARCH_WEB_PROVIDER)
+      await execution.run('freeze_round',{hash:round.input_hash,context:ticket.context},async()=>({context:ticket!.context,created_at:round.created_at}))
       const parent=round.parent_round_id?(await this.stored(project,round.parent_round_id)).payload:null
       const sources:StrategySource[]=round.materials.map(material=>{
         const source=snapshot.sources.find(source=>source.id===material.source_id&&source.hash===material.version)
@@ -157,7 +192,7 @@ export class ResearchRoundsService {
         return {id:source.id,title:source.title,text:source.untrusted_text,url:null,published_at:material.source_date,role:'current',locator:material.locator,
           visibility:material.visibility,data_class:material.data_class,document_id:material.document_id,document_version:material.version,project_id:project.id,material_category:material.material_category,source_date:material.source_date}
       })
-      const result=await this.runner({...project,input:snapshot},round.input_hash,signal,{round_id:round.id,round_number:round.round_number,allow_internal_ai:round.allow_internal_ai,materials:round.materials,sources,parent:parent?{id:parent.id,input_hash:parent.input_hash,context_version:parent.context_version,result:parent.result}:null,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version},onProgress)
+      const result=await this.runner({...project,input:snapshot},round.input_hash,signal,{round_id:round.id,round_number:round.round_number,allow_internal_ai:round.allow_internal_ai,materials:round.materials,sources,parent:parent?{id:parent.id,input_hash:parent.input_hash,context_version:parent.context_version,result:parent.result}:null,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version,execution},onProgress)
       // Preserve the actual output for audit even when a later upload makes it obsolete.
       round.result=result;signal.throwIfAborted()
       round.missing_materials=[...(result.strategy?.round_review?.missing_materials||[]),...strategySupplementRequests(result.content_review),...assessmentSupplementRequests(result)]
@@ -165,11 +200,17 @@ export class ResearchRoundsService {
       if(current.context_version!==round.context_version) {round.status='obsolete';round.error='研究期间项目资料已变化，本轮结果保留为历史，请按当前资料创建新轮次。'}
       else {round.status=result.status==='completed'?'completed':'failed';round.error=result.status==='completed'?null:strategyFailureMessage(result)}
       await commitProjectAnalysis(this.store,project,ticket,result,async(db,_active,packet)=>{
+        round.execution!.state='completed'
         round.result=packet;round.missing_materials=[...(packet.strategy?.round_review?.missing_materials||[]),...strategySupplementRequests(packet.content_review),...assessmentSupplementRequests(packet)]
         await this.save(project,round,db)
       })
       return round
     } catch(error) {
+      const latest=(await this.stored(project,id)).payload
+      if(latest.execution?.cancelled)return latest
+      if(signal.aborted&&signal.reason instanceof Error&&signal.reason.message==='HOST_SHUTDOWN'){
+        round.status='running';round.execution!.state='interrupted';round.error='服务正在更新，已完成节点已保存，重启后继续。';await this.save(project,round);return round
+      }
       round.status='failed';round.error=signal.aborted?'本轮研究已停止，上一轮结果仍保留。':'本轮研究未完成，上一轮结果仍保留；请查看资料后新建研究轮次。'
       await this.save(project,round)
       if(ticket)await this.store.db.query("UPDATE project_analysis_attempts SET status='failed' WHERE id=$1 AND owner_id=$2 AND project_id=$3 AND status='running'",[ticket.id,project.owner_id,project.id])
@@ -188,6 +229,24 @@ export function registerResearchRoundRoutes(app:Express,service:ResearchRoundsSe
   app.get(path,route(async(_req,res,project)=>res.json(await service.list(project))))
   app.post(path+'/adopt',route(async(req,res,project)=>res.status(201).json({round:await service.adopt(project,req.body)})))
   app.post(path,route(async(req,res,project)=>res.status(201).json({round:await service.create(project,req.body)})))
+  app.get(path+'/:roundId',route(async(req,res,project)=>res.json({round:await service.get(project,String(req.params.roundId))})))
+  app.get(path+'/:roundId/execution',route(async(req,res,project)=>res.json(await service.inspect(project,String(req.params.roundId)))))
+  for(const action of ['start','resume'])app.post(path+'/:roundId/'+action,route(async(req,res,project)=>{z.object({}).strict().parse(req.body||{});await service.start(project,String(req.params.roundId));res.status(202).json({round:await service.get(project,String(req.params.roundId))})}))
+  app.post(path+'/:roundId/cancel',route(async(req,res,project)=>{z.object({}).strict().parse(req.body||{});res.json({round:await service.cancel(project,String(req.params.roundId))})}))
+  app.get(path+'/:roundId/events',route(async(req,res,project)=>{
+    const id=String(req.params.roundId);await service.get(project,id)
+    let after=Number(req.query.after||0),closed=false;if(!Number.isSafeInteger(after)||after<0)after=0
+    if(!req.headers.accept?.includes('application/x-ndjson')){res.json({round:await service.get(project,id),events:await service.events(project,id,after)});return}
+    res.type('application/x-ndjson');res.setHeader('Cache-Control','no-store');res.setHeader('X-Accel-Buffering','no');res.flushHeaders();res.on('close',()=>{closed=true})
+    while(!closed){
+      for(const event of await service.events(project,id,after)){after=Number(event.id);if((event.payload as {type:string}).type==='progress')res.write(JSON.stringify(event.payload)+'\n')}
+      const round=await service.get(project,id)
+      if(['completed','failed','obsolete'].includes(round.status)){res.write(JSON.stringify(round.result&&round.status!=='obsolete'?{type:'complete',result:round.result,round}:{type:'error',message:round.error||'本轮已结束，已保存成果可继续查看。',round})+'\n');break}
+      if(round.execution?.state==='interrupted'&&!backgroundWork.has('research:'+id)){res.write(JSON.stringify({type:'error',message:'已保存本轮成果，可恢复未完成节点。',round})+'\n');break}
+      res.write(JSON.stringify({type:'heartbeat',round_id:id,cursor:after})+'\n');await new Promise(resolve=>setTimeout(resolve,500))
+    }
+    if(!res.destroyed)res.end()
+  }))
   app.post(path+'/:roundId/run',route(async(req,res,project)=>{
     z.object({}).strict().parse(req.body||{})
     const stream=req.headers.accept?.includes('application/x-ndjson')||false

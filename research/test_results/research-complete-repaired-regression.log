@@ -1,0 +1,25 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/research-complete
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains a valid current dimension independently when the work-package contract fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"same-snapshot","diagnostic":{"code":"MODEL_SCHEMA_INVALID"},"source_count":4,"query_count":0,"model_calls":1,"model_duration_ms":10500,"cause_type":"Error","location":"    at Object.call (D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:68:13)\n    at synthesize (D:/建工ai/.cache/research-complete/services/map-screening/renewal-strategy.ts:264:32)"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500,"cause_type":"Error","location":"    at Object.<anonymous> (D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:82:181)\n    at Object.Mock (file:///D:/%E5%BB%BA%E5%B7%A5ai/node_modules/@vitest/spy/dist/index.js:332:34)"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0,"cause_type":"Error","location":"    at D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:92:34\n    at file:///D:/%E5%BB%BA%E5%B7%A5ai/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500,"cause_type":"Error","location":"    at Object.<anonymous> (D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:107:76)\n    at Object.Mock (file:///D:/%E5%BB%BA%E5%B7%A5ai/node_modules/@vitest/spy/dist/index.js:332:34)"}
+
+stderr | tests/contracts/decision-model.test.ts > Qwen System One protocol > reports missing configuration without networking or leaking transport error text
+{"event":"decision_request_failed","category":"Error"}
+
+·····················································································
+
+ Test Files  6 passed (6)
+      Tests  85 passed (85)
+   Start at  12:41:20
+   Duration  5.13s (transform 1.24s, setup 0ms, import 3.10s, tests 1.32s, environment 0ms)
+

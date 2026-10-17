@@ -1,4 +1,5 @@
 import express from 'express'
+import {backgroundWork} from './background-work'
 import helmet from 'helmet'
 import multer from 'multer'
 import { randomUUID, createHash } from 'node:crypto'
@@ -41,8 +42,8 @@ const app = express()
 const amapSettings = new AmapSettings(config.dataDir)
 await amapSettings.load()
 const adminAccess = new AdminAccess(config.ADMIN_USERNAME, config.ADMIN_PASSWORD_HASH, config.ADMIN_SESSION_TTL_SECONDS, config.PUBLIC_READ_ONLY === 'true', config.collaborativeWorkspace)
-const controllers = new Map<string, AbortController>()
-const active = new Set<Promise<void>>()
+const controllers = backgroundWork.controllers
+const active = backgroundWork.active
 const { allowedHosts, allowedOrigins } = config.requestOrigins
 app.disable('x-powered-by')
 app.use(helmet({ contentSecurityPolicy: false }))
@@ -99,10 +100,7 @@ async function requireRun(id: string) {
 }
 function launchRun(run: RunRecord) {
   if (run.status !== 'running' || controllers.has(run.id)) return
-  const controller = new AbortController(); controllers.set(run.id, controller)
-  const timeout = setTimeout(() => controller.abort(), run.execution_mode === 'live' ? 240_000 : 90_000)
-  const task = executeRun(store, run, controller.signal).finally(() => { clearTimeout(timeout); controllers.delete(run.id); active.delete(task) })
-  active.add(task)
+  void backgroundWork.launch(run.id,Date.now()+(run.execution_mode==='live'?240000:90000),signal=>executeRun(store,run,signal))
 }
 app.get('/api/projects', async (_req, res) => {
   const projects = await store.projects(config.ownerId)
@@ -292,5 +290,5 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
   res.status(500).json({ code: 'INTERNAL_ERROR', detail: '服务处理失败，请查看本地运行记录' })
 })
 const server = app.listen(config.PORT, config.HOST, () => console.log(JSON.stringify({ event: 'host_ready', url: `http://${config.HOST}:${config.PORT}` })))
-async function shutdown() { server.close(); adminAccess.close(); controllers.forEach(c => c.abort()); await Promise.allSettled([...active]); await intelligence.stop(); await store.db.close(); process.exit(0) }
+async function shutdown() { server.close(); adminAccess.close(); await backgroundWork.stop(); await intelligence.stop(); await store.db.close(); process.exit(0) }
 process.once('SIGINT', () => void shutdown()); process.once('SIGTERM', () => void shutdown())

@@ -1,4 +1,5 @@
 import StrategyContentNotice from './StrategyContentNotice'
+import ResearchExecutionSummary from './ResearchExecutionSummary'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
 import type { ResearchMaterial, ResearchRound } from '../../../../packages/retrofit/research-rounds'
@@ -24,15 +25,19 @@ function RoundArchive({ result }: { result: StrategyPacket }) {
   </div>
 }
 
-export default function ResearchRoundsPanel({ projectName, revision, rounds, materials = [], candidate = null, busy = false, loading = false, error = '', onAdopt, onStart, onUpload, onReadCurrent, onEvidence, sourceCounts = { public: 0, internal: 0 }, children, onReload, synthetic = false, historyOnly = false, intakeOnly = false }: {
+export default function ResearchRoundsPanel({ projectName, revision, rounds, materials = [], candidate = null, busy = false, loading = false, error = '', onAdopt, onStart, onUpload, onReadCurrent, onEvidence,onResume, sourceCounts = { public: 0, internal: 0 }, children, onReload, synthetic = false, historyOnly = false, intakeOnly = false }: {
   projectName: string; revision: number; rounds: ResearchRound[]; materials?: ResearchMaterial[]; candidate?: StrategyPacket | null;
   busy?: boolean; loading?: boolean; error?: string;
   onAdopt?: (packet: StrategyPacket) => Promise<void>; onStart?: (input: RoundSubmission) => Promise<void>;
+  onResume?:(round:ResearchRound)=>Promise<void>;
   onUpload?: (file: File, metadata: MaterialUploadMetadata) => Promise<void>; onReadCurrent?: () => void;
   onEvidence: (refs: string[]) => void; sourceCounts?: { public: number; internal: number; synthetic?: number }; children?: ReactNode; onReload?: () => void; synthetic?: boolean; historyOnly?: boolean; intakeOnly?: boolean;
 }) {
   const [uploadOpen, setUploadOpen] = useState(false), [consent, setConsent] = useState(false)
+  const [executionOpen,setExecutionOpen]=useState<string|null>(null)
   const ordered = [...rounds].sort((a, b) => a.round_number - b.round_number)
+  const latestExecution=ordered.filter(round=>!!round.execution).at(-1),inspected=ordered.find(round=>round.id===executionOpen)
+  const resumable=ordered.filter(round=>round.execution&&!round.execution.cancelled&&round.context_version===revision&&(round.execution.state==='interrupted'||round.status==='failed')).at(-1)
   const completed = ordered.filter(round => round.status === 'completed' && round.result?.strategy)
   const baseline = completed.at(-1), first = completed[0]
   const baselineVersions = new Set(baseline?.materials.map(material => `${material.document_id}:${material.version}`) || [])
@@ -69,6 +74,9 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
       <div className="research-source-count"><span>已导入公开文件 {sourceCounts.public} 份</span>{!!baseline?.result?.sources.length&&<span>本轮研判来源 {baseline.result.sources.length} 份</span>}<span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
       {loading && <p role="status">正在读取已保存的研判轮次与项目文件…</p>}
       {error && <div className="research-round-notice" role="alert"><p>{error}</p><button disabled={busy || loading} onClick={onReload}>重新读取轮次</button></div>}
+      {resumable&&onResume&&<button className="secondary" disabled={busy||loading} onClick={()=>void onResume(resumable)}>继续未完成环节 · 保留已完成成果</button>}
+      {latestExecution&&<button className="research-text-button" onClick={()=>setExecutionOpen(executionOpen?null:latestExecution.id)}>{executionOpen?'收起执行记录':'查看本轮执行与复用记录'}</button>}
+      {inspected&&<ResearchExecutionSummary projectId={inspected.project_id} roundId={inspected.id}/>}
       {reviewPacket?.content_review&&<StrategyContentNotice packet={reviewPacket} details/>}
       {!!requestedMaterials.length&&<section aria-label="下一轮建议补充资料"><h4>本轮建议补充资料</h4><ul className="research-round-gap-list">{requestedMaterials.map((item,index)=><li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p></li>)}</ul></section>}
       <div className="research-intake-actions">

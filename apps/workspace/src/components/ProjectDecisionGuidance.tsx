@@ -2,7 +2,7 @@ import {createContext,useContext,useEffect,useRef,useState,type ReactNode} from 
 import {IconArrowRight,IconBolt,IconRefresh} from '@tabler/icons-react'
 import {api,type Project} from '../api'
 import {useWorkbenchAccess} from '../AdminAccess'
-import {GUIDANCE_PAGES,PAGE_LABELS,type ProjectGuidance,type GuidanceDirection,type GuidancePage,type GuidancePreference,type GuidanceTarget} from '../../../../packages/decision/project-guidance'
+import {GUIDANCE_PAGES,GUIDANCE_POLICY,PAGE_LABELS,type ProjectGuidance,type GuidanceDirection,type GuidancePage,type GuidancePreference,type GuidanceTarget} from '../../../../packages/decision/project-guidance'
 import './project-decision-guidance.css'
 
 const GuidanceContext=createContext<ProjectGuidance|null>(null)
@@ -15,7 +15,7 @@ export default function ProjectDecisionGuidance({project,page,direction,packetHa
  const controller=useRef<AbortController|null>(null),identity=useRef('')
  const enabled=project.input.business_profile==='neighborhood',key=[project.id,project.context_version,direction,preference,packetHash].join('|');identity.current=key
  const endpoint=`/projects/${encodeURIComponent(project.id)}/decision-guidance`
- const belongs=(value:ProjectGuidance|null)=>!!value&&value.policy==='project-decision-guidance-v1'&&value.project_id===project.id&&value.context_version===project.context_version&&value.direction===direction&&value.preference===preference
+ const belongs=(value:ProjectGuidance|null)=>!!value&&[GUIDANCE_POLICY,'project-decision-guidance-v1'].includes(value.policy)&&value.project_id===project.id&&value.context_version===project.context_version&&value.direction===direction&&value.preference===preference
  useEffect(()=>{
   const abort=new AbortController();controller.current?.abort();controller.current=abort;setBusy(false);setError('');setExpanded(false);setState({key,result:null})
   if(enabled)void api<ProjectGuidance|null>(`${endpoint}?direction=${direction||'unselected'}&preference=${preference}`,undefined,abort.signal).then(result=>{if(!abort.signal.aborted&&identity.current===key)setState({key,result:belongs(result)?result:null})}).catch(()=>{})

@@ -145,7 +145,7 @@ it('retains failed and obsolete attempts without changing a completed parent',as
   const first=await run(await createRound(p,['DOC-PRIVATE']))
   const next=await createRound(p,['DOC-PRIVATE'],first)
   ports.open.mockRejectedValueOnce(new Error('MODEL_SIMULATED_FAILURE'))
-  const failed=await run(next);expect(failed.status).toBe('failed');expect(failed.result?.status).toBe('failed')
+  const failed=await run(next);expect(failed.status).toBe('completed');expect(failed.result?.delivery).toMatchObject({report_status:'conditional',renderer:'host_structured_fallback'})
   const stale=await createRound(p,['DOC-PRIVATE'],first)
   const originalOpen=ports.open.getMockImplementation()!
   ports.open.mockImplementationOnce(async()=>{const live=await originalOpen();await store.db.query('UPDATE projects SET context_version=context_version+1 WHERE id=$1',[p.id]);return live})
@@ -158,10 +158,10 @@ it('keeps a failed first attempt and permits a new baseline attempt without inve
   let p=await project();p=await document(p.id,'DOC-PRIVATE','演示资料：居民需求和管线安排仍需进一步核查。')
   const first=await createRound(p,['DOC-PRIVATE'])
   ports.open.mockRejectedValueOnce(new Error('MODEL_SIMULATED_FAILURE'))
-  expect((await run(first)).status).toBe('failed')
-  const retry=await run(await createRound(p,['DOC-PRIVATE']))
-  expect(retry).toMatchObject({round_number:2,status:'completed',parent_round_id:null,first_round_id:retry.id})
-  expect((await service.list(p)).rounds.map(round=>round.status)).toEqual(['failed','completed'])
+  const initial=await run(first);expect(initial.result?.delivery?.report_status).toBe('conditional')
+  const retry=await run(await createRound(p,['DOC-PRIVATE'],initial))
+  expect(retry).toMatchObject({round_number:2,status:'completed',parent_round_id:initial.id,first_round_id:initial.id})
+  expect((await service.list(p)).rounds.map(round=>round.status)).toEqual(['completed','completed'])
 })
 it('preserves the synthetic round identity and flags inconsistent survey wording without blocking the plan',async()=>{
   let p=await project(undefined,true)

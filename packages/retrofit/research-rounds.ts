@@ -40,6 +40,7 @@ export type ResearchRound = {
   error: string | null
   created_at: string
   updated_at: string
+  execution?:{state:'queued'|'running'|'interrupted'|'completed'|'cancelled';deadline_at:string;cancelled:boolean;provider?:'legacy'|'deepseek_tools'|'deepseek_content';ticket?:{id:string;generation:number;context:import('./project-context').ProjectContextRef;round_id:string|null}}
 }
 export type ResearchRoundsResponse = {
   rounds: ResearchRound[]

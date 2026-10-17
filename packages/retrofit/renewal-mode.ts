@@ -165,7 +165,8 @@ function base(target: string, objectRef: string | null, asOf: string, synthetic:
 }
 
 export function projectRenewalModeInput(input: ProjectInput): RenewalModeInput {
-  return base(input.scope.name, `project:${input.project_id}`, input.as_of, input.synthetic, input.sources, input.facts, input.project_id,
+  const sources=input.sources.filter(source=>{const refs=source.object_refs?.filter(ref=>ref.startsWith('project:'))||[];return !refs.length||refs.includes(`project:${input.project_id}`)||refs.includes(input.scope.boundary_source||'')})
+  return base(input.scope.name, `project:${input.project_id}`, input.as_of, input.synthetic, sources, input.facts, input.project_id,
     [input.scope.name, input.scope.map_anchor?.name || input.scope.name],projectObjectLocation(input.scope))
 }
 

@@ -1,0 +1,306 @@
+{
+  "checked_at": "2026-10-17T04:15:29.817Z",
+  "status": "completed",
+  "scope": "Synthetic protocol probe only; no existing project, no real decision-quality claim.",
+  "elapsed_ms": 10406,
+  "native_model_calls": [
+    {
+      "stage": "renewal_research_expert_1_1_building_delivery",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 4842,
+      "output_tokens": 212,
+      "usage_status": "reported",
+      "duration_ms": 1131,
+      "session_id": "6c50bbb3-448d-4d3f-b1ea-05e569595e8e",
+      "cache_read_tokens": 1152,
+      "cache_write_tokens": 0
+    },
+    {
+      "stage": "renewal_research_expert_1_1_building_delivery",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 5279,
+      "output_tokens": 169,
+      "usage_status": "reported",
+      "duration_ms": 1461,
+      "session_id": "6c50bbb3-448d-4d3f-b1ea-05e569595e8e",
+      "cache_read_tokens": 4992,
+      "cache_write_tokens": 0
+    },
+    {
+      "stage": "renewal_research_expert_1_1_building_delivery",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 5487,
+      "output_tokens": 1348,
+      "usage_status": "reported",
+      "duration_ms": 7663,
+      "session_id": "6c50bbb3-448d-4d3f-b1ea-05e569595e8e",
+      "cache_read_tokens": 5248,
+      "cache_write_tokens": 0
+    }
+  ],
+  "notes": [
+    {
+      "task_id": "protocol-engineer",
+      "summary": "本轮唯一获准来源s1为合成协议测试材料，明确不含结构鉴定、居民问卷或工程预算，针对\"管网、电梯、附属工程、工程量、实施顺序\"的检索无命中。因此本任务的楼栋、管网、电梯与附属工程改造内容、工程量和实施顺序均无项目级事实依据，不形成任何已确认工程量、已完成鉴定或已开工判断。以下结论为明示工程前提下的条件化措施：建议以\"资料补齐—专项检测—分部工程排序—施工组织接口\"四步推进；分部顺序按先地下管网与结构隐患处置、后电梯与附属工程、最后路面与公共空间收面，并留出各分部独立验收与分期接口。所有估算参数均为试算区间，须由实测检测、勘测与工程量清单替换后重算。",
+      "observations": [
+        {
+          "source_id": "PROTOCOL-SYNTHETIC",
+          "quote": "这是合成协议测试材料，本轮没有真实结构鉴定、居民问卷或工程预算。请保留资料缺项，提出可验证的条件建议。",
+          "locator": "synthetic:protocol:1",
+          "inference": "该来源自述为协议测试材料，非项目证据；结构鉴定、居民需求与预算均属缺项，本轮只能输出条件化措施与核实办法，不能把任何工程量或鉴定结论当作已知事实。"
+        }
+      ],
+      "reasoned_proposals": [
+        {
+          "kind": "logical_inference",
+          "premises": [
+            "获准来源s1明确不含真实结构鉴定与工程预算，管网、电梯、附属工程检索无命中",
+            "结构安全与可实施性依赖分部检测结论，未取得前任何拆改、加固或电梯加装范围都不能确定"
+          ],
+          "assumptions": [],
+          "conclusion": "按分部工程并行取证：分楼栋结构检测报告（含外挂设备与加梯位置的承载条件）、雨污管网勘测与缺陷评估、电梯单元逐栋意愿与条件核查，三项资料齐备后再编制工程量清单与实施顺序，未齐备分部不进入施工准备。",
+          "verification": "逐栋核对检测报告编号、结论与检测范围是否覆盖拟改造点；管网勘测需含检查井编号、管径、错混接与破损位置；电梯需有单元签认表与结构核算意见。",
+          "evidence_refs": [
+            "PROTOCOL-SYNTHETIC"
+          ],
+          "parameters": []
+        },
+        {
+          "kind": "scenario",
+          "premises": [
+            "地下管网与结构隐患处置是后续地面、附属工程的施工前提",
+            "电梯与附属工程需依附楼栋条件，且受居民意愿与结构核算约束"
+          ],
+          "assumptions": [
+            "以单一小区若干栋、单轮改造周期为试算对象",
+            "假设结构检测结果未出现整栋禁用或拆除结论；若出现则本情景失效",
+            "试算区间为规划用值，非测量值"
+          ],
+          "conclusion": "排序建议：第一序位地下雨污管网与结构隐患处置，第二序位电梯加装与附属工程，第三序位路面、公共空间与收面，每序位独立验收并保留分期接口；此为排序逻辑，不构成工程量或准入结论。",
+          "verification": "以实测工程量清单与施工图替换试算参数，若结构检测出现整栋风险结论或管网需大范围整体更换，则重排序位与工期。",
+          "evidence_refs": [],
+          "parameters": [
+            {
+              "name": "管网与结构处置分部工期",
+              "value": 90,
+              "unit": "日历天",
+              "low": 60,
+              "high": 150,
+              "basis": "试算区间，按分部独立施工与验收设定，须由实际工程量与检测结论替换"
+            },
+            {
+              "name": "电梯与附属工程分部工期",
+              "value": 120,
+              "unit": "日历天",
+              "low": 90,
+              "high": 180,
+              "basis": "试算区间，含居民签认、生产运输与安装调试，非实测值"
+            },
+            {
+              "name": "路面与公共空间收面工期",
+              "value": 45,
+              "unit": "日历天",
+              "low": 30,
+              "high": 90,
+              "basis": "试算区间，取决于地下完工验收时间与季节施工条件"
+            },
+            {
+              "name": "分部间验收衔接缓冲",
+              "value": 15,
+              "unit": "日历天",
+              "low": 7,
+              "high": 30,
+              "basis": "试算设定，用于吸收检测整改、居民异议与天气影响"
+            }
+          ]
+        }
+      ],
+      "missing_data": [
+        "分楼栋结构安全鉴定报告及外挂设备、加梯位置承载结论，决定可改造范围与施工准入",
+        "雨污管网勘测与缺陷评估（检查井、管径、错混接、破损位置），决定管网改造工程量与序位",
+        "逐单元加梯意愿签认表与结构核算意见，决定电梯工程是否纳入本轮",
+        "工程量清单、施工图与分期施工组织方案，决定工期与分期接口"
+      ],
+      "investigation_requests": [
+        {
+          "question_ids": [
+            "engineering"
+          ],
+          "missing_fields": [
+            "分楼栋结构安全鉴定报告及结论",
+            "雨污管网勘测与缺陷评估",
+            "加梯单元签认与结构核算",
+            "工程量清单与分期施工组织方案"
+          ],
+          "suggested_queries": [
+            "老旧小区 房屋结构安全鉴定报告 楼栋 检测",
+            "小区雨污水管网 混接 排查 改造 工程量清单",
+            "既有住宅加装电梯 结构核算 居民同意 实施顺序",
+            "老旧小区改造 分部工程 施工组织 分期接口"
+          ],
+          "domain_hints": [
+            "结构检测",
+            "市政管网",
+            "既有住宅加梯",
+            "施工组织"
+          ],
+          "affected_decisions": [
+            "可改造范围与拆改加固边界",
+            "管网改造工程量与第一序位工期",
+            "电梯工程是否纳入本轮及附属工程内容",
+            "分期施工与验收接口安排"
+          ]
+        }
+      ]
+    }
+  ],
+  "trace": {
+    "planner_status": "completed",
+    "planner_backend": "dsh",
+    "plan": {
+      "summary": "仅测试一个专家的原生受限工具与条件推理。",
+      "tasks": [
+        {
+          "id": "protocol-engineer",
+          "role": "building_delivery",
+          "question": "先检索不存在的结构鉴定，若无匹配仍形成有假设和核实办法的建议；缺项可请求宿主补查，不能编造事实。；具体楼栋、管网、电梯与附属工程的改造内容、工程量和实施顺序",
+          "source_ids": [
+            "PROTOCOL-SYNTHETIC"
+          ],
+          "question_ids": [
+            "engineering"
+          ]
+        }
+      ]
+    },
+    "tasks": [
+      {
+        "id": "protocol-engineer",
+        "role": "building_delivery",
+        "source_ids": [
+          "PROTOCOL-SYNTHETIC"
+        ],
+        "status": "completed",
+        "profile": {
+          "role": "building_delivery",
+          "sha256": "2f3882eaa2abd57c8c59e58edd8002ec0125492765ba92832ac8a932426b912e"
+        },
+        "retrieval": {
+          "calls": 2,
+          "query_matches": 1,
+          "read_windows": [
+            {
+              "source_id": "PROTOCOL-SYNTHETIC",
+              "start_char": 0,
+              "end_char": 51,
+              "characters": 51,
+              "query": "结构鉴定",
+              "matched": true
+            }
+          ]
+        },
+        "reasoning": "mixed",
+        "attempts": 1,
+        "effort": {
+          "maxOutputTokens": 3500,
+          "timeoutMs": 149995,
+          "sourceCharacters": 51,
+          "synthesisReserveMs": 150000,
+          "allocation_basis": "question_impact_and_evidence_size"
+        },
+        "lineage": {
+          "source_ids": [
+            "PROTOCOL-SYNTHETIC"
+          ],
+          "source_versions": {
+            "PROTOCOL-SYNTHETIC": "3d991f9774804a924e5903df78aab8236336afbf8ce4c43cfb4e957631c3fa49"
+          },
+          "contains_internal": false,
+          "authorized_view_hash": "a610ada87bfa6010b73248d5df4ac7aafbdf2d6f5682808c3cd02b0e7b242200"
+        }
+      }
+    ],
+    "input_characters": 247,
+    "source_characters": 51,
+    "retained_source_characters": 51,
+    "output_characters": 3061,
+    "compression": "retained",
+    "method": "evidence_windows_and_untrusted_notes",
+    "quoted_passages": 1,
+    "retained_quotes": 1,
+    "expanded_input_characters": 2932,
+    "compression_ratio": 1.0439972714870396,
+    "compression_audit": {
+      "critical_fragments": 2,
+      "retained_critical_fragments": 2,
+      "retention_ratio": 1,
+      "omitted": [],
+      "retained_chars": 51,
+      "semantic_claim": "literal_conditions_and_amounts_preserved_in_retained_ranges"
+    }
+  },
+  "investigation_requests": [
+    {
+      "task_id": "protocol-engineer",
+      "question_ids": [
+        "engineering"
+      ],
+      "missing_fields": [
+        "分楼栋结构安全鉴定报告及结论",
+        "雨污管网勘测与缺陷评估结果",
+        "加装电梯单元申请与结构核算条件",
+        "改造项目工程量清单与分期施工组织方案"
+      ],
+      "suggested_queries": [
+        "老旧小区 房屋结构安全鉴定报告 楼栋 检测",
+        "小区雨污水管网 混接 排查 改造 工程量清单",
+        "既有住宅加装电梯 结构核算 居民同意 实施顺序",
+        "老旧小区改造 分年度 分部工程 施工组织 分期接口"
+      ],
+      "domain_hints": [],
+      "affected_decisions": [
+        "先检索不存在的结构鉴定，若无匹配仍形成有假设和核实办法的建议；缺项可请求宿主补查，不能编造事实。；具体楼栋、管网、电梯与附属工程的改造内容、工程量和实施顺序"
+      ],
+      "visibility": "public"
+    },
+    {
+      "question_ids": [
+        "engineering"
+      ],
+      "missing_fields": [
+        "分楼栋结构安全鉴定报告及结论",
+        "雨污管网勘测与缺陷评估",
+        "加梯单元签认与结构核算",
+        "工程量清单与分期施工组织方案"
+      ],
+      "suggested_queries": [
+        "老旧小区 房屋结构安全鉴定报告 楼栋 检测",
+        "小区雨污水管网 混接 排查 改造 工程量清单",
+        "既有住宅加装电梯 结构核算 居民同意 实施顺序",
+        "老旧小区改造 分部工程 施工组织 分期接口"
+      ],
+      "domain_hints": [
+        "结构检测",
+        "市政管网",
+        "既有住宅加梯",
+        "施工组织"
+      ],
+      "affected_decisions": [
+        "可改造范围与拆改加固边界",
+        "管网改造工程量与第一序位工期",
+        "电梯工程是否纳入本轮及附属工程内容",
+        "分期施工与验收接口安排"
+      ],
+      "task_id": "protocol-engineer",
+      "visibility": "public"
+    }
+  ],
+  "project_writes": 0,
+  "tool_cleanup_count": 0
+}

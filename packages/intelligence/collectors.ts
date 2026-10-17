@@ -40,7 +40,7 @@ export async function collectChannel(channel:Channel,signal:AbortSignal,onSource
   if(channel.kind==='external')return {saved:0,failed:0}
   const ctx=injected?null:new Context();let web=injected,saved=0,failed=0
   try{
-    if(ctx){await mountPublicWeb(ctx,{maxRedirects:0});web=ctx.web as unknown as ResearchWeb}
+    if(ctx){await mountPublicWeb(ctx,{maxRedirects:0,provider:'legacy'});web=ctx.web as unknown as ResearchWeb}
     const get=async(url:string)=>{signal.throwIfAborted();safeUrl(url,channel.domains);if(!injected)await validateNetwork(url);const r=await web!.fetch({url},signal);if(r.statusCode<200||r.statusCode>=300)throw new Error('SOURCE_HTTP_'+r.statusCode);return r}
     let links:Link[]
     if(channel.kind==='native_search'){

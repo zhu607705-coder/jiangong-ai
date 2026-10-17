@@ -14,6 +14,9 @@ import { LiveSession } from '../../runtime/dsh/live-session'
 import { HybridRetrievalService, type RagModelPort } from '../../packages/experience/hybrid-retrieval'
 import { SemanticIndexRepository } from '../../packages/experience/semantic-index'
 import {withResearchOriginals} from '../../packages/experience/retrieval-sources'
+import {collectSelectedEvidence} from '../../services/capabilities/research'
+import {projectObjectLocation} from '../../packages/retrofit/object-binding'
+import {answerSlots} from '../../packages/retrofit/research-coverage'
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const parsed = new Date(`${value}T00:00:00Z`)
@@ -53,7 +56,18 @@ async function openRagModel(signal:AbortSignal):Promise<RagModelPort> {
 
 export function registerRagRetrieval(app: Express, store: Store, requireProject: (id: string) => Promise<ProjectRecord>, options: { pipeline: Pick<KnowledgePipelineService, 'state'>; ranker?: RetrievalRanker; modelFactory?:((signal:AbortSignal)=>Promise<RagModelPort>)|null; background?:IntelligenceService }) {
   const hybrid=new HybridRetrievalService(new SemanticIndexRepository(store.db),options.ranker||capabilityRetrievalRanker,
-    options.modelFactory===undefined?(config.modelConfigured?openRagModel:null):options.modelFactory)
+    options.modelFactory===undefined?(config.modelConfigured?openRagModel:null):options.modelFactory,config.searchConfigured?async(project,question,signal)=>{
+      if(project.input.synthetic)return []
+      // Search terms are rebuilt from public object registration and fixed topic/field labels, never private summaries.
+      const location=projectObjectLocation(project.input.scope),name=project.input.scope.map_anchor?.name||project.input.scope.name
+      const subjects=[...new Set(answerSlots(question).filter(slot=>['机电配套','雨棚','消防通道','二次供水','电梯','社区食堂'].includes(slot.topic)).map(slot=>slot.topic))]
+      const queries=(subjects.length?subjects:['改造工程']).slice(0,4).map(topic=>`${location.city||''} ${name} ${topic} 金额 阶段 资金来源 公告`)
+      const found=await collectSelectedEvidence({name,city:location.city,purpose:'本对象公开原文补查',asOf:project.input.as_of,seedSources:project.input.sources,forceDiscovery:true,budget:{newEvidence:3,refresh:1}},signal,undefined,undefined,queries)
+      const sources=found.sources.filter(source=>source.untrusted_text&&source.content_status!=='metadata_only'&&!project.input.sources.some(old=>old.id===source.id&&old.hash===source.hash))
+      await store.db.exec('CREATE TABLE IF NOT EXISTS project_rag_evidence(owner_id TEXT NOT NULL,project_id TEXT NOT NULL REFERENCES projects(id),context_version INTEGER NOT NULL,source_id TEXT NOT NULL,source_hash TEXT NOT NULL,payload JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(owner_id,project_id,context_version,source_id,source_hash))')
+      for(const source of sources)await store.db.query('INSERT INTO project_rag_evidence(owner_id,project_id,context_version,source_id,source_hash,payload) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[project.owner_id,project.id,project.context_version,source.id,source.hash,JSON.stringify(source)])
+      return sources
+    }:undefined)
   const fingerprint=(project:ProjectRecord)=>hash(canonical(project.input.sources.map(source=>[source.id,source.visibility,source.data_class,source.hash,source.untrusted_text])))
   async function indexBundle(project:ProjectRecord){
     const state=await options.pipeline.state(project)
