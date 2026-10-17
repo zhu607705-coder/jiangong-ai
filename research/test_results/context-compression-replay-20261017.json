@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-17T09:14:49.535Z",
+  "scope": "offline_saved_round_replay_no_provider_calls",
+  "round_id": "ROUND-08e572b5-78d2-4b71-b3bb-697a439058b4",
+  "project_id": "P-d397c757-5df1-4c59-a397-13cb95f763eb",
+  "input_sha256": "226b8e843c64e4efa38ced5c15cf3d0e4f93143329d1be25340ac4242545297b",
+  "report_sha256": "ef36b590502c3f240082834012a2965128eabcdcdfa9e44e5fde61c069ebdaf7",
+  "policy": "literal-evidence-v2",
+  "equivalent": {
+    "before": 35432,
+    "previous_after": 35353,
+    "after": 26514,
+    "reduction_percent": 25.17
+  },
+  "synthesis_evidence_payload": {
+    "previous": 35579,
+    "after": 26319,
+    "reduction_percent": 26.03,
+    "excludes": "system instructions, output schema, project conditions, input/output tokens and billing"
+  },
+  "body": {
+    "before": 13241,
+    "after": 6934
+  },
+  "retention": {
+    "expert_records": 3,
+    "quotes": 12,
+    "critical_fragments": 87,
+    "retained_critical_fragments": 87,
+    "omitted": 0,
+    "all_expert_fields_roundtrip": true,
+    "all_windows_literal": true
+  },
+  "provider_calls": 0,
+  "production_writes": 0
+}

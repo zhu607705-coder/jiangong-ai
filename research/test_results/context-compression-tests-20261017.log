@@ -1,0 +1,16 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/context-compression
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_PLAN_SCOPE"}
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > a failed small planner readiness call prevents experts from starting
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_MODEL_FAILED"}
+
+············································································
+
+ Test Files  5 passed (5)
+      Tests  76 passed (76)
+   Start at  17:14:50
+   Duration  3.94s (transform 920ms, setup 0ms, import 2.68s, tests 655ms, environment 0ms)
+

@@ -17,19 +17,25 @@ import {captureCurrentAssessment} from '../../packages/retrofit/strategy-assessm
 import {bindStrategySource,projectObjectLocation} from '../../packages/retrofit/object-binding'
 import {resolveAnswerSlots,DEFAULT_RESEARCH_QUESTIONS,costReferenceGroups,projectFinancialQuestion} from '../../packages/retrofit/research-coverage'
 import {conditionalReport} from '../../packages/retrofit/conditional-report'
+import {packEvidenceContext} from '../../packages/retrofit/evidence-compression'
 import {modelSchema} from '../../packages/contracts/validate'
 
 /** Small contiguous quote choices, using the same line/excerpt approach as the demo prompt. */
-function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:readonly string[]=[]) {
-  const priorities=new Set(priorityIds),choices:{source_id:string;locator:string;quotes:string[]}[]=[]
+export function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:readonly string[]=[],windows?:readonly {source_id:string;start_char:number;end_char:number;text:string}[]) {
+  const priorities=new Set(priorityIds),choices:{source_id:string;locator:string;quotes:string[];quote_refs?:{start_char:number;end_char:number}[]}[]=[]
   let remaining=3000
   const ordered=[...sources].sort((a,b)=>Number(priorities.has(b.id))-Number(priorities.has(a.id))||Number(b.role==='current')-Number(a.role==='current'))
   for(const source of ordered) {
     if(choices.length>=12||remaining<16)break
-    const parts=[...source.text.split('\n'),...(source.text.match(/[^。！？\n]+[。！？]?/gu)||[])].map(text=>text.trim()).filter(text=>text.length>=16&&text.length<=360)
+    const sourceWindows=windows?.filter(window=>window.source_id===source.id)
+    const bodies=sourceWindows?sourceWindows.map(window=>window.text):[source.text]
+    const parts=bodies.flatMap(text=>[...text.split('\n'),...(text.match(/[^。！？\n]+[。！？]?/gu)||[])]).map(text=>text.trim()).filter(text=>text.length>=16&&text.length<=360)
     const candidates=[parts.find(text=>/\d+(?:\.\d+)?\s*(?:户|台|幢|栋|万元|元|平方米|㎡|人次|人)/.test(text)),parts.find(text=>/改造|更换|更新|加装|新建|治理|配置|供水|服务/.test(text)),parts[0]]
     const quotes=[...new Set(candidates.filter((text):text is string=>!!text))].slice(0,2).filter(text=>{if(text.length>remaining)return false;remaining-=text.length;return true})
-    if(quotes.length)choices.push({source_id:source.id,locator:source.locator,quotes})
+    if(quotes.length){
+      const quote_refs=sourceWindows?quotes.map(quote=>{const window=sourceWindows.find(window=>window.text.includes(quote))!;const start_char=window.start_char+window.text.indexOf(quote);return {start_char,end_char:start_char+quote.length}}):undefined
+      choices.push({source_id:source.id,locator:source.locator,quotes:quote_refs?[]:quotes,...(quote_refs?{quote_refs}:{})})
+    }
   }
   return choices
 }
@@ -192,17 +198,18 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
     }
     if(workflow)base.workflow={...workflow.trace,notes:workflow.notes}
     const references=strategyModelReferences(promptSources),modelSources=references.sources
-    const quoteChoices=JSON.stringify(sourceQuoteCandidates(modelSources))
     const compressed=workflow?references.encodeKnown(workflow.contextValue):null
+    const quoteChoices=JSON.stringify(sourceQuoteCandidates(modelSources,[],compressed?.evidence_windows))
+    const packed=compressed?packEvidenceContext(compressed):null
     const modelSourcePayload=compressed?compressed.source_catalog:modelSources
-    const synthesisContext=compressed?{evidence_windows:compressed.evidence_windows,untrusted_research_plan:compressed.untrusted_research_plan,untrusted_expert_notes:compressed.untrusted_expert_notes,failed_tasks:compressed.failed_tasks}:null
+    const synthesisContext=compressed?{evidence_windows:packed!.evidence_windows,untrusted_research_plan:compressed.untrusted_research_plan,untrusted_expert_notes:compressed.untrusted_expert_notes,failed_tasks:compressed.failed_tasks}:null
     const synthesisContextJson=synthesisContext?JSON.stringify(synthesisContext):''
     if(base.workflow) {
       const after=JSON.stringify(modelSourcePayload).length+synthesisContextJson.length+quoteChoices.length
       base.workflow={...base.workflow,synthesis_quote_candidate_chars:quoteChoices.length,synthesis_context_chars:after}
       const tasks=base.workflow.tasks.map(task=>({id:task.id,role:task.role,status:task.status,source_count:task.source_ids.length,summary:workflow?.notes.find(note=>note.task_id===task.id)?.summary}))
       progress({stage:'model',status:'running',message:`主研判来源上下文为${after}字符，包含专家记录、原文窗口及候选引文。`,source_count:promptSources.length,
-        workflow:{phase:'compression',tasks,context_before_chars:base.workflow.expanded_input_characters,context_after_chars:base.workflow.output_characters,context_metric:'equivalent_research_context',source_before_chars:base.workflow.source_characters,source_after_chars:base.workflow.retained_source_characters}})
+        workflow:{phase:'compression',tasks,context_before_chars:base.workflow.expanded_input_characters,context_after_chars:base.workflow.output_characters,context_metric:'equivalent_research_context',source_before_chars:base.workflow.source_characters,source_after_chars:base.workflow.retained_source_characters,quoted_passages:base.workflow.quoted_passages,retained_quotes:base.workflow.retained_quotes,critical_fragments:base.workflow.compression_audit?.critical_fragments,retained_critical_fragments:base.workflow.compression_audit?.retained_critical_fragments}})
       progress({stage:'model',status:'running',message:'正在综合已核原句窗口与专家记录，形成具体改造方案。',source_count:promptSources.length,
         workflow:{phase:'synthesis',tasks,request_context_chars:after}})
     }
@@ -248,7 +255,7 @@ ${workflow?'另须填写reasoning_dimensions完整六项，key依次覆盖demand
 材料使用：role=current支撑本对象现况；reference用于方法、社区背景和对标目标。数量、费用与阶段保留来源的对象范围和时点，分项估算、合同、结算及整体预算分别列。结构鉴定、居民决议、资金到账等事实逐项取自原文。${demo ? '本次所有现况数值取自SIM-STRATEGY-BASE，明确完整模拟；整治和拆建分别采用各自的演示预算。' : synthetic ? '本轮是隔离的演示资料研究，所有构造内容明确为模拟，按所选演示文件分析，不替换为其他完整模拟社区的底表。' : '社会效果可提出带前提的预期，实际成效和人口金额取自所列来源。'}
 输出组织：decision_brief在前，接headline、summary、preferred_mode、rationale、两条paths（含work_packages）、六条dimensions、internal_data_requests和next_checks。headline直接点明本项目建议；summary控制在140字内。每块brief的conclusion尽量65字内、reason100字内，financial/social各110字内。rationale写2至3个核心判断，每条quote逐字复制同一来源一段连续原句或归档字段，保留必要限定。两路径各写1至2项actions摘要、1至2项requirements；next_checks写2项最影响决策的核查。六维key不重复，每个描述尽量50字内，保留对象、动作与实现条件。各举措和维度均引用evidence_refs。具体内容优先放分项表，避免在多个字段重复同一段。只调用structured_output。
 <untrusted_sources>${JSON.stringify(modelSourcePayload)}</untrusted_sources>
-${synthesisContextJson?'专家记录中的quote_ref指向同源UTF-16字符范围；原句只保存一次，见evidence_windows。引用时从对应窗口逐字复制原句，不能把quote_ref标识当作原文。\n<untrusted_research_context>'+synthesisContextJson+'</untrusted_research_context>':''}
+${synthesisContextJson?'evidence_windows按source_id分组，rows每行按columns表示[start_char,text]；end_char=start_char+text的UTF-16长度，各行独立，不能跨行拼接引文。专家quote_ref和候选quote_refs均指向同源UTF-16范围；原句仅见这些窗口，引用时按范围逐字复制，标识不作原文。\n<untrusted_research_context>'+synthesisContextJson+'</untrusted_research_context>':''}
 以下是从同一批source直接截取的少量连续原句候选，source_id与locator保持对应；可选用候选，也可从同一source正文选其他连续短句。quantity_basis=source时所选quote本身必须含该数量和单位，否则quantity设null、quantity_basis设unknown，scope和delivery也不将该数量写成已知工程量。
 <source_quote_candidates>${quoteChoices}</source_quote_candidates>
 ${demo?"rationale.quote须从下列候选原句逐字复制，不得改写："+JSON.stringify(references.encodeKnown(sources[0].text.split("\n").filter(line=>line.length>=16&&line.length<=360).map(quote=>({source_id:sources[0].id,quote})).slice(0,24))):""}

@@ -196,7 +196,10 @@ describe('bounded native DSH renewal research workflow', () => {
     expect(result.source_windows[0].end_char).toBeLessThan(result.source_windows[1].start_char)
     for (const observation of result.notes[0].observations) expect(result.source_windows.some(window => window.text.includes(observation.quote))).toBe(true)
     for (const window of result.source_windows) expect(window.text).toBe(row.text.slice(window.start_char, window.end_char))
-    expect(result.trace.output_characters).toBe(JSON.stringify(result.contextValue).length)
+    expect(result.trace.output_characters).toBe(result.context.length)
+    const packed=JSON.parse(result.context).evidence_windows
+    expect(packed.columns).toEqual(['start_char','text'])
+    expect(packed.groups.flatMap((group:any)=>group.rows.map(([start,text]:[number,string])=>({source_id:group.source_id,start_char:start,end_char:start+text.length,text})))).toEqual(result.contextValue.evidence_windows)
     expect(result.trace.output_characters).toBeGreaterThan(result.trace.retained_source_characters)
     expect(result.trace.compression).toBe('reduced')
     const tiny = await session(async () => ({ summary: '本轮直接研判。', tasks: [] }))
