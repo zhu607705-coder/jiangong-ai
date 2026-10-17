@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-17T09:17:16.102092+00:00",
+  "ready": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "46f04faf061f90d9442097801d1a6b50485122c6",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "deployed_replay": {
+    "before": 35432,
+    "after": 26514,
+    "audit": {
+      "critical_fragments": 87,
+      "retained_critical_fragments": 87,
+      "retention_ratio": 1,
+      "omitted": [],
+      "retained_chars": 6934,
+      "deduplicated_chars": 699,
+      "semantic_claim": "literal_conditions_and_amounts_preserved_in_retained_ranges"
+    },
+    "quotes": 12
+  },
+  "research_history_unchanged": true,
+  "existing_project_runs": 0,
+  "provider_calls": 0,
+  "production_writes": 0
+}
