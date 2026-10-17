@@ -1894,6 +1894,27 @@
         "research/test_results/research-complete-*"
       ],
       "definition_of_done": "必要回归、原生协议和公开来源对照分别留存；部署并核对项目与历史不变，合并主分支；真实标签不足不伪称已校准。"
+    },
+    {
+      "id": "CASE-TASK-IMPORT-20261017",
+      "depends_on": [
+        "RESEARCH-COMPLETE-20261017"
+      ],
+      "goal": "扩展项目案例匹配、修正压缩统计口径、在调查任务直接导入并提取新数据",
+      "write_scope": [
+        "apps/host",
+        "apps/workspace/src",
+        "packages/retrofit",
+        "services/map-screening",
+        "runtime/workflows/renewal-research.ts",
+        "data/public_cases/renewal-case-cards-20261017.json",
+        "scripts",
+        "tests",
+        "agent",
+        "docs/对象与当前上下文合同.md",
+        "research/reuse_manifest.json"
+      ],
+      "definition_of_done": "案例随实际问题变化、来源状态分开；任务导入可回读原文定位及工具回执；压缩同口径且历史数值保留；回归/构建及服务器页面验收，部署后项目与历史保持，完成合并。"
     }
   ]
 }

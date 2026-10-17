@@ -58,7 +58,7 @@ export class ResearchRoundsService {
     const metadata = metadataSchema.parse(value)
     const row = (await this.store.db.query('SELECT d.id FROM documents d JOIN projects p ON p.id=d.project_id WHERE d.id=$1 AND d.project_id=$2 AND p.owner_id=$3',[documentId,project.id,project.owner_id])).rows[0]
     if (!row) fail(404,'ROUND_DOCUMENT_NOT_FOUND','此资料不属于当前项目。')
-    await this.store.db.query('INSERT INTO research_material_metadata(owner_id,project_id,document_id,metadata) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,document_id) DO UPDATE SET metadata=EXCLUDED.metadata',[project.owner_id,project.id,documentId,JSON.stringify(metadata)])
+    await this.store.db.query('INSERT INTO research_material_metadata(owner_id,project_id,document_id,metadata) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,project_id,document_id) DO UPDATE SET metadata=research_material_metadata.metadata||EXCLUDED.metadata',[project.owner_id,project.id,documentId,JSON.stringify(metadata)])
   }
   private async documents(project:ProjectRecord):Promise<ResearchMaterial[]> {
     const rows = (await this.store.db.query<DocumentRow>(`SELECT d.id,d.file_name,d.sha256,d.parser_result,m.metadata FROM documents d

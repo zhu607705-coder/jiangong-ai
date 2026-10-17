@@ -1,0 +1,10 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/case-matching
+
+··············
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Start at  15:12:30
+   Duration  1.55s (transform 464ms, setup 0ms, import 1.14s, tests 174ms, environment 0ms)
+

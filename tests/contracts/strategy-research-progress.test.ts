@@ -62,6 +62,17 @@ test('compression displays one reported character pair and does not combine a re
   expect(inspect([phase('planning')]).querySelector('.srp-compression')).toBeNull()
 })
 
+test('compares equivalent contexts, reports real growth and keeps source-only counts separately',()=>{
+  const document=inspect([phase('compression',{context_before_chars:35432,context_after_chars:35353,context_metric:'equivalent_research_context',source_before_chars:16540,source_after_chars:13241}),phase('synthesis',{request_context_chars:35579})])
+  expect(document.querySelector('.srp-compression')?.textContent).toContain('35,432')
+  expect(document.querySelector('.srp-compression')?.textContent).toContain('减少 79')
+  expect(document.querySelector('.srp-compression')?.textContent).toContain('最终方案输入上下文 35,579')
+  const growth=inspect([phase('compression',{context_before_chars:1000,context_after_chars:1400,context_metric:'equivalent_research_context'})])
+  expect(growth.querySelector('.srp-compression')?.textContent).toContain('增加 400')
+  const legacy=inspect([phase('compression',{context_before_chars:21844,context_after_chars:35579})])
+  expect(legacy.querySelector('.srp-compression')?.textContent).toContain('历史记录统计范围不同')
+})
+
 test('task snapshots replace prior cards, summaries are bounded, and unrequested model thinking is never rendered', () => {
   const raw = { ...phase('specialists', { tasks: [{ ...tasks[0], summary: '已验证任务要点。'.repeat(100) }] }), thinking: '不可显示的模型思维全文', raw_trace: '私有推理轨迹' } as StrategyProgress
   const document = inspect([phase('specialists', { tasks }), raw])

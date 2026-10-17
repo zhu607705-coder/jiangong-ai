@@ -6,7 +6,8 @@ import { config } from './config'
 import type { ConstructionCostLibrary } from '../../packages/construction-costs/library'
 import { projectDecisionInput, type DecisionInput } from '../../packages/decision/structured-route'
 import type { DecisionSupport } from './generated/contracts'
-import type { RenewalModePacket, RenewalModeStreamEvent, ModeHistory } from '../../packages/retrofit/renewal-mode'
+import type { RenewalModePacket, RenewalModeStreamEvent, ModeHistory,RenewalModeInput } from '../../packages/retrofit/renewal-mode'
+import {selectCaseReferences} from '../../packages/retrofit/case-matching'
 import { evaluateDecision, decisionCacheDescriptor } from '../../services/capabilities/decision-model'
 import { renewalHistory } from '../../services/map-screening/renewal-history'
 import { validate } from '../../packages/contracts/validate'
@@ -32,31 +33,25 @@ async function prepareMode(input: DecisionInput, library: ConstructionCostLibrar
   const previous = input.state as { scope?: unknown; target?: unknown; as_of?: string; synthetic?: boolean }
   input.state = { purpose: '先判定老旧小区更新模式，再安排六维方案与调查', scope: previous.scope || previous.target,
     as_of: previous.as_of, synthetic: previous.synthetic || false, verified_conditions: input.factors }
-  input.renewalMode.history = history ?? await renewalHistory(library)
+  input.renewalMode.history = history ?? await renewalHistory(library,process.cwd(),input.renewalMode)
   const hash = createHash('sha256').update(JSON.stringify(decisionCacheDescriptor(input, { model: config.QWEN_DECISION_MODEL, endpoint: config.QWEN_DECISION_ENDPOINT }))).digest('hex')
   return { input, hash }
 }
 function strategyHash(modeHash: string, version: number, demo: 'true' | 'false') {
   return createHash('sha256').update(JSON.stringify({modeHash,version,policy:STRATEGY_POLICY+(demo==='true'?'-readable-demo-v2':''),model:config.DEEPSEEK_MODEL,demo})).digest('hex')
 }
-async function workPlanReferences(library: ConstructionCostLibrary, asOf: string): Promise<StrategySource[]> {
-  if (typeof library.search !== 'function') return []
-  const results = await Promise.allSettled(['浙江省','上海市','广东省'].map(province=>library.search({province,work_type:'construction'})))
-  const selected: StrategySource[] = []
-  for (const [index,result] of results.entries()) {
-    if (result.status !== 'fulfilled') continue
-    const seen = new Set<string>()
-    for (const item of result.value.items) {
-      const scope = item.scope_quote || item.scale_quote
-      const date = item.source.published_at || item.notice_date
-      if (!scope || !/道路|排水|供水|管网|立面|屋面|电梯|消防|适老|绿化/.test(scope) || date && date.slice(0,10)>asOf.slice(0,10) || seen.has(item.project_name)) continue
-      seen.add(item.project_name)
-      selected.push({id:`COST-REF-${item.id}`,title:`${item.province} · ${item.project_name} · 工程内容参考`,role:'reference',visibility:'public',data_class:'public',url:item.source.url,published_at:date||null,locator:`cost:${item.id}:scope_quote`,
-        text:`项目：${item.project_name}\n来源范围原文：\n${scope}\n金额阶段：${item.amount_kind}\n金额原文：\n${item.amount_quote}\n案例数量与金额按该历史项目使用。`})
-      if (seen.size >= (index===0?2:1)) break
-    }
+async function workPlanReferences(library:ConstructionCostLibrary,mode:RenewalModeInput):Promise<StrategySource[]> {
+  if(typeof library.search!=='function')return []
+  const ranked=selectCaseReferences(mode),selected:StrategySource[]=[],urls=new Set<string>()
+  for(const match of ranked){
+    const item=match.item
+    if(item.kind==='workbook'||!item.url||urls.has(item.url)||!item.source_quote)continue
+    urls.add(item.url)
+    selected.push({id:'CASE-REF-'+item.id,title:`${item.city} · ${item.name} · 案例摘录`,role:'reference',visibility:'public',data_class:'public',url:item.url,published_at:item.published_at||null,locator:item.source_locator||'case:'+item.id,
+      text:`来源摘录：${item.source_quote}\n案例范围：${item.reference_scope||item.reported_stage}\n归档案例字段（该历史工程，不是本项目事实）：${JSON.stringify(item.metrics)}\n匹配问题：${match.reasons.join('；')}\n可研究的迁移方向：${item.decision_use}\n采用前需核对：${match.differences.join('；')}`})
+    if(selected.length>=6)break
   }
-  return selected.slice(0,4)
+  return selected
 }
 
 /** A bounded read capability; source/version keyed results use the existing Store. */
@@ -174,7 +169,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
         && cached.sources.length && cached.sources.every(source=>source.visibility!=='internal'&&source.data_class!=='internal') ? {sources:cached.sources,research:cached.research} : undefined
       // The isolated simulation path does not advance the real project's head.
       if(query.demo==='false')ticket=await beginProjectAnalysis(store,project)
-      let result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,project.input.as_of),savedResearch,researchWorkflow:true})
+      let result = await researchRenewalStrategy(project.input,project.context_version,input,hash,query.demo==='true',signal,prior,{onProgress:emit,referenceSources:await workPlanReferences(library,input.renewalMode!),savedResearch,researchWorkflow:true})
       signal.throwIfAborted()
       const changed=(await requireProject(project.id)).context_version!==project.context_version
       if(ticket){
@@ -207,7 +202,7 @@ export async function registerRenewalMode(app: Express, store: Store, requirePro
     try {
       // Public projection is deliberately independent from the selected internal material manifest.
       const {input}=await prepareMode(projectDecisionInput(project.input),library)
-      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext,referenceSources:await workPlanReferences(library,project.input.as_of),researchWorkflow:true})
+      return await researchRenewalStrategy(project.input,project.context_version,input,hash,project.input.synthetic,signal,null,{onProgress,roundContext,referenceSources:await workPlanReferences(library,input.renewalMode!),researchWorkflow:true})
     } finally {running.delete(key)}
   })
   await researchRounds.initialize()

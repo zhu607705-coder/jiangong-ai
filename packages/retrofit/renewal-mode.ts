@@ -5,6 +5,7 @@ import { publicMapContext } from '../maps/public-context'
 import { MODEL_SIGNAL_THRESHOLDS } from '../decision/thresholds'
 import {objectLocationConflicts} from '../research/evidence'
 import {projectObjectLocation} from './object-binding'
+import {expandCuratedCases,extractCaseTopics,rankRenewalCases,type RenewalCase,type CaseContext} from './case-matching'
 
 export const RENEWAL_MODE_POLICY = 'renewal-mode-first-v4'
 export const MODE_LABELS = { comprehensive: '综合整治', rebuild: '原拆原建', compare: '两种模式并行比选', investigate: '先核查模式关键条件' } as const
@@ -21,13 +22,13 @@ export type ModeEvidence = { source_id: string; title: string; published_at: str
 export type ModeCondition = { kind: string; value: boolean | null; state: 'supported' | 'restricted' | 'unknown' | 'conflict'; source_ids: string[]; locators: string[] }
 export type ModeHistory = {
   snapshot_date: string; total: number; provinces: Record<string, number>; contract_count: number; settlement_count: number;
-  records: { id: string; project_name: string; city: string | null; year: number | null; work_type: string | null; amounts_yuan: Record<string, number | null>; locator: string; document_id: string; review_status: string; url: string | null }[];
+  records: { id: string; project_name: string; city: string | null; year: number | null; work_type: string | null; amounts_yuan: Record<string, number | null>; locator: string; document_id: string; review_status: string; url: string | null;scope?:string|null }[];
   official_costs: { id: string; project_name: string; city: string | null; amount_yuan: number; amount_kind: string; scope: string | null; url: string; date: string | null }[]
 }
 export type RenewalModeInput = {
   policy_version: string; target: string; object_ref: string | null; as_of: string; synthetic: boolean;
   reference_as_of: string; conditions: ModeCondition[]; evidence: ModeEvidence[];
-  standards: typeof MODE_STANDARD; cases: typeof benchmarks.cases; method_reference: typeof benchmarks.method_reference;
+  standards: typeof MODE_STANDARD; cases: RenewalCase[]; method_reference: typeof benchmarks.method_reference;matching_context?:CaseContext;
   history?: ModeHistory
 }
 export type RenewalModePacket = { screening: RenewalModeInput; decision: DecisionSupport | null; origin?: 'explicit_mode' | 'strategy' | 'legacy' }
@@ -159,9 +160,12 @@ function base(target: string, objectRef: string | null, asOf: string, synthetic:
     return !objectLocationConflicts(passages,location,target)
   })
   const referenceAsOf = new Date().toISOString().slice(0, 10)
+  const evidence=excerpts(current,names,facts.filter(fact=>!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef})),objectRef,location)
+  const households=facts.find(fact=>fact.epistemic_status==='fact'&&fact.unit==='户'&&/household|households|住户|户数/.test(fact.kind)&&typeof fact.value==='number'&&fact.value>0&&current.some(source=>source.id===fact.source_id)&&!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef}))
+  const matchingContext:CaseContext={target,city:location.city||null,topics:extractCaseTopics(target+' '+evidence.map(row=>row.title+' '+row.quote).join('\n')),households:households?Number(households.value):null,as_of:referenceAsOf,city_basis:location.city?'registered':'unknown',...(/民宿|酒店|宾馆|商场/.test(target)?{object_note:'登记名称含住宿或商业用途线索。住宅案例可先借鉴专项做法，建筑用途与居民范围需结合本对象资料核对。'}:{})}
   return { policy_version: RENEWAL_MODE_POLICY, target, object_ref: objectRef, as_of: asOf, synthetic, reference_as_of: referenceAsOf,
-    conditions: conditionRows(facts, current, objectRef, projectId, asOf), evidence: excerpts(current, names, facts.filter(fact=>!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef})), objectRef,location), standards: MODE_STANDARD,
-    cases: benchmarks.cases.filter(row => row.published_at <= referenceAsOf), method_reference: benchmarks.method_reference }
+    conditions: conditionRows(facts, current, objectRef, projectId, asOf), evidence, standards: MODE_STANDARD,matching_context:matchingContext,
+    cases:rankRenewalCases(expandCuratedCases(benchmarks.cases,referenceAsOf),matchingContext).map(match=>match.item), method_reference: benchmarks.method_reference }
 }
 
 export function projectRenewalModeInput(input: ProjectInput): RenewalModeInput {

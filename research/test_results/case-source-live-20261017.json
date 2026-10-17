@@ -1,0 +1,196 @@
+{
+  "checked_at": "2026-10-17T06:59:18.984Z",
+  "elapsed_ms": 42339,
+  "scope": "Read-only public source/quote protocol check; no project writes or business effectiveness labels.",
+  "receipts": [
+    {
+      "url": "https://fgj.sh.gov.cn/gqdt/20260428/998feb2a74c94e20acb983f97a74fb30.html",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "69515c0b8349664d71a2a9c69b1d804faea05f9c0ecd97ac83ac1e1f5fb61f56",
+      "elapsed_ms": 7954,
+      "checks": [
+        {
+          "case_id": "CASE-JUNYUE-LIFT",
+          "quote_found": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.hzzx.gov.cn/cshz/content/2024-08/23/content_8777570.htm",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "65d9c03258bdc81c7163d30934a64f9a1e0b18f58fcfc30a46ee7628884ec5a2",
+      "elapsed_ms": 12234,
+      "checks": [
+        {
+          "case_id": "CASE-CUIYUAN1-LIFT",
+          "quote_found": true
+        },
+        {
+          "case_id": "CASE-CUIYUAN3-REUSE",
+          "quote_found": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.shanghai.gov.cn/nw4411/20251219/17da6017b5cd4baa8813a3a98e4faa8e.html",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "e754a8caf7d06e29b65bbeee3e81cf648e415d4b90dcf8c5985c5ae99b433227",
+      "elapsed_ms": 3937,
+      "checks": [
+        {
+          "case_id": "CASE-FANGUA-REBUILD",
+          "quote_found": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.lw.gov.cn/yshj/sdpt/wslhlq/ptfc/content/post_9053167.html",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "56e18f5cdb95cf41c4b748e0ce1e04dff7935aa9e5d3aada43eb32e566076c31",
+      "elapsed_ms": 4673,
+      "checks": [
+        {
+          "case_id": "CASE-PANTANG-MICRO",
+          "quote_found": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.shanghai.gov.cn/nw4411/20250102/dfa531e346a6448ba02952b23b506c21.html",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "90307132214eb3bb1013cf4484a3fb898925c8e929f2a13d23ed88991055d9a7",
+      "elapsed_ms": 5168,
+      "checks": [
+        {
+          "case_id": "CASE-DAPU-COMPLETE",
+          "quote_found": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.shanghai.gov.cn/nw15343/20250121/48e45e60005c44a3b3b440d01119bd32.html",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "6003d69cf585e2d5e8a363a858a55e4d14ebba1189615535745a053c06bf3927",
+      "elapsed_ms": 9842,
+      "checks": [
+        {
+          "case_id": "CASE-CAOYANG8-COMPLETE",
+          "quote_found": true
+        }
+      ]
+    },
+    {
+      "url": "https://mzj.gz.gov.cn/gkmlpt/content/10/10510/post_10510551.html",
+      "http_status": 200,
+      "representation_kind": "text",
+      "representation_sha256": "3b0b0a69d696d63abb04cd759a4094f0550319c23afd067c9495ff340213bcc8",
+      "elapsed_ms": 14216,
+      "checks": [
+        {
+          "case_id": "CASE-LIWAN-MEALS",
+          "quote_found": true
+        }
+      ]
+    }
+  ],
+  "web_calls": [
+    {
+      "id": "0a42353f-3e2e-489e-a991-00f525c5da41",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "256f22b69ab479e4b0c242d58d0ccbb829e575bcf17965ca0c20ad26fabbc98c",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 12231,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "bf9068e4-4f41-4b81-99c5-26b15920edfb",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "a9693afc929d5752103dd92a88d2c1bb885a877d089ea9f82f83683e3ced3f87",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 7722,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "222eccd2-c2ce-4d80-ad87-a48ea55b5887",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "3dd82da06acff028ce82b20a1ca99b7b49c1f68120a667337c9e4949d687f587",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 4657,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "870cde62-2367-49a8-815a-118bd2929004",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "fa2e2778dab3861465642b50c12bef3f112874dfced9d195a9c898cd78e68e5a",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 3687,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "54e065d5-29c0-4ff2-ac71-d9e9d656c1a8",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "d02fee867db56699ab7afe603109bb65ca7f99261209bd07ab13e74d1f95ca54",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 5166,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "bc8ff8bc-f2d7-474c-b8f5-1814303d7e82",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "2d73219094c98f93c689a984606dff8607268c6a6d43fdc7ef7b6d80e8f729fb",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 4667,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "3fa7ac84-3a85-4e9a-9b59-5fe635b08c5f",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "366a896949ac07a467675b25a64f5b55e324d1b97db05ec7f0dd5a6eb2b90758",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 14207,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    }
+  ],
+  "quote_matching": "Unicode NFKC normalization with whitespace removed; not an original-file hash claim"
+}

@@ -4242,5 +4242,67 @@
       "research/test_results/research-complete-deployed-providers-20261017.json",
       "research/test_results/research-complete-browser-live-20261017.json"
     ]
+  },
+  "case_task_import_20261017": {
+    "status": "deployed_verified",
+    "updated_at": "2026-10-17T07:29:43.718620+00:00",
+    "requests": [
+      "broaden and precisely match reference cases",
+      "fix reversed/mixed context-compression character counts",
+      "upload/extract newly acquired data directly from investigation tasks with real tool receipts"
+    ],
+    "root_causes": [
+      "3 hardcoded cases + history regex restricting four project names",
+      "raw sources-only length compared to sources+expert context; real round 21844 vs35579; equivalent35432->35353",
+      "tasks only local progress and link away; ParserPort and knowledge extractor exist but not wired to tasks"
+    ],
+    "implemented": [
+      "11 curated case profiles from 3 existing+8 verified additions",
+      "query-conditioned1277 workbook and20 official cost history selection",
+      "two-column case-to-decision explorer and weighted explainable match",
+      "same-scope compression fields and legacy metric labels",
+      "TaskMaterialService associations in existing metadata, local literal metrics and optional DSH draft extraction",
+      "task upload/paste UI, tool receipts and original task baseline retained across upload revision",
+      "public case Markdown/JSON and existing parser/extractor/round reuse"
+    ],
+    "pending": [
+      "merge PR55"
+    ],
+    "worktree": "D:/建工ai/.cache/case-matching",
+    "next_runnable_task": "Merge PR55 and reconcile root without overwriting unrelated changes.",
+    "tests": [
+      "56 focused cases passed; core source/tool tests13 passed",
+      "7 real public URL fetches returned200; all8 new excerpts normalized-match",
+      "production build passed",
+      "map browser flow passed; Python220 passed",
+      "full suite1690 passed/1 failure; the removed historical case evidence button was restored and its19 affected tests passed",
+      "final production build passed",
+      "task material real HTTP routes6 passed",
+      "final UI/HTTP21 passed; final intake UI10 passed",
+      "live browser topic switching, corrected stacked case layout, direct file/paste controls verified"
+    ],
+    "live": {
+      "runtime_commit": "035c348063758416ecde10d0905ee01816a54b4b",
+      "projects": 38,
+      "project_metadata_unchanged": true,
+      "research_history_unchanged": true,
+      "project_readback": "P-d397c757-5df1-4c59-a397-13cb95f763eb",
+      "curated_cases": 11,
+      "historical_rows": 1277,
+      "official_records": 20,
+      "selected_workbook_rows": 24,
+      "existing_project_research_calls": 0,
+      "task_imports_route": "ok"
+    },
+    "ui_commit": "8bdec71b8eef05a1aec7fe31828d2566212bf98e",
+    "artifacts": [
+      "docs/对象与当前上下文合同.md",
+      "data/public_cases/renewal-case-cards-20261017.json",
+      "data/public_cases/renewal-case-reference-catalog.md",
+      "research/test_results/case-task-live-readback-20261017.json",
+      "research/test_results/case-task-browser-20261017.json",
+      "research/test_results/case-task-runtime-deployment-20261017.json",
+      "research/test_results/case-task-ui-final-deployment-20261017.json"
+    ]
   }
 }

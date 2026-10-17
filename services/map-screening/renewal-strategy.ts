@@ -74,7 +74,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
         url: source.url || null, published_at: source.published_at || null, role: 'reference', locator: source.locator || `text:chars:1-${source.untrusted_text!.length}` })
     }
     const workReferenceIds:string[]=[]
-    for(const source of (options.referenceSources||[]).slice(0,4)) {
+    for(const source of (options.referenceSources||[]).slice(0,6)) {
       if(!source.text.trim()||source.visibility==='internal'||source.data_class==='internal')continue
       if(!sources.some(row=>row.id===source.id))sources.push({...source,role:'reference'})
       if(sources.find(row=>row.id===source.id)?.role==='reference')workReferenceIds.push(source.id)
@@ -133,7 +133,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       }
     }
     else progress({ stage: 'research', status: 'skipped', message: synthetic ? '使用完整模拟底表与归档案例，不进行外部检索。' : '本轮使用已保存原文与归档案例。' })
-    for (const example of screening.cases) if(!sources.some(source=>source.id===example.id))sources.push({ id: example.id, title: `${example.city} · ${example.name} · 归档对标字段`,
+    for (const example of screening.cases.slice(0,6)) if(!sources.some(source=>source.id===example.id||source.role==='reference'&&source.url===example.url))sources.push({ id: example.id, title: `${example.city} · ${example.name} · 归档对标字段`,
       text: JSON.stringify(example), url: example.url, published_at: example.published_at, role: 'reference', locator: `case:${example.id}` })
     const demo = synthetic && !round ? buildCompleteCommunityDemo() : null
     if (demo) {
@@ -202,9 +202,9 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       base.workflow={...base.workflow,synthesis_quote_candidate_chars:quoteChoices.length,synthesis_context_chars:after}
       const tasks=base.workflow.tasks.map(task=>({id:task.id,role:task.role,status:task.status,source_count:task.source_ids.length,summary:workflow?.notes.find(note=>note.task_id===task.id)?.summary}))
       progress({stage:'model',status:'running',message:`主研判来源上下文为${after}字符，包含专家记录、原文窗口及候选引文。`,source_count:promptSources.length,
-        workflow:{phase:'compression',tasks,context_before_chars:base.workflow.input_characters,context_after_chars:after}})
+        workflow:{phase:'compression',tasks,context_before_chars:base.workflow.expanded_input_characters,context_after_chars:base.workflow.output_characters,context_metric:'equivalent_research_context',source_before_chars:base.workflow.source_characters,source_after_chars:base.workflow.retained_source_characters}})
       progress({stage:'model',status:'running',message:'正在综合已核原句窗口与专家记录，形成具体改造方案。',source_count:promptSources.length,
-        workflow:{phase:'synthesis',tasks,context_before_chars:base.workflow.input_characters,context_after_chars:after}})
+        workflow:{phase:'synthesis',tasks,request_context_chars:after}})
     }
     const constructionAdmission = { comprehensive: strategyConstructionAllowed('comprehensive',input.renewalMode!.conditions,promptSources), rebuild: strategyConstructionAllowed('rebuild',input.renewalMode!.conditions,promptSources) }
     const historicalStages = synthetic ? [] : [

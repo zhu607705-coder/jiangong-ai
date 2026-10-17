@@ -28,6 +28,7 @@ import ProjectOverview from './components/ProjectOverview';
 import ProjectDecisionGuidance from './components/ProjectDecisionGuidance';
 import ProjectEvidenceDrawer, { type ProjectEvidenceReference } from './components/ProjectEvidenceDrawer';
 import ProjectTasksPage from './components/ProjectTasksPage';
+import type {TaskMaterialLink,TaskMaterialReceipt} from '../../../packages/retrofit/task-materials';
 import ProjectResultsPage from './components/ProjectResultsPage';
 import './workspace-navigation.css';
 import './qiushi-demo-replay.css';
@@ -590,7 +591,7 @@ export default function App() {
     if(!access.canWrite){window.location.assign('/admin/login');return}
     creationDraftId.current=null;setCreateError('');setMapAnchor(undefined);setMapEvidence(null);setProjectName('');setRegionName('');setGeometryText('');setCreateOpen(true);
   }
-  async function uploadMaterial(file: File, metadata?: MaterialUploadMetadata) {
+  async function uploadMaterial(file: File, metadata?: MaterialUploadMetadata,onSaved?:(documentId:string)=>void) {
     if (!project || busy || !canWrite) return;
     const projectId = project.id;
     await action(async () => {
@@ -610,10 +611,21 @@ export default function App() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.detail || "材料上传未完成。");
       await loadProject(projectId);
+      if(typeof result.id==="string")onSaved?.(result.id);
       setNotice(result.parser_result?.status === "ocr_required"
         ? "原文件已保存，扫描页尚需 OCR；未把空文本当作已解析证据。"
         : "材料已保存为本项目内部资料，可在补充研判中纳入分析。");
     });
+  }
+  async function uploadInvestigation(file:File,metadata:MaterialUploadMetadata,link:TaskMaterialLink):Promise<TaskMaterialReceipt> {
+    if(!project)throw new Error('请先打开项目。');const projectId=project.id;let documentId='';
+    await uploadMaterial(file,metadata,id=>{documentId=id});
+    if(!documentId)throw new Error('资料尚未完成上传，请查看页面提示并重试。');
+    return api<TaskMaterialReceipt>(`/projects/${encodeURIComponent(projectId)}/investigation-materials`,{...link,document_id:documentId});
+  }
+  async function extractInvestigation(documentId:string,link:TaskMaterialLink):Promise<TaskMaterialReceipt> {
+    if(!project)throw new Error('请先打开项目。');
+    return api<TaskMaterialReceipt>(`/projects/${encodeURIComponent(project.id)}/investigation-materials/${encodeURIComponent(documentId)}/extract`,{...link,use_model:true});
   }
   async function startRun(p: Project, mode: "automatic" | "enterprise", knowledgeQuery?: KnowledgeQuery) {
     if (!canWrite) return;
@@ -1522,7 +1534,7 @@ export default function App() {
               </details>}
             </section>
           )}
-          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <ProjectTasksPage project={project} packet={overviewStrategy} rounds={researchRecords?.rounds} direction={currentDirection} section={location.section==='history'?'history':'current'} onEvidence={openEvidence} onSupplement={()=>navigateProject('evidence','files')}/>}
+          {tab === 'actions' && project.input.business_profile === 'neighborhood' && <ProjectTasksPage project={project} packet={overviewStrategy} rounds={researchRecords?.rounds} direction={currentDirection} section={location.section==='history'?'history':'current'} onEvidence={openEvidence} onSupplement={()=>navigateProject('evidence','files')} onUploadTask={uploadInvestigation} onExtractTask={extractInvestigation} onReassess={()=>{setMaterialRequest(value=>value+1);navigateProject('assessment','direction')}}/>}
           {tab === "actions" && !(["neighborhood"].includes(project.input.business_profile || "")) && !completeDemoActive && (
             <details className="strategy-historical-investigations" open={project.input.business_profile !== 'neighborhood'}><summary>历史调查建议与已保存清单</summary><section className="content-panel">
               <div className="kicker">NEXT ACTIONS</div>
