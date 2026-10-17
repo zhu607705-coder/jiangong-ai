@@ -96,7 +96,8 @@ test('scheme comparison always opens both candidates and an explicit click chang
     expect(app.navigate).toHaveBeenLastCalledWith({ view: 'scenarios', section: 'detail', pane: 'content', scheme: 'rebuild' })
     expect(app.container.querySelector('.single-scheme-workspace')?.textContent).not.toContain('分项改善目标')
     await act(async () => app.root.render(createElement(WorkbenchAccessContext.Provider, { value: { role: 'viewer', canWrite: false } }, createElement(StrategyOverview, { project, demoActive: false, workspacePage: 'assessment', section: 'direction', directionSelection: { identity: 'WS:4:false', mode: 'rebuild' }, onDirectionSelect: app.choose, onNavigate: app.navigate, onEvidence: app.evidence, onInvestigate: vi.fn() }))))
-    await vi.waitFor(() => expect(app.container.querySelector('.strategy-working-status')?.textContent).toContain('系统核验方向：综合整治'))
+    await vi.waitFor(() => expect(app.container.querySelector('.strategy-working-status')?.textContent).toContain('当前工作方向：原拆原建'))
+    expect(app.container.querySelector('.strategy-working-status')?.textContent).not.toContain('系统核验方向')
     expect(app.container.querySelector('.strategy-working-status')?.textContent).toContain('当前工作方向：原拆原建')
     expect(app.container.querySelector('.decision-criteria')).toBeNull()
   } finally { await app.cleanup() }

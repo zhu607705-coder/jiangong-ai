@@ -45,6 +45,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
   const internalSelected = selected.some(material => material.visibility === 'internal') || !!baseline?.materials.some(material => material.visibility === 'internal')
   const nextNumber = Math.max(0, ...ordered.map(round => round.round_number)) + 1
   const latestReview = baseline?.result?.strategy?.round_review
+  const reviewPacket=candidate&&candidate.input_hash===baseline?.result?.input_hash&&candidate.context_version===revision?candidate:baseline?.result
   const missing = baseline?.missing_materials || []
   const requestedMaterials=baseline?.result?.content_review?missing.filter(item=>item.topic!=='后续资料补充'):missing
   const question = baseline ? `第 ${baseline.round_number} 轮之后，还可以补充哪些项目资料？` : '研判之前，有没有企业或项目内部资料？'
@@ -68,7 +69,7 @@ export default function ResearchRoundsPanel({ projectName, revision, rounds, mat
       <div className="research-source-count"><span>已导入公开文件 {sourceCounts.public} 份</span>{!!baseline?.result?.sources.length&&<span>本轮研判来源 {baseline.result.sources.length} 份</span>}<span>本项目内部资料 {sourceCounts.internal} 份</span>{!!sourceCounts.synthetic && <span>合成资料 {sourceCounts.synthetic} 份</span>}<span>当前资料版本 v{revision}</span></div>
       {loading && <p role="status">正在读取已保存的研判轮次与项目文件…</p>}
       {error && <div className="research-round-notice" role="alert"><p>{error}</p><button disabled={busy || loading} onClick={onReload}>重新读取轮次</button></div>}
-      {baseline?.result?.content_review&&<StrategyContentNotice packet={baseline.result} details/>}
+      {reviewPacket?.content_review&&<StrategyContentNotice packet={reviewPacket} details/>}
       {!!requestedMaterials.length&&<section aria-label="下一轮建议补充资料"><h4>本轮建议补充资料</h4><ul className="research-round-gap-list">{requestedMaterials.map((item,index)=><li key={`${item.topic}:${index}`}><strong>{item.topic}：{item.request}</strong><p>{item.reason}</p></li>)}</ul></section>}
       <div className="research-intake-actions">
         <button disabled={!actionable} aria-pressed={uploadOpen} onClick={() => void prepareUpload()}>有，补充内部资料</button>

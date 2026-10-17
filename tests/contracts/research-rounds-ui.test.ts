@@ -169,6 +169,18 @@ test.each(['round-first', 'public-first'] as const)('a newer public v6 plan wins
   } finally { await app.cleanup() }
 })
 
+test('a canonical object-review projection appears in material intake without rewriting the saved round',async()=>{
+  const canonical=structuredClone(newPacket)
+  canonical.content_review={policy:'advisory-v1',status:'needs_review',checked_at:canonical.created_at,issues:[{code:'OBJECT_LOCATION_CONFLICT',path:'sources.SRC',message:'异地同名对象需要核对地址。'}],follow_up:{search_queries:[],reading_focus:[],internal_data:['补充本对象边界与地址登记。']}}
+  const savedRound=round('r2',2,newPacket),original=JSON.stringify(savedRound)
+  const app=await mount({rounds:[savedRound],materials:[],baseline_candidate:null},canonical)
+  try{
+    expect(app.container.querySelector('.research-intake')?.textContent).toContain('异地同名对象需要核对地址。')
+    expect(app.container.querySelector('.research-intake')?.textContent).toContain('补充本对象边界与地址登记。')
+    expect(JSON.stringify(savedRound)).toBe(original)
+  }finally{await app.cleanup()}
+})
+
 test('the shared intake form forwards user category and date to the original upload callback', async () => {
   const env = environment(), upload = vi.fn(async () => {})
   try {
