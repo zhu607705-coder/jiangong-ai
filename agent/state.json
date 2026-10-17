@@ -4186,9 +4186,9 @@
     }
   },
   "research_complete_20261017": {
-    "status": "in_progress",
+    "status": "deployed_verified",
     "request": "一次完整落实Pro评审剩余三批改造，不在每个工单结束时停下",
-    "updated_at": "2026-10-17T04:45:10.879689+00:00",
+    "updated_at": "2026-10-17T04:47:22.675483+00:00",
     "implemented": [
       "shared background run registry and durable per-node leases/events/manifests/call receipts",
       "native DSH expert checkpoints, public-only supplementation and affected-task replay",
@@ -4208,14 +4208,13 @@
       "full initial run:1667 passed; all ten affected findings repaired (four provider error preservation, updated conditional delivery/condition UI, workflow compatibility and encoded-URL assertion)",
       "browser map UI:36 checks + scan races + all eight geometry handoffs passed",
       "Python e2e:16 passed; upstream unittest:45 passed",
-      "34 affected UI cases passed after actual historical-object presentation review"
+      "34 affected UI cases passed after actual historical-object presentation review",
+      "release full suite:135 files /1677 tests passed; final object UI 24 tests passed"
     ],
     "pending": [
-      "complete full unit/browser regression",
-      "deployed runtime and UI readback, no project research triggered",
-      "merge and preserve unrelated root changes"
+      "final UI release readback and GitHub merge"
     ],
-    "next_runnable_task": "Deploy final historical-object UI correction, await release suite and CI, merge and preserve root changes.",
+    "next_runnable_task": "Deploy final UI from immutable commit, retain screenshot and merge PR54.",
     "runtime_commit": "cb0a9bd75496b4733c60c35df84e933d613abd65",
     "live": {
       "projects": 38,
