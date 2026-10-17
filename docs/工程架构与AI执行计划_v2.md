@@ -85,8 +85,8 @@
 
 - **应用壳**：fork/移植 CRE 的 React/TypeScript dashboard、解析服务接口、schema校验、报告渲染和相关测试。删除美式收购流程的业务阈值与预设结论。[S3]
 - **运行时**：DeepSeek Harness，默认挂载官方模型、web与subagent能力；禁止业务分析会话拥有任意shell、写文件、读全部私有目录权限。[S1]
-- **主模型**：DeepSeek-V4.1-Flash，官方当前 API 名为 `deepseek-flash`；模型名配置化，记录每次运行实际返回的模型标识，不把漂移别名当不变快照。[S2]
-- **搜索**：优先直接使用 DSH `dsh-web` / `dsh-tool-web` / `dsh-web-search-deepseek`；抓原文与材料解析单独处理。搜索配置与聊天配置分别检查。[S1]
+- **主模型**：DeepSeek-V4.1-Flash-1017（2026-10-17核对官方目录），官方当前 API 名为 `deepseek-flash`；模型名配置化，记录每次运行实际返回的模型标识，不把漂移别名当不变快照。[S2]
+- **搜索**：复用DSH `dsh-web`挂载独立官方`/v1/tools/search`与`/v1/tools/fetch`；默认Search请求正文并复用，正文缺失再Fetch，原HTTP解析保留为兼容回退。旧`dsh-web-search-deepseek`仅用于允许的临时故障回退。搜索配置与聊天配置分别检查。[S1][S2]
 - **Python桥**：FastAPI + Pydantic；TS通过生成的JSON/OpenAPI客户端调用。保留科学计算和原有Python模块，不将其翻译为TS重写。
 - **存储**：PostgreSQL/PostGIS/pgvector，一套业务库；原始文件使用BlobStore接口和本地持久卷。私有资料的过滤发生在召回前，缓存键含scope/ACL/版本。
 - **检索**：RETQA已有表格/槽位处理 + `rank_bm25`/jieba + 向量召回；语料小先保持可解释的过滤、排序、合并。检索代码只有一个公共入口。
@@ -401,7 +401,7 @@ agent/                      # AGENTS、任务DAG、状态与交接
 
 [S1] DeepSeek Harness：`https://github.com/deepseek-ai/deepseek-harness`；核验ref `477b4f420553e8a52c2fbccc464d7561b239c443`。重点：`LICENSE`、`docs/subsystems/subagent.md`、`packages/web/web-search-deepseek/README.md`。搜索实现使用结构化原生返回块，每次消耗模型调用；其文件默认旧model名称不能覆盖最新官方API文档。
 
-[S2] DeepSeek，2026-09-10模型发布：`https://www.deepseek.com/en/news/deepseek-v4-1-flash/`。当前推荐调用名`deepseek-flash`，支持原生多模态；未采用发布页benchmark数字作为本项目性能。
+[S2] DeepSeek官方模型与价格目录（2026-10-17核对）：`https://api-docs.deepseek.com/zh-cn/quick_start/pricing/`；搜索与抓取：`https://api-docs.deepseek.com/zh-cn/guides/search/`。当前Flash目录版本为DeepSeek-V4.1-Flash-1017，推荐调用名`deepseek-flash`。目录标识、每次响应model和实际项目效果分别记录。
 
 [S3] CRE：`https://github.com/ahacker-1/cre-acquisition-orchestrator`；索引ref `a1cdd7f680a4dcf2f5e70a8380d6eb5eaccda878`；核读parser blob `7b5d00b9f4a47c380aa1557e125cebddd2a7435c`，README、EVAL-PLAN。工作区/UI与演示逻辑复用必须区分。
 

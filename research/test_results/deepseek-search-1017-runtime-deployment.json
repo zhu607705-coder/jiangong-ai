@@ -1,0 +1,57 @@
+{
+  "deployed_at": "2026-10-17T10:54:57.295854+00:00",
+  "commit": "0820f1caf081552dc800ebb40ebc4afcb456fc53",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261017T105452Z",
+  "runtime_files": {
+    "apps/host/config.ts": {
+      "before": "5accf3dbd66ded7c08832f797241eb82dcb540f7036dc4e4acaf1cbf2a9fd4bf",
+      "after": "045e667f8dec5fc8ce6eaef5dce5be7ef32e18d33b695fef982a84cc84f6efc4"
+    },
+    "apps/host/server.ts": {
+      "before": "c16fc11d4a0836f838014ba12d25f48f867f56a93dd17619087ccf9b3fc9423a",
+      "after": "92ebce0556f9819b2f2dd5a84b6f6923cfcb9f1a1b7496e69ed2f43a9a00bc97"
+    },
+    "runtime/dsh/bridge.ts": {
+      "before": "d58f532464afeb086489a22fabf85b6fe1f2a3da5d5b6192f031849ba80cdaa6",
+      "after": "2233658fd878a14ec8bc62e81fe2da76ed5057404b549463108d411fbc0782f5"
+    },
+    "runtime/dsh/deepseek-catalog.ts": {
+      "before": null,
+      "after": "357c631817b33f06cb6971afd0eb1b7fbb4f2f215230eaa11a6496f1e3305dd0"
+    },
+    "runtime/dsh/deepseek-web-tools.ts": {
+      "before": "aaab96f9fa734c45fc6aabf40143da719c6f52929991191c5e28327e477495cd",
+      "after": "f194ac337273caaf96edb301837d3dcfd5e66c8f7e6fec23fb960b58f5b7bbc4"
+    },
+    "runtime/dsh/live-session.ts": {
+      "before": "7e89d8df558e15236c34f3dfc3462167ba11c6902d112d24bc9fc39f621f97a4",
+      "after": "447c638d69e9e80a87fc71cdcdf1c1cb08495db5106053f4e82f01bdaa37c6d8"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "0820f1caf081552dc800ebb40ebc4afcb456fc53",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

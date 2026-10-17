@@ -1,0 +1,106 @@
+{
+  "checked_at": "2026-10-17T10:55:04.905Z",
+  "scope": "isolated_public_api_and_model_protocol",
+  "search": {
+    "provider": "deepseek_content",
+    "query": "杭州 求是村 二次供水 site:zju.edu.cn",
+    "result_count": 3,
+    "search_ms": 334,
+    "first_source": {
+      "title": "水电职工八小时奋力抢修 确保教师居住区生活供水-浙江大学后勤集团",
+      "url": "https://zulg.zju.edu.cn/info/1020/1644.htm"
+    },
+    "body_characters": 493,
+    "search_content_reused": true
+  },
+  "direct_fetch": {
+    "status": "completed",
+    "duration_ms": 104,
+    "characters": 6402,
+    "representation": "deepseek_markdown"
+  },
+  "model": {
+    "status": "completed",
+    "descriptor": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "calls": [
+      {
+        "stage": "model_catalog_protocol",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 1960,
+        "output_tokens": 51,
+        "usage_status": "reported",
+        "duration_ms": 626,
+        "session_id": "cd5d15af-df77-4844-8372-ddd12781da83",
+        "cache_read_tokens": 1792,
+        "cache_write_tokens": 0
+      }
+    ]
+  },
+  "web_calls": [
+    {
+      "id": "f27f033c-08fe-4679-bca3-46ab51997be4",
+      "operation": "search",
+      "provider": "deepseek-tools",
+      "request_hash": "7457bf0f05ff8f7e91bf01aae40a14002a27d42a99e1b5a51e4b90c7d647c7bd",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 329,
+      "attempt": 1,
+      "result_count": 3,
+      "estimated_cny": 0.005
+    },
+    {
+      "id": "359e1e33-e5dc-47ec-b8ca-8c7ecc74d8a1",
+      "operation": "fetch",
+      "provider": "deepseek-tools",
+      "request_hash": "2c80098d9346db1fa40c519e1f41189b054e310652f074a4ea7d86ff65c8c1a8",
+      "status": 200,
+      "outcome": "received",
+      "billing_state": "expected_charge",
+      "duration_ms": 104,
+      "attempt": 1,
+      "result_count": 1,
+      "estimated_cny": 0.005
+    }
+  ],
+  "estimated_standard_rate_cny": 0.01,
+  "unknown_billing_attempts": 0,
+  "duration_ms": 1245,
+  "project_writes": 0,
+  "real_project_runs": 0,
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "0820f1caf081552dc800ebb40ebc4afcb456fc53",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects": 38,
+  "project_metadata_unchanged": true,
+  "research_histories_unchanged": true
+}

@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { randomBytes } from 'node:crypto'
 import { z } from 'zod'
 import { requestOriginPolicy } from './request-origin'
+import {canonicalDeepSeekModel} from '../../runtime/dsh/deepseek-catalog'
 
 const env = z.object({
   HOST: z.enum(['127.0.0.1', 'localhost']).default('127.0.0.1'),
@@ -33,7 +34,7 @@ if (!collaborativeWorkspace && env.TRUSTED_PUBLIC_ORIGIN.trim() && !env.ADMIN_PA
 if (!collaborativeWorkspace && env.PUBLIC_READ_ONLY === 'true' && (!env.TRUSTED_PUBLIC_ORIGIN.trim() || !env.ADMIN_PASSWORD_HASH)) throw new Error('Public browsing requires an explicit origin and administrator credentials.')
 
 export const config = {
-  ...env, collaborativeWorkspace, dataDir: resolve(env.DATA_DIR), ownerId: 'local-operator',
+  ...env, DEEPSEEK_MODEL:canonicalDeepSeekModel(env.DEEPSEEK_MODEL), collaborativeWorkspace, dataDir: resolve(env.DATA_DIR), ownerId: 'local-operator',
   requestOrigins: requestOriginPolicy(env.PORT, env.WORKSPACE_PORT, env.TRUSTED_PUBLIC_ORIGIN, env.TRUSTED_PUBLIC_ORIGINS),
   capabilityUrl: `http://127.0.0.1:${env.CAPABILITY_PORT}`,
   capabilityToken: process.env.CAPABILITY_TOKEN || randomBytes(32).toString('hex'),

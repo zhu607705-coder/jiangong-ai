@@ -7,6 +7,7 @@ import { readFile, mkdir, writeFile, unlink } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import { z } from 'zod'
 import { config } from './config'
+import {deepSeekModelDescriptor} from '../../runtime/dsh/deepseek-catalog'
 import { Store, type RunRecord, type ProjectRecord } from './store'
 import { ContractError, projectInput,contractErrorMessage } from '../../packages/contracts/validate'
 import { compileContext, applyContextPatch } from '../../packages/context/compiler'
@@ -59,7 +60,7 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '4mb' }))
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'haizhizi-host' }))
 registerAdminRoutes(app, adminAccess, () => ({ user: { id: config.ownerId, label: config.collaborativeWorkspace ? '校园协作用户' : adminAccess.enabled ? `管理员 ${config.ADMIN_USERNAME}` : '本地项目负责人' }, deployment: config.collaborativeWorkspace ? 'campus_collaborative' : adminAccess.enabled ? 'single_admin_server' : 'single_operator_local', model_configured: config.modelConfigured, search_configured: config.searchConfigured, database: store.kind,
-  decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL} }), renderAdminLoginPage)
+  decision_model:{enabled:config.decisionEnabled,configured:config.decisionConfigured,model:config.QWEN_DECISION_MODEL},research_model:deepSeekModelDescriptor(config.DEEPSEEK_MODEL),search_provider:config.RESEARCH_WEB_PROVIDER }), renderAdminLoginPage)
 app.use(['/api', '/_AMapService'], (req, res, next) => {
   if (!adminAccess.identity(req.headers.cookie) && res.locals.workbenchRole !== 'viewer') return next(new ApiError(401, 'SESSION_REQUIRED', '会话已更新，请刷新页面'))
   if (!['GET', 'HEAD'].includes(req.method) && req.headers['x-requested-with'] !== 'haizhizi') return next(new ApiError(403, 'CSRF_GUARD', '缺少工作台请求标识'))
@@ -79,7 +80,7 @@ if (await store.project(QIUSHI_SOURCE_PROJECT_ID, config.ownerId)) await install
 app.get('/api/ready', async (_req, res) => {
   let capability = false
   try { capability = (await fetch(`${config.capabilityUrl}/health`, { signal: AbortSignal.timeout(1500) })).ok } catch { /* explicit unavailable status below */ }
-  res.status(capability ? 200 : 503).json({ protocol_version:'research-recovery-v1',release_commit:/^[a-f0-9]{40}$/.test(process.env.HZZ_RELEASE_COMMIT||'')?process.env.HZZ_RELEASE_COMMIT:null,status: capability ? 'ok' : 'degraded', database: store.kind, capabilities: capability, live_model: config.modelConfigured ? 'configured_not_verified' : 'blocked_external', live_search: config.searchConfigured ? 'configured_not_verified' : 'blocked_external' })
+  res.status(capability ? 200 : 503).json({ protocol_version:'research-recovery-v1',release_commit:/^[a-f0-9]{40}$/.test(process.env.HZZ_RELEASE_COMMIT||'')?process.env.HZZ_RELEASE_COMMIT:null,status: capability ? 'ok' : 'degraded', database: store.kind, capabilities: capability, live_model: config.modelConfigured ? 'configured_not_verified' : 'blocked_external', live_search: config.searchConfigured ? 'configured_not_verified' : 'blocked_external',research_model:deepSeekModelDescriptor(config.DEEPSEEK_MODEL),search_provider:config.RESEARCH_WEB_PROVIDER })
 })
 app.get('/api/admin/database-schema', async (req,res,next) => {
   try {
