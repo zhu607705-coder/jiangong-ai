@@ -8,6 +8,8 @@ import {extractTaskObservations,type TaskMaterialLink} from '../../packages/retr
 import {buildProjectTasks} from '../../packages/retrofit/project-tasks'
 import {guideProject,guidePacket} from './project-decision-fixture'
 import {ExperienceError} from '../../packages/experience/domain'
+import express from 'express'
+import {registerTaskMaterials} from '../../apps/host/task-materials'
 let store:Store,project:ProjectRecord,service:TaskMaterialService,link:TaskMaterialLink
 const extract=vi.fn(),version='1'.repeat(64)
 beforeEach(async()=>{
@@ -49,4 +51,13 @@ it('preserves task associations when ordinary material metadata is later edited'
 it('reads key-value table cells and literal numbers without making new aggregates',()=>{
  const observations=extractTaskObservations({tables:[{rows:[{rowNumber:2,values:{指标:'就餐人次',数值:180}}]}]},'电梯使用次数：250次；满意度：4.3分')
  expect(observations.map(row=>row.value)).toEqual(['180','250次','4.3分']);expect(observations.find(row=>row.field==='满意度')?.quote).toBe('满意度：4.3分')
+})
+it('serves the actual HTTP task association and extraction routes without a model call for local reading',async()=>{
+ const app=express();app.use(express.json());await registerTaskMaterials(app,store,async id=>{if(id!==project.id)throw new ExperienceError(404,'PROJECT_NOT_FOUND','不存在');return project},{extract})
+ const server=await new Promise<import('node:http').Server>(resolve=>{const value=app.listen(0,'127.0.0.1',()=>resolve(value))})
+ try{const base=`http://127.0.0.1:${(server.address() as import('node:net').AddressInfo).port}/api/projects/${project.id}/investigation-materials`
+  const posted=await fetch(base,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...link,document_id:'DOC-TASK'})});expect(posted.status).toBe(200);expect((await posted.json() as any).observations).toHaveLength(2)
+  const read=await fetch(base+'?input_hash=guide-plan');expect((await read.json() as any).items).toHaveLength(1)
+  const local=await fetch(base+'/DOC-TASK/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...link,use_model:false})});expect(local.status).toBe(200);expect(extract).not.toHaveBeenCalled()
+ }finally{await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()))}
 })

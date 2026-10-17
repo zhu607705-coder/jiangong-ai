@@ -26,6 +26,15 @@ it('switches the actual two-column case view by the decision problem and keeps t
  expect(container.querySelector('.case-decision-use')?.textContent).toContain('堂食与配送容量')
  expect(container.querySelector('.case-two-columns')).not.toBeNull();expect(container.textContent).not.toContain('凤南一村')
 })
+it('uses labelled proposal topics when original evidence is sparse and excludes an object-conflicting old proposal',async()=>{
+ const input=projectRenewalModeInput(guideProject.input);input.matching_context!.topics=[];const proposal=guidePacket()
+ await mount(createElement(RenewalCaseExplorer,{input,proposal,direction:'comprehensive'}))
+ expect(container.querySelector('.case-proposal-basis')?.textContent).toContain('拟议措施')
+ expect(container.querySelector('.case-compare-row')?.textContent).toContain('供水与管网')
+ proposal.current_context={policy:'project-context-v1',generation:0,attempt_id:null,round_id:null,freshness:'legacy_snapshot',object_review_required:true}
+ await mount(createElement(RenewalCaseExplorer,{input,proposal,direction:'comprehensive'}))
+ expect(container.querySelector('.case-proposal-basis')).toBeNull()
+})
 it('shows real saved fields and calls extraction only after selecting this file consent',async()=>{
  const task=buildProjectTasks(guidePacket(),'comprehensive')[0],link={task_id:task.id,input_hash:'guide-plan',direction:'comprehensive' as const}
  const receipt:TaskMaterialReceipt={...link,document_id:'DOC',file_name:'问卷.csv',version:'v1',context_version:3,task_title:task.title,parse_status:'extracted',observations:[{field:'有效问卷',value:'100',locator:'table:1/row:2',quote:'{"有效问卷":100}',representation:'parsed_table'}],tools:[{tool:'ParserPort',status:'completed',detail:'已保存的解析结果',count:25},{tool:'任务指标提取',status:'completed',detail:'来源行绑定',count:1}],created_at:'2026-10-17',updated_at:'2026-10-17',extraction:{status:'not_requested',model_calls:0,card_ids:[],warnings:[]}}

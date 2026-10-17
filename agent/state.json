@@ -4244,8 +4244,8 @@
     ]
   },
   "case_task_import_20261017": {
-    "status": "in_progress",
-    "updated_at": "2026-10-17T07:09:03.255081+00:00",
+    "status": "deployed_verifying",
+    "updated_at": "2026-10-17T07:16:26.273085+00:00",
     "requests": [
       "broaden and precisely match reference cases",
       "fix reversed/mixed context-compression character counts",
@@ -4266,8 +4266,8 @@
       "public case Markdown/JSON and existing parser/extractor/round reuse"
     ],
     "pending": [
-      "deployment and real browser/read-only API proof",
-      "merge with unrelated dirty files preserved"
+      "final sparse-context UI deployment and browser proof",
+      "merge PR55 preserving root edits"
     ],
     "worktree": "D:/建工ai/.cache/case-matching",
     "next_runnable_task": "Commit immutable release, deploy runtime/data/UI and verify current project without starting research or uploading real data.",
@@ -4278,6 +4278,19 @@
       "map browser flow passed; Python220 passed",
       "full suite1690 passed/1 failure; the removed historical case evidence button was restored and its19 affected tests passed",
       "final production build passed"
-    ]
+    ],
+    "live": {
+      "runtime_commit": "035c348063758416ecde10d0905ee01816a54b4b",
+      "projects": 38,
+      "project_metadata_unchanged": true,
+      "research_history_unchanged": true,
+      "project_readback": "P-d397c757-5df1-4c59-a397-13cb95f763eb",
+      "curated_cases": 11,
+      "historical_rows": 1277,
+      "official_records": 20,
+      "selected_workbook_rows": 24,
+      "existing_project_research_calls": 0,
+      "task_imports_route": "ok"
+    }
   }
 }

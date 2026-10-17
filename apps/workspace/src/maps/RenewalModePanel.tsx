@@ -151,7 +151,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
         })}
         {onInvestigate && <button className="renewal-investigate" onClick={onInvestigate}>进入项目安排调查<IconArrowUpRight size={17}/></button>}
       </>}
-      {tab === 'cases' && <RenewalCaseExplorer input={screening} onInvestigate={onInvestigate}/>}
+      {tab === 'cases' && <RenewalCaseExplorer input={screening} onInvestigate={onInvestigate} proposal={strategy}/>}
     </div>
     <details className="renewal-evidence"><summary>本对象依据{evidence.length ? ` · ${evidence.length} 份主要原文` : ` · ${screening.evidence.length} 份可读材料`}</summary>
       {(evidence.length ? evidence : screening.evidence).map(row => <article key={row.source_id}><strong>{row.title}</strong><p>{row.published_at.slice(0, 10)} · {row.locator}</p><blockquote>{row.quote}</blockquote>{row.url && /^https?:\/\//.test(row.url) && <a href={row.url} target="_blank" rel="noreferrer">查看来源 ↗</a>}</article>)}

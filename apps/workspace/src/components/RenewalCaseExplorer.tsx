@@ -1,7 +1,8 @@
 import {useEffect,useMemo,useState} from 'react'
 import {api} from '../api'
 import type {RenewalModeInput,RenewalModePacket} from '../../../../packages/retrofit/renewal-mode'
-import {CASE_MATCH_POLICY,CASE_TOPICS,CASE_PRESETS,caseContext,historyCases,rankRenewalCases,type CaseDirection,type CaseWeights,type RenewalCase} from '../../../../packages/retrofit/case-matching'
+import type {StrategyPacket} from '../../../../packages/retrofit/strategy'
+import {CASE_MATCH_POLICY,CASE_TOPICS,CASE_PRESETS,caseContext,historyCases,rankRenewalCases,extractCaseTopics,type CaseDirection,type CaseWeights,type RenewalCase} from '../../../../packages/retrofit/case-matching'
 import './renewal-case-explorer.css'
 
 const stages:Record<string,string>={contract_price:'合同价',winning_bid:'中标价',award:'中标价',budget:'预算',tender_budget:'预算',tender_ceiling:'控制价',estimate:'估算',settlement:'结算',total_investment:'总投资'}
@@ -10,7 +11,7 @@ const safeLink=(value:string)=>{try{const url=new URL(value);return ['http:','ht
 const money=(value:number)=>value>=1e8?(value/1e8).toLocaleString('zh-CN',{maximumFractionDigits:4})+' 亿元':(value/10000).toLocaleString('zh-CN',{maximumFractionDigits:4})+' 万元'
 
 /** One browser-local relevance computation, shared by the dedicated page and mode reference tab. */
-export default function RenewalCaseExplorer({input,endpoint,direction,onInvestigate}:{input:RenewalModeInput;endpoint?:string;direction?:CaseDirection|null;onInvestigate?:()=>void}){
+export default function RenewalCaseExplorer({input,endpoint,direction,onInvestigate,proposal}:{input:RenewalModeInput;endpoint?:string;direction?:CaseDirection|null;onInvestigate?:()=>void;proposal?:StrategyPacket|null}){
  const [remote,setRemote]=useState<{key:string;input:RenewalModeInput}|null>(null),[loading,setLoading]=useState(false)
  const [kind,setKind]=useState<'public_case'|'official_cost'|'workbook'>('public_case'),[topic,setTopic]=useState(''),[region,setRegion]=useState(''),[query,setQuery]=useState(''),[preset,setPreset]=useState('problem'),[selected,setSelected]=useState(''),[weights,setWeights]=useState<CaseWeights>({...CASE_PRESETS[0].weights})
  const key=JSON.stringify([endpoint,input.target,input.as_of,input.matching_context,input.evidence.map(row=>[row.source_id,row.quote])])
@@ -18,9 +19,13 @@ export default function RenewalCaseExplorer({input,endpoint,direction,onInvestig
    void api<RenewalModePacket>(endpoint,undefined,controller.signal).then(value=>{if(!controller.signal.aborted&&Array.isArray(value.screening?.cases)&&value.screening.target===input.target)setRemote({key,input:value.screening})}).catch(()=>{}).finally(()=>{if(!controller.signal.aborted)setLoading(false)})
    return()=>controller.abort()
  },[key,endpoint])
- const screening=remote?.key===key?remote.input:input,baseContext=caseContext(screening),context={...baseContext,city:region||baseContext.city,city_basis:region?'filter' as const:baseContext.city_basis}
+ const screening=remote?.key===key?remote.input:input,baseContext=caseContext(screening)
+ const safeProposal=proposal?.status==='completed'&&proposal.strategy&&proposal.synthetic===input.synthetic&&input.object_ref===`project:${proposal.project_id}`&&!proposal.current_context?.object_review_required&&proposal.current_context?.freshness!=='historical'?proposal.strategy:null
+ const proposalTopics=safeProposal?extractCaseTopics(safeProposal.paths.filter(path=>!direction||path.mode===direction).flatMap(path=>path.work_packages?.length?path.work_packages.map(row=>row.target+' '+row.intervention+' '+row.scope):path.actions.map(row=>row.title+' '+row.detail)).join('\n')):[]
+ const fromProposal=!baseContext.topics.length&&proposalTopics.length>0
+ const context={...baseContext,topics:fromProposal?proposalTopics:baseContext.topics,topic_basis:fromProposal?'proposed_measures':'source_passages',city:region||baseContext.city,city_basis:region?'filter' as const:baseContext.city_basis}
  const candidates=useMemo(()=>[...screening.cases.map(row=>({...row,kind:'public_case' as const})),...historyCases(screening.history)],[screening])
- const matches=useMemo(()=>rankRenewalCases(candidates.filter(row=>row.kind===kind),context,{direction,topic:topic||undefined,query,weights}),[candidates,screening,direction,kind,topic,region,query,weights])
+ const matches=useMemo(()=>rankRenewalCases(candidates.filter(row=>row.kind===kind),context,{direction,topic:topic||undefined,query,weights}),[candidates,screening,direction,kind,topic,region,query,weights,proposal])
  const current=matches.find(row=>row.item.id===selected)||matches[0],item=current?.item
  useEffect(()=>setSelected(''),[key,direction,kind,topic,region,query,preset])
  const counts={public_case:candidates.filter(row=>row.kind==='public_case').length,official_cost:candidates.filter(row=>row.kind==='official_cost').length,workbook:candidates.filter(row=>row.kind==='workbook').length}
@@ -29,6 +34,7 @@ export default function RenewalCaseExplorer({input,endpoint,direction,onInvestig
  return <section className="case-explorer" aria-label="项目案例匹配">
   <header><div><span>对标当前项目 · {context.city||'地域待确认'}{direction&&` · ${direction==='comprehensive'?'综合整治':'原拆原建'}`}</span><h3>从相似问题找到可用做法</h3><p>左侧选择案例，右侧查看它对本项目的措施、投入与调查有什么帮助。</p></div><button onClick={exportMatches} disabled={!matches.length}>导出匹配清单</button></header>
   {context.object_note&&<p className="case-scope-note">{context.object_note}</p>}
+  {fromProposal&&<p className="case-proposal-basis">本次匹配重点取自当前方案的拟议措施，可通过下方问题筛选调整。</p>}
   <div className="case-kind-tabs" role="group" aria-label="案例来源类别">{(['public_case','official_cost','workbook'] as const).map(value=><button key={value} aria-pressed={kind===value} onClick={()=>setKind(value)}>{kindLabel(value)} <strong>{counts[value]}</strong></button>)}{screening.history&&<span>历史库共 {screening.history.total.toLocaleString('zh-CN')} 条 · 按项目选入 {counts.workbook} 条线索</span>}</div>
   <div className="case-search-controls"><label>查找案例<input value={query} onChange={event=>setQuery(event.target.value)} placeholder="项目名、城市或措施"/></label><label>本次重点<select value={topic} onChange={event=>setTopic(event.target.value)} aria-label="案例匹配重点"><option value="">按本项目已有问题</option>{CASE_TOPICS.map(row=><option key={row.key} value={row.key}>{row.label}</option>)}</select></label><label>对标地域<input value={region} maxLength={40} onChange={event=>setRegion(event.target.value)} placeholder={baseContext.city||"城市名，仅用于本次匹配"} aria-label="案例对标城市"/></label><label>排序目标<select value={preset} onChange={event=>usePreset(event.target.value)} aria-label="案例排序目标">{CASE_PRESETS.map(row=><option key={row.id} value={row.id}>{row.label}</option>)}<option value="custom">自定义权重</option></select></label></div>
   <details className="case-weight-controls"><summary>调整匹配标准 · {matches.length} 项符合当前范围</summary><p>相关度按问题、方向、地域、来源和住户规模计算；只对已有字段比较。</p><div>{([{key:'issue',label:'问题相近'},{key:'direction',label:'方向一致'},{key:'region',label:'地域相近'},{key:'evidence',label:'原件依据'},{key:'scale',label:'规模相近'}] as const).map(row=><label key={row.key}>{row.label}<input type="range" min="0" max="5" step="1" value={weights[row.key]} aria-label={row.label+'权重'} onChange={event=>{const value=Number(event.target.value),next={...weights,[row.key]:value};if(Object.values(next).some(v=>v>0)){setPreset('custom');setWeights(next)}}}/><output>{weights[row.key]}</output></label>)}</div></details>

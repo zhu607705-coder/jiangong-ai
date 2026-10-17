@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-17T07:11:15.954715+00:00",
+  "project_id": "P-d397c757-5df1-4c59-a397-13cb95f763eb",
+  "project_version": 0,
+  "public_cases": 11,
+  "history_total": 1277,
+  "selected_imported": 24,
+  "selected_official": 20,
+  "matching_context": {
+    "target": "快乐鱼民宿",
+    "city": null,
+    "topics": [],
+    "households": null,
+    "as_of": "2026-10-17",
+    "city_basis": "unknown",
+    "object_note": "登记名称含住宿或商业用途线索。住宅案例可先借鉴专项做法，建筑用途与居民范围需结合本对象资料核对。"
+  },
+  "mode_payload_characters": 35154,
+  "task_materials_route": "ok",
+  "task_material_receipts": 0,
+  "project_unchanged": true,
+  "rounds_unchanged": true,
+  "report_sha256": "da00de5070042932d8fce87d7fb8fe194f1098d19002bb24e1cd7a84a343a32b",
+  "research_triggered": false,
+  "uploads_triggered": false,
+  "release": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "035c348063758416ecde10d0905ee01816a54b4b",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  }
+}
