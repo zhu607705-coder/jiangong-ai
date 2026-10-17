@@ -10,6 +10,7 @@ import RenewalResearchEvidence from './RenewalResearchEvidence'
 import { renewalCheckEmphasis } from '../components/decision-emphasis'
 import { consumeStream } from './screening-stream'
 import './RenewalModePanel.css'
+import RenewalCaseExplorer from '../components/RenewalCaseExplorer'
 
 const money = (value: number) => value >= 1e8 ? `${(value / 1e8).toLocaleString('zh-CN', { maximumFractionDigits: 3 })} 亿元` : `${(value / 10000).toLocaleString('zh-CN', { maximumFractionDigits: 4 })} 万元`
 const kinds: Record<string, string> = { contract_price: '合同价', winning_bid: '中标价', budget: '预算', tender_ceiling: '控制价', estimate: '估算', settlement: '结算' }
@@ -31,7 +32,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
   const [attempted,setAttempted]=useState(false), [progress,setProgress]=useState<RenewalModeProgress[]>([]), [notice,setNotice]=useState('')
   const [reviews,setReviews]=useState<{key:string;cards:{id:string;title:string}[];error:boolean}|null>(null)
   const [tab, setTab] = useState<'compare' | 'standards' | 'cases'>('compare'), [path, setPath] = useState<'comprehensive' | 'rebuild'>('comprehensive')
-  const [caseId, setCaseId] = useState(input.cases[0]?.id), [openStandard, setOpenStandard] = useState('')
+  const [openStandard, setOpenStandard] = useState('')
   const restoreController = useRef<AbortController | null>(null), requestController = useRef<AbortController | null>(null)
   const identity = useRef(''); identity.current = `${endpoint}|${contextVersion ?? ''}`
   const packet = snapshot?.key===identity.current?snapshot.value:null
@@ -55,7 +56,6 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
   const directionSummary = direction===gate.direction?gate.summary:mode?.summary||gate.summary
   const conditionCounts = { met: gate.checks.filter(row => row.state === 'met').length, unknown: gate.checks.filter(row => row.state === 'unknown').length, unmet: gate.checks.filter(row => row.state === 'unmet').length, conflict: gate.checks.filter(row => row.state === 'conflict').length }
   const agent=strategy?.status==='completed'&&!strategy.synthetic?strategy.strategy:null
-  const example = screening.cases.find(row => row.id === caseId) || screening.cases[0]
   const evidence = screening.evidence.filter(row => mode?.source_ids.includes(row.source_id))
   useEffect(() => {
     setPath(direction === 'rebuild' ? 'rebuild' : 'comprehensive')
@@ -151,22 +151,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
         })}
         {onInvestigate && <button className="renewal-investigate" onClick={onInvestigate}>进入项目安排调查<IconArrowUpRight size={17}/></button>}
       </>}
-      {tab === 'cases' && <>
-        <div className="renewal-case-switch">{screening.cases.map(row => <button key={row.id} aria-pressed={example?.id === row.id} onClick={() => setCaseId(row.id)}>{row.name}<span>{row.city}</span></button>)}</div>
-        {example && <article className="renewal-case">
-          <h4>{example.name}<span>{example.mode}</span></h4><p>{example.reported_stage} · 来源日期 {example.published_at}</p>
-          <dl>{example.metrics.map(metric => <div key={metric.label}><dt>{metric.label}</dt><dd>{metric.unit === '元' ? money(metric.value) : `${metric.value.toLocaleString('zh-CN')} ${metric.unit}`}<span>{metric.scope}</span></dd></div>)}</dl>
-          <p>{example.funding_note}</p><p>{example.comparison_note}</p>
-          <a href={example.url} target="_blank" rel="noreferrer">{example.publisher} · 查看原文 ↗</a>
-          {example.related_source && <p>{example.related_source.note}<a href={example.related_source.url} target="_blank" rel="noreferrer">工程规模原文 ↗</a></p>}
-        </article>}
-        {screening.history && <div className="renewal-history">
-          <h4>历史工程库 · 同阶段对照</h4><p>{screening.history.total.toLocaleString('zh-CN')} 条工程 · {screening.history.contract_count.toLocaleString('zh-CN')} 条有合同价 · {screening.history.settlement_count} 条有结算价</p>
-          {screening.history.official_costs.filter(row => example?.name === '浙工新村' ? row.project_name.includes('浙工新村') : row.project_name.includes(example?.name || '')).map(row => <article key={row.id}><strong>{kinds[row.amount_kind] || row.amount_kind} · {money(row.amount_yuan)}</strong><p>{row.project_name}</p><p>{row.date} · {row.city || '来源所列区域'}</p><a href={row.url} target="_blank" rel="noreferrer">交易原件 ↗</a></article>)}
-          <p>总投资、EPC合同与分项工程分别比较。用杭州工程量和价格重新测算，上海成本与收益不直接套用。</p>
-          {!!screening.history.records.length && <details><summary>查看工作簿对应行</summary>{screening.history.records.map(row => <p key={row.id}>{row.project_name} · {row.locator} · 提供工作簿</p>)}</details>}
-        </div>}
-      </>}
+      {tab === 'cases' && <RenewalCaseExplorer input={screening} onInvestigate={onInvestigate}/>}
     </div>
     <details className="renewal-evidence"><summary>本对象依据{evidence.length ? ` · ${evidence.length} 份主要原文` : ` · ${screening.evidence.length} 份可读材料`}</summary>
       {(evidence.length ? evidence : screening.evidence).map(row => <article key={row.source_id}><strong>{row.title}</strong><p>{row.published_at.slice(0, 10)} · {row.locator}</p><blockquote>{row.quote}</blockquote>{row.url && /^https?:\/\//.test(row.url) && <a href={row.url} target="_blank" rel="noreferrer">查看来源 ↗</a>}</article>)}

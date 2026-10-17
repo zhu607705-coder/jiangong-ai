@@ -425,6 +425,27 @@
         "no new scheduler, parser framework or second database owner",
         "original materials and old reports retained"
       ]
+    },
+    {
+      "id": "case-task-import-20261017",
+      "reuse": [
+        "renewalHistory and existing official cost library",
+        "projectRenewalModeInput and original case references",
+        "documents upload + ParserPort + CRE profile tables",
+        "ExperienceService.extract and original DSH runtime",
+        "research_material_metadata JSON + owner/project gates",
+        "research round material intake and baseline comparison"
+      ],
+      "new_domain_logic": [
+        "contextual case relevance and decision-transfer view",
+        "task-scoped material associations and literal field receipts",
+        "same-scope compression measurements"
+      ],
+      "unchanged": [
+        "original material bytes and historical plans",
+        "no new parser, model client, source store or scheduler",
+        "private-file model consent and field review required"
+      ]
     }
   ]
 }

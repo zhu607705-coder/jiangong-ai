@@ -1,0 +1,395 @@
+{
+  "version": "renewal-case-cards-v1",
+  "updated_at": "2026-10-17",
+  "method": "本轮核对政府及政协网站公开原文；字段为来源事实摘要，迁移建议单列。",
+  "cases": [
+    {
+      "id": "CASE-CUIYUAN1-LIFT",
+      "name": "翠苑一区 · 加梯与分层协商",
+      "city": "杭州",
+      "mode": "综合整治 · 加装电梯",
+      "reported_stage": "2024年报道时分批加梯进行中",
+      "published_at": "2024-08-23",
+      "url": "https://www.hzzx.gov.cn/cshz/content/2024-08/23/content_8777570.htm",
+      "source_title": "翠苑旧改亮点纷呈",
+      "publisher": "杭州政协网 / 杭州日报",
+      "metrics": [
+        {
+          "label": "楼栋",
+          "value": 69,
+          "unit": "幢",
+          "scope": "翠苑一区"
+        },
+        {
+          "label": "已完成加梯",
+          "value": 32,
+          "unit": "单元",
+          "scope": "截至2024-08-23报道"
+        }
+      ],
+      "funding_note": "报道提供单个单元电费分摊方式，未提供小区整体工程结算。",
+      "comparison_note": "32个已完成单元与超过70个可实施单元分别使用；110元/月仅为报道中1幢2单元电费实例，不能当整区维保费",
+      "directions": [
+        "comprehensive"
+      ],
+      "topics": [
+        "elevator",
+        "residents",
+        "maintenance"
+      ],
+      "building_form": "既有多层住宅",
+      "interventions": [
+        "外置加梯，协调低层采光、通风与噪声",
+        "按单元协商运行电费分摊"
+      ],
+      "decision_use": "确定加梯单元、低层影响补偿与持续运行责任",
+      "transfer_checks": [
+        "32个已完成单元与超过70个可实施单元分别使用",
+        "110元/月仅为报道中1幢2单元电费实例，不能当整区维保费"
+      ],
+      "source_quote": "已有32个单元楼加装完毕",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": null,
+      "reference_scope": "2024年报道时分批加梯进行中"
+    },
+    {
+      "id": "CASE-CUIYUAN3-REUSE",
+      "name": "翠苑三区 · 闲置车库再利用",
+      "city": "杭州",
+      "mode": "综合整治 · 存量空间活化",
+      "reported_stage": "2024年报道时已作为居民活动空间使用",
+      "published_at": "2024-08-23",
+      "url": "https://www.hzzx.gov.cn/cshz/content/2024-08/23/content_8777570.htm",
+      "source_title": "翠苑旧改亮点纷呈",
+      "publisher": "杭州政协网 / 杭州日报",
+      "metrics": [
+        {
+          "label": "改造前车库",
+          "value": 2,
+          "unit": "处",
+          "scope": "报道指定两处车库"
+        }
+      ],
+      "funding_note": "资金金额及承担口径按所列原件核对。",
+      "comparison_note": "先调查车库实际利用率与替代停车需求；规划用途、消防及服务排班须按本对象核对",
+      "directions": [
+        "comprehensive"
+      ],
+      "topics": [
+        "reuse",
+        "services",
+        "operations"
+      ],
+      "building_form": "既有小区闲置非机动车库",
+      "interventions": [
+        "改造25幢南侧、43幢西侧两处低利用率车库",
+        "配置婴幼儿、文化、休闲、体育活动空间"
+      ],
+      "decision_use": "先比较存量场地改用与新增服务用房的容量和运营支出",
+      "transfer_checks": [
+        "先调查车库实际利用率与替代停车需求",
+        "规划用途、消防及服务排班须按本对象核对"
+      ],
+      "source_quote": "两座非机动车停车库",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": null,
+      "reference_scope": "2024年报道时已作为居民活动空间使用"
+    },
+    {
+      "id": "CASE-JUNYUE-LIFT",
+      "name": "君悦苑3号楼 · 旧梯更新",
+      "city": "上海",
+      "mode": "综合整治 · 电梯设备更新",
+      "reported_stage": "2026年报道时电梯更新完成",
+      "published_at": "2026-04-28",
+      "url": "https://fgj.sh.gov.cn/gqdt/20260428/998feb2a74c94e20acb983f97a74fb30.html",
+      "source_title": "曹杨新村街道旧梯更新",
+      "publisher": "上海市房屋管理局",
+      "metrics": [
+        {
+          "label": "更新电梯",
+          "value": 3,
+          "unit": "部",
+          "scope": "君悦苑3号楼"
+        }
+      ],
+      "funding_note": "资金金额及承担口径按所列原件核对。",
+      "comparison_note": "这是旧梯替换，不是无梯住宅新增加梯；补贴资格、楼层和费用由项目所在地重新核对",
+      "directions": [
+        "comprehensive"
+      ],
+      "topics": [
+        "elevator",
+        "maintenance",
+        "residents"
+      ],
+      "building_form": "既有电梯住宅",
+      "interventions": [
+        "更换持续老化、反复维修的既有电梯",
+        "居委会、业委会、物业联合组织"
+      ],
+      "decision_use": "比较持续修理与整机更新，明确停梯组织及后续维保",
+      "transfer_checks": [
+        "这是旧梯替换，不是无梯住宅新增加梯",
+        "补贴资格、楼层和费用由项目所在地重新核对"
+      ],
+      "source_quote": "3部老旧电梯焕新升级",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": null,
+      "reference_scope": "2026年报道时电梯更新完成"
+    },
+    {
+      "id": "CASE-PANTANG-MICRO",
+      "name": "泮塘五约 · 风貌保护微改造",
+      "city": "广州",
+      "mode": "综合整治 · 历史街区微更新",
+      "reported_stage": "两期于2019年底完成，2026年回顾报道",
+      "published_at": "2026-05-28",
+      "url": "https://www.lw.gov.cn/yshj/sdpt/wslhlq/ptfc/content/post_9053167.html",
+      "source_title": "泮塘五约微改造",
+      "publisher": "广州市荔湾区政府",
+      "metrics": [
+        {
+          "label": "片区用地",
+          "value": 31000,
+          "unit": "㎡",
+          "scope": "整体片区用地，非本期改造建筑面积"
+        },
+        {
+          "label": "片区建筑面积",
+          "value": 53000,
+          "unit": "㎡",
+          "scope": "整体建筑面积"
+        }
+      ],
+      "funding_note": "资金金额及承担口径按所列原件核对。",
+      "comparison_note": "岭南形态、气候与客流不同，工程单价和营业收入须重算；片区约400栋与一期改造面积为不同范围，不混作同一工程量",
+      "directions": [
+        "comprehensive"
+      ],
+      "topics": [
+        "heritage",
+        "pipe",
+        "reuse",
+        "services",
+        "operations"
+      ],
+      "building_form": "岭南传统低层街区",
+      "interventions": [
+        "保留历史格局，局部修缮、功能置换",
+        "同步改善给排水、线路与社区服务设施"
+      ],
+      "decision_use": "划清保留修缮与局部更新范围，比较公共服务和空间运营收益",
+      "transfer_checks": [
+        "岭南形态、气候与客流不同，工程单价和营业收入须重算",
+        "片区约400栋与一期改造面积为不同范围，不混作同一工程量"
+      ],
+      "source_quote": "2019年12月完工并投入运营",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": null,
+      "reference_scope": "两期于2019年底完成，2026年回顾报道"
+    },
+    {
+      "id": "CASE-FANGUA-REBUILD",
+      "name": "蕃瓜弄 · 重建与过渡服务",
+      "city": "上海",
+      "mode": "原拆原建 · 小梁薄板住宅",
+      "reported_stage": "2025-12主体封顶，回搬仍为预计",
+      "published_at": "2025-12-19",
+      "url": "https://www.shanghai.gov.cn/nw4411/20251219/17da6017b5cd4baa8813a3a98e4faa8e.html",
+      "source_title": "蕃瓜弄旧改提前两个月封顶",
+      "publisher": "上海市政府 / 解放日报",
+      "metrics": [
+        {
+          "label": "原凭证",
+          "value": 1122,
+          "unit": "证",
+          "scope": "报道原凭证，不等同人数"
+        },
+        {
+          "label": "计划新建房源",
+          "value": 1285,
+          "unit": "套",
+          "scope": "项目拟交付房源"
+        }
+      ],
+      "funding_note": "资金金额及承担口径按所列原件核对。",
+      "comparison_note": "1122证与1285套房源分母不同，均不能当本项目户数；报道时封顶，预计2027年回搬不作为已回搬事实",
+      "directions": [
+        "rebuild"
+      ],
+      "topics": [
+        "safety",
+        "relocation",
+        "residents",
+        "services"
+      ],
+      "building_form": "小梁薄板不成套住宅",
+      "interventions": [
+        "按户型与权属组织拆建及回搬方案",
+        "过渡期建立特殊住户档案和跨部门服务"
+      ],
+      "decision_use": "明确安置对象、过渡保障、交付配套和回搬节点",
+      "transfer_checks": [
+        "1122证与1285套房源分母不同，均不能当本项目户数",
+        "报道时封顶，预计2027年回搬不作为已回搬事实"
+      ],
+      "source_quote": "预计2027年上半年将迎接居民回搬",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": null,
+      "reference_scope": "2025-12主体封顶，回搬仍为预计"
+    },
+    {
+      "id": "CASE-DAPU-COMPLETE",
+      "name": "打浦路339弄、303弄 · 联动成套改造",
+      "city": "上海",
+      "mode": "混合路径 · 原址改建与成套化",
+      "reported_stage": "2024年底方案签约生效，非竣工结算",
+      "published_at": "2025-01-02",
+      "url": "https://www.shanghai.gov.cn/nw4411/20250102/dfa531e346a6448ba02952b23b506c21.html",
+      "source_title": "高密度居住区原址改建与成套化",
+      "publisher": "上海市政府 / 解放日报",
+      "metrics": [
+        {
+          "label": "原凭证",
+          "value": 238,
+          "unit": "证",
+          "scope": "3幢，含居民与单位凭证"
+        }
+      ],
+      "funding_note": "资金金额及承担口径按所列原件核对。",
+      "comparison_note": "238证含235户居民与3户单位，不能用作238名居民；加层和边界调整需本地规划及结构论证",
+      "directions": [
+        "comprehensive",
+        "rebuild"
+      ],
+      "topics": [
+        "safety",
+        "residents",
+        "relocation",
+        "elevator",
+        "rights"
+      ],
+      "building_form": "多产权小梁薄板住宅",
+      "interventions": [
+        "联动不同地块，局部加层扩建、厨卫独用与加梯",
+        "按户调整设计及权属登记安排"
+      ],
+      "decision_use": "判断能否按楼栋采取组合路径，减少被动外迁",
+      "transfer_checks": [
+        "238证含235户居民与3户单位，不能用作238名居民",
+        "加层和边界调整需本地规划及结构论证"
+      ],
+      "source_quote": "涉及居民235户、单位3户",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": 235,
+      "reference_scope": "2024年底方案签约生效，非竣工结算"
+    },
+    {
+      "id": "CASE-CAOYANG8-COMPLETE",
+      "name": "曹杨八村75—76号 · 居民协商与成套改善",
+      "city": "上海",
+      "mode": "综合整治研究 · 成套改造",
+      "reported_stage": "2025年1月意见征询完成，尚非竣工阶段",
+      "published_at": "2025-01-21",
+      "url": "https://www.shanghai.gov.cn/nw15343/20250121/48e45e60005c44a3b3b440d01119bd32.html",
+      "source_title": "曹杨八村75—76号意见征询签约",
+      "publisher": "上海市政府 / 普陀区政府",
+      "metrics": [
+        {
+          "label": "签约居民",
+          "value": 76,
+          "unit": "户",
+          "scope": "75—76号项目"
+        }
+      ],
+      "funding_note": "资金金额及承担口径按所列原件核对。",
+      "comparison_note": "75—76号签约与77—85号已回搬属于不同项目；100%为本案已记录意见征询结果，不是其他项目通用门槛",
+      "directions": [
+        "comprehensive"
+      ],
+      "topics": [
+        "residents",
+        "elevator",
+        "pipe",
+        "accessibility"
+      ],
+      "building_form": "1950年代非成套住宅",
+      "interventions": [
+        "优化独用厨卫、底层防汛与电梯设置",
+        "针对残疾居民逐户优化门框、转弯空间"
+      ],
+      "decision_use": "把居民意见转换为分户设计和分阶段实施任务",
+      "transfer_checks": [
+        "75—76号签约与77—85号已回搬属于不同项目",
+        "100%为本案已记录意见征询结果，不是其他项目通用门槛"
+      ],
+      "source_quote": "76户居民实现100％签约",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": 76,
+      "reference_scope": "2025年1月意见征询完成，尚非竣工阶段"
+    },
+    {
+      "id": "CASE-LIWAN-MEALS",
+      "name": "荔湾区 · 供餐与空间复合运营",
+      "city": "广州",
+      "mode": "综合整治配套 · 助餐服务网络",
+      "reported_stage": "截至2025年报道的区级运营实践",
+      "published_at": "2025-10-28",
+      "url": "https://mzj.gz.gov.cn/gkmlpt/content/10/10510/post_10510551.html",
+      "source_title": "荔湾区创新老年助餐服务模式",
+      "publisher": "广州市民政局",
+      "metrics": [
+        {
+          "label": "饭堂网络",
+          "value": 169,
+          "unit": "个",
+          "scope": "荔湾全区网络，不是单个社区"
+        }
+      ],
+      "funding_note": "参考政府、企业、社会捐助和长者缴费的多方筹资机制，不推定当地补贴标准可跨城使用。",
+      "comparison_note": "169个是全区饭堂总量，不是单个中心配置规模；需要本项目实际就餐人数、人次、餐价、成本和补贴台账",
+      "directions": [
+        "comprehensive"
+      ],
+      "topics": [
+        "meals",
+        "operations",
+        "reuse",
+        "services",
+        "funding"
+      ],
+      "building_form": "区级助餐网络与存量社区场地",
+      "interventions": [
+        "利用存量养老设施和闲置空间配置供餐点",
+        "组合集中就餐、上门送餐与文娱服务",
+        "按时段及服务对象拓展运营"
+      ],
+      "decision_use": "确定食堂选址、堂食与配送容量以及政府和运营主体分账",
+      "transfer_checks": [
+        "169个是全区饭堂总量，不是单个中心配置规模",
+        "需要本项目实际就餐人数、人次、餐价、成本和补贴台账"
+      ],
+      "source_quote": "高标准建设169个长者饭堂",
+      "source_locator": "原页面连续摘录",
+      "source_review": "primary_excerpt_checked",
+      "verified_at": "2026-10-17",
+      "households": null,
+      "reference_scope": "截至2025年报道的区级运营实践"
+    }
+  ]
+}

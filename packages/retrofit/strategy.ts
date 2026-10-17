@@ -26,7 +26,7 @@ export type StrategyPacket = { project_id: string; context_version: number; inpu
 
 export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compression'|'synthesis';
   tasks?:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];status:'pending'|'running'|'completed'|'failed';source_count:number;summary?:string}[];
-  context_before_chars?:number;context_after_chars?:number }
+  context_before_chars?:number;context_after_chars?:number;context_metric?:'equivalent_research_context';source_before_chars?:number;source_after_chars?:number;request_context_chars?:number }
 export type StrategyWorkflowTrace = {
   compression_audit?:ReturnType<typeof import('./evidence-compression').preserveCriticalWindows>['audit'];synthesis_prompt_chars?:number;synthesis_schema_chars?:number;
   planner_status:'completed'|'failed'|'not_applicable';planner_error?:string;plan:RenewalResearchPlan|null;

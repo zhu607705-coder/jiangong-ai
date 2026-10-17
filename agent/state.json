@@ -4242,5 +4242,42 @@
       "research/test_results/research-complete-deployed-providers-20261017.json",
       "research/test_results/research-complete-browser-live-20261017.json"
     ]
+  },
+  "case_task_import_20261017": {
+    "status": "in_progress",
+    "updated_at": "2026-10-17T07:09:03.255081+00:00",
+    "requests": [
+      "broaden and precisely match reference cases",
+      "fix reversed/mixed context-compression character counts",
+      "upload/extract newly acquired data directly from investigation tasks with real tool receipts"
+    ],
+    "root_causes": [
+      "3 hardcoded cases + history regex restricting four project names",
+      "raw sources-only length compared to sources+expert context; real round 21844 vs35579; equivalent35432->35353",
+      "tasks only local progress and link away; ParserPort and knowledge extractor exist but not wired to tasks"
+    ],
+    "implemented": [
+      "11 curated case profiles from 3 existing+8 verified additions",
+      "query-conditioned1277 workbook and20 official cost history selection",
+      "two-column case-to-decision explorer and weighted explainable match",
+      "same-scope compression fields and legacy metric labels",
+      "TaskMaterialService associations in existing metadata, local literal metrics and optional DSH draft extraction",
+      "task upload/paste UI, tool receipts and original task baseline retained across upload revision",
+      "public case Markdown/JSON and existing parser/extractor/round reuse"
+    ],
+    "pending": [
+      "deployment and real browser/read-only API proof",
+      "merge with unrelated dirty files preserved"
+    ],
+    "worktree": "D:/建工ai/.cache/case-matching",
+    "next_runnable_task": "Commit immutable release, deploy runtime/data/UI and verify current project without starting research or uploading real data.",
+    "tests": [
+      "56 focused cases passed; core source/tool tests13 passed",
+      "7 real public URL fetches returned200; all8 new excerpts normalized-match",
+      "production build passed",
+      "map browser flow passed; Python220 passed",
+      "full suite1690 passed/1 failure; the removed historical case evidence button was restored and its19 affected tests passed",
+      "final production build passed"
+    ]
   }
 }

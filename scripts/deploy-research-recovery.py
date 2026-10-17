@@ -11,7 +11,7 @@ root=pathlib.Path.cwd()
 def git(*parts):return subprocess.check_output(['git',*parts],cwd=root)
 commit=git('rev-parse',args.commit).decode().strip()
 base=git('rev-parse',args.base).decode().strip()
-names=git('diff','--name-only',base,commit,'--','apps/host','packages','runtime','services').decode().splitlines()
+names=git('diff','--name-only',base,commit,'--','apps/host','packages','runtime','services','data/public_cases/renewal-case-cards-20261017.json').decode().splitlines()
 names=[name for name in names if name.endswith(('.ts','.json','.py')) or name == 'runtime/agents/renewal/AGENTS.md']
 assert names and all('..' not in pathlib.PurePosixPath(name).parts for name in names)
 sha=lambda content:hashlib.sha256(content.replace(b'\r\n',b'\n')).hexdigest()

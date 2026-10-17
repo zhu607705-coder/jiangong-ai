@@ -72,7 +72,7 @@ describe('bounded native DSH renewal research workflow', () => {
     for (const window of result.source_windows) expect(window.text).toBe(sources[0].text.slice(window.start_char, window.end_char))
     expect(result.context).not.toContain(sources[0].text); expect(sources).toEqual(before)
     expect(live.ctx.tools.schemas()).toEqual([])
-    expect(events.at(-1)?.workflow).toMatchObject({ phase: 'compression', context_before_chars: result.trace.input_characters, context_after_chars: result.trace.output_characters })
+    expect(events.at(-1)?.workflow).toMatchObject({ phase: 'compression', context_before_chars: result.trace.expanded_input_characters, context_after_chars: result.trace.output_characters,context_metric:'equivalent_research_context' })
   })
 
   it('overlaps three DSH child calls with distinct stages and only task-scoped native source tools', async () => {

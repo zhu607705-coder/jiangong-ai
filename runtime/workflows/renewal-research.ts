@@ -20,6 +20,7 @@ type RetrievedSource = StrategySource & { start_char: number; end_char: number; 
 type RetrievalTrace = { calls: number; query_matches: number; read_windows: {
   source_id: string; start_char: number; end_char: number; characters: number; query: string | null; matched: boolean
 }[] }
+type CompressionCounts={context_before_chars?:number;context_after_chars?:number;context_metric?:'equivalent_research_context';source_before_chars?:number;source_after_chars?:number}
 type ReasoningMode = 'direct_evidence' | 'mixed' | 'reasoned_fallback' | 'not_produced'
 type SourceMetadata = Omit<StrategySource, 'id' | 'text'> & { source_id: string; characters: number }
 export type RenewalEvidenceWindow = SourceMetadata & { start_char: number; end_char: number; text: string }
@@ -27,7 +28,7 @@ export type RenewalResearchProgress = {
   stage: 'planning' | 'specialists' | 'compression'; status: 'running' | 'completed' | 'partial'; message: string; task_id?: string
   workflow: { phase: 'planning' | 'specialists' | 'compression'; tasks?: {
     id: string; role: Task['role']; status: 'pending' | 'running' | 'completed' | 'failed'; source_count: number; summary?: string
-  }[]; context_before_chars?: number; context_after_chars?: number }
+  }[] } & CompressionCounts
 }
 export type RenewalResearchTrace = {
   compression_audit?:ReturnType<typeof preserveCriticalWindows>['audit']
@@ -207,7 +208,7 @@ export async function runRenewalResearch(live: Pick<LiveSession, 'ctx' | 'call'>
   let plannerError: string | undefined
   let plannerBackend:'decision'|'dsh'='dsh'
   const taskProgress: NonNullable<RenewalResearchProgress['workflow']['tasks']> = []
-  const progress = (event: Omit<RenewalResearchProgress, 'workflow'>, counts: { context_before_chars?: number; context_after_chars?: number } = {}) =>
+  const progress = (event: Omit<RenewalResearchProgress, 'workflow'>, counts: CompressionCounts = {}) =>
     options.onProgress?.({ ...event, workflow: { phase: event.stage, ...(taskProgress.length ? { tasks: structuredClone(taskProgress) } : {}), ...counts } })
   try {
     progress({stage:'planning',status:'running',message:'先检查角色职责、输出契约和受限读取能力，再进行小规模分工调用。'})
@@ -392,9 +393,9 @@ export async function runRenewalResearch(live: Pick<LiveSession, 'ctx' | 'call'>
   const trace: RenewalResearchTrace = { planner_status: plannerStatus,planner_backend:plannerBackend,...(plannerBackend==='decision'&&options.decisionRoute?{decision_routing:options.decisionRoute}:{}), ...(plannerError ? { planner_error: plannerError } : {}), ...(plannerProfile ? { planner_profile: plannerProfile } : {}), plan, tasks: taskTrace,
     input_characters: inputCharacters, source_characters: snapshot.reduce((sum, source) => sum + source.text.length, 0),
     retained_source_characters: windows.reduce((sum, window) => sum + window.text.length, 0), output_characters: context.length,
-    compression: context.length < inputCharacters ? 'reduced' : 'retained', method: 'evidence_windows_and_untrusted_notes',quoted_passages:quoteCount,retained_quotes:quoteCount,expanded_input_characters:expanded,compression_ratio:context.length/Math.max(1,expanded) }
+    compression: context.length < expanded ? 'reduced' : 'retained', method: 'evidence_windows_and_untrusted_notes',quoted_passages:quoteCount,retained_quotes:quoteCount,expanded_input_characters:expanded,compression_ratio:context.length/Math.max(1,expanded) }
   trace.compression_audit=preserved.audit
   progress({ stage: 'compression', status: preserved.audit.omitted.length?'partial':'completed', message: `证据上下文已整理：原资料${trace.input_characters}字符，数据上下文${trace.output_characters}字符；${quoteCount}/${quoteCount}条引用原句、${preserved.audit.retained_critical_fragments}/${preserved.audit.critical_fragments}段关键条件和金额片段保留。` },
-    { context_before_chars: trace.input_characters, context_after_chars: trace.output_characters })
+    { context_before_chars: expanded, context_after_chars: trace.output_characters,context_metric:'equivalent_research_context',source_before_chars:trace.source_characters,source_after_chars:trace.retained_source_characters })
   return { plan, notes, investigation_requests:investigationRequests,failed_roles: taskTrace.filter(task => task.status === 'failed').map(task => task.role), source_windows: windows, context, contextValue, trace }
 }

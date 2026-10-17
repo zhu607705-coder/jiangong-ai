@@ -9,10 +9,10 @@ export const MATERIAL_CATEGORIES = [
 export type MaterialUploadMetadata = { material_category: typeof MATERIAL_CATEGORIES[number][0]; source_date?: string }
 
 /** Only gathers form values; App owns the existing upload/parse/refresh request. */
-export default function InternalMaterialIntake({ onUpload, disabled = false, compact = false, synthetic = false }: {
-  onUpload: (file: File, metadata: MaterialUploadMetadata) => Promise<void>; disabled?: boolean; compact?: boolean; synthetic?: boolean;
+export default function InternalMaterialIntake({ onUpload, disabled = false, compact = false, synthetic = false,initialCategory='resident_needs' }: {
+  onUpload: (file: File, metadata: MaterialUploadMetadata) => Promise<void>; disabled?: boolean; compact?: boolean; synthetic?: boolean;initialCategory?:MaterialUploadMetadata['material_category'];
 }) {
-  const [category, setCategory] = useState<MaterialUploadMetadata['material_category']>('resident_needs')
+  const [category, setCategory] = useState<MaterialUploadMetadata['material_category']>(initialCategory)
   const [date, setDate] = useState('')
   return <div className={`internal-material-upload${compact ? ' is-compact' : ''}`}>
     {synthetic && <p><strong>合成演示项目：此处仅上传模拟资料，文件将标记为合成并与真实项目分开保存。</strong></p>}

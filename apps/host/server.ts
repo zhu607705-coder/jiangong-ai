@@ -20,6 +20,7 @@ import { AmapSettings, registerAmap } from './amap'
 import { registerMapScreening } from './map-screening'
 import { registerIntelligence } from './intelligence'
 import { registerExperience } from './experience'
+import { registerTaskMaterials } from './task-materials'
 import { registerCommunityOperations } from './community-operations'
 import { registerConstructionCosts } from './construction-costs'
 import { registerRenewalMode } from './renewal-mode'
@@ -67,6 +68,7 @@ app.use(['/api', '/_AMapService'], (req, res, next) => {
 app.use(qiushiDemoReadOnly)
 const intelligence = registerIntelligence(app,store)
 const experience = await registerExperience(app,store,requireProject,intelligence)
+await registerTaskMaterials(app,store,requireProject,experience)
 await registerCommunityOperations(app,store,requireProject)
 const costLibrary = await registerConstructionCosts(app,store,requireProject)
 registerAmap(app, amapSettings)
