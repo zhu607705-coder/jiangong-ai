@@ -36,6 +36,8 @@ describe('object and active analysis context',()=>{
     expect(saved.current).toBe(true);expect(saved.packet.status).toBe('completed')
     expect(saved.packet.sources[0]).toMatchObject({role:'reference',object_binding:{relation:'different_object'}})
     expect(saved.packet.content_review?.issues.some(row=>row.code==='OBJECT_LOCATION_CONFLICT')).toBe(true)
+    expect(saved.packet.content_review?.issues.find(row=>row.code==='OBJECT_LOCATION_CONFLICT')?.message).toContain('杭州市建工新村改造')
+    expect(saved.packet.content_review?.follow_up.search_queries.some(query=>query.includes('项目地址'))).toBe(true)
     expect(value.sources[0].role).toBe('current');expect((await store.project(project.id,project.owner_id))!.input.scope.city).toBe('天津市')
     expect((await readPublishedStrategy(store,project,'',false))?.current_context?.object_review_required).toBe(true)
   })

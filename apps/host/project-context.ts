@@ -20,12 +20,12 @@ export function packetMatchesContext(packet:StrategyPacket,project:ProjectRecord
 export function bindPacketContext(packet:StrategyPacket,project:ProjectRecord):StrategyPacket {
   if(project.input.synthetic)return packet
   const sources=packet.sources.map(source=>bindStrategySource(source,project.input))
-  const issues=sources.filter(source=>source.object_binding?.relation==='different_object').map(source=>({code:'OBJECT_LOCATION_CONFLICT',path:`sources.${source.id}`,message:source.object_binding!.reason}))
+  const issues=sources.filter(source=>source.object_binding?.relation==='different_object').map(source=>({code:'OBJECT_LOCATION_CONFLICT',path:`sources.${source.id}`,message:`《${source.title}》：${source.object_binding!.reason}`}))
   if(!issues.length)return {...packet,sources}
   const review=packet.content_review
   return {...packet,sources,content_review:{policy:'advisory-v1',status:'needs_review',checked_at:review?.checked_at||packet.created_at,
     issues:[...(review?.issues||[]),...issues.filter(issue=>!review?.issues.some(row=>row.path===issue.path&&row.code===issue.code))],
-    follow_up:{search_queries:review?.follow_up.search_queries||[`${project.input.scope.city||''} ${project.input.scope.name} 项目地址`],
+    follow_up:{search_queries:[...new Set([...(review?.follow_up.search_queries||[]),`${project.input.scope.name} 项目地址 工程范围`])],
       reading_focus:[...new Set([...(review?.follow_up.reading_focus||[]),'核对同名资料中的项目地址和研究范围。'])],
       internal_data:[...new Set([...(review?.follow_up.internal_data||[]),'项目位置、边界及对应资料的对象登记。'])]}}}
 }
