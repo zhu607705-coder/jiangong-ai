@@ -82,6 +82,15 @@ test('task snapshots replace prior cards, summaries are bounded, and unrequested
   expect(inspect([raw, phase('planning', { tasks: [] })]).querySelector('.srp-experts')).toBeNull()
 })
 
+test('displays actual reduction and measured evidence retention without implying token or time savings',()=>{
+ const document=inspect([phase('compression',{context_before_chars:35432,context_after_chars:26514,context_metric:'equivalent_research_context',quoted_passages:12,retained_quotes:12,critical_fragments:87,retained_critical_fragments:87})])
+ const text=document.querySelector('.srp-compression')!.textContent!
+ expect(text).toContain('减少 25.2%')
+ expect(text).toContain('引用原句 12 / 12 保留')
+ expect(text).toContain('关键条件与金额片段 87 / 87')
+ expect(text).not.toMatch(/token|耗时|费用/)
+})
+
 test('a completed synthesis does not claim the whole run complete before an explicit result event', () => {
   const synthesis = phase('synthesis', { tasks }, 'completed')
   expect(inspect([synthesis]).querySelector('h3')?.textContent).not.toBe('本轮方案研究已完成')

@@ -4304,5 +4304,53 @@
       "research/test_results/case-task-runtime-deployment-20261017.json",
       "research/test_results/case-task-ui-final-deployment-20261017.json"
     ]
+  },
+  "context_compression_20261017": {
+    "status": "deployed_pending_merge",
+    "updated_at": "2026-10-17T09:17:40.424248+00:00",
+    "request": "real context reduction instead of 79-character cosmetic change",
+    "root_causes": [
+      "broad read previews repeated in synthesis",
+      "overlap from critical-fragment retention",
+      "repeated source/window keys and candidate literal quotes"
+    ],
+    "implemented": [
+      "quote-centered windows plus literal critical spans",
+      "source-bounded interval union",
+      "grouped start/text wire encoding and candidate range references",
+      "all expert fields preserved; original sources and reports unchanged"
+    ],
+    "worktree": "D:/建工ai/.cache/context-compression",
+    "replay": "research/test_results/context-compression-replay-20261017.json",
+    "native": "research/test_results/context-compression-native-20261017.json",
+    "measurement": {
+      "same_scope_before": 35432,
+      "previous_after": 35353,
+      "after": 26514,
+      "synthesis_before": 35579,
+      "synthesis_after": 26319,
+      "quotes": 12,
+      "critical_fragments": 87
+    },
+    "real_project_runs": 0,
+    "next_runnable_task": "Merge verified branch; next manual project research uses deployed compression.",
+    "runtime_commit": "46f04faf061f90d9442097801d1a6b50485122c6",
+    "ui_commit": "46f04faf061f90d9442097801d1a6b50485122c6",
+    "tests": [
+      "76 focused regression checks passed",
+      "production typecheck/build passed",
+      "1 native DSH synthetic protocol call passed",
+      "deployed pure replay35432->26514;12 quotes and87 critical spans preserved",
+      "38 project records and all research histories unchanged"
+    ],
+    "artifacts": [
+      "research/test_results/context-compression-replay-20261017.json",
+      "research/test_results/context-compression-native-20261017.json",
+      "research/test_results/context-compression-tests-20261017.log",
+      "research/test_results/context-compression-build-20261017.log",
+      "research/test_results/context-compression-runtime-deployment-20261017.json",
+      "research/test_results/context-compression-ui-deployment-20261017.json",
+      "research/test_results/context-compression-deployed-replay-20261017.json"
+    ]
   }
 }

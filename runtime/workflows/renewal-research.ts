@@ -4,14 +4,14 @@ import { ContractError, validate, modelSchema } from '../../packages/contracts/v
 import { chunkDocument } from '../../packages/corpus/corpus'
 import { expandRetrievalQuery, passageQueryMatches } from '../../packages/experience/retrieval'
 import { queryScore, searchTokens,canonical,hash } from '../../packages/intelligence/domain'
-import { strategyModelReferences, type StrategySource } from '../../packages/retrofit/strategy'
+import { strategyModelReferences, type StrategySource, type StrategyWorkflowTrace } from '../../packages/retrofit/strategy'
 import { loadRenewalAgentProfile, type RenewalAgentProfile } from '../agents/renewal/profiles'
 import type { LiveSession } from '../dsh/live-session'
 import { allocateRenewalEffort } from './renewal-research-effort'
 import {decisionResearchPlan} from '../../packages/decision/fast-analysis'
 import type {ResearchExecution,ResearchLineage} from '../../packages/retrofit/research-execution'
 import {DEFAULT_RESEARCH_QUESTIONS,type InvestigationRequest} from '../../packages/retrofit/research-coverage'
-import {preserveCriticalWindows} from '../../packages/retrofit/evidence-compression'
+import {preserveCriticalWindows,packEvidenceContext} from '../../packages/retrofit/evidence-compression'
 
 type Task = RenewalResearchPlan['tasks'][number]
 type ProfileFingerprint = Pick<RenewalAgentProfile, 'role' | 'sha256'>
@@ -20,7 +20,7 @@ type RetrievedSource = StrategySource & { start_char: number; end_char: number; 
 type RetrievalTrace = { calls: number; query_matches: number; read_windows: {
   source_id: string; start_char: number; end_char: number; characters: number; query: string | null; matched: boolean
 }[] }
-type CompressionCounts={context_before_chars?:number;context_after_chars?:number;context_metric?:'equivalent_research_context';source_before_chars?:number;source_after_chars?:number}
+type CompressionCounts={context_before_chars?:number;context_after_chars?:number;context_metric?:'equivalent_research_context';source_before_chars?:number;source_after_chars?:number;quoted_passages?:number;retained_quotes?:number;critical_fragments?:number;retained_critical_fragments?:number}
 type ReasoningMode = 'direct_evidence' | 'mixed' | 'reasoned_fallback' | 'not_produced'
 type SourceMetadata = Omit<StrategySource, 'id' | 'text'> & { source_id: string; characters: number }
 export type RenewalEvidenceWindow = SourceMetadata & { start_char: number; end_char: number; text: string }
@@ -45,7 +45,7 @@ type CompactResearchNote=Omit<RenewalResearchNote,'observations'>&{observations:
 export type RenewalResearchContext = {
   source_catalog: SourceMetadata[]; evidence_windows: Pick<RenewalEvidenceWindow,'source_id'|'start_char'|'end_char'|'text'>[]
   untrusted_research_plan: RenewalResearchPlan | null; untrusted_expert_notes: CompactResearchNote[]
-  failed_tasks: RenewalResearchTrace['tasks']
+  failed_tasks: StrategyWorkflowTrace['tasks']
 }
 
 const roleLabels: Record<Task['role'], string> = {
@@ -165,22 +165,39 @@ function evidenceWindows(sources: readonly StrategySource[], notes: readonly Ren
     remaining -= added
     ranges.set(source.id, [...existing.filter(range => !overlaps.includes(range)), merged])
   }
-  // Validated expert quotes receive space before previews of unreferenced material.
+  // Carry exact citations plus local context, not each specialist's broad read preview.
   for (const note of notes) for (const row of note.observations) {
     const source = byId.get(row.source_id)!, returned=reads.find(read=>read.source_id===row.source_id&&read.text.includes(row.quote)),start = returned?returned.start_char+returned.text.indexOf(row.quote):source.text.indexOf(row.quote)
-    add(source, Math.max(0, start - 120), Math.min(source.text.length, start + row.quote.length + 120))
-  }
-  for (const read of reads) {
-    const source = byId.get(read.source_id)!
-    add(source, read.start_char, Math.min(read.end_char, read.start_char + 700))
+    let begin=Math.max(0,start-80),end=Math.min(source.text.length,start+row.quote.length+80)
+    if(!boundary(source.text,begin))begin--
+    if(!boundary(source.text,end))end++
+    add(source,begin,end)
   }
   for (const source of sources) {
     if (ranges.has(source.id) || remaining <= 0) continue
-    add(source, 0, Math.min(source.text.length, remaining, source.role === 'current' || source.document_id ? 700 : 280))
+    add(source, 0, Math.min(source.text.length, remaining, 160))
   }
   return sources.flatMap(source => (ranges.get(source.id) || []).sort((a, b) => a.start - b.start).map(range => ({
     ...metadata(source), start_char: range.start, end_char: range.end, text: source.text.slice(range.start, range.end),
   })))
+}
+
+/** Pure replayable projection. Full notes, read receipts and originals remain in the saved packet. */
+export function compileRenewalResearchContext(snapshot:readonly StrategySource[],notes:readonly RenewalResearchNote[],plan:RenewalResearchPlan|null,taskTrace:StrategyWorkflowTrace['tasks'],reads:readonly ReadWindow[]){
+  const initialWindows = evidenceWindows(snapshot, notes, reads)
+  const preserved=preserveCriticalWindows(snapshot,reads,initialWindows,notes.flatMap(note=>note.observations))
+  const windows=preserved.windows.map(window=>({...metadata(snapshot.find(source=>source.id===window.source_id)!),...window}))
+  const compactNotes:CompactResearchNote[]=notes.map(note=>({...structuredClone(note),observations:note.observations.map(({quote,...row})=>{
+    const window=windows.find(window=>window.source_id===row.source_id&&window.text.includes(quote))
+    if(!window)throw new Error('RENEWAL_RESEARCH_COMPRESSION_EVIDENCE_LOSS')
+    const start=window.start_char+window.text.indexOf(quote)
+    return {...row,quote_ref:{source_id:row.source_id,start_char:start,end_char:start+quote.length}}
+  })}))
+  const contextValue: RenewalResearchContext = { source_catalog: snapshot.map(metadata), evidence_windows: windows.map(({source_id,start_char,end_char,text})=>({source_id,start_char,end_char,text})),
+    untrusted_research_plan: plan, untrusted_expert_notes: compactNotes, failed_tasks: taskTrace.filter(task => task.status === 'failed') }
+  const context = JSON.stringify(packEvidenceContext(contextValue)), inputCharacters = JSON.stringify(snapshot).length
+  const expanded=JSON.stringify({sources:snapshot,untrusted_research_plan:plan,untrusted_expert_notes:notes,failed_tasks:contextValue.failed_tasks}).length
+  return {windows,contextValue,context,inputCharacters,expanded,audit:preserved.audit}
 }
 
 /**
@@ -376,26 +393,14 @@ export async function runRenewalResearch(live: Pick<LiveSession, 'ctx' | 'call'>
     for(const request of note.investigation_requests||[])investigationRequests.push({...request,task_id:note.task_id,visibility:privateInputs?'internal':'public'})
     if(!note.investigation_requests?.length&&note.missing_data.length)investigationRequests.push({task_id:note.task_id,question_ids:task?.question_ids||[],missing_fields:note.missing_data,suggested_queries:note.missing_data.slice(0,2).map(field=>`${options.projectName} ${field}`),domain_hints:[],affected_decisions:[task?.question||'本轮方案'],visibility:privateInputs?'internal':'public'})
   }
-  const initialWindows = evidenceWindows(snapshot, notes, reads)
-  const preserved=preserveCriticalWindows(snapshot,reads,initialWindows,notes.flatMap(note=>note.observations))
-  const windows=preserved.windows.map(window=>({...metadata(snapshot.find(source=>source.id===window.source_id)!),...window}))
-  const compactNotes:CompactResearchNote[]=notes.map(note=>({...structuredClone(note),observations:note.observations.map(({quote,...row})=>{
-    const window=windows.find(window=>window.source_id===row.source_id&&window.text.includes(quote))
-    if(!window)throw new Error('RENEWAL_RESEARCH_COMPRESSION_EVIDENCE_LOSS')
-    const start=window.start_char+window.text.indexOf(quote)
-    return {...row,quote_ref:{source_id:row.source_id,start_char:start,end_char:start+quote.length}}
-  })}))
-  const contextValue: RenewalResearchContext = { source_catalog: snapshot.map(metadata), evidence_windows: windows.map(({source_id,start_char,end_char,text})=>({source_id,start_char,end_char,text})),
-    untrusted_research_plan: plan, untrusted_expert_notes: compactNotes, failed_tasks: taskTrace.filter(task => task.status === 'failed') }
-  const context = JSON.stringify(contextValue), inputCharacters = JSON.stringify(snapshot).length
-  const expanded=JSON.stringify({sources:snapshot,untrusted_research_plan:plan,untrusted_expert_notes:notes,failed_tasks:contextValue.failed_tasks}).length
+  const {windows,contextValue,context,inputCharacters,expanded,audit}=compileRenewalResearchContext(snapshot,notes,plan,taskTrace,reads)
   const quoteCount=notes.reduce((total,note)=>total+note.observations.length,0)
   const trace: RenewalResearchTrace = { planner_status: plannerStatus,planner_backend:plannerBackend,...(plannerBackend==='decision'&&options.decisionRoute?{decision_routing:options.decisionRoute}:{}), ...(plannerError ? { planner_error: plannerError } : {}), ...(plannerProfile ? { planner_profile: plannerProfile } : {}), plan, tasks: taskTrace,
     input_characters: inputCharacters, source_characters: snapshot.reduce((sum, source) => sum + source.text.length, 0),
     retained_source_characters: windows.reduce((sum, window) => sum + window.text.length, 0), output_characters: context.length,
     compression: context.length < expanded ? 'reduced' : 'retained', method: 'evidence_windows_and_untrusted_notes',quoted_passages:quoteCount,retained_quotes:quoteCount,expanded_input_characters:expanded,compression_ratio:context.length/Math.max(1,expanded) }
-  trace.compression_audit=preserved.audit
-  progress({ stage: 'compression', status: preserved.audit.omitted.length?'partial':'completed', message: `证据上下文已整理：原资料${trace.input_characters}字符，数据上下文${trace.output_characters}字符；${quoteCount}/${quoteCount}条引用原句、${preserved.audit.retained_critical_fragments}/${preserved.audit.critical_fragments}段关键条件和金额片段保留。` },
-    { context_before_chars: expanded, context_after_chars: trace.output_characters,context_metric:'equivalent_research_context',source_before_chars:trace.source_characters,source_after_chars:trace.retained_source_characters })
+  trace.compression_audit=audit
+  progress({ stage: 'compression', status: audit.omitted.length?'partial':'completed', message: `证据上下文已整理：同口径${expanded} → ${trace.output_characters}字符；${quoteCount}/${quoteCount}条引用原句、${audit.retained_critical_fragments}/${audit.critical_fragments}段关键条件和金额片段保留。` },
+    { context_before_chars: expanded, context_after_chars: trace.output_characters,context_metric:'equivalent_research_context',source_before_chars:trace.source_characters,source_after_chars:trace.retained_source_characters,quoted_passages:quoteCount,retained_quotes:quoteCount,critical_fragments:audit.critical_fragments,retained_critical_fragments:audit.retained_critical_fragments })
   return { plan, notes, investigation_requests:investigationRequests,failed_roles: taskTrace.filter(task => task.status === 'failed').map(task => task.role), source_windows: windows, context, contextValue, trace }
 }

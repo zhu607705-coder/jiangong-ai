@@ -446,6 +446,25 @@
         "no new parser, model client, source store or scheduler",
         "private-file model consent and field review required"
       ]
+    },
+    {
+      "id": "context-compression-20261017",
+      "reuse": [
+        "runtime/workflows/renewal-research.ts:evidence windows and saved specialist notes",
+        "packages/retrofit/evidence-compression.ts:literal condition/amount preservation",
+        "strategyModelReferences:existing identity aliases",
+        "DSH native structured tool and research-round store"
+      ],
+      "new_domain_logic": [
+        "same-source interval union and quote-centered selection",
+        "grouped UTF-16 window transport and candidate range references",
+        "offline same-input compression replay"
+      ],
+      "unchanged": [
+        "expert propositions, assumptions, ranges and investigation requests",
+        "original sources, historical packets and permission lineage",
+        "no additional model client or context runtime"
+      ]
     }
   ]
 }
