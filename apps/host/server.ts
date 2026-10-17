@@ -26,6 +26,7 @@ import { registerCommunityOperations } from './community-operations'
 import { registerConstructionCosts } from './construction-costs'
 import { registerRenewalMode } from './renewal-mode'
 import {registerProjectDecision} from './project-decision'
+import {registerProjectAdvice} from './project-advice'
 import { parseResearchMaterialMetadata } from './research-rounds'
 import { ExperienceError } from '../../packages/experience/domain'
 import { AdminAccess, registerAdminRoutes } from './admin-auth'
@@ -76,6 +77,7 @@ registerAmap(app, amapSettings)
 const mapScreening = registerMapScreening(app, amapSettings, store)
 const researchRounds = await registerRenewalMode(app,store,requireProject,costLibrary,(id,signal)=>mapScreening.modeInput(id,signal))
 await registerProjectDecision(app,store,requireProject)
+await registerProjectAdvice(app,store,requireProject)
 if (await store.project(QIUSHI_SOURCE_PROJECT_ID, config.ownerId)) await installQiushiDemoReplay(store, config.ownerId)
 app.get('/api/ready', async (_req, res) => {
   let capability = false

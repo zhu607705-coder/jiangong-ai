@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-10-17T12:18:15.824413+00:00",
+  "before_cached": false,
+  "result": {
+    "policy": "investigation-advice-v1",
+    "project_id": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+    "context_version": 0,
+    "strategy_hash": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961",
+    "strategy_created_at": "2026-10-16T14:28:46.073Z",
+    "input_hash": "advice:c42123a59f3a854e3c2e5f54ee1b4aa1a5b5458a4e0bb07aa04b962685d8dbd1",
+    "direction": null,
+    "created_at": "2026-10-17T12:18:15.718Z",
+    "duration_ms": 4872,
+    "reused": false,
+    "summary": "登记对象为天津市滨海新区大沽街道建工新村，而现有公开资料均指向杭州市西湖区文二路与莫干山路一带的建工新村、日晖新村危旧房拆除重建项目，属同名异址，不得把其户数、预算、签约与工期迁移到本对象。最优先是与登记地址核对：向属地街道及滨海新区住建部门索取本小区楼栋、边界与工程范围原件，同时保留当前登记，暂不评判改造模式。",
+    "steps": [
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E5%A4%A9%E6%B4%A5%E5%B8%82%E5%BB%BA%E5%B7%A5%E6%96%B0%E6%9D%91%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E5%B7%A5%E7%A8%8B%E8%8C%83%E5%9B%B4",
+        "action": "以“天津市滨海新区大沽街道 建工新村 老旧小区改造”等词检索属地政府公开信息，记录发布主体、地址、楼栋与年份",
+        "reason": "公开检索可先确认本地是否有对应项目与原文，决定后续判断引用哪份资料；现有同名资料指向杭州，不能作为本对象依据",
+        "material": "项目名称、发布单位、地址表述、涉及楼栋或用地范围、发布时间",
+        "channel": "滨海新区住房建设主管部门、大沽街道政务公开栏目及市政府公开渠道",
+        "completion_check": "命中的原文地址是否包含大沽街道或滨海新区；不一致则记为异地线索，不并入本项目",
+        "evidence_refs": [],
+        "title": "继续公开检索"
+      },
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E6%A0%B8%E5%AF%B9%E5%90%8C%E5%90%8D%E8%B5%84%E6%96%99%E4%B8%AD%E7%9A%84%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E5%92%8C%E7%A0%94%E7%A9%B6%E8%8C%83%E5%9B%B4",
+        "action": "补读同名资料原文的工程地点与范围段落，与登记地址逐条比对，注明只能借鉴的调查口径",
+        "reason": "现有摘录仅片段，需确认同名资料确属异地，避免误用其拆除重建顺序与消防通道、雨棚等举措；影响方案对比与六维判断的对象一致性",
+        "material": "工程地点、项目范围、投资与资金来源字段、阶段（公示、成交、竣工）",
+        "channel": "已登记原件链接（杭州市住保房管、西湖区政府及政务公开页面）",
+        "completion_check": "若原文地点均为杭州西湖区，则结论记为异地参考，仅借鉴调查方法，不引用数值",
+        "evidence_refs": [
+          "INTEL-218b8e52f563:PUB-82c312bf956e4603",
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6",
+          "INTEL-61a63a010641:PUB-57a7477a91c59cfa",
+          "INTEL-1bac957606b6:PUB-d47d72ed48483453",
+          "INTEL-5d50cffc79a1:PUB-dfbce596fb3115f1"
+        ],
+        "title": "补读关键原文"
+      },
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E9%A1%B9%E7%9B%AE%E4%BD%8D%E7%BD%AE%E8%BE%B9%E7%95%8C%E5%8F%8A%E5%AF%B9%E5%BA%94%E8%B5%84%E6%96%99%E7%9A%84%E5%AF%B9%E8%B1%A1%E7%99%BB%E8%AE%B0",
+        "action": "向属地经办方索取本小区楼栋清单、边界图与既往改造台账，登记取得来源与时点",
+        "reason": "地址核对与方案分析可并行；补齐后当前基于假设的六维需求、工程条件与维护责任暂估可转为可核判断，资料未齐不阻断工作台继续研判",
+        "material": "楼栋与户数清单、小区边界图、房屋建成年代、既往维修与检测记录、如有则核对的物业与业主组织名册",
+        "channel": "大沽街道办事处、社区居委会及滨海新区住建（房管）部门；工作台如已导入内部资料则核对对象登记",
+        "completion_check": "核对材料地址与登记地址一致，并确认楼栋数与边界是否覆盖登记小区；不一致处列入待核清单",
+        "evidence_refs": [],
+        "title": "补充内部资料"
+      }
+    ],
+    "source_count": 6,
+    "private_context_omitted": false,
+    "model_label": "DeepSeek-V4.1-Flash-1017",
+    "model_calls": [
+      {
+        "stage": "investigation_advice",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 6543,
+        "output_tokens": 684,
+        "usage_status": "reported",
+        "duration_ms": 4637,
+        "session_id": "b37b4942-fd3e-41be-9e63-f9c13226c262",
+        "cache_read_tokens": 1792,
+        "cache_write_tokens": 0
+      }
+    ]
+  },
+  "cache_read_reused": true,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "full_project_research_started": false,
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "7e115f1e5e8fbaad2dc39e4fcfd4e754d18ab3c8",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  }
+}

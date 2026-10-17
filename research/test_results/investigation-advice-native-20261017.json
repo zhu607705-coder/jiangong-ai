@@ -1,0 +1,108 @@
+{
+  "scope": "public-input protocol probe; no project or report writes",
+  "input": {
+    "target": {
+      "name": "天津市 建工新村",
+      "address": "天津市滨海新区大沽街道建工新村",
+      "city": "天津市"
+    },
+    "direction": null,
+    "synthetic": false,
+    "object_review_required": true,
+    "candidates": [
+      {
+        "alias": "t1",
+        "title": "继续公开检索",
+        "request": "天津市 建工新村 项目地址 工程范围",
+        "reason": "先确认当前项目的位置、范围和对应原文，再采用旧报告中的具体调查口径。"
+      },
+      {
+        "alias": "t2",
+        "title": "补读关键原文",
+        "request": "核对同名资料中的项目地址和研究范围。",
+        "reason": "先确认当前项目的位置、范围和对应原文，再采用旧报告中的具体调查口径。"
+      },
+      {
+        "alias": "t3",
+        "title": "补充内部资料",
+        "request": "项目位置、边界及对应资料的对象登记。",
+        "reason": "先确认当前项目的位置、范围和对应原文，再采用旧报告中的具体调查口径。"
+      }
+    ]
+  },
+  "result": {
+    "policy": "investigation-advice-v1",
+    "project_id": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+    "context_version": 0,
+    "strategy_hash": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961",
+    "strategy_created_at": "2026-10-16T14:28:46.073Z",
+    "input_hash": "native-probe",
+    "direction": null,
+    "created_at": "2026-10-17T12:12:44.640Z",
+    "duration_ms": 5664,
+    "reused": false,
+    "summary": "登记对象为天津市滨海新区大沽街道建工新村；来源均为杭州西湖区\"建工新村、日晖新村区块\"危旧房拆除重建项目（文二路以南、莫干山路以西，9-14幢等8幢、322或326户、投资超2亿、区级国有投资/区财政），地址与户数口径均不一致，只能作异地方法参考，不能当作本对象事实。首要任务是核实登记对象地址与范围原件。",
+    "steps": [
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E6%A0%B8%E5%AF%B9%E5%90%8C%E5%90%8D%E8%B5%84%E6%96%99%E4%B8%AD%E7%9A%84%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E5%92%8C%E7%A0%94%E7%A9%B6%E8%8C%83%E5%9B%B4",
+        "action": "先逐份核对同名原文的项目地址、街道与幢号范围，将杭州西湖区资料标注为异地参考，写明只借鉴调查口径（危房检测、签约与搬迁时序），不引用其余户数、预算与时限",
+        "reason": "现有6份来源经object-binding均指向杭州西湖区项目（s1-s6），若直接采用会把异地楼栋、322/326户与投资口径误当本对象事实，影响后续需求与工程判断的对象准确性",
+        "material": "各来源中项目地址、工程地点、涉及幢号、户数、资金性质字段摘录；一份“异地/待核”标注表",
+        "channel": "已登记公开原件（s1-s6原始页面），不新建检索；仅核对原文定位与发布主体",
+        "completion_check": "核对后每份资料能写明与本登记地址（天津市滨海新区大沽街道建工新村）是否一致；无法一致的标为different_object并从本对象证据中排除",
+        "evidence_refs": [
+          "INTEL-218b8e52f563:PUB-82c312bf956e4603",
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6",
+          "PUB-68388708cf4ae0d9",
+          "INTEL-61a63a010641:PUB-57a7477a91c59cfa"
+        ],
+        "title": "补读关键原文"
+      },
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E9%A1%B9%E7%9B%AE%E4%BD%8D%E7%BD%AE%E8%BE%B9%E7%95%8C%E5%8F%8A%E5%AF%B9%E5%BA%94%E8%B5%84%E6%96%99%E7%9A%84%E5%AF%B9%E8%B1%A1%E7%99%BB%E8%AE%B0",
+        "action": "向登记方索取本对象的地址、四至边界、楼栋与户数清单及项目文件，确认“建工新村”是滨海新区大沽街道的小区名还是其他，并确认对应改造项目编号",
+        "reason": "登记地址仅一级文字且object_review_required为true，缺边界与幢户清单就无法判断名称冲突来源，也会阻断六维中需求、工程与实施协同的取值",
+        "material": "项目登记表（地址、四至、幢号、户数、建成年代、产权与物业管理情况）、属地项目立项或改造计划文号",
+        "channel": "项目登记方/属地街道及区住建部门已登记原件（机构名称待核实后填写，不预设联系人）",
+        "completion_check": "拿到后核对边界与幢户数是否与登记地址一致，并据此把标记为异地或待核的资料重新绑定或排除",
+        "evidence_refs": [
+          "INTEL-61a63a010641:PUB-57a7477a91c59cfa",
+          "INTEL-1bac957606b6:PUB-d47d72ed48483453"
+        ],
+        "title": "补充内部资料"
+      },
+      {
+        "task_id": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961:followup:%E5%A4%A9%E6%B4%A5%E5%B8%82%E5%BB%BA%E5%B7%A5%E6%96%B0%E6%9D%91%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E5%B7%A5%E7%A8%8B%E8%8C%83%E5%9B%B4",
+        "action": "在上述原件到位后再做一次有限公开核验：以“天津市滨海新区 建工新村”加确切四至检索属地发布者的项目公告，检索前写明关键词、对象与出处要求",
+        "reason": "当前检索结果被同名异地项目占据，若无地址与边界前提，公开检索只会重复命中杭州资料，故排在原件核对之后，仅用于补充对象证据而非替换登记",
+        "material": "检索记录（关键词、检索日期、来源URL、对象绑定结论），命中的属地公告或无法确认的记录",
+        "channel": "属地政府与住建部门公开发布页面（网址待核实），并以已登记原件为准",
+        "completion_check": "每条命中能写明是否与登记地址四至一致、发布主体与时点；无命中也记录为“未取得证据”而非“不满足”",
+        "evidence_refs": [
+          "INTEL-ed6eb8d2a0ae:PUB-acf64a65d22febf6",
+          "PUB-68388708cf4ae0d9",
+          "INTEL-5d50cffc79a1:PUB-dfbce596fb3115f1"
+        ],
+        "title": "继续公开检索"
+      }
+    ],
+    "source_count": 6,
+    "private_context_omitted": false,
+    "model_label": "DeepSeek-V4.1-Flash-1017",
+    "model_calls": [
+      {
+        "stage": "investigation_advice",
+        "requested_model": "deepseek-flash",
+        "returned_model": "deepseek-flash",
+        "finish_reason": "tool-calls",
+        "input_tokens": 6319,
+        "output_tokens": 813,
+        "usage_status": "reported",
+        "duration_ms": 5484,
+        "session_id": "66c4db2d-1ab6-43b6-9bd6-9b9418eb41eb",
+        "cache_read_tokens": 1408,
+        "cache_write_tokens": 0
+      }
+    ]
+  }
+}
