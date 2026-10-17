@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-17T03:09:51.635242+00:00",
+  "browser": "Chrome",
+  "url": "https://laneanew.cn/?project=P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de&view=assessment&section=direction",
+  "current_direction": "尚未选择; no automatic model call",
+  "observed": "7 follow-ups including 3 titled object-location conflicts; registered Tianjin search query and internal object-boundary request present",
+  "screenshot": "output/playwright/context-contract/material-followups.png",
+  "screenshot_sha256": "d05290d7c7807ed5a0c71f43d8adb5137114ecbc76b95e672afdec5d27a3d33e",
+  "scope": "Read-only UI inspection; no model/research start, project or round write."
+}

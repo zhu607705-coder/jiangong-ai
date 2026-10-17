@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-17T03:01:01.909133+00:00",
+  "checked_at": "2026-10-17T03:09:51.635242+00:00",
   "scope": "Pro review first work order; canonical object/current result contract",
   "base_commit": "29f5ef08d8c520c09752278574732b53cc28a485",
   "pro_review_sha256": "6f8bc44cac8c995e2caebfe3123f8143e0f81d3f22ede37a673a8a662e79b0e6",
@@ -11,7 +11,11 @@
     "full_suite_snapshot": "130 files passed, 3 failed; 1643 tests passed, 2 failed, 9 skipped; all three remaining failures isolated and subsequently fixed/retested (corpus suite, experience cutoff, obsolete workspace mock)",
     "full_suite_snapshot_log": "research/test_results/context-contract-final-suite-20261017.log",
     "baseline_reproduction_log": "research/test_results/context-contract-existing-baseline-20261017.log",
-    "production_build": "TypeScript and Vite passed; final deployment build being read back"
+    "production_build": "TypeScript and Vite passed; final UI build 5.29 sec",
+    "workspace_final": "11 passed; server-resolved result stays visible while failed retry remains history",
+    "registered_address": "52 passed in 5 files; city omitted but explicit map address used without changing project inputs",
+    "final_ui": "28 passed in 3 files; manual direction separated; canonical material issues shown without mutating saved round",
+    "object_followup": "10 passed; conflicting source titles and object-scoped search queries retained"
   },
   "not_claimed": [
     "No new Search/Fetch provider A/B",
@@ -19,5 +23,23 @@
     "No domain decision-quality or enterprise effectiveness validation",
     "No automatic full project/model research"
   ],
-  "next_batch": "Existing workflow node receipts and recovery, answer-slot coverage and controlled supplementation before provider experiments."
+  "next_batch": "Existing workflow node receipts and recovery, answer-slot coverage and controlled supplementation before provider experiments.",
+  "deployment": {
+    "origin": "https://laneanew.cn",
+    "runtime_commit": "75eb1502d676b9c265fe68e69d19af15b0736f53",
+    "ui_commit": "a08fb511a4eb9393f6231f1a6dccb02aee11c6e4",
+    "project_count": 38,
+    "project_and_research_rounds_unchanged": true,
+    "actual_registered_address_resolved_city": "天津市",
+    "actual_object_conflicts_classified": 3,
+    "canonical_result_equals_public_index": true,
+    "new_model_research_calls": 0,
+    "screenshot": "output/playwright/context-contract/material-followups.png"
+  },
+  "artifacts": [
+    "research/test_results/context-contract-final-runtime-deployment-20261017.json",
+    "research/test_results/context-contract-final-ui-deployment-20261017.json",
+    "research/test_results/context-contract-final-live-20261017.json",
+    "research/test_results/context-contract-browser-20261017.json"
+  ]
 }

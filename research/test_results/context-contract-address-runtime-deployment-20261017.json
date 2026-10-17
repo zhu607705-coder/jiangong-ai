@@ -1,0 +1,37 @@
+{
+  "deployed_at": "2026-10-17T03:03:17.149903+00:00",
+  "commit": "de06bda7a8ac4efc66f8cdc0a3d799fa1a1512c5",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261017T030314Z",
+  "runtime_files": {
+    "packages/research/evidence.ts": {
+      "before": "7c6698f0c3454e9eef4114240d2978841c0dd5f481c4cba40b672cf89707b5c3",
+      "after": "1e8962dcaed9939aad95b25039dd336e15d5161b90e7b2e34d432d92445e603f"
+    },
+    "packages/retrofit/object-binding.ts": {
+      "before": "2b04755700f2fa54a44a47891e3795dc6a1bf1f2779b29b471925e79945cba53",
+      "after": "8b07e762f476489f42088589208687834114b0e929543719a0093bca34cf47e1"
+    },
+    "packages/retrofit/renewal-mode.ts": {
+      "before": "28a4317337027cfa47e5ee0246f7cc072899e802885b003b00e2d5352367f69d",
+      "after": "50405b64390ffc5964e918a9e1d064cc456c75581d0a866949c5565e9fa1bd93"
+    },
+    "services/map-screening/renewal-strategy.ts": {
+      "before": "ecbb63e87577bdaf351647d1052180fb502f537f6127688ce53cd82240229faa",
+      "after": "3e429a11b8349030aafe11b942ba754d97a7b160f1df178d2d0ef509bcbefd28"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "de06bda7a8ac4efc66f8cdc0a3d799fa1a1512c5",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}
