@@ -4,7 +4,7 @@ import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest'
 import {Store,type Database,type ProjectRecord} from '../../apps/host/store'
 import {beginProjectAnalysis,commitProjectAnalysis,projectContextRef} from '../../apps/host/project-context'
 import {readPublishedStrategy,resolveCurrentContext} from '../../apps/host/strategy-publication'
-import {bindObjectPassage} from '../../packages/retrofit/object-binding'
+import {bindObjectPassage,projectObjectLocation} from '../../packages/retrofit/object-binding'
 import {projectRenewalModeInput} from '../../packages/retrofit/renewal-mode'
 import {requestDecisionQuestions} from '../../services/capabilities/decision-model'
 import {guidePacket,guideProject} from './project-decision-fixture'
@@ -44,6 +44,13 @@ describe('object and active analysis context',()=>{
     expect(bindObjectPassage(project.input,'项目分项','杭州市建工新村供水改造。').relation).toBe('different_object')
     expect(bindObjectPassage(project.input,'项目分项','天津市建工新村供水改造。供应商地址：杭州市西湖区。',project.id).relation).toBe('unresolved')
     expect(bindObjectPassage(project.input,'对标案例','杭州市其他小区的供水更新。',undefined,true).relation).toBe('comparable_case')
+  })
+  it('uses a registered map address even when the separate city field is absent',()=>{
+    delete project.input.scope.city
+    project.input.scope.map_anchor={provider:'amap',coordinate_encoding:'GCJ-02',longitude:117.54,latitude:39.11,name:'建工新村',address:'天津市滨海新区大沽街道建工新村'}
+    expect(projectObjectLocation(project.input.scope).city).toBe('天津市')
+    expect(bindObjectPassage(project.input,'杭州市建工新村改造','杭州市建工新村需要改造供水。').relation).toBe('different_object')
+    expect(project.input.scope.city).toBeUndefined()
   })
   it('late old context cannot replace a newer result even if context_version was accidentally unchanged',async()=>{
     const oldProject=structuredClone(project),old=await beginProjectAnalysis(store,oldProject)

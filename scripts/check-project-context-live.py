@@ -31,7 +31,9 @@ index=get('/api/projects/public-decisions')['items']
 entry=next((row for row in index if row['project_id']==before['id']),None)
 assert entry and entry['input_hash']==first['input_hash']
 print(json.dumps({'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'release':get('/api/ready'),
- 'project_id':before['id'],'registered_city':before['input']['scope'].get('city'),'context_version':before['context_version'],
+ 'project_id':before['id'],'registered_city':before['input']['scope'].get('city'),
+ 'registered_address':before['input']['scope'].get('map_anchor',{}).get('address'),
+ 'effective_city':next((s.get('object_binding',{}).get('city') for s in first['sources'] if s.get('object_binding',{}).get('city')),None),'context_version':before['context_version'],
  'current_context':first['current_context'],'selected_input_hash':first['input_hash'],'source_count':len(first['sources']),
  'explicit_object_conflicts':len(conflicts),'public_index_same_result':True,'decision_cache_current':guidance is not None,
  'projects_unchanged':True,'rounds_unchanged':True,'model_calls_triggered':0},ensure_ascii=False))

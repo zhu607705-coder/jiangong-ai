@@ -15,7 +15,7 @@ export { normalizedName } from '../maps/object-identity'
 const names=(rows:{name:string}[])=>[...new Set(rows.map(row=>row.name))].sort((a,b)=>b.length-a.length)
 const provinceNames=names(provinces),cityNames=names(cities),areaNames=names(areas)
 const municipalities=new Set(['北京市','上海市','天津市','重庆市'])
-function administrativeAddress(text:string){
+export function administrativeAddress(text:string){
   let rest=text.trim()
   const province=provinceNames.find(name=>rest.startsWith(name))
   if(province)rest=rest.slice(province.length).trimStart()

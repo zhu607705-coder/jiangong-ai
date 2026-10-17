@@ -4,6 +4,7 @@ import { factAppliesToTarget } from '../maps/object-identity'
 import { publicMapContext } from '../maps/public-context'
 import { MODEL_SIGNAL_THRESHOLDS } from '../decision/thresholds'
 import {objectLocationConflicts} from '../research/evidence'
+import {projectObjectLocation} from './object-binding'
 
 export const RENEWAL_MODE_POLICY = 'renewal-mode-first-v4'
 export const MODE_LABELS = { comprehensive: '综合整治', rebuild: '原拆原建', compare: '两种模式并行比选', investigate: '先核查模式关键条件' } as const
@@ -12,7 +13,7 @@ export const MODE_STANDARD = [
   { key: 'safety', label: '结构安全与可修复性', comprehensive: '逐栋鉴定、修缮可行性、结构与消防适配', rebuild: '不可修复或功能重构的专项依据、保护要求', task: '向产权单位和住建部门取得逐栋安全鉴定、修缮与重建两套技术意见。', kinds: ['structure_repairable', 'demolition_permitted'] },
   { key: 'rights_planning', label: '权属与规划', comprehensive: '维修责任、共有部位和施工边界', rebuild: '土地与房屋权属、拆建许可、容积率及新建指标', task: '核对不动产登记、保护名录及规划条件，向属地主管部门确认可采用的程序。', kinds: ['rights_clear', 'rebuild_planning_confirmed'] },
   { key: 'consent_relocation', label: '居民决议与安置', comprehensive: '分项意愿、施工干扰和临时保障', rebuild: '适用的业主决议程序、筹资承受力、腾退和回搬', task: '开展逐户意愿与支付能力调查，核对决议记录并形成临时安置和回搬方案。', kinds: ['resident_resolution_valid', 'relocation_ready'] },
-  { key: 'funding', label: '全口径费用与资金', comprehensive: '分项工程量、维修预算、分期资金及后续运维', rebuild: '拆除、新建、腾退、过渡、财务费用及资金峰值', task: '按杭州价格年和同一费用范围编制两条路径现金流，核对已落实出资及资金缺口。', kinds: ['funding_secured', 'life_cycle_cost_compared'] },
+  { key: 'funding', label: '全口径费用与资金', comprehensive: '分项工程量、维修预算、分期资金及后续运维', rebuild: '拆除、新建、腾退、过渡、财务费用及资金峰值', task: '按项目所在地价格年和同一费用范围编制两条路径现金流，核对已落实出资及资金缺口。', kinds: ['funding_secured', 'life_cycle_cost_compared'] },
   { key: 'maintenance', label: '长期使用与维护', comprehensive: '现有资产再利用、服务缺口与维护责任', rebuild: '新增公共配套、物业负担和长期使用效果', task: '核查已有设施的使用和维护记录，比较更新后居民负担与公共服务覆盖。', kinds: ['maintenance_entity_confirmed'] },
 ] as const
 
@@ -165,7 +166,7 @@ function base(target: string, objectRef: string | null, asOf: string, synthetic:
 
 export function projectRenewalModeInput(input: ProjectInput): RenewalModeInput {
   return base(input.scope.name, `project:${input.project_id}`, input.as_of, input.synthetic, input.sources, input.facts, input.project_id,
-    [input.scope.name, input.scope.map_anchor?.name || input.scope.name],{city:input.scope.city})
+    [input.scope.name, input.scope.map_anchor?.name || input.scope.name],projectObjectLocation(input.scope))
 }
 
 export function mapRenewalModeInput(context: MapScreenContext): RenewalModeInput {
