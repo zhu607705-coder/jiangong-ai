@@ -1,0 +1,57 @@
+{
+  "deployed_at": "2026-10-17T11:14:30.395380+00:00",
+  "commit": "18976acc5edb685a5a9db947d0671aa3287e5be2",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261017T111426Z",
+  "runtime_files": {
+    "packages/contracts/validate.ts": {
+      "before": "a59d43f87bd388d6b8ff7bc7e9d82a329a9ccb809868cb87f9b9a4c93cc2a563",
+      "after": "88eb86643e839a05c9da0bb3d0a1afaf5b0bf68d3dc3768b0630d86582ba9c3c"
+    },
+    "packages/retrofit/project-tasks.ts": {
+      "before": "a4d82ba5061aedbe98605467433d92efc88597bacb07db5721c0e6c116294a03",
+      "after": "b9080ca0ee4bb6e9a54c1190967e3bc4596f86cd1ee12dd4fecb400f523a95a2"
+    },
+    "packages/retrofit/strategy.ts": {
+      "before": "1ddc22b6462c1233a7ba57fe23fc0d8a0d4001e2f7fca18c702f027631a31a69",
+      "after": "9ae2dc09f8528e29e3a04ef96ebd43ebb4ccffbd2dab0a29953f70bf3e658c0d"
+    },
+    "runtime/agents/renewal/AGENTS.md": {
+      "before": "87e3f67acad870ef34bf0dfece25337725cbe0b63042db1b7ca8d3a3f024881e",
+      "after": "71ce14afcb0c7f5c704627b3237dbfe1c12c1f55a44b0b4ed53660bc6d55d466"
+    },
+    "runtime/dsh/live-session.ts": {
+      "before": "447c638d69e9e80a87fc71cdcdf1c1cb08495db5106053f4e82f01bdaa37c6d8",
+      "after": "dcf14ae3db4ac2225bf6b0ee5a86acc4fbda9c6e514cc949d0b15a7483932c56"
+    },
+    "services/map-screening/renewal-strategy.ts": {
+      "before": "abff0d9fc7d4ae7967e88332e96ffa5dbaf505c3cb0d82802f0ab5d24c7b5506",
+      "after": "060eb0df7834d63163f5bd4ef98e52cfc6dcfbd5967d14ecf9d080231f16facc"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "18976acc5edb685a5a9db947d0671aa3287e5be2",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

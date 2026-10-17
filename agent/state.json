@@ -4404,8 +4404,8 @@
     }
   },
   "functional_evaluation_20261017": {
-    "status": "verified_pending_deploy",
-    "updated_at": "2026-10-17T11:13:18.120720+00:00",
+    "status": "deployed_pending_final_ui_check",
+    "updated_at": "2026-10-17T11:15:52.197745+00:00",
     "request": "Test actual search, model, full decision workflow and page effects",
     "worktree": "D:/建工ai/.cache/functional-evaluation",
     "online_sample": {
@@ -4446,6 +4446,13 @@
       "same saved output after source-review fix:6 false issues->0 with0 model calls",
       "actual native zero-source regression completed without invented refs"
     ],
-    "next_runnable_task": "Deploy verified runtime/UI, confirm current task page and source badges, merge without changing business histories."
+    "next_runnable_task": "Finish deduplicated scope-label deployment, capture task page/drawer, merge.",
+    "runtime_commit": "18976acc5edb685a5a9db947d0671aa3287e5be2",
+    "ui_commit": "18976acc5edb685a5a9db947d0671aa3287e5be2",
+    "browser_initial_check": {
+      "current_object_checks": 3,
+      "legacy_scope_review_tasks": 12,
+      "existing_project_research_started": false
+    }
   }
 }

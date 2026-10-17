@@ -72,8 +72,9 @@ test('separates foreign-object legacy tasks from current object checks without c
 test('carries foreign-object provenance through an internal task related package even without direct task refs',()=>{
  const value=collectionPacket()
  value.sources[0].object_binding={policy:'object-context-v1',project_id:project.id,city:'天津市',relation:'different_object',basis:'explicit_location_conflict',reason:'原楼栋属于杭州案例'}
+ value.sources[1].object_binding={...value.sources[0].object_binding}
  const task=buildProjectTasks(value).find(task=>task.internal_data?.id==='LIFT')!
- task.evidence_refs=[]
+ task.evidence_refs=['S2']
  expect(taskObjectApplicability(value,task)).toMatchObject({state:'foreign_reference',reason:'原楼栋属于杭州案例'})
  const projectTask=buildProjectTasks(value).find(task=>task.internal_data?.id==='WELLBEING')!
  expect(taskObjectApplicability(value,projectTask).state).toBe('unflagged')
