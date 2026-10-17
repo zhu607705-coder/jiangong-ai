@@ -29,6 +29,7 @@ export type RetrievalContext = {id:string;document_id:string;version:string;loca
 export type RetrievalHit = RetrievalCandidate & { score: number; matched_excerpt?: string;context?:RetrievalContext[] }
 export type RetrievalAnswerClaim = { text:string; citations:{hit_id:string;quote:string}[] }
 export type RetrievalAssistance = {
+  coverage?:ReturnType<typeof import('../retrofit/research-coverage').resolveAnswerSlots>;public_sources_discovered?:number;selection?:{eligible:number;selected_window_ids:string[];question_windows:Record<string,string[]>;unscored_window_count:number};reasoned_guidance?:{conclusion:string;assumptions:string[];verification:string}[];
   status:'api'|'partial'|'keyword_fallback'; model:string|null; calls:number;
   answer:RetrievalAnswerClaim[]; public_queries:string[]; internal_requests:string[]; reading_guidance:string[];
   index:{eligible:number;indexed:number;pending:number;reused:number}; warnings:string[];

@@ -3,6 +3,7 @@ import {dashboardDimensions,dashboardPolicy} from './dashboard'
 import {completeProbabilityMap,compatibleExpectedScore} from './probabilities'
 import {queryScore} from '../intelligence/domain'
 import type {StrategySource} from '../retrofit/strategy'
+import {DEFAULT_RESEARCH_QUESTIONS} from '../retrofit/research-coverage'
 
 export type EstimationInput={purpose:string;profile?:MapScreenProfile;context?:unknown}
 const assumptions:Record<ResearchDimension,string>={
@@ -49,6 +50,6 @@ export const researchRoutingQuestions=()=>Object.fromEntries(RESEARCH_ROLES.map(
 export function decisionResearchPlan(route:DecisionResearchRouting,sources:readonly StrategySource[],projectName:string):RenewalResearchPlan|null {
   if(route.policy!=='decision-research-routing-v1'||route.tasks.length!==3||new Set(route.tasks.map(task=>task.role)).size!==3||RESEARCH_ROLES.some(role=>!route.tasks.some(task=>task.role===role)))return null
   return {summary:'按快速判断结果安排本轮专题研究。',tasks:route.tasks.filter(task=>task.effort!=='skip').map(task=>({id:'fast-'+task.role,role:task.role,
-    question:`${projectName}：研究${roleQuestions[task.role]}，给出具体候选措施、假设与待补数据。`,
+    question:`${projectName}：${DEFAULT_RESEARCH_QUESTIONS.filter(question=>question.role===task.role).map(question=>question.question).join('；')}。给出具体措施、假设和待补字段。`,question_ids:DEFAULT_RESEARCH_QUESTIONS.filter(question=>question.role===task.role).map(question=>question.id),
     source_ids:[...sources].sort((a,b)=>queryScore({title:b.title,text:b.text},roleQuestions[task.role])-queryScore({title:a.title,text:a.text},roleQuestions[task.role])).slice(0,10).map(source=>source.id)}))}
 }

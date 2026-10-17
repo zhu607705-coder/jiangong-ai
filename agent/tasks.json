@@ -1873,6 +1873,27 @@
       ],
       "definition_of_done": "异地同名、逆序返回、输入变化、所有者及模拟隔离、零资料条件报告与16题限制经过合同验证；部署后真实只读接口和页面回读，不自动研究项目。",
       "evidence_log": "research/test_results/context-contract-verification-20261017.json"
+    },
+    {
+      "id": "RESEARCH-COMPLETE-20261017",
+      "depends_on": [
+        "PROJECT-CONTEXT-CONTRACT-20261017"
+      ],
+      "goal": "连续实施Pro评审剩余范围：持久节点与订阅恢复、覆盖补查、Search/Fetch和Decision科学性合同",
+      "write_scope": [
+        "apps/host",
+        "apps/workspace/src",
+        "packages",
+        "runtime",
+        "services",
+        "scripts",
+        "tests",
+        "agent",
+        "docs/对象与当前上下文合同.md",
+        "research/reuse_manifest.json",
+        "research/test_results/research-complete-*"
+      ],
+      "definition_of_done": "必要回归、原生协议和公开来源对照分别留存；部署并核对项目与历史不变，合并主分支；真实标签不足不伪称已校准。"
     }
   ]
 }

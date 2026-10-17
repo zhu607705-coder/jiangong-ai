@@ -60,6 +60,8 @@ export class LiveSession {
   private parent!: AgentHandle
   private modelRequests = 0
   private stageScope = new AsyncLocalStorage<LiveCallScope>()
+  private execution?:import('../../packages/retrofit/research-execution').ResearchExecution
+  attachExecution(execution:import('../../packages/retrofit/research-execution').ResearchExecution){this.execution=execution}
   private constructor(readonly runId: string, readonly signal: AbortSignal) {}
 
   /** Renewal research has no request-count cap; cancellation/deadlines still apply. */
@@ -90,9 +92,12 @@ export class LiveSession {
         const scope=live.stageScope.getStore()
         if(scope){scope.toolBlocks=[];scope.providerFailureMessage=undefined}
         live.reserveModelRequest()
-        yield* observeModelStream(request.model,scope?.stage||'unknown',live.signal,next,call=>live.calls.push(call),chunk=>{
+        const receipt=await live.execution?.beginCall('deepseek-model',scope?.stage||'unknown',request)
+        let observed:ModelCall|undefined
+        try{yield* observeModelStream(request.model,scope?.stage||'unknown',live.signal,next,call=>{live.calls.push(call);observed=call},chunk=>{
           if(scope&&chunk.type==='block-end'&&chunk.block.type==='tool-call')scope.toolBlocks!.push({name:chunk.block.name,arguments:chunk.block.arguments})
-        },message=>{if(scope)scope.providerFailureMessage=message})
+        },message=>{if(scope)scope.providerFailureMessage=message})}
+        finally{if(receipt)await live.execution!.finishCall(receipt,observed||null,observed?'received':'unknown_outcome',observed?'expected_charge':'unknown')}
       })
       const sessionId = SessionId(runId)
       live.parent = await ctx.sessionPersistence.stat(sessionId)

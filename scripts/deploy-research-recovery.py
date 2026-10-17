@@ -12,7 +12,7 @@ def git(*parts):return subprocess.check_output(['git',*parts],cwd=root)
 commit=git('rev-parse',args.commit).decode().strip()
 base=git('rev-parse',args.base).decode().strip()
 names=git('diff','--name-only',base,commit,'--','apps/host','packages','runtime','services').decode().splitlines()
-names=[name for name in names if name.endswith(('.ts','.json','.py'))]
+names=[name for name in names if name.endswith(('.ts','.json','.py')) or name == 'runtime/agents/renewal/AGENTS.md']
 assert names and all('..' not in pathlib.PurePosixPath(name).parts for name in names)
 sha=lambda content:hashlib.sha256(content.replace(b'\r\n',b'\n')).hexdigest()
 manifest={}
@@ -42,6 +42,13 @@ def get(path):
  with client.open('https://laneanew.cn'+path,timeout=15) as response:return json.load(response)
 get('/api/session')
 before_projects=get('/api/projects')
+def round_state(projects):
+ result={}
+ for project in projects:
+  if project.get('input',{}).get('business_profile')=='neighborhood':result[project['id']]=get('/api/projects/'+project['id']+'/research-rounds')
+ return result
+before_rounds=round_state(before_projects)
+assert not any(round.get('status')=='running' for state in before_rounds.values() for round in state.get('rounds',[])),'An approved research round is active; wait for it before deployment'
 paths={}
 for name,hashes in manifest.items():
  path=release/name
@@ -81,7 +88,9 @@ try:
  assert ready and ready.get('release_commit')==commit and ready.get('capabilities') is True,'Host readiness failed'
  after_projects=get('/api/projects')
  assert before_projects==after_projects,'Project metadata changed during deployment'
- result={'deployed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'commit':commit,'release':str(release),'backup':str(backup),'runtime_files':manifest,'readiness':ready,'projects_count':len(after_projects),'project_metadata_unchanged':True,'model_research_triggered_by_deployer':False,'rollback':False}
+ after_rounds=round_state(after_projects)
+ assert before_rounds==after_rounds,'Research history changed during deployment'
+ result={'deployed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'commit':commit,'release':str(release),'backup':str(backup),'runtime_files':manifest,'readiness':ready,'projects_count':len(after_projects),'project_metadata_unchanged':True,'research_history_unchanged':True,'model_research_triggered_by_deployer':False,'rollback':False}
  (base/'shared'/('research-recovery-runtime-'+commit+'.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
  print(json.dumps(result,ensure_ascii=False))
 except Exception:

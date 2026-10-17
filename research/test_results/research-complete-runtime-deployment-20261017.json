@@ -1,0 +1,166 @@
+{
+  "deployed_at": "2026-10-17T04:42:28.968926+00:00",
+  "commit": "cb0a9bd75496b4733c60c35df84e933d613abd65",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261017T044224Z",
+  "runtime_files": {
+    "apps/host/background-work.ts": {
+      "before": null,
+      "after": "1b7e585337225625d5e924bde6a2f01a037d809b0cc148839ebdd241650f7f02"
+    },
+    "apps/host/config.ts": {
+      "before": "3488849eb3b49c5df91e1a8debacd6b7f523dc952a46a475edb65291a628e4e8",
+      "after": "5accf3dbd66ded7c08832f797241eb82dcb540f7036dc4e4acaf1cbf2a9fd4bf"
+    },
+    "apps/host/generated/contracts.ts": {
+      "before": "fdde18abaf6a4736bb1d1d0944fed5f4b1837764044745bb10d954ce037c171e",
+      "after": "844e120a383fa81eb53d2e870162d232baa252ee57c177a58888470a0fc82cb9"
+    },
+    "apps/host/rag-retrieval.ts": {
+      "before": "ceaab45f7fdbe01c4e43d5cb90815215b7a4bc63e4d7de007a8ae93432eb5f2a",
+      "after": "2ad97c2a77f855d9ba02d1da5f9efaca71db16d849661aa9bcd0b860d0d53871"
+    },
+    "apps/host/research-execution.ts": {
+      "before": null,
+      "after": "c3e3f0a5d917527c7fb5ffdfa487e0272853e717f42209ab932821a637f91a27"
+    },
+    "apps/host/research-rounds.ts": {
+      "before": "4ed7b98c29df4de6bee9fc1f9a4303c8b382edde7b4e2d5b7f2fa0baf241dd77",
+      "after": "b687055dff0a8d4e1defe515ac1c98b9e93d85991fd5737053dc1ef7a3bc836c"
+    },
+    "apps/host/server.ts": {
+      "before": "b58a1601a27f72fc0bc9b44c67de4562cc374ca86003d261b298f5176307e02b",
+      "after": "4cc9e6412e291aaebfa3f66d992706921bd2dd47f7e2a6eb399df949311ce842"
+    },
+    "packages/contracts/schema.json": {
+      "before": "82412b492659329129671aea8808d028f572cadcdf39a0eee2fb8d39ab5f382e",
+      "after": "434f691061f6cbf604b3e282226909298abb4fe5269bbdf18d5b0e51e1bf1972"
+    },
+    "packages/contracts/validate.ts": {
+      "before": "054381e7b33732d0ae7deb1d19d4489dd70bccb03f4980422a631820955d1b2e",
+      "after": "a59d43f87bd388d6b8ff7bc7e9d82a329a9ccb809868cb87f9b9a4c93cc2a563"
+    },
+    "packages/decision/evaluation.ts": {
+      "before": null,
+      "after": "a0e427d0442ff2cab9985ed2b1cd8289aa4b11ca9ad9a8f3044d0b9998720f1b"
+    },
+    "packages/decision/fast-analysis.ts": {
+      "before": "a0836021cb2c51e419e804f617ff970e1fed99257b4907c8b99ec19798ffa335",
+      "after": "94ddb7121963dadaa18e58968f493a815eecac166fb2d2cd5ad6f6b78f3acc88"
+    },
+    "packages/decision/project-guidance.ts": {
+      "before": "e4e6ba5978af15c5f960cacdf8a52adf20090bcf18544d73bcd60fdd202ddd98",
+      "after": "ca529c80e479163f7241c68d4e79ec856a055b07898ec3fcc3f9a0c4f6d7b4b0"
+    },
+    "packages/experience/hybrid-retrieval.ts": {
+      "before": "fc3f2979fcf8c471d6609d6b6003eed2ffefddf1f22291d58d5129aa206fdb4d",
+      "after": "34602539dc3a34aeef8400c54fba64f7aab8cd460b86933ce573c894030024dd"
+    },
+    "packages/experience/retrieval-sources.ts": {
+      "before": "8a385a0a9ed4fbd1028bf28006ebf715a503b42c2c944a35989ec3cdbd9d8feb",
+      "after": "93af4851de74dce7ceb7eba63190a503204cf85f6c259e0b41cb8ea4eb1d3445"
+    },
+    "packages/experience/retrieval.ts": {
+      "before": "757c24b990c786d156617efe3dd30af68a7860dcb81fba7a8c47976015edf737",
+      "after": "e73ae0a5ac393193711e4e4b556a4710b9451bead26021d4cab954f5de89e92f"
+    },
+    "packages/intelligence/collectors.ts": {
+      "before": "97dbc7b3bfcc8eff94f55cbcc9c8d23e3c225b3cf49c6689695b3d8b065c56c5",
+      "after": "a53cae227559d1f33afe56a96eb81a72f381eeacf197ec29e1f75a7b4ecc0249"
+    },
+    "packages/retrofit/conditional-report.ts": {
+      "before": null,
+      "after": "54c88f8cd69a0f5d7c30390df1eb7a75beec8027f4cfa60fc1cf65d558bed5c1"
+    },
+    "packages/retrofit/evidence-compression.ts": {
+      "before": null,
+      "after": "b1d2959ddfbb4d94577f1e33c9c54db7ed55c5055f38f1bfdd1259c5e76bded4"
+    },
+    "packages/retrofit/object-binding.ts": {
+      "before": "8b07e762f476489f42088589208687834114b0e929543719a0093bca34cf47e1",
+      "after": "789ffef0e6b2889e925ba03c5ed580d497f8bac398388dfd6dd6f1fd85cdd75d"
+    },
+    "packages/retrofit/project-tasks.ts": {
+      "before": "787032f31e5a5a033def820c58c2670c6b5a2d11758d08291e7933dae288542e",
+      "after": "a4d82ba5061aedbe98605467433d92efc88597bacb07db5721c0e6c116294a03"
+    },
+    "packages/retrofit/renewal-mode.ts": {
+      "before": "50405b64390ffc5964e918a9e1d064cc456c75581d0a866949c5565e9fa1bd93",
+      "after": "9a60210bde8ce6cbdd99bbe8fb76054635e65401437f1180c02075b77ccbc8c4"
+    },
+    "packages/retrofit/research-coverage.ts": {
+      "before": null,
+      "after": "dbf2c601d7d1f1c68292e18b3ad998948ad9a7a09001d7a3b406ec75b14da9d3"
+    },
+    "packages/retrofit/research-execution.ts": {
+      "before": null,
+      "after": "119e661852e39ef0a72d9a1b9f1c2ac217efc59d92d0193c1ced980c64f7b221"
+    },
+    "packages/retrofit/research-rounds.ts": {
+      "before": "d2561ee168f25e334242e16f900018c15f90f67046636f113826d49427c5ea40",
+      "after": "b86e6993eb0189aff70b8bb2cb7e4da8bb4aca8e7ff8ae52ba782f43eb0d95e6"
+    },
+    "packages/retrofit/strategy.ts": {
+      "before": "5495b3f11061d2d945d34a30fa1f1c2747b62a6033cb71a0f5e6f3715ff3f595",
+      "after": "7bce7f761b5d70ecc13b62a66c0ae47e32945d8686c3222bae9d35068544b807"
+    },
+    "runtime/agents/renewal/AGENTS.md": {
+      "before": "fa05910036cbd55ef311663ccd8e1e87a60e5ccd944eac15bc3ae63782e8a79e",
+      "after": "87e3f67acad870ef34bf0dfece25337725cbe0b63042db1b7ca8d3a3f024881e"
+    },
+    "runtime/dsh/deepseek-web-tools.ts": {
+      "before": null,
+      "after": "aaab96f9fa734c45fc6aabf40143da719c6f52929991191c5e28327e477495cd"
+    },
+    "runtime/dsh/live-session.ts": {
+      "before": "9b3b1d86492865c0156615757423f952dd46c1b58aea02e889b8bdd2e9e1a55f",
+      "after": "7e89d8df558e15236c34f3dfc3462167ba11c6902d112d24bc9fc39f621f97a4"
+    },
+    "runtime/dsh/public-web.ts": {
+      "before": "78714db3368e29e68016cbfe39853f0cf6349782d23f95a9a8c096c14b794bd9",
+      "after": "8150d836f323477a6ce5c72011cbfabedfec8dbcbfeb22232e337fc8f18b3f4a"
+    },
+    "runtime/workflows/renewal-research-effort.ts": {
+      "before": "e527a331d5ae3cadcf3564e914eefb93f7d2fcf044cc9c097e6a5df9c73f3e74",
+      "after": "7664c7021c4d06868a183110e74caa29276b3f605dbe810441dd98813c59a462"
+    },
+    "runtime/workflows/renewal-research.ts": {
+      "before": "742e5fd615d6310c0a1de263fee28ab1a3a08f15d3aeded16d0f98a403dcfe5d",
+      "after": "503667ad081c534b1c63e6545e3113595a06e19c9d3382015b417365ad04ea9e"
+    },
+    "services/capabilities/decision-model.ts": {
+      "before": "493d2c068d2c3f7a121a1f5ab13852bc727ef2fffcb40b41b41abee47233de3a",
+      "after": "24a9d7ea4c57fad8ded9d8753813faccc5ebf82cabe7428627c0a057879c17ba"
+    },
+    "services/capabilities/generated/contracts.py": {
+      "before": "b45c64e50afb668d694d21c548c7196a9395b33907e1e63f497cd0ba198d49a7",
+      "after": "9ed74815609b9ddcf8ff2aea4c2da7d912f78d5a84cbf0c79f2b22e2f2cfd2d7"
+    },
+    "services/capabilities/project-decision.ts": {
+      "before": "d8297c4a15569301a2206e6af7b45347ec29d740263df405850513d976b9f5d0",
+      "after": "a7efea39a0b372c577ae3776a4b0c038d34b71fce7103c81662d3c2e1688920e"
+    },
+    "services/capabilities/research.ts": {
+      "before": "82702d2c91c7822209b3a66b3749a1cb27df0603b6189ddde3d3812a2b529d69",
+      "after": "a26e1096bb46e29addd14d6d1770e50076eb3938dc7475e1accd5b5f4b93af74"
+    },
+    "services/map-screening/renewal-strategy.ts": {
+      "before": "3e429a11b8349030aafe11b942ba754d97a7b160f1df178d2d0ef509bcbefd28",
+      "after": "2653eaf59108dec47ca4d3651c110f85bc2513ddc26055318d0ea5a0c629afe6"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "cb0a9bd75496b4733c60c35df84e933d613abd65",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

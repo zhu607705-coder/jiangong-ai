@@ -1,0 +1,118 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run --reporter=dot
+
+
+ RUN  v4.1.11 D:/建工ai/.cache/research-complete
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains a valid current dimension independently when the work-package contract fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"same-snapshot","diagnostic":{"code":"MODEL_SCHEMA_INVALID"},"source_count":4,"query_count":0,"model_calls":1,"model_duration_ms":10500,"cause_type":"Error","location":"    at Object.call (D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:68:13)\n    at synthesize (D:/建工ai/.cache/research-complete/services/map-screening/renewal-strategy.ts:264:32)"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > retains acquired sources, research records and usage when the model transport fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":4,"query_count":1,"model_calls":1,"model_duration_ms":10500,"cause_type":"Error","location":"    at Object.<anonymous> (D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:82:181)\n    at Object.Mock (file:///D:/%E5%BB%BA%E5%B7%A5ai/node_modules/@vitest/spy/dist/index.js:332:34)"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > returns a safe failure packet when DSH initialization fails
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":0,"query_count":0,"model_calls":0,"model_duration_ms":0,"cause_type":"Error","location":"    at D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:92:34\n    at file:///D:/%E5%BB%BA%E5%B7%A5ai/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11"}
+
+stderr | tests/contracts/strategy-failure.test.ts > safe strategy failure diagnostics > reports real two-round acquisition and a failed model stage without invented completion
+{"event":"renewal_strategy_failed","project_id":"SYN-INDUSTRIAL-001","context_version":0,"input_hash":"input-hash","diagnostic":{"code":"MODEL_PROVIDER_FAILED","stage":"renewal_strategy","stop_reason":"error","provider_code":"TRANSPORT"},"source_count":5,"query_count":12,"model_calls":1,"model_duration_ms":10500,"cause_type":"Error","location":"    at Object.<anonymous> (D:/建工ai/.cache/research-complete/tests/contracts/strategy-failure.test.ts:107:76)\n    at Object.Mock (file:///D:/%E5%BB%BA%E5%B7%A5ai/node_modules/@vitest/spy/dist/index.js:332:34)"}
+
+stderr | tests/contracts/research-rounds.test.ts > retains failed and obsolete attempts without changing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"86e0be77f7be0434b663a84e8122b09b147e3b5f88452e7dfffee69bd7e68184","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0,"cause_type":"Error","location":"    at D:/建工ai/.cache/research-complete/tests/contracts/research-rounds.test.ts:147:36\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)"}
+
+stderr | tests/contracts/research-rounds.test.ts > keeps a failed first attempt and permits a new baseline attempt without inventing a completed parent
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"0893c6f6c430ecfc7fc328a9cd683df8742d0187603854ffae68c2952629621c","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":2,"query_count":0,"model_calls":0,"model_duration_ms":0,"cause_type":"Error","location":"    at D:/建工ai/.cache/research-complete/tests/contracts/research-rounds.test.ts:160:36\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)"}
+
+stderr | tests/contracts/operations-playground-layout.test.ts > the compact board compares recent plans and restores any retained plan through the full comparison dialog
+Warning: An update to CommunityOperationsPlayground inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CommunityOperationsPlayground (D:/建工ai/.cache/research-complete/apps/workspace/src/components/CommunityOperationsPlayground.tsx:13:42)
+Warning: An update to CommunityOperationsPlayground inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CommunityOperationsPlayground (D:/建工ai/.cache/research-complete/apps/workspace/src/components/CommunityOperationsPlayground.tsx:13:42)
+
+stderr | tests/contracts/operations-playground-layout.test.ts > the compact board compares recent plans and restores any retained plan through the full comparison dialog
+Warning: An update to CommunityOperationsPlayground inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CommunityOperationsPlayground (D:/建工ai/.cache/research-complete/apps/workspace/src/components/CommunityOperationsPlayground.tsx:13:42)
+Warning: An update to CommunityOperationsPlayground inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CommunityOperationsPlayground (D:/建工ai/.cache/research-complete/apps/workspace/src/components/CommunityOperationsPlayground.tsx:13:42)
+
+stderr | tests/contracts/construction-cost-library-view.test.ts > global and project construction-cost views > reads the existing cost contract for project undefined
+Warning: An update to ConstructionCostLibrary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ConstructionCostLibrary (D:/建工ai/.cache/research-complete/apps/workspace/src/components/ConstructionCostLibrary.tsx:15:36)
+
+stderr | tests/contracts/construction-cost-library-view.test.ts > global and project construction-cost views > reads the existing cost contract for project P-TARGET
+Warning: An update to ConstructionCostLibrary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ConstructionCostLibrary (D:/建工ai/.cache/research-complete/apps/workspace/src/components/ConstructionCostLibrary.tsx:15:36)
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_PLAN_SCOPE"}
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > a failed small planner readiness call prevents experts from starting
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_MODEL_FAILED"}
+
+stderr | tests/contracts/renewal-structured-request.test.ts > repairs captured tool JSON locally before requesting another model response
+{"event":"renewal_tool_json_format_repaired","stage":"renewal_research_expert_1_2_cost_value","session_id":"locally-repaired-child","edits":["escaped_inner_quotes"],"original_sha256":"fa47955eec157652e151bf889a47851e4893690fa01b83c726d08165eb73a901","native_failure_preserved":true}
+
+stderr | tests/contracts/decision-model.test.ts > Qwen System One protocol > reports missing configuration without networking or leaking transport error text
+{"event":"decision_request_failed","category":"Error"}
+
+·············································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································
+
+ Test Files  135 passed (135)
+      Tests  1677 passed (1677)
+   Start at  12:41:19
+   Duration  311.02s (transform 3.03s, setup 0ms, import 30.45s, tests 265.22s, environment 7ms)
+

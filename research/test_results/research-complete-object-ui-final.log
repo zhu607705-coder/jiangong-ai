@@ -1,0 +1,10 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/research-complete
+
+························
+
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  12:46:42
+   Duration  2.85s (transform 1.01s, setup 0ms, import 1.91s, tests 716ms, environment 0ms)
+

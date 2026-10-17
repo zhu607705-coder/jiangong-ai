@@ -297,7 +297,7 @@ test('AI decision fields and actual rationale lead the direction page while the 
   expect(document.querySelectorAll('.decision-ai-rationale>article')).toHaveLength(3)
   expect(document.querySelector('.decision-ai-meta')?.textContent).toContain('actual-model')
   expect(document.querySelector('.decision-ai-meta')?.textContent).toContain('1 份资料')
-  expect(document.querySelector('[aria-label="程序核验方向"]')?.textContent).toContain('综合整治')
+  expect(document.querySelector('[aria-label="实施条件核验"]')?.textContent).toContain('关键条件待核')
 })
 
 test('the selected direction alone determines subsequent plan text, assessment targets and metric levels', async () => {

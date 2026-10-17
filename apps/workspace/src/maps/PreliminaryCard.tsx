@@ -32,7 +32,7 @@ export default function PreliminaryCard({ selection, profile, cell, onContext, o
   const restoreAbort=useRef<AbortController|null>(null),viewIdentity=useRef('')
   viewIdentity.current=[selection.id,context?.id,profile].join('|')
   const card=useRef<HTMLElement|null>(null)
-  useEffect(()=>{if(!sourcesOpen)card.current?.closest('aside')?.scrollTo({top:0,behavior:'auto'})},[selection.id,profile,sourcesOpen])
+  useEffect(()=>{if(!sourcesOpen){const aside=card.current?.closest('aside');(aside?.querySelector('.atlas-inspector-scroll')||aside)?.scrollTo({top:0,behavior:'auto'})}},[selection.id,profile,sourcesOpen])
   useEffect(()=>{
     const controller=new AbortController();analysisAbort.current?.abort()
     setContext(null);setAnalysis(null);setStage('context');setError('');setSourcesOpen(false);setTasksOpen(false);setProgress([])

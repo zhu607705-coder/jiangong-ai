@@ -167,6 +167,9 @@ export interface Source {
    * @maxItems 50
    */
   public_records?: PublicRecord[];
+  representations?: SourceRepresentation[];
+  representation_id?: string;
+  canonical_source_id?: string;
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -196,6 +199,19 @@ export interface PublicField {
   unit: string;
   raw: string;
   locator: string;
+}
+/**
+ * This interface was referenced by `ProjectInput`'s JSON-Schema
+ * via the `definition` "SourceRepresentation".
+ */
+export interface SourceRepresentation {
+  id: string;
+  kind: "raw_html" | "raw_text" | "deepseek_markdown" | "search_content";
+  sha256: string;
+  origin_hash: string | null;
+  extractor: string;
+  received_at: string;
+  offset_encoding: "UTF-16";
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -303,6 +319,10 @@ export interface RenewalResearchPlan {
      * @maxItems 10
      */
     source_ids: string[];
+    /**
+     * @maxItems 12
+     */
+    question_ids?: string[];
   }[];
 }
 /**
@@ -357,6 +377,31 @@ export interface RenewalResearchNote {
       basis: string;
     }[];
   }[];
+  /**
+   * @maxItems 4
+   */
+  investigation_requests?: {
+    /**
+     * @maxItems 6
+     */
+    question_ids: string[];
+    /**
+     * @maxItems 6
+     */
+    missing_fields: string[];
+    /**
+     * @maxItems 6
+     */
+    suggested_queries: string[];
+    /**
+     * @maxItems 6
+     */
+    domain_hints: string[];
+    /**
+     * @maxItems 6
+     */
+    affected_decisions: string[];
+  }[];
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -366,7 +411,7 @@ export interface RenewalWorkPackage {
   id: string;
   target: string;
   target_basis: "object_source" | "project_scope" | "scenario";
-  source_id: string;
+  source_id: string | null;
   quote: string;
   locator: string;
   intervention: string;
@@ -381,7 +426,7 @@ export interface RenewalWorkPackage {
    */
   preconditions: string[];
   /**
-   * @minItems 1
+   * @minItems 0
    * @maxItems 8
    */
   evidence_refs: string[];
@@ -724,6 +769,15 @@ export interface ResearchTrace {
   source_ids: string[];
   warnings: string[];
   reused: boolean;
+  acquisition?: {
+    provider: string;
+    cached_sources: number;
+    new_sources: number;
+    refreshed_sources: number;
+    fetch_attempts: number;
+    new_evidence_budget: number;
+    refresh_budget: number;
+  };
 }
 /**
  * This interface was referenced by `ProjectInput`'s JSON-Schema
@@ -2136,7 +2190,7 @@ export interface RenewalStrategy {
       after: string;
       reason: string;
       /**
-       * @minItems 1
+       * @minItems 0
        * @maxItems 8
        */
       evidence_refs: string[];
@@ -2159,7 +2213,7 @@ export interface RenewalStrategy {
       conclusion: string;
       reason: string;
       /**
-       * @minItems 1
+       * @minItems 0
        * @maxItems 8
        */
       evidence_refs: string[];
@@ -2169,7 +2223,7 @@ export interface RenewalStrategy {
       reason: string;
       stage: "preliminary" | "construction" | "hold";
       /**
-       * @minItems 1
+       * @minItems 0
        * @maxItems 8
        */
       evidence_refs: string[];
@@ -2178,7 +2232,7 @@ export interface RenewalStrategy {
       financial: string;
       social: string;
       /**
-       * @minItems 1
+       * @minItems 0
        * @maxItems 8
        */
       evidence_refs: string[];
@@ -2332,4 +2386,16 @@ export interface RagAnswer {
    * @maxItems 4
    */
   internal_requests: string[];
+  /**
+   * @maxItems 3
+   */
+  reasoned_guidance?: {
+    conclusion: string;
+    /**
+     * @minItems 1
+     * @maxItems 4
+     */
+    assumptions: string[];
+    verification: string;
+  }[];
 }

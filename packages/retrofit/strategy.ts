@@ -18,6 +18,9 @@ export type StrategyContentIssue = { code: string; path: string; message: string
 export type StrategyContentReview = { policy: 'advisory-v1'; status: 'clear' | 'needs_review'; checked_at: string; issues: StrategyContentIssue[]; follow_up: { search_queries:string[]; reading_focus:string[]; internal_data:string[] };
   recovered_from?: { round_id: string; session_id: string; candidate_sha256: string } }
 export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';current_assessment?:import('./strategy-assessment').CurrentAssessment;
+  delivery?:{run_status:'running'|'completed'|'failed';evidence_status:'sufficient'|'partial'|'none'|'conflicting';report_status:'unavailable'|'conditional'|'ready';renderer?:'host_structured_fallback'|'dsh';reason?:string};
+  coverage?:ReturnType<typeof import('./research-coverage').resolveAnswerSlots>;manifests?:import('./research-execution').ResearchManifest[];investigation_requests?:import('./research-coverage').InvestigationRequest[];
+  lineage?:import('./research-execution').ResearchLineage;cost_reference?:{scope:string;stage:string;price_year:number|null;record_count:number;min_yuan:number|null;max_yuan:number|null;source_ids:string[]}[];
   context_ref?:import('./project-context').ProjectContextRef; current_context?:{policy:'project-context-v1';generation:number;attempt_id:string|null;round_id:string|null;freshness:'current'|'legacy_snapshot'|'historical';object_review_required:boolean};
   strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; content_review?: StrategyContentReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
 
@@ -25,11 +28,12 @@ export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compres
   tasks?:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];status:'pending'|'running'|'completed'|'failed';source_count:number;summary?:string}[];
   context_before_chars?:number;context_after_chars?:number }
 export type StrategyWorkflowTrace = {
+  compression_audit?:ReturnType<typeof import('./evidence-compression').preserveCriticalWindows>['audit'];synthesis_prompt_chars?:number;synthesis_schema_chars?:number;
   planner_status:'completed'|'failed'|'not_applicable';planner_error?:string;plan:RenewalResearchPlan|null;
   planner_profile?:{role:string;sha256:string};
   planner_backend?:'decision'|'dsh';decision_routing?:import('../../apps/host/generated/contracts').DecisionResearchRouting;
   tasks:{id:string;role:RenewalResearchPlan['tasks'][number]['role'];source_ids:string[];status:'completed'|'failed';error_code?:string;profile?:{role:string;sha256:string};
-    retrieval?:{calls:number;query_matches:number;read_windows:{source_id:string;start_char:number;end_char:number;characters:number;query?:string|null;matched:boolean}[]};
+    lineage?:import('./research-execution').ResearchLineage;retrieval?:{calls:number;query_matches:number;read_windows:{source_id:string;start_char:number;end_char:number;characters:number;query?:string|null;matched:boolean}[]};
     reasoning?:'direct_evidence'|'mixed'|'reasoned_fallback'|'not_produced';attempts?:number;effort?:{maxOutputTokens:number;timeoutMs:number;sourceCharacters:number;synthesisReserveMs:number}}[];
   input_characters:number;source_characters:number;retained_source_characters:number;output_characters:number;
   compression:'reduced'|'retained';method:'evidence_windows_and_untrusted_notes';notes?:RenewalResearchNote[];
@@ -241,13 +245,14 @@ export function validateStrategy(value: RenewalStrategy, sources: StrategySource
     if(requireWorkPlan&&(!directionPath.work_packages||directionPath.work_packages.length<2))reject('STRATEGY_WORK_PACKAGES_REQUIRED')
     for(const work of directionPath.work_packages||[]) {
       path = `paths.${directionPath.mode}.work_packages.${work.id}`
-      const texts=[work.id,work.target,work.source_id,work.locator,work.intervention,work.scope,work.delivery]
+      const texts=[work.id,work.target,work.locator,work.intervention,work.scope,work.delivery]
       if(texts.some(text=>typeof text!=='string'||!text.trim())||workIds.has(work.id)||!['object_source','project_scope','scenario'].includes(work.target_basis)||!['first','next','reserve'].includes(work.priority)||!Array.isArray(work.preconditions)||work.preconditions.some(text=>!text.trim()))reject('STRATEGY_WORK_PACKAGE_INCOMPLETE')
       workIds.add(work.id)
-      if(!work.evidence_refs?.length||!work.evidence_refs.includes(work.source_id)||work.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
+      if(work.source_id===null){if(work.target_basis==='object_source'||work.quantity_basis==='source'||work.quote||work.evidence_refs.length)reject('STRATEGY_SOURCE_MISMATCH')}
+      else if(!work.evidence_refs?.length||!work.evidence_refs.includes(work.source_id)||work.evidence_refs.some(id=>!ids.has(id)))reject('STRATEGY_SOURCE_MISMATCH')
       const source=sources.find(source=>source.id===work.source_id)!
-      if(typeof work.quote!=='string'||work.quote.length<8||!source?.text.replace(/\r\n/g,'\n').includes(work.quote.replace(/\r\n/g,'\n')))reject('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
-      if(work.locator!==source?.locator)reject('STRATEGY_WORK_PACKAGE_LOCATOR_MISMATCH')
+      if(work.source_id!==null&&(typeof work.quote!=='string'||work.quote.length<8||!source?.text.replace(/\r\n/g,'\n').includes(work.quote.replace(/\r\n/g,'\n'))))reject('STRATEGY_WORK_PACKAGE_QUOTE_MISMATCH')
+      if(work.source_id!==null&&work.locator!==source?.locator)reject('STRATEGY_WORK_PACKAGE_LOCATOR_MISMATCH')
       if(work.target_basis==='object_source'&&source?.role!=='current')reject('STRATEGY_WORK_PACKAGE_TARGET_SCOPE')
       const action=work.intervention.trim()
       const taskPatterns=[

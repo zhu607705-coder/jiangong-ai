@@ -1,0 +1,11 @@
+PASS map UI: 36 checks including research waiting motion, historical refresh, polygon and structured evidence handoff; synthetic provider fixtures
+PASS late scan cannot overwrite the newer study: 4 checks
+PASS cancelled scan cannot overwrite the newer study: 4 checks
+PASS project geometry handoff: normal-pending (6 assertions)
+PASS project geometry handoff: normal-ready (6 assertions)
+PASS project geometry handoff: normal-failed (6 assertions)
+PASS project geometry handoff: expanded-pending (6 assertions)
+PASS project geometry handoff: expanded-ready (6 assertions)
+PASS project geometry handoff: expanded-failed (6 assertions)
+PASS project geometry handoff: expanded-switch (6 assertions)
+PASS project geometry handoff: point-ready (6 assertions)

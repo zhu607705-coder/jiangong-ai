@@ -1,0 +1,213 @@
+{
+  "checked_at": "2026-10-17T04:31:51.967Z",
+  "calibration": {
+    "status": "insufficient_labels",
+    "temperature": 1,
+    "objects": 0
+  },
+  "held_out_metrics": {
+    "n": 0,
+    "brier": null,
+    "log_loss": null,
+    "rps": null,
+    "accuracy": null,
+    "ece": null,
+    "objects": 0
+  },
+  "business_quality_status": "insufficient_independent_human_labels",
+  "frozen_source_replay": {
+    "scope": "Replay extraction on frozen actual public originals; not another provider request.",
+    "provider": "deepseek_content",
+    "captured_at": "2026-10-17T04:25:32.941Z",
+    "source_count": 4,
+    "field_count": 9,
+    "covered": 8,
+    "slots": [
+      {
+        "topic": "机电配套",
+        "field": "amount",
+        "status": "conditional",
+        "answer": "80.874400万元（预算）",
+        "source_ids": [
+          "PUB-acf64a65d22febf6"
+        ]
+      },
+      {
+        "topic": "机电配套",
+        "field": "stage",
+        "status": "conditional",
+        "answer": "80.874400万元（预算）",
+        "source_ids": [
+          "PUB-acf64a65d22febf6"
+        ]
+      },
+      {
+        "topic": "机电配套",
+        "field": "funding",
+        "status": "conditional",
+        "answer": "区级国有投资（到账时点待核）",
+        "source_ids": [
+          "PUB-acf64a65d22febf6"
+        ]
+      },
+      {
+        "topic": "雨棚",
+        "field": "amount",
+        "status": "conditional",
+        "answer": "106.642500万元（预算）；101.523700万元（成交/中标）",
+        "source_ids": [
+          "PUB-68388708cf4ae0d9",
+          "PUB-c291a805fb8420a6"
+        ]
+      },
+      {
+        "topic": "雨棚",
+        "field": "stage",
+        "status": "conditional",
+        "answer": "106.642500万元（预算）；101.523700万元（成交/中标）",
+        "source_ids": [
+          "PUB-68388708cf4ae0d9",
+          "PUB-c291a805fb8420a6"
+        ]
+      },
+      {
+        "topic": "雨棚",
+        "field": "funding",
+        "status": "conditional",
+        "answer": "区财政（到账时点待核）",
+        "source_ids": [
+          "PUB-68388708cf4ae0d9"
+        ]
+      },
+      {
+        "topic": "消防通道",
+        "field": "amount",
+        "status": "conditional",
+        "answer": "137.487800万元（成交/中标）",
+        "source_ids": [
+          "PUB-dfbce596fb3115f1"
+        ]
+      },
+      {
+        "topic": "消防通道",
+        "field": "stage",
+        "status": "conditional",
+        "answer": "137.487800万元（成交/中标）",
+        "source_ids": [
+          "PUB-dfbce596fb3115f1"
+        ]
+      },
+      {
+        "topic": "消防通道",
+        "field": "funding",
+        "status": "missing",
+        "answer": "现有资料尚未明确。",
+        "source_ids": []
+      }
+    ],
+    "all_quotes_literal": true,
+    "cost_stage_records": [
+      {
+        "topic": "机电配套",
+        "amount_decimal": "80.874400",
+        "original_unit": "万元",
+        "amount_yuan": "808744",
+        "stage": "budget",
+        "price_year": null,
+        "funding_source": "区级国有投资",
+        "source_id": "PUB-acf64a65d22febf6"
+      },
+      {
+        "topic": "雨棚",
+        "amount_decimal": "106.642500",
+        "original_unit": "万元",
+        "amount_yuan": "1066425",
+        "stage": "budget",
+        "price_year": null,
+        "funding_source": "区财政",
+        "source_id": "PUB-68388708cf4ae0d9"
+      },
+      {
+        "topic": "雨棚",
+        "amount_decimal": "106.642500",
+        "original_unit": "万元",
+        "amount_yuan": "1066425",
+        "stage": "budget",
+        "price_year": null,
+        "funding_source": "区财政",
+        "source_id": "PUB-68388708cf4ae0d9"
+      },
+      {
+        "topic": "雨棚",
+        "amount_decimal": "101.523700",
+        "original_unit": "万元",
+        "amount_yuan": "1015237",
+        "stage": "award",
+        "price_year": null,
+        "funding_source": null,
+        "source_id": "PUB-c291a805fb8420a6"
+      },
+      {
+        "topic": "雨棚",
+        "amount_decimal": "101.523700",
+        "original_unit": "万元",
+        "amount_yuan": "1015237",
+        "stage": "award",
+        "price_year": null,
+        "funding_source": null,
+        "source_id": "PUB-c291a805fb8420a6"
+      },
+      {
+        "topic": "雨棚",
+        "amount_decimal": "101.523700",
+        "original_unit": "万元",
+        "amount_yuan": "1015237",
+        "stage": "award",
+        "price_year": null,
+        "funding_source": null,
+        "source_id": "PUB-c291a805fb8420a6"
+      },
+      {
+        "topic": "消防通道",
+        "amount_decimal": "137.487800",
+        "original_unit": "万元",
+        "amount_yuan": "1374878",
+        "stage": "award",
+        "price_year": null,
+        "funding_source": null,
+        "source_id": "PUB-dfbce596fb3115f1"
+      },
+      {
+        "topic": "消防通道",
+        "amount_decimal": "137.487800",
+        "original_unit": "万元",
+        "amount_yuan": "1374878",
+        "stage": "award",
+        "price_year": null,
+        "funding_source": null,
+        "source_id": "PUB-dfbce596fb3115f1"
+      },
+      {
+        "topic": "消防通道",
+        "amount_decimal": "137.487800",
+        "original_unit": "万元",
+        "amount_yuan": "1374878",
+        "stage": "award",
+        "price_year": null,
+        "funding_source": null,
+        "source_id": "PUB-dfbce596fb3115f1"
+      }
+    ]
+  },
+  "evaluation_contract": {
+    "split_unit": "physical_object",
+    "time_isolation": "as_of_before_label_outcome",
+    "provider_confidence_is_label": false,
+    "comparison_axes": [
+      "provider_only_on_fixed_queries",
+      "pipeline_change_on_frozen_sources",
+      "decision_quality_on_held_out_objects"
+    ],
+    "no_enterprise_effect_claim": true
+  }
+}

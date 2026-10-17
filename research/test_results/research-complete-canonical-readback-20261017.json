@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-17T04:43:03.084928+00:00",
+  "release": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "cb0a9bd75496b4733c60c35df84e933d613abd65",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "project_id": "P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de",
+  "registered_city": null,
+  "registered_address": "天津市滨海新区大沽街道建工新村",
+  "effective_city": "天津市",
+  "context_version": 0,
+  "current_context": {
+    "policy": "project-context-v1",
+    "generation": 0,
+    "attempt_id": null,
+    "round_id": "ROUND-80e30aa8-ea20-4ff8-8779-f4403db333ef",
+    "freshness": "legacy_snapshot",
+    "object_review_required": true
+  },
+  "selected_input_hash": "804fadcd33e42305aaba40a862120c73ab5c174521d97e921d918a1eb1cc2961",
+  "source_count": 20,
+  "explicit_object_conflicts": 3,
+  "public_index_same_result": true,
+  "decision_cache_current": false,
+  "projects_unchanged": true,
+  "rounds_unchanged": true,
+  "model_calls_triggered": 0
+}

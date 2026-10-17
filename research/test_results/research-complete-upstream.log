@@ -1,0 +1,52 @@
+D:\建工ai\.venv-win\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_capacity_is_visit_slots_and_people_remain_bounded (test_aging_coverage.AgingCoverageTest.test_capacity_is_visit_slots_and_people_remain_bounded) ... ok
+test_core_missing_is_none_and_exact_action_label (test_aging_coverage.AgingCoverageTest.test_core_missing_is_none_and_exact_action_label) ... ok
+test_fixed_seed_is_stable (test_aging_coverage.AgingCoverageTest.test_fixed_seed_is_stable) ... ok
+test_person_deduplication_denominators_and_visits (test_aging_coverage.AgingCoverageTest.test_person_deduplication_denominators_and_visits) ... ok
+test_route_improvement_and_adoption_scenario_direction (test_aging_coverage.AgingCoverageTest.test_route_improvement_and_adoption_scenario_direction) ... ok
+test_units_population_consistency_and_example (test_aging_coverage.AgingCoverageTest.test_units_population_consistency_and_example) ... ok
+test_backprop_matches_finite_differences_for_every_parameter (test_cost_neural_model.CostNeuralModelTests.test_backprop_matches_finite_differences_for_every_parameter) ... ok
+test_initialization_is_deterministic_without_fitting (test_cost_neural_model.CostNeuralModelTests.test_initialization_is_deterministic_without_fitting) ... ok
+test_invalid_network_shapes_and_nonfinite_inputs_are_rejected (test_cost_neural_model.CostNeuralModelTests.test_invalid_network_shapes_and_nonfinite_inputs_are_rejected) ... ok
+test_l2_penalizes_weights_and_leaves_bias_gradients_unpenalized (test_cost_neural_model.CostNeuralModelTests.test_l2_penalizes_weights_and_leaves_bias_gradients_unpenalized) ... ok
+test_overflow_and_underflow_raise_instead_of_clipping_prices (test_cost_neural_model.CostNeuralModelTests.test_overflow_and_underflow_raise_instead_of_clipping_prices) ... ok
+test_prediction_is_independent_of_other_prediction_rows (test_cost_neural_model.CostNeuralModelTests.test_prediction_is_independent_of_other_prediction_rows) ... ok
+test_saved_scaler_and_architecture_validation (test_cost_neural_model.CostNeuralModelTests.test_saved_scaler_and_architecture_validation) ... ok
+test_serialized_forward_matches_explicit_train_scalers (test_cost_neural_model.CostNeuralModelTests.test_serialized_forward_matches_explicit_train_scalers) ... ok
+test_area (test_pack.FixtureTests.test_area) ... ok
+test_geometry_closed (test_pack.FixtureTests.test_geometry_closed) ... ok
+test_labels_and_references (test_pack.FixtureTests.test_labels_and_references) ... ok
+test_missing_preserved (test_pack.FixtureTests.test_missing_preserved) ... ok
+test_no_hidden_truth_in_input (test_pack.FixtureTests.test_no_hidden_truth_in_input) ... ok
+test_permutation_pairs (test_pack.FixtureTests.test_permutation_pairs) ... ok
+test_project_rule (test_pack.FixtureTests.test_project_rule) ... ok
+test_rule_source_private (test_pack.FixtureTests.test_rule_source_private) ... ok
+test_ten_inputs (test_pack.FixtureTests.test_ten_inputs) ... ok
+test_city (test_pack.PortTests.test_city) ... ok
+test_cls_sep (test_pack.PortTests.test_cls_sep) ... ok
+test_empty (test_pack.PortTests.test_empty) ... ok
+test_enterprise_bug_patch (test_pack.PortTests.test_enterprise_bug_patch) ... ok
+test_length (test_pack.PortTests.test_length) ... ok
+test_orphan (test_pack.PortTests.test_orphan) ... ok
+test_separate_entity (test_pack.PortTests.test_separate_entity) ... ok
+test_area_contribution_cannot_be_counted_twice (test_renewal_economics.RenewalEconomicsTest.test_area_contribution_cannot_be_counted_twice) ... ok
+test_core_right_and_budget_unknown (test_renewal_economics.RenewalEconomicsTest.test_core_right_and_budget_unknown) ... ok
+test_four_accounts_and_exact_cash (test_renewal_economics.RenewalEconomicsTest.test_four_accounts_and_exact_cash) ... ok
+test_missing_core_cost_is_not_zero (test_renewal_economics.RenewalEconomicsTest.test_missing_core_cost_is_not_zero) ... ok
+test_mode_specific_conflict_and_budget_match (test_renewal_economics.RenewalEconomicsTest.test_mode_specific_conflict_and_budget_match) ... ok
+test_no_disposal_right_no_area_sale_revenue (test_renewal_economics.RenewalEconomicsTest.test_no_disposal_right_no_area_sale_revenue) ... ok
+test_optional_unknown_is_a_separate_opportunity (test_renewal_economics.RenewalEconomicsTest.test_optional_unknown_is_a_separate_opportunity) ... ok
+test_price_discount_and_cost_sensitivity (test_renewal_economics.RenewalEconomicsTest.test_price_discount_and_cost_sensitivity) ... ok
+test_resident_and_loan_funds_are_not_income (test_renewal_economics.RenewalEconomicsTest.test_resident_and_loan_funds_are_not_income) ... ok
+test_units_incomplete_scope_and_unknown_funding (test_renewal_economics.RenewalEconomicsTest.test_units_incomplete_scope_and_unknown_funding) ... ok
+test_default_preserves_all_rules_and_omits_all_noncore (test_teacher_criteria_review.TeacherCriteriaReviewTests.test_default_preserves_all_rules_and_omits_all_noncore) ... ok
+test_manual_fill_updates_task_and_keeps_other_missing_fields (test_teacher_criteria_review.TeacherCriteriaReviewTests.test_manual_fill_updates_task_and_keeps_other_missing_fields) ... ok
+test_provenance_cells_and_hash_survive_review_without_source_edit (test_teacher_criteria_review.TeacherCriteriaReviewTests.test_provenance_cells_and_hash_survive_review_without_source_edit) ... ok
+test_report_requests_only_related_missing_parameters (test_teacher_criteria_review.TeacherCriteriaReviewTests.test_report_requests_only_related_missing_parameters) ... ok
+test_source_simulation_is_preserved_and_excluded_from_compliance (test_teacher_criteria_review.TeacherCriteriaReviewTests.test_source_simulation_is_preserved_and_excluded_from_compliance) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.062s
+
+OK

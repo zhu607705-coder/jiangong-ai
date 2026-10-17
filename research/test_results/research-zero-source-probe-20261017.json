@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-10-17T04:34:21.381Z",
+  "scope": "Isolated native zero-source protocol test; no real project or decision labels.",
+  "status": "completed",
+  "elapsed_ms": 25306,
+  "delivery": {
+    "run_status": "completed",
+    "evidence_status": "none",
+    "report_status": "conditional",
+    "renderer": "dsh"
+  },
+  "source_count": 0,
+  "dimensions": 6,
+  "reasoning_dimensions": 6,
+  "work_packages": 5,
+  "no_invented_citations": true,
+  "model_calls": [
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 9728,
+      "output_tokens": 1823,
+      "usage_status": "reported",
+      "duration_ms": 10289,
+      "session_id": "01dd818d-8bca-4d35-a285-09edf68cefe8",
+      "cache_read_tokens": 1152,
+      "cache_write_tokens": 0
+    },
+    {
+      "stage": "renewal_strategy",
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "finish_reason": "tool-calls",
+      "input_tokens": 11591,
+      "output_tokens": 3746,
+      "usage_status": "reported",
+      "duration_ms": 14846,
+      "session_id": "01dd818d-8bca-4d35-a285-09edf68cefe8",
+      "cache_read_tokens": 10752,
+      "cache_write_tokens": 0
+    }
+  ],
+  "diagnostic": null,
+  "review_issue_codes": [
+    "STRATEGY_OBJECT_EVIDENCE_MISSING",
+    "STRATEGY_BRIEF_EVIDENCE_MISSING"
+  ],
+  "project_writes": 0
+}
