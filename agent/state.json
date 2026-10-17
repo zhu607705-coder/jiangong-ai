@@ -4354,8 +4354,8 @@
     ]
   },
   "deepseek_search_model_1017": {
-    "status": "implemented_pending_deploy",
-    "updated_at": "2026-10-17T10:53:35.586945+00:00",
+    "status": "deployed_pending_merge",
+    "updated_at": "2026-10-17T10:55:41.909256+00:00",
     "request": [
       "connect independent Search/Fetch following official docs",
       "synchronize updated DSF model mapping"
@@ -4378,6 +4378,29 @@
       "dsh_calls": 1,
       "real_project_runs": 0
     },
-    "next_runnable_task": "Finish focused tests/build, deploy runtime and independently probe server Search/Fetch and DSH."
+    "next_runnable_task": "Merge deployed source and receipts; new manual research uses updated provider/catalog.",
+    "runtime_commit": "0820f1caf081552dc800ebb40ebc4afcb456fc53",
+    "tests": [
+      "54 focused regressions passed",
+      "production typecheck/build passed",
+      "local real Search/Fetch and1DSH protocol passed",
+      "server real Search334ms/Fetch104ms/DSH626ms passed",
+      "38 project metadata and all research histories unchanged"
+    ],
+    "server_probe": "research/test_results/deepseek-search-1017-server.json",
+    "server": {
+      "search_provider": "deepseek_content",
+      "search_ms": 334,
+      "search_results": 3,
+      "cached_body_characters": 493,
+      "fetch_ms": 104,
+      "fetch_characters": 6402,
+      "requested_model": "deepseek-flash",
+      "returned_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "model_ms": 626,
+      "billing_estimate_standard_cny": 0.01,
+      "unknown_tool_attempts": 0
+    }
   }
 }
