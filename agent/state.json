@@ -4404,8 +4404,8 @@
     }
   },
   "functional_evaluation_20261017": {
-    "status": "deployed_pending_final_ui_check",
-    "updated_at": "2026-10-17T11:15:52.197745+00:00",
+    "status": "deployed_pending_merge",
+    "updated_at": "2026-10-17T11:17:52.831849+00:00",
     "request": "Test actual search, model, full decision workflow and page effects",
     "worktree": "D:/建工ai/.cache/functional-evaluation",
     "online_sample": {
@@ -4446,13 +4446,22 @@
       "same saved output after source-review fix:6 false issues->0 with0 model calls",
       "actual native zero-source regression completed without invented refs"
     ],
-    "next_runnable_task": "Finish deduplicated scope-label deployment, capture task page/drawer, merge.",
-    "runtime_commit": "18976acc5edb685a5a9db947d0671aa3287e5be2",
-    "ui_commit": "18976acc5edb685a5a9db947d0671aa3287e5be2",
+    "next_runnable_task": "Merge verified fixes and report; full reanalysis of existing projects remains user initiated.",
+    "runtime_commit": "816660259079a96d988cf5cb79adff1085b073c2",
+    "ui_commit": "816660259079a96d988cf5cb79adff1085b073c2",
     "browser_initial_check": {
       "current_object_checks": 3,
       "legacy_scope_review_tasks": 12,
       "existing_project_research_started": false
-    }
+    },
+    "artifacts": [
+      "research/test_results/在线效果测试报告_20261017.md",
+      "research/test_results/online-renewal-effect-20261017.json",
+      "research/test_results/functional-evaluation-review-replay-20261017.json",
+      "research/test_results/functional-evaluation-zero-source-after-20261017.json",
+      "research/test_results/functional-evaluation-runtime-final-20261017.json",
+      "research/test_results/functional-evaluation-ui-final-20261017.json",
+      "research/test_results/functional-evaluation-browser-20261017.json"
+    ]
   }
 }
