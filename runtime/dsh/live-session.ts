@@ -166,7 +166,7 @@ export class LiveSession {
       try {
         const layout=normalizeResearchNoteLayout(outputType,structured)
         if(layout.edits.length)console.warn(JSON.stringify({event:'renewal_note_layout_normalized',stage,session_id:String(child.id),fields:layout.edits,all_text_preserved:true}))
-        return { value: ownedModelValue<T>(outputType, layout.value), sessionId: String(child.id) }
+        return { value: ownedModelValue<T>(outputType, layout.value,presentationPolicy), sessionId: String(child.id) }
       }
       catch(error) {
         if(!(error instanceof ContractError)) throw error

@@ -1,0 +1,94 @@
+{
+  "task_id": "task-object-review",
+  "status": "completed",
+  "summary": "确认任务页存在对象适用性信号遗漏：后端已把天津项目中的杭州同名来源标为different_object/reference，并在报告上给出object_review_required，但调查页仍把旧报告任务当作当前可执行调查，未显示对象不一致提示。代码证据已核对；具体4幢、322/326户、344套UI内容来自主Agent任务包，未独立操作浏览器复核。没有运行测试、网络或模型调用。",
+  "files_touched": [
+    "D:/建工ai/.cache/functional-evaluation/.cache/task-object-review.json"
+  ],
+  "commands_run": [
+    "Get-Content D:/建工ai/AGENT_ERROR_RULES.md",
+    "Get-Content .cache/task-object-packet.json",
+    "Get-Content/numbered reads packages/retrofit/project-tasks.ts, packages/retrofit/project-context.ts, packages/retrofit/object-binding.ts",
+    "Get-Content/numbered reads apps/workspace/src/components/ProjectTasksPage.tsx, DecisionBrief.tsx, ProjectOverview.tsx",
+    "Get-Content/numbered reads apps/host/project-context.ts, strategy-publication.ts, task-materials.ts",
+    "Get-Content/numbered reads tests/contracts/project-tasks-page.test.ts, project-context.test.ts",
+    "rg scoped object_binding/different_object/current_context/buildProjectTasks and relevant test coverage",
+    "Get-Content package.json (read scripts/dependencies only)"
+  ],
+  "findings": [
+    {
+      "id": "TASK-OBJECT-01",
+      "priority": "P1",
+      "title": "当前调查把异地旧报告的要求直接当作本项目任务",
+      "evidence": [
+        "packages/retrofit/project-tasks.ts:15-18 仅检查completed/strategy，visible只按研究方向过滤文字。",
+        "packages/retrofit/project-tasks.ts:28-38 原样生成next_checks和round_review/extraMissing任务；53-62原样保留internal_data_requests的采集方法、分母和work package target。没有任何object_binding、OBJECT_LOCATION_CONFLICT或current_context检查。",
+        "apps/workspace/src/components/ProjectTasksPage.tsx:86-95 仅按project_id/synthetic/completed选择报告和轮次。项目记录归属相同不能证明报告中每个物理对象相同。",
+        "apps/workspace/src/components/ProjectTasksPage.tsx:110-118 标题为当前调查任务/本轮调查事项，卡片仅展示类型与来源数，没有异地或适用性状态。69、72行还为这些当前任务提供上传及进度修改。",
+        "主Agent提供UI观察：天津市建工新村项目P-0e40c5dd-dc9a-4d12-9f54-a8c952be87de的view=actions出现旧杭州报告的4幢、322/326户和344套要求，页面没有醒目的对象冲突提示。此子任务未独立读取该浏览器或生产数据。"
+      ],
+      "impact": "用户可把杭州报告的楼栋与户数当成天津当前采集口径，并把新资料关联到这些旧要求。现有工程归属校验不会阻止这种同项目内的物理对象误用。",
+      "already_filtered_or_flagged": "方向、项目ID、模拟身份、完成状态已过滤；物理对象适用性未过滤/未标记。"
+    },
+    {
+      "id": "TASK-OBJECT-02",
+      "priority": "P2",
+      "title": "来源已经被后端标记为异地参考，任务详情丢失该标记",
+      "evidence": [
+        "packages/retrofit/object-binding.ts:15-24 重用当前项目scope与行政地址，对different_object来源重标role=reference。",
+        "apps/host/project-context.ts:20-30 的只读投影保留原报告，添加OBJECT_LOCATION_CONFLICT及三类对象补查；apps/host/strategy-publication.ts:60-62 将该结果与object_review_required传给当前分析。",
+        "apps/workspace/src/components/ProjectTasksPage.tsx:62 只按source.id和可选project_id选来源；71行只显示标题、locator、日期，未显示source.role/object_binding.reason。",
+        "同一工作树ProjectOverview.tsx:52-53和DecisionBrief.tsx:40-46已经响应object_review_required，证明信号存在且已有可复用显示语义。"
+      ],
+      "impact": "用户即使打开调查详情，也看不到来源已被判定为异地参考；与总览和研判页的对象提示不一致。",
+      "already_filtered_or_flagged": "后端和其他页面已经标记；调查卡片和详情没有消费这些信号。"
+    },
+    {
+      "id": "TASK-OBJECT-03",
+      "priority": "P2",
+      "title": "现有调查测试只覆盖跨项目记录，不覆盖同项目异地来源",
+      "evidence": [
+        "tests/contracts/project-tasks-page.test.ts:100-114 只构造project_id=OTHER及synthetic身份不同的轮次。",
+        "tests/contracts/project-context.test.ts:30-42覆盖天津/杭州来源重标与object_review_required，但没有把该投影交给ProjectTasksPage。",
+        "tests/contracts/project-tasks-page.test.ts:49-57、116-143验证去重、方向和进度，未设置ObjectBinding或内容冲突提示。",
+        "apps/host/task-materials.ts:28-34 同时从原报告和bindPacketContext投影生成可关联任务；修改builder时需保持已有历史task_id/进度/资料关联兼容，不可无意把历史任务变成404。"
+      ],
+      "impact": "当前测试可全部通过，同时真实任务页仍暴露旧对象口径。",
+      "already_filtered_or_flagged": "已有合同测试保护owner/project身份和历史只读，但不保护物理对象适用性。"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "D:/建工ai/.cache/functional-evaluation/.cache/task-object-packet.json",
+      "kind": "input_packet"
+    },
+    {
+      "path": "D:/建工ai/.cache/functional-evaluation/.cache/task-object-review.json",
+      "kind": "read_only_investigation"
+    },
+    {
+      "path": "D:/建工ai/.cache/functional-evaluation/tests/contracts/project-context.test.ts",
+      "kind": "existing_object_contract_test_not_run"
+    },
+    {
+      "path": "D:/建工ai/.cache/functional-evaluation/tests/contracts/project-tasks-page.test.ts",
+      "kind": "existing_ui_contract_test_not_run"
+    }
+  ],
+  "questions_for_main": [],
+  "next_action": {
+    "owner": "main",
+    "minimal_safe_fix": [
+      "任务页复用现有current_context.object_review_required及OBJECT_LOCATION_CONFLICT来源信息，醒目标明当前登记对象和旧报告对象不一致；原报告文字、input_hash、task_id和本机进度不改。",
+      "为任务增加只读适用性显示：按已引用来源和关联work package来源标明异地参考/对象待核。报告已有冲突而任务无来源时保留待核状态，避免把无refs等同于已适用。",
+      "在当前任务视图把旧对象专属要求与可立即做的对象地址/边界补查分开或明显标记；不能机械隐藏所有调查而丢失泛用核查和新增补查，也不要把异地户数替换成猜测的本地户数。",
+      "详情来源列表显示已保存ObjectBinding的reason及reference角色，且历史任务保持原件可读和历史资料关联可追溯。"
+    ],
+    "suggested_validation": [
+      "将bindPacketContext生成的天津项目/杭州来源报告传入当前任务页，确认有对象提示，引用该来源的322/326户、344套或具体楼栋要求不能无标记出现在当前可执行任务中。",
+      "覆盖mixed refs、无refs但报告冲突、内部数据related_package_ids、extraMissing、一般同对象任务、纯历史页、上传增版保留任务及已有进度键。",
+      "核对TaskMaterialService现存历史链接行为，避免只改UI/builder造成既有资料关联失效。",
+      "由主Agent用既有浏览器/保存快照核对任务卡和详情，区分真实UI验证与合同测试。"
+    ]
+  }
+}

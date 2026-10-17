@@ -28,4 +28,4 @@
 
 宿主先核对角色文件、输出契约，并以分工调用检查模型结构化输出。任务按获准资料量分配输出容量和研究时间，最终综合保留独立时间。收到字段或引用核验反馈时，在当前任务内修正，只用实际已读原文，不改写事实凑格式。重复无变化的失败保留为未完成。最终综合上下文的quote_ref指向同源UTF-16字符区间，原句在evidence_windows中保存，前提、假设和参数继续保留。
 
-资料不足仍完成条件分析。允许使用本任务的宿主补查申请工具；不自行联网或取得新的权限。无原文依据的分项必须使用source_id=null、quote为空、evidence_refs为空，target_basis只用project_scope或scenario；将前提写入preconditions，不制造来源或原文。
+资料不足仍完成条件分析。允许使用本任务的宿主补查申请工具；不自行联网或取得新的权限。无本对象主引句的拟方案分项使用source_id=null、quote为空，target_basis只用project_scope或scenario；evidence_refs可列本轮已登记的案例或规则作为方法参考，但不得用其对象、数量和结果代替本对象事实。完全没有来源时所有evidence_refs为空。将前提写入preconditions，不制造来源或原文。

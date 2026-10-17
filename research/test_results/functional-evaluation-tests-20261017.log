@@ -1,0 +1,13 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/functional-evaluation
+
+stderr | tests/contracts/renewal-structured-request.test.ts > repairs captured tool JSON locally before requesting another model response
+{"event":"renewal_tool_json_format_repaired","stage":"renewal_research_expert_1_2_cost_value","session_id":"locally-repaired-child","edits":["escaped_inner_quotes"],"original_sha256":"fa47955eec157652e151bf889a47851e4893690fa01b83c726d08165eb73a901","native_failure_preserved":true}
+
+·················································································
+
+ Test Files  7 passed (7)
+      Tests  81 passed (81)
+   Start at  19:10:46
+   Duration  10.28s (transform 697ms, setup 0ms, import 2.69s, tests 6.76s, environment 0ms)
+

@@ -7,7 +7,7 @@ import {decisionMetrics,fitTemperature,investigationSensitivity,latencySummary} 
 import {collectSelectedEvidence} from '../../services/capabilities/research'
 import type {Source} from '../../apps/host/generated/contracts'
 import type {StrategySource} from '../../packages/retrofit/strategy'
-import {modelSchema,validate} from '../../packages/contracts/validate'
+import {modelSchema,validate,ownedModelValue} from '../../packages/contracts/validate'
 import {conditionalReport} from '../../packages/retrofit/conditional-report'
 import {bindStrategySource} from '../../packages/retrofit/object-binding'
 import {buildProjectTasks} from '../../packages/retrofit/project-tasks'
@@ -27,6 +27,11 @@ it('renders a six-dimensional zero-source conditional report with a satisfiable 
  expect(()=>validate('RenewalStrategy',result.strategy)).not.toThrow()
  expect(result.strategy?.reasoning_dimensions).toHaveLength(6)
  expect(JSON.stringify(modelSchema('RenewalStrategy',undefined,{evidenceIds:[]}))).not.toContain('"enum":[]')
+ const schema=modelSchema('RenewalStrategy',undefined,{evidenceIds:[]})
+ expect(schema.properties).not.toHaveProperty('rationale')
+ const raw=structuredClone(result.strategy!) as Partial<NonNullable<typeof result.strategy>>;delete raw.rationale
+ expect(ownedModelValue('RenewalStrategy',raw,{evidenceIds:[]})).toEqual(result.strategy)
+ expect(()=>ownedModelValue('RenewalStrategy',raw)).toThrow()
  for(const type of ['RenewalStrategy','RenewalResearchNote','RenewalResearchPlan'])expect(()=>assertObjectJsonSchema(modelSchema(type,undefined,{evidenceIds:[]}))).not.toThrow()
  const work={id:'scenario',target:'拟更新管网',target_basis:'scenario',source_id:null,quote:'',locator:'scenario:project-scope',intervention:'分段更换管网',scope:'假设既有建筑保留',quantity:null,unit:null,quantity_basis:'unknown',delivery:'分段检修管网',priority:'first',preconditions:['先核实实际设施范围'],evidence_refs:[]}
  expect(()=>validate('RenewalWorkPackage',work)).not.toThrow()

@@ -4402,5 +4402,50 @@
       "billing_estimate_standard_cny": 0.01,
       "unknown_tool_attempts": 0
     }
+  },
+  "functional_evaluation_20261017": {
+    "status": "verified_pending_deploy",
+    "updated_at": "2026-10-17T11:13:18.120720+00:00",
+    "request": "Test actual search, model, full decision workflow and page effects",
+    "worktree": "D:/建工ai/.cache/functional-evaluation",
+    "online_sample": {
+      "target": "天津市建工新村",
+      "isolated": true,
+      "elapsed_ms": 76700,
+      "online_originals": 7,
+      "archived_case_cards": 5,
+      "queries": 12,
+      "work_packages": 6,
+      "dimensions": 6,
+      "reasoning_dimensions": 6,
+      "expert_quotes": 12,
+      "final_direct_quotes": 4,
+      "critical_fragments": 49,
+      "native_model_attempts": 32,
+      "context_before": 33070,
+      "context_after": 27432,
+      "project_writes": 0
+    },
+    "found_and_fixed": [
+      "task-page omitted foreign-object applicability despite upstream flags",
+      "scenario method refs falsely labelled nonexistent",
+      "empty source schema requested rationale with no legal source; contradictory prompt"
+    ],
+    "zero_source": {
+      "before_no_invented_citations": false,
+      "after_no_invented_citations": true,
+      "elapsed_ms": 32584,
+      "dimensions": 6,
+      "reasoning_dimensions": 6,
+      "work_packages": 5,
+      "renderer": "dsh"
+    },
+    "tests": [
+      "81 focused checks passed",
+      "native full pipeline completed on deployed server before fixes",
+      "same saved output after source-review fix:6 false issues->0 with0 model calls",
+      "actual native zero-source regression completed without invented refs"
+    ],
+    "next_runnable_task": "Deploy verified runtime/UI, confirm current task page and source badges, merge without changing business histories."
   }
 }
