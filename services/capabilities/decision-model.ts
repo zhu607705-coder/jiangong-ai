@@ -118,7 +118,7 @@ export async function requestDecisionQuestions(state:unknown, questions:Record<s
   transport:typeof fetch=fetch):Promise<any> {
   if(!settings.apiKey||!settings.endpoint)throw new Error('DECISION_NOT_CONFIGURED')
   if(settings.model!=='decision-model-preview')throw new Error('DECISION_MODEL_INVALID')
-  if(Object.keys(questions).length<1||Object.keys(questions).length>24)throw new Error('DECISION_INPUT_LIMIT')
+  if(Object.keys(questions).length<1||Object.keys(questions).length>16)throw new Error('DECISION_INPUT_LIMIT')
   const body={model:settings.model,state,questions}
   const serialized=JSON.stringify(body)
   if(Buffer.byteLength(serialized)>160000) throw new Error('DECISION_INPUT_LIMIT')

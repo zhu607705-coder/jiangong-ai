@@ -24,7 +24,7 @@ function administrativeAddress(text:string){
   const district=areaNames.find(name=>rest.startsWith(name))
   return {province,city,district}
 }
-function wrongLocation(location:string,context:MapScreenContext,name:string):boolean {
+export function objectLocationConflicts(location:string,context:{address?:string|null;city?:string|null},name:string):boolean {
   const expected=administrativeAddress(context.address||'')
   expected.city=context.city||expected.city
   // Names may contain administrative-looking suffixes and provider punctuation.
@@ -59,15 +59,15 @@ export function objectQuoteMatches(source:Source,context:MapScreenContext,name:s
   if(recordId){
     const record=sourceRecords(source,records).find(r=>r.id===recordId)
     if(!record||record.scope!=='object'||!source.raw_hash||record.source_hash!==source.raw_hash)return false
-    if(wrongLocation(record.subject,context,name))return false
+    if(objectLocationConflicts(record.subject,context,name))return false
     const location=record.fields.find(f=>f.key==='location')?.value
-    if(typeof location==='string'&&wrongLocation(location,context,name))return false
+    if(typeof location==='string'&&objectLocationConflicts(location,context,name))return false
     const nativeIds=record.fields.filter(f=>f.key==='project_id'||f.key==='parcel_id').map(f=>`${record.adapter}:${f.value}`)
     if(context.target.object_ref?.startsWith(record.adapter+':')&&!nativeIds.includes(context.target.object_ref))return false
     if(!ownObjectClaim(record.subject,name,true,allowVenue))return false
-    return record.fields.some(f=>f.value!==null&&f.raw.includes(quote)&&(['buyer','supplier','owner','assignee'].includes(f.key)||!wrongLocation(quote,context,name)))
+    return record.fields.some(f=>f.value!==null&&f.raw.includes(quote)&&(['buyer','supplier','owner','assignee'].includes(f.key)||!objectLocationConflicts(quote,context,name)))
   }
-  if(wrongLocation(quote,context,name))return false
+  if(objectLocationConflicts(quote,context,name))return false
   return source.untrusted_text!.includes(quote)&&ownObjectClaim(quote,name,false,allowVenue)
 }
 export function eligibleDimension(source:Source,context:MapScreenContext,name:string,evidence:DimensionEvidence,records:PublicRecord[],purpose=''):boolean {

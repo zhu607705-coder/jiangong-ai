@@ -3,6 +3,7 @@ import benchmarks from '../../data/public_cases/renewal-mode-benchmarks-20261014
 import { factAppliesToTarget } from '../maps/object-identity'
 import { publicMapContext } from '../maps/public-context'
 import { MODEL_SIGNAL_THRESHOLDS } from '../decision/thresholds'
+import {objectLocationConflicts} from '../research/evidence'
 
 export const RENEWAL_MODE_POLICY = 'renewal-mode-first-v4'
 export const MODE_LABELS = { comprehensive: '综合整治', rebuild: '原拆原建', compare: '两种模式并行比选', investigate: '先核查模式关键条件' } as const
@@ -113,7 +114,7 @@ export function renewalCommunitySources(input: ProjectInput, evidence: readonly 
 }
 
 /** Literal object mentions are research evidence, never a structured safety/rights finding. */
-function excerpts(sources: Source[], names: string[], facts: Fact[], objectRef: string | null): ModeEvidence[] {
+function excerpts(sources: Source[], names: string[], facts: Fact[], objectRef: string | null,location:{city?:string|null;address?:string|null}={}): ModeEvidence[] {
   const explicit = new Set(facts.filter(f => f.epistemic_status === 'fact').map(f => f.source_id))
   const namesToFind = objectNames(names)
   const normalizeText = (text: string) => text.normalize('NFKC').replace(/\s+/g, '')
@@ -125,6 +126,7 @@ function excerpts(sources: Source[], names: string[], facts: Fact[], objectRef: 
     const titleBound = source.evidence_scope === 'object' && namesToFind.some(name => normalizeText(source.title).includes(normalizeText(name)))
     if (index < 0 && !explicit.has(source.id) && !objectBound && !titleBound) return []
     const start = Math.max(0, index - 120), end = Math.min(body.length, start + 1800), quote = body.slice(start, end)
+    if(objectLocationConflicts(source.title,location,names[0])||objectLocationConflicts(quote,location,names[0]))return []
     return [{ evidence: { source_id: source.id, title: source.title, published_at: source.published_at!, locator: `text:chars:${start + 1}-${end}`, quote, url: source.url || null },
       body: normalizeText(body), quote: normalizeText(quote), priority: objectBound ? 3 : explicit.has(source.id) || titleBound ? 2 : 1, order }]
   }).sort((a, b) => b.priority - a.priority || a.order - b.order)
@@ -148,17 +150,22 @@ function excerpts(sources: Source[], names: string[], facts: Fact[], objectRef: 
   return selected.map(row => row.evidence)
 }
 
-function base(target: string, objectRef: string | null, asOf: string, synthetic: boolean, sources: Source[], facts: Fact[], projectId: string, names = [target]): RenewalModeInput {
-  const current = sources.filter(source => readable(source, asOf, synthetic))
+function base(target: string, objectRef: string | null, asOf: string, synthetic: boolean, sources: Source[], facts: Fact[], projectId: string, names = [target],location:{city?:string|null;address?:string|null}={}): RenewalModeInput {
+  const aliases=objectNames(names)
+  const current = sources.filter(source => {
+    if(!readable(source,asOf,synthetic)||objectLocationConflicts(source.title,location,target))return false
+    const passages=source.untrusted_text!.split(/[。；;\n]/).filter(line=>aliases.some(alias=>line.includes(alias))||/^(?:建设地点|项目地址|建设地址)[:：]/.test(line.trim())).join('。')
+    return !objectLocationConflicts(passages,location,target)
+  })
   const referenceAsOf = new Date().toISOString().slice(0, 10)
   return { policy_version: RENEWAL_MODE_POLICY, target, object_ref: objectRef, as_of: asOf, synthetic, reference_as_of: referenceAsOf,
-    conditions: conditionRows(facts, current, objectRef, projectId, asOf), evidence: excerpts(current, names, facts.filter(fact=>!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef})), objectRef), standards: MODE_STANDARD,
+    conditions: conditionRows(facts, current, objectRef, projectId, asOf), evidence: excerpts(current, names, facts.filter(fact=>!!objectRef&&factAppliesToTarget(fact,{project_id:projectId},{object_ref:objectRef})), objectRef,location), standards: MODE_STANDARD,
     cases: benchmarks.cases.filter(row => row.published_at <= referenceAsOf), method_reference: benchmarks.method_reference }
 }
 
 export function projectRenewalModeInput(input: ProjectInput): RenewalModeInput {
   return base(input.scope.name, `project:${input.project_id}`, input.as_of, input.synthetic, input.sources, input.facts, input.project_id,
-    [input.scope.name, input.scope.map_anchor?.name || input.scope.name])
+    [input.scope.name, input.scope.map_anchor?.name || input.scope.name],{city:input.scope.city})
 }
 
 export function mapRenewalModeInput(context: MapScreenContext): RenewalModeInput {
@@ -168,9 +175,9 @@ export function mapRenewalModeInput(context: MapScreenContext): RenewalModeInput
   const selected = exact.length === 1 ? exact[0] : undefined
   if (selected) return base(selected.scope_label || selected.name, `project:${selected.project_id}`, selected.as_of || context.created_at, false,
     [...selected.sources.map(source => ({ ...source, id: `${selected.project_id}:${source.id}` })), ...(publicContext.research_sources || [])],
-    selected.facts.map(fact => ({ ...fact, source_id: `${selected.project_id}:${fact.source_id}` })), selected.project_id, [selected.name, selected.scope_label])
+    selected.facts.map(fact => ({ ...fact, source_id: `${selected.project_id}:${fact.source_id}` })), selected.project_id, [selected.name, selected.scope_label],{city:context.city,address:context.address})
   return base(context.target.label || context.address || '所选小区', context.target.object_ref || null, context.created_at, false,
-    publicContext.research_sources || [], [], '', [context.target.label || ''])
+    publicContext.research_sources || [], [], '', [context.target.label || ''],{city:context.city,address:context.address})
 }
 
 export function renewalQuestions(input: RenewalModeInput) {

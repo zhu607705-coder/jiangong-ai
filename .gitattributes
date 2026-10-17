@@ -2,6 +2,8 @@
 *.csv whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Archived cost evidence is hash-bound to its original bytes on every platform.
 data/public_cases/renewal-cost-sources/* -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab,cr-at-eol
+# Collection receipts refer to the exact archived HTML bytes, including line endings.
+data/public_case_snapshot/* -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab,cr-at-eol
 # Generated vector paths and captured tool logs retain the generator's spacing.
 docs/figures/*.svg -text whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 research/test_results/scientific-methods-results.json -text whitespace=cr-at-eol

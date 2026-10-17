@@ -1,0 +1,50 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/context-baseline
+
+ ❯ tests/contracts/experience-learning.test.ts (5 tests | 1 failed) 10868ms
+     × reads beyond the former first 18000 characters and automatically creates draft skills and rule comparisons 2192ms
+ ❯ tests/contracts/corpus.test.ts (17 tests | 9 skipped) 126ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/corpus.test.ts > corpus build and supervised export
+Error: 公开 HTML 快照与采集凭证不一致。
+ ❯ buildCorpus packages/corpus/corpus.ts:195:74
+    193|       const metaFile = await localFile(rootDir, entry.metadata_path), …
+    194|       inputs.push({ path: metaFile.path, sha256: metaFile.sha256 })
+    195|       if (meta.sha256 !== file.sha256 || meta.http_status !== 200) thr…
+       |                                                                          ^
+    196|       const text = visibleText(file.data.toString('utf8'), meta.url)
+    197|       add({ id: 'SNAPSHOT-' + file.sha256.slice(0, 14), title: meta.ti…
+ ❯ tests/contracts/corpus.test.ts:90:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/experience-learning.test.ts > file/chat to experience, skill and rule versions > reads beyond the former first 18000 characters and automatically creates draft skills and rule comparisons
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ tests/contracts/experience-learning.test.ts:64:73
+     62|     expect(activated.skill).toMatchObject({status:'approved',revision:…
+     63|     const resolved=await experience.resolveKnowledge(project,{measure_…
+     64|     expect(resolved.skills?.some(skill=>skill.id===activated.skill.id)…
+       |                                                                         ^
+     65|     expect([...resolved.trace.rule_hits,...resolved.trace.candidates].…
+     66|     expect((await store.db.query<{payload:unknown}>('SELECT payload FR…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  1 failed | 12 passed | 9 skipped (22)
+   Start at  10:54:43
+   Duration  12.34s (transform 414ms, setup 0ms, import 1.10s, tests 10.99s, environment 0ms)
+

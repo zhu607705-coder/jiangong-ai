@@ -83,9 +83,12 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
     rememberReasoning(next,key)
     const previous=latestResult.current?.key===key?latestResult.current.result:null
     if(next?.status==='completed'&&next.strategy&&sameScope(next)) {
+      if(next.current_context?.freshness==='historical')return
       const previousTime=Date.parse(previous?.created_at||''),nextTime=Date.parse(next.created_at)
       // Compare result creation, not adoption time or transport completion. Equal or unknown dates do not prove a newer result.
-      const selected=!previous||Number.isFinite(nextTime)&&(!Number.isFinite(previousTime)||nextTime>previousTime)?next:previous
+      const selected=next.current_context
+        ? (!previous?.current_context||next.current_context.generation>=previous.current_context.generation?next:previous)
+        : !previous||!previous.current_context&&Number.isFinite(nextTime)&&(!Number.isFinite(previousTime)||nextTime>previousTime)?next:previous
       latestResult.current={key,result:selected};setResult(selected)
     } else if(previous)setResult(previous)
     else setResult(next&&sameScope(next)?next:null)
@@ -99,8 +102,7 @@ export default function StrategyOverview({ project, demoActive, onEvidence, onIn
       if(!signal?.aborted&&currentIdentity.current===key){
         setRoundState({key,loading:false,error:'',data})
         for(const round of data.rounds)if(round.project_id===project.id&&round.context_version===project.context_version){
-          if(round.status==='completed'&&round.result?.status==='completed'&&round.result.strategy)acceptResult(round.result,key)
-          else rememberReasoning(round.result,key)
+          rememberReasoning(round.result,key)
         }
       }
     } catch {

@@ -361,6 +361,29 @@
       ],
       "isolation": "No parallel scheduler, parser, search client or general context system; no real fact or ledger mutation. Synthetic strategy results use a separate cache identity.",
       "license": "Local adaptations; existing upstream package licensing and attribution retained."
+    },
+    "project_context_contract_20261017": {
+      "reuse": [
+        "packages/research/evidence.ts:objectLocationConflicts (existing administrative matching exported)",
+        "packages/maps/object-identity.ts:existing identity conventions",
+        "packages/intelligence/domain.ts:canonical",
+        "apps/host/store.ts:Database.transaction and Store",
+        "apps/host/strategy-publication.ts:completed snapshot validation",
+        "apps/host/research-rounds.ts:existing round persistence",
+        "runtime/dsh:unchanged single runtime"
+      ],
+      "new_domain_logic": [
+        "project object/input revision references",
+        "generation-fenced current result pointer and immutable terminal receipts",
+        "object relation read projections and material follow-ups"
+      ],
+      "unchanged": [
+        "runtime scheduler",
+        "raw source bytes and historical plans",
+        "DSH transport and evidence parser",
+        "internal material consent"
+      ],
+      "validation": "tests/contracts/project-context.test.ts and affected integration contracts"
     }
   },
   "local_adaptations": [

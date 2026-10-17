@@ -4,7 +4,8 @@ import { evaluateRenewalModeGate, type ModeCondition } from './renewal-mode'
 export const STRATEGY_POLICY = 'renewal-strategy-overview-v8-advisory'
 export type StrategySource = { id: string; title: string; text: string; url: string | null; published_at: string | null; role: 'current' | 'reference'; locator: string;
   visibility?: 'public' | 'internal'; data_class?: 'public' | 'internal' | 'synthetic' | 'semi_synthetic'; document_id?: string; document_version?: string; project_id?: string;
-  material_category?: import('./research-rounds').ResearchMaterialCategory; source_date?: string | null }
+  material_category?: import('./research-rounds').ResearchMaterialCategory; source_date?: string | null;
+  object_binding?:import('./object-binding').ObjectBinding }
 export type StrategyPublication = { kind: 'current' | 'saved_snapshot'; is_current: boolean; current_input_hash: string; saved_at: string }
 export type PublicStrategyIndexItem = { project_id: string; project_name: string; context_version: number; strategy_context_version: number; created_at: string; headline: string; status: 'completed'; synthetic: false; is_current: boolean; input_hash: string }
 export type PublicStrategyIndexResponse = { items: PublicStrategyIndexItem[] }
@@ -17,6 +18,7 @@ export type StrategyContentIssue = { code: string; path: string; message: string
 export type StrategyContentReview = { policy: 'advisory-v1'; status: 'clear' | 'needs_review'; checked_at: string; issues: StrategyContentIssue[]; follow_up: { search_queries:string[]; reading_focus:string[]; internal_data:string[] };
   recovered_from?: { round_id: string; session_id: string; candidate_sha256: string } }
 export type StrategyPacket = { project_id: string; context_version: number; input_hash: string; created_at: string; synthetic: boolean; status: 'completed' | 'failed' | 'unavailable';current_assessment?:import('./strategy-assessment').CurrentAssessment;
+  context_ref?:import('./project-context').ProjectContextRef; current_context?:{policy:'project-context-v1';generation:number;attempt_id:string|null;round_id:string|null;freshness:'current'|'legacy_snapshot'|'historical';object_review_required:boolean};
   strategy: RenewalStrategy | null; sources: StrategySource[]; decision: DecisionSupport | null; model_calls: ModelCall[]; research: ResearchTrace | null; error: string | null; diagnostic?: StrategyDiagnostic; publication?: StrategyPublication; review?: StrategyReview; content_review?: StrategyContentReview; workflow?:StrategyWorkflowTrace; demo_replay?:StrategyDemoReplay }
 
 export type StrategyWorkflowProgress = { phase:'planning'|'specialists'|'compression'|'synthesis';

@@ -150,10 +150,10 @@ test('a failed result shows Chinese recovery actions after screening and never p
   } finally { await app.cleanup() }
 })
 
-test('a completed saved result remains visible and available when another current read failed', async () => {
-  const failure: StrategyPacket = { ...saved, status: 'failed', strategy: null, error: 'LIVE_STAGE_FAILED:renewal_strategy:error:TRANSPORT' }
+test('the server-resolved saved result remains visible when the research history also contains a failed retry', async () => {
   const record: ResearchRound = { id: 'SAVED-OLD', project_id: project.id, round_number: 1, context_version: project.context_version, input_hash: saved.input_hash, parent_round_id: null, parent_input_hash: null, parent_context_version: null, first_round_id: 'SAVED-OLD', first_input_hash: saved.input_hash, first_context_version: saved.context_version, origin: 'adopted_history', status: 'completed', material_intake: 'not_recorded', allow_internal_ai: false, materials: [], missing_materials: [], result: saved, error: null, created_at: saved.created_at, updated_at: saved.created_at }
-  const app = await mount({ page: 'assessment', section: 'direction' }, failure, { collaborative: true, rounds: [record] })
+  const failedRetry:ResearchRound={...record,id:'FAILED-RETRY',round_number:2,status:'failed',result:null,error:'供应商暂时不可用'}
+  const app = await mount({ page: 'assessment', section: 'direction' }, saved, { collaborative: true, rounds: [record,failedRetry] })
   try {
     expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(saved.strategy!.headline)
     expect(app.container.querySelector('.strategy-direction-selection')).not.toBeNull()

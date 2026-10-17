@@ -10,6 +10,13 @@ const research = vi.hoisted(() => vi.fn())
 vi.mock('../../services/map-screening/renewal-strategy', () => ({ researchRenewalStrategy: research }))
 vi.mock('../../services/map-screening/renewal-history', () => ({ renewalHistory: async () => ({ records: [], official_costs: [] }) }))
 import { registerRenewalMode } from '../../apps/host/renewal-mode'
+// Fencing/storage semantics are exercised against real PGlite in project-context.test.ts.
+// These tests isolate HTTP streaming, progress and the existing cache fallback contract.
+vi.mock('../../apps/host/project-context',async original=>{
+  const actual=await original<typeof import('../../apps/host/project-context')>()
+  return {...actual,beginProjectAnalysis:vi.fn(async(_store:Store,project:ProjectRecord)=>({id:'stream-attempt',generation:1,context:actual.projectContextRef(project),round_id:null})),
+    commitProjectAnalysis:vi.fn(async(...[store,_project,_ticket,packet,persist]:Parameters<typeof actual.commitProjectAnalysis>)=>{await persist?.(store.db,!changed,packet);return {current:!changed,packet}})}
+})
 
 let server: Server | undefined
 let origin = ''
@@ -23,7 +30,7 @@ beforeEach(async () => {
   changed = false; cache = null; inserted = 0
   const input = { ...JSON.parse(readFileSync('fixtures/inputs/01_auto.json', 'utf8')), project_id: 'P-STREAM', business_profile: 'neighborhood', sources: [], facts: [] }
   const project = { id: 'P-STREAM', name: '离线协议样本', context_version: 1, input } as ProjectRecord
-  const store = { db: { exec: vi.fn(), query: vi.fn(async (sql: string) => {
+  const store = { initializeAnalysisContext:vi.fn(), db: { exec: vi.fn(), query: vi.fn(async (sql: string) => {
     if (sql.startsWith('INSERT')) { inserted++; return { rows: [] } }
     return { rows: sql.includes('renewal_strategy_assessments') && cache ? [{ payload: cache }] : [] }
   }) } } as unknown as Store

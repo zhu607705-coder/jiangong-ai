@@ -106,19 +106,19 @@ test('the second review requires consent, submits inherited plus new documents, 
   } finally { await app.cleanup() }
 })
 
-test.each(['round-first', 'public-first'] as const)('a newer same-scope private result wins when responses arrive %s', async order => {
+test.each(['round-first', 'public-first'] as const)('the canonical private result wins independently of history response order %s', async order => {
   const internal = structuredClone(newPacket), publicPlan = packet(2, '较旧公开结果')
   internal.created_at = '2026-10-15T09:00:00Z'; publicPlan.created_at = '2026-10-15T07:00:00Z'
   const history: ResearchRoundsResponse = { rounds: [round('r1', 1, oldPacket), round('r2', 2, internal, [addedMaterial])], materials: [addedMaterial], baseline_candidate: null }
   let finishPublic!: (result: StrategyPacket | null) => void, finishRounds!: (value: ResearchRoundsResponse) => void
   const legacy = new Promise<StrategyPacket | null>(resolve => { finishPublic = resolve }), savedRounds = new Promise<ResearchRoundsResponse>(resolve => { finishRounds = resolve })
-  const app = await mount(history, publicPlan, internal, { legacy: order === 'round-first' ? legacy : undefined, rounds: order === 'public-first' ? savedRounds : undefined, waitForRounds: order !== 'public-first' })
+  const app = await mount(history, internal, internal, { legacy: order === 'round-first' ? legacy : undefined, rounds: order === 'public-first' ? savedRounds : undefined, waitForRounds: order !== 'public-first' })
   try {
     if (order === 'round-first') {
-      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(internal.strategy!.headline))
-      await act(async () => finishPublic(publicPlan))
+      expect(app.container.querySelector('.decision-brief h3')).toBeNull()
+      await act(async () => finishPublic(internal))
     } else {
-      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline))
+      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(internal.strategy!.headline))
       await act(async () => finishRounds(history))
     }
     await vi.waitFor(() => expect(app.container.querySelector('.strategy-working')).toBeNull())
@@ -128,9 +128,11 @@ test.each(['round-first', 'public-first'] as const)('a newer same-scope private 
   } finally { await app.cleanup() }
 })
 
-test('a freshly completed round replaces a public result only through its newer creation timestamp', async () => {
+test('a completed round replaces the prior result through its context generation even with an earlier model timestamp', async () => {
   const publicPlan = packet(2, '较新公开方案'), generated = packet(2, '刚生成的补充研判')
-  publicPlan.created_at = '2026-10-15T10:00:00Z'; generated.created_at = '2026-10-15T11:00:00Z'
+  publicPlan.created_at = '2026-10-15T10:00:00Z'; generated.created_at = '2026-10-15T09:00:00Z'
+  publicPlan.current_context={policy:'project-context-v1',generation:1,attempt_id:'a1',round_id:null,freshness:'current',object_review_required:false}
+  generated.current_context={...publicPlan.current_context,generation:2,attempt_id:'a2',round_id:'r2'}
   const app = await mount({ rounds: [round('r1', 1, oldPacket, [previousMaterial])], materials: [previousMaterial, addedMaterial], baseline_candidate: null }, publicPlan, generated)
   try {
     expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline)
@@ -152,7 +154,7 @@ test.each(['round-first', 'public-first'] as const)('a newer public v6 plan wins
   const app = await mount(history, publicPlan, publicPlan, { legacy: order === 'round-first' ? publicResponse : undefined, rounds: order === 'public-first' ? roundsResponse : undefined, waitForRounds: order !== 'public-first' })
   try {
     if (order === 'round-first') {
-      await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(adopted.strategy!.headline))
+      expect(app.container.querySelector('.decision-brief h3')).toBeNull()
       await act(async () => finishPublic(publicPlan))
     } else {
       await vi.waitFor(() => expect(app.container.querySelector('.decision-brief h3')?.textContent).toBe(publicPlan.strategy!.headline))

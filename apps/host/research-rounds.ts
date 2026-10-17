@@ -9,6 +9,7 @@ import { validate } from '../../packages/contracts/validate'
 import { projectRenewalModeInput } from '../../packages/retrofit/renewal-mode'
 import { STRATEGY_POLICY, validateStrategy, strategySupplementRequests, strategyFailureMessage, type StrategyPacket, type StrategyProgress, type StrategySource } from '../../packages/retrofit/strategy'
 import { RESEARCH_MATERIAL_CATEGORIES, type ResearchMaterial, type ResearchMaterialMetadata, type ResearchRound, type ResearchRoundsResponse, type ResearchRoundStreamEvent } from '../../packages/retrofit/research-rounds'
+import {beginProjectAnalysis,commitProjectAnalysis,type AnalysisTicket} from './project-context'
 
 const sourceDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10) === value)
 const metadataSchema = z.object({ material_category: z.enum(RESEARCH_MATERIAL_CATEGORIES).default('other'), source_date: sourceDate.nullable().default(null) })
@@ -30,6 +31,7 @@ const copy = <T>(value:T):T => structuredClone(value)
 export class ResearchRoundsService {
   constructor(private readonly store:Store, private readonly requireProject:(id:string)=>Promise<ProjectRecord>, private readonly runner:Runner) {}
   async initialize() {
+    await this.store.initializeAnalysisContext()
     await this.store.db.exec(`CREATE TABLE IF NOT EXISTS research_material_metadata (
       owner_id TEXT NOT NULL,project_id TEXT NOT NULL REFERENCES projects(id),document_id TEXT NOT NULL REFERENCES documents(id),metadata JSONB NOT NULL,
       PRIMARY KEY(owner_id,project_id,document_id));
@@ -133,7 +135,7 @@ export class ResearchRoundsService {
       first_round_id:parent?.first_round_id||id,first_input_hash:parent?.first_input_hash||hash,first_context_version:parent?.first_context_version??project.context_version,
       origin:'generated',status:'draft',material_intake:body.material_intake,allow_internal_ai:body.allow_internal_ai,materials,missing_materials:[],result:null,error:null,created_at:now,updated_at:now})},copy(project.input))
   }
-  private async save(project:ProjectRecord,round:ResearchRound) { round.updated_at=new Date().toISOString(); await this.store.db.query('UPDATE renewal_research_rounds SET payload=$1 WHERE id=$2 AND owner_id=$3 AND project_id=$4',[JSON.stringify(round),round.id,project.owner_id,project.id]); return round }
+  private async save(project:ProjectRecord,round:ResearchRound,db=this.store.db) { round.updated_at=new Date().toISOString(); await db.query('UPDATE renewal_research_rounds SET payload=$1 WHERE id=$2 AND owner_id=$3 AND project_id=$4',[JSON.stringify(round),round.id,project.owner_id,project.id]); return round }
   async run(project:ProjectRecord,id:string,signal:AbortSignal,onProgress:(event:StrategyProgress)=>void):Promise<ResearchRound> {
     const stored=await this.stored(project,id),round=stored.payload
     if(round.status==='completed') return round
@@ -145,7 +147,9 @@ export class ResearchRoundsService {
     const claimed=(await this.store.db.query<{payload:ResearchRound}>(`UPDATE renewal_research_rounds SET payload=jsonb_set(payload,'{status}','"running"') WHERE id=$1 AND owner_id=$2 AND project_id=$3 AND payload->>'status'='draft' RETURNING payload`,[id,project.owner_id,project.id])).rows[0]
     if(!claimed) fail(409,'ROUND_RUNNING','本轮正在研究，请等待结果。')
     round.status='running'
+    let ticket:AnalysisTicket|undefined
     try {
+      ticket=await beginProjectAnalysis(this.store,project,round.id)
       const parent=round.parent_round_id?(await this.stored(project,round.parent_round_id)).payload:null
       const sources:StrategySource[]=round.materials.map(material=>{
         const source=snapshot.sources.find(source=>source.id===material.source_id&&source.hash===material.version)
@@ -155,14 +159,20 @@ export class ResearchRoundsService {
       })
       const result=await this.runner({...project,input:snapshot},round.input_hash,signal,{round_id:round.id,round_number:round.round_number,allow_internal_ai:round.allow_internal_ai,materials:round.materials,sources,parent:parent?{id:parent.id,input_hash:parent.input_hash,context_version:parent.context_version,result:parent.result}:null,first_round_id:round.first_round_id,first_input_hash:round.first_input_hash,first_context_version:round.first_context_version},onProgress)
       // Preserve the actual output for audit even when a later upload makes it obsolete.
-      round.result=result; round.missing_materials=[...(result.strategy?.round_review?.missing_materials||[]),...strategySupplementRequests(result.content_review),...assessmentSupplementRequests(result)]
+      round.result=result;signal.throwIfAborted()
+      round.missing_materials=[...(result.strategy?.round_review?.missing_materials||[]),...strategySupplementRequests(result.content_review),...assessmentSupplementRequests(result)]
       const current=await this.requireProject(project.id)
       if(current.context_version!==round.context_version) {round.status='obsolete';round.error='研究期间项目资料已变化，本轮结果保留为历史，请按当前资料创建新轮次。'}
       else {round.status=result.status==='completed'?'completed':'failed';round.error=result.status==='completed'?null:strategyFailureMessage(result)}
-      return await this.save(project,round)
+      await commitProjectAnalysis(this.store,project,ticket,result,async(db,_active,packet)=>{
+        round.result=packet;round.missing_materials=[...(packet.strategy?.round_review?.missing_materials||[]),...strategySupplementRequests(packet.content_review),...assessmentSupplementRequests(packet)]
+        await this.save(project,round,db)
+      })
+      return round
     } catch(error) {
       round.status='failed';round.error=signal.aborted?'本轮研究已停止，上一轮结果仍保留。':'本轮研究未完成，上一轮结果仍保留；请查看资料后新建研究轮次。'
       await this.save(project,round)
+      if(ticket)await this.store.db.query("UPDATE project_analysis_attempts SET status='failed' WHERE id=$1 AND owner_id=$2 AND project_id=$3 AND status='running'",[ticket.id,project.owner_id,project.id])
       if(error instanceof ResearchRoundError) throw error
       return round
     }

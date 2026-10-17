@@ -4103,5 +4103,66 @@
     "known_limitations": [
       "Project P-0e40c5dd scope is registered as Tianjin while its existing analysis contains Hangzhou case material; this change preserves project inputs and does not certify the historical analysis factual identity."
     ]
+  },
+  "project_context_contract_20261017": {
+    "status": "implementation_and_regressions_verified_deployment_pending",
+    "updated_at": "2026-10-17T02:57:55.010678+00:00",
+    "scope": "Pro review first work order: object and canonical current-context contract, fenced result commit, shared Decision question limit, affected interface mocks.",
+    "changed_files": [
+      ".gitattributes",
+      "agent/mission.md",
+      "apps/host/project-decision.ts",
+      "apps/host/renewal-mode.ts",
+      "apps/host/research-rounds.ts",
+      "apps/host/store.ts",
+      "apps/host/strategy-publication.ts",
+      "apps/workspace/src/App.tsx",
+      "apps/workspace/src/components/ProjectOverview.tsx",
+      "apps/workspace/src/components/StrategyOverview.tsx",
+      "packages/decision/project-guidance.ts",
+      "packages/research/evidence.ts",
+      "packages/retrofit/renewal-mode.ts",
+      "packages/retrofit/strategy.ts",
+      "services/capabilities/decision-model.ts",
+      "services/map-screening/renewal-strategy.ts",
+      "tests/contracts/experience-learning.test.ts",
+      "tests/contracts/floating-evidence-search.test.ts",
+      "tests/contracts/project-decision.test.ts",
+      "tests/contracts/project-overview.test.ts",
+      "tests/contracts/public-decision-entry.test.ts",
+      "tests/contracts/renewal-mode-stream.test.ts",
+      "tests/contracts/research-rounds-ui.test.ts",
+      "tests/contracts/retrieval-workspace-navigation.test.ts",
+      "tests/contracts/strategy-stream-api.test.ts",
+      "apps/host/project-context.ts",
+      "packages/retrofit/project-context.ts",
+      "packages/retrofit/object-binding.ts",
+      "tests/contracts/project-context.test.ts",
+      "scripts/check-project-context-live.py",
+      "docs/对象与当前上下文合同.md",
+      "docs/reviews/Pro架构评审结论_20261017.md"
+    ],
+    "tests": {
+      "context_and_stream": "34 passed in 5 files",
+      "app_integration": "104 passed plus pre-existing experience cutoff failure subsequently fixed",
+      "final_context": "23 passed in 3 files (includes additional late-round legacy-fallback case)",
+      "baseline_fixes": "22 passed in 2 files; raw snapshot Git bytes match recorded SHA; research day read from DB",
+      "full_suite_snapshot": "130 files passed, 3 failed; 1643 tests passed, 2 failed, 9 skipped; all three remaining failures isolated and subsequently fixed/retested (corpus suite, experience cutoff, obsolete workspace mock)",
+      "full_suite_snapshot_log": "research/test_results/context-contract-final-suite-20261017.log",
+      "baseline_reproduction_log": "research/test_results/context-contract-existing-baseline-20261017.log",
+      "production_build": "TypeScript and Vite passed; final deployment build being read back"
+    },
+    "artifacts": [
+      "docs/对象与当前上下文合同.md",
+      "docs/reviews/Pro架构评审结论_20261017.md",
+      "research/test_results/context-contract-verification-20261017.json"
+    ],
+    "unresolved_questions": [
+      "No new Search/Fetch provider A/B",
+      "No business expert node restart recovery",
+      "No domain decision-quality or enterprise effectiveness validation",
+      "No automatic full project/model research"
+    ],
+    "next_runnable_task": "Complete final regression readback, deploy the scoped patch, verify canonical reads without model calls, and merge while preserving root dirty changes."
   }
 }

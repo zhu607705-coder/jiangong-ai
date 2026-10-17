@@ -28,6 +28,10 @@ beforeEach(() => {
   container = window.document.getElementById('root') as unknown as HTMLElement
   root = createRoot(container)
   vi.mocked(api).mockReset(); vi.mocked(api).mockResolvedValue(response())
+  vi.stubGlobal('fetch',vi.fn(async(url:string,init:RequestInit)=>{
+    const result=await api(url.replace(/^\/api/,''),JSON.parse(String(init.body)),init.signal as AbortSignal)
+    return new Response(JSON.stringify({type:'complete',result})+'\n',{headers:{'Content-Type':'application/x-ndjson'}})
+  }))
 })
 afterEach(async () => { await act(async () => root.unmount()); vi.unstubAllGlobals() })
 const click = async (selector: string) => { const button = container.querySelector<HTMLButtonElement>(selector)!; expect(button).toBeTruthy(); await act(async () => button.click()); return button }

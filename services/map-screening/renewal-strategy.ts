@@ -14,6 +14,7 @@ import type { ResearchRoundContext } from '../../apps/host/research-rounds'
 import { runRenewalResearch } from '../../runtime/workflows/renewal-research'
 import { loadRenewalAgentProfile } from '../../runtime/agents/renewal/profiles'
 import {captureCurrentAssessment} from '../../packages/retrofit/strategy-assessment'
+import {bindStrategySource} from '../../packages/retrofit/object-binding'
 
 /** Small contiguous quote choices, using the same line/excerpt approach as the demo prompt. */
 function sourceQuoteCandidates(sources:readonly StrategySource[],priorityIds:readonly string[]=[]) {
@@ -84,6 +85,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
       }
       base.research=options.savedResearch.research?{...structuredClone(options.savedResearch.research),source_ids:options.savedResearch.research.source_ids.filter(id=>!deniedIds.has(id)),reused:true}:null
     }
+    sources=sources.map(source=>bindStrategySource(source,project))
     base.sources = sources
     progress({ stage: 'sources', status: 'completed', message: `已读取 ${sources.length} 份对象依据，准备核对公开案例。`, source_count: sources.length })
     live = await LiveSession.open('MAP-AI-STRATEGY-' + randomUUID(), budget)
@@ -100,7 +102,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
         }
         const fetched = new Set<string>()
         progress({ stage: 'research', status: 'running', message: `第 ${index + 1}/${rounds.length} 轮：${round.label}。`, query_count: base.research.queries.length, source_count: sources.length, round: index + 1, round_count: rounds.length })
-        const research = await live.runReadCapability(`renewal_public_research_${round.key}`, toolSignal => collectSelectedEvidence({ name, city: project.scope.city || '杭州', purpose: '老旧小区改造模式、综合整治与原拆原建比选', asOf: base.created_at, intelligencePolicy:{readExisting:true,rememberNew:true,checkFreshness:true} }, toolSignal, event => {
+        const research = await live.runReadCapability(`renewal_public_research_${round.key}`, toolSignal => collectSelectedEvidence({ name, city: project.scope.city || '', purpose: '老旧小区改造模式、综合整治与原拆原建比选', asOf: base.created_at, intelligencePolicy:{readExisting:true,rememberNew:true,checkFreshness:true} }, toolSignal, event => {
           if (event.stage === 'fetch' && event.status === 'completed' && event.source_id) fetched.add(event.source_id)
           progress({ stage: 'research', status: 'running', message: event.stage === 'fetch' ? `第 ${index + 1}/${rounds.length} 轮已取得 ${fetched.size} 份公开来源，继续核对正文。` : `第 ${index + 1}/${rounds.length} 轮正在检索并整理公开来源。`, source_count: sources.length + fetched.size, query_count: base.research!.queries.length, round: index + 1, round_count: rounds.length })
         }, undefined, round.queries)).catch(error=>{
@@ -137,6 +139,7 @@ export async function researchRenewalStrategy(project: ProjectInput, version: nu
           conditions:screening.conditions.map(condition=>({...condition,value:null,state:'unknown',source_ids:[],locators:[]})),
           evidence:[{source_id:'SIM-STRATEGY-BASE',title:sources[0].title,published_at:'2026-10-13',locator:sources[0].locator,quote:sources[0].text,url:null}] } }
     }
+    sources=sources.map(source=>bindStrategySource(source,project))
     base.sources = sources
     if (!synthetic && config.searchConfigured && !options.savedResearch) progress({ stage: 'research', status: 'completed', message: `已整理 ${sources.length} 份对象依据与对标资料。`, source_count: sources.length, query_count: base.research?.queries.length || 0 })
     progress({ stage: 'model', status: 'running', message: '正在综合原文，提出更新取舍、投入阶段与财务及社会效果建议。', source_count: sources.length })

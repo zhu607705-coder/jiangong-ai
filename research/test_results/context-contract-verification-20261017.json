@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-17T03:01:01.909133+00:00",
+  "scope": "Pro review first work order; canonical object/current result contract",
+  "base_commit": "29f5ef08d8c520c09752278574732b53cc28a485",
+  "pro_review_sha256": "6f8bc44cac8c995e2caebfe3123f8143e0f81d3f22ede37a673a8a662e79b0e6",
+  "checks": {
+    "context_and_stream": "34 passed in 5 files",
+    "app_integration": "104 passed plus pre-existing experience cutoff failure subsequently fixed",
+    "final_context": "23 passed in 3 files (includes additional late-round legacy-fallback case)",
+    "baseline_fixes": "22 passed in 2 files; raw snapshot Git bytes match recorded SHA; research day read from DB",
+    "full_suite_snapshot": "130 files passed, 3 failed; 1643 tests passed, 2 failed, 9 skipped; all three remaining failures isolated and subsequently fixed/retested (corpus suite, experience cutoff, obsolete workspace mock)",
+    "full_suite_snapshot_log": "research/test_results/context-contract-final-suite-20261017.log",
+    "baseline_reproduction_log": "research/test_results/context-contract-existing-baseline-20261017.log",
+    "production_build": "TypeScript and Vite passed; final deployment build being read back"
+  },
+  "not_claimed": [
+    "No new Search/Fetch provider A/B",
+    "No business expert node restart recovery",
+    "No domain decision-quality or enterprise effectiveness validation",
+    "No automatic full project/model research"
+  ],
+  "next_batch": "Existing workflow node receipts and recovery, answer-slot coverage and controlled supplementation before provider experiments."
+}
