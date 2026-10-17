@@ -1,0 +1,99 @@
+{
+  "search": {
+    "provider": "deepseek_content",
+    "source_count": 1,
+    "elapsed_ms": 689,
+    "attempts": [
+      {
+        "operation": "search",
+        "outcome": "received",
+        "billing_state": "expected_charge",
+        "duration_ms": 581
+      }
+    ],
+    "intelligence_writes": false
+  },
+  "decision": {
+    "status": "completed",
+    "elapsed_ms": 416,
+    "valid_answers": 38,
+    "batches": [
+      {
+        "question_ids": [
+          "q0",
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q5",
+          "q6",
+          "q7",
+          "q8",
+          "q9",
+          "q10",
+          "q11",
+          "q12",
+          "q13",
+          "q14",
+          "q15"
+        ],
+        "request_id": "083ce193-a542-4c5c-a7f7-53b6e51a39c3",
+        "status": "received",
+        "input_tokens": 555,
+        "latency_ms": 300
+      },
+      {
+        "question_ids": [
+          "q16",
+          "q17",
+          "q18",
+          "q19",
+          "q20",
+          "q21",
+          "q22",
+          "q23",
+          "q24",
+          "q25",
+          "q26",
+          "q27",
+          "q28",
+          "q29",
+          "q30",
+          "q31"
+        ],
+        "request_id": "8912bd63-ee43-4f5a-817f-81958e4755d1",
+        "status": "received",
+        "input_tokens": 555,
+        "latency_ms": 305
+      },
+      {
+        "question_ids": [
+          "q32",
+          "q33",
+          "q34",
+          "q35",
+          "q36",
+          "q37"
+        ],
+        "request_id": "f2a18c98-0f02-40ba-9b82-dc309119cf56",
+        "status": "received",
+        "input_tokens": 215,
+        "latency_ms": 110
+      }
+    ],
+    "calibration_status": "uncalibrated"
+  },
+  "project_writes": 0,
+  "scope": "Public provider and synthetic typed-batch protocol probes only; no business-quality labels.",
+  "checked_at": "2026-10-17T04:44:50.854104+00:00",
+  "release": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "cb0a9bd75496b4733c60c35df84e933d613abd65",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified"
+  },
+  "projects_unchanged": true
+}
