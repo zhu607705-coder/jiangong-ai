@@ -1,0 +1,48 @@
+{
+  "activated_at": "2026-10-18T10:29:23.268406+00:00",
+  "server": "10.70.223.113",
+  "flags": {
+    "INTELLIGENCE_CAMPAIGN_SPEND_APPROVED": "true",
+    "INTELLIGENCE_CAMPAIGN_APPROVED_DAILY_CNY": "6"
+  },
+  "credential_file_mode": "0o600",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/corpus-campaign-backups/20261018T102920Z",
+  "old_env_sha256": "51f6af81988e7ec58a2e92a9fc851c2c3d0ae4b6061fc85e6f4ef0f819720703",
+  "project_count": 38,
+  "project_metadata_unchanged": true,
+  "campaign": {
+    "policy": "public-corpus-v1",
+    "id": 1,
+    "enabled": true,
+    "daily_search_limit": 1000,
+    "daily_fetch_limit": 200,
+    "daily_cny_limit": 6,
+    "cursor": 0,
+    "next_at": "2026-10-18T10:29:22.827Z",
+    "error": null,
+    "cost_approved": true,
+    "approved_daily_cny": 6,
+    "day": "2026-10-18",
+    "timezone": "Asia/Shanghai",
+    "usage": {
+      "search_attempts": 0,
+      "fetch_attempts": 0,
+      "successful": 0,
+      "unknown": 0,
+      "estimated_cny": 0
+    },
+    "archive": {
+      "versions": 530,
+      "chunks": 4791
+    },
+    "query_pool": 8640,
+    "recent": [],
+    "storage": "corpus-public",
+    "search_unit_cny": 0.005,
+    "fetch_unit_cny": 0.005,
+    "uses_model_for_search": false,
+    "model_daily_budget": 40,
+    "pricing_source": "https://api-docs.deepseek.com/zh-cn/guides/search/",
+    "schedule": "均匀分布全天；同题至少间隔7天，正文7天复查；无结果也计入本地调用上限"
+  }
+}

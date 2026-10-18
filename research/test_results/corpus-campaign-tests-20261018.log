@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/public-corpus-campaign
+
+
+ Test Files  5 passed (5)
+      Tests  77 passed (77)
+   Start at  18:21:41
+   Duration  16.03s (transform 530ms, setup 0ms, import 2.01s, tests 13.42s, environment 0ms)
+

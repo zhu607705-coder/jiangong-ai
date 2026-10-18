@@ -15,7 +15,7 @@ export function registerIntelligence(app:Express,store:Store){
     try{await intel.ready;await fn(req,res)}catch(e){
       const message=e instanceof Error?e.message:'INTELLIGENCE_UNAVAILABLE'
       const code=/^[A-Z][A-Z0-9_]+$/.test(message)?message:'INTELLIGENCE_REQUEST_FAILED'
-      const details:Record<string,string>={PROJECT_VERSION_CONFLICT:'项目资料已变化，请重新选择项目后加入。',PUBLIC_ORIGINAL_REQUIRED:'只接收公开、非合成的原始材料。',ORIGINAL_BODY_REQUIRED:'尚未取得原文，先补取材料再加入项目。',RECEIPT_REVIEW_REQUIRED:'上次付费调用结果不确定；请先核对回执，不能自动重复调用。',DATASET_FAMILY_SPLIT_CONFLICT:'同源或同事件资料不能分到不同数据集。',BLOCKED_EXTERNAL_MODEL:'模型尚未配置，已有资料仍可检索。',SOURCE_SCHEMA_CHANGED:'来源页面结构已变化，请检查映射。'}
+      const details:Record<string,string>={CAMPAIGN_COST_APPROVAL_REQUIRED:'独立搜索和抓取按成功请求计费，请先确认日预算，再启用持续采集。',CORPUS_DISK_LOW:'磁盘可用空间低于保留值，采集已延后。',CAMPAIGN_DAILY_LIMIT:'今天的采集次数或费用额度已用完，后续任务等待下一日。',PROJECT_VERSION_CONFLICT:'项目资料已变化，请重新选择项目后加入。',PUBLIC_ORIGINAL_REQUIRED:'只接收公开、非合成的原始材料。',ORIGINAL_BODY_REQUIRED:'尚未取得原文，先补取材料再加入项目。',RECEIPT_REVIEW_REQUIRED:'上次付费调用结果不确定；请先核对回执，不能自动重复调用。',DATASET_FAMILY_SPLIT_CONFLICT:'同源或同事件资料不能分到不同数据集。',BLOCKED_EXTERNAL_MODEL:'模型尚未配置，已有资料仍可检索。',SOURCE_SCHEMA_CHANGED:'来源页面结构已变化，请检查映射。'}
       if(!res.headersSent)res.status(code==='PROJECT_VERSION_CONFLICT'?409:422).json({code,detail:details[code]||'操作未完成，请检查输入或任务状态。'})
     }
   }
@@ -23,7 +23,10 @@ export function registerIntelligence(app:Express,store:Store){
     decision_configured:config.decisionConfigured,decision_enabled:config.decisionEnabled,
     selection_threshold:Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65),daily_model_budget:Number(process.env.INTELLIGENCE_DAILY_MODEL_CALLS||40),
     collection_enabled:process.env.INTELLIGENCE_COLLECTION_ENABLED==='true',model_auto_enabled:process.env.INTELLIGENCE_MODEL_ENABLED==='true',
-    database:await intel.repo.stats(),knowledge:await intel.repo.knowledgeStats(config.ownerId),jobs:await intel.repo.jobs(),channels:await intel.repo.channels(),scope:'local_public_intelligence',weight_training_started:false})))
+    database:await intel.repo.stats(),knowledge:await intel.repo.knowledgeStats(config.ownerId),campaign:await intel.campaign.status(),jobs:await intel.repo.jobs(),channels:await intel.repo.channels(),scope:'local_public_intelligence',weight_training_started:false})))
+  app.get('/api/intelligence/campaign',route(async(_req,res)=>res.json(await intel.campaign.status())))
+  app.post('/api/intelligence/campaign',route(async(req,res)=>{const b=z.object({enabled:z.boolean(),daily_search_limit:z.number().int().min(1).max(1000).default(1000),daily_fetch_limit:z.number().int().min(0).max(1000).default(200),daily_cny_limit:z.number().min(0).max(10).default(6)}).strict().parse(req.body);await intel.configureCampaign(b);res.json(await intel.campaign.status())}))
+  app.post('/api/intelligence/campaign/snapshot',route(async(_req,res)=>{res.status(202).json(await intel.campaign.queueSnapshot());void intel.tick().catch(()=>console.warn('CORPUS_SNAPSHOT_FAILED'))}))
   app.get('/api/intelligence/search',route(async(req,res)=>{
     const q=z.object({q:z.string().max(300).optional(),city:z.string().max(80).optional(),category:z.enum(CATEGORIES).optional(),as_of:z.string().max(40).optional(),limit:z.coerce.number().int().min(1).max(40).optional(),offset:z.coerce.number().int().min(0).max(380).optional()}).strict().parse(req.query)
     if(q.as_of&&!Number.isFinite(Date.parse(q.as_of)))throw new Error('INVALID_DATE')

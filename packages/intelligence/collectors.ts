@@ -36,21 +36,23 @@ export function listLinks(raw:string,channel:Channel):Link[]{
   if(nodes.length&&!out.length)throw new Error('SOURCE_SCHEMA_CHANGED')
   return [...new Map(out.map(x=>[x.url,x])).values()]
 }
-export async function collectChannel(channel:Channel,signal:AbortSignal,onSource:(s:Source)=>Promise<void>,injected?:ResearchWeb):Promise<{saved:number;failed:number}>{
-  if(channel.kind==='external')return {saved:0,failed:0}
-  const ctx=injected?null:new Context();let web=injected,saved=0,failed=0
+export type CollectionOptions={query?:string;maxResults?:number;validate_network?:boolean;shouldFetch?:(url:string)=>Promise<boolean>}
+export async function collectChannel(channel:Channel,signal:AbortSignal,onSource:(s:Source,raw?:string)=>Promise<void>,injected?:ResearchWeb,options:CollectionOptions={}):Promise<{saved:number;failed:number;skipped:number}>{
+  if(channel.kind==='external')return {saved:0,failed:0,skipped:0}
+  const ctx=injected?null:new Context();let web=injected,saved=0,failed=0,skipped=0
   try{
     if(ctx){await mountPublicWeb(ctx,{maxRedirects:0,provider:'legacy'});web=ctx.web as unknown as ResearchWeb}
-    const get=async(url:string)=>{signal.throwIfAborted();safeUrl(url,channel.domains);if(!injected)await validateNetwork(url);const r=await web!.fetch({url},signal);if(r.statusCode<200||r.statusCode>=300)throw new Error('SOURCE_HTTP_'+r.statusCode);return r}
+    const get=async(url:string)=>{signal.throwIfAborted();safeUrl(url,channel.domains);if(!injected||options.validate_network)await validateNetwork(url);const r=await web!.fetch({url},signal);if(r.statusCode<200||r.statusCode>=300)throw new Error('SOURCE_HTTP_'+r.statusCode);return r}
     let links:Link[]
     if(channel.kind==='native_search'){
-      const query=`${channel.city} ${channel.config.query} site:${channel.domains[0]}`.trim()
-      const hits=await web!.search({query,maxResults:8},signal)
+      const query=options.query??`${channel.city} ${channel.config.query} site:${channel.domains[0]}`.trim()
+      const hits=await web!.search({query,maxResults:options.maxResults??8},signal)
       links=hits.sources.flatMap(h=>{try{return [{title:(h.title||h.url).slice(0,240),url:safeUrl(h.url,channel.domains),published_at:dateOrNull(h.publishedAt)}]}catch{return []}})
     }else{const page=await get(channel.url);if(page.truncated)throw new Error('SOURCE_LIST_TRUNCATED');links=listLinks(page.body.content,channel)}
-    for(const hit of links.slice(0,10)){
+    for(const hit of links.slice(0,options.maxResults??10)){
       signal.throwIfAborted()
       try{
+        if(options.shouldFetch&&!await options.shouldFetch(hit.url)){skipped++;continue}
         const page=await get(hit.url),raw=page.body.content
         // Do not feed a binary PDF to an HTML parser or claim it was successfully read.
         if(raw.startsWith('%PDF'))throw new Error('SOURCE_REQUIRES_EXISTING_FILE_PARSER')
@@ -65,9 +67,9 @@ export async function collectChannel(channel:Channel,signal:AbortSignal,onSource
         if(adapted.receipt.status==='access_required'||!text){source.content_status='metadata_only';source.untrusted_text='';source.hash=hash('')}
         source.public_records=source.content_status==='metadata_only'?[]:adapted.records.slice(0,50)
         source.records_truncated=adapted.records.length>50||adapted.receipt.status==='truncated'
-        await onSource(source);saved++
+        await onSource(source,raw);saved++
       }catch{signal.throwIfAborted();failed++}
     }
-    return {saved,failed}
+    return {saved,failed,skipped}
   }finally{if(ctx)await ctx.fiber.dispose()}
 }

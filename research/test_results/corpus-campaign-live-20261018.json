@@ -1,0 +1,365 @@
+{
+  "checked_at": "2026-10-18T10:28:23.194710+00:00",
+  "before": {
+    "database": {
+      "documents": 177,
+      "versions": 561,
+      "pending": 0
+    },
+    "knowledge": {
+      "model_calls_today": 4,
+      "analyzed": 2,
+      "needs_review": 1,
+      "structured": 2,
+      "events": 2,
+      "stories": 2,
+      "project_links": 2590,
+      "linked_projects": 23
+    },
+    "model_auto_enabled": true,
+    "collection_enabled": false,
+    "daily_model_budget": 40
+  },
+  "after": {
+    "database": {
+      "documents": 177,
+      "versions": 561,
+      "pending": 0
+    },
+    "knowledge": {
+      "model_calls_today": 4,
+      "analyzed": 2,
+      "needs_review": 1,
+      "structured": 2,
+      "events": 2,
+      "stories": 2,
+      "project_links": 2590,
+      "linked_projects": 23
+    },
+    "model_auto_enabled": true,
+    "collection_enabled": false,
+    "daily_model_budget": 40
+  },
+  "archive_jobs": [],
+  "sample_search": {
+    "items": [
+      {
+        "id": "ID-9ebb269c3b59ae297d6d7742",
+        "story_id": "ID-9ebb269c3b59ae297d6d7742",
+        "representative": {
+          "id": "ID-9ebb269c3b59ae297d6d7742",
+          "version": "3e2f2f363513eed45855edd007c8340a5ae5ecf7664e799d78768d17012db519",
+          "title": "【咨询协商会】关于《浙大求是社区求是村75幢1单元加装电梯项目》咨询协商会举行",
+          "url": "http://www.hzxh.gov.cn/art/2024/11/6/art_1229516984_59042361.html",
+          "published_at": "2024-11-06T00:00:00.000Z",
+          "ingested_at": "2026-10-10T09:33:56.147Z",
+          "city": "",
+          "category": "other",
+          "dimensions": [],
+          "status": "unscored",
+          "selected": false,
+          "event_id": "ID-9ebb269c3b59ae297d6d7742",
+          "story_id": "ID-9ebb269c3b59ae297d6d7742",
+          "relation": "UNRELATED",
+          "publisher_group": "www.hzxh.gov.cn",
+          "channel_id": "project-research",
+          "date_status": "verified",
+          "content_status": "full_text",
+          "summary": null,
+          "score": null,
+          "issue": null
+        },
+        "items": [
+          {
+            "id": "ID-9ebb269c3b59ae297d6d7742",
+            "version": "3e2f2f363513eed45855edd007c8340a5ae5ecf7664e799d78768d17012db519",
+            "title": "【咨询协商会】关于《浙大求是社区求是村75幢1单元加装电梯项目》咨询协商会举行",
+            "url": "http://www.hzxh.gov.cn/art/2024/11/6/art_1229516984_59042361.html",
+            "published_at": "2024-11-06T00:00:00.000Z",
+            "ingested_at": "2026-10-10T09:33:56.147Z",
+            "city": "",
+            "category": "other",
+            "dimensions": [],
+            "status": "unscored",
+            "selected": false,
+            "event_id": "ID-9ebb269c3b59ae297d6d7742",
+            "story_id": "ID-9ebb269c3b59ae297d6d7742",
+            "relation": "UNRELATED",
+            "publisher_group": "www.hzxh.gov.cn",
+            "channel_id": "project-research",
+            "date_status": "verified",
+            "content_status": "full_text",
+            "summary": null,
+            "score": null,
+            "issue": null
+          }
+        ],
+        "momentum": {
+          "participants": 0,
+          "heat": 0
+        },
+        "source_channels": 1
+      },
+      {
+        "id": "ID-fa8ee5f1fe5b8917552adbc5",
+        "story_id": "ID-fa8ee5f1fe5b8917552adbc5",
+        "representative": {
+          "id": "ID-fa8ee5f1fe5b8917552adbc5",
+          "version": "d6a6a7f570a2968005628e5844bdf48950cffc965adcddf3dccaddccfb79d68d",
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+          "url": "http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html",
+          "published_at": "2024-09-18T00:00:00.000Z",
+          "ingested_at": "2026-10-18T02:52:06.091Z",
+          "city": "杭州市",
+          "category": "other",
+          "dimensions": [],
+          "status": "unscored",
+          "selected": false,
+          "event_id": "ID-fa8ee5f1fe5b8917552adbc5",
+          "story_id": "ID-fa8ee5f1fe5b8917552adbc5",
+          "relation": "UNRELATED",
+          "publisher_group": "www.hzxh.gov.cn",
+          "channel_id": "project-research",
+          "date_status": "verified",
+          "content_status": "excerpt",
+          "summary": null,
+          "score": null,
+          "issue": null
+        },
+        "items": [
+          {
+            "id": "ID-fa8ee5f1fe5b8917552adbc5",
+            "version": "d6a6a7f570a2968005628e5844bdf48950cffc965adcddf3dccaddccfb79d68d",
+            "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+            "url": "http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html",
+            "published_at": "2024-09-18T00:00:00.000Z",
+            "ingested_at": "2026-10-18T02:52:06.091Z",
+            "city": "杭州市",
+            "category": "other",
+            "dimensions": [],
+            "status": "unscored",
+            "selected": false,
+            "event_id": "ID-fa8ee5f1fe5b8917552adbc5",
+            "story_id": "ID-fa8ee5f1fe5b8917552adbc5",
+            "relation": "UNRELATED",
+            "publisher_group": "www.hzxh.gov.cn",
+            "channel_id": "project-research",
+            "date_status": "verified",
+            "content_status": "excerpt",
+            "summary": null,
+            "score": null,
+            "issue": null
+          }
+        ],
+        "momentum": {
+          "participants": 0,
+          "heat": 0
+        },
+        "source_channels": 1
+      },
+      {
+        "id": "EV-5a1087c5c80bc02f40e08c58",
+        "story_id": "EV-5a1087c5c80bc02f40e08c58",
+        "representative": {
+          "id": "ID-6830646647034e8b5677c438",
+          "version": "3f29bbd05253bcf7808c58a39fb0819e0c3c908f126d055dc01963a449273d56",
+          "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+          "url": "https://www.hzxh.gov.cn/api-gateway/jpaas-web-server/front/document/file-download?fileUrl=/cms_files/jcms1/web1838/site/attach/0/7189c231fdf6439fbc9db35e125e1352.doc",
+          "published_at": "2024-09-18T00:00:00.000Z",
+          "ingested_at": "2026-10-18T02:52:05.899Z",
+          "city": "杭州市",
+          "category": "planning",
+          "dimensions": [
+            "demand",
+            "resources",
+            "implementation"
+          ],
+          "status": "ready",
+          "selected": false,
+          "event_id": "EV-5a1087c5c80bc02f40e08c58",
+          "story_id": "EV-5a1087c5c80bc02f40e08c58",
+          "relation": "UNRELATED",
+          "publisher_group": "www.hzxh.gov.cn",
+          "channel_id": "project-research",
+          "date_status": "verified",
+          "content_status": "excerpt",
+          "summary": "2024年9月18日发布的求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件载明：估算总投资约54万元，建设资金来自市区补助及自筹。该草案处于征求意见阶段，尚未体现决策通过、开工或完工结果。",
+          "score": 41,
+          "issue": null
+        },
+        "items": [
+          {
+            "id": "ID-6830646647034e8b5677c438",
+            "version": "3f29bbd05253bcf7808c58a39fb0819e0c3c908f126d055dc01963a449273d56",
+            "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+            "url": "https://www.hzxh.gov.cn/api-gateway/jpaas-web-server/front/document/file-download?fileUrl=/cms_files/jcms1/web1838/site/attach/0/7189c231fdf6439fbc9db35e125e1352.doc",
+            "published_at": "2024-09-18T00:00:00.000Z",
+            "ingested_at": "2026-10-18T02:52:05.899Z",
+            "city": "杭州市",
+            "category": "planning",
+            "dimensions": [
+              "demand",
+              "resources",
+              "implementation"
+            ],
+            "status": "ready",
+            "selected": false,
+            "event_id": "EV-5a1087c5c80bc02f40e08c58",
+            "story_id": "EV-5a1087c5c80bc02f40e08c58",
+            "relation": "UNRELATED",
+            "publisher_group": "www.hzxh.gov.cn",
+            "channel_id": "project-research",
+            "date_status": "verified",
+            "content_status": "excerpt",
+            "summary": "2024年9月18日发布的求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件载明：估算总投资约54万元，建设资金来自市区补助及自筹。该草案处于征求意见阶段，尚未体现决策通过、开工或完工结果。",
+            "score": 41,
+            "issue": null
+          }
+        ],
+        "momentum": {
+          "participants": 0,
+          "heat": 0
+        },
+        "source_channels": 1
+      },
+      {
+        "id": "ID-139d520c14eb96dbb082ba53",
+        "story_id": "ID-139d520c14eb96dbb082ba53",
+        "representative": {
+          "id": "ID-139d520c14eb96dbb082ba53",
+          "version": "ef27852603cf978fb08698607147858336ba965152f7748a5154ab0bbc012685",
+          "title": "灵隐街道办事处关于公布《2024年下半年灵隐街道办事处重大行政决策事项目录》的通知",
+          "url": "http://www.hzxh.gov.cn/art/2024/9/14/art_1229516987_59041228.html",
+          "published_at": "2024-09-14T00:00:00.000Z",
+          "ingested_at": "2026-10-18T02:52:06.099Z",
+          "city": "杭州市",
+          "category": "other",
+          "dimensions": [],
+          "status": "unscored",
+          "selected": false,
+          "event_id": "ID-139d520c14eb96dbb082ba53",
+          "story_id": "ID-139d520c14eb96dbb082ba53",
+          "relation": "UNRELATED",
+          "publisher_group": "www.hzxh.gov.cn",
+          "channel_id": "project-research",
+          "date_status": "verified",
+          "content_status": "excerpt",
+          "summary": null,
+          "score": null,
+          "issue": null
+        },
+        "items": [
+          {
+            "id": "ID-139d520c14eb96dbb082ba53",
+            "version": "ef27852603cf978fb08698607147858336ba965152f7748a5154ab0bbc012685",
+            "title": "灵隐街道办事处关于公布《2024年下半年灵隐街道办事处重大行政决策事项目录》的通知",
+            "url": "http://www.hzxh.gov.cn/art/2024/9/14/art_1229516987_59041228.html",
+            "published_at": "2024-09-14T00:00:00.000Z",
+            "ingested_at": "2026-10-18T02:52:06.099Z",
+            "city": "杭州市",
+            "category": "other",
+            "dimensions": [],
+            "status": "unscored",
+            "selected": false,
+            "event_id": "ID-139d520c14eb96dbb082ba53",
+            "story_id": "ID-139d520c14eb96dbb082ba53",
+            "relation": "UNRELATED",
+            "publisher_group": "www.hzxh.gov.cn",
+            "channel_id": "project-research",
+            "date_status": "verified",
+            "content_status": "excerpt",
+            "summary": null,
+            "score": null,
+            "issue": null
+          }
+        ],
+        "momentum": {
+          "participants": 0,
+          "heat": 0
+        },
+        "source_channels": 1
+      }
+    ],
+    "total_in_window": 4,
+    "truncated": false,
+    "scope": {
+      "q": "75幢1单元",
+      "limit": 40
+    },
+    "mode": "postgres_fts_event_grouped",
+    "generated_at": "2026-10-18T10:28:11.362Z"
+  },
+  "native": null,
+  "disk": {
+    "root": "/home/zhuhangcheng/apps/haizhizi/shared/data/corpus-public",
+    "versions": 530,
+    "documents": 146,
+    "chunks": 4791,
+    "sample": [
+      {
+        "id": "ID-f534635ea875d96c04779f13",
+        "version": "e7e2e3a6f69ec15da5fb48feace88eca49f4a9942e091a286c7dd0cba9b3b139",
+        "title": "径山镇求是村古树议站建设项目交易公告",
+        "url": "http://www.yuhang.gov.cn/col/col1229374038/art/2026/art_0d24efa7771644759691e1579d511b7d.html",
+        "chunks": 4,
+        "body_sha256": "605c4e2e28781f4471306f73f5b1247b9c396256f679afee409a14a7c3e5cf66"
+      },
+      {
+        "id": "ID-ecc3b27872611f08ee8ce93e",
+        "version": "90631fd98148139712493e7ebdabed839ad72f253e3863be835d38b6299d114b",
+        "title": "全市成套改造体量最大项目 凤南一村旧住房更新开工",
+        "url": "https://www.shanghai.gov.cn/nw4411/20240628/e6c15eb4d57b4bbf949489c86701911d.html",
+        "chunks": 20,
+        "body_sha256": "1ad7e33675eee964a12374e24af8cc0a780709b6bbc2a41ef4ad60fc51fe7503"
+      },
+      {
+        "id": "ID-ecc3b27872611f08ee8ce93e",
+        "version": "377cfebb3e2cfb1c394d902cf7dfcea43e6cdb5fe1617675139eb7272244b4b7",
+        "title": "上海 · 凤南一村 · 归档对标字段",
+        "url": "https://www.shanghai.gov.cn/nw4411/20240628/e6c15eb4d57b4bbf949489c86701911d.html",
+        "chunks": 1,
+        "body_sha256": "bd3dd7478405d761003bc81e0436300ec4c20ee2c1583de9ccdc69acc8cdbc60"
+      }
+    ],
+    "campaign": {
+      "policy": "public-corpus-v1",
+      "id": 1,
+      "enabled": false,
+      "daily_search_limit": 1000,
+      "daily_fetch_limit": 200,
+      "daily_cny_limit": 6,
+      "cursor": 0,
+      "next_at": "2026-10-18T10:23:22.599Z",
+      "error": null,
+      "cost_approved": false,
+      "approved_daily_cny": 6,
+      "day": "2026-10-18",
+      "timezone": "Asia/Shanghai",
+      "usage": {
+        "search_attempts": 0,
+        "fetch_attempts": 0,
+        "successful": 0,
+        "unknown": 0,
+        "estimated_cny": 0
+      },
+      "archive": {
+        "versions": 530,
+        "chunks": 4791
+      },
+      "query_pool": 8640,
+      "recent": [],
+      "storage": "corpus-public",
+      "search_unit_cny": 0.005,
+      "fetch_unit_cny": 0.005,
+      "uses_model_for_search": false,
+      "model_daily_budget": 40,
+      "pricing_source": "https://api-docs.deepseek.com/zh-cn/guides/search/",
+      "schedule": "均匀分布全天；同题至少间隔7天，正文7天复查；无结果也计入本地调用上限"
+    },
+    "paid_search_calls_added": 0,
+    "snapshot_jobs": []
+  },
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "full_research_started": false
+}

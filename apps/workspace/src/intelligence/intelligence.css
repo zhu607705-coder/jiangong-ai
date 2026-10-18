@@ -34,3 +34,12 @@
 .global-knowledge .intel-search input::placeholder,.global-knowledge .intel-filters input::placeholder{color:#5b6b82;opacity:1}
 .global-knowledge .intel-panel .intel-topics .map-text-button{background:var(--color-surface);border-color:#a8b7ca;color:#3f5674;font-size:15px}
 .global-knowledge .intel-meta{align-items:center;gap:10px;font-size:16px}
+
+.intel-campaign{margin:18px 0;padding:20px;border:1px solid var(--line,#d7dce2);border-radius:14px;background:#fff;color:#253342}
+.intel-campaign header,.intel-campaign footer{display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.intel-campaign header strong{font-size:18px;margin-right:12px}
+.intel-campaign p{font-size:14px;line-height:1.6;color:#4f5e6b;margin:8px 0}
+.intel-campaign-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}
+.intel-campaign-metrics span{display:flex;flex-direction:column;gap:6px;padding:12px;background:#f5f6f8;border-radius:8px;font-size:14px}
+.intel-campaign-metrics b{font-size:21px;color:#253342}
+@media(max-width:760px){.intel-campaign-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -19,10 +19,15 @@ import {projectArchiveOriginals} from './project-archive'
 import {projectObjectLocation} from '../retrofit/object-binding'
 import {administrativeAddress} from '../research/evidence'
 import {retrievalScopeNames,queryObjectLocated} from '../experience/retrieval'
+import {CorpusCampaign} from './campaign'
+import {DeepSeekWebTools} from '../../runtime/dsh/deepseek-web-tools'
+import {ensureHarnessNetwork} from '../../runtime/dsh/public-web'
+import type {ResearchWeb} from '../../services/capabilities/research'
 
 export class IntelligenceService {
   readonly repo:IntelRepository
   readonly ready:Promise<void>
+  readonly campaign:CorpusCampaign
   private busy=false
   private stopped=false
   private active:{id:string;controller:AbortController}|undefined
@@ -30,9 +35,10 @@ export class IntelligenceService {
   private uninstall:(()=>void)|undefined
   private jobHandlers=new Map<string,(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>>()
   registerJobHandler(kind:'rag_index',handler:(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>){this.jobHandlers.set(kind,handler)}
-  constructor(readonly store:Store){this.repo=new IntelRepository(store.db);this.ready=this.initialize()}
+  constructor(readonly store:Store){this.repo=new IntelRepository(store.db);this.campaign=new CorpusCampaign(this.repo,config.dataDir);this.ready=this.initialize()}
   private async initialize(){
     await this.repo.initialize()
+    await this.campaign.initialize()
     const known=new Set((await this.repo.channels()).map(c=>c.payload.id))
     // Search-backed official catalogue templates, not invented RSS endpoints or live coverage claims.
     for(const s of PUBLIC_SOURCES){const id='catalog-'+s.id;if(!known.has(id))await this.repo.saveChannel(channelOf({id,name:s.name,kind:'native_search',url:'https://'+s.domain,domains:[s.domain],publisher_group:s.domain,city:'',config:{query:'存量建筑 改造 建设 项目'},enabled:false,interval_minutes:180,first_party:true}))}
@@ -45,11 +51,18 @@ export class IntelligenceService {
     if(this.busy||this.stopped)return
     this.busy=true
     try{
+      await this.campaign.schedule()
       if(process.env.INTELLIGENCE_COLLECTION_ENABLED==='true')for(const c of await this.repo.due())await this.repo.enqueue('collect',c.id,{model:process.env.INTELLIGENCE_MODEL_ENABLED==='true',channel:c})
       const job=await this.repo.claim();if(!job)return
       const controller=new AbortController(),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(180000)]);this.active={id:job.id,controller}
       try{
-        if(job.kind==='archive'){
+        if(job.kind==='corpus_snapshot'){
+          const result=await this.campaign.snapshot(String(job.payload.cursor||''),signal)
+          signal.throwIfAborted();await this.repo.jobResult(job.id,result);await this.repo.endJob(job.id,'completed')
+          if(result.has_more)await this.repo.enqueue('corpus_snapshot','public-corpus-snapshot:'+result.next_cursor,{cursor:result.next_cursor})
+        }else if(job.kind==='corpus_collect'){
+          await this.collectCorpus(job,signal)
+        }else if(job.kind==='archive'){
           const result=await this.syncExisting(String(job.payload.cursor||''),Number(job.payload.analyze_remaining||0),signal)
           signal.throwIfAborted()
           await this.repo.jobResult(job.id,result);await this.repo.endJob(job.id,'completed')
@@ -79,9 +92,38 @@ export class IntelligenceService {
         if(code==='INTELLIGENCE_BUDGET_EXHAUSTED')await this.repo.deferBudget(job.id)
         else await this.repo.endJob(job.id,signal.aborted?'cancelled':code.startsWith('BLOCKED')?'blocked_external':'failed',code)
         if(job.kind==='collect'){const c=job.payload.channel?channelOf(job.payload.channel):await this.repo.channel(job.subject);if(c)await this.repo.channelResult(c,false,code)}
+        if(job.kind==='corpus_collect'){await this.campaign.outcome(job.subject,{status:'failed',code});if(!['CAMPAIGN_PAUSED','CAMPAIGN_DAILY_LIMIT'].includes(code))await this.campaign.failed(code)}
       }finally{this.active=undefined}
     }finally{this.busy=false}
   }
+  private async collectCorpus(job:Job,signal:AbortSignal){
+    if(!config.searchConfigured)throw Error('BLOCKED_EXTERNAL_SEARCH')
+    await this.campaign.disk.capacity()
+    const q=await this.campaign.query(job.subject);if(!q)throw Error('CAMPAIGN_QUERY_NOT_FOUND')
+    await this.repo.saveChannel(q.channel)
+    await ensureHarnessNetwork()
+    const web=new DeepSeekWebTools({key:()=>process.env.DEEPSEEK_SEARCH_API_KEY||process.env.DEEPSEEK_API_KEY||'',includeContent:true,maxSearchRequests:3,onReceipt:r=>this.campaign.record(r)})
+    let created=0,chunks=0,archived=0,metadata=0,queued=0
+    const result=await collectChannel(q.channel,signal,async(source,raw)=>{
+      signal.throwIfAborted()
+      const stored=await this.ingest(source,q.channel.id,{analyze:false});created+=Number(stored.created)
+      const m=await this.repo.get(stored.id,stored.version);if(!m)throw Error('DOCUMENT_VERSION_NOT_FOUND')
+      if(!m.text.trim()||m.source.content_status==='metadata_only'){metadata++;return}
+      const r=await this.campaign.persist(m,raw);chunks+=r.chunks;archived++
+      await this.campaign.discovery(q.id,m.url,m)
+      // Paid organisation keeps the existing40/day cap; never queue a model turn for every hit.
+      if(!queued&&stored.created&&config.modelConfigured&&process.env.INTELLIGENCE_MODEL_ENABLED==='true'&&m.analysis.status==='unscored'){
+        const pending=(await this.repo.db.query<{n:number}>("SELECT count(*)::int AS n FROM intel_jobs WHERE kind='analyze' AND status IN ('queued','running')")).rows[0].n
+        if(pending<6){await this.repo.enqueue('analyze',m.id+'@'+m.version,{id:m.id,version:m.version});queued++}
+      }
+    },web as unknown as ResearchWeb,{query:q.query,maxResults:20,validate_network:true,shouldFetch:url=>this.campaign.shouldFetch(url,q.id)})
+    signal.throwIfAborted()
+    const receipt={...result,created,archived,chunks,metadata,queued,query:q.query,calls:web.receipts}
+    await this.campaign.outcome(q.id,receipt);await this.repo.jobResult(job.id,receipt);await this.repo.endJob(job.id,result.failed?'partial':'completed')
+    const auth=web.receipts.find(r=>r.status&&[401,402,403].includes(r.status));if(auth)await this.campaign.failed('DEEPSEEK_TOOLS_HTTP_'+auth.status)
+    else if(result.failed&&!result.saved&&!result.skipped)await this.campaign.failed('COLLECTION_RETRY_LATER')
+  }
+  async configureCampaign(value:Parameters<CorpusCampaign['configure']>[0]){await this.ready;await this.campaign.configure(value);if(!value.enabled&&this.active){const j=(await this.repo.db.query<Job>('SELECT * FROM intel_jobs WHERE id=$1',[this.active.id])).rows[0];if(j?.kind==='corpus_collect')await this.cancel(j.id)}}
   async syncExisting(cursor='',analyzeLimit=0,signal?:AbortSignal) {await this.ready
     const projects=(await this.store.db.query<ProjectRecord>('SELECT * FROM projects WHERE owner_id=$1 AND id>$2 ORDER BY id LIMIT 11',[config.ownerId,cursor])).rows
     let seen=0,created=0,linked=0,queued=0,skipped=0
