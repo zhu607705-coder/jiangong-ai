@@ -2,7 +2,7 @@
 import argparse, json, pathlib, shlex, subprocess
 p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--archive',action='store_true');p.add_argument('--analyze-one',action='store_true');p.add_argument('--disk-snapshot',action='store_true');args=p.parse_args()
 code=r'''
-import urllib.request,urllib.parse,http.cookiejar,json,time,datetime,pathlib,hashlib
+import urllib.request,urllib.parse,http.cookiejar,json,time,datetime,pathlib,hashlib,re
 c=urllib.request.build_opener(urllib.request.ProxyHandler({}),urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 def api(path,body=None):
  req=urllib.request.Request('https://laneanew.cn/api'+path,data=None if body is None else json.dumps(body).encode(),headers={'Content-Type':'application/json','X-Requested-With':'haizhizi','Origin':'https://laneanew.cn'})
@@ -42,7 +42,7 @@ if __DISK__:
  root=pathlib.Path('/home/zhuhangcheng/apps/haizhizi/shared/data/corpus-public')
  docs=list((root/'documents').glob('ID-*/*/source.json'));chunks=0;readback=[]
  for path in docs:
-  manifest=json.loads(path.read_text());body=(path.parent/'original.md').read_bytes();text=body.decode('utf8');lines=text.splitlines()
+  manifest=json.loads(path.read_text());body=(path.parent/'original.md').read_bytes();text=body.decode('utf8');lines=re.split(r'\r?\n',text)
   assert hashlib.sha256(body).hexdigest()==manifest['body_sha256']
   rows=[json.loads(line) for line in (path.parent/'chunks.jsonl').read_text().splitlines() if line]
   for row in rows:
