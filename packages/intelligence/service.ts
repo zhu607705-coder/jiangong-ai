@@ -50,6 +50,7 @@ export class IntelligenceService {
       try{
         if(job.kind==='archive'){
           const result=await this.syncExisting(String(job.payload.cursor||''),Number(job.payload.analyze_remaining||0),signal)
+          signal.throwIfAborted()
           await this.repo.jobResult(job.id,result);await this.repo.endJob(job.id,'completed')
           if(result.has_more)await this.repo.enqueue('archive',String(job.payload.run_id)+':'+result.next_cursor,{run_id:job.payload.run_id,cursor:result.next_cursor,analyze_remaining:Math.max(0,Number(job.payload.analyze_remaining||0)-result.queued)})
         }else if(job.kind==='rag_index'){
@@ -104,7 +105,7 @@ export class IntelligenceService {
     }
     return {seen,created,linked,queued,skipped,skip_reasons,has_more:projects.length>10,next_cursor:projects.slice(0,10).at(-1)?.id||cursor}
   }
-  async queueArchive(analyzeLimit=0){await this.ready;const run_id='archive-'+config.ownerId;const job=await this.repo.enqueue('archive',run_id,{run_id,cursor:'',analyze_remaining:Math.min(8,Math.max(0,analyzeLimit))});void this.tick().catch(()=>console.warn('INTELLIGENCE_ARCHIVE_JOB_FAILED'));return job}
+  async queueArchive(analyzeLimit=0){await this.ready;const run_id='archive-'+config.ownerId;const active=(await this.repo.db.query<Job>("SELECT * FROM intel_jobs WHERE kind='archive' AND payload->>'run_id'=$1 AND status IN ('queued','running') ORDER BY created_at LIMIT 1",[run_id])).rows[0];if(active)return active;const job=await this.repo.enqueue('archive',run_id,{run_id,cursor:'',analyze_remaining:Math.min(8,Math.max(0,analyzeLimit))});void this.tick().catch(()=>console.warn('INTELLIGENCE_ARCHIVE_JOB_FAILED'));return job}
   async search(q:Query){await this.ready;const loaded=await this.repo.entries(q.city,400,q.as_of,q.q),all=rankEntries(loaded.entries,{...q,city:undefined}),limit=Math.min(40,Math.max(1,q.limit??20)),offset=Math.min(380,Math.max(0,q.offset??0))
     const groups=new Map<string,Entry[]>()
     for(const e of all){const g=groups.get(e.event_id)||[];g.push(e);groups.set(e.event_id,g)}

@@ -64,7 +64,7 @@ export class IntelRepository {
     await db.query("INSERT INTO intel_versions(document_id,version,payload,search_vector) VALUES($1,$2,$3,setweight(to_tsvector('simple',$4),'A')||setweight(to_tsvector('simple',$5),'D')) ON CONFLICT DO NOTHING",[m.id,m.version,JSON.stringify(m),searchTokens(m.title).join(' '),searchTokens(m.text).join(' ')])
     await db.query('INSERT INTO intel_observations(document_id,version,channel_id) VALUES($1,$2,$3) ON CONFLICT(document_id,version,channel_id) DO UPDATE SET seen_at=now()',[m.id,m.version,m.channel_id])
     if(advance||!old)await db.query('INSERT INTO intel_revision_log(document_id,version) VALUES($1,$2)',[m.id,m.version])
-    return advance||!exists
+    return !exists
   })}
   async get(id:string,version?:string):Promise<Entry|null>{const rows=await this.db.query<{payload:Material;analysis:Analysis|null;event_id:string|null;story_id:string|null;relation:Relation|null;observed_at:string;channel_policy:Channel|null}>(`
     SELECT v.payload,a.payload AS analysis,g.event_id,g.story_id,g.relation,v.observed_at,c.payload AS channel_policy FROM intel_documents d
