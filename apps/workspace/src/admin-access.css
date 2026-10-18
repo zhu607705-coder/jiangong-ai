@@ -25,3 +25,4 @@
 .admin-workspace { position:fixed; inset:44px 0 0; transform:translateZ(0); overflow:hidden; }
 @media(max-width:560px) { .admin-access-card { padding:28px 24px; }.admin-session-bar { padding:0 10px; font-size:15px; }.admin-session-bar>span,.admin-session-bar>div { gap:6px; }.admin-session-bar [role=alert] { position:absolute; top:44px; right:10px; padding:6px 10px; background:var(--color-surface); border:1px solid var(--color-danger-line); border-radius:6px; } }
 @media(max-width:560px) { .admin-session-bar.campus-session-bar { font-size:16px; } }
+@media(max-width:760px){.admin-session-bar{display:none}.admin-workspace{inset:0}}

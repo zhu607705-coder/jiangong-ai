@@ -4757,5 +4757,33 @@
     "user_authorization": "2026-10-18 用户回复没有关系并要求放心调用；按已说明1000Search/200Fetch/6CNY日上限启用。",
     "storage": "/home/zhuhangcheng/apps/haizhizi/shared/data/corpus-public",
     "approved_daily_cny": 6
+  },
+  "mobile_navigation_20261018": {
+    "status": "verified_pending_ui_deployment",
+    "changed_files": [
+      "apps/workspace/src/components/WorkspaceFrame.tsx",
+      "apps/workspace/src/components/WorkspaceFrame.css",
+      "apps/workspace/src/AdminAccess.tsx",
+      "apps/workspace/src/admin-access.css",
+      "apps/workspace/src/imports/FloatingEvidenceSearch.tsx",
+      "apps/workspace/src/imports/floating-evidence-search.css"
+    ],
+    "validation": [
+      "initial TypeScript/production build passed",
+      "390px local browser: collapsed full-width main, drawer contains existing global/project/session actions",
+      "Tab/Shift+Tab loop, Escape return focus and inert cleanup passed",
+      "project-page selection automatically closes drawer",
+      "320px has no document horizontal overflow;1280px restores desktop dock/sidebar/session bar",
+      "final TypeScript and production build passed",
+      "local390x844 content330x507.8125 at(60,336.1875) to390x788 at(0,56)",
+      "existing project switch and map entrance passed; query panel366px within viewport"
+    ],
+    "artifacts": [
+      "research/test_results/mobile-navigation-build-20261018.log",
+      "output/playwright/mobile-navigation/before.png",
+      "output/playwright/mobile-navigation/before.json",
+      "research/test_results/mobile-navigation-local-20261018.json"
+    ],
+    "next_runnable_task": "Finalize production build, deployUI only, verify actual mobile page/desktop restoration and merge while preserving dirty workspace."
   }
 }

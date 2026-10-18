@@ -1,10 +1,12 @@
 // CRE workspace chrome adapted into map exploration and a full-page project workspace.
-import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react'
-import { IconCube, IconMap2, IconFolder, IconBook2, IconPlus, IconSettings, IconArrowLeft, IconChevronDown, IconX, IconArrowUpRight } from '@tabler/icons-react'
+import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from 'react'
+import {createPortal} from 'react-dom'
+import { IconCube, IconMap2, IconFolder, IconBook2, IconPlus, IconSettings, IconArrowLeft, IconChevronDown, IconX, IconArrowUpRight, IconMenu2 } from '@tabler/icons-react'
 import type { Stage } from './LifecycleSpine'
 import type { Project } from '../api'
 import { PROJECT_PAGES, type ProjectPage } from '../public-decisions'
 import WaitingScene from './WaitingScene'
+import {useWorkbenchAccess} from '../AdminAccess'
 import './WorkspaceFrame.css'
 
 export type WorkspaceGlobalView = 'map' | 'projects' | 'knowledge' | 'project'
@@ -26,6 +28,9 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
   modeControl, mapView, detailsOpen, bootLoading, onMap, onSettings, error, onDismissError,
   globalView, onGlobalView, globalContent, activeProjectPage = 'overview', onProjectPage, availableProjectPages, scrollContainerRef }: WorkspaceFrameProps) {
   const [projectsOpen, setProjectsOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const mobileMenuId = useId(), mobileMenuButton = useRef<HTMLButtonElement>(null), mobileMenu = useRef<HTMLElement>(null)
+  const {sessionLabel,sessionActions} = useWorkbenchAccess()
   const researchMain = useRef<HTMLElement>(null)
   const view = globalView || (detailsOpen ? 'project' : 'map')
   const surfaceOpen = view !== 'map', projectOpen = view === 'project'
@@ -34,6 +39,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
   const projectPages = availableProjectPages === undefined ? WORKSPACE_PROJECT_PAGES : WORKSPACE_PROJECT_PAGES.filter(page => availableProjectPages.includes(page.id))
   const globalLabel = view === 'knowledge' ? '案例与规则' : '项目空间'
   const navigate = (next: WorkspaceGlobalView) => {
+    setMobileMenuOpen(false)
     setProjectsOpen(false)
     if (onGlobalView) onGlobalView(next)
     else if (next === 'map') onMap()
@@ -44,21 +50,51 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
     if (surfaceOpen && !bootLoading) researchMain.current?.focus({ preventScroll: true })
   }, [surfaceOpen, view, bootLoading, project?.id])
   useEffect(() => { setProjectsOpen(false) }, [globalView])
-  const projectSwitch = <button className="research-project-switch" aria-label="切换项目" aria-expanded={projectsOpen} onClick={() => setProjectsOpen(value => !value)}><IconFolder size={18} /><span>{project?.name || '项目研究'}</span><IconChevronDown size={16} /></button>
-  const errorNotice = error && <div className={surfaceOpen ? 'workspace-frame-error' : 'atlas-global-error glass-panel'} role="alert" {...inactiveProps}>{error}<button className="map-icon-button" aria-label="关闭错误" onClick={onDismissError}><IconX size={18} /></button></div>
-  return <div className={`map-shell workspace-frame${surfaceOpen ? ' map-shell--research' : ''}`} data-global-view={view}>
-    <div className="map-stage" hidden={surfaceOpen}>{mapView}</div>
-    <footer className="ai-disclaimer">AI 生成与搜索可能存在错误</footer>
-    <nav className="atlas-dock glass-panel" aria-label="主导航" {...inactiveProps}>
+  useEffect(() => {setMobileMenuOpen(false)},[globalView,activeProjectPage,project?.id])
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 760px)')
+    const resized = () => {if(!media.matches)setMobileMenuOpen(false)}
+    media.addEventListener('change',resized)
+    return () => media.removeEventListener('change',resized)
+  },[])
+  useEffect(() => {
+    if(!mobileMenuOpen)return
+    setProjectsOpen(false)
+    const panel=mobileMenu.current
+    panel?.querySelector<HTMLButtonElement>('button')?.focus()
+    const keydown=(event:KeyboardEvent)=>{
+      if(event.key==='Escape'){event.preventDefault();event.stopPropagation();setMobileMenuOpen(false)}
+      if(event.key!=='Tab'||!panel)return
+      const buttons=Array.from(panel.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],select,[tabindex="0"]')).filter(element=>element.getClientRects().length>0)
+      const first=buttons[0],last=buttons.at(-1)
+      if(event.shiftKey&&(document.activeElement===first||!panel.contains(document.activeElement))){event.preventDefault();last?.focus()}
+      else if(!event.shiftKey&&(document.activeElement===last||!panel.contains(document.activeElement))){event.preventDefault();first?.focus()}
+    }
+    document.addEventListener('keydown',keydown,true)
+    return ()=>{document.removeEventListener('keydown',keydown,true);if(mobileMenuButton.current?.getClientRects().length)mobileMenuButton.current.focus();else researchMain.current?.focus({preventScroll:true})}
+  },[mobileMenuOpen])
+  const projectSwitch = <button className="research-project-switch" aria-label="切换项目" aria-expanded={projectsOpen} onClick={() => {setMobileMenuOpen(false);setProjectsOpen(value => !value)}}><IconFolder size={18} /><span>{project?.name || '项目研究'}</span><IconChevronDown size={16} /></button>
+  const projectNavigation = <nav aria-label="项目工作区">{projectPages.map(page => <button key={page.id} type="button" data-project-page={page.id}
+    aria-current={activeProjectPage === page.id ? 'page' : undefined} onClick={() => {setMobileMenuOpen(false);onProjectPage ? onProjectPage(page.id) : onTab(page.id)}}>{page.label}</button>)}</nav>
+  const globalNavigation = <nav className="atlas-dock glass-panel" aria-label="主导航" {...inactiveProps}>
       <button className="atlas-logo" aria-label="返回地图探索" onClick={() => navigate('map')}><IconCube size={28} stroke={1.5} /></button>
       <span className="dock-divider" />
       <button className={view === 'map' ? 'is-active' : ''} title="地图探索" aria-label="地图探索" aria-current={view === 'map' ? 'page' : undefined} onClick={() => navigate('map')}><IconMap2 size={23} /><small>地图探索</small></button>
-      <button className={projectsOpen || view === 'projects' || projectOpen ? 'is-active' : ''} title="项目空间" aria-label={structured ? '项目空间' : '打开项目列表'} aria-current={view === 'projects' || projectOpen ? 'page' : undefined} onClick={() => structured ? navigate('projects') : setProjectsOpen(value => !value)}><IconFolder size={23} /><small>项目空间</small></button>
+      <button className={projectsOpen || view === 'projects' || projectOpen ? 'is-active' : ''} title="项目空间" aria-label={structured ? '项目空间' : '打开项目列表'} aria-current={view === 'projects' || projectOpen ? 'page' : undefined} onClick={() => {setMobileMenuOpen(false);structured ? navigate('projects') : setProjectsOpen(value => !value)}}><IconFolder size={23} /><small>项目空间</small></button>
       {structured && <button className={view === 'knowledge' ? 'is-active' : ''} title="案例与规则" aria-label="案例与规则" aria-current={view === 'knowledge' ? 'page' : undefined} onClick={() => navigate('knowledge')}><IconBook2 size={23} /><small>案例与规则</small></button>}
       <div className="dock-spacer" />
-      <button title="管理与设置" aria-label="管理与设置" onClick={onSettings}><IconSettings size={23} /><small>设置</small></button>
+      <button title="管理与设置" aria-label="管理与设置" onClick={()=>{setMobileMenuOpen(false);onSettings()}}><IconSettings size={23} /><small>设置</small></button>
       <span className="atlas-avatar" title="共享项目工作台">项</span>
     </nav>
+  const errorNotice = error && <div className={surfaceOpen ? 'workspace-frame-error' : 'atlas-global-error glass-panel'} role="alert" {...inactiveProps}>{error}<button className="map-icon-button" aria-label="关闭错误" onClick={onDismissError}><IconX size={18} /></button></div>
+  return <><div className={`map-shell workspace-frame${surfaceOpen ? ' map-shell--research' : ''}`} data-global-view={view} {...(mobileMenuOpen?{inert:''}:{})}>
+    <header className="workspace-mobile-header" {...inactiveProps}>
+      <button ref={mobileMenuButton} type="button" className="workspace-mobile-menu-trigger" aria-label="打开工作台导航" aria-haspopup="dialog" aria-expanded={mobileMenuOpen} aria-controls={mobileMenuId} onClick={()=>setMobileMenuOpen(true)}><IconMenu2 size={23}/><span>菜单</span></button>
+      <div><strong>{projectOpen ? project?.name || '当前项目' : '旧区新生'}</strong><span>{projectOpen?pageLabel:view==='map'?'地图探索':globalLabel}</span></div>
+    </header>
+    <div className="map-stage" hidden={surfaceOpen}>{mapView}</div>
+    <footer className="ai-disclaimer">AI 生成与搜索可能存在错误</footer>
+    {globalNavigation}
     {!surfaceOpen && <header className="atlas-global-header" {...inactiveProps}>
       <div className="atlas-wordmark"><strong>旧区新生</strong></div>
       <button className="atlas-project-switch glass-panel" aria-expanded={projectsOpen} onClick={() => setProjectsOpen(v => !v)}><IconFolder size={17} /><span>{project?.name || '项目空间'}</span><IconChevronDown size={15} /></button>
@@ -84,8 +120,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
       <div className="workspace-frame-layout">
         {projectOpen && structured && <aside className="workspace-project-sidebar">
           <div className="workspace-project-identity"><strong>{project?.name || '当前项目'}</strong>{project && <span>资料 v{project.context_version}</span>}</div>
-          <nav aria-label="项目工作区">{projectPages.map(page => <button key={page.id} type="button" data-project-page={page.id}
-            aria-current={activeProjectPage === page.id ? 'page' : undefined} onClick={() => onProjectPage ? onProjectPage(page.id) : onTab(page.id)}>{page.label}</button>)}</nav>
+          {projectNavigation}
         </aside>}
         <div className="research-drawer-scroll" ref={scrollContainerRef}><div className="workspace-columns"><main ref={researchMain} tabIndex={-1} aria-label={projectOpen ? '项目主调研' : `${globalLabel}主内容`}>
           {surfaceOpen && errorNotice}
@@ -95,5 +130,15 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
       </div>
     </section>
     {bootLoading && <div className="workspace-boot-overlay"><WaitingScene variant="boot" title="正在打开项目空间" detail="正在读取本地项目与资料…" /></div>}
-  </div>
+  </div>{mobileMenuOpen&&createPortal(<div className="workspace-mobile-menu-backdrop" onClick={()=>setMobileMenuOpen(false)}>
+    <aside ref={mobileMenu} id={mobileMenuId} className="workspace-mobile-menu" role="dialog" aria-modal="true" aria-labelledby={`${mobileMenuId}-title`} onClick={event=>event.stopPropagation()}>
+      <header><h2 id={`${mobileMenuId}-title`}>工作台导航</h2><button type="button" aria-label="收起工作台导航" onClick={()=>setMobileMenuOpen(false)}><IconX size={22}/></button></header>
+      {globalNavigation}
+      <section className="workspace-mobile-project"><h3>当前项目</h3>{projectSwitch}
+        {projectOpen&&<>{projectNavigation}{!structured&&<nav aria-label="研判工作区">{stages.map(stage=><button key={stage.id} aria-current={tab===stage.id?'page':undefined} onClick={()=>{setMobileMenuOpen(false);onTab(stage.id)}}>{stage.label}</button>)}</nav>}
+          <div className="workspace-mobile-mode" onClick={()=>setMobileMenuOpen(false)}>{modeControl}</div></>}
+      </section>
+      {(sessionLabel||sessionActions)&&<footer className="workspace-mobile-session"><span>{sessionLabel}</span><div>{sessionActions}</div></footer>}
+    </aside>
+  </div>,document.body)}</>
 }

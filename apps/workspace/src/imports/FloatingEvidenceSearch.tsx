@@ -65,6 +65,6 @@ export default function FloatingEvidenceSearch({ projectId, revision, projectNam
       </div>
       {projectId && onOpenMaterials && <footer><button type="button" onClick={browse}>打开逻辑与证据 →</button><span>Esc 收起</span></footer>}
     </div>}
-    <button ref={triggerRef} type="button" className="floating-evidence-trigger" aria-haspopup="dialog" aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => setOpen(value => !value)}><span aria-hidden="true">⌕</span>{open ? '收起资料查询' : '直接问资料'}</button>
+    <button ref={triggerRef} type="button" className="floating-evidence-trigger" aria-label={open ? '收起资料查询' : '直接问资料'} aria-haspopup="dialog" aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => setOpen(value => !value)}><span className="floating-evidence-icon" aria-hidden="true">{open ? '×' : '⌕'}</span><span className="floating-evidence-trigger-label">{open ? '收起资料查询' : '直接问资料'}</span></button>
   </div>
 }
