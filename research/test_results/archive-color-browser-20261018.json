@@ -1,0 +1,114 @@
+{
+  "checked_at": "2026-10-18T06:33:19.756Z",
+  "scope": "current archive headings, figures, status chips and primary action",
+  "items": [
+    {
+      "background": "rgb(243, 245, 249)",
+      "contrast": 12.27,
+      "foreground": "rgb(23, 47, 83)",
+      "text": "案例与规则"
+    },
+    {
+      "background": "rgb(243, 245, 249)",
+      "contrast": 12.27,
+      "foreground": "rgb(23, 47, 83)",
+      "text": "资料沉淀"
+    },
+    {
+      "background": "rgb(255, 247, 233)",
+      "contrast": 4.79,
+      "foreground": "rgb(161, 94, 8)",
+      "text": "1 项资料待核"
+    },
+    {
+      "background": "rgb(237, 244, 255)",
+      "contrast": 4.77,
+      "foreground": "rgb(35, 99, 228)",
+      "text": "177"
+    },
+    {
+      "background": "rgb(247, 248, 251)",
+      "contrast": 12.61,
+      "foreground": "rgb(23, 47, 83)",
+      "text": "561"
+    },
+    {
+      "background": "rgb(234, 250, 244)",
+      "contrast": 4.6,
+      "foreground": "rgb(8, 127, 102)",
+      "text": "2"
+    },
+    {
+      "background": "rgb(247, 248, 251)",
+      "contrast": 12.61,
+      "foreground": "rgb(23, 47, 83)",
+      "text": "2"
+    },
+    {
+      "background": "rgb(247, 248, 251)",
+      "contrast": 12.61,
+      "foreground": "rgb(23, 47, 83)",
+      "text": "23"
+    },
+    {
+      "background": "rgb(247, 248, 251)",
+      "contrast": 12.61,
+      "foreground": "rgb(23, 47, 83)",
+      "text": "0"
+    },
+    {
+      "background": "rgb(35, 99, 228)",
+      "contrast": 5.28,
+      "foreground": "rgb(255, 255, 255)",
+      "text": "归集并研读一批资料"
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "contrast": 4.94,
+      "foreground": "rgb(95, 113, 144)",
+      "text": "待分类范围待核1 个来源渠道未分类"
+    },
+    {
+      "background": "rgb(255, 247, 233)",
+      "contrast": 4.79,
+      "foreground": "rgb(161, 94, 8)",
+      "text": "未分类"
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "contrast": 4.94,
+      "foreground": "rgb(95, 113, 144)",
+      "text": "待分类杭州市1 个来源渠道未分类"
+    },
+    {
+      "background": "rgb(255, 247, 233)",
+      "contrast": 4.79,
+      "foreground": "rgb(161, 94, 8)",
+      "text": "未分类"
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "contrast": 4.94,
+      "foreground": "rgb(95, 113, 144)",
+      "text": "改造与规划杭州市1 个来源渠道已分类"
+    },
+    {
+      "background": "rgb(234, 250, 244)",
+      "contrast": 4.6,
+      "foreground": "rgb(8, 127, 102)",
+      "text": "已分类"
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "contrast": 4.94,
+      "foreground": "rgb(95, 113, 144)",
+      "text": "待分类杭州市1 个来源渠道未分类"
+    },
+    {
+      "background": "rgb(255, 247, 233)",
+      "contrast": 4.79,
+      "foreground": "rgb(161, 94, 8)",
+      "text": "未分类"
+    }
+  ]
+}
