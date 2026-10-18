@@ -4512,5 +4512,43 @@
       "research/test_results/investigation-advice-ui-deployment-20261017.json",
       "research/test_results/investigation-advice-browser-20261017.json"
     ]
+  },
+  "rag_performance_20261018": {
+    "status": "local_verified_pending_deployment",
+    "request": "RAG搜索太慢且不够智能",
+    "changed_files": [
+      "apps/host/rag-retrieval.ts",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "packages/experience/hybrid-retrieval.ts",
+      "packages/experience/retrieval.ts",
+      "packages/experience/semantic-index.ts",
+      "packages/experience/retrieval-sources.ts",
+      "packages/intelligence/domain.ts",
+      "packages/retrofit/research-coverage.ts",
+      "services/capabilities/analysis.py"
+    ],
+    "implemented": [
+      "direct original route skips compulsory model planner and semantic selection",
+      "same-permitted-snapshot validated answer cache, ten minute reuse and explicit refresh",
+      "bounded pure-text BM25/token reuse, original scope admission every request",
+      "colloquial/compound terms, continuous focused passages and exact-unit preference",
+      "only requested missing financial fields trigger bounded public supplementation",
+      "streaming originals remain usable; stop AI and replace pending question"
+    ],
+    "verification": [
+      "54 RAG contract/UI checks passed",
+      "13 research coverage checks passed",
+      "35 Python capability checks passed",
+      "8 archived relaxed source-hit-at-5: 7 before, 8 after; not answer accuracy"
+    ],
+    "artifacts": [
+      "research/test_results/rag-live-before-20261018.json",
+      "research/test_results/rag-recall-before-20261018.json",
+      "research/test_results/rag-recall-after-20261018.json"
+    ],
+    "unresolved": [
+      "native latency/cache and real browser need deployed-code checks"
+    ],
+    "next_runnable_task": "Deploy immutable runtime/UI, repeat same bounded questions, verify direct citations and cache, merge while preserving root edits."
   }
 }

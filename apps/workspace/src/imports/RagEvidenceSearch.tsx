@@ -27,12 +27,13 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
   const [useAI,setUseAI]=useState(true),[allowInternalAI,setAllowInternalAI]=useState(false)
   const [indexBusy,setIndexBusy]=useState(false),[indexMessage,setIndexMessage]=useState('')
   const indexController=useRef<AbortController|null>(null)
+  const searchController=useRef<AbortController|null>(null)
   useEffect(()=>{setAllowInternalAI(false);setIndexMessage('');setIndexBusy(false);return()=>indexController.current?.abort()},[projectId,revision])
   function clearFilters() { setMeasure(''); setObject(''); setStage(''); setAsOf(''); setIncludeAI(false) }
   useEffect(() => { setResult(null); setError(''); setBusy(false); setRequest(null); setQuestion(initialQuestion ?? ''); clearFilters() }, [projectId, revision, initialQuestion])
   useEffect(() => {
     if (!request || request.projectId !== projectId || request.revision !== revision) return
-    const controller = new AbortController(); setBusy(true); setError(''); setResult(null)
+    const controller = new AbortController(); searchController.current=controller; setBusy(true); setError(''); setResult(null)
     const search=async()=>{
       if(!request.query.use_ai)return api<RetrievalResponse>(`/projects/${encodeURIComponent(projectId)}/knowledge/retrieve`,request.query,controller.signal)
       const response=await fetch(`/api/projects/${encodeURIComponent(projectId)}/knowledge/retrieve`,{method:'POST',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json','Accept':'application/x-ndjson','X-Requested-With':'haizhizi'},body:JSON.stringify(request.query)})
@@ -40,6 +41,7 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
       if(!response.headers.get('content-type')?.includes('application/x-ndjson'))return response.json() as Promise<RetrievalResponse>
       let complete:RetrievalResponse|undefined
       await consumeStream<{type:'originals'|'complete';result:RetrievalResponse}|{type:'error';message:string}>(response,controller.signal,event=>{
+        if(controller.signal.aborted)return
         if(event.type==='error'){setError(event.message);return}
         setResult(event.result)
         if(event.type==='complete')complete=event.result
@@ -59,10 +61,11 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
   }
   const query: RetrievalRequest = { question: question.trim(), ...(measure.trim() ? { measure_key: measure.trim() } : {}), ...(object.trim() ? { object_ref: object.trim() } : {}), ...(stage.trim() ? { stage: stage.trim() } : {}), ...(asOf ? { as_of: asOf } : {}), include_ai: includeAI, limit: 5,use_ai:useAI,allow_internal_ai:allowInternalAI }
   const filtered = !!(measure || object || stage || asOf || includeAI)
-  function search(unrestricted = false) {
+  function search(unrestricted = false,refresh = false) {
     if (!query.question) return
     if (unrestricted) clearFilters()
-    setRequest({ projectId, revision, query: unrestricted ? { question: query.question, include_ai: false, limit: 5,use_ai:useAI,allow_internal_ai:allowInternalAI } : query })
+    searchController.current?.abort()
+    setRequest({ projectId, revision, query: {...(unrestricted ? { question: query.question, include_ai: false, limit: 5,use_ai:useAI,allow_internal_ai:allowInternalAI } : query),...(refresh?{refresh:true}:{})} })
   }
   async function buildIndex(){
     indexController.current?.abort()
@@ -82,7 +85,7 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
     <form onSubmit={event => { event.preventDefault(); search() }}><label>{floating ? '直接输入你的问题' : '需要核实的问题'}<textarea aria-label={floating ? '直接问资料的问题' : 'RAG研判问题'} value={question} maxLength={500} placeholder="例如：电梯托管费用是多少？停车和邻里中心有哪些安排？" onChange={event => setQuestion(event.target.value)} /></label>{floating ? <details className="rag-floating-filters"><summary>限定资料范围{filtered ? ' · 已限定' : ' · 当前不限举措'}</summary>{filters}</details> : filters}
       <p className="rag-current-scope" aria-label="当前检索范围">{scopeSummary(query)}{filtered && <button type="button" onClick={clearFilters}>清除筛选</button>}</p>
       <div className="rag-api-options"><label><input type="checkbox" checked={useAI} onChange={event=>setUseAI(event.target.checked)}/>AI理解、语义召回与回答</label>{useAI&&<label><input type="checkbox" checked={allowInternalAI} onChange={event=>setAllowInternalAI(event.target.checked)}/>允许本次AI处理内部资料（需服务器开启）</label>}</div>
-      <div className="rag-search-submit"><label><input type="checkbox" checked={includeAI} onChange={event => setIncludeAI(event.target.checked)} />包括 AI 研究草稿与模拟资料（单独标注）</label><button type="submit" disabled={busy || indexBusy || !question.trim()}>{busy ? '正在检索与阅读…' : floating ? '查找依据' : '检索原文'}</button></div></form>
+      <div className="rag-search-submit"><label><input type="checkbox" checked={includeAI} onChange={event => setIncludeAI(event.target.checked)} />包括 AI 研究草稿与模拟资料（单独标注）</label>{busy&&<button type="button" onClick={()=>{searchController.current?.abort();setBusy(false)}}>停止AI补充</button>}<button type="submit" disabled={indexBusy || !question.trim()}>{busy ? '提交新问题' : floating ? '查找依据' : '检索原文'}</button></div></form>
     {useAI&&<div className="rag-index-controls"><button type="button" disabled={busy||indexBusy} onClick={()=>void buildIndex()}>{indexBusy?'正在建立语义索引…':'建立 / 更新语义索引'}</button><span>公开资料自动按版本复用索引</span>{indexMessage&&<p role="status">{indexMessage}</p>}</div>}
     <div className="rag-floating-examples" aria-label="资料提问示例">{[
       { label: '供水范围', question: '二次供水改造涉及哪些楼栋和户数，哪些楼栋被排除？' },
@@ -92,7 +95,7 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
       { label: '资金投入', question: '更新资金由谁承担，投资和运营费用有什么依据？' },
       { label: '更新模式', question: '综合整治与原拆原建各有哪些实施条件和依据？' },
     ].map(example => <button type="button" key={example.label} onClick={() => { clearFilters(); setQuestion(example.question); setRequest(null); setResult(null) }}>{example.label}</button>)}</div>
-    {busy&&result&&<p role="status">已找到 {result.hits.length} 条原文，可以先阅读；语义补充仍在进行。</p>}
+    {busy&&result&&<p role="status">已找到 {result.hits.length} 条原文，可以先阅读；{result.routing?.mode==='direct'?'AI正在根据原文整理回答。':'正在补充语义匹配与阅读。'}</p>}
     {error && <p role="alert">{error}</p>}
     {result?.project_id === projectId && request?.revision === revision && <div ref={resultRoot} className="rag-search-results">
       <nav className="rag-evidence-process" aria-label="本次资料使用过程">
@@ -103,14 +106,15 @@ export default function RagEvidenceSearch({ projectId, revision = 0, onEvidence,
       </nav>
       <p role="status">{result.hits.length}条命中 · {result.candidate_counts.documents}份导入文件{result.candidate_counts.source_texts !== undefined && ` · ${result.candidate_counts.source_texts}份已收集来源`}{!floating && ` · ${result.candidate_counts.eligible_chunks}个符合范围的原文片段`}</p>
       <div className="rag-submitted-scope"><strong>本次问题：{result.question}</strong><p>{request && scopeSummary(request.query)}</p></div>
-      {result.assistance&&<section className="rag-answer" aria-label="资料回答与后续查证"><header><h3>{result.assistance.answer.length?'资料回答':'继续寻找依据'}</h3><span>{result.method==='api_semantic_bm25'?'语义＋关键词':'关键词检索'}</span></header>
+      {result.timing&&<p role="status">原文 {(result.timing.first_originals_ms/1000).toFixed(2)} 秒{!busy&&` · 完整回答 ${(result.timing.total_ms/1000).toFixed(2)} 秒`}{result.cache?.reused&&' · 复用当前资料快照'}{!busy&&result.cache?.reused&&<button type="button" onClick={()=>search(false,true)}>重新分析</button>}</p>}
+      {result.assistance&&<section className="rag-answer" aria-label="资料回答与后续查证"><header><h3>{result.assistance.answer.length?'资料回答':'继续寻找依据'}</h3><span>{result.method==='api_semantic_bm25'?'语义＋关键词':result.method==='bm25_with_api_answer'?'原文＋AI回答':'关键词检索'}</span></header>
         {!!result.assistance.coverage?.slots.length&&<div className="rag-coverage" aria-label="逐项问题覆盖"><strong>问题覆盖 · {result.assistance.coverage.slots.length-result.assistance.coverage.missing}/{result.assistance.coverage.slots.length} 项已有原文参考</strong><div>{result.assistance.coverage.slots.map(slot=><article key={slot.id} data-status={slot.status}><span>{slot.topic} · {{amount:'金额',stage:'阶段',funding:'资金来源',question:'问题'}[slot.field]}</span><p>{slot.answer}</p>{slot.status==='conditional'&&<small>来源参考 · 适用范围待核</small>}{slot.status==='conflicting'&&<small>保留冲突值，需核对原件</small>}</article>)}</div></div>}
         {result.assistance.reasoned_guidance?.map((row,index)=><details key={index}><summary>推理与取证建议：{row.conclusion}</summary><p>前提：{row.assumptions.join('；')}</p><p>核实办法：{row.verification}</p></details>)}
         {result.assistance.answer.map((claim,index)=><div key={index}><p>{claim.text}</p>{claim.citations.map((citation,i)=>{const hit=citationHit(citation.hit_id);return hit&&<div className="rag-answer-citation" key={`${citation.hit_id}:${i}`}><blockquote>{citation.quote}</blockquote><button type="button" onClick={()=>onLocateHit?onLocateHit({...hit,matched_excerpt:citation.quote}):onEvidence?.([hit.source.id])}>原文依据 · {hit.file_name} · {hit.locator} →</button></div>})}</div>)}
         {!!result.assistance.reading_guidance.length&&<div><strong>继续阅读</strong><ul>{result.assistance.reading_guidance.map(text=><li key={text}>{text}</li>)}</ul></div>}
         {!!result.assistance.public_queries.length&&<div><strong>公开资料补查</strong>{result.assistance.public_queries.map(text=><a key={text} href={`https://www.bing.com/search?q=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">{text} ↗</a>)}</div>}
         {!!result.assistance.internal_requests.length&&<details><summary>需要内部补充的资料</summary><ul>{result.assistance.internal_requests.map(text=><li key={text}>{text}</li>)}</ul></details>}
-        <details><summary>API与索引状态</summary><p>{result.assistance.model||'未配置模型'} · 已索引 {result.assistance.index.indexed} / {result.assistance.index.eligible} 个窗口 · 待处理 {result.assistance.index.pending} 个</p>{result.assistance.warnings.map((text,index)=><p key={index}>{text}</p>)}</details>
+        <details><summary>API与索引状态</summary><p>{result.assistance.model||'未配置模型'} · 本次 {result.assistance.calls??0} 次模型调用 · 已索引 {result.assistance.index.indexed} / {result.assistance.index.eligible} 个窗口 · 待处理 {result.assistance.index.pending} 个</p>{result.assistance.warnings.map((text,index)=><p key={index}>{text}</p>)}</details>
       </section>}
       {!!featureLocations?.(result.question).length && onNavigateFeature && <nav className="rag-feature-shortcuts" aria-label="相关功能入口"><strong>相关功能入口</strong><p>按问题事项匹配工作台功能；这些入口不表示已经检索到证据或形成了决策。</p>{featureLocations(result.question).map(location => <div key={location.id}><button type="button" onClick={() => onNavigateFeature(location)}>{location.label} →</button><p>{location.detail}</p></div>)}</nav>}
       {result.hits.map(hit => {

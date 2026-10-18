@@ -110,12 +110,18 @@ export function isCurrent(m: Material, at: string, requireVerified=true): boolea
   return Number.isFinite(cutoff)&&Number.isFinite(published)&&published<=cutoff&&(!requireVerified||m.source.date_status==='verified')&&(!m.source.expires_at||(Number.isFinite(expires)&&expires>cutoff))
 }
 /** Bounded Chinese/English index tokens. Retrieval quality is evaluated separately from model judgement. */
+const searchSegmenter=new Intl.Segmenter('zh-CN',{granularity:'word'})
+const tokenCache=new Map<string,readonly string[]>()
 export function searchTokens(text:string):string[] {
-  const words=Array.from(new Intl.Segmenter('zh-CN',{granularity:'word'}).segment(text.toLowerCase())).filter(p=>p.isWordLike).map(p=>p.segment)
+  const normalized=text.toLowerCase(),cached=tokenCache.get(normalized)
+  if(cached){tokenCache.delete(normalized);tokenCache.set(normalized,cached);return [...cached]}
+  const words=Array.from(searchSegmenter.segment(normalized)).filter(p=>p.isWordLike).map(p=>p.segment)
   const out=new Set<string>()
   for(const word of words){if(!/^[\p{L}\p{N}]+$/u.test(word))continue;out.add(word)
     if(/^[\p{Script=Han}]+$/u.test(word)&&word.length>2)for(let i=0;i<word.length-1;i++)out.add(word.slice(i,i+2))}
-  return [...out].slice(0,16000)
+  const result=[...out].slice(0,16000)
+  if(normalized.length<=8192){tokenCache.set(normalized,result);if(tokenCache.size>512)tokenCache.delete(tokenCache.keys().next().value!)}
+  return [...result]
 }
 export function searchExpression(text:string):string { return searchTokens(text).slice(0,32).join(' | ') }
 export function queryScore(m: Pick<Material, 'title' | 'text'>, q: string): number {

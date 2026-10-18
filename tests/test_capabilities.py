@@ -144,3 +144,22 @@ def test_retrieval_recall_limit_preserves_default_and_expands_hybrid_candidates(
                     for i in range(12)]
     assert len(retrieval_query(p, "供水", False)["matches"]) == 5
     assert len(retrieval_query(p, "供水", False, limit=30)["matches"]) == 12
+
+
+def test_retrieval_statistics_reuse_keeps_ranking_and_current_permission_scope():
+    from services.capabilities.analysis import _cached_retrieval_corpus
+    _cached_retrieval_corpus.cache_clear()
+    p = fixture()
+    p["sources"] = [dict(p["sources"][0], id="ORIGINAL", title="供水公告", untrusted_text="供水改造预算50万元。", visibility="public", url="https://example.org/cache")]
+    first = retrieval_query(p, "供水预算", False)
+    assert first == retrieval_query(p, "供水预算", False)
+    assert _cached_retrieval_corpus.cache_info().hits == 1
+    other = copy.deepcopy(p)
+    other["sources"][0].update(id="OTHER", visibility="internal")
+    assert retrieval_query(other, "供水预算", False)["matches"] == []
+    assert retrieval_query(other, "供水预算", True)["matches"][0]["source_id"] == "OTHER"
+    # Reused statistics must not return the previous source's ID or metadata.
+    other["sources"][0]["untrusted_text"] = "供水改造预算80万元。"
+    result = retrieval_query(other, "供水预算", True)
+    assert "80万元" in result["matches"][0]["snippets"][0]
+    assert _cached_retrieval_corpus.cache_info().misses == 2

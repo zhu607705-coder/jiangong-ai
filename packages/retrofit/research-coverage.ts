@@ -42,7 +42,7 @@ export function moneyObservations(sources:readonly StrategySource[]):MoneyObserv
   })
 }
 export function answerSlots(question:string):AnswerSlot[]{
-  const selected=topics.filter(topic=>topic.pattern.test(question)),financial=/费用|金额|预算|造价|资金|结算|支出|出资|投入/.test(question)
+  const selected=topics.filter(topic=>topic.pattern.test(question)),financial=/费用|金额|预算|造价|资金|结算|支出|出资|投入|多少钱|花费|投资|成本|谁出钱|谁掏钱|谁买单/.test(question)
   const fields:AnswerSlot['field'][]=financial?['amount','stage',...(/资金|出资|来源|财政|谁出|谁承担/.test(question)?['funding' as const]:[])]:['question']
   const subjects=selected.length?selected.map(topic=>topic.name):[question]
   return subjects.flatMap((topic,index)=>fields.map(field=>({id:`q${index+1}:${field}`,question_id:`q${index+1}`,topic,field,question:field==='question'?question:`${topic}的${{amount:'金额',stage:'金额阶段与口径',funding:'资金来源'}[field]}是什么？`,status:'missing',source_ids:[],quotes:[],answer:'',assumptions:[],follow_up:[]})))

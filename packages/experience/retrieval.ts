@@ -11,7 +11,7 @@ export type RetrievalRequest = {
   question: string; measure_key?: string; object_ref?: string; stage?: string;
   source_kind?: RetrievalSourceKind; include_ai?: boolean;
   review_status?: 'draft' | 'approved' | 'rejected'; as_of?: string; limit?: number;
-  use_ai?:boolean;allow_internal_ai?:boolean;
+  use_ai?:boolean;allow_internal_ai?:boolean;refresh?:boolean;
 }
 export type RetrievalSkip = { document_id: string; locator?: string; code: string; reason: string }
 type RagChunk = RagDocumentExport['chunks'][number]
@@ -39,8 +39,9 @@ export type RetrievalResponse = {
   project_id: string; question: string; rank_query: string; query_expansions: RetrievalQueryExpansion[]; as_of: string | null; hits: RetrievalHit[];
   candidate_counts: { documents: number; parsed_chunks: number; eligible_chunks: number; ranked_chunks: number; batches: number; unresolved_references: number;
     source_texts?: number; eligible_source_texts?: number };
-  skipped: RetrievalSkip[]; method: 'metadata_gated_bm25' | 'metadata_gated_batched_bm25' | 'api_semantic_bm25' | 'keyword_fallback';
+  skipped: RetrievalSkip[]; method: 'metadata_gated_bm25' | 'metadata_gated_batched_bm25' | 'api_semantic_bm25' | 'keyword_fallback' | 'bm25_with_api_answer';
   assistance?:RetrievalAssistance;
+  routing?:{mode:'direct'|'semantic';reason:string};timing?:{first_originals_ms:number;total_ms:number};cache?:{reused:boolean;created_at:string};
   score_meaning: string; ranking_note: string; content_role: 'untrusted_source_material'; fact_writes: 0;
 }
 export type RankMatch = { source_id: string; score: number }
@@ -70,16 +71,21 @@ export function expandRetrievalQuery(question: string): { rank_query: string; qu
     { terms: ['花多少钱', '要多少钱', '花费多少'], added_term: '费用 投资 预算', reason: '日常费用问法对应工程材料中的费用、投资和预算词汇；仅扩展查找措辞，不推断金额。' },
     { terms: ['老人', '老年人', '长者'], added_term: '养老 老年 社区服务 邻里', reason: '老人的日常活动可能记在养老、老年、社区服务或邻里材料中；仅扩展查找词汇，不认定设施已适用。' },
     { terms: ['停车难', '找不到车位', '车位不够', '车位不足'], added_term: '停车 车位 泊位', reason: '停车困难在材料中可能用停车、车位或泊位记录；保留原问题并补充相应设施词汇。' },
-    { terms: ['吃饭', '食堂', '用餐', '助餐'], added_term: '助餐 社区食堂 长者食堂 就餐 人次', reason: '补充助餐与食堂的常用表达。' },
+    { terms: ['吃饭', '食堂', '用餐', '助餐', '晚餐', '午餐', '饭钱'], added_term: '助餐 社区食堂 长者食堂 就餐 人次', reason: '补充助餐与食堂的常用表达。' },
     { terms: ['幸福', '满意', '过得怎么样', '住得舒服'], added_term: '幸福感 满意度 问卷 居住体验', reason: '补充居民感受和调查量表的表达。' },
-    { terms: ['上楼', '乘梯', '电梯怎么', '电梯的', '加梯怎么'], added_term: '电梯 加装电梯 无障碍 使用频次 维保 托管', reason: '补充出行设施、运行与维护的表达。' },
+    { terms: ['上楼', '乘梯', '电梯怎么', '电梯的', '加梯怎么', '爬楼', '上下楼', '走楼梯'], added_term: '电梯 加装电梯 无障碍 使用频次 维保 托管', reason: '补充出行设施、运行与维护的表达。' },
     { terms: ['漏水', '水压', '停水'], added_term: '给水 管网 供水 渗漏 水泵', reason: '补充供水故障和设施名称。' },
+    { terms: ['谁出钱', '钱谁出', '谁掏钱', '谁买单', '谁承担', '钱从哪'], added_term: '出资 承担 分摊 资金来源 财政 自筹', reason: '将日常出资问法对应材料中的资金承担字段，不推断责任主体。' },
+    { terms: ['什么时候能用', '什么时候建好', '弄好了没', '修到哪'], added_term: '竣工 完工 验收 投用 施工', reason: '补充工程交付与使用阶段，计划与实际完成分别核对。' },
+    { terms: ['延期', '延后', '推迟'], added_term: '延期 延后 推迟', reason: '补充延期通知中的不同措辞。' },
+    { terms: ['雨天积水', '排污', '污水', '雨污分流'], added_term: '排水 雨污 管网 污水', reason: '补充排水与雨污设施表达，不混成给水工程。' },
     { terms: ['充电', '电动车'], added_term: '充电设施 充电桩 非机动车 消防', reason: '补充非机动车和充电设施表达。' },
   ]
   const query_expansions = rules.flatMap(rule => {
     const matched_terms = rule.terms.filter(term => question.includes(term))
     return matched_terms.length ? [{ matched_terms, added_term: rule.added_term, reason: rule.reason }] : []
   })
+  for(const phrase of question.match(/拆[零〇一二两三四五六七八九十百\d]+建[零〇一二两三四五六七八九十百\d]+/g)||[])query_expansions.push({matched_terms:[phrase],added_term:phrase+' 拆建 拆除重建',reason:'保留拆建组合短语，避免分成单字后漏检，不改变数量口径。'})
   return { rank_query: query_expansions.length ? `${question}\n${query_expansions.map(item => item.added_term).join(' ')}` : question, query_expansions }
 }
 
@@ -90,12 +96,15 @@ const subjectTopics = [
   ['电梯', '加梯'], ['停车', '车位', '泊位', '泊车'],
   ['原拆原建', '拆除重建', '拆建', '重建', '自主更新'],
   ['养老', '老人', '老年', '长者', '康养', '助老', '邻里', '社区服务'],
+  ['助餐', '食堂', '用餐', '就餐', '晚餐', '午餐', '吃饭'],
+  ['排水', '雨污', '积水', '污水'],
+  ['满意', '幸福', '问卷', '居住体验'],
 ]
 const financialTerms = ['费用', '投资', '预算', '成本', '造价', '资金', '补助', '补贴', '融资', '自筹', '估算', '支出']
 export function retrievalTopics(question: string) {
   const subjects = subjectTopics.filter(terms => terms.some(term => question.includes(term)))
   const financial = [...financialTerms, '多少钱', '花费'].some(term => question.includes(term))
-  return { explicit: subjects.length > 0 || financial,
+  return { explicit: subjects.length > 0 || financial,subjects,financial,
     matches: (text: string) => (!subjects.length || subjects.some(terms => terms.some(term => text.includes(term))))
       && (!financial || financialTerms.some(term => text.includes(term))) }
 }

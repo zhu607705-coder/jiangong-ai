@@ -501,6 +501,26 @@
         "original projects, saved strategies, tasks and documents",
         "no new model client, search client, scheduler or private-data consent path"
       ]
+    },
+    {
+      "id": "rag-performance-20261018",
+      "reuse": [
+        "existing HybridRetrievalService and DSH LiveSession",
+        "SemanticIndexRepository existing owner/project/model/policy table",
+        "same Jieba/BM25Okapi capability and original candidates",
+        "bindStrategySource and existing research coverage",
+        "current React NDJSON consumer and abort handling"
+      ],
+      "new_domain_logic": [
+        "deterministic direct/semantic routing with colloquial terms",
+        "validated same-snapshot answer reuse and pure-text statistics memoization",
+        "explicit-question supplementation and bounded continuous original focus"
+      ],
+      "unchanged": [
+        "original source/quote and permission/version gates",
+        "no new vector store, search client, model client or scheduler",
+        "project facts, saved plans and research history"
+      ]
     }
   ]
 }

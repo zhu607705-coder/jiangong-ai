@@ -1,0 +1,75 @@
+rag-tests.log
+
+ RUN  v4.1.11 D:/建工ai/.cache/rag-performance
+
+
+ Test Files  4 passed (4)
+      Tests  54 passed (54)
+   Start at  10:06:25
+   Duration  13.67s (transform 512ms, setup 0ms, import 1.70s, tests 11.47s, environment 0ms)
+
+
+
+coverage-tests.log
+
+ RUN  v4.1.11 D:/建工ai/.cache/rag-performance
+
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  10:06:59
+   Duration  1.07s (transform 313ms, setup 0ms, import 648ms, tests 296ms, environment 0ms)
+
+
+
+python-rag.log
+...................................                                      [100%]
+============================== warnings summary ===============================
+..\..\.venv-win\Lib\site-packages\fastapi\testclient.py:1
+  D:\建工ai\.venv-win\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+35 passed, 1 warning in 3.09s
+
+
+build.log
+
+> haizhizi-decision-workspace@0.2.0 build
+> tsc --noEmit && vite build --config apps/workspace/vite.config.ts
+
+vite v6.4.3 building for production...
+transforming...
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 6677 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                      0.51 kB │ gzip:   0.38 kB
+dist/assets/KnowledgeAgentReport-znkVSlVW.css        6.66 kB │ gzip:   1.44 kB
+dist/assets/KnowledgeWorkbench-B02dDSju.css          8.29 kB │ gzip:   1.82 kB
+dist/assets/KnowledgePipelinePanel-CbPY0HV6.css      8.81 kB │ gzip:   1.90 kB
+dist/assets/index-hXWASnhY.css                     388.47 kB │ gzip:  59.68 kB
+dist/assets/index-CWAFr4Y4.js                        5.29 kB │ gzip:   1.79 kB
+dist/assets/correction-report-BUMXvzL5.js            7.30 kB │ gzip:   3.56 kB
+dist/assets/KnowledgeAgentReport-B4c3Tskv.js        10.51 kB │ gzip:   3.58 kB
+dist/assets/KnowledgeWorkbench-RIPnrY9Q.js          17.56 kB │ gzip:   6.80 kB
+dist/assets/KnowledgePipelinePanel-BKeBxSIW.js      33.57 kB │ gzip:  10.66 kB
+dist/assets/index-DklGmkzb.js                    1,587.09 kB │ gzip: 446.63 kB
+dist/assets/history-records-B99qh1CF.js          6,854.12 kB │ gzip: 584.74 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.10s

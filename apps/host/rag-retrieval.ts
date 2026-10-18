@@ -17,6 +17,7 @@ import {withResearchOriginals} from '../../packages/experience/retrieval-sources
 import {collectSelectedEvidence} from '../../services/capabilities/research'
 import {projectObjectLocation} from '../../packages/retrofit/object-binding'
 import {answerSlots} from '../../packages/retrofit/research-coverage'
+import {deepSeekModelDescriptor} from '../../runtime/dsh/deepseek-catalog'
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const parsed = new Date(`${value}T00:00:00Z`)
@@ -28,7 +29,7 @@ export const retrievalRequest = z.object({ question: z.string().trim().min(1).ma
   source_kind: z.enum(['public_original', 'ai_draft', 'synthetic', 'internal_material', 'unknown']).optional(),
   include_ai: z.boolean().default(false), review_status: z.enum(['draft', 'approved', 'rejected']).optional(),
   as_of: date.optional(), limit: z.number().int().min(1).max(5).default(5),
-  use_ai:z.boolean().default(false), allow_internal_ai:z.boolean().default(false),
+  use_ai:z.boolean().default(false), allow_internal_ai:z.boolean().default(false), refresh:z.boolean().default(false),
 }).strict()
 
 /** The existing local capability remains the lexical ranker; API use is handled separately after consent filtering. */
@@ -104,7 +105,7 @@ export function registerRagRetrieval(app: Express, store: Store, requireProject:
       const streaming=use_ai&&request.headers.accept?.includes('application/x-ndjson')
       const emit=(event:unknown)=>{if(streaming&&!response.destroyed&&!response.writableEnded)response.write(JSON.stringify(event)+'\n')}
       if(streaming){response.type('application/x-ndjson');response.setHeader('Cache-Control','no-store');response.setHeader('X-Accel-Buffering','no');response.flushHeaders()}
-      const result=use_ai?await hybrid.retrieve(project,bundle,state.documents,body,{signal:signalFor(request,response),allowInternalAI:allow_internal_ai&&config.ALLOW_INTERNAL_MODEL==='true',onOriginals:originals=>{emit({type:'originals',result:originals});void queueIndex(project).catch(()=>console.warn('RAG_BACKGROUND_INDEX_QUEUE_FAILED'))}})
+      const result=use_ai?await hybrid.retrieve(project,bundle,state.documents,body,{signal:signalFor(request,response),cacheModel:JSON.stringify(deepSeekModelDescriptor(config.DEEPSEEK_MODEL)),allowInternalAI:allow_internal_ai&&config.ALLOW_INTERNAL_MODEL==='true',onOriginals:originals=>{emit({type:'originals',result:originals});if(originals.routing?.mode==='semantic')void queueIndex(project).catch(()=>console.warn('RAG_BACKGROUND_INDEX_QUEUE_FAILED'))}})
         :await retrieveProjectEvidence(project,bundle,state.documents,body,options.ranker||capabilityRetrievalRanker)
       if(!response.destroyed){if(streaming){emit({type:'complete',result});response.end()}else response.json(result)}
     } catch (error) {

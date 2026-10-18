@@ -1,0 +1,317 @@
+{
+  "checked_at": "2026-10-18T01:52:29.899775+00:00",
+  "rows": [
+    {
+      "question": "75幢1单元加装电梯预计要花多少钱？",
+      "use_ai": true,
+      "first_originals_ms": 350.3,
+      "complete_ms": 31013.9,
+      "hits": [
+        {
+          "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+          "source_id": "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+          "locator": "官方DOC第三部分（四）投资；第三部分（一）任务规模；第四部分实施计划"
+        },
+        {
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+          "locator": "within_scope:http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html"
+        },
+        {
+          "title": "西湖区三方协同为居民幸福加码",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+          "locator": "within_scope:body"
+        },
+        {
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+          "locator": "line:1"
+        },
+        {
+          "title": "央视纪录片《我们一起走过》 聚焦杭州既有住宅加装电梯工作",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-16c64d454a5024c2",
+          "locator": "within_scope:http://www.hzxh.gov.cn/art/2018/12/7/art_1207985_26879583.html"
+        },
+        {
+          "title": "灵隐街道办事处关于公布《2024年下半年灵隐街道办事处重大行政决策事项目录》的通知",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db",
+          "locator": "within_scope:http://www.hzxh.gov.cn/art/2024/9/14/art_1229516987_59041228.html"
+        },
+        {
+          "title": "西湖区三方协同为居民幸福加码",
+          "source_id": "PUB-d85a112b5bf0f508",
+          "locator": "http://zjrb.zjol.com.cn/html/2023-12/28/content_3711099.htm"
+        },
+        {
+          "title": "求是教育集团（总校）2026年特种设备维修工程交易公告 - 小额项目招投标",
+          "source_id": "PUB-6beb97daaa3177d5",
+          "locator": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_becd7225e8054e258d8b11689b917370.html"
+        },
+        {
+          "title": "求是书院院落环境整治项目",
+          "source_id": "PUB-085e4aa3001f1c7d",
+          "locator": "public:excerpt"
+        },
+        {
+          "title": "彭水日报数字报-杭州浙工新村：居民“自主更新”的旧改探索",
+          "source_id": "PUB-ef3ee89b0e627c85",
+          "locator": "public:excerpt"
+        },
+        {
+          "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+          "source_id": "PUB-e0574d28e221f21e",
+          "locator": "public:excerpt"
+        },
+        {
+          "title": "存量焕新践初心 精筑杭城幸福景 - 存量焕新践初心 精筑杭城幸福景",
+          "source_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-0660f343db0f72",
+          "locator": "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2025/art_bc077135478f4b2e91b7823f00ffd328.html#1"
+        },
+        {
+          "title": "杭州市物业专项维修资金管理办法（市政府令第353号）",
+          "source_id": "INTEL-8624b6aa1f33:PUB-HZ-MAINT-353",
+          "locator": "第九、十二、十四、十八条（网页正文第50行）"
+        },
+        {
+          "title": "政府投资项目可行性研究报告编写通用大纲（2023年版）",
+          "source_id": "INTEL-7be9a435d74a:PUB-NDRC-FEAS-2023",
+          "locator": "11页PDF，第5页工程方案，第7页七（二），第8页融资与财务可持续性，第9页经济和社会影响"
+        },
+        {
+          "title": "求是村残疾人之家电梯采购项目中标结果公告",
+          "source_id": "PUB-334b328e631e03a8",
+          "locator": "https://www.zhiliaobiaoxun.com/detail/450073923b21E780830r.html"
+        },
+        {
+          "title": "65项政策、三大转型……一文读懂城市更新的“杭州模式” - 65项政策、三大转型……一文读懂城市更新的“杭州模式”",
+          "source_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-0dcdd0805ea6c7",
+          "locator": "city_background:https://cxjw.hangzhou.gov.cn/col/col1692516/art/2026/art_afaa6781f67f484f8e7886a381030122.html#1"
+        },
+        {
+          "title": "91岁奶奶在西湖边的老房子里住了30多年 设计师帮她改造！每一个细节都很用心 _ 杭州政协网 - 今天是 2026-10-07 星期三",
+          "source_id": "P-e417e04f-784d-4f93-af75-8c75964710e8:PUB-da0641e4827c9eb7",
+          "locator": "within_scope:https://www.hzzx.gov.cn/cshz/content/2020-08/21/content_7796898_0.htm"
+        },
+        {
+          "title": "老旧住房自主更新、原拆原建怎么做？浙江国企正在试点先行",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-8935c3ac63c4900b",
+          "locator": "within_scope:http://zj.xinhuanet.com/20260316/76b6c2d051bd4615b5efda1a267e13b1/c.html"
+        },
+        {
+          "title": "加装电梯、创建“美好家园”两项民生实事项目进展如何？人大代表来监督",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-7accdf1ab8eea290",
+          "locator": "within_scope:https://fgj.hangzhou.gov.cn/art/2023/5/31/art_1229268440_58875721.html"
+        },
+        {
+          "title": "累计加装电梯54台 “求是有约”议事平台让老旧小区“梯”升幸福感",
+          "source_id": "INTEL-8983987af2bb:PUB-QS-ELEV-20260829",
+          "locator": "网页第16行；第23行署每日商报记者及社区通讯员"
+        },
+        {
+          "title": "杭州市城乡建设委员会关于市十四届人大三次会议上城21号建议的答复 - 索引号: 002489479/2023-271882",
+          "source_id": "PUB-af0615434805b8a9",
+          "locator": "public:excerpt"
+        },
+        {
+          "title": "解读杭州城市更新背后的“蝶变密码”",
+          "source_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-5dc61986bb1e5a",
+          "locator": "city_background:https://www.hangzhou.gov.cn/col/col812269/art/2025/art_69bee316d11d4a909c205f5103f29ac7.html"
+        },
+        {
+          "title": "浙江国企试点老旧住房自主更新 微改革推动老房焕新入户",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-cd5eeb3d51d45807",
+          "locator": "within_scope:http://iot.china.com.cn/content/2026-03/17/content_43374641.shtml"
+        },
+        {
+          "title": "浙江国企试点老旧住房自主更新 微改革推动老房焕新入户",
+          "source_id": "PUB-cd5eeb3d51d45807",
+          "locator": "public:excerpt"
+        },
+        {
+          "title": "高德区位初筛资料快照",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:MAPCTX-53310559-de40-4f2c-8450-afdad26e8a22",
+          "locator": "within_scope:map-screening:MAPCTX-53310559-de40-4f2c-8450-afdad26e8a22"
+        },
+        {
+          "title": "高德区位初筛资料快照",
+          "source_id": "P-e417e04f-784d-4f93-af75-8c75964710e8:MAPCTX-c4e232a1-7b26-4056-bc68-85d094f50ab3",
+          "locator": "within_scope:map-screening:MAPCTX-c4e232a1-7b26-4056-bc68-85d094f50ab3"
+        },
+        {
+          "title": "高德区位初筛资料快照",
+          "source_id": "MAPCTX-9a09a880-5771-4026-a827-f7dfeb3777b9",
+          "locator": "map-screening:MAPCTX-9a09a880-5771-4026-a827-f7dfeb3777b9"
+        }
+      ],
+      "model_calls": 3,
+      "timing": null,
+      "cache": null,
+      "events": [
+        "originals",
+        "complete"
+      ],
+      "assistance_status": "partial",
+      "answer": [
+        {
+          "text": "来源原文：官方决策草案附件写明，求是村75幢1单元加装电梯估算总投资约54万元，建设资金来自市区补助及自筹。这是估算数，不是合同价或结算价。",
+          "citations": [
+            {
+              "hit_id": "RAG-82c218d07e42821284a8aaab5fb779ea6cf76118223db52fb2ed40c0c15ddf1f",
+              "quote": "估算总投资约54万元，建设资金来自市区补助及自筹。"
+            }
+          ]
+        },
+        {
+          "text": "该54万元出自灵隐街道办事处2024年9月18日至10月18日公开征求意见的决策草案征求意见稿，属决策前期估算，尚未见成交或竣工结算数据佐证。",
+          "citations": [
+            {
+              "hit_id": "RAG-7b46abcd6565439b6b1fe95ec945dd35627c16361e070c7ef2c84ce4ab368bf4",
+              "quote": "征集意见期限为：2024年9月18日至2024年10月18日。"
+            },
+            {
+              "hit_id": "RAG-82c218d07e42821284a8aaab5fb779ea6cf76118223db52fb2ed40c0c15ddf1f",
+              "quote": "估算总投资约54万元，建设资金来自市区补助及自筹。"
+            }
+          ]
+        },
+        {
+          "text": "杭州市对既有住宅加装电梯有每台20万元的补贴政策（2017年报道口径，现行标准需核）；54万元中补助与自筹的具体拆分原文未列。",
+          "citations": [
+            {
+              "hit_id": "RAG-d80011d5b2cac8330d7f57010ac2b79f3f2d01d92a45e57ad761a711abc246f6",
+              "quote": "对每部电梯补贴20万，其余资金由居民共同筹措"
+            }
+          ]
+        },
+        {
+          "text": "该事项已列入灵隐街道2024年下半年重大行政决策事项目录，计划2024年11月底前完成征求意见和合法性审查、2024年12月底前完成审议，可据此向街道索取后续决策与资金文件。",
+          "citations": [
+            {
+              "hit_id": "RAG-639c7fce955ec386ccf3cf62442abc6a4619fdc8ec316ca8fbb642cb0d4ad63a",
+              "quote": "求是村75幢1单元电梯加装"
+            }
+          ]
+        },
+        {
+          "text": "另需区分：求是教育集团特种设备维修（含加装电梯）预算49.69万元，是学校项目；求是村残疾人之家电梯中标公告金额空白。二者均不能作为75幢1单元造价依据。",
+          "citations": [
+            {
+              "hit_id": "RAG-f2b74ae77718ebcfe5da5aa2172ddf19943323d65397c9b394c269e72a31b56e",
+              "quote": "工程主要内容：加装电梯等。"
+            },
+            {
+              "hit_id": "RAG-938f1ba77e0b9ffa29e476cdb8a1aff0ac6fce4d53893f3a8fc64af85f87935f",
+              "quote": "求是村残疾人之家电梯采购项目中标结果公告"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "本次只对有界候选进行语义判读，未让模型逐批扫描全库。"
+      ]
+    },
+    {
+      "question": "二次供水改造涉及哪些楼栋，哪栋没纳入？",
+      "use_ai": false,
+      "first_originals_ms": 81.6,
+      "complete_ms": 81.6,
+      "hits": [
+        {
+          "title": "浙大求是社区推进二次供水改造",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-cde2a3da3dd5:QS-water2023",
+          "locator": "within_scope:body"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:22"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:24"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:20"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:21"
+        }
+      ],
+      "model_calls": 0,
+      "timing": null,
+      "cache": null,
+      "events": [],
+      "assistance_status": null,
+      "answer": [],
+      "warnings": []
+    },
+    {
+      "question": "社区食堂的用餐人数和运营费用有记录吗？",
+      "use_ai": false,
+      "first_originals_ms": 273.3,
+      "complete_ms": 273.3,
+      "hits": [
+        {
+          "title": "西湖区三方协同为居民幸福加码",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+          "locator": "within_scope:body"
+        },
+        {
+          "title": "社区可持续，萧山北干何以全域成林？ - 社区可持续，萧山北干何以全域成林",
+          "source_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-882e4af9a489f7",
+          "locator": "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2026/art_9469fc6fcab54f87a223ac7215491e9f.html#1"
+        },
+        {
+          "title": "西湖区三方协同为居民幸福加码",
+          "source_id": "PUB-d85a112b5bf0f508",
+          "locator": "http://zjrb.zjol.com.cn/html/2023-12/28/content_3711099.htm"
+        },
+        {
+          "title": "彭水日报数字报-杭州浙工新村：居民“自主更新”的旧改探索",
+          "source_id": "PUB-ef3ee89b0e627c85",
+          "locator": "public:excerpt"
+        },
+        {
+          "title": "全省率先试点城市危旧房有机更新 拱墅区如何做到“第一个吃螃蟹”？ _ 杭州政协网 - 今天是 2026-05-25 星期一",
+          "source_id": "PUB-62fc38dfe56bfeba",
+          "locator": "public:excerpt"
+        }
+      ],
+      "model_calls": 0,
+      "timing": null,
+      "cache": null,
+      "events": [],
+      "assistance_status": null,
+      "answer": [],
+      "warnings": []
+    }
+  ],
+  "project_metadata_unchanged": true,
+  "research_rounds_unchanged": true,
+  "full_research_started": false,
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "7e115f1e5e8fbaad2dc39e4fcfd4e754d18ab3c8",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  }
+}
