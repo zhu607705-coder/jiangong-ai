@@ -521,6 +521,28 @@
         "no new vector store, search client, model client or scheduler",
         "project facts, saved plans and research history"
       ]
+    },
+    {
+      "id": "aihot-knowledge-closure-20261018",
+      "reuse": [
+        "IntelRepository original/version/analysis/membership schema",
+        "same intel_jobs worker and paid-call receipts",
+        "existing AIHOT event/story algorithms, DSH and Decision judge",
+        "withResearchOriginals shared public-source projection",
+        "IntelligencePanel and GlobalKnowledge navigation",
+        "existing BM25 capability for library research handoff"
+      ],
+      "new_domain_logic": [
+        "owner/project/version original lineage",
+        "archive job and historical-version non-promotion",
+        "publication cutoff distinct from observation snapshot",
+        "continuous research intake origin and40-call budget deferral"
+      ],
+      "unchanged": [
+        "no new database/search client/scheduler",
+        "internal materials stay in project permissions",
+        "case/rule approval and original saved results"
+      ]
     }
   ]
 }

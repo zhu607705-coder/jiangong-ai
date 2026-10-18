@@ -71,7 +71,7 @@ export function GlobalProjects({ projects, publishedPlans, onProject, onCreate, 
   </section>
 }
 
-export type GlobalKnowledgeSection = 'cases' | 'rules' | 'costs'
+export type GlobalKnowledgeSection = 'archive' | 'cases' | 'rules' | 'costs'
 export type GlobalKnowledgeProps = {
   children?: ReactNode
   onProjectSpace?: () => void
@@ -79,13 +79,14 @@ export type GlobalKnowledgeProps = {
   onSectionChange?: (section: GlobalKnowledgeSection) => void
 }
 const knowledgeSections: { id: GlobalKnowledgeSection; label: string; description: string }[] = [
+  { id: 'archive', label: '资料沉淀', description: '采集原文、保存版本、研读分类、关联事件，再复用到具体项目；随研究持续积累。' },
   { id: 'cases', label: '案例库', description: '查看案例的改造举措、适用条件与关键差异，并追溯原始材料。' },
   { id: 'rules', label: '规则库', description: '核对规则的来源、审核状态、适用对象与版本。' },
   { id: 'costs', label: '成本参考', description: '按工程范围、价格阶段、面积口径与价格年份查阅成本来源。' },
 ]
 
 export function GlobalKnowledge({ children, onProjectSpace, activeSection, onSectionChange }: GlobalKnowledgeProps) {
-  const [localSection, setLocalSection] = useState<GlobalKnowledgeSection>('cases')
+  const [localSection, setLocalSection] = useState<GlobalKnowledgeSection>('archive')
   const selected = activeSection ?? localSection
   const section = knowledgeSections.find(item => item.id === selected)!
   const headingId = useId(), contentId = useId()

@@ -1,0 +1,69 @@
+{
+  "deployed_at": "2026-10-18T02:43:32.857532+00:00",
+  "commit": "1831d818686942e566ff789c95f7b959e06414cf",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261018T024329Z",
+  "runtime_files": {
+    "apps/host/intelligence.ts": {
+      "before": "077ac5ef3051766ecaaa687b7e4d93ae6c6bc5a92d41eb74baf8faff27c49e5d",
+      "after": "180f04897528eb6b4cea52f1f8e2590100b629fb3a6503a14dfb6b688d5e034d"
+    },
+    "apps/host/rag-retrieval.ts": {
+      "before": "990fbdf055feda4e03f134632822c628c1209f843530b9abd1bfd5cb6bae93bf",
+      "after": "11b828fea38930f09615e72a3c44ac7285083d5db709550a2928a0866dc7146e"
+    },
+    "packages/experience/retrieval-sources.ts": {
+      "before": "4ec257ccc7ac7de8bc4dec010cd1ab6dd797a21e3fd7d21717505c3da1962bdf",
+      "after": "e545b5afaa9370d289ede1420857a28a81b16316fef8d6d9cec39af2aa917ee9"
+    },
+    "packages/intelligence/project-archive.ts": {
+      "before": null,
+      "after": "4c50298e8ad83d9db457f579a81ba18a6956db87672c5c44a18cc822ec467304"
+    },
+    "packages/intelligence/repository.ts": {
+      "before": "b3426855182bab87d88ea72c13f28d5d06ae25ca9dde219c1279e6daa746a79f",
+      "after": "210b3dbf7b97dd90940605a7a4167c60dd60ddb668145244c63d596eb90d6ebf"
+    },
+    "packages/intelligence/research-bridge.ts": {
+      "before": "80452a0e8a8a2bb5845e72e247762f768c39a69c72fed88d10826cb2502801fc",
+      "after": "784caa6645ea0a4aaec09aad228060ff96c67bf6c7f5eb20e73750211d0d26f7"
+    },
+    "packages/intelligence/service.ts": {
+      "before": "75763211afc2741a33490bb1d3100117c83dbd8d9aa2c222248f7697fc5c2183",
+      "after": "6a7ea784279037a8958bf7b6c76b4f040bae84a2a00ed5d4251bea4bd2c52ec5"
+    },
+    "services/capabilities/research.ts": {
+      "before": "a26e1096bb46e29addd14d6d1770e50076eb3938dc7475e1accd5b5f4b93af74",
+      "after": "93439ac9573d383222d4f1a30484dc05b878481193b54551aefdd8362363c5d5"
+    },
+    "services/map-screening/renewal-strategy.ts": {
+      "before": "060eb0df7834d63163f5bd4ef98e52cfc6dcfbd5967d14ecf9d080231f16facc",
+      "after": "47bb23ca1683d090c8eb22bb194bcdf1b7e40dcb910258e46c938ec237baeee3"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "1831d818686942e566ff789c95f7b959e06414cf",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

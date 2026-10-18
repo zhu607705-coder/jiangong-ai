@@ -18,6 +18,11 @@ import {collectSelectedEvidence} from '../../services/capabilities/research'
 import {projectObjectLocation} from '../../packages/retrofit/object-binding'
 import {answerSlots} from '../../packages/retrofit/research-coverage'
 import {deepSeekModelDescriptor} from '../../runtime/dsh/deepseek-catalog'
+import {recallIntelligence,rememberIntelligence} from '../../packages/intelligence/research-bridge'
+import {resolveAnswerSlots} from '../../packages/retrofit/research-coverage'
+import {needsPublicSupplement} from '../../packages/experience/hybrid-retrieval'
+import {queryObjectCompatible} from '../../packages/experience/retrieval'
+import {bindStrategySource} from '../../packages/retrofit/object-binding'
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const parsed = new Date(`${value}T00:00:00Z`)
@@ -61,9 +66,12 @@ export function registerRagRetrieval(app: Express, store: Store, requireProject:
       if(project.input.synthetic)return []
       // Search terms are rebuilt from public object registration and fixed topic/field labels, never private summaries.
       const location=projectObjectLocation(project.input.scope),name=project.input.scope.map_anchor?.name||project.input.scope.name
+      const local=(await recallIntelligence({name,city:location.city,purpose:question,asOf:project.input.as_of},signal)).filter(source=>queryObjectCompatible(question,source.title+'\n'+source.untrusted_text))
+      const localCoverage=resolveAnswerSlots(question,local.map(source=>bindStrategySource({id:source.id,title:source.title,text:source.untrusted_text||'',url:source.url||null,locator:source.locator||'source:body',role:'reference',published_at:source.published_at||null},project.input)))
       const subjects=[...new Set(answerSlots(question).filter(slot=>['机电配套','雨棚','消防通道','二次供水','电梯','社区食堂'].includes(slot.topic)).map(slot=>slot.topic))]
       const queries=(subjects.length?subjects:['改造工程']).slice(0,4).map(topic=>`${location.city||''} ${name} ${topic} 金额 阶段 资金来源 公告`)
-      const found=await collectSelectedEvidence({name,city:location.city,purpose:'本对象公开原文补查',asOf:project.input.as_of,seedSources:project.input.sources,forceDiscovery:true,budget:{newEvidence:3,refresh:1}},signal,undefined,undefined,queries)
+      const found=!needsPublicSupplement(question,localCoverage,local.length)?{sources:local}:await collectSelectedEvidence({origin:{project_id:project.id,context_version:project.context_version},name,city:location.city,purpose:'本对象公开原文补查',asOf:project.input.as_of,seedSources:project.input.sources,forceDiscovery:true,budget:{newEvidence:3,refresh:1}},signal,undefined,undefined,queries)
+      if(found.sources===local)await rememberIntelligence(local,location.city,{project_id:project.id,context_version:project.context_version})
       const sources=found.sources.filter(source=>source.untrusted_text&&source.content_status!=='metadata_only'&&!project.input.sources.some(old=>old.id===source.id&&old.hash===source.hash))
       await store.db.exec('CREATE TABLE IF NOT EXISTS project_rag_evidence(owner_id TEXT NOT NULL,project_id TEXT NOT NULL REFERENCES projects(id),context_version INTEGER NOT NULL,source_id TEXT NOT NULL,source_hash TEXT NOT NULL,payload JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(owner_id,project_id,context_version,source_id,source_hash))')
       for(const source of sources)await store.db.query('INSERT INTO project_rag_evidence(owner_id,project_id,context_version,source_id,source_hash,payload) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[project.owner_id,project.id,project.context_version,source.id,source.hash,JSON.stringify(source)])

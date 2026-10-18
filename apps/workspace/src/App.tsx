@@ -24,6 +24,7 @@ import {
 import WorkspaceFrame, { type WorkspaceGlobalView } from "./components/WorkspaceFrame";
 import { GlobalProjects, GlobalKnowledge } from './components/GlobalWorkspace';
 import GlobalKnowledgeCatalog from './components/GlobalKnowledgeCatalog';
+import IntelligencePanel from './intelligence/IntelligencePanel';
 import ProjectOverview from './components/ProjectOverview';
 import ProjectDecisionGuidance from './components/ProjectDecisionGuidance';
 import ProjectEvidenceDrawer, { type ProjectEvidenceReference } from './components/ProjectEvidenceDrawer';
@@ -257,7 +258,7 @@ export default function App() {
   const demoSessionActive = !!project && !replay && project.id === completeDemoProject;
   const completeDemoActive = demoSessionActive && !['evidence','context'].includes(tab);
   const location = resolveProjectLocation(tab, routeSection);
-  const knowledgeSection = ['cases','rules','costs'].includes(routeSection || '') ? routeSection as 'cases'|'rules'|'costs' : 'cases';
+  const knowledgeSection = ['archive','cases','rules','costs'].includes(routeSection || '') ? routeSection as 'archive'|'cases'|'rules'|'costs' : 'archive';
   const directionIdentity = project ? `${project.id}:${project.context_version}:${demoSessionActive}` : '';
   const [directionSelection, setDirectionSelection] = useState<StrategyDirectionSelection | null>(null);
   const [directionPacket, setDirectionPacket] = useState<{ identity: string; packet: StrategyPacket } | null>(null);
@@ -293,7 +294,7 @@ export default function App() {
   function rememberPosition() { if (scrollContainer.current) scrollPositions.current.set(navigationKey, scrollContainer.current.scrollTop); }
   function navigateProject(page: ProjectPage | 'map' | 'knowledge', section?: string, pane?: string, scheme?: 'comprehensive'|'rebuild') {
     if (page === 'map') { setMapFocus(value => value + 1); navigateGlobal('map'); return; }
-    if (page === 'knowledge') { setRouteSection(section || 'cases'); navigateGlobal('knowledge', section); return; }
+    if (page === 'knowledge') { setRouteSection(section || 'archive'); navigateGlobal('knowledge', section); return; }
     if (page === 'results' && section === 'runs') { setRunDetailsOpen(true); return; }
     rememberPosition();
     const normalized = section === 'baseline' ? 'current' : section === 'materials' ? 'files' : section;
@@ -305,8 +306,8 @@ export default function App() {
   }
   function navigateGlobal(view: WorkspaceGlobalView, section?: string) {
     rememberPosition(); setGlobalView(view); setDetailsOpen(view === 'project');
-    if (view === 'knowledge' || view === 'projects') setRouteSection(section || (view === 'knowledge'?'cases':'projects'));
-    if (project) writeWorkbenchLink(project.id, view === 'project' ? tab as WorkbenchView : view, {section: view === 'knowledge' ? section || 'cases' : view==='projects'?section||'projects':undefined, push:true});
+    if (view === 'knowledge' || view === 'projects') setRouteSection(section || (view === 'knowledge'?'archive':'projects'));
+    if (project) writeWorkbenchLink(project.id, view === 'project' ? tab as WorkbenchView : view, {section: view === 'knowledge' ? section || 'archive' : view==='projects'?section||'projects':undefined, push:true});
   }
   useEffect(() => {
     const node = scrollContainer.current; if (!node) return;
@@ -808,7 +809,7 @@ export default function App() {
       onProjectPage={page => navigateProject(page)}
       availableProjectPages={availableProjectPages}
       scrollContainerRef={scrollContainer}
-      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={openBlankProject} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
+      globalContent={globalView === 'projects' ? <GlobalProjects activeSection={routeSection==='published'?'published':'projects'} onSectionChange={section=>navigateGlobal('projects',section)} projects={projects} publishedPlans={publicDecisions.items} onCreate={openBlankProject} canCreate={access.canWrite} onProject={id => void openPublicDecision(id)} onOpenPublished={openPublicDecision} loading={loading} error={error}/> : globalView === 'knowledge' ? <GlobalKnowledge activeSection={knowledgeSection} onSectionChange={section => navigateGlobal('knowledge',section)} onProjectSpace={() => navigateGlobal('projects')}>{knowledgeSection === 'archive' ? <IntelligencePanel onOpenProject={id => void action(async()=>{await loadProject(id);setTab('evidence');setRouteSection('files');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'evidence',{section:'files'});})}/> : knowledgeSection === 'costs' ? <ConstructionCostLibrary/> : <GlobalKnowledgeCatalog kind={knowledgeSection === 'rules' ? 'rule' : 'case'} onOpenProject={id => void action(async()=>{await loadProject(id);setTab('context');setRouteSection('context');setGlobalView('project');setDetailsOpen(true);writeWorkbenchLink(id,'context');})}/>}</GlobalKnowledge> : null}
       project={project}
       projects={projects}
       stages={stages}

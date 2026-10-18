@@ -105,7 +105,7 @@ test('knowledge shell renders supplied reference content directly and keeps its 
   await act(async () => root.render(createElement(GlobalKnowledge, { children: createElement('article', { 'data-real-library': true }, '已有规则来源与审核记录') })))
   expect(container.querySelector('h1')?.textContent).toBe('案例与规则')
   expect(container.textContent).toContain('参考资料'); expect(container.querySelector('[data-real-library]')?.textContent).toBe('已有规则来源与审核记录')
-  expect([...container.querySelectorAll('nav button')].map(button => button.textContent)).toEqual(['案例库', '规则库', '成本参考'])
+  expect([...container.querySelectorAll('nav button')].map(button => button.textContent)).toEqual(['资料沉淀', '案例库', '规则库', '成本参考'])
   expect(container.querySelector('details')).toBeNull(); expect(fetch).not.toHaveBeenCalled()
 })
 

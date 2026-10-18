@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-18T03:07:39.984282+00:00",
+  "url": "https://laneanew.cn/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=knowledge&section=archive",
+  "runtime_commit": "fae8347df609bfb29c01a5e2064f1724caf0f1e2",
+  "ui_commit": "6748ab7f7b0a85c20016e5c78ec1cd901bf86b3c",
+  "observed": [
+    "default archive entry beside cases/rules/costs",
+    "177 originals561 version records2 analyzed23 linked project rows",
+    "automatic organization enabled with4/40 daily calls",
+    "four matching75幢1单元 original results",
+    "real classified summary, original quote,12 version entries and8 project links",
+    "light workspace title computed color rgb(23,63,115)",
+    "no browser console errors"
+  ],
+  "screenshot": "output/playwright/aihot-closure/archive-overview.png",
+  "no_project_inputs_written": true
+}
