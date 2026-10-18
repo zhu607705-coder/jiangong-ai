@@ -4618,7 +4618,7 @@
       "restore knowledge archive entry and visible statistics",
       "existing model budget with next-day deferral"
     ],
-    "next_runnable_task": "Finish browser proof and merge production-equivalent source; new public originals auto organize under daily40-call budget; historical bulk classification remains explicit.",
+    "next_runnable_task": "Merge verified source; normal public research now archives and links originals continuously. Existing original backlog can be organized in bounded batches.",
     "artifact_refs": [
       "docs/AIHOT资料沉淀与研判回流_20261018.md",
       "research/test_results/aihot-closure-server-20261018.json",
@@ -4626,7 +4626,8 @@
       "research/test_results/aihot-closure-idempotency-20261018.json",
       "research/test_results/aihot-closure-auto-organization-20261018.json",
       "research/test_results/aihot-closure-runtime-final-20261018.json",
-      "research/test_results/aihot-closure-ui-final-20261018.json"
+      "research/test_results/aihot-closure-ui-final-20261018.json",
+      "research/test_results/aihot-closure-browser-20261018.json"
     ],
     "server": {
       "database": {
@@ -4659,6 +4660,23 @@
     "automatic_organization": true,
     "collection_enabled": false,
     "runtime_commit": "fae8347df609bfb29c01a5e2064f1724caf0f1e2",
-    "ui_commit": "b5172502fb7ad817fa2e7fa2b5cd3094dd34ddfd"
+    "ui_commit": "6748ab7f7b0a85c20016e5c78ec1cd901bf86b3c",
+    "browser": {
+      "checked_at": "2026-10-18T03:07:39.984282+00:00",
+      "url": "https://laneanew.cn/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=knowledge&section=archive",
+      "runtime_commit": "fae8347df609bfb29c01a5e2064f1724caf0f1e2",
+      "ui_commit": "6748ab7f7b0a85c20016e5c78ec1cd901bf86b3c",
+      "observed": [
+        "default archive entry beside cases/rules/costs",
+        "177 originals561 version records2 analyzed23 linked project rows",
+        "automatic organization enabled with4/40 daily calls",
+        "four matching75幢1单元 original results",
+        "real classified summary, original quote,12 version entries and8 project links",
+        "light workspace title computed color rgb(23,63,115)",
+        "no browser console errors"
+      ],
+      "screenshot": "output/playwright/aihot-closure/archive-overview.png",
+      "no_project_inputs_written": true
+    }
   }
 }
