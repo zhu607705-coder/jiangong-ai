@@ -34,11 +34,16 @@ it('archives real public originals with project lineage and preserves current an
   vi.stubGlobal('fetch',vi.fn(async(_url:string,init:RequestInit)=>{const p=JSON.parse(String(init.body));return new Response(JSON.stringify({matches:p.project.sources.map((s:{id:string})=>({source_id:s.id,score:1}))}))}))
   const recalled=await recallIntelligence({name:'甲园区',city:'杭州',purpose:'供水预算',asOf:'2024-12-31'},new AbortController().signal)
   expect(recalled.some(source=>source.untrusted_text?.includes('10万元'))).toBe(true)
+  const alias=await recallIntelligence({name:'浙大甲园区 · 片区研究',city:'杭州市',purpose:'供水预算',asOf:'2024-12-31'},new AbortController().signal)
+  expect(alias.some(source=>source.untrusted_text?.includes('10万元'))).toBe(true)
   await rememberIntelligence(recalled,'杭州',{project_id:input.project_id,context_version:2})
   expect((await intel.repo.projectLinks(current[0].id,current[0].version,config.ownerId)).some(row=>row.origin==='research_discovery')).toBe(true)
   const more=Array.from({length:14},(_,i)=>({...original,id:'MORE-'+i,url:'https://example.org/more/'+i}))
   await rememberIntelligence(more as Parameters<typeof rememberIntelligence>[0],'杭州')
   expect((await intel.repo.stats()).documents).toBe(15)
+  for(const [id,title] of [['A','75幢1单元电梯预算'],['B','75幢2单元电梯预算']] as const)await intel.ingest({...original,id,title,url:'https://example.org/unit/'+id})
+  const precise=await intel.search({q:'75幢1单元'})
+  expect(precise.items.map(row=>row.representative.title)).toEqual(['75幢1单元电梯预算'])
  }finally{vi.unstubAllGlobals();await intel.stop();await db.close()}
 })
 

@@ -52,6 +52,7 @@ const sourceKind = (document: Pick<RagDocumentExport, 'data_kind'>): RetrievalSo
   internal_material: 'internal_material', unknown: 'unknown',
 } as const)[document.data_kind]
 const unique = (values: string[]) => [...new Set(values.filter(Boolean))].sort()
+export const retrievalScopeNames=(names:string[])=>unique(names.flatMap(name=>[name.split(/[·|｜]/)[0].trim(),name.split(/[·|｜]/)[0].trim().replace(/^(?:浙江大学|浙大)/,'')]).filter(name=>name.length>=3))
 const validDate = (value: string | undefined): string | null => {
   if (!value || !/^\d{4}-\d{2}-\d{2}(?:$|T)/.test(value)) return null
   const date = value.slice(0, 10), parsed = new Date(`${date}T00:00:00Z`)
@@ -151,6 +152,10 @@ export function queryObjectCompatible(question:string,text:string):boolean {
   const wanted=buildingLocations(question),actual=buildingLocations(text)
   if(!wanted.length||!actual.length)return true
   return wanted.some(w=>actual.some(a=>a.building===w.building&&(w.unit===null||a.unit===null||a.unit===w.unit)))
+}
+/** Explicit object searches in the archive require an actually recorded building, not just a shared numeral. */
+export function queryObjectLocated(question:string,text:string):boolean{
+  return !buildingLocations(question).length||buildingLocations(text).length>0&&queryObjectCompatible(question,text)
 }
 
 /** Shared by direct questions and expert source reading; topics are preferences. */
@@ -380,7 +385,7 @@ export async function retrieveProjectEvidence(project: ProjectRecord, bundle: Ra
   const locations = buildingLocations(request.question)
   const locationTokens = new Set(locations.flatMap(location => searchTokens(location.literal)))
   const attributeTerms = terms.filter(term => !locationTokens.has(term) && !/^[\d零〇一二两三四五六七八九十百千]+$/.test(term) && !['单元', '楼栋', '楼幢', '号楼'].includes(term))
-  const projectNames = unique(names.flatMap(name => [name.split(/[·|｜]/)[0].trim(), name.split(/[·|｜]/)[0].trim().replace(/^(?:浙江大学|浙大)/, '')]).filter(name => name.length >= 3))
+  const projectNames = retrievalScopeNames(names)
   const locationMatch = (candidate: RetrievalCandidate) => {
     if (!locations.length) return false
     const refs = candidate.source.object_refs || [], metadata = `${candidate.source.title} ${refs.join(' ')}`

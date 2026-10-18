@@ -18,6 +18,7 @@ import {localOfficialStructure,localAnalysis} from './local-structure'
 import {projectArchiveOriginals} from './project-archive'
 import {projectObjectLocation} from '../retrofit/object-binding'
 import {administrativeAddress} from '../research/evidence'
+import {retrievalScopeNames,queryObjectLocated} from '../experience/retrieval'
 
 export class IntelligenceService {
   readonly repo:IntelRepository
@@ -106,7 +107,8 @@ export class IntelligenceService {
     return {seen,created,linked,queued,skipped,skip_reasons,has_more:projects.length>10,next_cursor:projects.slice(0,10).at(-1)?.id||cursor}
   }
   async queueArchive(analyzeLimit=0){await this.ready;const run_id='archive-'+config.ownerId;const active=(await this.repo.db.query<Job>("SELECT * FROM intel_jobs WHERE kind='archive' AND payload->>'run_id'=$1 AND status IN ('queued','running') ORDER BY created_at LIMIT 1",[run_id])).rows[0];if(active)return active;const job=await this.repo.enqueue('archive',run_id,{run_id,cursor:'',analyze_remaining:Math.min(8,Math.max(0,analyzeLimit))});void this.tick().catch(()=>console.warn('INTELLIGENCE_ARCHIVE_JOB_FAILED'));return job}
-  async search(q:Query){await this.ready;const loaded=await this.repo.entries(q.city,400,q.as_of,q.q),all=rankEntries(loaded.entries,{...q,city:undefined}),limit=Math.min(40,Math.max(1,q.limit??20)),offset=Math.min(380,Math.max(0,q.offset??0))
+  async search(q:Query){await this.ready;const loaded=await this.repo.entries(q.city,400,q.as_of,q.q),all=rankEntries(loaded.entries,{...q,city:undefined}).filter(entry=>queryObjectLocated(q.q||'',entry.title+'\n'+entry.text)),limit=Math.min(40,Math.max(1,q.limit??20)),offset=Math.min(380,Math.max(0,q.offset??0))
+    if(!q.q?.trim())all.sort((a,b)=>Number(b.analysis.status==='ready')-Number(a.analysis.status==='ready'))
     const groups=new Map<string,Entry[]>()
     for(const e of all){const g=groups.get(e.event_id)||[];g.push(e);groups.set(e.event_id,g)}
     const events=[...groups].map(([id,items])=>({id,story_id:items[0].story_id,representative:summaryOf(items[0]),items:items.map(summaryOf),
@@ -146,8 +148,9 @@ export class IntelligenceService {
   private async lookup(request:{name:string;city?:string;purpose:string;asOf:string},signal:AbortSignal){await this.ready;signal.throwIfAborted()
     const entries=(await this.repo.entries(request.city,200,undefined,request.name+' '+request.purpose,request.asOf)).entries
     const place=request.name.replace(/(?:研究范围|片区|街区)$/,'').trim()
+    const names=retrievalScopeNames([place])
     const eligible=rankEntries(entries,{q:place+' '+request.purpose,as_of:request.asOf})
-      .filter(e=>e.analysis.status!=='irrelevant'&&(e.title.includes(place)||e.text.includes(place)))
+      .filter(e=>e.analysis.status!=='irrelevant'&&names.some(name=>e.title.includes(name)||e.text.includes(name)))
     const sources=eligible.flatMap(e=>{const s=evidenceSource(e,request.asOf);return s?[s]:[]}).slice(0,20)
     if(!sources.length)return []
     // The existing jieba/BM25/RETQA/STORM capability remains the single research lexical retriever.
