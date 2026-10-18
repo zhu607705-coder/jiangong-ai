@@ -4598,5 +4598,29 @@
       "screenshot": "output/playwright/rag-performance/answer-and-source.png",
       "no_full_research_started": true
     }
+  },
+  "aihot_knowledge_closure_20261018": {
+    "status": "implementation_and_local_verification",
+    "request": "恢复AIHOT范式并建立合理的资料数据库沉淀",
+    "evidence": [
+      "production has125 public documents141 versions",
+      "automatic model and collection flags both false",
+      "global knowledge page not connected to IntelligencePanel",
+      "project sync missed renewal snapshots and RAG supplements",
+      "research asOf incorrectly used observation clock"
+    ],
+    "design": [
+      "reuse intel_documents/versions/analyses/memberships/jobs/receipts",
+      "add owner-scoped project lineage only for public originals",
+      "published cutoff separate from observation snapshot",
+      "historical versions cannot replace current pointer",
+      "research intake automatically remembers sources and origin, no12-source truncation",
+      "restore knowledge archive entry and visible statistics",
+      "existing model budget with next-day deferral"
+    ],
+    "next_runnable_task": "Finish scoped checks; deploy, archive public history, enable bounded automatic model organization, verify native item and browser, merge.",
+    "artifact_refs": [
+      "docs/AIHOT资料沉淀与研判回流_20261018.md"
+    ]
   }
 }

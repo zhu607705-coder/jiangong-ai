@@ -1915,6 +1915,26 @@
         "research/reuse_manifest.json"
       ],
       "definition_of_done": "案例随实际问题变化、来源状态分开；任务导入可回读原文定位及工具回执；压缩同口径且历史数值保留；回归/构建及服务器页面验收，部署后项目与历史保持，完成合并。"
+    },
+    {
+      "id": "AIHOT-KNOWLEDGE-20261018",
+      "depends_on": [],
+      "goal": "恢复AIHOT资料库与当前研判的持续归集、研读、关系及复用",
+      "write_scope": [
+        "packages/intelligence",
+        "packages/experience/retrieval-sources.ts",
+        "apps/host/intelligence.ts",
+        "apps/host/rag-retrieval.ts",
+        "apps/workspace/src",
+        "services/capabilities/research.ts",
+        "services/map-screening/renewal-strategy.ts",
+        "scripts",
+        "tests",
+        "agent",
+        "research",
+        "docs"
+      ],
+      "definition_of_done": "公开历史可回填、版本与项目出处可回读，研究原文增量入库与预算内研读，UI入口可用且真实查询复用；原项目与历史不变，完成部署和合并。"
     }
   ]
 }

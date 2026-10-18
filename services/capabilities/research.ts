@@ -7,6 +7,7 @@ import type { ProjectInput, ResearchTrace, Source, PublicRecord, AdapterReceipt 
 import type { ProgressSink } from '../../packages/research/events'
 import { PUBLIC_SOURCES, publicSourceClass, publicSearchPlan, safePublicUrl } from '../../packages/research/public-sources'
 import { recallIntelligence, rememberIntelligence } from '../../packages/intelligence/research-bridge'
+import type {IntelligenceOrigin} from '../../packages/intelligence/research-bridge'
 import { adaptOfficialSource, officialArticleText, MAX_RESEARCH_RECORDS } from './adapters/public-records'
 import { resolveScope } from './scope'
 import type {FetchRepresentation,WebCallReceipt} from '../../runtime/dsh/deepseek-web-tools'
@@ -19,7 +20,7 @@ export function visibleText(html:string,_url:string):string {
   const article=new Readability(document as unknown as Document,{charThreshold:100}).parse()
   return (article?.textContent||document.body?.textContent||document.documentElement?.textContent||'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim().slice(0,30000)
 }
-export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;seedSources?:Source[];intelligence?:boolean;forceDiscovery?:boolean;criticalReview?:boolean;provider?:'legacy'|'deepseek_tools'|'deepseek_content';budget?:{newEvidence?:number;refresh?:number};onWebCall?:(receipt:WebCallReceipt)=>Promise<void>;intelligencePolicy?:{readExisting:boolean;rememberNew:boolean;checkFreshness:boolean}}
+export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;origin?:IntelligenceOrigin;seedSources?:Source[];intelligence?:boolean;forceDiscovery?:boolean;criticalReview?:boolean;provider?:'legacy'|'deepseek_tools'|'deepseek_content';budget?:{newEvidence?:number;refresh?:number};onWebCall?:(receipt:WebCallReceipt)=>Promise<void>;intelligencePolicy?:{readExisting:boolean;rememberNew:boolean;checkFreshness:boolean}}
 export type PublicResearch={sources:Source[];records:PublicRecord[];receipts:AdapterReceipt[];trace:ResearchTrace;web_calls?:WebCallReceipt[]}
 type SearchHit={url:string;title?:string;snippet?:string;publishedAt?:string}
 // Transport injection keeps contract tests offline; production reuses DSH Web.
@@ -149,7 +150,7 @@ export async function collectSelectedEvidence(request:ResearchRequest,signal:Abo
       }
     }
     emit({type:'progress',stage:'adapters',status:finalRecords.length&&!warnings.length?'completed':'partial',message:finalRecords.length?'已提取项目、金额与统计口径':'已整理原文依据'})
-    if(policy.rememberNew)await rememberIntelligence(sources,request.city)
+    if(policy.rememberNew)await rememberIntelligence(sources,request.city,request.origin)
     return {sources,records:finalRecords,receipts:finalReceipts,web_calls:webMetadata.receipts,trace:{status:usable?(warnings.length?'partial':'success'):'partial',queries,source_ids:[...ids],warnings,reused:localCount>0&&queries.length===0,acquisition:{provider:webMetadata.provider,cached_sources:seed.length+localCount,new_sources:newCount,refreshed_sources:refreshCount,fetch_attempts:fetchAttempts,new_evidence_budget:newBudget,refresh_budget:refreshBudget}}}
   }finally{if(ctx)await ctx.fiber.dispose()}
 }

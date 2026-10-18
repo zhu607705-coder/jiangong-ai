@@ -1,4 +1,3 @@
-import {mergeProjectSources} from '../../services/map-screening/project-evidence'
 import type {ProjectRecord} from '../../apps/host/store'
 import { randomUUID } from 'node:crypto'
 import type { Store } from '../../apps/host/store'
@@ -11,11 +10,14 @@ import { materialFromSource,evidenceSource,summaryOf } from './material'
 import { collectChannel } from './collectors'
 import { analyzeMaterial } from './pipeline'
 import { intelligenceJudge,intelligenceRoutes } from '../../runtime/intelligence/judge'
-import { installIntelligenceHooks } from './research-bridge'
+import { installIntelligenceHooks,type IntelligenceOrigin } from './research-bridge'
 import { datasetRows,evaluateSelection } from './evaluation'
 import { momentum } from '../../vendor/aihot/algorithms'
 import { PUBLIC_SOURCES } from '../research/public-sources'
 import {localOfficialStructure,localAnalysis} from './local-structure'
+import {projectArchiveOriginals} from './project-archive'
+import {projectObjectLocation} from '../retrofit/object-binding'
+import {administrativeAddress} from '../research/evidence'
 
 export class IntelligenceService {
   readonly repo:IntelRepository
@@ -34,7 +36,7 @@ export class IntelligenceService {
     // Search-backed official catalogue templates, not invented RSS endpoints or live coverage claims.
     for(const s of PUBLIC_SOURCES){const id='catalog-'+s.id;if(!known.has(id))await this.repo.saveChannel(channelOf({id,name:s.name,kind:'native_search',url:'https://'+s.domain,domains:[s.domain],publisher_group:s.domain,city:'',config:{query:'存量建筑 改造 建设 项目'},enabled:false,interval_minutes:180,first_party:true}))}
     if(this.stopped)return
-    this.uninstall=installIntelligenceHooks({lookup:(r,s)=>this.lookup(r,s),remember:(s,c)=>this.remember(s,c),revision:async r=>hash(canonical((await this.repo.entries(r.city,200,r.asOf,r.name+' '+r.purpose)).entries.map(e=>[e.id,e.version,e.participation]).sort()))})
+    this.uninstall=installIntelligenceHooks({lookup:(r,s)=>this.lookup(r,s),remember:(s,c,o)=>this.remember(s,c,o),revision:async r=>hash(canonical((await this.repo.entries(r.city,200,undefined,r.name+' '+r.purpose,r.asOf)).entries.map(e=>[e.id,e.version,e.participation]).sort()))})
     this.timer=setInterval(()=>{void this.tick().catch(()=>console.warn('INTELLIGENCE_WORKER_FAILED'))},5000);this.timer.unref()
   }
   async stop(){this.stopped=true;if(this.timer)clearInterval(this.timer);this.active?.controller.abort();this.uninstall?.();await this.ready.catch(()=>undefined);if(this.timer)clearInterval(this.timer);while(this.busy)await new Promise(resolve=>setTimeout(resolve,20))}
@@ -46,7 +48,11 @@ export class IntelligenceService {
       const job=await this.repo.claim();if(!job)return
       const controller=new AbortController(),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(180000)]);this.active={id:job.id,controller}
       try{
-        if(job.kind==='rag_index'){
+        if(job.kind==='archive'){
+          const result=await this.syncExisting(String(job.payload.cursor||''),Number(job.payload.analyze_remaining||0),signal)
+          await this.repo.jobResult(job.id,result);await this.repo.endJob(job.id,'completed')
+          if(result.has_more)await this.repo.enqueue('archive',String(job.payload.run_id)+':'+result.next_cursor,{run_id:job.payload.run_id,cursor:result.next_cursor,analyze_remaining:Math.max(0,Number(job.payload.analyze_remaining||0)-result.queued)})
+        }else if(job.kind==='rag_index'){
           const handler=this.jobHandlers.get(job.kind)
           if(!handler)throw new Error('RAG_INDEX_HANDLER_UNAVAILABLE')
           const result=await handler(job,signal)
@@ -55,8 +61,7 @@ export class IntelligenceService {
         }else if(job.kind==='collect'){
           const c=job.payload.channel?channelOf(job.payload.channel):await this.repo.channel(job.subject);if(!c)throw new Error('CHANNEL_NOT_FOUND')
           const result=await collectChannel(c,signal,async source=>{
-            const m=materialFromSource(source,c),created=await this.repo.put(m)
-            if(created&&job.payload.model===true&&m.text)await this.repo.enqueue('analyze',m.id+'@'+m.version,{id:m.id,version:m.version})
+            await this.ingest(source,c.id,{analyze:job.payload.model===true})
           })
           signal.throwIfAborted();const ok=result.failed===0
           await this.repo.channelResult(c,ok,ok?null:'PARTIAL_SOURCE_FETCH')
@@ -69,23 +74,38 @@ export class IntelligenceService {
         }
       }catch(e){const msg=e instanceof Error?e.message:'INTELLIGENCE_JOB_FAILED'
         const code=/^[A-Z][A-Z0-9_:]+$/.test(msg)?msg:'INTELLIGENCE_JOB_FAILED'
-        await this.repo.endJob(job.id,signal.aborted?'cancelled':code.startsWith('BLOCKED')?'blocked_external':'failed',code)
+        if(code==='INTELLIGENCE_BUDGET_EXHAUSTED')await this.repo.deferBudget(job.id)
+        else await this.repo.endJob(job.id,signal.aborted?'cancelled':code.startsWith('BLOCKED')?'blocked_external':'failed',code)
         if(job.kind==='collect'){const c=job.payload.channel?channelOf(job.payload.channel):await this.repo.channel(job.subject);if(c)await this.repo.channelResult(c,false,code)}
       }finally{this.active=undefined}
     }finally{this.busy=false}
   }
-  async syncExisting(cursor='') {await this.ready
+  async syncExisting(cursor='',analyzeLimit=0,signal?:AbortSignal) {await this.ready
     const projects=(await this.store.db.query<ProjectRecord>('SELECT * FROM projects WHERE owner_id=$1 AND id>$2 ORDER BY id LIMIT 11',[config.ownerId,cursor])).rows
-    let seen=0,created=0
+    let seen=0,created=0,linked=0,queued=0,skipped=0
+    const skip_reasons:Record<string,number>={}
+    const queuedVersions=new Set<string>()
     for(const p of projects.slice(0,10)){
+      signal?.throwIfAborted()
       if(p.input.synthetic)continue
-      const sources=mergeProjectSources(p,await this.store.runs(p.id))
-      for(const s of sources){if(s.synthetic||s.visibility!=='public'||s.data_class!=='public'||!s.url)continue
-        try{const m=materialFromSource(s);m.city=p.input.scope.city||'';created+=Number(await this.repo.put(m));seen++}catch{continue}}
+      const sources=await projectArchiveOriginals(this.store,p)
+      for(const row of sources){const s=row.source
+        signal?.throwIfAborted()
+        try{
+          if(!s.url||!s.untrusted_text?.trim()||s.content_status==='metadata_only')throw Error('ORIGINAL_BODY_OR_URL_MISSING')
+          const location=projectObjectLocation(p.input.scope),m=materialFromSource(s);m.city=administrativeAddress(s.title).city||(s.evidence_scope==='background'?'':location.city||'')
+          const added=await this.repo.put(m,row.origin==='project_input');created+=Number(added);seen++
+          if(added){const local=localOfficialStructure(m);if(local)await this.repo.saveLocalAnalysis(m.id,m.version,localAnalysis(local))}
+          linked+=Number(await this.repo.linkProject({owner_id:p.owner_id,project_id:p.id,context_version:row.context_version,source_id:s.id,document_id:m.id,version:m.version,origin:row.origin,origin_id:row.origin_id}))
+          const key=m.id+'@'+m.version
+          if(queued<Math.min(8,Math.max(0,analyzeLimit))&&!queuedVersions.has(key)&&config.modelConfigured){const entry=await this.repo.get(m.id,m.version);if(entry&&entry.analysis.status==='unscored'){await this.repo.enqueue('analyze',key,{id:m.id,version:m.version});queuedVersions.add(key);queued++}}
+        }catch(error){skipped++;const code=error instanceof Error&&/^[A-Z_]+$/.test(error.message)?error.message:'ARCHIVE_SOURCE_FAILED';skip_reasons[code]=(skip_reasons[code]||0)+1}
+      }
     }
-    return {seen,created,has_more:projects.length>10,next_cursor:projects.slice(0,10).at(-1)?.id||cursor}
+    return {seen,created,linked,queued,skipped,skip_reasons,has_more:projects.length>10,next_cursor:projects.slice(0,10).at(-1)?.id||cursor}
   }
-  async search(q:Query){await this.ready;const loaded=await this.repo.entries(q.city,400,q.as_of,q.q),all=rankEntries(loaded.entries,q),limit=Math.min(40,Math.max(1,q.limit??20)),offset=Math.min(380,Math.max(0,q.offset??0))
+  async queueArchive(analyzeLimit=0){await this.ready;const run_id='archive-'+config.ownerId;const job=await this.repo.enqueue('archive',run_id,{run_id,cursor:'',analyze_remaining:Math.min(8,Math.max(0,analyzeLimit))});void this.tick().catch(()=>console.warn('INTELLIGENCE_ARCHIVE_JOB_FAILED'));return job}
+  async search(q:Query){await this.ready;const loaded=await this.repo.entries(q.city,400,q.as_of,q.q),all=rankEntries(loaded.entries,{...q,city:undefined}),limit=Math.min(40,Math.max(1,q.limit??20)),offset=Math.min(380,Math.max(0,q.offset??0))
     const groups=new Map<string,Entry[]>()
     for(const e of all){const g=groups.get(e.event_id)||[];g.push(e);groups.set(e.event_id,g)}
     const events=[...groups].map(([id,items])=>({id,story_id:items[0].story_id,representative:summaryOf(items[0]),items:items.map(summaryOf),
@@ -93,8 +113,9 @@ export class IntelligenceService {
       source_channels:new Set(items.map(e=>e.publisher_group)).size}))
     return {items:events.slice(offset,offset+limit),total_in_window:events.length,truncated:loaded.truncated,scope:q,mode:'postgres_fts_event_grouped',generated_at:new Date().toISOString()}
   }
-  async ingest(value:unknown,channelId?:string){await this.ready;const c=channelId?await this.repo.channel(channelId):undefined;if(channelId&&!c)throw new Error('CHANNEL_NOT_FOUND');const m=materialFromSource(value,c),created=await this.repo.put(m)
+  async ingest(value:unknown,channelId?:string,options:{analyze?:boolean}={}){await this.ready;const c=channelId?await this.repo.channel(channelId):undefined;if(channelId&&!c)throw new Error('CHANNEL_NOT_FOUND');const m=materialFromSource(value,c),created=await this.repo.put(m)
     if(created){const local=localOfficialStructure(m);if(local)await this.repo.saveLocalAnalysis(m.id,m.version,localAnalysis(local))}
+    if(created&&m.text&&config.modelConfigured&&(options.analyze??process.env.INTELLIGENCE_MODEL_ENABLED==='true'))await this.repo.enqueue('analyze',m.id+'@'+m.version,{id:m.id,version:m.version})
     return {id:m.id,version:m.version,created}
   }
   async organize(id:string,version:string){await this.ready
@@ -122,9 +143,9 @@ export class IntelligenceService {
     })
   }
   private async lookup(request:{name:string;city?:string;purpose:string;asOf:string},signal:AbortSignal){await this.ready;signal.throwIfAborted()
-    const entries=(await this.repo.entries(request.city,200,request.asOf,request.name+' '+request.purpose)).entries
+    const entries=(await this.repo.entries(request.city,200,undefined,request.name+' '+request.purpose,request.asOf)).entries
     const place=request.name.replace(/(?:研究范围|片区|街区)$/,'').trim()
-    const eligible=rankEntries(entries,{city:request.city,q:place+' '+request.purpose,as_of:request.asOf})
+    const eligible=rankEntries(entries,{q:place+' '+request.purpose,as_of:request.asOf})
       .filter(e=>e.analysis.status!=='irrelevant'&&(e.title.includes(place)||e.text.includes(place)))
     const sources=eligible.flatMap(e=>{const s=evidenceSource(e,request.asOf);return s?[s]:[]}).slice(0,20)
     if(!sources.length)return []
@@ -138,9 +159,16 @@ export class IntelligenceService {
       return out.matches.flatMap(m=>{const s=byId.get(m.source_id);return s?[s]:[]}).slice(0,5)
     }catch{signal.throwIfAborted();return sources.slice(0,5)}
   }
-  private async remember(sources:Source[],city?:string){await this.ready
-    for(const s of sources.slice(0,12)){if(/^INTEL-[a-f0-9]{12}:/.test(s.id)||s.synthetic||s.visibility!=='public'||s.data_class!=='public'||!s.url)continue
-      try{const m=materialFromSource(s);m.city=city||'';await this.repo.put(m)}catch{continue}}
+  private async remember(sources:Source[],city?:string,origin?:IntelligenceOrigin){await this.ready
+    const project=origin?await this.store.project(origin.project_id,config.ownerId):null
+    for(const s of sources){if(s.synthetic||s.visibility!=='public'||s.data_class!=='public'||!s.url||!s.untrusted_text?.trim()||s.content_status==='metadata_only')continue
+      try{
+        const prefix=s.id.match(/^INTEL-([a-f0-9]{12}):/)
+        const known=prefix?(await this.repo.db.query<{document_id:string;version:string}>("SELECT v.document_id,v.version FROM intel_versions v JOIN intel_documents d ON d.id=v.document_id WHERE v.version LIKE $1 AND d.url=$2 AND v.payload->>'text'=$3 LIMIT 1",[prefix[1]+'%',s.url,s.untrusted_text])).rows[0]:undefined
+        let identity=known
+        if(!prefix){const m=materialFromSource(s);m.city=administrativeAddress(s.title).city||(s.evidence_scope==='background'?'':city||'');const created=await this.repo.put(m);identity={document_id:m.id,version:m.version};if(created){const local=localOfficialStructure(m);if(local)await this.repo.saveLocalAnalysis(m.id,m.version,localAnalysis(local));if(config.modelConfigured&&process.env.INTELLIGENCE_MODEL_ENABLED==='true')await this.repo.enqueue('analyze',m.id+'@'+m.version,{id:m.id,version:m.version})}}
+        if(identity&&project&&!project.input.synthetic&&origin&&Number.isSafeInteger(origin.context_version)&&origin.context_version>=0)await this.repo.linkProject({owner_id:project.owner_id,project_id:project.id,context_version:origin.context_version,source_id:s.id,...identity,origin:'research_discovery',origin_id:hash(s.url+'|'+s.untrusted_text)})
+      }catch{console.warn('INTELLIGENCE_SOURCE_ARCHIVE_SKIPPED')}}
   }
   async review(r:Omit<Review,'reviewer'|'reviewed_at'>){await this.ready
     const e=await this.repo.get(r.document_id,r.version);if(!e)throw new Error('DOCUMENT_VERSION_NOT_FOUND')
