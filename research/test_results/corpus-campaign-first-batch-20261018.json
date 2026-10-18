@@ -1,0 +1,155 @@
+{
+  "checked_at": "2026-10-18T10:30:05.319920+00:00",
+  "campaign": {
+    "policy": "public-corpus-v1",
+    "id": 1,
+    "enabled": true,
+    "daily_search_limit": 1000,
+    "daily_fetch_limit": 200,
+    "daily_cny_limit": 6,
+    "cursor": 1,
+    "next_at": "2026-10-18T10:30:54.012Z",
+    "error": null,
+    "cost_approved": true,
+    "approved_daily_cny": 6,
+    "day": "2026-10-18",
+    "timezone": "Asia/Shanghai",
+    "usage": {
+      "search_attempts": 1,
+      "fetch_attempts": 0,
+      "successful": 1,
+      "unknown": 0,
+      "estimated_cny": 0.005
+    },
+    "archive": {
+      "versions": 543,
+      "chunks": 5432
+    },
+    "query_pool": 8640,
+    "recent": [
+      {
+        "query": "杭州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "1c8fc85a-4329-4e27-b733-c05a45586373",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 1359,
+              "request_hash": "6d17f6fc1665137384b9a4dad60ef70a82816612199c4370a115f69c3cf23c94",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "杭州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+          "saved": 13,
+          "chunks": 641,
+          "failed": 0,
+          "queued": 1,
+          "created": 13,
+          "skipped": 0,
+          "archived": 13,
+          "metadata": 0
+        }
+      }
+    ],
+    "storage": "corpus-public",
+    "search_unit_cny": 0.005,
+    "fetch_unit_cny": 0.005,
+    "uses_model_for_search": false,
+    "model_daily_budget": 40,
+    "pricing_source": "https://api-docs.deepseek.com/zh-cn/guides/search/",
+    "schedule": "均匀分布全天；同题至少间隔7天，正文7天复查；无结果也计入本地调用上限"
+  },
+  "database": {
+    "documents": 188,
+    "versions": 574,
+    "pending": 0
+  },
+  "knowledge": {
+    "model_calls_today": 8,
+    "analyzed": 3,
+    "needs_review": 1,
+    "structured": 2,
+    "events": 3,
+    "stories": 3,
+    "project_links": 2590,
+    "linked_projects": 23
+  },
+  "jobs": [
+    {
+      "id": "IJ-6480437a-57db-4a51-adce-bd2e38a6b134",
+      "kind": "analyze",
+      "subject": "ID-1927511289f66c30c12d796e@76a026be0733702237c6f2579fac9fc64236078d6acd8a3723f03f8955cddec0",
+      "status": "completed",
+      "payload": {
+        "id": "ID-1927511289f66c30c12d796e",
+        "version": "76a026be0733702237c6f2579fac9fc64236078d6acd8a3723f03f8955cddec0"
+      },
+      "error": null,
+      "created_at": "2026-10-18T10:29:29.409Z",
+      "updated_at": "2026-10-18T10:29:37.458Z",
+      "result": null,
+      "not_before": "2026-10-18T10:29:29.409Z"
+    },
+    {
+      "id": "IJ-d28cdb03-ccc8-485b-b7d0-4a9555bf0661",
+      "kind": "corpus_collect",
+      "subject": "a8fd6736b102ba3cb62745fea938648bd0fd23092cd435ef9466371699d8e587",
+      "status": "completed",
+      "payload": {
+        "query_id": "a8fd6736b102ba3cb62745fea938648bd0fd23092cd435ef9466371699d8e587"
+      },
+      "error": null,
+      "created_at": "2026-10-18T10:29:27.612Z",
+      "updated_at": "2026-10-18T10:29:29.750Z",
+      "result": {
+        "calls": [
+          {
+            "id": "1c8fc85a-4329-4e27-b733-c05a45586373",
+            "status": 200,
+            "attempt": 1,
+            "outcome": "received",
+            "provider": "deepseek-tools",
+            "operation": "search",
+            "duration_ms": 1359,
+            "request_hash": "6d17f6fc1665137384b9a4dad60ef70a82816612199c4370a115f69c3cf23c94",
+            "result_count": 20,
+            "billing_state": "expected_charge",
+            "estimated_cny": 0.005
+          }
+        ],
+        "query": "杭州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+        "saved": 13,
+        "chunks": 641,
+        "failed": 0,
+        "queued": 1,
+        "created": 13,
+        "skipped": 0,
+        "archived": 13,
+        "metadata": 0
+      },
+      "not_before": "2026-10-18T10:29:27.612Z"
+    },
+    {
+      "id": "IJ-2c02d672-dac7-40c3-bb1a-1dde0193d41b",
+      "kind": "analyze",
+      "subject": "ID-6830646647034e8b5677c438@3f29bbd05253bcf7808c58a39fb0819e0c3c908f126d055dc01963a449273d56",
+      "status": "completed",
+      "payload": {
+        "id": "ID-6830646647034e8b5677c438",
+        "version": "3f29bbd05253bcf7808c58a39fb0819e0c3c908f126d055dc01963a449273d56"
+      },
+      "error": null,
+      "created_at": "2026-10-18T02:46:43.269Z",
+      "updated_at": "2026-10-18T02:46:47.107Z",
+      "result": null,
+      "not_before": "2026-10-18T02:46:43.269Z"
+    }
+  ],
+  "disk_bytes": 11223503
+}

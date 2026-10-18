@@ -1,0 +1,65 @@
+{
+  "deployed_at": "2026-10-18T10:23:25.013248+00:00",
+  "commit": "b0ed58c3aa45f2109f04b429dda93759bc53c3aa",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261018T102320Z",
+  "runtime_files": {
+    "apps/host/intelligence.ts": {
+      "before": "180f04897528eb6b4cea52f1f8e2590100b629fb3a6503a14dfb6b688d5e034d",
+      "after": "90465316a4a43cefcca5a2a0e5657cea7341683607b412bcc67680b9f400317a"
+    },
+    "packages/experience/semantic-index.ts": {
+      "before": "215e2106e76e7699111391b2a8755d1ade2753583c7714884b39d82e9de1ff60",
+      "after": "9fe1cbbaef6f1fd199294754bd9e0fb3b24034dee82320e3be70750eb88cfd20"
+    },
+    "packages/intelligence/campaign-plan.ts": {
+      "before": null,
+      "after": "5f5a16a7bcb5f583c0ebfdf035130d1f65378d16ca4ce40c2b1694d4caf708aa"
+    },
+    "packages/intelligence/campaign.ts": {
+      "before": null,
+      "after": "4c9ed5749620b03acfa1f714de4ac6d0cf0b73b7c69872a432614e69a135dcf7"
+    },
+    "packages/intelligence/collectors.ts": {
+      "before": "a53cae227559d1f33afe56a96eb81a72f381eeacf197ec29e1f75a7b4ecc0249",
+      "after": "93558463fb0b42b85e3372250ea2e7ffbb5de6ea8d9479cdae6c12c6c965111c"
+    },
+    "packages/intelligence/corpus-disk.ts": {
+      "before": null,
+      "after": "ccb4a7ea26b50c74bbe6b587a0327a23be8221856dbd2e0949fa96a77bbd3fde"
+    },
+    "packages/intelligence/repository.ts": {
+      "before": "77ed5d64e9672fab9629c8670326dc2045e74fffb4b13555efe3933cf82931ab",
+      "after": "a8b732d3285a9222235de8f8420a554a89913932f2aa5dcec7356deffa0458b1"
+    },
+    "packages/intelligence/service.ts": {
+      "before": "4083350afbc5430fb3f20579025e5ae7b0f8244b0e1899193849ffd3875fff8e",
+      "after": "79a231c30d36c62e04b4a43eba04caa31c131ee92334bdfae370f5208621c89f"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "b0ed58c3aa45f2109f04b429dda93759bc53c3aa",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

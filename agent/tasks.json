@@ -1940,7 +1940,7 @@
       "id": "T-PUBLIC-CORPUS-CAMPAIGN-20261018",
       "depends_on": [],
       "goal": "公开资料千次日采集与磁盘MD/JSON沉淀，沿用AIHOT与同一后台队列",
-      "status": "implemented_pending_live_deployment",
+      "status": "deployed_running",
       "write_scope": [
         "packages/intelligence",
         "packages/experience/semantic-index.ts",

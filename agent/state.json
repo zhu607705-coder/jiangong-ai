@@ -4712,7 +4712,7 @@
     ]
   },
   "public_corpus_campaign_20261018": {
-    "status": "implemented_pending_deployment_and_cost_authorization",
+    "status": "deployed_running_pending_merge",
     "changed_files": [
       "packages/intelligence/campaign.ts",
       "packages/intelligence/campaign-plan.ts",
@@ -4726,18 +4726,36 @@
       "apps/workspace/src/intelligence/intelligence.css"
     ],
     "validation": [
-      "77 targeted checks passed; build passed before final budget-cap refinement"
+      "77 targeted contract checks passed",
+      "TypeScript and production build passed",
+      "530 existing public-body versions /4791 chunks verified by hash and UTF16 line/window readback",
+      "First native search1359ms:20results,13archived versions,641chunks,0Fetch,1model organisation job completed",
+      "First two searches added20documents/22versions/909chunks; global library query visibly retrieves new procurement originals",
+      "38projects and research histories unchanged during backfill; project metadata unchanged after activation",
+      "Model calls4to8 for first new analysis under existing40/day cap; no model turn used to perform Search"
     ],
     "artifacts": [
       "research/test_results/corpus-campaign-tests-20261018.log",
       "research/test_results/corpus-campaign-build-20261018.log",
-      "docs/公开资料持续采集与AIHOT沉淀_20261018.md"
+      "docs/公开资料持续采集与AIHOT沉淀_20261018.md",
+      "research/test_results/corpus-campaign-runtime-20261018.json",
+      "research/test_results/corpus-campaign-ui-20261018.json",
+      "research/test_results/corpus-campaign-live-20261018.json",
+      "research/test_results/corpus-campaign-activation-20261018.json",
+      "research/test_results/corpus-campaign-first-batch-20261018.json",
+      "output/playwright/public-corpus-campaign/live-collection.png"
     ],
     "constraints": [
       "Independent Search/Fetch cost0.005CNY per successful request; daily1000Search/200Fetch/6CNY prepared but disabled pending explicit confirmation",
       "Existing40-call model budget unchanged; no private/synthetic promotion",
       "Server has500GB root disk and477GB available; no separate mounted data volume"
     ],
-    "next_runnable_task": "Deploy paused campaign, archive existing public versions, verify live counters/files/UI; request approval for paid daily collection."
+    "next_runnable_task": "Continuous collection active at1000Search/200Fetch/6CNY per Beijing day; finish merge, then evaluate daily net-new public originals and decision coverage from real receipts.",
+    "runtime_commit": "b0ed58c3aa45f2109f04b429dda93759bc53c3aa",
+    "ui_commit": "bb0cc27a61f38294ec5d126febfa5082cf11f708",
+    "activated_at": "2026-10-18T10:29:23+00:00",
+    "user_authorization": "2026-10-18 用户回复没有关系并要求放心调用；按已说明1000Search/200Fetch/6CNY日上限启用。",
+    "storage": "/home/zhuhangcheng/apps/haizhizi/shared/data/corpus-public",
+    "approved_daily_cny": 6
   }
 }
