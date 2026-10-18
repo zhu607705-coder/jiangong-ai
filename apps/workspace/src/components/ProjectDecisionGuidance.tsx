@@ -6,6 +6,8 @@ import {GUIDANCE_PAGES,GUIDANCE_POLICY,PAGE_LABELS,type ProjectGuidance,type Gui
 import './project-decision-guidance.css'
 
 const GuidanceContext=createContext<ProjectGuidance|null>(null)
+const GuidanceControls=createContext<{preference:GuidancePreference;setPreference:(preference:GuidancePreference)=>void;refresh:()=>void;busy:boolean;error:string;canWrite:boolean}|null>(null)
+export const useProjectGuidanceControls=()=>useContext(GuidanceControls)
 export function useProjectDecisionGuidance(packetHash?:string){const result=useContext(GuidanceContext);return result&&!result.stale&&(!packetHash||result.strategy_hash===packetHash)?result:null}
 export function orderByDecision<T>(rows:readonly T[],ranks:readonly {id:string;score:number}[],id:(row:T)=>string){const scores=new Map(ranks.map(row=>[row.id,row.score]));return [...rows].sort((a,b)=>(scores.get(id(b))??-1)-(scores.get(id(a))??-1))}
 
@@ -41,6 +43,6 @@ export default function ProjectDecisionGuidance({project,page,direction,packetHa
     {expanded&&<div className="pdg-details">{GUIDANCE_PAGES.map(item=>result.stages[item]&&<article key={item}><strong>{PAGE_LABELS[item]} · {result.stages[item]!.label}</strong><p>{result.stages[item]!.reason}</p><button type="button" onClick={()=>onNavigate(result.stages[item]!.target)}>进入建议工作 →</button></article>)}<p>依据 {result.source_count} 份公开资料与已保存分析，优先参考分为当前目标下的处理顺序。判断不会修改已保存方案或正式实施条件。{result.issues.length>0?'部分判断未返回，其余结果可继续使用。':''}</p><p>Decision · {result.request_id}</p></div>}
    </>}
   </section>}
-  {children}
+  <GuidanceControls.Provider value={{preference,setPreference,refresh:()=>void judge(),busy,error,canWrite}}>{children}</GuidanceControls.Provider>
  </GuidanceContext.Provider>
 }

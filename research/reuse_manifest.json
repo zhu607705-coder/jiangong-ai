@@ -578,6 +578,26 @@
         "backend,auth policies,model workflow and database",
         "desktop global/project navigation responsibilities"
       ]
+    },
+    {
+      "id": "mobile-project-cards-20261019",
+      "reuse": [
+        "projectOverviewState saved strategy/version binding",
+        "buildProjectTasks and original task drawer/import tools",
+        "sameRenewalModePanel explicit progress/condition output",
+        "Decision guidance context and existing callbacks",
+        "same direction text filter,emphasis labels and original workspace children",
+        "existing evidence drawer and FloatingEvidenceSearch"
+      ],
+      "new_domain_logic": [
+        "mobile-only presentation adapter and4local chapters for6projectpages",
+        "single-card paging and optional original-text/detail reader",
+        "keep full workspace mounted for form state retention"
+      ],
+      "unchanged": [
+        "backend/storage/model clients and decision policies",
+        "desktop structure and private/source permissions"
+      ]
     }
   ]
 }

@@ -1,0 +1,52 @@
+{
+  "sections": [
+    {
+      "actionsBottom": 745.3333740234375,
+      "client": 788,
+      "scroll": 788,
+      "tab": "对象",
+      "viewport": 844
+    },
+    {
+      "actionsBottom": 745.3333740234375,
+      "client": 788,
+      "scroll": 788,
+      "tab": "调查",
+      "viewport": 844
+    },
+    {
+      "actionsBottom": 745.3333740234375,
+      "client": 788,
+      "scroll": 788,
+      "tab": "进度",
+      "viewport": 844
+    },
+    {
+      "actionsBottom": 745.3333740234375,
+      "client": 788,
+      "scroll": 788,
+      "tab": "结论",
+      "viewport": 844
+    }
+  ],
+  "task": {
+    "url": "https://laneanew.cn/?project=P-d397c757-5df1-4c59-a397-13cb95f763eb&view=actions&section=current",
+    "opened": true,
+    "backToCard": true
+  },
+  "small": {
+    "bodyFont": "14px",
+    "client": 512,
+    "footerBottom": 568,
+    "scroll": 512,
+    "titleFont": "18px",
+    "width": 320
+  },
+  "desktop": {
+    "desktopOverview": true,
+    "globalNav": "flex",
+    "nativeVisible": false,
+    "scrolling": "auto",
+    "sidebar": "block"
+  }
+}

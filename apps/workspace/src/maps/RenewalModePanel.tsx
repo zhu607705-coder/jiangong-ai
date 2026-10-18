@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext,useEffect, useRef, useState } from 'react'
 import { IconBuildingCommunity, IconBuildingSkyscraper, IconSparkles, IconChevronDown, IconArrowUpRight } from '@tabler/icons-react'
 import { api, ADMIN_LOGIN_REQUIRED_EVENT, ADMIN_LOGIN_REQUESTED_EVENT } from '../api'
 import { useWorkbenchAccess } from '../AdminAccess'
@@ -11,6 +11,7 @@ import { renewalCheckEmphasis } from '../components/decision-emphasis'
 import { consumeStream } from './screening-stream'
 import './RenewalModePanel.css'
 import RenewalCaseExplorer from '../components/RenewalCaseExplorer'
+import {MobileModePublisher,type MobileModeReport} from '../components/mobile-workspace-context'
 
 const money = (value: number) => value >= 1e8 ? `${(value / 1e8).toLocaleString('zh-CN', { maximumFractionDigits: 3 })} 亿元` : `${(value / 10000).toLocaleString('zh-CN', { maximumFractionDigits: 4 })} 万元`
 const kinds: Record<string, string> = { contract_price: '合同价', winning_bid: '中标价', budget: '预算', tender_ceiling: '控制价', estimate: '估算', settlement: '结算' }
@@ -28,6 +29,7 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
   endpoint: string; contextVersion?: number; input: RenewalModeInput; decision?: DecisionSupport | null; strategy?:StrategyPacket|null; compact?:boolean; onInvestigate?: () => void;
 }) {
   const { canWrite } = useWorkbenchAccess()
+  const publishMobile=useContext(MobileModePublisher)
   const [snapshot, setSnapshot] = useState<{key:string; value:RenewalModePacket} | null>(null), [running, setRunning] = useState(false), [error, setError] = useState('')
   const [attempted,setAttempted]=useState(false), [progress,setProgress]=useState<RenewalModeProgress[]>([]), [notice,setNotice]=useState('')
   const [reviews,setReviews]=useState<{key:string;cards:{id:string;title:string}[];error:boolean}|null>(null)
@@ -57,6 +59,10 @@ export default function RenewalModePanel({ endpoint, contextVersion, input, stra
   const conditionCounts = { met: gate.checks.filter(row => row.state === 'met').length, unknown: gate.checks.filter(row => row.state === 'unknown').length, unmet: gate.checks.filter(row => row.state === 'unmet').length, conflict: gate.checks.filter(row => row.state === 'conflict').length }
   const agent=strategy?.status==='completed'&&!strategy.synthetic?strategy.strategy:null
   const evidence = screening.evidence.filter(row => mode?.source_ids.includes(row.source_id))
+  const mobileReport:MobileModeReport={endpoint,revision:contextVersion,hasResult,running,restoring:!packet&&!error,direction,summary:directionSummary,checks:gate.checks,progress,sourceCount:screening.evidence.length,sourceIds:mode?.source_ids||[]}
+  const mobileReportRef=useRef(mobileReport);mobileReportRef.current=mobileReport
+  useEffect(()=>{publishMobile(mobileReportRef.current)},[endpoint,contextVersion,packet,input,running,attempted,progress,error])
+  useEffect(()=>()=>{const latest=mobileReportRef.current;publishMobile({...latest,running:false,restoring:false,progress:latest.running?[]:latest.progress})},[endpoint,contextVersion])
   useEffect(() => {
     setPath(direction === 'rebuild' ? 'rebuild' : 'comprehensive')
   }, [direction])
