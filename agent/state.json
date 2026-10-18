@@ -4678,5 +4678,25 @@
       "screenshot": "output/playwright/aihot-closure/archive-overview.png",
       "no_project_inputs_written": true
     }
+  },
+  "archive_color_clarity_20261018": {
+    "status": "implemented_pending_visual_verification",
+    "request": "当前页面色彩有问题",
+    "scope": [
+      "WorkspaceFrame view attribute",
+      "GlobalWorkspace knowledge-only canvas/headings",
+      "IntelligencePanel status tones",
+      "intelligence.css readability and semantic accents"
+    ],
+    "changes": [
+      "neutral canvas and white cards, reserve blue for interaction",
+      "green completed classification, amber pending/review, red actual errors",
+      "distinct primary/secondary buttons and stronger input boundaries",
+      "real review-count badge; zero pending stays neutral"
+    ],
+    "validation": [
+      "production TypeScript/build passed; live visual/contrast verification pending"
+    ],
+    "next_runnable_task": "Deploy UI only; inspect real archive cards, labels, tabs and calculated contrast; preserve backend/database; merge."
   }
 }

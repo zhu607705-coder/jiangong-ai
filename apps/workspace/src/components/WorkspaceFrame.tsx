@@ -46,7 +46,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
   useEffect(() => { setProjectsOpen(false) }, [globalView])
   const projectSwitch = <button className="research-project-switch" aria-label="切换项目" aria-expanded={projectsOpen} onClick={() => setProjectsOpen(value => !value)}><IconFolder size={18} /><span>{project?.name || '项目研究'}</span><IconChevronDown size={16} /></button>
   const errorNotice = error && <div className={surfaceOpen ? 'workspace-frame-error' : 'atlas-global-error glass-panel'} role="alert" {...inactiveProps}>{error}<button className="map-icon-button" aria-label="关闭错误" onClick={onDismissError}><IconX size={18} /></button></div>
-  return <div className={`map-shell workspace-frame${surfaceOpen ? ' map-shell--research' : ''}`}>
+  return <div className={`map-shell workspace-frame${surfaceOpen ? ' map-shell--research' : ''}`} data-global-view={view}>
     <div className="map-stage" hidden={surfaceOpen}>{mapView}</div>
     <footer className="ai-disclaimer">AI 生成与搜索可能存在错误</footer>
     <nav className="atlas-dock glass-panel" aria-label="主导航" {...inactiveProps}>
