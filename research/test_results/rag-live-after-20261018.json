@@ -1,0 +1,231 @@
+{
+  "checked_at": "2026-10-18T02:08:34.823062+00:00",
+  "rows": [
+    {
+      "question": "75幢1单元加装电梯预计要花多少钱？",
+      "use_ai": true,
+      "first_originals_ms": 419.2,
+      "complete_ms": 5687.1,
+      "hits": [
+        {
+          "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+          "source_id": "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+          "locator": "官方DOC第三部分（四）投资；第三部分（一）任务规模；第四部分实施计划"
+        },
+        {
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+          "locator": "line:1"
+        },
+        {
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+          "locator": "within_scope:http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html"
+        }
+      ],
+      "model_calls": 1,
+      "timing": {
+        "first_originals_ms": 263,
+        "total_ms": 5612
+      },
+      "cache": null,
+      "events": [
+        "originals",
+        "complete"
+      ],
+      "assistance_status": "api",
+      "answer": [
+        {
+          "text": "官方草案（征求意见稿）载明：求是村75幢1单元加装电梯估算总投资约54万元，属估算值而非最终结算或合同价。",
+          "citations": [
+            {
+              "hit_id": "RAG-82c218d07e42821284a8aaab5fb779ea6cf76118223db52fb2ed40c0c15ddf1f",
+              "quote": "估算总投资约54万元，建设资金来自市区补助及自筹。"
+            }
+          ]
+        },
+        {
+          "text": "口径与阶段：该金额处在重大行政决策草案（征求意见稿）的“投资”部分，为决策草案阶段的估算总投资；文件同时说明资金来源为市区补助与自筹，尚未区分补助与居民自筹各多少。",
+          "citations": [
+            {
+              "hit_id": "RAG-82c218d07e42821284a8aaab5fb779ea6cf76118223db52fb2ed40c0c15ddf1f",
+              "quote": "估算总投资约54万元，建设资金来自市区补助及自筹。"
+            }
+          ]
+        },
+        {
+          "text": "该文件为灵隐街道办起草、2024年9月18日至10月18日公开征求意见的草案，金额随决策推进可能调整，引用时应标注“草案估算”。",
+          "citations": [
+            {
+              "hit_id": "RAG-7b46abcd6565439b6b1fe95ec945dd35627c16361e070c7ef2c84ce4ab368bf4",
+              "quote": "灵隐街道办事处起草了《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》"
+            },
+            {
+              "hit_id": "RAG-7b46abcd6565439b6b1fe95ec945dd35627c16361e070c7ef2c84ce4ab368bf4",
+              "quote": "征集意见期限为：2024年9月18日至2024年10月18日。"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "部分语义索引待后台补充，现有原文已可阅读。"
+      ]
+    },
+    {
+      "question": "二次供水改造涉及哪些楼栋，哪栋没纳入？",
+      "use_ai": false,
+      "first_originals_ms": 86.4,
+      "complete_ms": 86.4,
+      "hits": [
+        {
+          "title": "浙大求是社区推进二次供水改造",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-cde2a3da3dd5:QS-water2023",
+          "locator": "within_scope:body"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:22"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:24"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:20"
+        },
+        {
+          "title": "浙大求是社区推进二次供水改造.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-5293cfe5-51b8-4e76-b8a7-d9cfc58158e8",
+          "locator": "line:21"
+        }
+      ],
+      "model_calls": 0,
+      "timing": null,
+      "cache": null,
+      "events": [],
+      "assistance_status": null,
+      "answer": [],
+      "warnings": []
+    },
+    {
+      "question": "社区食堂的用餐人数和运营费用有记录吗？",
+      "use_ai": false,
+      "first_originals_ms": 70.7,
+      "complete_ms": 70.8,
+      "hits": [
+        {
+          "title": "社区可持续，萧山北干何以全域成林？ - 社区可持续，萧山北干何以全域成林",
+          "source_id": "PUBLIC-920de331-de1b-4cfd-906b-6a53b5a1e13f:PUB-882e4af9a489f7",
+          "locator": "city_background:https://www.hangzhou.gov.cn/col/col812262/art/2026/art_9469fc6fcab54f87a223ac7215491e9f.html#1"
+        }
+      ],
+      "model_calls": 0,
+      "timing": null,
+      "cache": null,
+      "events": [],
+      "assistance_status": null,
+      "answer": [],
+      "warnings": []
+    },
+    {
+      "question": "75幢1单元加装电梯预计要花多少钱？",
+      "use_ai": true,
+      "first_originals_ms": 58.9,
+      "complete_ms": 59.5,
+      "hits": [
+        {
+          "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+          "source_id": "INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+          "locator": "官方DOC第三部分（四）投资；第三部分（一）任务规模；第四部分实施计划"
+        },
+        {
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告.txt",
+          "source_id": "PUBLIC-DOCUMENT-DOC-2faed37e-ddec-4891-a361-152e6ce0ea19",
+          "locator": "line:1"
+        },
+        {
+          "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+          "source_id": "P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+          "locator": "within_scope:http://www.hzxh.gov.cn/art/2024/9/18/art_1229516984_59041263.html"
+        }
+      ],
+      "model_calls": 0,
+      "timing": {
+        "first_originals_ms": 12,
+        "total_ms": 12
+      },
+      "cache": {
+        "reused": true,
+        "created_at": "Sun Oct 18 2026 02:08:34 GMT+0000 (Coordinated Universal Time)"
+      },
+      "events": [
+        "originals",
+        "complete"
+      ],
+      "assistance_status": "api",
+      "answer": [
+        {
+          "text": "官方草案（征求意见稿）载明：求是村75幢1单元加装电梯估算总投资约54万元，属估算值而非最终结算或合同价。",
+          "citations": [
+            {
+              "quote": "估算总投资约54万元，建设资金来自市区补助及自筹。",
+              "hit_id": "RAG-82c218d07e42821284a8aaab5fb779ea6cf76118223db52fb2ed40c0c15ddf1f"
+            }
+          ]
+        },
+        {
+          "text": "口径与阶段：该金额处在重大行政决策草案（征求意见稿）的“投资”部分，为决策草案阶段的估算总投资；文件同时说明资金来源为市区补助与自筹，尚未区分补助与居民自筹各多少。",
+          "citations": [
+            {
+              "quote": "估算总投资约54万元，建设资金来自市区补助及自筹。",
+              "hit_id": "RAG-82c218d07e42821284a8aaab5fb779ea6cf76118223db52fb2ed40c0c15ddf1f"
+            }
+          ]
+        },
+        {
+          "text": "该文件为灵隐街道办起草、2024年9月18日至10月18日公开征求意见的草案，金额随决策推进可能调整，引用时应标注“草案估算”。",
+          "citations": [
+            {
+              "quote": "灵隐街道办事处起草了《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》",
+              "hit_id": "RAG-7b46abcd6565439b6b1fe95ec945dd35627c16361e070c7ef2c84ce4ab368bf4"
+            },
+            {
+              "quote": "征集意见期限为：2024年9月18日至2024年10月18日。",
+              "hit_id": "RAG-7b46abcd6565439b6b1fe95ec945dd35627c16361e070c7ef2c84ce4ab368bf4"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "部分语义索引待后台补充，现有原文已可阅读。"
+      ]
+    }
+  ],
+  "project_metadata_unchanged": true,
+  "research_rounds_unchanged": true,
+  "full_research_started": false,
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "7033f29c007d4267cb8cd2ea69dedef670c306dc",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-18T02:12:03.797840+00:00",
+  "url": "https://laneanew.cn/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=evidence&section=files",
+  "actual_ui_commit": "7033f29c007d4267cb8cd2ea69dedef670c306dc",
+  "runtime_commit": "5d100340506b4ef73cce89dee9c3d4fed080d153",
+  "observed": [
+    "public project RAG direct answer about54万元",
+    "current snapshot reuse marker and refresh button",
+    "original citation button opens actual evidence drawer with54万元 quotation",
+    "result hit actions link to decisions and tasks",
+    "no browser console errors"
+  ],
+  "screenshot": "output/playwright/rag-performance/answer-and-source.png",
+  "no_full_research_started": true
+}
