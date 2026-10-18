@@ -4796,7 +4796,7 @@
     "ui_commit": "71d086d8247445939fcb89efb45284e6066f4fc7"
   },
   "mobile_cards_20261019": {
-    "status": "implemented_verified_pending_deployment",
+    "status": "deployed_verified_pending_merge",
     "changed_files": [
       "apps/workspace/src/App.tsx",
       "apps/workspace/src/components/MobileProjectWorkspace.tsx",
@@ -4814,18 +4814,28 @@
       "320x568clientHeight=scrollHeight512,actions/footer inside viewport,title18px/body14px",
       "existing task drawer/import tools reachable;query tool reachable;global knowledge restores scrolling",
       "unsubmitted funding12.34survives summary/detail switching,test value restoredempty;no project write",
-      "mode presentation uses existing explicit result/progress,not whole-plan preference;partial six-dimensional reasoning preserved"
+      "mode presentation uses existing explicit result/progress,not whole-plan preference;partial six-dimensional reasoning preserved",
+      "live390x844all overview local chapters clientHeight=scrollHeight788,actions in viewport",
+      "live320x568clientHeight=scrollHeight512,font18/14,width320",
+      "live cross-page task card opens the exact original task drawer and closes back to native card",
+      "1280desktop restores original overview,dock/sidebar and scrolling",
+      "UI deployment:backend files andPID76050unchanged;deploymentDBwrites0/modelcalls0"
     ],
     "artifacts": [
       "docs/手机项目工作区_20261019.md",
       "research/test_results/mobile-workspace-build-20261019.log",
       "research/test_results/mobile-workspace-tests-20261019.log",
       "research/test_results/mobile-workspace-local-20261019.json",
-      "output/playwright/mobile-workspace/local-overview.png"
+      "output/playwright/mobile-workspace/local-overview.png",
+      "research/test_results/mobile-workspace-live-20261019.json",
+      "research/test_results/mobile-workspace-ui-20261019.json",
+      "output/playwright/mobile-workspace/mobile-overview.png",
+      "output/playwright/mobile-workspace/mobile-investigation.png"
     ],
-    "next_runnable_task": "Deploy UI-only,verify real phone card switching and desktop restoration,merge while preserving root dirty files.",
+    "next_runnable_task": "Merge verified mobile UI. Native phone summary uses local tabs/cards; full originals/forms remain available and preserve state.",
     "unresolved_questions": [
       "Existing stage-unknown cost-reference groups can span disparate amounts;mobile shows source records rather than adopting the range."
-    ]
+    ],
+    "ui_commit": "f1885d9c9dcfccad9681fdcf86f9787ee6a87457"
   }
 }

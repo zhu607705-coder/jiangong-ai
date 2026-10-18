@@ -1971,7 +1971,7 @@
         "T-MOBILE-NAVIGATION-20261018"
       ],
       "goal": "手机项目工作卡与局部点按切换，避免照搬桌面长页面",
-      "status": "verified_pending_ui_deployment",
+      "status": "deployed_verified",
       "write_scope": [
         "apps/workspace/src",
         "tests/contracts",
