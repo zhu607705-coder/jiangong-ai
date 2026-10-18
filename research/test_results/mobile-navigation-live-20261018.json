@@ -1,0 +1,66 @@
+{
+  "layout": {
+    "content": {
+      "display": "block",
+      "height": 788,
+      "width": 390,
+      "x": 0,
+      "y": 56
+    },
+    "globalNav": {
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "header": {
+      "display": "flex",
+      "height": 56,
+      "width": 390,
+      "x": 0,
+      "y": 0
+    },
+    "projectNav": {
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "query": {
+      "display": "flex",
+      "height": 48,
+      "width": 48,
+      "x": 330,
+      "y": 770
+    },
+    "session": {
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "url": "https://laneanew.cn/?project=P-d397c757-5df1-4c59-a397-13cb95f763eb&view=overview",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "checks": {
+    "focus": "打开工作台导航",
+    "inert": false,
+    "menuClosed": true,
+    "escape": {
+      "focus": "打开工作台导航",
+      "menuClosed": true
+    },
+    "desktop": {
+      "inert": false,
+      "nav": "flex",
+      "session": "flex",
+      "sidebar": "block"
+    }
+  }
+}

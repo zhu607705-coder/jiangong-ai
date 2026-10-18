@@ -4759,7 +4759,7 @@
     "approved_daily_cny": 6
   },
   "mobile_navigation_20261018": {
-    "status": "verified_pending_ui_deployment",
+    "status": "deployed_pending_merge",
     "changed_files": [
       "apps/workspace/src/components/WorkspaceFrame.tsx",
       "apps/workspace/src/components/WorkspaceFrame.css",
@@ -4776,14 +4776,23 @@
       "320px has no document horizontal overflow;1280px restores desktop dock/sidebar/session bar",
       "final TypeScript and production build passed",
       "local390x844 content330x507.8125 at(60,336.1875) to390x788 at(0,56)",
-      "existing project switch and map entrance passed; query panel366px within viewport"
+      "existing project switch and map entrance passed; query panel366px within viewport",
+      "production mobile390x844: header56px,content390x788,48px query button",
+      "production menu selection auto-close,Escape focus restoration,desktop nav/session restoration passed",
+      "UI-only deployment:hostPID76050unchanged;backendfiles unchanged;deployer databasewrites0/providercalls0"
     ],
     "artifacts": [
       "research/test_results/mobile-navigation-build-20261018.log",
       "output/playwright/mobile-navigation/before.png",
       "output/playwright/mobile-navigation/before.json",
-      "research/test_results/mobile-navigation-local-20261018.json"
+      "research/test_results/mobile-navigation-local-20261018.json",
+      "research/test_results/mobile-navigation-live-20261018.json",
+      "research/test_results/mobile-navigation-ui-20261018.json",
+      "output/playwright/mobile-navigation/mobile-collapsed.png",
+      "output/playwright/mobile-navigation/mobile-expanded.png",
+      "output/playwright/mobile-navigation/desktop.png"
     ],
-    "next_runnable_task": "Finalize production build, deployUI only, verify actual mobile page/desktop restoration and merge while preserving dirty workspace."
+    "next_runnable_task": "Merge verified mobile UI; original project data,backend and ongoing collection remain unchanged.",
+    "ui_commit": "71d086d8247445939fcb89efb45284e6066f4fc7"
   }
 }

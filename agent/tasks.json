@@ -1957,7 +1957,7 @@
       "id": "T-MOBILE-NAVIGATION-20261018",
       "depends_on": [],
       "goal": "手机端默认收起全局和项目导航，正文占据全屏宽度",
-      "status": "implemented_pending_deployment",
+      "status": "deployed_verified",
       "write_scope": [
         "apps/workspace/src",
         "agent",
