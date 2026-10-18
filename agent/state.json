@@ -4680,7 +4680,7 @@
     }
   },
   "archive_color_clarity_20261018": {
-    "status": "implemented_pending_visual_verification",
+    "status": "deployed_verified_pending_merge",
     "request": "当前页面色彩有问题",
     "scope": [
       "WorkspaceFrame view attribute",
@@ -4695,8 +4695,20 @@
       "real review-count badge; zero pending stays neutral"
     ],
     "validation": [
-      "production TypeScript/build passed; live visual/contrast verification pending"
+      "TypeScript and production build passed",
+      "live archive headings, figures, status chips and primary action inspected",
+      "minimum measured visible text contrast4.60:1",
+      "backend unchanged, host PID unchanged, database operations0, provider calls0"
     ],
-    "next_runnable_task": "Deploy UI only; inspect real archive cards, labels, tabs and calculated contrast; preserve backend/database; merge."
+    "next_runnable_task": "Merge UI-only verified palette; normal refresh loads semantic state colors.",
+    "ui_commit": "8e2d063a693a1087f4e1421275fb2aedfb735dcd",
+    "artifacts": [
+      "research/test_results/archive-color-browser-20261018.json",
+      "research/test_results/archive-color-ui-20261018.json",
+      "research/test_results/archive-color-build-20261018.log",
+      "output/playwright/archive-color-clarity/before.png",
+      "output/playwright/archive-color-clarity/after-overview.png",
+      "output/playwright/archive-color-clarity/after-results.png"
+    ]
   }
 }
