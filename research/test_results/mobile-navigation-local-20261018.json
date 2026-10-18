@@ -1,0 +1,132 @@
+{
+  "before": {
+    "content": {
+      "display": "block",
+      "height": 507.8125,
+      "width": 330,
+      "x": 60,
+      "y": 336.1875
+    },
+    "globalNav": {
+      "display": "flex",
+      "height": 800,
+      "width": 60,
+      "x": 0,
+      "y": 44
+    },
+    "header": {
+      "display": "flex",
+      "height": 172.6666717529297,
+      "width": 330,
+      "x": 60,
+      "y": 44
+    },
+    "projectNav": {
+      "display": "block",
+      "height": 119.52083587646484,
+      "width": 330,
+      "x": 60,
+      "y": 216.6666717529297
+    },
+    "session": {
+      "display": "flex",
+      "height": 44,
+      "width": 390,
+      "x": 0,
+      "y": 0
+    },
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "after": {
+    "content": {
+      "display": "block",
+      "height": 788,
+      "width": 390,
+      "x": 0,
+      "y": 56
+    },
+    "globalNav": {
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "header": {
+      "display": "flex",
+      "height": 56,
+      "width": 390,
+      "x": 0,
+      "y": 0
+    },
+    "projectNav": {
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "query": {
+      "display": "flex",
+      "height": 48,
+      "width": 48,
+      "x": 326,
+      "y": 236.7291717529297
+    },
+    "session": {
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0
+    },
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "checks": {
+    "shiftTab": {
+      "focus": "数据库结构",
+      "inert": true,
+      "insideMenu": true
+    },
+    "tabWrap": "收起工作台导航",
+    "escape": {
+      "focus": "打开工作台导航",
+      "inert": false,
+      "menuOpen": false
+    },
+    "navigation": {
+      "current": "菜单浙大求是村 · 片区研究项目总览",
+      "inert": false,
+      "menuOpen": false
+    },
+    "small": {
+      "contentWidth": 320,
+      "scrollWidth": 320,
+      "width": 320
+    },
+    "desktop": {
+      "inert": false,
+      "menuOpen": false,
+      "nav": "flex",
+      "session": "flex",
+      "sidebar": "block"
+    },
+    "query": {
+      "bottom": 760,
+      "viewport": 844,
+      "width": 366,
+      "x": 12,
+      "y": 28
+    },
+    "projectSwitch": {
+      "url": "http://127.0.0.1:5178/?project=P-d397c757-5df1-4c59-a397-13cb95f763eb&view=overview",
+      "menuOpen": 0
+    }
+  }
+}

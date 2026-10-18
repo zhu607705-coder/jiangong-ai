@@ -4,7 +4,7 @@ import './admin-access.css'
 
 type Authentication = { enabled: false; role: 'admin'; collaborative_workspace?: boolean; public_read_only?: false } | { enabled: true; role: 'admin'; username: string; expires_at: string } | { enabled: true; role: 'viewer'; public_read_only: true; expires_at: null }
 export type AdminSession = { authentication: Authentication }
-export type WorkbenchAccess = { role: 'admin' | 'viewer'; canWrite: boolean }
+export type WorkbenchAccess = { role: 'admin' | 'viewer'; canWrite: boolean; sessionLabel?: ReactNode; sessionActions?: ReactNode }
 // Components rendered outside the entry gate retain the existing local-workspace behavior.
 export const WorkbenchAccessContext = createContext<WorkbenchAccess>({ role: 'admin', canWrite: true })
 export const useWorkbenchAccess = () => useContext(WorkbenchAccessContext)
@@ -143,19 +143,21 @@ export default function AdminAccess({ children }: { children: ReactNode }) {
 
   if (state.phase === 'ready') {
     const auth = state.session.authentication
-    const content = <WorkbenchAccessContext.Provider value={{ role: auth.role, canWrite: auth.role === 'admin' }}>{children}</WorkbenchAccessContext.Provider>
     const collaborative = !auth.enabled && auth.collaborative_workspace === true
+    const sessionLabel = collaborative ? '校园协作' : auth.role === 'viewer' ? '公开浏览 · 只读' : auth.enabled ? <>管理员 <strong>{auth.username}</strong></> : null
+    const sessionActions = <>
+      {(collaborative || auth.role === 'admin') && <a href="/api/admin/database-schema">数据库结构</a>}
+      {!collaborative && (auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <>
+        {logoutError && <span role="alert">{logoutError}</span>}
+        <button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button>
+      </>)}
+    </>
+    const content = <WorkbenchAccessContext.Provider value={{ role: auth.role, canWrite: auth.role === 'admin', sessionLabel, sessionActions: auth.enabled || collaborative ? sessionActions : undefined }}>{children}</WorkbenchAccessContext.Provider>
     if (!auth.enabled && !collaborative) return content
     return <div className="admin-session-shell">
       <header className={`admin-session-bar${collaborative ? ' campus-session-bar' : ''}`} aria-label={collaborative ? '校园协作工作台' : auth.role === 'viewer' ? '公开浏览权限' : '管理员会话'}>
-        <span><span className="admin-session-dot" />{collaborative ? '校园协作' : auth.role === 'viewer' ? '公开浏览 · 只读' : auth.enabled ? <>管理员 <strong>{auth.username}</strong></> : null}</span>
-        <div>
-          {(collaborative || auth.role === 'admin') && <a href="/api/admin/database-schema">数据库结构</a>}
-          {!collaborative && (auth.role === 'viewer' ? <a href="/admin/login">管理员登录</a> : <>
-            {logoutError && <span role="alert">{logoutError}</span>}
-            <button type="button" onClick={() => void signOut()} disabled={busy}>{busy ? '正在退出…' : '退出登录'}</button>
-          </>)}
-        </div>
+        <span><span className="admin-session-dot" />{sessionLabel}</span>
+        <div>{sessionActions}</div>
       </header>
       <div className="admin-workspace">{content}</div>
     </div>

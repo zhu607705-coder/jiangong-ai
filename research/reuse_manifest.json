@@ -562,6 +562,22 @@
         "no parallel scheduler/search client/parser/database",
         "project facts/reports and private material permissions"
       ]
+    },
+    {
+      "id": "mobile-navigation-20261018",
+      "reuse": [
+        "WorkspaceFrame existing global/project navigation nodes and callbacks",
+        "WorkbenchAccessContext role-bound session actions",
+        "existing FloatingEvidenceSearch and query panel"
+      ],
+      "new_domain_logic": [
+        "760px collapsible mobile navigation and56px header",
+        "modal focus handling and responsive full-width content"
+      ],
+      "unchanged": [
+        "backend,auth policies,model workflow and database",
+        "desktop global/project navigation responsibilities"
+      ]
     }
   ]
 }

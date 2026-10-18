@@ -1952,6 +1952,18 @@
         "research"
       ],
       "definition_of_done": "费用边界明确；已有原文落盘可回读；真实接口回执/额度/暂停恢复可追踪；没有授权费用时不启动持续付费任务。"
+    },
+    {
+      "id": "T-MOBILE-NAVIGATION-20261018",
+      "depends_on": [],
+      "goal": "手机端默认收起全局和项目导航，正文占据全屏宽度",
+      "status": "deployed_verified",
+      "write_scope": [
+        "apps/workspace/src",
+        "agent",
+        "research/test_results"
+      ],
+      "definition_of_done": "现有入口完整可达；选择后收起；320/390/桌面切换与焦点可用；仅UI部署、实页验证及合并。"
     }
   ]
 }
