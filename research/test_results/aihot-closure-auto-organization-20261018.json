@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-18T02:46:40.010329+00:00",
+  "automatic_model_organization": true,
+  "daily_model_budget": 40,
+  "collection_enabled": false,
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/intelligence-config-backups/20261018T024637Z",
+  "before_hash": "5442a50486106e878f9cb6a0fec09955fcaee9e24a87a2c6fd186fbea982a3c4",
+  "after_hash": "51f6af81988e7ec58a2e92a9fc851c2c3d0ae4b6061fc85e6f4ef0f819720703",
+  "project_metadata_unchanged": true
+}
