@@ -9,7 +9,7 @@ export interface IntelDatabase {
   exec(sql:string):Promise<unknown>
   transaction<T>(body:(db:IntelDatabase)=>Promise<T>):Promise<T>
 }
-export type Job={id:string;kind:'collect'|'analyze'|'rag_index'|'archive';subject:string;status:string;payload:Record<string,unknown>;error:string|null;created_at:string;result?:unknown}
+export type Job={id:string;kind:'collect'|'analyze'|'rag_index'|'archive'|'corpus_collect'|'corpus_snapshot';subject:string;status:string;payload:Record<string,unknown>;error:string|null;created_at:string;result?:unknown}
 export type ReceiptResult={value:unknown;model:string;usage?:unknown}
 export type Review={document_id:string;version:string;family_id:string;split:'development'|'holdout'|'train';selected:boolean|null;category:string|null;note:string;allowed_use:'local_eval'|'local_sft';permission:string;reviewer:string;reviewed_at:string}
 export const MIGRATION=`
@@ -115,15 +115,15 @@ export class IntelRepository {
   })}
   async membership(id:string,version:string,event:string,story:string,relation:Relation,manual=false){await this.db.query(`INSERT INTO intel_memberships(document_id,version,event_id,story_id,relation,manual) VALUES($1,$2,$3,$4,$5,$6)
     ON CONFLICT(document_id,version) DO UPDATE SET event_id=EXCLUDED.event_id,story_id=EXCLUDED.story_id,relation=EXCLUDED.relation,manual=EXCLUDED.manual WHERE NOT intel_memberships.manual OR EXCLUDED.manual`,[id,version,event,story,relation,manual])}
-  async enqueue(kind:Job['kind'],subject:string,payload:Record<string,unknown>={}):Promise<Job>{return this.db.transaction(async db=>{
+  async enqueue(kind:Job['kind'],subject:string,payload:Record<string,unknown>={},transaction?:IntelDatabase):Promise<Job>{const insert=async(db:IntelDatabase)=>{
     const active=(await db.query<Job>("SELECT * FROM intel_jobs WHERE kind=$1 AND subject=$2 AND status IN ('queued','running')",[kind,subject])).rows[0]
     if(active)return active
     const id='IJ-'+randomUUID()
     await db.query("INSERT INTO intel_jobs(id,kind,subject,status,payload) VALUES($1,$2,$3,'queued',$4) ON CONFLICT DO NOTHING",[id,kind,subject,JSON.stringify(payload)])
     return (await db.query<Job>("SELECT * FROM intel_jobs WHERE kind=$1 AND subject=$2 AND status IN ('queued','running')",[kind,subject])).rows[0]
-  })}
+  };return transaction?insert(transaction):this.db.transaction(insert)}
   async claim():Promise<Job|undefined>{return this.db.transaction(async db=>{
-    const j=(await db.query<Job>("SELECT * FROM intel_jobs WHERE status='queued' AND not_before<=now() ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1")).rows[0]
+    const j=(await db.query<Job>("SELECT * FROM intel_jobs WHERE status='queued' AND not_before<=now() ORDER BY CASE WHEN kind IN ('corpus_collect','corpus_snapshot') THEN 1 ELSE 0 END,created_at FOR UPDATE SKIP LOCKED LIMIT 1")).rows[0]
     if(!j)return undefined
     await db.query("UPDATE intel_jobs SET status='running',updated_at=now() WHERE id=$1",[j.id]);return {...j,status:'running'}
   })}

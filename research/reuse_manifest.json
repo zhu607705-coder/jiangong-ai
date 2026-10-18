@@ -543,6 +543,25 @@
         "internal materials stay in project permissions",
         "case/rule approval and original saved results"
       ]
+    },
+    {
+      "id": "public-corpus-campaign-20261018",
+      "reuse": [
+        "DeepSeekWebTools standaloneSearch/Fetch adapter and request receipts",
+        "collectChannel public-source/DNS/domain guards and official page adapter",
+        "same IntelRepository and intel_jobs worker",
+        "documentSlices and semanticWindows immutable original locators",
+        "AIHOT original/version/analysis/event pipeline and existing40/day model budget"
+      ],
+      "new_domain_logic": [
+        "Beijing daily collection quotas and cost reservations",
+        "finite8640-query coverage plan with pacing and7daycooldown",
+        "content-addressed disk archive and public-version snapshot jobs"
+      ],
+      "unchanged": [
+        "no parallel scheduler/search client/parser/database",
+        "project facts/reports and private material permissions"
+      ]
     }
   ]
 }

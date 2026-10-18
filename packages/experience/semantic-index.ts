@@ -9,7 +9,7 @@ export type SemanticWindow={id:string;candidate_id:string;version:string;locator
 export type SemanticEntry=RagSemanticIndex['entries'][number]&{candidate_id:string;version:string;locator:string;start:number;end:number}
 
 /** Indexes describe original windows; summaries never replace evidence or become project facts. */
-export function semanticWindows(candidates:RetrievalCandidate[]):SemanticWindow[] {
+export function semanticWindows(candidates:Pick<RetrievalCandidate,'id'|'version'|'text'|'locator'|'file_name'>[]):SemanticWindow[] {
   return candidates.flatMap(candidate=>{
     const windows:SemanticWindow[]=[]
     for(let start=0;start<candidate.text.length;start+=3800) {

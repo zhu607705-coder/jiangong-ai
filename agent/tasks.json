@@ -1935,6 +1935,23 @@
         "docs"
       ],
       "definition_of_done": "公开历史可回填、版本与项目出处可回读，研究原文增量入库与预算内研读，UI入口可用且真实查询复用；原项目与历史不变，完成部署和合并。"
+    },
+    {
+      "id": "T-PUBLIC-CORPUS-CAMPAIGN-20261018",
+      "depends_on": [],
+      "goal": "公开资料千次日采集与磁盘MD/JSON沉淀，沿用AIHOT与同一后台队列",
+      "status": "implemented_pending_live_deployment",
+      "write_scope": [
+        "packages/intelligence",
+        "packages/experience/semantic-index.ts",
+        "apps/host/intelligence.ts",
+        "apps/workspace/src/intelligence",
+        "tests/contracts/corpus-campaign.test.ts",
+        "docs",
+        "agent",
+        "research"
+      ],
+      "definition_of_done": "费用边界明确；已有原文落盘可回读；真实接口回执/额度/暂停恢复可追踪；没有授权费用时不启动持续付费任务。"
     }
   ]
 }

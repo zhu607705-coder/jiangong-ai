@@ -4710,5 +4710,34 @@
       "output/playwright/archive-color-clarity/after-overview.png",
       "output/playwright/archive-color-clarity/after-results.png"
     ]
+  },
+  "public_corpus_campaign_20261018": {
+    "status": "implemented_pending_deployment_and_cost_authorization",
+    "changed_files": [
+      "packages/intelligence/campaign.ts",
+      "packages/intelligence/campaign-plan.ts",
+      "packages/intelligence/corpus-disk.ts",
+      "packages/intelligence/collectors.ts",
+      "packages/intelligence/repository.ts",
+      "packages/intelligence/service.ts",
+      "packages/experience/semantic-index.ts",
+      "apps/host/intelligence.ts",
+      "apps/workspace/src/intelligence/IntelligencePanel.tsx",
+      "apps/workspace/src/intelligence/intelligence.css"
+    ],
+    "validation": [
+      "77 targeted checks passed; build passed before final budget-cap refinement"
+    ],
+    "artifacts": [
+      "research/test_results/corpus-campaign-tests-20261018.log",
+      "research/test_results/corpus-campaign-build-20261018.log",
+      "docs/公开资料持续采集与AIHOT沉淀_20261018.md"
+    ],
+    "constraints": [
+      "Independent Search/Fetch cost0.005CNY per successful request; daily1000Search/200Fetch/6CNY prepared but disabled pending explicit confirmation",
+      "Existing40-call model budget unchanged; no private/synthetic promotion",
+      "Server has500GB root disk and477GB available; no separate mounted data volume"
+    ],
+    "next_runnable_task": "Deploy paused campaign, archive existing public versions, verify live counters/files/UI; request approval for paid daily collection."
   }
 }
