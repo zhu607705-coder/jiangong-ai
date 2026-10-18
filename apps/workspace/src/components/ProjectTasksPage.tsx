@@ -11,6 +11,7 @@ import {buildProjectTasks,taskObjectApplicability,type ProjectTaskProgress,type 
 import {useProjectDecisionGuidance,orderByDecision} from './ProjectDecisionGuidance'
 import TaskMaterialImport,{type TaskUpload,type TaskExtract} from './TaskMaterialImport'
 import InvestigationAdvicePanel from './InvestigationAdvicePanel'
+import {useMobileWorkspaceRequest} from './mobile-workspace-context'
 export {buildProjectTasks,type ProjectTaskProgress,type ProjectInvestigationTask} from '../../../../packages/retrofit/project-tasks'
 
 export type ProjectTasksPageProps = {
@@ -97,6 +98,8 @@ export default function ProjectTasksPage({ project, packet, rounds = [], directi
   const activePacket = section === 'history' ? selectedRound?.result || null : current
   const guidance=useProjectDecisionGuidance(activePacket?.input_hash)
   const tasks = useMemo(() => {const rows=buildProjectTasks(activePacket,direction,selectedRound?.missing_materials||[]);return section==='current'&&guidance?orderByDecision(rows,guidance.materials,row=>row.id):rows}, [activePacket, direction, selectedRound,section,guidance])
+  const mobileFocus=useMobileWorkspaceRequest()
+  useEffect(()=>{const request=mobileFocus.request;if(request&&request.projectId===project.id&&request.revision===project.context_version&&section==='current'&&tasks.some(task=>task.id===request.taskId)){setOpened(request.taskId);mobileFocus.consume()}},[mobileFocus.request,project.id,project.context_version,section,tasks])
   const pendingObject=(task:ProjectInvestigationTask)=>!!activePacket&&['foreign_reference','needs_review'].includes(taskObjectApplicability(activePacket,task).state)
   const currentTasks=section==='current'?tasks.filter(task=>!pendingObject(task)):tasks
   const reviewTasks=section==='current'?tasks.filter(pendingObject):[]

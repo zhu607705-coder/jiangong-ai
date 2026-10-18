@@ -1964,6 +1964,22 @@
         "research/test_results"
       ],
       "definition_of_done": "现有入口完整可达；选择后收起；320/390/桌面切换与焦点可用；仅UI部署、实页验证及合并。"
+    },
+    {
+      "id": "T-MOBILE-CARDS-20261019",
+      "depends_on": [
+        "T-MOBILE-NAVIGATION-20261018"
+      ],
+      "goal": "手机项目工作卡与局部点按切换，避免照搬桌面长页面",
+      "status": "verified_pending_ui_deployment",
+      "write_scope": [
+        "apps/workspace/src",
+        "tests/contracts",
+        "docs",
+        "agent",
+        "research"
+      ],
+      "definition_of_done": "六页摘要可在手机一屏切换，真实数据和方向/来源规则共享，表单及原工具保留；390/320/桌面验证，UI部署与合并。"
     }
   ]
 }
