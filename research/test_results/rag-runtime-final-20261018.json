@@ -1,0 +1,37 @@
+{
+  "deployed_at": "2026-10-18T02:10:22.572486+00:00",
+  "commit": "5d100340506b4ef73cce89dee9c3d4fed080d153",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261018T021018Z",
+  "runtime_files": {
+    "packages/experience/hybrid-retrieval.ts": {
+      "before": "107f9f6163ac40be98b5d628fad1173efa8c567da0dfc2b7590247da571bccc1",
+      "after": "689e0c3e05574b5a02543deaa94b973fcc78f22c461b58b10aad778fffd813fc"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "5d100340506b4ef73cce89dee9c3d4fed080d153",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 38,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

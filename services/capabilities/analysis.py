@@ -6,6 +6,7 @@ import json
 import sqlite3
 import logging
 from datetime import date
+from functools import lru_cache
 
 import jieba
 from rank_bm25 import BM25Okapi
@@ -127,17 +128,29 @@ def analyze(project: dict, role: str) -> dict:
             "missing_fields": sorted(set(missing)), "artifact_refs": [], "version": "2.0"}
 
 
+def _prepare_retrieval_corpus(texts: tuple[tuple[str, str], ...]):
+    tokens = [list(jieba.cut(title + " " + text)) or [""] for title, text in texts]
+    overlaps = [frozenset(jieba.cut(title + text)) for title, text in texts]
+    return BM25Okapi(tokens), overlaps
+
+
+# Pure text statistics only. IDs, permissions, source metadata and responses are never cached.
+_cached_retrieval_corpus = lru_cache(maxsize=8)(_prepare_retrieval_corpus)
+
+
 def retrieval_query(project: dict, query: str, include_internal: bool, slots=None, limit=5) -> dict:
     visible = list(scoped_sources(project, include_internal).values())
     if not visible:
         return {"matches": [], "slots": []}
-    texts = [s["title"] + " " + (s.get("untrusted_text") or "") for s in visible]
-    tokens = [list(jieba.cut(t)) or [""] for t in texts]
-    scores = BM25Okapi(tokens).get_scores(list(jieba.cut(query)))
-    matches = sorted(zip(visible, scores), key=lambda v: (-float(v[1]), v[0]["id"]))
+    texts = tuple((s["title"], s.get("untrusted_text") or "") for s in visible)
+    prepare = _cached_retrieval_corpus if sum(len(title) + len(text) for title, text in texts) <= 1_000_000 else _prepare_retrieval_corpus
+    bm25, overlaps = prepare(texts)
+    query_words = list(jieba.cut(query))
+    scores = bm25.get_scores(query_words)
+    matches = sorted(zip(visible, scores, overlaps), key=lambda v: (-float(v[1]), v[0]["id"]))
     # Exact term overlap matters for tiny corpora whose BM25 IDF may be nonpositive.
-    query_tokens = set(jieba.cut(query))
-    filtered = [(s, score) for s, score in matches if query_tokens.intersection(jieba.cut(s["title"] + (s.get("untrusted_text") or "")))]
+    query_tokens = set(query_words)
+    filtered = [(s, score) for s, score, overlap in matches if query_tokens.intersection(overlap)]
     curation = construct_url_to_info([("retrieval", [DialogueTurn([
         Information(s.get("url") or "source:" + s["id"], s["title"], [s.get("untrusted_text") or s["title"]]) for s, _ in filtered
     ])])])

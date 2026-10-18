@@ -37,3 +37,26 @@ it('uses AI retrieval, indexes on request, renders original quotes and locates t
     expect(call[1]).not.toHaveProperty('question');expect(call[1]).toHaveProperty('allow_internal_ai',false)
   } finally {await act(async()=>root.unmount())}
 })
+
+it('lets users stop AI without losing originals and submit a new question while a prior answer is waiting',async()=>{
+ const dom=parseHTML('<html><body><div id="root"></div></body></html>')
+ vi.stubGlobal('window',dom.window);vi.stubGlobal('document',dom.document);vi.stubGlobal('HTMLElement',dom.window.HTMLElement);vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true)
+ const signals:AbortSignal[]=[]
+ vi.stubGlobal('fetch',vi.fn(async(_url:string,init:RequestInit)=>{
+  signals.push(init.signal as AbortSignal)
+  return new Response(new ReadableStream({start(controller){controller.enqueue(new TextEncoder().encode(JSON.stringify({type:'originals',result:{project_id:'P-TEST',question:'供水',hits:[],candidate_counts:{documents:1,eligible_chunks:1},query_expansions:[],skipped:[],rank_query:'供水'}})+'\n'))}}),{headers:{'Content-Type':'application/x-ndjson'}})
+ }))
+ const root=createRoot(dom.document.getElementById('root')!)
+ const submit=async()=>act(async()=>{dom.document.querySelector('form')!.dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true}))})
+ try{
+  await act(async()=>root.render(createElement(RagEvidenceSearch,{projectId:'P-TEST',initialQuestion:'供水'})))
+  await submit();await vi.waitFor(()=>expect(dom.document.querySelector('.rag-submitted-scope')?.textContent).toContain('供水'))
+  const button=dom.document.querySelector<HTMLButtonElement>('button[type="submit"]')!
+  expect(button.disabled).toBe(false);expect(button.textContent).toBe('提交新问题')
+  await submit();await vi.waitFor(()=>expect(signals.length).toBe(2));expect(signals[0].aborted).toBe(true)
+  const stop=[...dom.document.querySelectorAll('button')].find(button=>button.textContent==='停止AI补充')!
+  await act(async()=>{stop.dispatchEvent(new dom.window.Event('click',{bubbles:true}))})
+  expect(signals[1].aborted).toBe(true);expect(dom.document.querySelector('.rag-submitted-scope')?.textContent).toContain('供水')
+  expect(button.textContent).toBe('检索原文')
+ }finally{await act(async()=>root.unmount())}
+})

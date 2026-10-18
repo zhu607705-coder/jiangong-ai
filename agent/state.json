@@ -4512,5 +4512,91 @@
       "research/test_results/investigation-advice-ui-deployment-20261017.json",
       "research/test_results/investigation-advice-browser-20261017.json"
     ]
+  },
+  "rag_performance_20261018": {
+    "status": "deployed_verified_pending_merge",
+    "request": "RAG搜索太慢且不够智能",
+    "changed_files": [
+      "apps/host/rag-retrieval.ts",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "packages/experience/hybrid-retrieval.ts",
+      "packages/experience/retrieval.ts",
+      "packages/experience/semantic-index.ts",
+      "packages/experience/retrieval-sources.ts",
+      "packages/intelligence/domain.ts",
+      "packages/retrofit/research-coverage.ts",
+      "services/capabilities/analysis.py"
+    ],
+    "implemented": [
+      "direct original route skips compulsory model planner and semantic selection",
+      "same-permitted-snapshot validated answer cache, ten minute reuse and explicit refresh",
+      "bounded pure-text BM25/token reuse, original scope admission every request",
+      "colloquial/compound terms, continuous focused passages and exact-unit preference",
+      "only requested missing financial fields trigger bounded public supplementation",
+      "streaming originals remain usable; stop AI and replace pending question"
+    ],
+    "verification": [
+      "54 RAG contract/UI checks passed",
+      "13 research coverage checks passed",
+      "35 Python capability checks passed",
+      "8 archived relaxed source-hit-at-5: 7 before, 8 after; not answer accuracy"
+    ],
+    "artifacts": [
+      "research/test_results/rag-live-before-20261018.json",
+      "research/test_results/rag-recall-before-20261018.json",
+      "research/test_results/rag-recall-after-20261018.json",
+      "research/test_results/rag-live-final-20261018.json",
+      "research/test_results/rag-performance-comparison-20261018.json",
+      "research/test_results/rag-browser-20261018.json",
+      "research/test_results/rag-runtime-final-20261018.json",
+      "research/test_results/rag-ui-deployment-20261018.json"
+    ],
+    "unresolved": [],
+    "next_runnable_task": "Merge production-equivalent patch while preserving unrelated root edits; normal manual use needs no full research rerun.",
+    "runtime_commit": "5d100340506b4ef73cce89dee9c3d4fed080d153",
+    "ui_commit": "7033f29c007d4267cb8cd2ea69dedef670c306dc",
+    "server_measurement": {
+      "checked_at": "2026-10-18T02:12:03.796002+00:00",
+      "question": "75幢1单元加装电梯预计要花多少钱？",
+      "before": {
+        "first_originals_ms": 350.3,
+        "complete_ms": 31013.9,
+        "model_calls": 3
+      },
+      "after": {
+        "first_originals_ms": 417.6,
+        "complete_ms": 5527.9,
+        "model_calls": 1
+      },
+      "repeated": {
+        "complete_ms": 54.1,
+        "model_calls": 0,
+        "cache": {
+          "reused": true,
+          "created_at": "Sun Oct 18 2026 02:10:34 GMT+0000 (Coordinated Universal Time)"
+        }
+      },
+      "complete_latency_reduction_percent": 82.2,
+      "all_final_hits_target_unit": true,
+      "requested_limit_preserved": true,
+      "project_metadata_unchanged": true,
+      "research_rounds_unchanged": true,
+      "scope": "Same bounded production question, one fresh before/after and one cache repeat; other two questions lexical only; not a general latency SLA or answer accuracy benchmark."
+    },
+    "browser": {
+      "checked_at": "2026-10-18T02:12:03.797840+00:00",
+      "url": "https://laneanew.cn/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=evidence&section=files",
+      "actual_ui_commit": "7033f29c007d4267cb8cd2ea69dedef670c306dc",
+      "runtime_commit": "5d100340506b4ef73cce89dee9c3d4fed080d153",
+      "observed": [
+        "public project RAG direct answer about54万元",
+        "current snapshot reuse marker and refresh button",
+        "original citation button opens actual evidence drawer with54万元 quotation",
+        "result hit actions link to decisions and tasks",
+        "no browser console errors"
+      ],
+      "screenshot": "output/playwright/rag-performance/answer-and-source.png",
+      "no_full_research_started": true
+    }
   }
 }

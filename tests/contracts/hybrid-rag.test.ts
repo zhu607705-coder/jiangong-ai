@@ -4,7 +4,8 @@ import type {Database,ProjectRecord} from '../../apps/host/store'
 import type {ProjectInput,Source} from '../../apps/host/generated/contracts'
 import fixture from '../../fixtures/inputs/01_auto.json'
 import {buildRagExport} from '../../packages/experience/rag-export'
-import {HybridRetrievalService,type RagModelPort} from '../../packages/experience/hybrid-retrieval'
+import {HybridRetrievalService,needsPublicSupplement,focusedOriginal,type RagModelPort} from '../../packages/experience/hybrid-retrieval'
+import {resolveAnswerSlots} from '../../packages/retrofit/research-coverage'
 import {SemanticIndexRepository,semanticWindows} from '../../packages/experience/semantic-index'
 import {prepareRetrievalCandidates,type RetrievalRanker} from '../../packages/experience/retrieval'
 import {normalizeImportDocument} from '../../apps/workspace/src/imports/graph-model'
@@ -23,6 +24,54 @@ const source=(id:string,text:string,patch:Partial<Source>={}):Source=>({id,title
 const project=(sources:Source[],owner='owner'):ProjectRecord=>({id:'HYBRID-A',owner_id:owner,name:'测试社区',context_version:1,created_at:'',updated_at:'',input:{...structuredClone(fixture),project_id:'HYBRID-A',synthetic:false,sources,facts:[],context_rules:[],events:[]} as ProjectInput})
 const bundle=(p:ProjectRecord)=>buildRagExport({projectId:p.id,documents:[],rawDocuments:[],cards:[],sources:p.input.sources})
 const options=()=>({signal:new AbortController().signal})
+
+it('answers a clear original directly, reuses only the same permitted snapshot and can explicitly refresh',async()=>{
+  const p=project([source('MEAL','长者助餐服务覆盖36人。')]),fake=model(),open=vi.fn(async()=>fake.port),supplement=vi.fn(async()=>[])
+  const service=new HybridRetrievalService(repository,keyword,open,supplement)
+  const opts={...options(),cacheModel:'test-catalog-v1'}
+  const first=await service.retrieve(p,bundle(p),[],{question:'助餐'},opts)
+  expect(first.method).toBe('bm25_with_api_answer');expect(first.routing?.mode).toBe('direct')
+  expect(fake.types).toEqual(['RagAnswer']);expect(supplement).not.toHaveBeenCalled()
+  const cached=await service.retrieve(p,bundle(p),[],{question:'助餐'},opts)
+  expect(cached.cache?.reused).toBe(true);expect(cached.assistance?.calls).toBe(0);expect(open).toHaveBeenCalledTimes(1)
+  await service.retrieve(p,bundle(p),[],{question:'助餐',refresh:true},opts)
+  expect(open).toHaveBeenCalledTimes(2)
+  const changed=project([source('MEAL','长者助餐服务覆盖40人。')])
+  const newer=await service.retrieve(changed,bundle(changed),[],{question:'助餐'},opts)
+  expect(newer.cache?.reused).not.toBe(true)
+  expect(newer.assistance?.answer[0].citations[0].quote).toContain('40人')
+  await service.retrieve(project(p.input.sources,'other-owner'),bundle(p),[],{question:'助餐'},opts)
+  await service.retrieve({...p,context_version:2},bundle(p),[],{question:'助餐'},opts)
+  await service.retrieve(p,bundle(p),[],{question:'助餐'},{...opts,cacheModel:'test-catalog-v2'})
+  expect(open).toHaveBeenCalledTimes(6)
+  const privateP=project([source('MEAL','长者助餐服务覆盖36人。',{visibility:'internal',data_class:'internal'})])
+  const privateResult=await service.retrieve(privateP,bundle(privateP),[],{question:'助餐'},opts)
+  expect(privateResult.cache?.reused).not.toBe(true)
+  expect(privateResult.assistance?.answer[0]?.text).not.toBe('原文记录了长者助餐服务。')
+  await db.query("UPDATE project_rag_semantic_index SET created_at=now()-interval '11 minutes' WHERE policy='validated-answer-v1'")
+  const expired=await service.retrieve(p,bundle(p),[],{question:'助餐'},opts)
+  expect(expired.cache?.reused).not.toBe(true)
+})
+
+it('does not cache fallback answers whose quotes could not be verified',async()=>{
+  const p=project([source('MEAL','长者助餐服务覆盖36人。')]),fake=model({badQuote:true}),open=vi.fn(async()=>fake.port)
+  const service=new HybridRetrievalService(repository,keyword,open)
+  for(let i=0;i<2;i++)await service.retrieve(p,bundle(p),[],{question:'助餐'},{...options(),cacheModel:'test-catalog'})
+  expect(open).toHaveBeenCalledTimes(2)
+})
+
+it('supplements only fields actually requested instead of searching for every possible slot',()=>{
+  const coverage=resolveAnswerSlots('75幢1单元电梯多少钱',[{id:'PRICE',title:'75幢1单元电梯方案',text:'预算54万元。',locator:'line:1',role:'current',url:null,published_at:null}])
+  expect(needsPublicSupplement('75幢1单元电梯多少钱',coverage,1)).toBe(false)
+  expect(coverage.slots.some(slot=>slot.field==='amount'&&slot.status==='conditional')).toBe(true)
+  expect(needsPublicSupplement('电梯由谁出资',resolveAnswerSlots('电梯由谁出资',[]),1)).toBe(true)
+})
+
+it('reads the relevant continuous range of a long original instead of always truncating its prefix',()=>{
+ const text='公共通知。'.repeat(1200)+'75幢1单元电梯预算54万元。'+'附录说明。'.repeat(800)
+ const passage=focusedOriginal(text,'75幢1单元电梯多少钱',3500)
+ expect(passage).toContain('电梯预算54万元');expect(text.includes(passage)).toBe(true)
+})
 it('keeps a valid index summary above 240 characters instead of losing an entire batch',()=>{
   const summary='原文包含分期改造范围、资金承担和维护安排，索引保留范围及否定。'.repeat(12)
   const result={entries:[{source_id:'W-PUBLIC',summary,concepts:['资金承担'],questions:['谁承担改造资金']} ]}

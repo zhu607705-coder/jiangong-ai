@@ -1,0 +1,623 @@
+{
+  "checked_at": "2026-10-18T02:04:17.403Z",
+  "input": "data/demos/qiushi-validated-replay.json:packet.sources",
+  "source_count": 28,
+  "model_calls": 0,
+  "fact_writes": 0,
+  "summary": [
+    {
+      "protocol": "strict_body_topics",
+      "queries": 8,
+      "source_hit_at_5": 7
+    },
+    {
+      "protocol": "shared_context_recall",
+      "queries": 8,
+      "source_hit_at_5": 8
+    }
+  ],
+  "rows": [
+    {
+      "question": "二次供水涉及哪些楼栋和户数，哪些楼栋被排除？",
+      "expected_source_ids": [
+        "INTEL-cde2a3da3dd5:QS-water2023"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 678,
+          "returned": [
+            {
+              "source_id": "INTEL-e8cca15f64ed:PUB-7accdf1ab8eea290",
+              "title": "加装电梯、创建“美好家园”两项民生实事项目进展如何？人大代表来监督",
+              "version": "326fe4742d69b47d3460a5967768159046b1b26ec91dbe1c7d05e3529c4ff689",
+              "locator": "text:chars:49-803"
+            },
+            {
+              "source_id": "INTEL-cde2a3da3dd5:QS-water2023",
+              "title": "浙大求是社区推进二次供水改造",
+              "version": "4e612e1efdce7aaa4492d4d6f7fb42023cc51e1e20681cbcc3d21610deb722d2",
+              "locator": "text:chars:233-1199"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 20,
+          "returned": [
+            {
+              "source_id": "INTEL-cde2a3da3dd5:QS-water2023",
+              "title": "浙大求是社区推进二次供水改造",
+              "version": "4e612e1efdce7aaa4492d4d6f7fb42023cc51e1e20681cbcc3d21610deb722d2",
+              "locator": "text:chars:233-1199"
+            },
+            {
+              "source_id": "PUB-62fc38dfe56bfeba",
+              "title": "全省率先试点城市危旧房有机更新 拱墅区如何做到“第一个吃螃蟹”？ _ 杭州政协网 - 今天是 2026-05-25 星期一",
+              "version": "bebed7ad985a5e98d3d5493033564e29c1b7f8bcde0f0cdabb0a98b0ee82a697",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-d77a47f628facc42",
+              "title": "拱墅区如何做到“第一个吃螃蟹”？",
+              "version": "d47618ae6e11e62d0aff46568cd1c3d962f228243d92dd0b1e39651b04378124",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "INTEL-e8cca15f64ed:PUB-7accdf1ab8eea290",
+              "title": "加装电梯、创建“美好家园”两项民生实事项目进展如何？人大代表来监督",
+              "version": "326fe4742d69b47d3460a5967768159046b1b26ec91dbe1c7d05e3529c4ff689",
+              "locator": "text:chars:49-803"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "留博楼为什么没纳入供水改造？",
+      "expected_source_ids": [
+        "INTEL-cde2a3da3dd5:QS-water2023"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 1,
+          "returned": [
+            {
+              "source_id": "INTEL-e8cca15f64ed:PUB-7accdf1ab8eea290",
+              "title": "加装电梯、创建“美好家园”两项民生实事项目进展如何？人大代表来监督",
+              "version": "326fe4742d69b47d3460a5967768159046b1b26ec91dbe1c7d05e3529c4ff689",
+              "locator": "text:chars:49-803"
+            },
+            {
+              "source_id": "INTEL-cde2a3da3dd5:QS-water2023",
+              "title": "浙大求是社区推进二次供水改造",
+              "version": "4e612e1efdce7aaa4492d4d6f7fb42023cc51e1e20681cbcc3d21610deb722d2",
+              "locator": "text:chars:233-1199"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 2,
+          "returned": [
+            {
+              "source_id": "INTEL-cde2a3da3dd5:QS-water2023",
+              "title": "浙大求是社区推进二次供水改造",
+              "version": "4e612e1efdce7aaa4492d4d6f7fb42023cc51e1e20681cbcc3d21610deb722d2",
+              "locator": "text:chars:233-1199"
+            },
+            {
+              "source_id": "PUB-d77a47f628facc42",
+              "title": "拱墅区如何做到“第一个吃螃蟹”？",
+              "version": "d47618ae6e11e62d0aff46568cd1c3d962f228243d92dd0b1e39651b04378124",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-62fc38dfe56bfeba",
+              "title": "全省率先试点城市危旧房有机更新 拱墅区如何做到“第一个吃螃蟹”？ _ 杭州政协网 - 今天是 2026-05-25 星期一",
+              "version": "bebed7ad985a5e98d3d5493033564e29c1b7f8bcde0f0cdabb0a98b0ee82a697",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "INTEL-e8cca15f64ed:PUB-7accdf1ab8eea290",
+              "title": "加装电梯、创建“美好家园”两项民生实事项目进展如何？人大代表来监督",
+              "version": "326fe4742d69b47d3460a5967768159046b1b26ec91dbe1c7d05e3529c4ff689",
+              "locator": "text:chars:49-803"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "75幢1单元加装电梯的意见征求公告在哪里？",
+      "expected_source_ids": [
+        "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 17,
+          "returned": [
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+              "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+              "version": "79797b530f7910544d28353d4b1ac4fec14c2b940de50d22786c51ccaf143b1d",
+              "locator": "text:chars:50-484"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db",
+              "title": "灵隐街道办事处关于公布《2024年下半年灵隐街道办事处重大行政决策事项目录》的通知",
+              "version": "3e844a96a343f7af25d8a5f475f8c261562d1658cc8ca534d48623b129deaf32",
+              "locator": "text:chars:90-344"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+              "title": "西湖区三方协同为居民幸福加码（社区范围背景：浙大求是社区；本小区覆盖与运营效果待核）",
+              "version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+              "locator": "within_scope:within_scope:within_scope:within_scope:body"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-16c64d454a5024c2",
+              "title": "央视纪录片《我们一起走过》 聚焦杭州既有住宅加装电梯工作",
+              "version": "95895750e39e9dc12f4d5ddcbbf708880a5ddcd72594d17b08e46f33eb79c643",
+              "locator": "text:chars:610-1190"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 32,
+          "returned": [
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+              "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+              "version": "79797b530f7910544d28353d4b1ac4fec14c2b940de50d22786c51ccaf143b1d",
+              "locator": "text:chars:50-484"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+              "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+              "version": "55656d082712e60eb1f5520c173c1582726edbf29deab80107a39e1b336426c7",
+              "locator": "text:chars:1-25"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db",
+              "title": "灵隐街道办事处关于公布《2024年下半年灵隐街道办事处重大行政决策事项目录》的通知",
+              "version": "3e844a96a343f7af25d8a5f475f8c261562d1658cc8ca534d48623b129deaf32",
+              "locator": "text:chars:90-344"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+              "title": "西湖区三方协同为居民幸福加码（社区范围背景：浙大求是社区；本小区覆盖与运营效果待核）",
+              "version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+              "locator": "within_scope:within_scope:within_scope:within_scope:body"
+            },
+            {
+              "source_id": "PUB-dc8e9c3d95c1cd83",
+              "title": "浙江泛亚工程咨询有限公司关于求是书院院落环境整治项目中标(成交)结果公告",
+              "version": "0eb5909a98743c3bff09613ffba7f53303ed6514cf0118b371f8b7f04547d5f8",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "75幢1单元加电梯预计要花多少钱？",
+      "expected_source_ids": [
+        "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:INTEL-8463257afc80:PUB-QS75-DRAFT-2024"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 12,
+          "returned": [
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+              "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+              "version": "79797b530f7910544d28353d4b1ac4fec14c2b940de50d22786c51ccaf143b1d",
+              "locator": "text:chars:50-484"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+              "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+              "version": "55656d082712e60eb1f5520c173c1582726edbf29deab80107a39e1b336426c7",
+              "locator": "text:chars:1-25"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+              "title": "西湖区三方协同为居民幸福加码（社区范围背景：浙大求是社区；本小区覆盖与运营效果待核）",
+              "version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+              "locator": "within_scope:within_scope:within_scope:within_scope:body"
+            },
+            {
+              "source_id": "PUB-16c64d454a5024c2",
+              "title": "央视纪录片《我们一起走过》 聚焦杭州既有住宅加装电梯工作",
+              "version": "95895750e39e9dc12f4d5ddcbbf708880a5ddcd72594d17b08e46f33eb79c643",
+              "locator": "text:chars:610-1190"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 30,
+          "returned": [
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-fa8ee5f1fe5b8917",
+              "title": "关于公开征求《灵隐街道浙大求是社区求是村75幢1单元电梯加装项目重大行政决策草案（征求意见稿）》意见的公告",
+              "version": "79797b530f7910544d28353d4b1ac4fec14c2b940de50d22786c51ccaf143b1d",
+              "locator": "text:chars:50-484"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:INTEL-8463257afc80:PUB-QS75-DRAFT-2024",
+              "title": "求是村75幢1单元加装电梯项目重大行政决策草案（征求意见稿）官方附件",
+              "version": "55656d082712e60eb1f5520c173c1582726edbf29deab80107a39e1b336426c7",
+              "locator": "text:chars:1-25"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:PUB-139d520c14eb96db",
+              "title": "灵隐街道办事处关于公布《2024年下半年灵隐街道办事处重大行政决策事项目录》的通知",
+              "version": "3e844a96a343f7af25d8a5f475f8c261562d1658cc8ca534d48623b129deaf32",
+              "locator": "text:chars:90-344"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+              "title": "西湖区三方协同为居民幸福加码（社区范围背景：浙大求是社区；本小区覆盖与运营效果待核）",
+              "version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+              "locator": "within_scope:within_scope:within_scope:within_scope:body"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "求是村拆六建四是哪年的项目？",
+      "expected_source_ids": [
+        "PUB-037069d930115e02"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 47,
+          "returned": [
+            {
+              "source_id": "PUB-037069d930115e02",
+              "title": "\"450工程\"全面启动:浙大求是村拆六建四项目打响第一炮",
+              "version": "98ec521b3d4b1051446bb5388f06ec6ec03d33beb6d27aae8da19ecb4fbca0f0",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-306000f11466dfa0",
+              "title": "求是村“拆六建四（小高层）”拆迁工作全面启动",
+              "version": "becad0f61a2baeb4a211faa9e833c428eab6631144430c18c7803fdf7bbeac86",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-d595cc928dab1b2e",
+              "title": "我校求是村专用房产权证办理工作已近尾声",
+              "version": "4ba8424ddca0c87811621b78b39fcc9c213fbd58b344aec08710b1c6a0a48e85",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-a63cd753fa94df7b",
+              "title": "蕃瓜弄旧改提前两个月封顶 1122证居民预计2027年上半年“不离故土换新家”",
+              "version": "34bb5ca4056184945f022b4a92cd48a8cd0889ca8b987dd54b2cd7c41f929a91",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 47,
+          "returned": [
+            {
+              "source_id": "PUB-037069d930115e02",
+              "title": "\"450工程\"全面启动:浙大求是村拆六建四项目打响第一炮",
+              "version": "98ec521b3d4b1051446bb5388f06ec6ec03d33beb6d27aae8da19ecb4fbca0f0",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-306000f11466dfa0",
+              "title": "求是村“拆六建四（小高层）”拆迁工作全面启动",
+              "version": "becad0f61a2baeb4a211faa9e833c428eab6631144430c18c7803fdf7bbeac86",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-d595cc928dab1b2e",
+              "title": "我校求是村专用房产权证办理工作已近尾声",
+              "version": "4ba8424ddca0c87811621b78b39fcc9c213fbd58b344aec08710b1c6a0a48e85",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-a63cd753fa94df7b",
+              "title": "蕃瓜弄旧改提前两个月封顶 1122证居民预计2027年上半年“不离故土换新家”",
+              "version": "34bb5ca4056184945f022b4a92cd48a8cd0889ca8b987dd54b2cd7c41f929a91",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "求是村回迁签协议延期的通知是什么？",
+      "expected_source_ids": [
+        "PUB-efdfb3e9b0c4f84f"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": false,
+          "latency_ms": 33,
+          "returned": [
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-235853eb17720b70",
+              "title": "求是村“拆六建六”二期搬迁工作情况通报",
+              "version": "b03f017f64e1ca2566b49ea8b000866ea992d67f5deab9c18fc64b1c6f25392f",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+              "title": "西湖区三方协同为居民幸福加码（社区范围背景：浙大求是社区；本小区覆盖与运营效果待核）",
+              "version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+              "locator": "within_scope:within_scope:within_scope:within_scope:body"
+            },
+            {
+              "source_id": "PUB-d595cc928dab1b2e",
+              "title": "我校求是村专用房产权证办理工作已近尾声",
+              "version": "4ba8424ddca0c87811621b78b39fcc9c213fbd58b344aec08710b1c6a0a48e85",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-72750052ed1b6930",
+              "title": "求是村_百度百科 - 搜词条",
+              "version": "d1877382e1e78aab9c5f7661703bff6c9ebab7da98e4e12fb8e140ceb13d614e",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 37,
+          "returned": [
+            {
+              "source_id": "PUB-efdfb3e9b0c4f84f",
+              "title": "房地产部关于求是村“拆六建四”回迁住户推迟签订协议的通知",
+              "version": "8595c788c19b7297444e00114cb51709add176fd8b9a22e7e362fe41ebe94527",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "P-452c9c82-0229-40bc-89c4-5413844e84ed:P-0529974d-63fe-4ae8-804d-e5efb049f60a:P-e417e04f-784d-4f93-af75-8c75964710e8:P-73678dc3-b255-4ae4-848b-86f26266f0c0:INTEL-fc09b8717eeb:QS-trusteeship2023",
+              "title": "西湖区三方协同为居民幸福加码（社区范围背景：浙大求是社区；本小区覆盖与运营效果待核）",
+              "version": "f35f3f18372daad275b3e1a28f7df8ba1060f1d20c61ce68d62e3e8a37cd4531",
+              "locator": "within_scope:within_scope:within_scope:within_scope:body"
+            },
+            {
+              "source_id": "PUB-235853eb17720b70",
+              "title": "求是村“拆六建六”二期搬迁工作情况通报",
+              "version": "b03f017f64e1ca2566b49ea8b000866ea992d67f5deab9c18fc64b1c6f25392f",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-72750052ed1b6930",
+              "title": "求是村_百度百科 - 搜词条",
+              "version": "d1877382e1e78aab9c5f7661703bff6c9ebab7da98e4e12fb8e140ceb13d614e",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "浙工新村自主更新后的选房安排是什么？",
+      "expected_source_ids": [
+        "PUB-3ac6e5eac1a8c4bf"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 42,
+          "returned": [
+            {
+              "source_id": "PUB-62fc38dfe56bfeba",
+              "title": "全省率先试点城市危旧房有机更新 拱墅区如何做到“第一个吃螃蟹”？ _ 杭州政协网 - 今天是 2026-05-25 星期一",
+              "version": "bebed7ad985a5e98d3d5493033564e29c1b7f8bcde0f0cdabb0a98b0ee82a697",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-d77a47f628facc42",
+              "title": "拱墅区如何做到“第一个吃螃蟹”？",
+              "version": "d47618ae6e11e62d0aff46568cd1c3d962f228243d92dd0b1e39651b04378124",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-3ac6e5eac1a8c4bf",
+              "title": "选房啦！杭州首个自主更新小区 传来好消息 _ 杭州政协网",
+              "version": "289d228c719098edc1fc3864c5b9efb02ee2f8d6bc3b0301caf2365c389260e3",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-ef3ee89b0e627c85",
+              "title": "彭水日报数字报-杭州浙工新村：居民“自主更新”的旧改探索",
+              "version": "8bc1b229045476fab8a6e7c3c492028019e20d456045dfc032bdab1b0b5237b7",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-af0615434805b8a9",
+              "title": "杭州市城乡建设委员会关于市十四届人大三次会议上城21号建议的答复 - 索引号: 002489479/2023-271882",
+              "version": "d25a94c9f03c80c44d10e999c1c8cc5883a3b33e5fb0a8859e3bcec7dcb7bc3f",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 64,
+          "returned": [
+            {
+              "source_id": "PUB-62fc38dfe56bfeba",
+              "title": "全省率先试点城市危旧房有机更新 拱墅区如何做到“第一个吃螃蟹”？ _ 杭州政协网 - 今天是 2026-05-25 星期一",
+              "version": "bebed7ad985a5e98d3d5493033564e29c1b7f8bcde0f0cdabb0a98b0ee82a697",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-d77a47f628facc42",
+              "title": "拱墅区如何做到“第一个吃螃蟹”？",
+              "version": "d47618ae6e11e62d0aff46568cd1c3d962f228243d92dd0b1e39651b04378124",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-3ac6e5eac1a8c4bf",
+              "title": "选房啦！杭州首个自主更新小区 传来好消息 _ 杭州政协网",
+              "version": "289d228c719098edc1fc3864c5b9efb02ee2f8d6bc3b0301caf2365c389260e3",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-ef3ee89b0e627c85",
+              "title": "彭水日报数字报-杭州浙工新村：居民“自主更新”的旧改探索",
+              "version": "8bc1b229045476fab8a6e7c3c492028019e20d456045dfc032bdab1b0b5237b7",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "INTEL-84b3af0d1d3d:PUB-8935c3ac63c4900b",
+              "title": "老旧住房自主更新、原拆原建怎么做？浙江国企正在试点先行",
+              "version": "be264fc268c94df99dc4b5a62160301391ed90277b4808c10eeaffadf86a320b",
+              "locator": "text:chars:158-882"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    },
+    {
+      "question": "上海蕃瓜弄回搬涉及多少证，何时选房？",
+      "expected_source_ids": [
+        "PUB-e0574d28e221f21e"
+      ],
+      "variants": [
+        {
+          "protocol": "strict_body_topics",
+          "hit": true,
+          "latency_ms": 15,
+          "returned": [
+            {
+              "source_id": "INTEL-17c3448c4356:PUB-2d6a2b0f4d28ccae",
+              "title": "杭州全力做优老旧小区加装电梯“关键小事”",
+              "version": "afc0a15d3031fc171398be74a72997f670edd7eb4c0c940566c9b1cc13be03f3",
+              "locator": "text:chars:1-1800"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-a63cd753fa94df7b",
+              "title": "蕃瓜弄旧改提前两个月封顶 1122证居民预计2027年上半年“不离故土换新家”",
+              "version": "34bb5ca4056184945f022b4a92cd48a8cd0889ca8b987dd54b2cd7c41f929a91",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        },
+        {
+          "protocol": "shared_context_recall",
+          "hit": true,
+          "latency_ms": 2,
+          "returned": [
+            {
+              "source_id": "INTEL-17c3448c4356:PUB-2d6a2b0f4d28ccae",
+              "title": "杭州全力做优老旧小区加装电梯“关键小事”",
+              "version": "afc0a15d3031fc171398be74a72997f670edd7eb4c0c940566c9b1cc13be03f3",
+              "locator": "text:chars:1-1800"
+            },
+            {
+              "source_id": "PUB-e0574d28e221f21e",
+              "title": "“滚地龙”变电梯新房 1122证居民开始摇号选房 蕃瓜弄旧改进入回搬倒计时",
+              "version": "4cdbe20c49301bd864d9be33724d3eabe35baa9e48e743b48a9fdbb57a848bf1",
+              "locator": "public:excerpt"
+            },
+            {
+              "source_id": "PUB-a63cd753fa94df7b",
+              "title": "蕃瓜弄旧改提前两个月封顶 1122证居民预计2027年上半年“不离故土换新家”",
+              "version": "34bb5ca4056184945f022b4a92cd48a8cd0889ca8b987dd54b2cd7c41f929a91",
+              "locator": "public:excerpt"
+            }
+          ],
+          "fact_writes": 0
+        }
+      ]
+    }
+  ],
+  "interpretation": "Eight source-location questions over archived public excerpts, with the same local Python BM25. Labels are source IDs in this harness only. This measures source recall, not answer correctness, citation entailment or live API latency; the first timing includes Python startup.",
+  "ranker_diagnostics_present": false
+}

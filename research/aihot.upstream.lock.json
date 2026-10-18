@@ -43,7 +43,7 @@
     },
     {
       "path": "packages/intelligence/domain.ts",
-      "sha256": "5bec0c9da51bcfc4eb771fc15e8c3a556cbf7aae685179de7387bbcef42b5cf5"
+      "sha256": "2804a6399670ea02aa773cb7250a54680602793db7862a050ae2fcc70c79b8e4"
     },
     {
       "path": "packages/intelligence/pipeline.ts",
@@ -131,6 +131,21 @@
         "tests/contracts/intelligence-storage.test.ts"
       ],
       "evidence": "research/baseline_logs/knowledge-pipeline-aihot-audit.log"
+    },
+    {
+      "reviewed_at": "2026-10-18",
+      "path": "packages/intelligence/domain.ts",
+      "previous_review_commit": "ad1d4d88ad814d13549e6761a1f758097f1fd45c",
+      "changed_commit": "7033f29c007d4267cb8cd2ea69dedef670c306dc",
+      "previous_sha256": "5bec0c9da51bcfc4eb771fc15e8c3a556cbf7aae685179de7387bbcef42b5cf5",
+      "sha256": "2804a6399670ea02aa773cb7250a54680602793db7862a050ae2fcc70c79b8e4",
+      "scope": "Only searchTokens memoization: singleton Intl.Segmenter, bounded normalized pure-token LRU (512 entries, <=8192 chars each), copies returned to callers. Token rules, score math, upstream algorithms, license, source scope filtering and material IDs unchanged. Reviewed actual diff, not a blanket hash update.",
+      "tests": [
+        "tests/contracts/intelligence.test.ts",
+        "tests/contracts/hybrid-rag.test.ts",
+        "tests/contracts/rag-retrieval.test.ts"
+      ],
+      "evidence": "research/test_results/rag-regression-20261018.log"
     }
   ]
 }

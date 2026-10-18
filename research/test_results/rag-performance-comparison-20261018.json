@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-18T02:12:03.796002+00:00",
+  "question": "75幢1单元加装电梯预计要花多少钱？",
+  "before": {
+    "first_originals_ms": 350.3,
+    "complete_ms": 31013.9,
+    "model_calls": 3
+  },
+  "after": {
+    "first_originals_ms": 417.6,
+    "complete_ms": 5527.9,
+    "model_calls": 1
+  },
+  "repeated": {
+    "complete_ms": 54.1,
+    "model_calls": 0,
+    "cache": {
+      "reused": true,
+      "created_at": "Sun Oct 18 2026 02:10:34 GMT+0000 (Coordinated Universal Time)"
+    }
+  },
+  "complete_latency_reduction_percent": 82.2,
+  "all_final_hits_target_unit": true,
+  "requested_limit_preserved": true,
+  "project_metadata_unchanged": true,
+  "research_rounds_unchanged": true,
+  "scope": "Same bounded production question, one fresh before/after and one cache repeat; other two questions lexical only; not a general latency SLA or answer accuracy benchmark."
+}
