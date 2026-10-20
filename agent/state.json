@@ -4897,7 +4897,7 @@
       "compiled pages never become canonical original sources"
     ],
     "validation": [
-      "20topic/campaign tests passed",
+      "22topic/campaign tests passed",
       "74intelligence regression checks passed",
       "Final TypeScript and Vite production build passed"
     ],
@@ -4907,8 +4907,7 @@
       "research/test_results/topic-wiki-build-20261020.log"
     ],
     "next_runnable_task": "Final tests/build,scoped runtime/UI deployment,actual public-source compilation and browser verification.",
-    "unresolved_questions": [
-      "Today40modelcallsused;user asked optional authorization for at most2extra pilot calls;no override applied."
-    ]
+    "unresolved_questions": [],
+    "authorization": "2026-10-21 用户授权本次额外最多2次，仅供水/电梯，一小时到期，不改普通40次日限额。"
   }
 }
