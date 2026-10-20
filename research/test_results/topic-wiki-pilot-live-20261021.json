@@ -1,0 +1,34 @@
+{
+  "topics": [
+    {
+      "topic": "water",
+      "job": {
+        "id": "IJ-8e5635ab-c79e-42bc-8b22-9dd95d6b997a",
+        "status": "completed",
+        "error": null
+      },
+      "stale": false,
+      "sources": 12,
+      "claims": 8,
+      "questions": 5,
+      "model": "deepseek-flash",
+      "input_hash": "939dc403c3b31c9b7767ac3e77eff944dcd6ead76e7b77fcea05f46d29132296"
+    },
+    {
+      "topic": "elevator",
+      "job": {
+        "id": "IJ-8cb426b5-3cb3-424e-9a66-1e709d8a41ea",
+        "status": "completed",
+        "error": null
+      },
+      "stale": false,
+      "sources": 12,
+      "claims": 8,
+      "questions": 5,
+      "model": "deepseek-flash",
+      "input_hash": "a4d45f80502156a54daddc467ba567b5efaa3e531e1dfa85bbdd374a4707c183"
+    }
+  ],
+  "calls_today": 42,
+  "ordinary_budget": 40
+}

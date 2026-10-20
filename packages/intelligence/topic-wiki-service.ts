@@ -8,7 +8,7 @@ import {config} from '../../apps/host/config'
 import {intelligenceJudge} from '../../runtime/intelligence/judge'
 import {OUTPUT_SCHEMAS,PROMPTS} from './prompts'
 import {canonical,hash} from './domain'
-import {topicPilotLimit} from './topic-wiki-pilot'
+import {intelligenceDailyModelBudget} from './model-budget'
 
 /** Same DB, original repository, receipt budget and persistent worker. Public-only pilot. */
 export class TopicWikiService{
@@ -51,7 +51,7 @@ export class TopicWikiService{
     const frozen=job.payload.input as ReturnType<typeof topicInput>;topicOf(frozen.topic.id)
     const entries=[]
     for(const source of frozen.sources){const e=await this.intel.repo.get(source.id,source.version);if(!e||!publicWikiSource(e))throw Error('WIKI_SOURCE_POLICY_CHANGED');entries.push(e)}
-    const dailyLimit=await topicPilotLimit(this.intel.repo,this.dataDir,frozen.topic.id,frozen.input_hash,Number(process.env.INTELLIGENCE_DAILY_MODEL_CALLS||40))
+    const dailyLimit=intelligenceDailyModelBudget()
     const result=await this.intel.repo.receipt('topic_compile',frozen.topic.id,frozen,config.DEEPSEEK_MODEL,()=>intelligenceJudge('topic',frozen,OUTPUT_SCHEMAS.topic,PROMPTS.topic,signal,config.DEEPSEEK_MODEL),dailyLimit)
     signal.throwIfAborted()
     let page=compileTopicPage(frozen,result.value,entries,result.model)

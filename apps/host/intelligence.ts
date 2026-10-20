@@ -8,6 +8,7 @@ import { summaryOf } from '../../packages/intelligence/material'
 import { pairCompatible } from '../../packages/intelligence/domain'
 import {TopicWikiService} from '../../packages/intelligence/topic-wiki-service'
 import {topicMarkdown} from '../../packages/intelligence/topic-wiki'
+import {intelligenceDailyModelBudget} from '../../packages/intelligence/model-budget'
 
 /** Called from the already-authenticated application router, never mounted publicly. */
 export function registerIntelligence(app:Express,store:Store){
@@ -25,7 +26,7 @@ export function registerIntelligence(app:Express,store:Store){
   }
   app.get('/api/intelligence/status',route(async(_req,res)=>res.json({version:'1.0',storage:store.kind,model_configured:config.modelConfigured,
     decision_configured:config.decisionConfigured,decision_enabled:config.decisionEnabled,
-    selection_threshold:Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65),daily_model_budget:Number(process.env.INTELLIGENCE_DAILY_MODEL_CALLS||40),
+    selection_threshold:Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65),daily_model_budget:intelligenceDailyModelBudget(),
     collection_enabled:process.env.INTELLIGENCE_COLLECTION_ENABLED==='true',model_auto_enabled:process.env.INTELLIGENCE_MODEL_ENABLED==='true',
     database:await intel.repo.stats(),knowledge:await intel.repo.knowledgeStats(config.ownerId),campaign:await intel.campaign.status(),jobs:await intel.repo.jobs(),channels:await intel.repo.channels(),scope:'local_public_intelligence',weight_training_started:false})))
   app.get('/api/intelligence/campaign',route(async(_req,res)=>res.json(await intel.campaign.status())))

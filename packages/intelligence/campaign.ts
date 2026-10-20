@@ -3,6 +3,7 @@ import type {WebCallReceipt} from '../../runtime/dsh/deepseek-web-tools'
 import {campaignPlan,beijingDay,dailyPace,CAMPAIGN_POLICY,type CampaignQuery} from './campaign-plan'
 import {CorpusDisk} from './corpus-disk'
 import type {Material} from './domain'
+import {intelligenceDailyModelBudget} from './model-budget'
 
 type Settings={enabled:boolean;daily_search_limit:number;daily_fetch_limit:number;daily_cny_limit:number;cursor:number;next_at:string;error:string|null}
 const MIGRATION=`
@@ -38,7 +39,7 @@ export class CorpusCampaign {
     const archive=(await this.repo.db.query<{versions:number;chunks:number}>('SELECT count(*)::int AS versions,COALESCE(sum((payload->>\'chunks\')::int),0)::int AS chunks FROM intel_corpus_archives')).rows[0]
     const recent=(await this.repo.db.query<{query:string;result:unknown}>('SELECT query,result FROM intel_corpus_queries ORDER BY last_at DESC LIMIT 5')).rows
     return {policy:CAMPAIGN_POLICY,...settings,daily_cny_limit:Number(settings.daily_cny_limit),cost_approved:this.approved(),approved_daily_cny:this.approvedLimit(),day:beijingDay(now),timezone:'Asia/Shanghai',usage,archive,query_pool:this.plan.length,recent,
-      storage:'corpus-public',search_unit_cny:0.005,fetch_unit_cny:0.005,uses_model_for_search:false,model_daily_budget:Number(process.env.INTELLIGENCE_DAILY_MODEL_CALLS||40),
+      storage:'corpus-public',search_unit_cny:0.005,fetch_unit_cny:0.005,uses_model_for_search:false,model_daily_budget:intelligenceDailyModelBudget(),
       pricing_source:'https://api-docs.deepseek.com/zh-cn/guides/search/',schedule:'均匀分布全天；同题至少间隔7天，正文7天复查；无结果也计入本地调用上限'}
   }
   async schedule(now=new Date()){

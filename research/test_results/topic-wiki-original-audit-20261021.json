@@ -1,0 +1,12 @@
+{
+  "source_files": 24,
+  "reference_checks": 35,
+  "quote_range_locator_errors": 0,
+  "topic_pages": 2,
+  "markdown_json_exports": 4,
+  "server_index_schema_log": true,
+  "pilot_calls_used": 2,
+  "ordinary_budget_before_fix": 40,
+  "calls_before_fix": 42,
+  "semantic_review": "Model drafts;regional attribution and classification need review;not published as project facts/rules."
+}

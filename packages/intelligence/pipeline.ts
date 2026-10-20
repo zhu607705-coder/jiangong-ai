@@ -3,8 +3,9 @@ import { reportText,lexicalSimilarity,sameOccurrence,storyForDevelopment,firmlyT
 import { PROMPTS,PROMPT_VERSION,OUTPUT_SCHEMAS } from './prompts'
 import type { IntelRepository,ReceiptResult } from './repository'
 import {localOfficialStructure,localAnalysis} from './local-structure'
+import {intelligenceDailyModelBudget} from './model-budget'
 export type Judge=(stage:keyof typeof PROMPTS,input:unknown,schema:Record<string,unknown>,prompt:string,signal:AbortSignal,model?:string)=>Promise<ReceiptResult>
-export async function analyzeMaterial(repo:IntelRepository,m:Material,judge:Judge,signal:AbortSignal,model:string,reviewModel?:string,dailyLimit=40,routes:Partial<Record<keyof typeof PROMPTS,string>>={},threshold=65){
+export async function analyzeMaterial(repo:IntelRepository,m:Material,judge:Judge,signal:AbortSignal,model:string,reviewModel?:string,dailyLimit=intelligenceDailyModelBudget(),routes:Partial<Record<keyof typeof PROMPTS,string>>={},threshold=65){
   if(!Number.isInteger(threshold)||threshold<0||threshold>100)throw new Error('INVALID_SELECTION_THRESHOLD')
   const call=async(stage:keyof typeof PROMPTS,input:unknown,slot:string=stage,useModel=routes[stage]||model)=>{
     signal.throwIfAborted()

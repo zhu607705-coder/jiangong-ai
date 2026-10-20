@@ -4886,7 +4886,7 @@
     "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf"
   },
   "topic_wiki_20261020": {
-    "status": "local_verified",
+    "status": "deployed_trial_verified_budget_fix_pending",
     "references": [
       "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
     ],
@@ -4897,17 +4897,28 @@
       "compiled pages never become canonical original sources"
     ],
     "validation": [
-      "22topic/campaign tests passed",
-      "74intelligence regression checks passed",
-      "Final TypeScript and Vite production build passed"
+      "97targeted tests passed",
+      "Production build passed;final100budgetbuildpending",
+      "Two live DeepSeek topic compilations completed;12originals/8claims/5questions each",
+      "35references matched archived original bytes/UTF16ranges/line locators",
+      "Markdown/JSONexport and server schema/index/log exist",
+      "Warm topic-list read65ms"
     ],
     "artifacts": [
       "research/test_results/topic-wiki-tests-20261020.log",
       "research/test_results/topic-wiki-regression-20261020.log",
-      "research/test_results/topic-wiki-build-20261020.log"
+      "research/test_results/topic-wiki-build-20261020.log",
+      "research/test_results/topic-wiki-pilot-live-20261021.json",
+      "research/test_results/topic-wiki-runtime-final-20261021.json",
+      "research/test_results/topic-wiki-ui-final-20261021.json",
+      "research/test_results/topic-wiki-final-tests-20261021.log"
     ],
-    "next_runnable_task": "Final tests/build,scoped runtime/UI deployment,actual public-source compilation and browser verification.",
-    "unresolved_questions": [],
-    "authorization": "2026-10-21 用户授权本次额外最多2次，仅供水/电梯，一小时到期，不改普通40次日限额。"
+    "next_runnable_task": "Deploy unified100budget/explicitenv,preserve42used,resumequotaheldjobs,finalUIcheckandmerge.",
+    "unresolved_questions": [
+      "Model-generated pages are drafts:cross-region attribution and conflict-vs-statistical-scope require review;quote match is not semantic correctness."
+    ],
+    "authorization": "User confirmed100daily model calls on2026-10-21;supersedes old40fallback and temporary2pilot allowance.",
+    "runtime_commit": "196e1ff6a5d357a7bbceaa5adad77e67496c0ed9",
+    "ui_commit": "196e1ff6a5d357a7bbceaa5adad77e67496c0ed9"
   }
 }

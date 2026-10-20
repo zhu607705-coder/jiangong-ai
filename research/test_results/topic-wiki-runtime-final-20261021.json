@@ -1,0 +1,41 @@
+{
+  "deployed_at": "2026-10-20T16:07:30.533741+00:00",
+  "commit": "196e1ff6a5d357a7bbceaa5adad77e67496c0ed9",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261020T160725Z",
+  "runtime_files": {
+    "packages/intelligence/topic-wiki-pilot.ts": {
+      "before": null,
+      "after": "f0072c7c14046ce543f13b6d012be09c3610268560a8ab90f687d4abe8f1ef33"
+    },
+    "packages/intelligence/topic-wiki-service.ts": {
+      "before": "52dda40fa333218d878fd1479f3b3190e64ddffc5ce53a9962aa2549a88b4d10",
+      "after": "1310d3ec11442aca0af63476e5d5bd37924c8ffbf37e8c0385578a9f057e13fd"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "196e1ff6a5d357a7bbceaa5adad77e67496c0ed9",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 43,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

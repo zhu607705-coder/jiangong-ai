@@ -1,6 +1,6 @@
 import {afterAll,beforeAll,expect,it,vi} from 'vitest'
 import {PGlite} from '@electric-sql/pglite'
-import {mkdtemp,readFile,writeFile,rm} from 'node:fs/promises'
+import {mkdtemp,readFile,rm} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {compileTopicPage,topicInput,topicMarkdown,publicWikiSource} from '../../packages/intelligence/topic-wiki'
@@ -9,7 +9,7 @@ import {IntelRepository,type IntelDatabase,type Job} from '../../packages/intell
 import {TopicWikiService} from '../../packages/intelligence/topic-wiki-service'
 import type {IntelligenceService} from '../../packages/intelligence/service'
 import {config} from '../../apps/host/config'
-import {topicPilotLimit} from '../../packages/intelligence/topic-wiki-pilot'
+import {intelligenceDailyModelBudget} from '../../packages/intelligence/model-budget'
 
 vi.mock('../../runtime/intelligence/judge',()=>({intelligenceJudge:vi.fn(async(_stage,input)=>({model:'fixture-not-live',value:{claims:[{kind:'finding',text:'资料分别记载了供水改造的对象和阶段。',refs:[{source_id:input.sources[0].id,version:input.sources[0].version,quote:input.sources[0].windows[0].text}]}],questions:['调查居民的实际供水体验与满意度。']}}))}))
 const entry=(id='one',text='甲小区开展二次供水改造，涉及29幢与30幢。\n项目当前处于施工准备阶段。'):Entry=>({id:'ID-'+hash(id).slice(0,24),version:hash(text),title:id+'二次供水改造公告',url:'https://example.org/'+id,text,city:'杭州',published_at:'2026-09-01T00:00:00Z',channel_id:'public',publisher_group:'example.org',participation:'research',source:{visibility:'public',data_class:'public',synthetic:false,content_status:'full_text'},analysis:unscored(),event_id:id,story_id:id,relation:'UNRELATED',ingested_at:'2026-10-20T00:00:00Z'})
@@ -36,13 +36,17 @@ it('new material marks a saved page stale and keeps its earlier baseline intact'
 it('idempotent disk persistence keeps the first revision timestamp and rejects content conflicts',async()=>{const page=(await wiki.detail('water')).page!;const again=await wiki.persist({...page,created_at:'2026-10-22T00:00:00Z'});expect(again.created_at).toBe(page.created_at);await expect(wiki.persist({...page,questions:['different content']})).rejects.toThrow('WIKI_SNAPSHOT_CONFLICT')})
 it('shares the daily receipt budget and keeps prior knowledge while a refresh waits',async()=>{const before=await wiki.detail('water');await wiki.queue('water');const job=(await repo.claim())!;vi.stubEnv('INTELLIGENCE_DAILY_MODEL_CALLS','0');try{await expect(handler(job,new AbortController().signal)).rejects.toThrow('INTELLIGENCE_BUDGET_EXHAUSTED');await repo.deferBudget(job.id);const after=await wiki.detail('water');expect(after.page?.input_hash).toBe(before.page?.input_hash);expect(after.job?.error).toBe('DAILY_BUDGET_WAIT')}finally{vi.unstubAllEnvs()}})
 it('revokes a compiled public page when a cited source latest policy becomes internal',async()=>{const a=entry('persist'),revoked={...a,version:hash('revoked'),source:{...a.source,visibility:'internal',data_class:'internal'}};await repo.put(revoked);expect((await wiki.detail('water')).page).toBeNull()})
-it('limits an owner ticket to two scoped reservations and never changes ordinary future limits',async()=>{
- const now=new Date('2026-10-20T16:00:00Z'),fake={knowledgeStats:async()=>({model_calls_today:40})} as unknown as IntelRepository
- const path=join(dir,'.topic-wiki-pilot.json');await writeFile(path,JSON.stringify({expires_at:'2026-10-20T17:00:00Z',ordinary_limit:40,extra_calls:2,topics:['water','elevator'],used:[]}),{mode:0o600})
- expect(await topicPilotLimit(fake,dir,'dining','d',40,now)).toBe(40)
- expect(await topicPilotLimit(fake,dir,'water','w',40,now)).toBe(42)
- expect(await topicPilotLimit(fake,dir,'elevator','e',40,now)).toBe(42)
- expect(await topicPilotLimit(fake,dir,'water','new',40,now)).toBe(40)
- expect(await topicPilotLimit(fake,dir,'water','w',40,new Date('2026-10-21T16:00:00Z'))).toBe(40)
- expect(JSON.parse(await readFile(path,'utf8')).used).toHaveLength(2)
+it('uses one100-call default while preserving explicit configuration and zero',()=>{
+ expect(intelligenceDailyModelBudget({})).toBe(100)
+ expect(intelligenceDailyModelBudget({INTELLIGENCE_DAILY_MODEL_CALLS:'100'})).toBe(100)
+ expect(intelligenceDailyModelBudget({INTELLIGENCE_DAILY_MODEL_CALLS:'0'})).toBe(0)
+ expect(()=>intelligenceDailyModelBudget({INTELLIGENCE_DAILY_MODEL_CALLS:'invalid'})).toThrow('INVALID_MODEL_BUDGET')
+})
+it('a raised budget resumes only quota-delayed jobs without resetting the receipt ledger',async()=>{
+ const before=(await repo.knowledgeStats('local-operator'))!.model_calls_today
+ const delayed=(await repo.jobs()).find(job=>job.error==='DAILY_BUDGET_WAIT')!
+ expect(delayed).toBeDefined();await repo.resumeBudget(100)
+ const after=(await repo.jobs()).find(job=>job.id===delayed.id)!
+ expect(after.status).toBe('queued');expect(after.error).toBeNull()
+ expect((await repo.knowledgeStats('local-operator'))!.model_calls_today).toBe(before)
 })
