@@ -1,18 +1,18 @@
 :root {
   color-scheme: light;
-  --color-primary: #2363e4;
-  --color-primary-hover: #1852c7;
+  --color-primary: #005cf5;
+  --color-primary-hover: #0047c7;
   --color-primary-soft: #edf4ff;
   --color-primary-line: #b9d0fc;
-  --color-ink: #172f53;
-  --color-muted: #5f7190;
+  --color-ink: #101c41;
+  --color-muted: #596981;
   --color-faint: #627490;
-  --color-canvas: #edf3fa;
+  --color-canvas: #f0f7ff;
   --color-surface: #ffffff;
   --color-surface-soft: #f7faff;
   --color-line: #dce6f3;
   --color-line-strong: #bdcde2;
-  --color-nav: #142e53;
+  --color-nav: #122f50;
   --color-nav-muted: #c8d7ed;
   --color-on-primary: #ffffff;
   --color-success: #087f66;
@@ -29,7 +29,7 @@
   --color-violet: #7162bb;
   --color-violet-soft: #f3f0fc;
   --color-violet-line: #d9d1f0;
-  --chart-blue: #2363e4;
+  --chart-blue: #005cf5;
   --chart-teal: #0aa68b;
   --chart-amber: #df941f;
   --chart-violet: #8171ce;

@@ -1,4 +1,4 @@
-import { IconArrowRight, IconArrowUpRight, IconCircleCheck, IconSearch, IconAlertCircle, IconLoader2 } from '@tabler/icons-react'
+import { IconArrowRight, IconArrowUpRight, IconCircleCheck, IconSearch, IconAlertCircle, IconLoader2, IconStack2 } from '@tabler/icons-react'
 import type { Project } from '../api'
 import { MODE_LABELS, evaluateRenewalModeGate, projectRenewalModeInput } from '../../../../packages/retrofit/renewal-mode'
 import type { StrategyPacket } from '../../../../packages/retrofit/strategy'
@@ -77,7 +77,7 @@ export default function ProjectOverview(props:ProjectOverviewProps) {
       <section className={`project-overview-card project-overview-hero project-overview-hero--${state}`} aria-labelledby="project-overview-recommendation">
         {(showStatus||project.input.synthetic)&&<div className="project-overview-status" aria-live="polite">{showStatus&&<span>{props.loading?<IconLoader2 size={16}/>:stale?<IconAlertCircle size={16}/>:needsChecks?<IconSearch size={16}/>:<IconCircleCheck size={16}/>} {stateLabels[state]}</span>}{project.input.synthetic&&<span className="project-overview-synthetic">模拟项目</span>}</div>}
         {strategy&&<div className="project-overview-directions"><span>{stale||failed?'上次系统建议':'系统建议'}：<strong>{researchLabel}</strong></span><span>当前工作方向：<strong>{currentDirection?MODE_LABELS[currentDirection]:'尚未选择'}</strong></span></div>}
-        <h2 id="project-overview-recommendation">{headline}</h2><p className="project-overview-lead">{lead}</p>
+        <div className="project-overview-hero-title"><span className="project-overview-hero-icon" aria-hidden="true"><IconStack2 size={31}/></span><h2 id="project-overview-recommendation">{headline}</h2></div><p className="project-overview-lead">{lead}</p>
         {strategy?.decision_brief?.investment.conclusion&&<p className="project-overview-investment" data-stage={strategy.decision_brief.investment.stage}><span>投入建议</span>{strategy.decision_brief.investment.conclusion}</p>}
         {failed&&<p className="project-overview-notice" role="status">{strategy?'本轮未完成，以下保留上次已保存的研究建议。':'本轮未形成完整结论，已取得资料和运行记录仍可查看。'}</p>}
         {strategy&&!failed&&stale&&<p className="project-overview-notice">当前资料为 v{project.context_version}{packet?`，这份建议基于 v${packet.context_version}`:''}。先查看变化，再复核对应判断。</p>}

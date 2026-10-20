@@ -598,6 +598,23 @@
         "backend/storage/model clients and decision policies",
         "desktop structure and private/source permissions"
       ]
+    },
+    {
+      "id": "reference-ui-20261020",
+      "reuse": [
+        "WorkspaceFrame existing callbacks/project page availability/mobile drawer",
+        "GlobalProjects existing project and published plan arrays",
+        "ProjectOverview original state and actual ProjectLocationMap",
+        "FloatingEvidenceSearch same retrieval panel",
+        "mobile native cards and existing semantic status tokens"
+      ],
+      "new_domain_logic": [
+        "presentation only;local visible list filter by existing name/location/ID"
+      ],
+      "unchanged": [
+        "backend/model/search/decision/auth/database",
+        "all mobile chapter/task/source interactions"
+      ]
     }
   ]
 }

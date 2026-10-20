@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/reference-ui-20261020
+
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  12:05:28
+   Duration  1.28s (transform 274ms, setup 0ms, import 848ms, tests 113ms, environment 0ms)
+
