@@ -4839,7 +4839,7 @@
     "ui_commit": "f1885d9c9dcfccad9681fdcf86f9787ee6a87457"
   },
   "reference_ui_20261020": {
-    "status": "implemented_local_verified",
+    "status": "deployed_verified",
     "reference_images": [
       "reference/1.png",
       "reference/2.png",
@@ -4858,20 +4858,31 @@
     ],
     "validation": [
       "27 existing focused tests passed; repaired missing matchMedia in frame test fixture",
-      "TypeScript and Vite build passed; final build pending after visual refinements",
+      "Final TypeScript and Vite production build passed",
       "local1614desktop4projectcolumns,no horizontaloverflow;search street14 returns2savedprojects",
       "local390x844native workspace clientHeight=scrollHeight788;chapter switch works",
       "local320x568native workspace clientHeight=scrollHeight512;menu6entries reachable",
-      "local1280desktop restored,no horizontaloverflow"
+      "local1280desktop restored,no horizontaloverflow",
+      "production1614four-column project grid;street14filter returns2savedprojects",
+      "productionobject-map navigation opens actual project inspector;querybutton and panel do not overlap",
+      "production390x844objectchapter switch works;outer scrollHeight=clientHeight788;footerBottom844",
+      "UI deploy backend file hashes andPID76050unchanged;DBwrites0/providercalls0"
     ],
     "artifacts": [
       "docs/参考图界面适配_20261020.md",
       "research/test_results/reference-ui-build-20261020.log",
       "research/test_results/reference-ui-tests-20261020.log",
       "output/playwright/reference-ui/after-projects.png",
-      "output/playwright/reference-ui/after-mobile.png"
+      "output/playwright/reference-ui/after-mobile.png",
+      "research/test_results/reference-ui-deployment-20261020.json",
+      "research/test_results/reference-ui-live-20261020.json",
+      "output/playwright/reference-ui/live-projects.png",
+      "output/playwright/reference-ui/live-overview.png",
+      "output/playwright/reference-ui/live-map.png",
+      "output/playwright/reference-ui/live-mobile.png"
     ],
     "unresolved_questions": [],
-    "next_runnable_task": "Final build;UI-only deploy;production browser check;normal merge while preserving unrelated dirty state."
+    "next_runnable_task": "Normal merge and preserve unrelated local edits; deployed source already verified.",
+    "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf"
   }
 }

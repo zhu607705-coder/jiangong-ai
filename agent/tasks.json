@@ -1987,7 +1987,7 @@
         "T-MOBILE-CARDS-20261019"
       ],
       "goal": "适配三张参考图的全局导航、项目空间、总览与地图浮层",
-      "status": "implemented_local_verified",
+      "status": "deployed_verified",
       "write_scope": [
         "apps/workspace",
         "tests/contracts/workspace-frame.test.ts",
