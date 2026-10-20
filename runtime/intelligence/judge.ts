@@ -8,7 +8,7 @@ import type { Judge } from '../../packages/intelligence/pipeline'
 import { judgeIntelligenceDecision } from '../../services/capabilities/intelligence-decision'
 import { hash } from '../../packages/intelligence/domain'
 import { presentModelSchema } from '../../packages/contracts/validate'
-import { assertIntelligenceOutput } from '../../packages/intelligence/prompts'
+import { assertIntelligenceOutput,TOPIC_MAX_TOKENS } from '../../packages/intelligence/prompts'
 export const intelligenceRoutes=()=>config.decisionEnabled?{prefilter:'qwen_systemone:'+config.QWEN_DECISION_MODEL+':'+hash(config.QWEN_DECISION_ENDPOINT).slice(0,12),relate:'qwen_systemone:'+config.QWEN_DECISION_MODEL+':'+hash(config.QWEN_DECISION_ENDPOINT).slice(0,12)}:{}
 /** Reuses DSH and the configured model route; no second API client or general Agent loop. */
 export const intelligenceJudge:Judge=async(stage,input,schema,prompt,signal,model)=>{
@@ -21,7 +21,7 @@ export const intelligenceJudge:Judge=async(stage,input,schema,prompt,signal,mode
       if(!config.decisionConfigured)throw new Error('BLOCKED_EXTERNAL_DECISION')
       return accept(await live.runReadCapability('intelligence_'+stage,toolSignal=>judgeIntelligenceDecision(stage,input,toolSignal)))
     }
-    const maxTokens=stage==='topic'?4200:2200
+    const maxTokens=stage==='topic'?TOPIC_MAX_TOKENS:2200
     handle=await live.ctx.agents.create({sessionId:SessionId(id+'-judge'),agentOptions:{provider:'deepseek-official',model:model||config.DEEPSEEK_MODEL,reasoningEffort:ReasoningEffortId('off'),maxTokens}})
     const child=await live.ctx.subagents.start('spawn',{parent:handle.agent,signal,maxDepth:1,label:'intelligence-'+stage,persona:prompt,toolFilter:{allow:[]},
       outputSchema:presentModelSchema(schema) as unknown as SubagentStartRequest['outputSchema'],prompt:[{type:'text',text:JSON.stringify({untrusted_material:input})}],

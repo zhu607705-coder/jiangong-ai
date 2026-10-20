@@ -6,7 +6,7 @@ import {TOPICS,compileTopicPage,publicWikiSource,topicInput,topicMarkdown,topicO
 import type {Job} from './repository'
 import {config} from '../../apps/host/config'
 import {intelligenceJudge} from '../../runtime/intelligence/judge'
-import {OUTPUT_SCHEMAS,PROMPTS} from './prompts'
+import {OUTPUT_SCHEMAS,PROMPTS,TOPIC_MAX_TOKENS} from './prompts'
 import {canonical,hash} from './domain'
 import {intelligenceDailyModelBudget} from './model-budget'
 
@@ -52,7 +52,7 @@ export class TopicWikiService{
     const entries=[]
     for(const source of frozen.sources){const e=await this.intel.repo.get(source.id,source.version);if(!e||!publicWikiSource(e))throw Error('WIKI_SOURCE_POLICY_CHANGED');entries.push(e)}
     const dailyLimit=intelligenceDailyModelBudget()
-    const result=await this.intel.repo.receipt('topic_compile',frozen.topic.id,frozen,config.DEEPSEEK_MODEL,()=>intelligenceJudge('topic',frozen,OUTPUT_SCHEMAS.topic,PROMPTS.topic,signal,config.DEEPSEEK_MODEL),dailyLimit)
+    const result=await this.intel.repo.receipt('topic_compile',frozen.topic.id,{...frozen,output_budget:TOPIC_MAX_TOKENS},config.DEEPSEEK_MODEL,()=>intelligenceJudge('topic',frozen,OUTPUT_SCHEMAS.topic,PROMPTS.topic,signal,config.DEEPSEEK_MODEL),dailyLimit)
     signal.throwIfAborted()
     let page=compileTopicPage(frozen,result.value,entries,result.model)
     page=await this.persist(page)
@@ -79,7 +79,7 @@ export class TopicWikiService{
     // The index is a navigation entry; immutable versions remain under topics/id/hash.
     const pages=(await this.intel.repo.db.query<{topic_id:string;input_hash:string}>('SELECT DISTINCT ON(topic_id) topic_id,input_hash FROM intel_topic_pages ORDER BY topic_id,created_at DESC')).rows
     const links=pages.filter(p=>p.topic_id!==page.topic_id).map(p=>`- [${topicOf(p.topic_id).title}](topics/${p.topic_id}/${p.input_hash}/page.md)`)
-    for(const [name,body] of [['index.md',index+'\n'+links.join('\n')+'\n'],['AGENTS.md','# 主题Wiki维护规则\n\n原件位于../documents，保持不可变。只维护派生知识页；每项结论保留原文ID、版本、连续引文和定位。不同对象/时间/口径作为案例差异，不能伪造冲突。推理线索单独标记，待核内容进入下一步补充。主题整理复用DSH、intel_jobs与40次每日预算；输入快照变化保存新版本，不覆盖历史。私密、模拟、signal_only材料不进入公共Wiki。\n']] as const){
+    for(const [name,body] of [['index.md',index+'\n'+links.join('\n')+'\n'],['AGENTS.md','# 主题Wiki维护规则\n\n原件位于../documents，保持不可变。只维护派生知识页；每项结论保留原文ID、版本、连续引文和定位。不同对象/时间/口径作为案例差异，不能伪造冲突。推理线索单独标记，待核内容进入下一步补充。主题整理复用DSH、intel_jobs与已配置的每日预算；输入快照变化保存新版本，不覆盖历史。私密、模拟、signal_only材料不进入公共Wiki。\n']] as const){
       const tmp=join(wikiRoot,name+'.'+randomUUID()+'.tmp');await writeFile(tmp,body,{mode:0o600});await rename(tmp,join(wikiRoot,name))
     }
     const log=join(wikiRoot,'log.md');const old=await readFile(log,'utf8').catch(e=>{if(e.code==='ENOENT')return '# 主题修订记录\n';throw e})

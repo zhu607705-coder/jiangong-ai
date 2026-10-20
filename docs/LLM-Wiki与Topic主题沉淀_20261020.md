@@ -8,7 +8,7 @@
 
 公开原文通过既有检索窗口召回，按主题从当前窗口优先选12份，每份最多3个原文窗口；页面显示匹配量、采用量和窗口是否截断。使用documentSlices/semanticWindows，不引入第二套切片或搜索客户端。资料、模型路由、提示与结构变化均进入输入快照；旧页保留，页面提示新增资料待整合，用户按需发起修订。
 
-使用同一个IntelRepository数据库，在其上增加intel_topic_pages版本表。整理任务使用原intel_jobs与intel_receipts，复用DSH。每次整理至多一次模型任务，同输入已有成果直接复用；读取/刷新页面不调用模型。与单篇研读共用现有40次日限额；没有新增每条采集资料自动触发一次编纂的循环。
+使用同一个IntelRepository数据库，在其上增加intel_topic_pages版本表。整理任务使用原intel_jobs与intel_receipts，复用DSH。每次整理至多一次模型任务，同输入已有成果直接复用；读取/刷新页面不调用模型。与单篇研读共用每日100次限额（按2026-10-21用户确认）；没有新增每条采集资料自动触发一次编纂的循环。
 
 服务器文件位于现有数据根目录下corpus-public/wiki：AGENTS.md维护约定，index.md主题入口，log.md修订记录，topics/主题ID/快照/page.md和page.json为不可变成果。现有documents原件目录不改。网页可下载Markdown和JSON，展开引文或跳到原始来源；现有“查找主题原文”继续使用原检索页面。
 
