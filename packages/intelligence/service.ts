@@ -34,7 +34,7 @@ export class IntelligenceService {
   private timer:ReturnType<typeof setInterval>|undefined
   private uninstall:(()=>void)|undefined
   private jobHandlers=new Map<string,(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>>()
-  registerJobHandler(kind:'rag_index',handler:(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>){this.jobHandlers.set(kind,handler)}
+  registerJobHandler(kind:'rag_index'|'topic_compile',handler:(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>){this.jobHandlers.set(kind,handler)}
   constructor(readonly store:Store){this.repo=new IntelRepository(store.db);this.campaign=new CorpusCampaign(this.repo,config.dataDir);this.ready=this.initialize()}
   private async initialize(){
     await this.repo.initialize()
@@ -67,7 +67,7 @@ export class IntelligenceService {
           signal.throwIfAborted()
           await this.repo.jobResult(job.id,result);await this.repo.endJob(job.id,'completed')
           if(result.has_more)await this.repo.enqueue('archive',String(job.payload.run_id)+':'+result.next_cursor,{run_id:job.payload.run_id,cursor:result.next_cursor,analyze_remaining:Math.max(0,Number(job.payload.analyze_remaining||0)-result.queued)})
-        }else if(job.kind==='rag_index'){
+        }else if(job.kind==='rag_index'||job.kind==='topic_compile'){
           const handler=this.jobHandlers.get(job.kind)
           if(!handler)throw new Error('RAG_INDEX_HANDLER_UNAVAILABLE')
           const result=await handler(job,signal)

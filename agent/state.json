@@ -4884,5 +4884,31 @@
     "unresolved_questions": [],
     "next_runnable_task": "Normal merge and preserve unrelated local edits; deployed source already verified.",
     "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf"
+  },
+  "topic_wiki_20261020": {
+    "status": "local_verified",
+    "references": [
+      "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+    ],
+    "decisions": [
+      "Public-only three-topic pilot on AIHOT;topic is not event identity",
+      "same DB,worker,DSH,receipts;default40/day unchanged",
+      "invalid claim references become follow-up questions;valid claims retained",
+      "compiled pages never become canonical original sources"
+    ],
+    "validation": [
+      "20topic/campaign tests passed",
+      "74intelligence regression checks passed",
+      "Final TypeScript and Vite production build passed"
+    ],
+    "artifacts": [
+      "research/test_results/topic-wiki-tests-20261020.log",
+      "research/test_results/topic-wiki-regression-20261020.log",
+      "research/test_results/topic-wiki-build-20261020.log"
+    ],
+    "next_runnable_task": "Final tests/build,scoped runtime/UI deployment,actual public-source compilation and browser verification.",
+    "unresolved_questions": [
+      "Today40modelcallsused;user asked optional authorization for at most2extra pilot calls;no override applied."
+    ]
   }
 }
