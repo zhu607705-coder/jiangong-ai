@@ -23,6 +23,7 @@ import {CorpusCampaign} from './campaign'
 import {DeepSeekWebTools} from '../../runtime/dsh/deepseek-web-tools'
 import {ensureHarnessNetwork} from '../../runtime/dsh/public-web'
 import type {ResearchWeb} from '../../services/capabilities/research'
+import {intelligenceDailyModelBudget} from './model-budget'
 
 export class IntelligenceService {
   readonly repo:IntelRepository
@@ -34,7 +35,7 @@ export class IntelligenceService {
   private timer:ReturnType<typeof setInterval>|undefined
   private uninstall:(()=>void)|undefined
   private jobHandlers=new Map<string,(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>>()
-  registerJobHandler(kind:'rag_index',handler:(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>){this.jobHandlers.set(kind,handler)}
+  registerJobHandler(kind:'rag_index'|'topic_compile',handler:(job:Job,signal:AbortSignal)=>Promise<{pending:boolean;progress:boolean}>){this.jobHandlers.set(kind,handler)}
   constructor(readonly store:Store){this.repo=new IntelRepository(store.db);this.campaign=new CorpusCampaign(this.repo,config.dataDir);this.ready=this.initialize()}
   private async initialize(){
     await this.repo.initialize()
@@ -52,6 +53,7 @@ export class IntelligenceService {
     this.busy=true
     try{
       await this.campaign.schedule()
+      await this.repo.resumeBudget(intelligenceDailyModelBudget())
       if(process.env.INTELLIGENCE_COLLECTION_ENABLED==='true')for(const c of await this.repo.due())await this.repo.enqueue('collect',c.id,{model:process.env.INTELLIGENCE_MODEL_ENABLED==='true',channel:c})
       const job=await this.repo.claim();if(!job)return
       const controller=new AbortController(),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(180000)]);this.active={id:job.id,controller}
@@ -67,7 +69,7 @@ export class IntelligenceService {
           signal.throwIfAborted()
           await this.repo.jobResult(job.id,result);await this.repo.endJob(job.id,'completed')
           if(result.has_more)await this.repo.enqueue('archive',String(job.payload.run_id)+':'+result.next_cursor,{run_id:job.payload.run_id,cursor:result.next_cursor,analyze_remaining:Math.max(0,Number(job.payload.analyze_remaining||0)-result.queued)})
-        }else if(job.kind==='rag_index'){
+        }else if(job.kind==='rag_index'||job.kind==='topic_compile'){
           const handler=this.jobHandlers.get(job.kind)
           if(!handler)throw new Error('RAG_INDEX_HANDLER_UNAVAILABLE')
           const result=await handler(job,signal)
@@ -84,7 +86,7 @@ export class IntelligenceService {
         }else{
           if(!config.modelConfigured)throw new Error('BLOCKED_EXTERNAL_MODEL')
           const m=await this.repo.get(String(job.payload.id),String(job.payload.version));if(!m)throw new Error('DOCUMENT_VERSION_NOT_FOUND')
-          await analyzeMaterial(this.repo,m,intelligenceJudge,signal,config.DEEPSEEK_MODEL,process.env.INTELLIGENCE_REVIEW_MODEL,Number(process.env.INTELLIGENCE_DAILY_MODEL_CALLS||40),intelligenceRoutes(),Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65))
+          await analyzeMaterial(this.repo,m,intelligenceJudge,signal,config.DEEPSEEK_MODEL,process.env.INTELLIGENCE_REVIEW_MODEL,intelligenceDailyModelBudget(),intelligenceRoutes(),Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65))
           signal.throwIfAborted();await this.repo.endJob(job.id,'completed')
         }
       }catch(e){const msg=e instanceof Error?e.message:'INTELLIGENCE_JOB_FAILED'

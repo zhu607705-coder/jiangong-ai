@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/topic-wiki-20261020
+
+
+ Test Files  2 passed (2)
+      Tests  22 passed (22)
+   Start at  00:05:22
+   Duration  2.62s (transform 237ms, setup 0ms, import 642ms, tests 1.77s, environment 0ms)
+

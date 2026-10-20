@@ -4884,5 +4884,59 @@
     "unresolved_questions": [],
     "next_runnable_task": "Normal merge and preserve unrelated local edits; deployed source already verified.",
     "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf"
+  },
+  "topic_wiki_20261020": {
+    "status": "deployed_verified",
+    "references": [
+      "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+    ],
+    "decisions": [
+      "Public-only three-topic pilot on AIHOT;topic is not event identity",
+      "same DB,worker,DSH,receipts;default40/day unchanged",
+      "invalid claim references become follow-up questions;valid claims retained",
+      "compiled pages never become canonical original sources"
+    ],
+    "validation": [
+      "97targeted tests passed",
+      "Final TypeScript and Vite production build passed",
+      "Two live DeepSeek topic compilations completed;12originals/8claims/5questions each",
+      "35references matched archived original bytes/UTF16ranges/line locators",
+      "Markdown/JSONexport and server schema/index/log exist",
+      "Warm topic-list read65ms",
+      "Live daily_model_budget=100,campaign_model_budget=100;46receipts retained/continued,0quota-heldjobs",
+      "43projects and research histories preserved in runtime deployment",
+      "All3live topics completed:each12originals/8compiledclaims/5followups;60quote/range/linechecks matched archived originals",
+      "Dining max-tokens reproduced;topic output budget6400andseparate receipt attempt solved it;14focused tests andfinalTypeScriptcheck passed",
+      "AIHOT upstream/import audit passed after reviewing budget-only adapter diff and updating lock history",
+      "Formal browser budget66/100;390widthonecolumn/nohorizontaloverflow;desktop restored"
+    ],
+    "artifacts": [
+      "research/test_results/topic-wiki-tests-20261020.log",
+      "research/test_results/topic-wiki-regression-20261020.log",
+      "research/test_results/topic-wiki-build-20261020.log",
+      "research/test_results/topic-wiki-pilot-live-20261021.json",
+      "research/test_results/topic-wiki-runtime-final-20261021.json",
+      "research/test_results/topic-wiki-ui-final-20261021.json",
+      "research/test_results/topic-wiki-final-tests-20261021.log",
+      "research/test_results/topic-wiki-budget100-runtime-20261021.json",
+      "research/test_results/topic-wiki-budget100-ui-20261021.json",
+      "research/test_results/topic-wiki-budget100-live-20261021.json",
+      "research/test_results/topic-wiki-original-audit-20261021.json",
+      "research/test_results/topic-wiki-output-runtime-20261021.json",
+      "research/test_results/topic-wiki-three-topics-audit-20261021.json",
+      "research/test_results/topic-wiki-dining-live-20261021.json",
+      "research/test_results/topic-wiki-upstream-audit-20261021.log",
+      "research/test_results/topic-wiki-final-typecheck-20261021.log",
+      "output/playwright/topic-wiki/topics-final.png",
+      "output/playwright/topic-wiki/budget100.png"
+    ],
+    "next_runnable_task": "Merge deployed topic pilot and budget100 fix;review domain details in compiled drafts before adopting rules.",
+    "unresolved_questions": [
+      "Model-generated pages are drafts:cross-region attribution and conflict-vs-statistical-scope require review;quote match is not semantic correctness."
+    ],
+    "authorization": "User confirmed100daily model calls on2026-10-21;supersedes old40fallback and temporary2pilot allowance.",
+    "runtime_commit": "4bbd64c130b5155e46f5171ee2dde6e1480e02d2",
+    "ui_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+    "daily_model_budget": 100
   }
 }

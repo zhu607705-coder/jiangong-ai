@@ -6,22 +6,27 @@ import { IntelligenceService } from '../../packages/intelligence/service'
 import { channelOf,hash,canonical,CATEGORIES } from '../../packages/intelligence/domain'
 import { summaryOf } from '../../packages/intelligence/material'
 import { pairCompatible } from '../../packages/intelligence/domain'
+import {TopicWikiService} from '../../packages/intelligence/topic-wiki-service'
+import {topicMarkdown} from '../../packages/intelligence/topic-wiki'
+import {intelligenceDailyModelBudget} from '../../packages/intelligence/model-budget'
 
 /** Called from the already-authenticated application router, never mounted publicly. */
 export function registerIntelligence(app:Express,store:Store){
   const intel=new IntelligenceService(store)
+  const wiki=new TopicWikiService(intel)
+  void wiki.ready.catch(()=>console.warn('WIKI_INITIALIZATION_FAILED'))
   void intel.ready.catch(()=>console.warn('INTELLIGENCE_INITIALIZATION_FAILED'))
   const route=(fn:(req:Request,res:Response)=>Promise<unknown>)=>async(req:Request,res:Response)=>{
     try{await intel.ready;await fn(req,res)}catch(e){
       const message=e instanceof Error?e.message:'INTELLIGENCE_UNAVAILABLE'
       const code=/^[A-Z][A-Z0-9_]+$/.test(message)?message:'INTELLIGENCE_REQUEST_FAILED'
-      const details:Record<string,string>={CAMPAIGN_COST_APPROVAL_REQUIRED:'独立搜索和抓取按成功请求计费，请先确认日预算，再启用持续采集。',CORPUS_DISK_LOW:'磁盘可用空间低于保留值，采集已延后。',CAMPAIGN_DAILY_LIMIT:'今天的采集次数或费用额度已用完，后续任务等待下一日。',PROJECT_VERSION_CONFLICT:'项目资料已变化，请重新选择项目后加入。',PUBLIC_ORIGINAL_REQUIRED:'只接收公开、非合成的原始材料。',ORIGINAL_BODY_REQUIRED:'尚未取得原文，先补取材料再加入项目。',RECEIPT_REVIEW_REQUIRED:'上次付费调用结果不确定；请先核对回执，不能自动重复调用。',DATASET_FAMILY_SPLIT_CONFLICT:'同源或同事件资料不能分到不同数据集。',BLOCKED_EXTERNAL_MODEL:'模型尚未配置，已有资料仍可检索。',SOURCE_SCHEMA_CHANGED:'来源页面结构已变化，请检查映射。'}
+      const details:Record<string,string>={WIKI_TOPIC_NOT_FOUND:'未找到这个主题，请返回主题列表。',WIKI_NO_PUBLIC_SOURCES:'该主题尚未归集公开原文，可先查找并补充资料。',WIKI_PAGE_NOT_READY:'这个主题尚未形成知识页，可以先查阅已归集原文。',CAMPAIGN_COST_APPROVAL_REQUIRED:'独立搜索和抓取按成功请求计费，请先确认日预算，再启用持续采集。',CORPUS_DISK_LOW:'磁盘可用空间低于保留值，采集已延后。',CAMPAIGN_DAILY_LIMIT:'今天的采集次数或费用额度已用完，后续任务等待下一日。',PROJECT_VERSION_CONFLICT:'项目资料已变化，请重新选择项目后加入。',PUBLIC_ORIGINAL_REQUIRED:'只接收公开、非合成的原始材料。',ORIGINAL_BODY_REQUIRED:'尚未取得原文，先补取材料再加入项目。',RECEIPT_REVIEW_REQUIRED:'上次付费调用结果不确定；请先核对回执，不能自动重复调用。',DATASET_FAMILY_SPLIT_CONFLICT:'同源或同事件资料不能分到不同数据集。',BLOCKED_EXTERNAL_MODEL:'模型尚未配置，已有资料仍可检索。',SOURCE_SCHEMA_CHANGED:'来源页面结构已变化，请检查映射。'}
       if(!res.headersSent)res.status(code==='PROJECT_VERSION_CONFLICT'?409:422).json({code,detail:details[code]||'操作未完成，请检查输入或任务状态。'})
     }
   }
   app.get('/api/intelligence/status',route(async(_req,res)=>res.json({version:'1.0',storage:store.kind,model_configured:config.modelConfigured,
     decision_configured:config.decisionConfigured,decision_enabled:config.decisionEnabled,
-    selection_threshold:Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65),daily_model_budget:Number(process.env.INTELLIGENCE_DAILY_MODEL_CALLS||40),
+    selection_threshold:Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65),daily_model_budget:intelligenceDailyModelBudget(),
     collection_enabled:process.env.INTELLIGENCE_COLLECTION_ENABLED==='true',model_auto_enabled:process.env.INTELLIGENCE_MODEL_ENABLED==='true',
     database:await intel.repo.stats(),knowledge:await intel.repo.knowledgeStats(config.ownerId),campaign:await intel.campaign.status(),jobs:await intel.repo.jobs(),channels:await intel.repo.channels(),scope:'local_public_intelligence',weight_training_started:false})))
   app.get('/api/intelligence/campaign',route(async(_req,res)=>res.json(await intel.campaign.status())))
@@ -42,6 +47,10 @@ export function registerIntelligence(app:Express,store:Store){
   app.post('/api/intelligence/items/:id/analyze',route(async(req,res)=>{const b=z.object({version:z.string().regex(/^[a-f0-9]{64}$/)}).strict().parse(req.body);if(!await intel.repo.get(String(req.params.id),b.version))throw new Error('DOCUMENT_VERSION_NOT_FOUND');res.status(202).json(await intel.repo.enqueue('analyze',req.params.id+'@'+b.version,{id:req.params.id,version:b.version}));void intel.tick().catch(()=>console.warn('INTELLIGENCE_WORKER_FAILED'))}))
   app.post('/api/intelligence/items/:id/organize',route(async(req,res)=>{const b=z.object({version:z.string().regex(/^[a-f0-9]{64}$/)}).strict().parse(req.body);res.json(await intel.organize(String(req.params.id),b.version))}))
   app.post('/api/intelligence/jobs/:id/cancel',route(async(req,res)=>{await intel.cancel(String(req.params.id));res.json({status:'cancellation_requested'})}))
+  app.get('/api/intelligence/wiki/topics',route(async(_req,res)=>res.json({items:await wiki.list()})))
+  app.get('/api/intelligence/wiki/topics/:id',route(async(req,res)=>res.json(await wiki.detail(String(req.params.id)))))
+  app.post('/api/intelligence/wiki/topics/:id/compile',route(async(req,res)=>{z.object({}).strict().parse(req.body);res.json(await wiki.queue(String(req.params.id)))}))
+  app.get('/api/intelligence/wiki/topics/:id/export',route(async(req,res)=>{const detail=await wiki.detail(String(req.params.id));if(!detail.page)throw Error('WIKI_PAGE_NOT_READY');const format=z.enum(['md','json']).parse(req.query.format||'md');res.setHeader('Content-Disposition',`attachment; filename="${detail.topic.id}.${format}"`);res.type(format==='md'?'text/markdown':'application/json').send(format==='md'?topicMarkdown(detail.page):JSON.stringify(detail.page,null,2))}))
   app.get('/api/intelligence/projects',route(async(_req,res)=>res.json((await store.projects(config.ownerId)).filter(p=>!p.input.synthetic).map(p=>({id:p.id,name:p.name,input_hash:hash(canonical(p.input))})))))
   app.post('/api/intelligence/items/:id/attach',route(async(req,res)=>{const b=z.object({version:z.string().regex(/^[a-f0-9]{64}$/),project_id:z.string().max(120),expected_input_hash:z.string().regex(/^[a-f0-9]{64}$/)}).strict().parse(req.body);res.json(await intel.attach(String(req.params.id),b.version,b.project_id,b.expected_input_hash))}))
   app.post('/api/intelligence/events/link',route(async(req,res)=>{

@@ -45,7 +45,7 @@ collectSelectedEvidence → 优先查沉淀资料/已有 BM25 → 缺口外搜
 ```dotenv
 INTELLIGENCE_COLLECTION_ENABLED=false
 INTELLIGENCE_MODEL_ENABLED=false
-INTELLIGENCE_DAILY_MODEL_CALLS=40
+INTELLIGENCE_DAILY_MODEL_CALLS=100
 INTELLIGENCE_SELECTION_THRESHOLD=65
 # 可选：同一已配置提供方支持的另一实际模型；不等于独立厂商
 # INTELLIGENCE_REVIEW_MODEL=...
@@ -124,3 +124,5 @@ node tests/browser/intelligence.mjs
 ```
 
 浏览器截图和测试输入均明确为合成回归资料。企业判断效果、真实信源适配成功率和筛选阈值效果仍须有代表性的人工样本与获准端点检验；这不是合并后自动获得的能力。
+
+2026-10-21：按用户确认统一为每日100次模型研读。服务端环境明确设置，调度、主题编纂和页面使用同一读取函数；提高额度时恢复仅因预算等待而延后的任务，不重置已有回执计数。

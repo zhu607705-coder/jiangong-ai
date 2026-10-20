@@ -615,6 +615,28 @@
         "backend/model/search/decision/auth/database",
         "all mobile chapter/task/source interactions"
       ]
+    },
+    {
+      "id": "topic-wiki-20261020",
+      "reuse": [
+        "IntelRepository public original/version/query and existing database",
+        "same intel_jobs active deduplication/claim/budget deferral",
+        "existing intel_receipts model budget and exact input cache",
+        "DSH intelligenceJudge and output schema",
+        "documentSlices and semanticWindows",
+        "IntelligencePanel navigation and original-search callback"
+      ],
+      "new_domain_logic": [
+        "three topic catalogues and snapshot-bound compiled knowledge pages",
+        "per-claim citation validation with follow-up questions",
+        "immutable Markdown/JSON versions, schema/index/revision log",
+        "one100-call budget resolver;explicitenv and quota-only resumption preserving receipts"
+      ],
+      "unchanged": [
+        "original text, project facts and decision results",
+        "existing per-source prompt cache version",
+        "no new search/modelclient/scheduler/database;userexplicit100/daybudget"
+      ]
     }
   ]
 }

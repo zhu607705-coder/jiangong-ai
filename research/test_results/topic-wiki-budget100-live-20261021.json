@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-20T16:18:38.213149+00:00",
+  "daily_model_budget": 100,
+  "campaign_model_budget": 100,
+  "calls_today": 46,
+  "counts_preserved": true,
+  "quota_delayed_jobs": 0,
+  "source": "explicitserverenvandsharedbudgetfunction"
+}

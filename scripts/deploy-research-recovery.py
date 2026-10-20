@@ -19,10 +19,13 @@ manifest={}
 archive=root/'.cache'/('research-recovery-'+commit+'.tar.gz');archive.parent.mkdir(exist_ok=True)
 with tarfile.open(archive,'w:gz') as bundle:
     for name in names:
-        data=git('show',commit+':'+name)
+        current=subprocess.run(['git','show',commit+':'+name],capture_output=True)
+        data=current.stdout if current.returncode==0 else None
         old=subprocess.run(['git','show',base+':'+name],capture_output=True)
-        manifest[name]={'before':sha(old.stdout) if old.returncode==0 else None,'after':sha(data)}
-        item=tarfile.TarInfo(name);item.size=len(data);item.mode=0o644;bundle.addfile(item,io.BytesIO(data))
+        assert data is not None or old.returncode==0,'Missing source at both revisions: '+name
+        manifest[name]={'before':sha(old.stdout) if old.returncode==0 else None,'after':sha(data) if data is not None else None}
+        if data is not None:
+            item=tarfile.TarInfo(name);item.size=len(data);item.mode=0o644;bundle.addfile(item,io.BytesIO(data))
 ssh=['-o','BatchMode=yes','-o','ConnectTimeout=8','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+str(pathlib.Path(args.known_hosts).resolve())]
 target='zhuhangcheng@10.70.223.113'
 remote_archive='/home/zhuhangcheng/apps/haizhizi/shared/'+archive.name
@@ -69,12 +72,16 @@ installed=[]
 try:
  with tarfile.open(archive) as bundle:
   members=bundle.getmembers()
-  assert len(members)==len(paths) and {m.name for m in members}==set(paths)
+  written={name for name in paths if manifest[name]['after'] is not None}
+  assert len(members)==len(written) and {m.name for m in members}==written
   for item in members:
    assert item.isfile()
    data=bundle.extractfile(item).read();assert sha(data)==manifest[item.name]['after']
    path=paths[item.name];path.parent.mkdir(parents=True,exist_ok=True)
    temporary=path.with_name(path.name+'.research-new');temporary.write_bytes(data);temporary.chmod(0o644);os.replace(temporary,path);installed.append(item.name)
+  for name,path in paths.items():
+   if manifest[name]['after'] is None:
+    path.unlink();installed.append(name)
  env.parent.mkdir(parents=True,exist_ok=True);env.write_text('[Service]\nEnvironment=HZZ_RELEASE_COMMIT='+commit+'\n');env.chmod(0o644)
  subprocess.run(['systemctl','--user','daemon-reload'],check=True)
  subprocess.run(['systemctl','--user','restart','haizhizi-host.service'],check=True)

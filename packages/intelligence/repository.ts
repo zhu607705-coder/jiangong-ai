@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { Channel, Material, Analysis, Entry } from './domain'
 import { unscored, hash, canonical, searchTokens, searchExpression } from './domain'
 import type { Relation } from '../../vendor/aihot/algorithms'
+import {intelligenceDailyModelBudget} from './model-budget'
 
 /** Uses the existing host Database, including its single PGlite connection. */
 export interface IntelDatabase {
@@ -9,7 +10,7 @@ export interface IntelDatabase {
   exec(sql:string):Promise<unknown>
   transaction<T>(body:(db:IntelDatabase)=>Promise<T>):Promise<T>
 }
-export type Job={id:string;kind:'collect'|'analyze'|'rag_index'|'archive'|'corpus_collect'|'corpus_snapshot';subject:string;status:string;payload:Record<string,unknown>;error:string|null;created_at:string;result?:unknown}
+export type Job={id:string;kind:'collect'|'analyze'|'rag_index'|'archive'|'corpus_collect'|'corpus_snapshot'|'topic_compile';subject:string;status:string;payload:Record<string,unknown>;error:string|null;created_at:string;result?:unknown}
 export type ReceiptResult={value:unknown;model:string;usage?:unknown}
 export type Review={document_id:string;version:string;family_id:string;split:'development'|'holdout'|'train';selected:boolean|null;category:string|null;note:string;allowed_use:'local_eval'|'local_sft';permission:string;reviewer:string;reviewed_at:string}
 export const MIGRATION=`
@@ -130,12 +131,13 @@ export class IntelRepository {
   async endJob(id:string,status:string,error:string|null=null){await this.db.query("UPDATE intel_jobs SET status=$2,error=$3,updated_at=now() WHERE id=$1 AND status <> 'cancelled'",[id,status,error])}
   async jobResult(id:string,result:unknown){await this.db.query('UPDATE intel_jobs SET result=$2,updated_at=now() WHERE id=$1',[id,JSON.stringify(result)])}
   async deferBudget(id:string){await this.db.query("UPDATE intel_jobs SET status='queued',error='DAILY_BUDGET_WAIT',not_before=date_trunc('day',now())+interval '1 day',updated_at=now() WHERE id=$1 AND status<>'cancelled'",[id])}
+  async resumeBudget(dailyLimit:number){await this.db.query("UPDATE intel_jobs SET not_before=now(),error=NULL,updated_at=now() WHERE status='queued' AND error='DAILY_BUDGET_WAIT' AND (SELECT count(*) FROM intel_receipts WHERE created_at>=date_trunc('day',now()))<$1",[dailyLimit])}
   async linkProject(link:{owner_id:string;project_id:string;context_version:number;source_id:string;document_id:string;version:string;origin:string;origin_id:string}){return (await this.db.query('INSERT INTO intel_project_links(owner_id,project_id,context_version,source_id,document_id,version,origin,origin_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING RETURNING document_id',[link.owner_id,link.project_id,link.context_version,link.source_id,link.document_id,link.version,link.origin,link.origin_id])).rows.length>0}
   async projectLinks(id:string,version:string,owner:string){return (await this.db.query('SELECT project_id,context_version,source_id,origin,origin_id FROM intel_project_links WHERE document_id=$1 AND version=$2 AND owner_id=$3 ORDER BY created_at DESC LIMIT 50',[id,version,owner])).rows}
   async knowledgeStats(owner:string){return (await this.db.query(`SELECT (SELECT count(*)::int FROM intel_receipts WHERE created_at>=date_trunc('day',now())) AS model_calls_today,(SELECT count(*)::int FROM intel_analyses WHERE payload->>'status'='ready') AS analyzed,(SELECT count(*)::int FROM intel_analyses WHERE payload->>'status'='needs_review') AS needs_review,(SELECT count(*)::int FROM intel_analyses WHERE payload->>'issue'='CODE_STRUCTURED') AS structured,(SELECT count(DISTINCT event_id)::int FROM intel_memberships) AS events,(SELECT count(DISTINCT story_id)::int FROM intel_memberships) AS stories,(SELECT count(*)::int FROM intel_project_links WHERE owner_id=$1) AS project_links,(SELECT count(DISTINCT project_id)::int FROM intel_project_links WHERE owner_id=$1) AS linked_projects`,[owner])).rows[0]}
   async jobs(){return (await this.db.query<Job>('SELECT * FROM intel_jobs ORDER BY created_at DESC LIMIT 30')).rows}
   async cancel(id:string){await this.db.query("UPDATE intel_jobs SET status='cancelled',error='USER_CANCELLED' WHERE id=$1 AND status IN ('queued','running')",[id])}
-  async receipt(stage:string,subject:string,input:unknown,model:string,run:()=>Promise<ReceiptResult>,dailyLimit=40):Promise<ReceiptResult>{
+  async receipt(stage:string,subject:string,input:unknown,model:string,run:()=>Promise<ReceiptResult>,dailyLimit=intelligenceDailyModelBudget()):Promise<ReceiptResult>{
     if(!Number.isSafeInteger(dailyLimit)||dailyLimit<0||dailyLimit>1000)throw new Error('INVALID_MODEL_BUDGET')
     const key=hash(canonical({stage,subject,input,model}));let cached:ReceiptResult|undefined
     await this.db.transaction(async db=>{

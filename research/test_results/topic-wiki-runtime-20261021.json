@@ -1,0 +1,61 @@
+{
+  "deployed_at": "2026-10-20T16:01:36.397433+00:00",
+  "commit": "5590e33df37dc5bc2d4cfeb883141e96c83a79a2",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261020T160131Z",
+  "runtime_files": {
+    "apps/host/intelligence.ts": {
+      "before": "90465316a4a43cefcca5a2a0e5657cea7341683607b412bcc67680b9f400317a",
+      "after": "1460f03ee5a12ed88f60dee97d7a5864492b7efaf0edb6ebcb3620d9ef4e355d"
+    },
+    "packages/intelligence/prompts.ts": {
+      "before": "2fafb7c43f945e8643e71650facbf76ff267841e2401aef3a5269a5424d0847d",
+      "after": "48df17bc19c26ed954b4e10c2d406de5a8747d0449ddfea7842bc6da32b7a89d"
+    },
+    "packages/intelligence/repository.ts": {
+      "before": "a8b732d3285a9222235de8f8420a554a89913932f2aa5dcec7356deffa0458b1",
+      "after": "2a39ca0b22168ca2dbeda59f5cf748576154c22532938fb8171397972527cdd9"
+    },
+    "packages/intelligence/service.ts": {
+      "before": "79a231c30d36c62e04b4a43eba04caa31c131ee92334bdfae370f5208621c89f",
+      "after": "21dc6a65d837aaa944377318d353e9b349064279960bcb2e7c52da1d17231c98"
+    },
+    "packages/intelligence/topic-wiki-service.ts": {
+      "before": null,
+      "after": "52dda40fa333218d878fd1479f3b3190e64ddffc5ce53a9962aa2549a88b4d10"
+    },
+    "packages/intelligence/topic-wiki.ts": {
+      "before": null,
+      "after": "33c6f2514a5fd9fa6f2ceab69b0b40f01f5361063b4077e775ea0ea68cf647a3"
+    },
+    "runtime/intelligence/judge.ts": {
+      "before": "a7bc9a077947479956004005cc81a8cdd86a0b3a8c06f32360426f4d464d34e0",
+      "after": "7a03b84ce70e7f5bdbddf490f32fecbcbcdd9d5263fe8839d1deaf034309f0ad"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "5590e33df37dc5bc2d4cfeb883141e96c83a79a2",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 43,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

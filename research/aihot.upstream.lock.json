@@ -47,7 +47,7 @@
     },
     {
       "path": "packages/intelligence/pipeline.ts",
-      "sha256": "6dd102702966b5f73f89bd8bf32acc057477468b5e1aa652435ab5bae0903f85"
+      "sha256": "4d82dc57a8a0eb7cfe5fbe81888da5451fbbe65a4c9cae087f509660d840c29c"
     },
     {
       "path": "packages/intelligence/evaluation.ts",
@@ -146,6 +146,21 @@
         "tests/contracts/rag-retrieval.test.ts"
       ],
       "evidence": "research/test_results/rag-regression-20261018.log"
+    },
+    {
+      "reviewed_at": "2026-10-21",
+      "path": "packages/intelligence/pipeline.ts",
+      "changed_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+      "previous_sha256": "6dd102702966b5f73f89bd8bf32acc057477468b5e1aa652435ab5bae0903f85",
+      "sha256": "4d82dc57a8a0eb7cfe5fbe81888da5451fbbe65a4c9cae087f509660d840c29c",
+      "scope": "Reviewed exact diff: import the shared daily model budget resolver and replace the analyzeMaterial default40 argument with that resolver. User confirmed100/day. Existing AIHOT selection, prefilter, structure, relationship algorithms and licensing unchanged. Explicit supplied limits still work.",
+      "tests": [
+        "tests/contracts/topic-wiki.test.ts",
+        "tests/contracts/intelligence.test.ts",
+        "tests/contracts/intelligence-storage.test.ts",
+        "tests/contracts/intelligence-http.test.ts"
+      ],
+      "evidence": "research/test_results/topic-wiki-final-tests-20261021.log"
     }
   ]
 }

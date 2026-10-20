@@ -1,0 +1,65 @@
+{
+  "deployed_at": "2026-10-20T16:18:23.912146+00:00",
+  "commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261020T161819Z",
+  "runtime_files": {
+    "apps/host/intelligence.ts": {
+      "before": "1460f03ee5a12ed88f60dee97d7a5864492b7efaf0edb6ebcb3620d9ef4e355d",
+      "after": "977ed7c2a2f6d9353a1cc8c7cbbe94d5d6e75cce5c2817ea8dd2c4f1f67edf81"
+    },
+    "packages/intelligence/campaign.ts": {
+      "before": "4c9ed5749620b03acfa1f714de4ac6d0cf0b73b7c69872a432614e69a135dcf7",
+      "after": "517ca45d7bf39bf357114c46b9c5e21d5599790bf99dc0b93ba8953f8698e478"
+    },
+    "packages/intelligence/model-budget.ts": {
+      "before": null,
+      "after": "7ab8ed0ab71a2b0509274b169171f24f7c0f4924d463469289826b8280140632"
+    },
+    "packages/intelligence/pipeline.ts": {
+      "before": "6dd102702966b5f73f89bd8bf32acc057477468b5e1aa652435ab5bae0903f85",
+      "after": "4d82dc57a8a0eb7cfe5fbe81888da5451fbbe65a4c9cae087f509660d840c29c"
+    },
+    "packages/intelligence/repository.ts": {
+      "before": "2a39ca0b22168ca2dbeda59f5cf748576154c22532938fb8171397972527cdd9",
+      "after": "8cfbd63a541ee71bfb6a991c729b2b7939da2ee5710a81e3bf708c6eaa9d6eaf"
+    },
+    "packages/intelligence/service.ts": {
+      "before": "21dc6a65d837aaa944377318d353e9b349064279960bcb2e7c52da1d17231c98",
+      "after": "64ff5ca66db3bbb1667797fb20286f8fa122b0eac43813e15a0b6d92a960791c"
+    },
+    "packages/intelligence/topic-wiki-pilot.ts": {
+      "before": "f0072c7c14046ce543f13b6d012be09c3610268560a8ab90f687d4abe8f1ef33",
+      "after": null
+    },
+    "packages/intelligence/topic-wiki-service.ts": {
+      "before": "1310d3ec11442aca0af63476e5d5bd37924c8ffbf37e8c0385578a9f057e13fd",
+      "after": "7f98ae03f6461b15429cb13afef20e83c2feab215c20a7ce02353026f3f1334b"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 43,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

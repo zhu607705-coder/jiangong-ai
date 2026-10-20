@@ -1,0 +1,15 @@
+{"path":"vendor/aihot/algorithms.ts","sha256":"1065cf238d3113710cf625cb8a6a492dff8fa044cc2a210786131d66018f0f76","status":"hash_matches"}
+{"path":"packages/intelligence/domain.ts","sha256":"2804a6399670ea02aa773cb7250a54680602793db7862a050ae2fcc70c79b8e4","status":"hash_matches"}
+{"path":"packages/intelligence/pipeline.ts","sha256":"4d82dc57a8a0eb7cfe5fbe81888da5451fbbe65a4c9cae087f509660d840c29c","status":"hash_matches"}
+{"path":"packages/intelligence/evaluation.ts","sha256":"3096b5676c35952ecd9be1626a559771345ce030d26cc8af8ba6f704a7ee729a","status":"hash_matches"}
+{"path":"licenses/AIHOT-LICENSE.txt","sha256":"b7f53d07ea4ae2eef26a4f8b28cb7d4df95586e2aa713df408f1ffde9f5a0fea","status":"hash_matches"}
+{"caller":"apps/host/server.ts","contains":"registerIntelligence(app,store)","status":"static_reference_present"}
+{"caller":"apps/workspace/src/maps/DataSourcesPanel.tsx","contains":"<IntelligencePanel","status":"static_reference_present"}
+{"caller":"packages/intelligence/domain.ts","contains":"../../vendor/aihot/algorithms","status":"static_reference_present"}
+{"caller":"packages/intelligence/pipeline.ts","contains":"../../vendor/aihot/algorithms","status":"static_reference_present"}
+{"caller":"services/capabilities/research.ts","contains":"recallIntelligence","status":"static_reference_present"}
+{"caller":"services/capabilities/research.ts","contains":"rememberIntelligence","status":"static_reference_present"}
+{"caller":"packages/intelligence/service.ts","contains":"/capabilities/retrieval.query","status":"static_reference_present"}
+{"caller":"runtime/intelligence/judge.ts","contains":"runReadCapability","status":"static_reference_present"}
+{"caller":"services/capabilities/intelligence-decision.ts","contains":"requestDecisionQuestions","status":"static_reference_present"}
+{"upstream":"589f79eff09470b31ba8a7f1d9eb62d36ff2be6c","scope":"static_source_and_import_audit_only","live_execution_verified":false}

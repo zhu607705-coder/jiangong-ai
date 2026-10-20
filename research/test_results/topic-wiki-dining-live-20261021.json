@@ -1,0 +1,12 @@
+{
+  "job": {
+    "id": "IJ-4eb1c3f8-2556-4c72-a85c-17093630ca8b",
+    "status": "completed",
+    "error": null
+  },
+  "input_hash": "37c8fa12470f40c874dc1e97ce7e3090506bbc85610921292c7d814c754fec59",
+  "sources": 12,
+  "claims": 8,
+  "questions": 5,
+  "model": "deepseek-flash"
+}

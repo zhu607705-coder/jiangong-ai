@@ -1,0 +1,63 @@
+{
+  "items": [
+    {
+      "topic": {
+        "id": "water",
+        "title": "二次供水与管网更新",
+        "question": "改哪些对象、如何分期，工程与维护责任怎样衔接？",
+        "terms": [
+          "二次供水",
+          "供水改造",
+          "供水管网",
+          "雨污分流"
+        ]
+      },
+      "matching_sources": 321,
+      "selected_sources": 12,
+      "stale": false,
+      "updated_at": null,
+      "claims": 0,
+      "job": null
+    },
+    {
+      "topic": {
+        "id": "elevator",
+        "title": "加装电梯与适老更新",
+        "question": "哪些楼栋适用、怎样协商出资，后续利用与维护如何核实？",
+        "terms": [
+          "加装电梯",
+          "加梯",
+          "电梯更新",
+          "既有住宅增设电梯"
+        ]
+      },
+      "matching_sources": 345,
+      "selected_sources": 12,
+      "stale": false,
+      "updated_at": null,
+      "claims": 0,
+      "job": null
+    },
+    {
+      "topic": {
+        "id": "dining",
+        "title": "社区食堂与助餐运营",
+        "question": "怎样确定服务规模、用餐需求、补贴与持续运营条件？",
+        "terms": [
+          "社区食堂",
+          "老年食堂",
+          "助餐",
+          "幸福食堂",
+          "长者饭堂"
+        ]
+      },
+      "matching_sources": 318,
+      "selected_sources": 12,
+      "stale": false,
+      "updated_at": null,
+      "claims": 0,
+      "job": null
+    }
+  ],
+  "elapsed_ms": 3895
+}
