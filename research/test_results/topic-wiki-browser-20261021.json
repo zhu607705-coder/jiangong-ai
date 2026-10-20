@@ -1,0 +1,18 @@
+{
+  "url": "https://laneanew.cn/?view=knowledge&section=archive",
+  "entry": "案例与规则/资料沉淀/主题 Wiki",
+  "desktop_topics": 3,
+  "original_expansion": "water first claim expanded with3locatable quotes",
+  "budget_ui_readback": "今日研读已用66/100次模型调用",
+  "phone": {
+    "width": 390,
+    "columns": 1,
+    "horizontal_overflow": false
+  },
+  "viewport_restored": true,
+  "screenshots": [
+    "output/playwright/topic-wiki/topics-final.png",
+    "output/playwright/topic-wiki/water-evidence.png",
+    "output/playwright/topic-wiki/budget100.png"
+  ]
+}

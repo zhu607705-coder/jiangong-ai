@@ -4904,7 +4904,11 @@
       "Markdown/JSONexport and server schema/index/log exist",
       "Warm topic-list read65ms",
       "Live daily_model_budget=100,campaign_model_budget=100;46receipts retained/continued,0quota-heldjobs",
-      "43projects and research histories preserved in runtime deployment"
+      "43projects and research histories preserved in runtime deployment",
+      "All3live topics completed:each12originals/8compiledclaims/5followups;60quote/range/linechecks matched archived originals",
+      "Dining max-tokens reproduced;topic output budget6400andseparate receipt attempt solved it;14focused tests andfinalTypeScriptcheck passed",
+      "AIHOT upstream/import audit passed after reviewing budget-only adapter diff and updating lock history",
+      "Formal browser budget66/100;390widthonecolumn/nohorizontaloverflow;desktop restored"
     ],
     "artifacts": [
       "research/test_results/topic-wiki-tests-20261020.log",
@@ -4917,14 +4921,21 @@
       "research/test_results/topic-wiki-budget100-runtime-20261021.json",
       "research/test_results/topic-wiki-budget100-ui-20261021.json",
       "research/test_results/topic-wiki-budget100-live-20261021.json",
-      "research/test_results/topic-wiki-original-audit-20261021.json"
+      "research/test_results/topic-wiki-original-audit-20261021.json",
+      "research/test_results/topic-wiki-output-runtime-20261021.json",
+      "research/test_results/topic-wiki-three-topics-audit-20261021.json",
+      "research/test_results/topic-wiki-dining-live-20261021.json",
+      "research/test_results/topic-wiki-upstream-audit-20261021.log",
+      "research/test_results/topic-wiki-final-typecheck-20261021.log",
+      "output/playwright/topic-wiki/topics-final.png",
+      "output/playwright/topic-wiki/budget100.png"
     ],
-    "next_runnable_task": "Topic pilot deployed;finish browser readback and merge.Continue human/domain review of model draft regional attribution and scope classification before rule adoption.",
+    "next_runnable_task": "Merge deployed topic pilot and budget100 fix;review domain details in compiled drafts before adopting rules.",
     "unresolved_questions": [
       "Model-generated pages are drafts:cross-region attribution and conflict-vs-statistical-scope require review;quote match is not semantic correctness."
     ],
     "authorization": "User confirmed100daily model calls on2026-10-21;supersedes old40fallback and temporary2pilot allowance.",
-    "runtime_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+    "runtime_commit": "4bbd64c130b5155e46f5171ee2dde6e1480e02d2",
     "ui_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
     "daily_model_budget": 100
   }
