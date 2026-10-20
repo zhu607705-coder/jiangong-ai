@@ -629,12 +629,13 @@
       "new_domain_logic": [
         "three topic catalogues and snapshot-bound compiled knowledge pages",
         "per-claim citation validation with follow-up questions",
-        "immutable Markdown/JSON versions, schema/index/revision log"
+        "immutable Markdown/JSON versions, schema/index/revision log",
+        "one100-call budget resolver;explicitenv and quota-only resumption preserving receipts"
       ],
       "unchanged": [
         "original text, project facts and decision results",
         "existing per-source prompt cache version",
-        "no new search client, model client, scheduler, database or recurring budget"
+        "no new search/modelclient/scheduler/database;userexplicit100/daybudget"
       ]
     }
   ]

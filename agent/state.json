@@ -4886,7 +4886,7 @@
     "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf"
   },
   "topic_wiki_20261020": {
-    "status": "deployed_trial_verified_budget_fix_pending",
+    "status": "deployed_verified",
     "references": [
       "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
     ],
@@ -4898,11 +4898,13 @@
     ],
     "validation": [
       "97targeted tests passed",
-      "Production build passed;final100budgetbuildpending",
+      "Final TypeScript and Vite production build passed",
       "Two live DeepSeek topic compilations completed;12originals/8claims/5questions each",
       "35references matched archived original bytes/UTF16ranges/line locators",
       "Markdown/JSONexport and server schema/index/log exist",
-      "Warm topic-list read65ms"
+      "Warm topic-list read65ms",
+      "Live daily_model_budget=100,campaign_model_budget=100;46receipts retained/continued,0quota-heldjobs",
+      "43projects and research histories preserved in runtime deployment"
     ],
     "artifacts": [
       "research/test_results/topic-wiki-tests-20261020.log",
@@ -4911,14 +4913,19 @@
       "research/test_results/topic-wiki-pilot-live-20261021.json",
       "research/test_results/topic-wiki-runtime-final-20261021.json",
       "research/test_results/topic-wiki-ui-final-20261021.json",
-      "research/test_results/topic-wiki-final-tests-20261021.log"
+      "research/test_results/topic-wiki-final-tests-20261021.log",
+      "research/test_results/topic-wiki-budget100-runtime-20261021.json",
+      "research/test_results/topic-wiki-budget100-ui-20261021.json",
+      "research/test_results/topic-wiki-budget100-live-20261021.json",
+      "research/test_results/topic-wiki-original-audit-20261021.json"
     ],
-    "next_runnable_task": "Deploy unified100budget/explicitenv,preserve42used,resumequotaheldjobs,finalUIcheckandmerge.",
+    "next_runnable_task": "Topic pilot deployed;finish browser readback and merge.Continue human/domain review of model draft regional attribution and scope classification before rule adoption.",
     "unresolved_questions": [
       "Model-generated pages are drafts:cross-region attribution and conflict-vs-statistical-scope require review;quote match is not semantic correctness."
     ],
     "authorization": "User confirmed100daily model calls on2026-10-21;supersedes old40fallback and temporary2pilot allowance.",
-    "runtime_commit": "196e1ff6a5d357a7bbceaa5adad77e67496c0ed9",
-    "ui_commit": "196e1ff6a5d357a7bbceaa5adad77e67496c0ed9"
+    "runtime_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+    "ui_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
+    "daily_model_budget": 100
   }
 }

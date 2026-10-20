@@ -2003,7 +2003,7 @@
         "AIHOT-KNOWLEDGE-20261018"
       ],
       "goal": "LLM Wiki与主题知识聚合试点",
-      "status": "implemented",
+      "status": "deployed_verified",
       "write_scope": [
         "packages/intelligence",
         "runtime/intelligence/judge.ts",
@@ -2014,7 +2014,7 @@
         "research",
         "docs"
       ],
-      "definition_of_done": "实际原文主题编纂、逐条引文核对、版本变更和Markdown/JSON导出；不新建数据库/调度器，不覆盖原件和历史，遵守日预算；真实页面与API验证。"
+      "definition_of_done": "实际原文主题编纂、逐条引文核对、版本变更和Markdown/JSON导出；不新建数据库/调度器，不覆盖原件和历史，遵守日预算；真实页面与API验证。 用户确认日额度100，统一配置/页面/调度并保持计数；模型知识保持草稿待审核。"
     }
   ]
 }
