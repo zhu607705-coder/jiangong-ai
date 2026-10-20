@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="220" viewBox="0 0 520 220">
+  <defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#e0edfc"/><stop offset="1" stop-color="#bed6f0"/></linearGradient></defs>
+  <g transform="translate(260 -80) rotate(30) skewX(-30)" stroke="#fff" stroke-width="7" fill="#d4e8f4">
+    <path d="M-140 25h380v290h-380z" fill="#ecf5fc"/>
+    <path d="M-140 125h380M-140 225h380M-30 25v290M95 25v290" fill="none" stroke-width="15"/>
+    <path d="M-120 42h65v65h-65zM-10 42h80v65h-80zM115 42h100v65H115zM-120 147h65v55h-65zM-10 147h80v55h-80zM115 147h100v55H115zM-120 245h65v50h-65zM-10 245h80v50h-80zM115 245h100v50H115z" stroke-width="2"/>
+    <g fill="url(#wall)" stroke-width="2"><path d="M-110 45h42v40h-42zM0 40h50v47H0zM130 45h65v40h-65zM-110 145h42v36h-42zM0 140h50v41H0zM130 145h65v36h-65zM0 240h50v36H0z"/></g>
+    <g fill="#fff" stroke="#d8e8f8" stroke-width="1"><path d="M-110 32h42v40h-42zM0 24h50v47H0zM130 32h65v40h-65zM-110 132h42v36h-42zM0 124h50v41H0zM130 132h65v36h-65zM0 224h50v36H0z"/></g>
+    <g fill="#bce0d0" stroke="none"><circle cx="-80" cy="268" r="16"/><circle cx="160" cy="264" r="20"/></g>
+  </g>
+  <g transform="translate(315 95)"><circle r="25" fill="#76b5fc" opacity=".18"/><path d="M0-17c-11 0-19 8-19 18 0 13 19 30 19 30S19 14 19 1c0-10-8-18-19-18" fill="#66a8f5" stroke="#fff" stroke-width="2"/><circle r="6" fill="#fff"/></g>
+</svg>

@@ -6,5 +6,6 @@ import './theme.css'
 import './style.css'
 import './maps/map.css'
 import './workbench-polish.css'
+import './reference-workspace.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><AdminAccess><App /></AdminAccess></React.StrictMode>)

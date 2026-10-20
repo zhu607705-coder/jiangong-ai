@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import {IconArrowRight,IconSparkles,IconX} from '@tabler/icons-react'
 import type { RetrievalHit } from '../../../../packages/experience/retrieval'
 import RagEvidenceSearch from './RagEvidenceSearch'
 import type { RetrievalDecisionLocation, RetrievalFeatureLocation } from './retrieval-navigation'
@@ -65,6 +66,6 @@ export default function FloatingEvidenceSearch({ projectId, revision, projectNam
       </div>
       {projectId && onOpenMaterials && <footer><button type="button" onClick={browse}>打开逻辑与证据 →</button><span>Esc 收起</span></footer>}
     </div>}
-    <button ref={triggerRef} type="button" className="floating-evidence-trigger" aria-label={open ? '收起资料查询' : '直接问资料'} aria-haspopup="dialog" aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => setOpen(value => !value)}><span className="floating-evidence-icon" aria-hidden="true">{open ? '×' : '⌕'}</span><span className="floating-evidence-trigger-label">{open ? '收起资料查询' : '直接问资料'}</span></button>
+    <button ref={triggerRef} type="button" className="floating-evidence-trigger" aria-label={open ? '收起资料查询' : '直接问资料'} aria-haspopup="dialog" aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => setOpen(value => !value)}><span className="floating-evidence-icon" aria-hidden="true">{open ? <IconX size={23}/> : <IconSparkles size={23}/>}</span><span className="floating-evidence-trigger-label">{open ? '收起资料查询' : '直接问资料'}</span><IconArrowRight className="floating-evidence-arrow" size={20} aria-hidden="true"/></button>
   </div>
 }

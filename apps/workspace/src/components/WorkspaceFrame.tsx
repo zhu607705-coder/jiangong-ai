@@ -1,7 +1,7 @@
 // CRE workspace chrome adapted into map exploration and a full-page project workspace.
 import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from 'react'
 import {createPortal} from 'react-dom'
-import { IconCube, IconMap2, IconFolder, IconBook2, IconPlus, IconSettings, IconArrowLeft, IconChevronDown, IconX, IconArrowUpRight, IconMenu2 } from '@tabler/icons-react'
+import { IconCube, IconMap2, IconFolder, IconBook2, IconPlus, IconSettings, IconArrowLeft, IconChevronDown, IconX, IconArrowUpRight, IconMenu2, IconLayoutGrid, IconFiles, IconChartLine, IconGitCompare, IconClipboardCheck, IconHistory } from '@tabler/icons-react'
 import type { Stage } from './LifecycleSpine'
 import type { Project } from '../api'
 import { PROJECT_PAGES, type ProjectPage } from '../public-decisions'
@@ -12,6 +12,7 @@ import './WorkspaceFrame.css'
 export type WorkspaceGlobalView = 'map' | 'projects' | 'knowledge' | 'project'
 export type WorkspaceProjectPage = ProjectPage
 export const WORKSPACE_PROJECT_PAGES = PROJECT_PAGES
+const projectPageIcons = {overview:IconLayoutGrid,evidence:IconFiles,assessment:IconChartLine,scenarios:IconGitCompare,actions:IconClipboardCheck,results:IconHistory}
 
 export type WorkspaceFrameProps = {
   project: Project | null; projects: Project[]; stages: Stage[]; tab: string;
@@ -75,7 +76,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
   },[mobileMenuOpen])
   const projectSwitch = <button className="research-project-switch" aria-label="切换项目" aria-expanded={projectsOpen} onClick={() => {setMobileMenuOpen(false);setProjectsOpen(value => !value)}}><IconFolder size={18} /><span>{project?.name || '项目研究'}</span><IconChevronDown size={16} /></button>
   const projectNavigation = <nav aria-label="项目工作区">{projectPages.map(page => <button key={page.id} type="button" data-project-page={page.id}
-    aria-current={activeProjectPage === page.id ? 'page' : undefined} onClick={() => {setMobileMenuOpen(false);onProjectPage ? onProjectPage(page.id) : onTab(page.id)}}>{page.label}</button>)}</nav>
+    aria-current={activeProjectPage === page.id ? 'page' : undefined} onClick={() => {setMobileMenuOpen(false);onProjectPage ? onProjectPage(page.id) : onTab(page.id)}}>{(() => {const PageIcon=projectPageIcons[page.id];return <PageIcon size={22} aria-hidden="true"/>})()}<span>{page.label}</span></button>)}</nav>
   const globalNavigation = <nav className="atlas-dock glass-panel" aria-label="主导航" {...inactiveProps}>
       <button className="atlas-logo" aria-label="返回地图探索" onClick={() => navigate('map')}><IconCube size={28} stroke={1.5} /></button>
       <span className="dock-divider" />
@@ -109,6 +110,7 @@ export default function WorkspaceFrame({ project, projects, stages, tab, onTab, 
     {!surfaceOpen && errorNotice}
     <section className="research-drawer" hidden={!surfaceOpen} aria-label={projectOpen ? '项目研究详情' : globalLabel} {...inactiveProps}>
       <header className="research-drawer-header workspace-frame-header">
+        <button className="workspace-brand" aria-label="旧区新生，返回地图探索" onClick={() => navigate('map')}>旧区新生</button>
         <button onClick={() => navigate('map')}><IconArrowLeft size={18} />返回地图</button>
         <nav className="workspace-frame-breadcrumbs" aria-label="当前位置">
           {projectOpen ? <><button onClick={() => navigate('projects')}>项目空间</button><span>/</span>{projectSwitch}<span>/</span><strong>{structured ? pageLabel : stages.find(stage => stage.id === tab)?.label || '项目研究'}</strong></>

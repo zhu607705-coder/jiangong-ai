@@ -24,6 +24,7 @@ function props(globalView: WorkspaceGlobalView = 'project') {
 beforeEach(() => {
   const { window } = parseHTML('<!doctype html><html><body><div id="root"></div></body></html>')
   active = null; mounted = 0; unmounted = 0
+  Object.defineProperty(window, 'matchMedia', { configurable: true, value: (media: string) => ({ media, matches: false, addEventListener() {}, removeEventListener() {} }) })
   Object.defineProperty(window.document, 'activeElement', { configurable: true, get: () => active })
   window.HTMLElement.prototype.focus = function () { active = this as unknown as HTMLElement }
   for (const [name, value] of Object.entries({ window, document: window.document, HTMLElement: window.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true })) vi.stubGlobal(name, value)

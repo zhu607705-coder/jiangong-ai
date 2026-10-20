@@ -1980,6 +1980,22 @@
         "research"
       ],
       "definition_of_done": "六页摘要可在手机一屏切换，真实数据和方向/来源规则共享，表单及原工具保留；390/320/桌面验证，UI部署与合并。"
+    },
+    {
+      "id": "T-REFERENCE-UI-20261020",
+      "depends_on": [
+        "T-MOBILE-CARDS-20261019"
+      ],
+      "goal": "适配三张参考图的全局导航、项目空间、总览与地图浮层",
+      "status": "deployed_verified",
+      "write_scope": [
+        "apps/workspace",
+        "tests/contracts/workspace-frame.test.ts",
+        "agent",
+        "research",
+        "docs"
+      ],
+      "definition_of_done": "真实项目搜索、4列宽屏卡片、参考形态、语义状态色与手机点按保留；构建、实页、UI发布、合并。"
     }
   ]
 }

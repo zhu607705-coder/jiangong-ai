@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-20T04:08:34.574738+00:00",
+  "url": "https://laneanew.cn/",
+  "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf",
+  "references": [
+    "reference/1.png",
+    "reference/2.png",
+    "reference/3.png"
+  ],
+  "tests": "27passed/3files",
+  "production_build": "passed",
+  "browser_checks": {
+    "projects_1614": "4columns;search street14returns2savedprojects",
+    "map": "actualprojectgeometryandlocation;panel bottom788,query top802;overlapfalse",
+    "mobile_390": {
+      "client": 788,
+      "footerBottom": 844,
+      "height": 844,
+      "overflow": false,
+      "scroll": 788,
+      "width": 390
+    },
+    "local_320": {
+      "width": 320,
+      "height": 568,
+      "scrollHeight": 512,
+      "clientHeight": 512,
+      "horizontal_overflow": false
+    },
+    "desktop_1280": "original desktop navigation restored;no horizontaloverflow"
+  },
+  "backend_unchanged": true,
+  "automatic_model_research_run": false,
+  "screenshots": [
+    "output/playwright/reference-ui/live-projects.png",
+    "output/playwright/reference-ui/live-overview.png",
+    "output/playwright/reference-ui/live-map.png",
+    "output/playwright/reference-ui/live-mobile.png"
+  ]
+}
