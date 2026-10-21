@@ -649,8 +649,10 @@
       ],
       "new_domain_logic": [
         "shared21-topic/5group question catalogue",
-        "indexed public counts with bulk policy checks,with source windows loaded on topic entry",
-        "local catalogue search/grouping/pagination and task status polling"
+        "topic membership/access metadata on existing intel_documents;updated in original ingest transaction with batched catalogue-revision backfill",
+        "directory counts and bulk source-policy checks without rescanning bodies;source windows loaded on entry",
+        "local search/grouping/pagination and real queue/budget status polling",
+        "Archive selected original versions through existing campaign.persist;explicit archive endpoint for historical gaps"
       ],
       "unchanged": [
         "existing original IDs/versions and three saved topic histories",

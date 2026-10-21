@@ -2022,7 +2022,7 @@
         "T-TOPIC-WIKI-20261020"
       ],
       "goal": "按资料发现与业务问题扩展Topic目录，改善查找与目录加载",
-      "status": "implemented",
+      "status": "deployed_verifying",
       "write_scope": [
         "packages/intelligence/topic-catalog.ts",
         "packages/intelligence/topic-wiki.ts",
