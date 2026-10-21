@@ -1,0 +1,13 @@
+[
+  {
+    "id": "ID-98bf874e7c8ad6e6b5d3b2e8",
+    "version": "a3a25a7405b5fed726adb9c8c9283d1fd0f3ac985c75076861f3cc78ded60dd2",
+    "archived": true,
+    "result": {
+      "path": "documents/ID-98bf874e7c8ad6e6b5d3b2e8/a3a25a7405b5fed726adb9c8c9283d1fd0f3ac985c75076861f3cc78ded60dd2",
+      "body_sha256": "ab8fa77f9b7efe1ded8e66f1131702b1bae968f0274782afc5ac19291a79110c",
+      "raw_sha256": null,
+      "chunks": 6
+    }
+  }
+]

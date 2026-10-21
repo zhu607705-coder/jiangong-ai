@@ -173,6 +173,12 @@ export class IntelligenceService {
     if(canonical(entry.analysis)===canonical(analysis)||await this.repo.saveLocalAnalysis(id,version,analysis))return {status:'organized',issue:analysis.issue}
     return {status:'already_analyzed'}
   }
+  async archiveOriginal(id:string,version:string){await this.ready
+    const original=await this.repo.get(id,version),current=await this.repo.get(id)
+    if(!original||!current)throw Error('DOCUMENT_VERSION_NOT_FOUND')
+    if(current.source.visibility!=='public'||current.source.data_class!=='public'||current.source.synthetic)throw Error('PUBLIC_ORIGINAL_REQUIRED')
+    return this.campaign.persist(original)
+  }
   async cancel(id:string){await this.ready;if(this.active?.id===id)this.active.controller.abort();await this.repo.cancel(id)}
   async attach(id:string,version:string,projectId:string,expected:string){await this.ready
     const entry=await this.repo.get(id,version);if(!entry)throw new Error('DOCUMENT_NOT_FOUND')

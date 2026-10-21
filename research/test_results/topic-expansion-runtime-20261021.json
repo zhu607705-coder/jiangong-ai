@@ -1,0 +1,53 @@
+{
+  "deployed_at": "2026-10-21T00:33:30.539654+00:00",
+  "commit": "36139fb43044d5d6ab03db9366b9d9d6807cd8d2",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261021T003325Z",
+  "runtime_files": {
+    "packages/intelligence/prompts.ts": {
+      "before": "321662dc7e582531ebdc434f7b4f99647f591c5ed7938c356cd34746cb863f7b",
+      "after": "5d36dbba9e8aa32fb0aee7009b677501913ed8115d14530252236d8b134f0bb9"
+    },
+    "packages/intelligence/repository.ts": {
+      "before": "8cfbd63a541ee71bfb6a991c729b2b7939da2ee5710a81e3bf708c6eaa9d6eaf",
+      "after": "d7215ef698ee57687368f827ca44f1faea271ac30cc6f4643812c48b705afd21"
+    },
+    "packages/intelligence/topic-catalog.ts": {
+      "before": null,
+      "after": "f6069dddfc527d476c2fc07854f8f1301598e3ff555d392a5244d4a4b9f7971a"
+    },
+    "packages/intelligence/topic-wiki-service.ts": {
+      "before": "d5955998765420c99c041c6b51c512fc16c276679e088d7ddfff5cc977162cfb",
+      "after": "9057d05818614aeb18c2d7f2ec18c87bb36bac1573b2ddd4e5ec06c3e9531c7d"
+    },
+    "packages/intelligence/topic-wiki.ts": {
+      "before": "33c6f2514a5fd9fa6f2ceab69b0b40f01f5361063b4077e775ea0ea68cf647a3",
+      "after": "6e6b1c1a551b3b05ae2ac0eafce40e06163d04497c1d3691c71e99ee5235d55e"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "36139fb43044d5d6ab03db9366b9d9d6807cd8d2",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 43,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}

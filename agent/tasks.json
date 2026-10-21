@@ -2015,6 +2015,27 @@
         "docs"
       ],
       "definition_of_done": "实际原文主题编纂、逐条引文核对、版本变更和Markdown/JSON导出；不新建数据库/调度器，不覆盖原件和历史，遵守日预算；真实页面与API验证。 用户确认日额度100，统一配置/页面/调度并保持计数；模型知识保持草稿待审核。"
+    },
+    {
+      "id": "T-TOPIC-EXPANSION-20261021",
+      "depends_on": [
+        "T-TOPIC-WIKI-20261020"
+      ],
+      "goal": "按资料发现与业务问题扩展Topic目录，改善查找与目录加载",
+      "status": "deployed_verifying",
+      "write_scope": [
+        "packages/intelligence/topic-catalog.ts",
+        "packages/intelligence/topic-wiki.ts",
+        "packages/intelligence/topic-wiki-service.ts",
+        "packages/intelligence/repository.ts",
+        "packages/intelligence/prompts.ts",
+        "apps/workspace/src/intelligence",
+        "tests/contracts/topic-wiki.test.ts",
+        "agent",
+        "research",
+        "docs"
+      ],
+      "definition_of_done": "21主题/5组可搜索翻页，有资料计数并保留旧页与草稿；按100预算编纂，真实原文引用/页面和发布验证。"
     }
   ]
 }

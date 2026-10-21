@@ -4938,5 +4938,50 @@
     "runtime_commit": "4bbd64c130b5155e46f5171ee2dde6e1480e02d2",
     "ui_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
     "daily_model_budget": 100
+  },
+  "topic_expansion_20261021": {
+    "status": "deployed_verified",
+    "decisions": [
+      "21topic catalogue in5business groups based on public renovation scope and existing source discovery",
+      "same source/parser/index/worker/modelBudget100",
+      "directory queries indexed counts and revision metadata;source windows lazy-load per topic",
+      "per-topic phrases constrain the existing repository query before the result window;ordinary retrieval unchanged",
+      "compiled texts remain review drafts;only topic-relevant field investigation and no invented region/technical rule generalization"
+    ],
+    "artifacts": [
+      "research/test_results/topic-expansion-discovery-20261021.json",
+      "research/test_results/topic-expansion-tests-20261021.log",
+      "research/test_results/topic-expansion-build-20261021.log",
+      "docs/主题目录扩展与资料发现_20261021.md",
+      "research/test_results/topic-expansion-metadata-runtime-20261021.json",
+      "research/test_results/topic-expansion-inventory-20261021.json",
+      "research/test_results/topic-expansion-queued-20261021.json",
+      "research/test_results/topic-expansion-progress-20261021.json",
+      "research/test_results/topic-expansion-counts-recovery-20261021.json",
+      "research/test_results/topic-expansion-counts-tests-20261021.log",
+      "research/test_results/topic-expansion-original-audit-20261021.json",
+      "research/test_results/topic-expansion-original-backfill-20261021.json",
+      "research/test_results/topic-expansion-archive-runtime-20261021.json",
+      "research/test_results/topic-expansion-ui-final-20261021.json",
+      "output/playwright/topic-expansion/desktop.png",
+      "output/playwright/topic-expansion/mobile.png"
+    ],
+    "next_runnable_task": "Merge verified21topic expansion;then integrate official Tencent Yuanbao search in existing provider chain. Service key missing;current daily model usage100/100 remains unchanged.",
+    "unresolved_questions": [],
+    "validation": [
+      "36topic/storage/HTTPchecks passed before additional metadata-backfill case",
+      "19focused topic/metadata checks passed",
+      "TypeScript and production build passed;CSS production build passed",
+      "Live21themes all have original materials;21latest compile jobs completed within100budget",
+      "Directory metadata first277ms/repeated45ms;445mswith21compiledpage policy checks",
+      "43projects/research histories preserved in runtime migration",
+      "Browser topic search/fire,finance group4items,page2anddetail/backretain state verified",
+      "21latest topic pages/24saved versions;404archived quote/range/line checks all matched",
+      "21focused archive/topic checks passed;archive gap repaired via original persist API without model calls",
+      "390mobile one card,local paging,nohorizontaloverflow;desktop viewport restored"
+    ],
+    "runtime_commit": "f9560660cc1aa1620b8320d62f0d6bc4b1c20840",
+    "ui_commit": "c407c37bb5e28bc3e17eca8b7a896932bb8aa709",
+    "daily_model_budget": 100
   }
 }

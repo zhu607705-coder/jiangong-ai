@@ -1,0 +1,155 @@
+{
+  "read_ms": [
+    277,
+    45
+  ],
+  "topics": [
+    {
+      "id": "renewal-mode",
+      "title": "改造模式与自主更新",
+      "group": "方向与条件",
+      "sources": 930,
+      "claims": 0
+    },
+    {
+      "id": "planning",
+      "title": "权属规划与实施审批",
+      "group": "方向与条件",
+      "sources": 670,
+      "claims": 0
+    },
+    {
+      "id": "structure",
+      "title": "房屋安全与抗震加固",
+      "group": "安全与工程",
+      "sources": 605,
+      "claims": 0
+    },
+    {
+      "id": "water",
+      "title": "二次供水与管网更新",
+      "group": "安全与工程",
+      "sources": 1125,
+      "claims": 8
+    },
+    {
+      "id": "drainage",
+      "title": "排水防涝与雨污分流",
+      "group": "安全与工程",
+      "sources": 771,
+      "claims": 0
+    },
+    {
+      "id": "envelope",
+      "title": "屋面外墙与节能修缮",
+      "group": "安全与工程",
+      "sources": 717,
+      "claims": 0
+    },
+    {
+      "id": "fire",
+      "title": "消防设施与疏散安全",
+      "group": "安全与工程",
+      "sources": 884,
+      "claims": 0
+    },
+    {
+      "id": "utilities",
+      "title": "燃气电力与管线整治",
+      "group": "安全与工程",
+      "sources": 362,
+      "claims": 0
+    },
+    {
+      "id": "elevator",
+      "title": "加装电梯与适老更新",
+      "group": "安全与工程",
+      "sources": 1165,
+      "claims": 8
+    },
+    {
+      "id": "parking",
+      "title": "停车充电与慢行交通",
+      "group": "安全与工程",
+      "sources": 919,
+      "claims": 0
+    },
+    {
+      "id": "accessibility",
+      "title": "无障碍与适老环境",
+      "group": "安全与工程",
+      "sources": 1311,
+      "claims": 0
+    },
+    {
+      "id": "dining",
+      "title": "社区食堂与助餐运营",
+      "group": "公共服务",
+      "sources": 1125,
+      "claims": 8
+    },
+    {
+      "id": "care",
+      "title": "社区养老与健康服务",
+      "group": "公共服务",
+      "sources": 2059,
+      "claims": 0
+    },
+    {
+      "id": "childcare",
+      "title": "托育与儿童友好空间",
+      "group": "公共服务",
+      "sources": 294,
+      "claims": 0
+    },
+    {
+      "id": "public-space",
+      "title": "公共空间与便民设施",
+      "group": "公共服务",
+      "sources": 1420,
+      "claims": 0
+    },
+    {
+      "id": "residents",
+      "title": "居民需求与协商共治",
+      "group": "协商与交付",
+      "sources": 541,
+      "claims": 0
+    },
+    {
+      "id": "delivery",
+      "title": "改造招采与工程交付",
+      "group": "协商与交付",
+      "sources": 2129,
+      "claims": 0
+    },
+    {
+      "id": "funding",
+      "title": "出资机制与资金平衡",
+      "group": "资金与运营",
+      "sources": 1448,
+      "claims": 0
+    },
+    {
+      "id": "cost",
+      "title": "工程造价与成本参考",
+      "group": "资金与运营",
+      "sources": 1537,
+      "claims": 0
+    },
+    {
+      "id": "property",
+      "title": "物业治理与长效管护",
+      "group": "资金与运营",
+      "sources": 1533,
+      "claims": 0
+    },
+    {
+      "id": "operations",
+      "title": "运营收益与绩效评价",
+      "group": "资金与运营",
+      "sources": 371,
+      "claims": 0
+    }
+  ]
+}

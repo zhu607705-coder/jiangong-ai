@@ -637,6 +637,28 @@
         "existing per-source prompt cache version",
         "no new search/modelclient/scheduler/database;userexplicit100/daybudget"
       ]
+    },
+    {
+      "id": "topic-expansion-20261021",
+      "reuse": [
+        "existing topicInput/compiler/version table and original files",
+        "IntelRepository fulltext index/original versions and optional phrase query",
+        "same public source/policy gates and revision ledger",
+        "existing topic job queue and100-call receipt budget",
+        "same React topic panel/query navigation"
+      ],
+      "new_domain_logic": [
+        "shared21-topic/5group question catalogue",
+        "topic membership/access metadata on existing intel_documents;updated in original ingest transaction with batched catalogue-revision backfill",
+        "directory counts and bulk source-policy checks without rescanning bodies;source windows loaded on entry",
+        "local search/grouping/pagination and real queue/budget status polling",
+        "Archive selected original versions through existing campaign.persist;explicit archive endpoint for historical gaps"
+      ],
+      "unchanged": [
+        "existing original IDs/versions and three saved topic histories",
+        "no new database/search/modelclient/scheduler",
+        "no topic draft promotion into formal project facts or rules"
+      ]
     }
   ]
 }

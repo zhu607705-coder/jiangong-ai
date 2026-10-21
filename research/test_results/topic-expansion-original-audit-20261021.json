@@ -1,0 +1,135 @@
+{
+  "checked_at": "2026-10-21T01:30:50.079383+00:00",
+  "latest_topics": 21,
+  "total_saved_versions": 24,
+  "checked_refs": 404,
+  "errors": 0,
+  "topics": [
+    {
+      "topic": "accessibility",
+      "claims": 6,
+      "references": 15,
+      "errors": []
+    },
+    {
+      "topic": "care",
+      "claims": 8,
+      "references": 20,
+      "errors": []
+    },
+    {
+      "topic": "childcare",
+      "claims": 10,
+      "references": 21,
+      "errors": []
+    },
+    {
+      "topic": "cost",
+      "claims": 7,
+      "references": 17,
+      "errors": []
+    },
+    {
+      "topic": "delivery",
+      "claims": 8,
+      "references": 17,
+      "errors": []
+    },
+    {
+      "topic": "dining",
+      "claims": 9,
+      "references": 23,
+      "errors": []
+    },
+    {
+      "topic": "drainage",
+      "claims": 10,
+      "references": 22,
+      "errors": []
+    },
+    {
+      "topic": "elevator",
+      "claims": 12,
+      "references": 25,
+      "errors": []
+    },
+    {
+      "topic": "envelope",
+      "claims": 7,
+      "references": 14,
+      "errors": []
+    },
+    {
+      "topic": "fire",
+      "claims": 11,
+      "references": 28,
+      "errors": []
+    },
+    {
+      "topic": "funding",
+      "claims": 6,
+      "references": 11,
+      "errors": []
+    },
+    {
+      "topic": "operations",
+      "claims": 8,
+      "references": 18,
+      "errors": []
+    },
+    {
+      "topic": "parking",
+      "claims": 7,
+      "references": 12,
+      "errors": []
+    },
+    {
+      "topic": "planning",
+      "claims": 10,
+      "references": 26,
+      "errors": []
+    },
+    {
+      "topic": "property",
+      "claims": 13,
+      "references": 28,
+      "errors": []
+    },
+    {
+      "topic": "public-space",
+      "claims": 7,
+      "references": 15,
+      "errors": []
+    },
+    {
+      "topic": "renewal-mode",
+      "claims": 6,
+      "references": 15,
+      "errors": []
+    },
+    {
+      "topic": "residents",
+      "claims": 7,
+      "references": 13,
+      "errors": []
+    },
+    {
+      "topic": "structure",
+      "claims": 8,
+      "references": 16,
+      "errors": []
+    },
+    {
+      "topic": "utilities",
+      "claims": 11,
+      "references": 25,
+      "errors": []
+    },
+    {
+      "topic": "water",
+      "claims": 8,
+      "references": 23,
+      "errors": []
+    }
+  ]
+}
