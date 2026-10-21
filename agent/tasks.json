@@ -2064,7 +2064,7 @@
       "id": "T-GITHUB-CLOSEOUT-20261021",
       "depends_on": [],
       "goal": "上传工作台剩余修改与公开交付物，核对GitHub并明确服务器清理范围",
-      "status": "uploading",
+      "status": "github_uploaded_cleanup_pending_scope",
       "write_scope": [
         "preparedworktreeonly",
         "source/docs/data/research",

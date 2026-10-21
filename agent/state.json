@@ -5514,7 +5514,7 @@
     "next_runnable_task": "Use query/field coverage to prioritise high-value material organisation; current bottleneck40/day model-call cap, not search latency. No runtime change in this comparison."
   },
   "github_closeout_20261021": {
-    "status": "uploading",
+    "status": "github_uploaded_cleanup_pending_scope",
     "scope": "Workbenchchangesandpublicdeliverablesonly;serverdeletionnotauthorizedtospecifictargets",
     "decisions": [
       "MainbranchcontainslatestTencent/Topic/RAG/UIwork",
@@ -5525,15 +5525,23 @@
     "validation": [
       "Pendingselectedtextcredentialscan0hits",
       "TypeScriptcheckpassed;reportPythonsyntaxpassed",
-      "Prepared3videoassets60962083byteswithsource/copymatchinghashes"
+      "Prepared3videoassets60962083byteswithsource/copymatchinghashes",
+      "183preparedfilespushed;noactualcredentialfindingsafterreviewingmodelsessionUUIDcandidates",
+      "All5GitHubReleaseassetsizesandSHA256digestsreadbackmatched"
     ],
     "artifacts": [
       "research/test_results/github-upload-inventory-20261021.json",
-      "docs/GitHub归档与服务器清理范围_20261021.md"
+      "docs/GitHub归档与服务器清理范围_20261021.md",
+      "research/test_results/github-release-readback-20261021.json",
+      "research/test_results/github-index-scan-20261021.json"
     ],
-    "next_runnable_task": "Pushpreparedsource/recordsandRelease;verifyremotebranchandassetdigests;awaituserserverdeletionscope.",
+    "next_runnable_task": "MergearchivePR,verifyfinalGitHubmainandfileobjects;awaituserchoiceofserverdeletiontargets.Keepcurrentwebsiteand2.2GBdatabaseuntilconfirmed.",
     "unresolved_questions": [
       "Servercleanupscopequestionpending;43projectdatabase/originalcorpusnotbackedupbyGitpush."
-    ]
+    ],
+    "release_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/tag/workbench-delivery-20261021",
+    "release_assets": 5,
+    "release_video_count": 3,
+    "server_deletion_performed": false
   }
 }
