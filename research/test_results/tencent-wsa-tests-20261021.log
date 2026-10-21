@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/tencent-wsa-20261021
+
+
+ Test Files  4 passed (4)
+      Tests  28 passed (28)
+   Start at  09:45:59
+   Duration  8.94s (transform 474ms, setup 0ms, import 1.41s, tests 7.11s, environment 0ms)
+

@@ -28,6 +28,7 @@ export function registerIntelligence(app:Express,store:Store){
     decision_configured:config.decisionConfigured,decision_enabled:config.decisionEnabled,
     selection_threshold:Number(process.env.INTELLIGENCE_SELECTION_THRESHOLD||65),daily_model_budget:intelligenceDailyModelBudget(),
     collection_enabled:process.env.INTELLIGENCE_COLLECTION_ENABLED==='true',model_auto_enabled:process.env.INTELLIGENCE_MODEL_ENABLED==='true',
+    search_provider:config.RESEARCH_WEB_PROVIDER,additional_search:await intel.campaign.providerStatus(),
     database:await intel.repo.stats(),knowledge:await intel.repo.knowledgeStats(config.ownerId),campaign:await intel.campaign.status(),jobs:await intel.repo.jobs(),channels:await intel.repo.channels(),scope:'local_public_intelligence',weight_training_started:false})))
   app.get('/api/intelligence/campaign',route(async(_req,res)=>res.json(await intel.campaign.status())))
   app.post('/api/intelligence/campaign',route(async(req,res)=>{const b=z.object({enabled:z.boolean(),daily_search_limit:z.number().int().min(1).max(1000).default(1000),daily_fetch_limit:z.number().int().min(0).max(1000).default(200),daily_cny_limit:z.number().min(0).max(10).default(6)}).strict().parse(req.body);await intel.configureCampaign(b);res.json(await intel.campaign.status())}))

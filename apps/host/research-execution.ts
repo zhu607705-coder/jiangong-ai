@@ -19,7 +19,7 @@ export async function initializeResearchExecution(store:Store){
 }
 /** One Store owner; short DB leases surround network work, never an open network transaction. */
 export class StoredResearchExecution implements ResearchExecution {
-  constructor(private store:Store,private project:ProjectRecord,private roundId:string,readonly deadlineAt:number,readonly resumed:boolean,private signal:AbortSignal,readonly provider:'legacy'|'deepseek_tools'|'deepseek_content'=config.RESEARCH_WEB_PROVIDER){}
+  constructor(private store:Store,private project:ProjectRecord,private roundId:string,readonly deadlineAt:number,readonly resumed:boolean,private signal:AbortSignal,readonly provider:'legacy'|'deepseek_tools'|'deepseek_content'|'tencent_wsa'=config.RESEARCH_WEB_PROVIDER){}
   private async allowed(db:Database){
     const row=(await db.query<{payload:{status:string;execution?:{cancelled?:boolean}}}>('SELECT payload FROM renewal_research_rounds WHERE id=$1 AND owner_id=$2 AND project_id=$3',[this.roundId,this.project.owner_id,this.project.id])).rows[0]
     if(!row||row.payload.execution?.cancelled||!['running','draft'].includes(row.payload.status))throw new Error('RESEARCH_CANCELLED_OR_OBSOLETE')

@@ -4983,5 +4983,37 @@
     "runtime_commit": "f9560660cc1aa1620b8320d62f0d6bc4b1c20840",
     "ui_commit": "c407c37bb5e28bc3e17eca8b7a896932bb8aa709",
     "daily_model_budget": 100
+  },
+  "tencent_wsa_20261021": {
+    "status": "deployed_blocked_external_key",
+    "decisions": [
+      "Official POST https://api.wsa.cloud.tencent.com/SearchPro with Bearer service API Key",
+      "DSH provider and one existing factory;search snippets are not original bodies",
+      "Same IntelRepository DB/worker/archive/RAG;one provider receipt table for atomic monthly attempt ceiling2000",
+      "Unknown account free credits remain unknown;gross pre-credit price ceiling0.026CNY per request;original6CNY campaign daily ceiling unchanged",
+      "NoTencentkeyonserver;async user key-file request pending;keep defaultDeepSeek provideruntilconfigured"
+    ],
+    "artifacts": [
+      "docs/元宝搜索接入_20261021.md",
+      "research/test_results/tencent-wsa-tests-20261021.log",
+      "research/test_results/tencent-wsa-build-20261021.log",
+      "research/test_results/tencent-wsa-typecheck-20261021.log",
+      "research/test_results/tencent-wsa-reachability-20261021.json",
+      "research/test_results/tencent-wsa-runtime-20261021.json",
+      "research/test_results/tencent-wsa-live-readback-20261021.json",
+      "scripts/configure-tencent-wsa.py"
+    ],
+    "next_runnable_task": "ServiceAPIKeyisstillmissing:awaituserprivatekeyfilepath;installviahelper,verifycloudaccountfreequota,restartoriginalservicewhenidle,andrunfewsame-querysearch/originalfetchcomparisons.DefaultDeepSeekremainsactive.",
+    "unresolved_questions": [
+      "Tencent service key and account free quota not available yet."
+    ],
+    "runtime_commit": "5b15e1802c2958ff3fcd2dde922432e3e49a4df2",
+    "validation": [
+      "28targetedprovider/quota/campaign/HTTPchecks passed",
+      "TypeScript and fullproductionbuild passed",
+      "Server13runtimefiles deployed,43projectsandhistoriespreserved",
+      "Nativehealthok,statusconfiguredfalse/attempts0/limit2000;modeldailybudget100",
+      "Realmissing-keyfallback returned4DSsearchresultsin405ms;0Tencentwirecalls;notTencentperformanceevaluation"
+    ]
   }
 }

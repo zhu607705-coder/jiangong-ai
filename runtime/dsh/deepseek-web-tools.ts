@@ -2,7 +2,7 @@ import {createHash,randomUUID} from 'node:crypto'
 import type {WebSearchRequest,WebSearchResult,WebFetchRequest,WebFetchResult} from '@deepseek-ai/dsh-web'
 import {safePublicUrl} from '../../packages/research/public-sources'
 import type {SourceRepresentation} from '../../apps/host/generated/contracts'
-export type WebCallReceipt={id:string;operation:'search'|'fetch';provider:string;request_hash:string;status:number|null;outcome:'in_flight'|'received'|'empty'|'failed'|'unknown_outcome';billing_state:'expected_charge'|'expected_free'|'unknown';duration_ms:number;attempt:number;result_count:number;estimated_cny:number|null;fallback?:string}
+export type WebCallReceipt={id:string;operation:'search'|'fetch';provider:string;request_hash:string;status:number|null;outcome:'in_flight'|'received'|'empty'|'failed'|'unknown_outcome';billing_state:'expected_charge'|'expected_free'|'unknown';duration_ms:number;attempt:number;result_count:number;estimated_cny:number|null;fallback?:string;error_code?:string;request_id?:string;service_version?:string}
 type Legacy={search:(request:WebSearchRequest,signal?:AbortSignal)=>Promise<WebSearchResult>;fetch:(request:WebFetchRequest,signal?:AbortSignal)=>Promise<WebFetchResult>}
 export type FetchRepresentation=WebFetchResult&{representation?:SourceRepresentation;quality_warnings?:string[]}
 const digest=(text:string)=>createHash('sha256').update(text).digest('hex')

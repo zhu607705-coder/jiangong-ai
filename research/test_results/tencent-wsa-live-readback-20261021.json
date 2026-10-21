@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-21T01:49:24.289404+00:00",
+  "health": {
+    "status": "ok",
+    "service": "haizhizi-host"
+  },
+  "search_provider": "deepseek_content",
+  "additional_search": {
+    "provider": "tencent-wsa",
+    "configured": false,
+    "month": "2026-10",
+    "timezone": "Asia/Shanghai",
+    "attempts": 0,
+    "monthly_limit": 2000,
+    "remaining": 2000,
+    "quota_scope": "this_workbench_attempts",
+    "billing_state": "account_quota_not_verified",
+    "fallback": "deepseek-tools",
+    "original_fetch": "existing_fetch_provider"
+  },
+  "model_daily_budget": 100,
+  "database": {
+    "documents": 11393,
+    "versions": 11815
+  },
+  "key_absent": true,
+  "live_fallback": {
+    "status": "received",
+    "sources": [
+      {
+        "url": "https://www.hbzhan.com/news/detail/169092.html",
+        "title": "杭州灵隐街道：迎接二供施工进场，推进二次供水改造 - - 环保在线APP"
+      },
+      {
+        "url": "https://www.hjfwsh.com/news/6371.html",
+        "title": "杭州灵隐街道：迎接二供施工进场，推进二次供水改造"
+      },
+      {
+        "url": "http://www.yuhang.gov.cn/art/2024/6/13/art_1229204072_59098288.html",
+        "title": "2024年6月13日 径山镇潘板集镇求是村小古城村 停水公告"
+      },
+      {
+        "url": "https://wapbaike.baidu.com/item/%E6%B1%82%E6%98%AF%E6%9D%91",
+        "title": "求是村_百度百科 - 搜词条"
+      }
+    ],
+    "duration_ms": 405,
+    "receipts": [
+      {
+        "provider": "tencent-wsa",
+        "outcome": "failed",
+        "error_code": "TENCENT_WSA_NOT_CONFIGURED",
+        "billing_state": "expected_free",
+        "estimated_cny": 0,
+        "status": null
+      },
+      {
+        "provider": "deepseek-tools",
+        "outcome": "received",
+        "billing_state": "expected_charge",
+        "estimated_cny": 0.005,
+        "status": 200
+      }
+    ]
+  }
+}

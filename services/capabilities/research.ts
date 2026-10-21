@@ -20,7 +20,7 @@ export function visibleText(html:string,_url:string):string {
   const article=new Readability(document as unknown as Document,{charThreshold:100}).parse()
   return (article?.textContent||document.body?.textContent||document.documentElement?.textContent||'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim().slice(0,30000)
 }
-export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;origin?:IntelligenceOrigin;seedSources?:Source[];intelligence?:boolean;forceDiscovery?:boolean;criticalReview?:boolean;provider?:'legacy'|'deepseek_tools'|'deepseek_content';budget?:{newEvidence?:number;refresh?:number};onWebCall?:(receipt:WebCallReceipt)=>Promise<void>;intelligencePolicy?:{readExisting:boolean;rememberNew:boolean;checkFreshness:boolean}}
+export type ResearchRequest={name:string;city?:string;purpose:string;asOf:string;origin?:IntelligenceOrigin;seedSources?:Source[];intelligence?:boolean;forceDiscovery?:boolean;criticalReview?:boolean;provider?:'legacy'|'deepseek_tools'|'deepseek_content'|'tencent_wsa';budget?:{newEvidence?:number;refresh?:number};onWebCall?:(receipt:WebCallReceipt)=>Promise<void>;intelligencePolicy?:{readExisting:boolean;rememberNew:boolean;checkFreshness:boolean}}
 export type PublicResearch={sources:Source[];records:PublicRecord[];receipts:AdapterReceipt[];trace:ResearchTrace;web_calls?:WebCallReceipt[]}
 type SearchHit={url:string;title?:string;snippet?:string;publishedAt?:string}
 // Transport injection keeps contract tests offline; production reuses DSH Web.

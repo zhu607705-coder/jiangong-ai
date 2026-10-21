@@ -1,0 +1,85 @@
+{
+  "deployed_at": "2026-10-21T01:47:25.138817+00:00",
+  "commit": "5b15e1802c2958ff3fcd2dde922432e3e49a4df2",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+  "backup": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-backups/20261021T014714Z",
+  "runtime_files": {
+    "apps/host/config.ts": {
+      "before": "045e667f8dec5fc8ce6eaef5dce5be7ef32e18d33b695fef982a84cc84f6efc4",
+      "after": "4a4a65d2fdf7ceca0aaef0a7ec0b88de8f64ebaa18de710e742484d768783b58"
+    },
+    "apps/host/intelligence.ts": {
+      "before": "7f403b59471e58db95a7aac829bfffa90038f48fa430ef299fcdb4dd81622845",
+      "after": "e944f6ab61eaa0bc78dd2f563a30263b95c088077dfdb9f8d2b9babc78c2b165"
+    },
+    "apps/host/research-execution.ts": {
+      "before": "c3e3f0a5d917527c7fb5ffdfa487e0272853e717f42209ab932821a637f91a27",
+      "after": "c13895b0d766c7d0b4e937145533ce7f5ca9eaa2976a71869f45d0d8d770480d"
+    },
+    "packages/intelligence/campaign.ts": {
+      "before": "517ca45d7bf39bf357114c46b9c5e21d5599790bf99dc0b93ba8953f8698e478",
+      "after": "4c32732740684225a06b4dd3bb13645364d7073bc531db39b37b3391162b06dd"
+    },
+    "packages/intelligence/collectors.ts": {
+      "before": "93558463fb0b42b85e3372250ea2e7ffbb5de6ea8d9479cdae6c12c6c965111c",
+      "after": "4dff2e9f77e03659b6ec260dff1dc43bdbb2cc630d380565e0b922c7db9fa1ca"
+    },
+    "packages/intelligence/research-bridge.ts": {
+      "before": "784caa6645ea0a4aaec09aad228060ff96c67bf6c7f5eb20e73750211d0d26f7",
+      "after": "8f7048432387a61680f74781df893663d0b09f827218f3b41256acd74181bf5f"
+    },
+    "packages/intelligence/service.ts": {
+      "before": "b5d9fa2b52db2c3770b7be1917ff46711bb4b093d14c4401200136c757e9f882",
+      "after": "61230bad176c07650067fd59eb436185f628294dfd3cb5ec1bb7b79a9ef883f1"
+    },
+    "packages/retrofit/research-execution.ts": {
+      "before": "119e661852e39ef0a72d9a1b9f1c2ac217efc59d92d0193c1ced980c64f7b221",
+      "after": "0d7cd1243e547be27490056deaf66625e435a04611a2052b40701846979a20ef"
+    },
+    "packages/retrofit/research-rounds.ts": {
+      "before": "b86e6993eb0189aff70b8bb2cb7e4da8bb4aca8e7ff8ae52ba782f43eb0d95e6",
+      "after": "44b4366177c37552c8075ddcf3c430c16116a575dc7482a32f86d180a265a465"
+    },
+    "runtime/dsh/deepseek-web-tools.ts": {
+      "before": "f194ac337273caaf96edb301837d3dcfd5e66c8f7e6fec23fb960b58f5b7bbc4",
+      "after": "8c54b429b982c64e7c8efa630bf378481524e6c5bf830784a94666b26c05367c"
+    },
+    "runtime/dsh/public-web.ts": {
+      "before": "8150d836f323477a6ce5c72011cbfabedfec8dbcbfeb22232e337fc8f18b3f4a",
+      "after": "473c713abddbfc436be1fe7b42fd05bd1f7816eee8a587b252bd7dc3d5d73362"
+    },
+    "runtime/dsh/tencent-web-search.ts": {
+      "before": null,
+      "after": "c514eb4b9274ff992ac711ea0116c00a1c902816fc52da1dbb23e792243df9a4"
+    },
+    "services/capabilities/research.ts": {
+      "before": "93439ac9573d383222d4f1a30484dc05b878481193b54551aefdd8362363c5d5",
+      "after": "53c64ece4a60ba519b106672a35773398852b3fc69f21857cfbf1d4b11121046"
+    }
+  },
+  "readiness": {
+    "protocol_version": "research-recovery-v1",
+    "release_commit": "5b15e1802c2958ff3fcd2dde922432e3e49a4df2",
+    "status": "ok",
+    "database": "PGlite (embedded PostgreSQL)",
+    "capabilities": true,
+    "live_model": "configured_not_verified",
+    "live_search": "configured_not_verified",
+    "research_model": {
+      "requested_model": "deepseek-flash",
+      "documented_release": "DeepSeek-V4.1-Flash-1017",
+      "catalog_checked_at": "2026-10-17",
+      "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "version_basis": "official_alias_catalog",
+      "response_version_pinned": false,
+      "context_window": 1000000,
+      "max_output_tokens": 384000
+    },
+    "search_provider": "deepseek_content"
+  },
+  "projects_count": 43,
+  "project_metadata_unchanged": true,
+  "research_history_unchanged": true,
+  "model_research_triggered_by_deployer": false,
+  "rollback": false
+}
