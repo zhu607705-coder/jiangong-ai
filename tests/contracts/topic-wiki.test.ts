@@ -10,6 +10,7 @@ import {TopicWikiService} from '../../packages/intelligence/topic-wiki-service'
 import type {IntelligenceService} from '../../packages/intelligence/service'
 import {config} from '../../apps/host/config'
 import {intelligenceDailyModelBudget} from '../../packages/intelligence/model-budget'
+import {TOPICS,TOPIC_GROUPS,topicOf} from '../../packages/intelligence/topic-catalog'
 
 vi.mock('../../runtime/intelligence/judge',()=>({intelligenceJudge:vi.fn(async(_stage,input)=>({model:'fixture-not-live',value:{claims:[{kind:'finding',text:'资料分别记载了供水改造的对象和阶段。',refs:[{source_id:input.sources[0].id,version:input.sources[0].version,quote:input.sources[0].windows[0].text}]}],questions:['调查居民的实际供水体验与满意度。']}}))}))
 const entry=(id='one',text='甲小区开展二次供水改造，涉及29幢与30幢。\n项目当前处于施工准备阶段。'):Entry=>({id:'ID-'+hash(id).slice(0,24),version:hash(text),title:id+'二次供水改造公告',url:'https://example.org/'+id,text,city:'杭州',published_at:'2026-09-01T00:00:00Z',channel_id:'public',publisher_group:'example.org',participation:'research',source:{visibility:'public',data_class:'public',synthetic:false,content_status:'full_text'},analysis:unscored(),event_id:id,story_id:id,relation:'UNRELATED',ingested_at:'2026-10-20T00:00:00Z'})
@@ -49,4 +50,32 @@ it('a raised budget resumes only quota-delayed jobs without resetting the receip
  const after=(await repo.jobs()).find(job=>job.id===delayed.id)!
  expect(after.status).toBe('queued');expect(after.error).toBeNull()
  expect((await repo.knowledgeStats('local-operator'))!.model_calls_today).toBe(before)
+})
+it('covers21topics in5business groups and keeps the original three identities stable',()=>{
+ expect(TOPICS.length).toBe(21);expect(new Set(TOPICS.map(t=>t.id)).size).toBe(21)
+ const grouped=TOPIC_GROUPS.flatMap(group=>[...group.topics]);expect(new Set(grouped).size).toBe(TOPICS.length)
+ expect(grouped.length).toBe(TOPICS.length)
+ expect(['water','elevator','dining'].map(id=>topicOf(id).title)).toEqual(['二次供水与管网更新','加装电梯与适老更新','社区食堂与助餐运营'])
+ expect(TOPICS.every(topic=>topic.terms.length>=3&&topic.question.includes('？'))).toBe(true)
+})
+it('counts the full public library per theme while excluding internal, synthetic and signal-only versions',async()=>{
+ const a=entry('fire-one','消防通道需要清理，疏散出口不得堆物。'),b=entry('fire-two','消防设施改造与消防通道整治同步实施。')
+ a.title='甲小区消防通道整治';b.title='乙小区消防通道整治'
+ for(const e of [a,b,{...entry('fire-private',a.text),source:{...a.source,visibility:'internal',data_class:'internal'}},{...entry('fire-synthetic',a.text),source:{...a.source,synthetic:true}},{...entry('fire-signal',a.text),participation:'signal_only' as const}])await repo.put(e)
+ const counts=await repo.topicCounts([{id:'fire',terms:['消防通道']},{id:'missing',terms:['不存在的专题词']}])
+ expect(counts.find(row=>row.id==='fire')?.count).toBe(2);expect(counts.find(row=>row.id==='missing')?.count).toBe(0)
+ const list=await wiki.list();expect(list).toHaveLength(21);expect(list[0].topic.id).toBe('renewal-mode');expect(list.find(item=>item.topic.id==='fire')?.matching_sources).toBe(2)
+})
+it('topic phrase routing filters before the result window and leaves ordinary retrieval broad',async()=>{
+ const mixed=entry('mixed-fire','消防设施需要检查；通道宽度另行核实。');mixed.title='分开的消防与通道关键词';await repo.put(mixed)
+ const exact=await repo.entries(undefined,20,undefined,'消防通道',undefined,['消防通道'])
+ expect(exact.entries.some(e=>e.title==='甲小区消防通道整治')).toBe(true)
+ expect(exact.entries.every(e=>e.title.includes('消防通道')||e.text.includes('消防通道'))).toBe(true)
+ expect(exact.entries.some(e=>e.id===mixed.id)).toBe(false)
+ expect((await repo.entries(undefined,20,undefined,'消防通道')).entries.some(e=>e.id===mixed.id)).toBe(true)
+})
+it('bulk visibility removes a historical compiled citation after its current access policy is revoked',async()=>{
+ const a=entry('persist'),b=entry('new'),visible=await repo.visibleWikiVersions([a,b])
+ expect(visible.has(a.id+'@'+a.version)).toBe(false);expect(visible.has(b.id+'@'+b.version)).toBe(true)
+ expect((await wiki.list()).find(item=>item.topic.id==='water')?.claims).toBe(0)
 })

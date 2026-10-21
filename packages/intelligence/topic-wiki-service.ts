@@ -9,24 +9,42 @@ import {intelligenceJudge} from '../../runtime/intelligence/judge'
 import {OUTPUT_SCHEMAS,PROMPTS,TOPIC_MAX_TOKENS} from './prompts'
 import {canonical,hash} from './domain'
 import {intelligenceDailyModelBudget} from './model-budget'
+import {topicGroup,TOPIC_GROUPS} from './topic-catalog'
 
 /** Same DB, original repository, receipt budget and persistent worker. Public-only pilot. */
 export class TopicWikiService{
   readonly ready:Promise<void>
   private inputs=new Map<string,{revision:string;input:ReturnType<typeof topicInput>}>()
+  private inventory:{revision:string;counts:Map<string,number>}|undefined
   constructor(private intel:IntelligenceService,private dataDir=config.dataDir){
     this.ready=intel.ready.then(()=>intel.repo.db.exec(`CREATE TABLE IF NOT EXISTS intel_topic_pages(topic_id TEXT NOT NULL,input_hash TEXT NOT NULL,payload JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(topic_id,input_hash));`)).then(()=>undefined)
     intel.registerJobHandler('topic_compile',(job,signal)=>this.run(job,signal))
   }
-  private async input(id:string){
-    await this.ready;const topic=topicOf(id)
+  private async revision(){
+    await this.ready
     const clock=(await this.intel.repo.db.query<{revision:string;policies:unknown}>("SELECT (SELECT coalesce(max(sequence),0)::text FROM intel_revision_log) AS revision,(SELECT coalesce(jsonb_agg(payload ORDER BY id),'[]'::jsonb) FROM intel_channels) AS policies")).rows[0]
-    const revision=clock.revision+'|'+hash(canonical(clock.policies)),cached=this.inputs.get(id)
+    return clock.revision+'|'+hash(canonical(clock.policies))
+  }
+  private async input(id:string){
+    const topic=topicOf(id),revision=await this.revision(),cached=this.inputs.get(id)
     if(cached?.revision===revision)return cached.input
-    const loaded=await this.intel.repo.entries(undefined,400,undefined,topic.terms.join(' ')),input=topicInput(id,loaded.entries,config.DEEPSEEK_MODEL,loaded.truncated)
+    const loaded=await this.intel.repo.entries(undefined,400,undefined,topic.terms.join(' '),undefined,topic.terms),input=topicInput(id,loaded.entries,config.DEEPSEEK_MODEL,loaded.truncated)
     this.inputs.set(id,{revision,input});return input
   }
-  async list(){return Promise.all(TOPICS.map(async topic=>{const detail=await this.detail(topic.id);return {topic,matching_sources:detail.matching_sources,selected_sources:detail.selected_sources,scan_truncated:detail.scan_truncated,stale:detail.stale,updated_at:detail.page?.created_at||null,claims:detail.page?.claims.length||0,job:detail.job}}))}
+  async list(){
+    const revision=await this.revision(),db=this.intel.repo.db
+    if(this.inventory?.revision!==revision)this.inventory={revision,counts:new Map((await this.intel.repo.topicCounts(TOPICS)).map(row=>[row.id,row.count]))}
+    // The directory uses counts and metadata; original reading/windows load only on topic entry.
+    const pages=(await db.query<{topic_id:string;payload:TopicPage}>('SELECT DISTINCT ON(topic_id) topic_id,payload FROM intel_topic_pages ORDER BY topic_id,created_at DESC')).rows
+    const visible=await this.intel.repo.visibleWikiVersions(pages.flatMap(row=>row.payload.sources))
+    const jobs=(await db.query<Job>("SELECT DISTINCT ON(payload->>'topic_id') * FROM intel_jobs WHERE kind='topic_compile' ORDER BY payload->>'topic_id',created_at DESC")).rows
+    return TOPIC_GROUPS.flatMap(group=>group.topics.map(topicOf)).map(topic=>{
+      const saved=pages.find(row=>row.topic_id===topic.id)?.payload
+      const page=saved&&saved.sources.every(source=>visible.has(source.id+'@'+source.version))?saved:null
+      const cached=this.inputs.get(topic.id),checked=cached?.revision===revision,job=jobs.find(job=>job.payload.topic_id===topic.id)
+      return {topic,group:topicGroup(topic.id),matching_sources:this.inventory!.counts.get(topic.id)||0,count_scope:'public_library' as const,selected_sources:page?.sources.length||Math.min(12,this.inventory!.counts.get(topic.id)||0),scan_truncated:false,stale:page&&checked?page.input_hash!==cached!.input.input_hash:null,revision_checked:checked,updated_at:page?.created_at||null,claims:page?.claims.length||0,job:job?{id:job.id,status:job.status,error:job.error}:null}
+    })
+  }
   async detail(id:string):Promise<TopicDetail>{
     const input=await this.input(id),db=this.intel.repo.db
     const rows=(await db.query<{input_hash:string;payload:TopicPage;created_at:string}>('SELECT input_hash,payload,created_at FROM intel_topic_pages WHERE topic_id=$1 ORDER BY created_at DESC LIMIT 20',[id])).rows

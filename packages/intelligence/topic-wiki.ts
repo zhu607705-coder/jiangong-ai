@@ -4,12 +4,8 @@ import {semanticWindows} from '../experience/semantic-index'
 import {PROMPTS,OUTPUT_SCHEMAS} from './prompts'
 
 export const TOPIC_POLICY='public-topic-wiki-v1'
-export const TOPICS=[
-  {id:'water',title:'二次供水与管网更新',question:'改哪些对象、如何分期，工程与维护责任怎样衔接？',terms:['二次供水','供水改造','供水管网','雨污分流']},
-  {id:'elevator',title:'加装电梯与适老更新',question:'哪些楼栋适用、怎样协商出资，后续利用与维护如何核实？',terms:['加装电梯','加梯','电梯更新','既有住宅增设电梯']},
-  {id:'dining',title:'社区食堂与助餐运营',question:'怎样确定服务规模、用餐需求、补贴与持续运营条件？',terms:['社区食堂','老年食堂','助餐','幸福食堂','长者饭堂']},
-] as const
-export type TopicId=typeof TOPICS[number]['id']
+import {TOPICS,topicOf,type TopicId} from './topic-catalog'
+export {TOPICS,topicOf,type TopicId} from './topic-catalog'
 export type WikiRef={source_id:string;version:string;quote:string;locator:string;start:number;end:number}
 export type WikiClaim={kind:'finding'|'comparison'|'conflict'|'hypothesis';text:string;refs:WikiRef[]}
 export type TopicSource={id:string;version:string;title:string;url:string;city:string;published_at:string|null;windows:{locator:string;text:string}[]}
@@ -17,7 +13,6 @@ export type TopicInput={policy:string;topic:typeof TOPICS[number];input_hash:str
 export type TopicPage={topic_id:TopicId;input_hash:string;policy:string;created_at:string;model:string;claims:WikiClaim[];questions:string[];sources:Omit<TopicSource,'windows'>[];related_topics:TopicId[];matching_sources:number;scan_truncated:boolean;review_items:number}
 export type TopicDetail={topic:typeof TOPICS[number];input_hash:string;matching_sources:number;selected_sources:number;scan_truncated:boolean;page:TopicPage|null;stale:boolean;job:{id:string;status:string;error:string|null}|null;history:{input_hash:string;created_at:string}[]}
 
-export function topicOf(id:string){const topic=TOPICS.find(t=>t.id===id);if(!topic)throw Error('WIKI_TOPIC_NOT_FOUND');return topic}
 export function publicWikiSource(entry:Entry){return entry.source.visibility==='public'&&entry.source.data_class==='public'&&!entry.source.synthetic&&entry.participation!=='signal_only'&&entry.source.content_status!=='metadata_only'&&!!entry.text.trim()}
 function topicScore(entry:Entry,topic:typeof TOPICS[number]){return topic.terms.reduce((score,term)=>score+(entry.title.includes(term)?8:0)+(entry.text.includes(term)?1:0),0)}
 

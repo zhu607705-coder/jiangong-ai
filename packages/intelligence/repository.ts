@@ -4,6 +4,13 @@ import { unscored, hash, canonical, searchTokens, searchExpression } from './dom
 import type { Relation } from '../../vendor/aihot/algorithms'
 import {intelligenceDailyModelBudget} from './model-budget'
 
+const wikiPublicSql=(version:string,channel:string)=>`${version}.payload->'source'->>'visibility'='public'
+  AND ${version}.payload->'source'->>'data_class'='public'
+  AND coalesce(${version}.payload->'source'->>'synthetic','false')<>'true'
+  AND coalesce(${version}.payload->'source'->>'content_status','')<>'metadata_only'
+  AND coalesce(${channel}.payload->>'participation',${version}.payload->>'participation','research')<>'signal_only'
+  AND (${version}.payload->>'text') ~ '[^[:space:]]'`
+
 /** Uses the existing host Database, including its single PGlite connection. */
 export interface IntelDatabase {
   query<T=Record<string,unknown>>(sql:string,params?:unknown[]):Promise<{rows:T[]}>
@@ -39,6 +46,27 @@ CREATE INDEX IF NOT EXISTS intel_project_links_document ON intel_project_links(d
 `
 export class IntelRepository {
   constructor(readonly db:IntelDatabase){}
+  async topicCounts(topics:readonly {id:string;terms:readonly string[]}[]){
+    const catalog=topics.map(topic=>({id:topic.id,terms:topic.terms,expression:searchExpression(topic.terms.join(' '))}))
+    return (await this.db.query<{id:string;count:number}>(`SELECT t.id,(SELECT count(*)::int
+      FROM intel_documents d JOIN intel_versions v ON v.document_id=d.id AND v.version=d.latest_version
+      LEFT JOIN intel_channels c ON c.id=v.payload->>'channel_id'
+      WHERE ${wikiPublicSql('v','c')} AND v.search_vector @@ to_tsquery('simple',t.expression)
+      AND EXISTS(SELECT 1 FROM jsonb_array_elements_text(t.terms) AS term(value)
+        WHERE strpos(v.payload->>'title',term.value)>0 OR strpos(v.payload->>'text',term.value)>0)) AS count
+      FROM jsonb_to_recordset($1::jsonb) AS t(id text,terms jsonb,expression text)`,[JSON.stringify(catalog)])).rows
+  }
+  async visibleWikiVersions(refs:readonly {id:string;version:string}[]){
+    if(!refs.length)return new Set<string>()
+    const rows=(await this.db.query<{id:string;version:string}>(`SELECT DISTINCT r.id,r.version
+      FROM jsonb_to_recordset($1::jsonb) AS r(id text,version text)
+      JOIN intel_documents d ON d.id=r.id JOIN intel_versions v ON v.document_id=d.id AND v.version=r.version
+      JOIN intel_versions cur ON cur.document_id=d.id AND cur.version=d.latest_version
+      LEFT JOIN intel_channels c ON c.id=v.payload->>'channel_id'
+      LEFT JOIN intel_channels cc ON cc.id=cur.payload->>'channel_id'
+      WHERE ${wikiPublicSql('v','c')} AND ${wikiPublicSql('cur','cc')}`,[JSON.stringify(refs)])).rows
+    return new Set(rows.map(row=>row.id+'@'+row.version))
+  }
   async initialize(){await this.db.exec(MIGRATION)
     await this.db.query(`INSERT INTO intel_revision_log(document_id,version,observed_at)
       SELECT v.document_id,v.version,v.observed_at FROM intel_versions v
@@ -76,7 +104,7 @@ export class IntelRepository {
     const r=rows.rows[0];if(!r)return null
     return {...r.payload,participation:r.channel_policy?.participation??r.payload.participation,publisher_group:r.channel_policy?.publisher_group??r.payload.publisher_group,analysis:r.analysis??unscored(r.payload.title),event_id:r.event_id??r.payload.id,story_id:r.story_id??r.payload.id,relation:r.relation??'UNRELATED',ingested_at:new Date(r.observed_at).toISOString()}
   }
-  async entries(city?:string,limit=400,asOf?:string,textQuery='',publishedAsOf?:string):Promise<{entries:Entry[];truncated:boolean}>{
+  async entries(city?:string,limit=400,asOf?:string,textQuery='',publishedAsOf?:string,phrases?:readonly string[]):Promise<{entries:Entry[];truncated:boolean}>{
     const cap=Math.min(Math.max(limit,1),2000)
     const cutoff=asOf?(asOf.length===10?asOf+'T23:59:59.999Z':asOf):null
     const rows=(await this.db.query<{payload:Material;analysis:Analysis|null;event_id:string|null;story_id:string|null;relation:Relation|null;observed_at:string;channel_policy:Channel|null}>(`
@@ -94,7 +122,8 @@ export class IntelRepository {
       WHERE ($2::text IS NULL OR regexp_replace(v.payload->>'city','市$','')=regexp_replace($2,'市$','') OR regexp_replace(a.payload->'structure'->>'city','市$','')=regexp_replace($2,'市$','') OR (v.payload->>'city'='' AND strpos(v.payload->>'text',regexp_replace($2,'市$',''))>0))
       AND ($4::text='' OR v.search_vector @@ to_tsquery('simple',$4))
       AND ($5::timestamptz IS NULL OR (v.payload->>'published_at')::timestamptz <= $5)
-      ORDER BY CASE WHEN $4::text='' THEN 0 ELSE ts_rank_cd(v.search_vector,to_tsquery('simple',$4)) END DESC,v.observed_at DESC,d.id LIMIT $3`,[cutoff,city||null,cap+1,searchExpression(textQuery),publishedAsOf?(publishedAsOf.length===10?publishedAsOf+'T23:59:59.999Z':publishedAsOf):null])).rows
+      AND ($6::jsonb IS NULL OR EXISTS(SELECT 1 FROM jsonb_array_elements_text($6::jsonb) AS phrase(value) WHERE strpos(v.payload->>'title',phrase.value)>0 OR strpos(v.payload->>'text',phrase.value)>0))
+      ORDER BY CASE WHEN $4::text='' THEN 0 ELSE ts_rank_cd(v.search_vector,to_tsquery('simple',$4)) END DESC,v.observed_at DESC,d.id LIMIT $3`,[cutoff,city||null,cap+1,searchExpression(textQuery),publishedAsOf?(publishedAsOf.length===10?publishedAsOf+'T23:59:59.999Z':publishedAsOf):null,phrases?JSON.stringify(phrases):null])).rows
     return {entries:rows.slice(0,cap).map(r=>({...r.payload,participation:r.channel_policy?.participation??r.payload.participation,publisher_group:r.channel_policy?.publisher_group??r.payload.publisher_group,analysis:r.analysis??unscored(r.payload.title),event_id:r.event_id??r.payload.id,story_id:r.story_id??r.payload.id,relation:r.relation??'UNRELATED',ingested_at:new Date(r.observed_at).toISOString()})),truncated:rows.length>cap}
   }
   async analyze(id:string,version:string,value:Analysis){await this.db.transaction(async db=>{

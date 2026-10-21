@@ -1,0 +1,92 @@
+[
+  {
+    "query": "原拆原建",
+    "returned_events": 3,
+    "truncated": true,
+    "examples": [
+      {
+        "title": "2025年，中央文件明确提出“支持老旧住房自主更新、原拆原建”，老旧居住空间更新由此从以政府投入和综合整治为主，进一步转向产权人共同决策、自筹资金、多元主体协作并重的新阶段",
+        "url": "http://ang.ruc.edu.cn/docs/2026-09/31ffdc62da6a46f194dd5dfd2cb9168a.pdf"
+      },
+      {
+        "title": "老房子能原拆原建了！佛山支持城镇老旧住房自主更新 - 政府信息公开 规章库",
+        "url": "http://www.nanhai.gov.cn/fsnhslj/gkmlpt/content/7/7320/post_7320882.html"
+      }
+    ]
+  },
+  {
+    "query": "房屋安全",
+    "returned_events": 3,
+    "truncated": true,
+    "examples": [
+      {
+        "title": "开化县长虹乡农民搬后利用房屋安全提升及环境整治项目（二期）工程总承包及运营项目（EPC+0）招标公告",
+        "url": "https://ggzy.zj.gov.cn/zhejiang/b9b6fc12-ec01-420f-8ee8-cfa24a60dd4e/87aa53d5-4555-462f-8825-e75228501a18/%E5%BC%80%E5%8C%96%E5%8E%BF%E9%95%BF%E8%99%B9%E4%B9%A1%E5%86%9C%E6%B0%91%E6%90%AC%E5%90%8E%E5%88%A9%E7%94%A8%E6%88%BF%E5%B1%8B%E5%AE%89%E5%85%A8%E6%8F%90%E5%8D%87%E5%8F%8A%E7%8E%AF%E5%A2%83%E6%95%B4%E6%B2%BB%E9%A1%B9%E7%9B%AE%EF%BC%88%E4%BA%8C%E6%9C%9F%EF%BC%89-%E5%8F%91%E5%8C%85%E5%85%AC%E5%91%8A.pdf"
+      },
+      {
+        "title": "东莞市东江下游片区水质提升及排水管网提质增效项目（一期）第一阶段工程（二标段）高埗镇房屋安全鉴定服务用户需求",
+        "url": "https://ygp.gdzwfw.gov.cn/zjfwcs/gd-zjcs-pub/file/downloadfile/PjAttachment/93042fe7-38c1-49db-9f16-7b7705644882"
+      }
+    ]
+  },
+  {
+    "query": "消防通道",
+    "returned_events": 3,
+    "truncated": true,
+    "examples": [
+      {
+        "title": "（5）门禁系统，除已设的可视对讲外的口部外，进入负一层地下室单元门厅、消防监控室、出屋面门、水泵房、消防通道门、未装可视对讲的对外公共门均应设门禁系统",
+        "url": "https://ggzy.zj.gov.cn/jyxxgk/002001/002001011/20260430/0f0afb85-6128-4247-bd40-1afa991410fe.html?_x_output_type_b6db407c4_=embedded_pdf"
+      },
+      {
+        "title": "建工新村、日晖新村区块危旧房改造项目消防通道提升改造工程成交公示",
+        "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_d202d49580994e47b15ae8b88715631f.html"
+      }
+    ]
+  },
+  {
+    "query": "居民协商",
+    "returned_events": 3,
+    "truncated": true,
+    "examples": [
+      {
+        "title": "上海 · 曹杨八村75—76号 · 居民协商与成套改善 · 案例摘录",
+        "url": "https://www.shanghai.gov.cn/nw15343/20250121/48e45e60005c44a3b3b440d01119bd32.html"
+      },
+      {
+        "title": "|    |    | 1. 四川省南充市、陕西省榆林市榆阳区通过将居民出资作为纳入年度改造计划的前置条件、党员干部带头出资、社区入户走访宣传政策、召开协商会议等措施，动员居民出资用于小区改造及补建续费住宅专项维修资金",
+        "url": "https://www.mohurd.gov.cn/api-gateway/jpaas-web-server/front/document/download?fileUrl=YW5UzzlvCwcM%2FNHHX%2FtT6BJ6yM%2FAU1LVtmOVIvNjcurGdLAiZRkjaBvXEKJvAoVSjH3HcYuErOBFqSStB5j1q7TPQ%2F%2Bo4OtIlSvV5q%2BU97nc81qtJJXwCanLLPAPTLVPXuQXDcJ19iyt1QjDSXyJxQ%3D%3D&fileName=%E3%80%8A%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E4%BD%8F%E6%88%BF%E5%92%8C%E5%9F%8E%E4%B9%A1%E5%BB%BA%E8%AE%BE%E9%83%A8%E6%96%87%E5%91%8A%E3%80%8B2024%E5%B9%B4%E7%AC%AC1%E3%80%812%E6%9C%9F"
+      }
+    ]
+  },
+  {
+    "query": "改造资金",
+    "returned_events": 3,
+    "truncated": true,
+    "examples": [
+      {
+        "title": "4.1.1  既有建筑绿色改造可根据改造资金、改造需求等选择分步实施单项改造或综合改造，在进行评估策划时，可以按照绿色改造涉及的改造内容，对建筑环境、建筑结构、暖通空调系统、给排水系统、电气系统等开展局部或全面评估策划，在评估与策划过程中应注意各方面的相互...",
+        "url": "http://zfcxjst.gd.gov.cn/attachment/0/480/480337/2914387.docx"
+      },
+      {
+        "title": "清华大学出版社--图书详情 - \"张杰、边兰春作序推荐，揭示城市更新、老旧小区改造资金运作机制，7个北京老旧小区改造典型实例 \"",
+        "url": "http://www.tup.tsinghua.edu.cn/booksCenter/book_09913601.html"
+      }
+    ]
+  },
+  {
+    "query": "物业服务",
+    "returned_events": 3,
+    "truncated": true,
+    "examples": [
+      {
+        "title": "业主、业主大会或者业主委员会、代行业主委员会职责的其他机构、业主监事会等可以委托专业机构对物业服务资金的收支情况进行审计，并向全体业主公示审计结果",
+        "url": "https://zjj.zhuhai.gov.cn/attachment/0/168/168703/3404453.pdf"
+      },
+      {
+        "title": "物业服务合同",
+        "url": "https://zjj.dg.gov.cn/attachment/0/31/31224/3055078.pdf"
+      }
+    ]
+  }
+]

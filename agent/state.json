@@ -4938,5 +4938,27 @@
     "runtime_commit": "4bbd64c130b5155e46f5171ee2dde6e1480e02d2",
     "ui_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
     "daily_model_budget": 100
+  },
+  "topic_expansion_20261021": {
+    "status": "implemented",
+    "decisions": [
+      "21topic catalogue in5business groups based on public renovation scope and existing source discovery",
+      "same source/parser/index/worker/modelBudget100",
+      "directory queries indexed counts and revision metadata;source windows lazy-load per topic",
+      "per-topic phrases constrain the existing repository query before the result window;ordinary retrieval unchanged",
+      "compiled texts remain review drafts;only topic-relevant field investigation and no invented region/technical rule generalization"
+    ],
+    "artifacts": [
+      "research/test_results/topic-expansion-discovery-20261021.json",
+      "research/test_results/topic-expansion-tests-20261021.log",
+      "research/test_results/topic-expansion-build-20261021.log",
+      "docs/主题目录扩展与资料发现_20261021.md"
+    ],
+    "next_runnable_task": "Finish checks/build;deploy runtime/UI;read real inventory counts;compile topics within existing100/day and verify page controls/quotes.",
+    "unresolved_questions": [],
+    "validation": [
+      "36targeted contract checks passed",
+      "TypeScript and production build passed"
+    ]
   }
 }
