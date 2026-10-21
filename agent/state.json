@@ -5514,7 +5514,7 @@
     "next_runnable_task": "Use query/field coverage to prioritise high-value material organisation; current bottleneck40/day model-call cap, not search latency. No runtime change in this comparison."
   },
   "github_closeout_20261021": {
-    "status": "github_uploaded_cleanup_pending_scope",
+    "status": "complete",
     "scope": "Workbenchchangesandpublicdeliverablesonly;serverdeletionnotauthorizedtospecifictargets",
     "decisions": [
       "MainbranchcontainslatestTencent/Topic/RAG/UIwork",
@@ -5535,13 +5535,46 @@
       "research/test_results/github-release-readback-20261021.json",
       "research/test_results/github-index-scan-20261021.json"
     ],
-    "next_runnable_task": "MergearchivePR,verifyfinalGitHubmainandfileobjects;awaituserchoiceofserverdeletiontargets.Keepcurrentwebsiteand2.2GBdatabaseuntilconfirmed.",
-    "unresolved_questions": [
-      "Servercleanupscopequestionpending;43projectdatabase/originalcorpusnotbackedupbyGitpush."
-    ],
+    "next_runnable_task": "GitHubarchiveandapprovedoldartifactcleanupcomplete;website/database/keysretained.",
+    "unresolved_questions": [],
     "release_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/tag/workbench-delivery-20261021",
-    "release_assets": 5,
+    "release_assets": 6,
     "release_video_count": 3,
-    "server_deletion_performed": false
+    "server_deletion_performed": true,
+    "merge_commit": "c64a3509e7c09c39cd886d39a6f688161cca2fda",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/70",
+    "github_main_verified": true,
+    "remote_files_matched": 184,
+    "publication_receipt_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/download/workbench-delivery-20261021/publication-receipt.json",
+    "publication_receipt_sha256": "2307cc6f52f8a90cddbf22e6599fd038d8f167dda36113d32820db00a9aba38b",
+    "server_cleanup_performed": true,
+    "deleted_scope": "old release artifacts and temporary deployment packages only",
+    "website_or_database_deleted": false
+  },
+  "campus_artifact_cleanup_20261021": {
+    "status": "complete",
+    "authorization": "User explicitly chose only old release packages/tempfiles;preserve website/database/keys",
+    "plan_sha256": "60dc178e9146d648ecb4df417a417ead3c39a39d92f07f431ab3a942bab0b832",
+    "planned_count": 182,
+    "planned_allocated_bytes": 3925278720,
+    "protected_runtime_dependency_release": "e6b68b8e7ce9589acbc386d184612aa1ee2787f7-20261015T015642Z",
+    "retention": "current+live dependency release+2UI backups+latest2archivesperfamily;existingbackend/config/certbackupsretained",
+    "next_runnable_task": "Scopedservercleanupcomplete;do not remove live dependency release or database;Tencentservicekeyremainsseparatelypending.",
+    "planned_remaining_count": 181,
+    "already_removed_count": 2,
+    "guard_fix": "Verified old fingerprint false-positive on directory symlink becoming dangling;sort combined entries and journal each removal.",
+    "deleted_count": 182,
+    "allocated_bytes_removed": 3958251520,
+    "ready_status": "ok",
+    "project_count": 43,
+    "host_restarted": false,
+    "website_or_database_deleted": false,
+    "env_content_and_mode_unchanged": true,
+    "kept_ui_backups": 2,
+    "kept_current_and_dependency_releases": true,
+    "retained_root_owned_bytecode_bytes": 8192,
+    "artifacts": [
+      "research/test_results/campus-artifact-cleanup-20261021.json"
+    ]
   }
 }

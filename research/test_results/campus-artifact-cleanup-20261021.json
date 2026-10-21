@@ -1,0 +1,947 @@
+{
+  "completed_at": "2026-10-21T12:38:00.521097+00:00",
+  "authorized_scope": "User explicitly selected only old release packages and temporary files;preserve website/database/keys",
+  "deleted": [
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/abb5edf66673809ff85075acd21fc2c9512b742f-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31440896
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/83d6f9a50b06a82a76ea83b07f3d2a5b889f99c5-evidence",
+      "kind": "old_release",
+      "allocated_bytes": 23306240
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/6ee45ebacfaf0f99b58e854ea9b0d106dde8c37d-map-workflow",
+      "kind": "old_release",
+      "allocated_bytes": 32964608
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/2cf5f857744081048743bbaa276c8b8ad3601f60-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32002048
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/f50ea4850bfd699eebd820cc1720991a619ce855-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32595968
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/68322aa7bd05b0b43b978a13dc42c4f0192d98fa-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31571968
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/f96153e327ff650f12fd405c3d14e5b63481b316-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31997952
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/7905d1c9cac754938380b321daeb68d9416e22a1-public",
+      "kind": "old_release",
+      "allocated_bytes": 30842880
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/96769ef2e7d4dc4ae23bd7db7eb335634a3c7d41-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31838208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/6caae15f2798cfab9abdf87dc97706364dc329ba-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31440896
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/ba11046445dcf8caa5fce9658bf47b29a6ebb6c6-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31420416
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/c52871fd78173c8d81bb3a9835935c7aca25f316-map-workflow",
+      "kind": "old_release",
+      "allocated_bytes": 32976896
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow.preflight-refused-20261015T151736311548Z",
+      "kind": "old_release",
+      "allocated_bytes": 33374208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/65e6431bc272164f3e01d268ae6ed0a032286274-map-workflow",
+      "kind": "old_release",
+      "allocated_bytes": 32980992
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/c866e017910d343f36c1d440a1ddf33203a11be8-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31420416
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/f421f5998b3e9845ee80fdf0eec9ec804d52f445-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32616448
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/83d6f9a50b06a82a76ea83b07f3d2a5b889f99c5-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31412224
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/b7e348410f38f3c21855958eb6a6172d205e30d6-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32002048
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/f3457fd93cf079d33128f22e6845594cbceef468-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31551488
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/1479db36e3152d5cc163c691de65d24bf67ec229-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32616448
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/18dfd4872a69a2533ca7749b537165a4752cc755-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31580160
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/341b995d0788b41d2ccb7ce6e0c2708aea5432ba-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31645696
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/a14cc6fce57a378e2e321dcb314ff7bbe9db2e8f-admin",
+      "kind": "old_release",
+      "allocated_bytes": 30760960
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/4fc139592d58e81b49136093c9fe3725d7e3111c-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31498240
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/00b915c9e611020ef8a69a0383dbabc8d93b0bce-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32600064
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d36cac43214a783008f3002719e5b988dbd1fec3-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 31854592
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/95e8e4ec1e059c17d9b6a002b8c5c85c0763c972-evidence-r2",
+      "kind": "old_release",
+      "allocated_bytes": 32612352
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-6273005c88ced9da67836799cb5624805af719c9-20261021T005246Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 103575552
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-36139fb43044d5d6ab03db9366b9d9d6807cd8d2-20261021T003411Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 101421056
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-8d0325830b59ebfebe71fc175ffcf4903f93fbf8-20261020T161836Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 99704832
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-196e1ff6a5d357a7bbceaa5adad77e67496c0ed9-20261020T160737Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 97558528
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-5590e33df37dc5bc2d4cfeb883141e96c83a79a2-20261020T160145Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 95412224
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-458478d74aef4144a52f03a28189a022f7c807bf-20261020T040701Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 93274112
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-f1885d9c9dcfccad9681fdcf86f9787ee6a87457-20261018T164347Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 91156480
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-71d086d8247445939fcb89efb45284e6066f4fc7-20261018T153857Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 89071616
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-bb0cc27a61f38294ec5d126febfa5082cf11f708-20261018T102524Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 87396352
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-b0ed58c3aa45f2109f04b429dda93759bc53c3aa-20261018T102335Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 85323776
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-8e2d063a693a1087f4e1421275fb2aedfb735dcd-20261018T063005Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 83255296
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-6748ab7f7b0a85c20016e5c78ec1cd901bf86b3c-20261018T030457Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 81190912
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-07d4304da8cb0b99a51ad422b64414e5edfcfe2c-20261018T030153Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 79519744
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-b5172502fb7ad817fa2e7fa2b5cd3094dd34ddfd-20261018T025147Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 77848576
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-1d270aaaeea637fc5fe16847f3be63d92a1ab22b-20261018T024500Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 75784192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-7033f29c007d4267cb8cd2ea69dedef670c306dc-20261018T020837Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 74117120
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-9675c09726a2e6c61552b0aaaa3b44b8bd9631a4-20261017T121618Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 72060928
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-816660259079a96d988cf5cb79adff1085b073c2-20261017T111612Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 70397952
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-18976acc5edb685a5a9db947d0671aa3287e5be2-20261017T111439Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 68341760
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-46f04faf061f90d9442097801d1a6b50485122c6-20261017T091603Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 66682880
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-8bdec71b8eef05a1aec7fe31828d2566212bf98e-20261017T072639Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 64634880
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-a8afccf2e248a02a3bd98ccfd759610ce863ec26-20261017T072321Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 62976000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-53dd688388683b84c473797d9bbe0b1d3353b2ef-20261017T071701Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 61317120
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-035c348063758416ecde10d0905ee01816a54b4b-20261017T071001Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 59273216
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-af6ed92312611cefbbd9e4c9fb12b7d1d74d6c4e-20261017T044735Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 57274368
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-7121fde8876f1ef7a936ab2fa78316e6f19a67b0-20261017T044533Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 55652352
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-cb0a9bd75496b4733c60c35df84e933d613abd65-20261017T044240Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 53653504
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-a08fb511a4eb9393f6231f1a6dccb02aee11c6e4-20261017T030633Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 52039680
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-de06bda7a8ac4efc66f8cdc0a3d799fa1a1512c5-20261017T030333Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 50421760
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-1f0b6d1a7514cdd92cf4ed3f3df877282cdbd617-20261017T030124Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 48807936
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-cc5b7d311d3eadbe805f20edbc7785047fbd9607-20261016T154830Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 47104000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-ba000b915d9ec45f73802439591e2d5aae678246-20261016T153652Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 45400064
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-c89bb531bbd9f7eb21666540780582a7a3c1f143-20261016T150241Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 43704320
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-69c59f40ec556f6fda61d79048a8f995379116c9-20261016T141532Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 42385408
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-d985ab668b1a8aa14fce23bcf8aab7110eb231ea-20261016T141016Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 41066496
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-3b1f5ffcfcbf8efda286d646ff41616419bced24-20261016T140029Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 39374848
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-dae40810699a498f37d8cc2351f84c3610152b77-20261016T085609Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 37777408
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-2cad24fbe43626304e70625f1995a34b10742c22-20261016T061119Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 36184064
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-bee78400d71f03363534f6917dee3954ceedf79a-20261016T060518Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 34590720
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-0746c89ce6d6bd31be6f3de19f7d60145f8d682f-20261016T054549Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 32145408
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-c0ffdf40b933e2c93f35f02c7bce58be30d6be34-20261016T055033Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 33357824
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-6894a9617f98492fe4c1cde4326ca5dcf66a5af7-20261016T054527Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 30920704
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-ba14170b8101c399fe10f864a3709bc42529459c-20261016T054249Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 29327360
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23-20261016T051631Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 27750400
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-10e9b62eb71a4dcd8ed6668b09438f3062b18d40-20261016T050943Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 26173440
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-cafd130c9f3a31e62ef172e773b02b5d3d88eb0e-20261016T050257Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 24965120
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-42a7b68703c0dfce00de0f17a93f1cacd7bfe4a2-20261016T045747Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 23756800
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-7bc545a874fc00a63880a4f7ffd751e8528d9d3e-20261016T045603Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 22552576
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-a05be8d6d27cff709e6d08458e22b934a1f45c64-20261016T045304Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 20987904
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-0a41dafa595b579a2a0e58e18c1a1e5f6174cab5-20261016T035756Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 19423232
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-c5bc347483e0d1d0bc095a07d3ff37bee2e1dd18-20261016T034941Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 18219008
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-50ab3d47390066ab7390ab2bbce9bbe364a0346f-20261016T033533Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 16654336
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-98e1f75218526c5e1efa2fa5134531ab2db3aac0-20261016T025321Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 15454208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-a561a921d17e846c134fa30851029c4140616279-20261016T021009Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 13893632
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-8b4813019cd4592a9af8e9b569a9126a876702fa-20261016T014218Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 12701696
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-6748964c08109b4dcb786a7e03410458a6a9886c-20261016T014100Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 11153408
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-7ddd154520fed9c8e554a8f6d190a8014a2afe5c-20261015T162505Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 11153408
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-7ddd154520fed9c8e554a8f6d190a8014a2afe5c-20261015T162601Z",
+      "kind": "old_ui_backup",
+      "allocated_bytes": 8990720
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-6273005c88ced9da67836799cb5624805af719c9.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-4d3b9b873a92303f23bc8183a1c2cb3e35e48d80.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-36139fb43044d5d6ab03db9366b9d9d6807cd8d2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-4bbd64c130b5155e46f5171ee2dde6e1480e02d2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-8d0325830b59ebfebe71fc175ffcf4903f93fbf8.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-196e1ff6a5d357a7bbceaa5adad77e67496c0ed9.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-5590e33df37dc5bc2d4cfeb883141e96c83a79a2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-b0ed58c3aa45f2109f04b429dda93759bc53c3aa.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-fae8347df609bfb29c01a5e2064f1724caf0f1e2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-b5172502fb7ad817fa2e7fa2b5cd3094dd34ddfd.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-1831d818686942e566ff789c95f7b959e06414cf.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 45056
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-5d100340506b4ef73cce89dee9c3d4fed080d153.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-7033f29c007d4267cb8cd2ea69dedef670c306dc.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 45056
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-7e115f1e5e8fbaad2dc39e4fcfd4e754d18ab3c8.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-9675c09726a2e6c61552b0aaaa3b44b8bd9631a4.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 65536
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-816660259079a96d988cf5cb79adff1085b073c2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-18976acc5edb685a5a9db947d0671aa3287e5be2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 45056
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-0820f1caf081552dc800ebb40ebc4afcb456fc53.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-46f04faf061f90d9442097801d1a6b50485122c6.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 45056
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-035c348063758416ecde10d0905ee01816a54b4b.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 86016
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-cb0a9bd75496b4733c60c35df84e933d613abd65.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 184320
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-75eb1502d676b9c265fe68e69d19af15b0736f53.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-de06bda7a8ac4efc66f8cdc0a3d799fa1a1512c5.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-1f0b6d1a7514cdd92cf4ed3f3df877282cdbd617.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 65536
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-2e41aca94ab1a530266a123caef48fc48cdc4b9a.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-dd39f60f60ae8f73c9f9ed50b83b65bd974d3bd9.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-e71104a209b289ffd7cf7a14c50ef171f203dbbf.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-42db32603d57a4cf1861c60da3b191af6802c441.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-ba000b915d9ec45f73802439591e2d5aae678246.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-c89bb531bbd9f7eb21666540780582a7a3c1f143.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 118784
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-d985ab668b1a8aa14fce23bcf8aab7110eb231ea.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/research-recovery-4d9b907ba5eefc23c9485acdf9183ca75a03764f.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 151552
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-6273005c88ced9da67836799cb5624805af719c9.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1146880
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-36139fb43044d5d6ab03db9366b9d9d6807cd8d2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1146880
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-8d0325830b59ebfebe71fc175ffcf4903f93fbf8.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1142784
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-196e1ff6a5d357a7bbceaa5adad77e67496c0ed9.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1142784
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-5590e33df37dc5bc2d4cfeb883141e96c83a79a2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1142784
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-458478d74aef4144a52f03a28189a022f7c807bf.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1138688
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-f1885d9c9dcfccad9681fdcf86f9787ee6a87457.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1138688
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-71d086d8247445939fcb89efb45284e6066f4fc7.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1126400
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-bb0cc27a61f38294ec5d126febfa5082cf11f708.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1126400
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-b0ed58c3aa45f2109f04b429dda93759bc53c3aa.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1126400
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-8e2d063a693a1087f4e1421275fb2aedfb735dcd.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-6748ab7f7b0a85c20016e5c78ec1cd901bf86b3c.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-07d4304da8cb0b99a51ad422b64414e5edfcfe2c.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-b5172502fb7ad817fa2e7fa2b5cd3094dd34ddfd.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-1d270aaaeea637fc5fe16847f3be63d92a1ab22b.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-7033f29c007d4267cb8cd2ea69dedef670c306dc.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-9675c09726a2e6c61552b0aaaa3b44b8bd9631a4.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-816660259079a96d988cf5cb79adff1085b073c2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-18976acc5edb685a5a9db947d0671aa3287e5be2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-46f04faf061f90d9442097801d1a6b50485122c6.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1118208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-8bdec71b8eef05a1aec7fe31828d2566212bf98e.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1118208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-a8afccf2e248a02a3bd98ccfd759610ce863ec26.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1118208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-53dd688388683b84c473797d9bbe0b1d3353b2ef.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1118208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-035c348063758416ecde10d0905ee01816a54b4b.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1118208
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-af6ed92312611cefbbd9e4c9fb12b7d1d74d6c4e.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1105920
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-7121fde8876f1ef7a936ab2fa78316e6f19a67b0.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1105920
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-cb0a9bd75496b4733c60c35df84e933d613abd65.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1105920
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-a08fb511a4eb9393f6231f1a6dccb02aee11c6e4.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1101824
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-de06bda7a8ac4efc66f8cdc0a3d799fa1a1512c5.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1101824
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-1f0b6d1a7514cdd92cf4ed3f3df877282cdbd617.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1101824
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-cc5b7d311d3eadbe805f20edbc7785047fbd9607.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1056768
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-ba000b915d9ec45f73802439591e2d5aae678246.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1056768
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-c89bb531bbd9f7eb21666540780582a7a3c1f143.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1052672
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-69c59f40ec556f6fda61d79048a8f995379116c9.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1052672
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-d985ab668b1a8aa14fce23bcf8aab7110eb231ea.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1052672
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-3b1f5ffcfcbf8efda286d646ff41616419bced24.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1052672
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-dae40810699a498f37d8cc2351f84c3610152b77.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1024000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-2cad24fbe43626304e70625f1995a34b10742c22.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1024000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-bee78400d71f03363534f6917dee3954ceedf79a.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1024000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-c0ffdf40b933e2c93f35f02c7bce58be30d6be34.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1024000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-0746c89ce6d6bd31be6f3de19f7d60145f8d682f.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-6894a9617f98492fe4c1cde4326ca5dcf66a5af7.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1024000
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-ba14170b8101c399fe10f864a3709bc42529459c.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1019904
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-10e9b62eb71a4dcd8ed6668b09438f3062b18d40.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1019904
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-cafd130c9f3a31e62ef172e773b02b5d3d88eb0e.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-42a7b68703c0dfce00de0f17a93f1cacd7bfe4a2.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-7bc545a874fc00a63880a4f7ffd751e8528d9d3e.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-a05be8d6d27cff709e6d08458e22b934a1f45c64.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-0a41dafa595b579a2a0e58e18c1a1e5f6174cab5.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-c5bc347483e0d1d0bc095a07d3ff37bee2e1dd18.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-50ab3d47390066ab7390ab2bbce9bbe364a0346f.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1015808
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-98e1f75218526c5e1efa2fa5134531ab2db3aac0.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1011712
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-a561a921d17e846c134fa30851029c4140616279.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1011712
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-8b4813019cd4592a9af8e9b569a9126a876702fa.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1011712
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-6748964c08109b4dcb786a7e03410458a6a9886c.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1011712
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/blue-ui-7ddd154520fed9c8e554a8f6d190a8014a2afe5c.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 1007616
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/mode-lifecycle-98e1f75218526c5e1efa2fa5134531ab2db3aac0.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/mode-lifecycle-a561a921d17e846c134fa30851029c4140616279.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/advisory-plan-93f1711bfa77a10202fad3b88e35b6c5f05eb2a0.tar.gz",
+      "kind": "deployment_archive",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/incoming/server-admin-source.tgz",
+      "kind": "incoming_archive",
+      "allocated_bytes": 5234688
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/incoming/server-public-source.tgz",
+      "kind": "incoming_archive",
+      "allocated_bytes": 5255168
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/incoming/server-admin-ui.tgz",
+      "kind": "incoming_archive",
+      "allocated_bytes": 917504
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/incoming/server-public-ui.tgz",
+      "kind": "incoming_archive",
+      "allocated_bytes": 917504
+    },
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/incoming/server-report-update.tgz",
+      "kind": "incoming_archive",
+      "allocated_bytes": 2088960
+    }
+  ],
+  "deleted_count": 182,
+  "allocated_bytes_removed": 3958251520,
+  "free_bytes_increase_resumed_phase": 3903442944,
+  "previously_deleted_count": 2,
+  "initial_guard_pause": "Dangling links changed traversal grouping;verified regression and fixed ordering;frozen path guards retained",
+  "kept_releases": [
+    "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow",
+    "/home/zhuhangcheng/apps/haizhizi/releases/e6b68b8e7ce9589acbc386d184612aa1ee2787f7-20261015T015642Z"
+  ],
+  "kept_ui_backups": [
+    "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-c2a5c91dcc54788db0cf1d7cfa531ac4d843cdd3-20261021T005826Z",
+    "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-c407c37bb5e28bc3e17eca8b7a896932bb8aa709-20261021T010935Z"
+  ],
+  "current_unchanged": true,
+  "active_frontend_files_unchanged": true,
+  "env_content_and_mode_unchanged": true,
+  "host_pid_unchanged": true,
+  "host_restarted": false,
+  "database_directory_untouched": true,
+  "credentials_and_certificates_outside_cleanup_targets": true,
+  "before_project_count": 43,
+  "after_project_count": 43,
+  "ready_status": "ok",
+  "capability_active": "active",
+  "skipped": [
+    {
+      "path": "/home/zhuhangcheng/apps/haizhizi/shared/__pycache__",
+      "reason": "root-owned certificate-tool bytecode retained;no permission changes",
+      "remaining_bytes": 8192
+    }
+  ]
+}

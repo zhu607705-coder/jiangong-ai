@@ -2064,7 +2064,7 @@
       "id": "T-GITHUB-CLOSEOUT-20261021",
       "depends_on": [],
       "goal": "上传工作台剩余修改与公开交付物，核对GitHub并明确服务器清理范围",
-      "status": "github_uploaded_cleanup_pending_scope",
+      "status": "complete",
       "write_scope": [
         "preparedworktreeonly",
         "source/docs/data/research",
@@ -2072,6 +2072,20 @@
         "GitHubmain/Release"
       ],
       "definition_of_done": "准备文件有散列清单，无密钥/私密材料；GitHubmain和Release读回一致；服务器删除范围未明确时保留网站与数据库。"
+    },
+    {
+      "id": "T-CAMPUS-ARTIFACT-CLEANUP-20261021",
+      "depends_on": [
+        "T-GITHUB-CLOSEOUT-20261021"
+      ],
+      "goal": "按明确授权清理旧发布包和临时文件，保留网站/数据库/密钥",
+      "status": "complete",
+      "write_scope": [
+        "serverfrozen182oldartifacttargets",
+        "maintenanceauditrecords",
+        "agentstate"
+      ],
+      "definition_of_done": "旧包清理有冻结路径与回执；保留当前及真实依赖目录，43项目、同一PID、前端与env校验通过；root拥有8KB缓存保留。"
     }
   ]
 }
