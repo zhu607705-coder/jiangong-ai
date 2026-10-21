@@ -5575,6 +5575,47 @@
     "retained_root_owned_bytecode_bytes": 8192,
     "artifacts": [
       "research/test_results/campus-artifact-cleanup-20261021.json"
-    ]
+    ],
+    "live_dependency_aliases_canonical": true,
+    "cold_node_and_python_import_verified": true,
+    "alias_repair_receipt": "research/test_results/campus-runtime-link-repair-20261021.json"
+  },
+  "full_zip_bundle_20261021": {
+    "status": "complete",
+    "decisions": [
+      "ZIP contains program, consistent PGlite snapshot and original material",
+      "37internal source references require encrypted public Release;credentials excluded and password local only",
+      "Use original startup/runtime;platformdependenciesinstalledfromlocks,notcopiedLinuxvenv",
+      "No public DB-export endpoint;brief graceful host stop for consistency then restartbeforecompression",
+      "Current dependency aliases repaired directly to retained roots;fresh Node/Python imports passed"
+    ],
+    "artifacts": [
+      "docs/完整ZIP备份与恢复_20261021.md",
+      "research/test_results/campus-runtime-link-repair-20261021.json",
+      "research/test_results/full-bundle-snapshot-20261021.json",
+      "research/test_results/full-bundle-restore-linux-20261021.json",
+      "research/test_results/full-bundle-restore-windows-20261021.json",
+      "research/test_results/full-bundle-archive-20261021.json",
+      "research/test_results/full-bundle-github-readback-20261021.json"
+    ],
+    "next_runnable_task": "FullencryptedZIPandpublicsource/auditscomplete;passwordlocalonly;useREADMEtorestoreandconfigureownAPIs.Preservelivedataandcanonicaldependencyaliases.",
+    "unresolved_questions": [],
+    "source_commit": "c54ef7571ccf1efe9991ef2660c113f8df658bdc",
+    "archive_name": "jiuquxinsheng-full-20261021-aes256.zip",
+    "archive_bytes": 664317501,
+    "archive_sha256": "e8bd99df89d02a76c728c9b43c696ade39b3e67fef0d606b0c38bdf330468257",
+    "snapshot_at": "2026-10-21T15:01:30.441420+00:00",
+    "project_count": 43,
+    "topic_count": 21,
+    "original_records": 12516,
+    "uploaded_blobs_verified": 23,
+    "private_password_published": false,
+    "windows_database_restore_verified": true,
+    "native_http_restore_verified": true,
+    "production_ready_after_snapshot": true,
+    "maintenance_seconds": 8.99,
+    "release_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/tag/workbench-full-backup-20261021",
+    "archive_download_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/download/workbench-full-backup-20261021/jiuquxinsheng-full-20261021-aes256.zip",
+    "github_assets_verified": 4
   }
 }

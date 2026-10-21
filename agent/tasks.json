@@ -2086,6 +2086,19 @@
         "agentstate"
       ],
       "definition_of_done": "旧包清理有冻结路径与回执；保留当前及真实依赖目录，43项目、同一PID、前端与env校验通过；root拥有8KB缓存保留。"
+    },
+    {
+      "id": "T-FULL-ZIP-BUNDLE-20261021",
+      "depends_on": [],
+      "goal": "制作并上传可恢复的程序+数据库+原文完整ZIP",
+      "status": "complete",
+      "write_scope": [
+        "bundlehelpers/docs/audits",
+        "private snapshots/ZIP",
+        "GitHubRelease",
+        "agentstate"
+      ],
+      "definition_of_done": "同一时点业务数据备份、配置凭据排除；独立副本恢复43项目/原文/主题；AES加密和本机密码独立保存；GitHub包散列读回匹配，生产网站恢复。"
     }
   ]
 }

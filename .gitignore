@@ -51,3 +51,6 @@ output/playwright/minimal-map-*.png
 /output/**/*.mp4
 /output/**/*.webm
 /output/**/*.wav
+
+# Full encrypted datasets are Release assets;plaintext/passwords never belong in git.
+/output/archives/
