@@ -32,3 +32,4 @@ export const TOPIC_GROUPS=[
 ] as const
 export const topicGroup=(id:TopicId)=>TOPIC_GROUPS.find(group=>(group.topics as readonly string[]).includes(id))!
 export function topicOf(id:string){const topic=TOPICS.find(t=>t.id===id);if(!topic)throw Error('WIKI_TOPIC_NOT_FOUND');return topic}
+export function matchingTopicIds(title:string,text:string):TopicId[]{return TOPICS.filter(topic=>topic.terms.some(term=>title.includes(term)||text.includes(term))).map(topic=>topic.id)}

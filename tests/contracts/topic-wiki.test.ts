@@ -62,8 +62,8 @@ it('counts the full public library per theme while excluding internal, synthetic
  const a=entry('fire-one','消防通道需要清理，疏散出口不得堆物。'),b=entry('fire-two','消防设施改造与消防通道整治同步实施。')
  a.title='甲小区消防通道整治';b.title='乙小区消防通道整治'
  for(const e of [a,b,{...entry('fire-private',a.text),source:{...a.source,visibility:'internal',data_class:'internal'}},{...entry('fire-synthetic',a.text),source:{...a.source,synthetic:true}},{...entry('fire-signal',a.text),participation:'signal_only' as const}])await repo.put(e)
- const counts=await repo.topicCounts([{id:'fire',terms:['消防通道']},{id:'missing',terms:['不存在的专题词']}])
- expect(counts.find(row=>row.id==='fire')?.count).toBe(2);expect(counts.find(row=>row.id==='missing')?.count).toBe(0)
+ const counts=await repo.topicCounts([topicOf('fire'),topicOf('childcare')])
+ expect(counts.find(row=>row.id==='fire')?.count).toBe(2);expect(counts.find(row=>row.id==='childcare')?.count).toBe(0)
  const list=await wiki.list();expect(list).toHaveLength(21);expect(list[0].topic.id).toBe('renewal-mode');expect(list.find(item=>item.topic.id==='fire')?.matching_sources).toBe(2)
 })
 it('topic phrase routing filters before the result window and leaves ordinary retrieval broad',async()=>{
@@ -78,4 +78,13 @@ it('bulk visibility removes a historical compiled citation after its current acc
  const a=entry('persist'),b=entry('new'),visible=await repo.visibleWikiVersions([a,b])
  expect(visible.has(a.id+'@'+a.version)).toBe(false);expect(visible.has(b.id+'@'+b.version)).toBe(true)
  expect((await wiki.list()).find(item=>item.topic.id==='water')?.claims).toBe(0)
+})
+
+it('backfills catalogue metadata without changing original bodies or revision clocks',async()=>{
+ const a=entry('fire-one','消防通道需要清理，疏散出口不得堆物。')
+ const before=await repo.get(a.id),clock=(await db.query('SELECT max(sequence) AS n FROM intel_revision_log')).rows[0]
+ await db.query('UPDATE intel_documents SET wiki_policy=NULL,wiki_topics=NULL WHERE id=$1',[a.id]);await repo.initialize()
+ const after=await repo.get(a.id),counts=await repo.topicCounts([topicOf('fire')])
+ expect(after?.text).toBe(before?.text);expect(after?.version).toBe(before?.version);expect(counts[0].count).toBeGreaterThan(0)
+ expect((await db.query('SELECT max(sequence) AS n FROM intel_revision_log')).rows[0]).toEqual(clock)
 })

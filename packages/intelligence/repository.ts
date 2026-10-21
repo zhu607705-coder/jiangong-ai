@@ -3,6 +3,14 @@ import type { Channel, Material, Analysis, Entry } from './domain'
 import { unscored, hash, canonical, searchTokens, searchExpression } from './domain'
 import type { Relation } from '../../vendor/aihot/algorithms'
 import {intelligenceDailyModelBudget} from './model-budget'
+import {TOPICS,matchingTopicIds} from './topic-catalog'
+
+const wikiCatalog=hash(canonical(TOPICS.map(topic=>[topic.id,topic.terms])))
+type WikiProjectionInput=Pick<Material,'id'|'version'|'title'|'text'|'source'|'channel_id'|'participation'>
+const wikiMetadata=(m:WikiProjectionInput)=>({id:m.id,version:m.version,topics:matchingTopicIds(m.title,m.text),pub:m.source.visibility==='public'&&m.source.data_class==='public'&&!m.source.synthetic&&m.source.content_status!=='metadata_only'&&!!m.text.trim(),channel:m.channel_id,participation:m.participation||'research',policy:wikiCatalog})
+const wikiMetadataUpdate=`UPDATE intel_documents d SET wiki_topics=r.topics,wiki_public=r.pub,wiki_channel=r.channel,wiki_participation=r.participation,wiki_policy=r.policy
+  FROM jsonb_to_recordset($1::jsonb) AS r(id text,version text,topics text[],pub boolean,channel text,participation text,policy text)
+  WHERE d.id=r.id AND d.latest_version=r.version`
 
 const wikiPublicSql=(version:string,channel:string)=>`${version}.payload->'source'->>'visibility'='public'
   AND ${version}.payload->'source'->>'data_class'='public'
@@ -23,6 +31,11 @@ export type Review={document_id:string;version:string;family_id:string;split:'de
 export const MIGRATION=`
 CREATE TABLE IF NOT EXISTS intel_channels(id TEXT PRIMARY KEY,payload JSONB NOT NULL,enabled BOOLEAN NOT NULL DEFAULT false,last_ok TIMESTAMPTZ,next_at TIMESTAMPTZ NOT NULL DEFAULT now(),error TEXT);
 CREATE TABLE IF NOT EXISTS intel_documents(id TEXT PRIMARY KEY,url TEXT UNIQUE NOT NULL,channel_id TEXT NOT NULL,latest_version TEXT NOT NULL,title TEXT NOT NULL,city TEXT NOT NULL DEFAULT '',published_at TIMESTAMPTZ,updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+ALTER TABLE intel_documents ADD COLUMN IF NOT EXISTS wiki_topics TEXT[];
+ALTER TABLE intel_documents ADD COLUMN IF NOT EXISTS wiki_public BOOLEAN;
+ALTER TABLE intel_documents ADD COLUMN IF NOT EXISTS wiki_channel TEXT;
+ALTER TABLE intel_documents ADD COLUMN IF NOT EXISTS wiki_participation TEXT;
+ALTER TABLE intel_documents ADD COLUMN IF NOT EXISTS wiki_policy TEXT;
 CREATE TABLE IF NOT EXISTS intel_versions(document_id TEXT NOT NULL REFERENCES intel_documents(id),version TEXT NOT NULL,payload JSONB NOT NULL,sequence BIGSERIAL,observed_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(document_id,version));
 ALTER TABLE intel_versions ADD COLUMN IF NOT EXISTS search_vector TSVECTOR;
 CREATE INDEX IF NOT EXISTS intel_versions_search ON intel_versions USING gin(search_vector);
@@ -46,17 +59,12 @@ CREATE INDEX IF NOT EXISTS intel_project_links_document ON intel_project_links(d
 `
 export class IntelRepository {
   constructor(readonly db:IntelDatabase){}
-  async topicCounts(topics:readonly {id:string;terms:readonly string[]}[]){
-    const catalog=topics.map(topic=>({id:topic.id,terms:topic.terms,expression:searchExpression(topic.terms.join(' '))}))
-    return (await this.db.query<{id:string;count:number}>(`WITH topics AS MATERIALIZED (
-      SELECT id,terms,to_tsquery('simple',expression) AS query FROM jsonb_to_recordset($1::jsonb) AS t(id text,terms jsonb,expression text)
-    ), originals AS MATERIALIZED (
-      SELECT d.id,v.search_vector,v.payload->>'title' AS title,v.payload->>'text' AS body
-      FROM intel_documents d JOIN intel_versions v ON v.document_id=d.id AND v.version=d.latest_version
-      LEFT JOIN intel_channels c ON c.id=v.payload->>'channel_id' WHERE ${wikiPublicSql('v','c')}
-    ) SELECT t.id,count(o.id)::int AS count FROM topics t LEFT JOIN originals o
-      ON o.search_vector @@ t.query AND EXISTS(SELECT 1 FROM jsonb_array_elements_text(t.terms) AS term(value)
-        WHERE strpos(o.title,term.value)>0 OR strpos(o.body,term.value)>0) GROUP BY t.id`,[JSON.stringify(catalog)])).rows
+  async topicCounts(topics:readonly Pick<typeof TOPICS[number],'id'|'terms'>[]){
+    // Membership is maintained on the existing document row; directory reads never rescan bodies.
+    return (await this.db.query<{id:string;count:number}>(`SELECT t.id,count(d.id) FILTER(WHERE coalesce(c.payload->>'participation',d.wiki_participation,'research')<>'signal_only')::int AS count
+      FROM jsonb_to_recordset($1::jsonb) AS t(id text) LEFT JOIN intel_documents d
+      ON t.id=ANY(d.wiki_topics) AND d.wiki_public AND d.wiki_policy=$2
+      LEFT JOIN intel_channels c ON c.id=d.wiki_channel GROUP BY t.id`,[JSON.stringify(topics.map(topic=>({id:topic.id}))),wikiCatalog])).rows
   }
   async visibleWikiVersions(refs:readonly {id:string;version:string}[]){
     if(!refs.length)return new Set<string>()
@@ -77,6 +85,14 @@ export class IntelRepository {
     // Additive migration: previously ingested materials must remain searchable.
     const missing=(await this.db.query<{document_id:string;version:string;payload:Material}>('SELECT document_id,version,payload FROM intel_versions WHERE search_vector IS NULL')).rows
     for(const row of missing)await this.db.query("UPDATE intel_versions SET search_vector=setweight(to_tsvector('simple',$3),'A')||setweight(to_tsvector('simple',$4),'D') WHERE document_id=$1 AND version=$2",[row.document_id,row.version,searchTokens(row.payload.title).join(' '),searchTokens(row.payload.text).join(' ')])
+    // One additive backfill per catalogue revision. Sources/versions remain untouched.
+    for(;;){
+      const rows=(await this.db.query<WikiProjectionInput>(`SELECT d.id,d.latest_version AS version,v.payload->>'title' AS title,v.payload->>'text' AS text,v.payload->>'channel_id' AS channel_id,v.payload->>'participation' AS participation,
+        jsonb_build_object('visibility',v.payload->'source'->'visibility','data_class',v.payload->'source'->'data_class','synthetic',v.payload->'source'->'synthetic','content_status',v.payload->'source'->'content_status') AS source
+        FROM intel_documents d JOIN intel_versions v ON v.document_id=d.id AND v.version=d.latest_version WHERE d.wiki_policy IS DISTINCT FROM $1 ORDER BY d.id LIMIT 100`,[wikiCatalog])).rows
+      if(!rows.length)break
+      await this.db.query(wikiMetadataUpdate,[JSON.stringify(rows.map(wikiMetadata))])
+    }
     // Never blindly retry a possibly paid, interrupted operation.
     await this.db.query("UPDATE intel_jobs SET status='interrupted',error='HOST_RESTART' WHERE status='running'")
     await this.db.query("UPDATE intel_receipts SET status='ambiguous' WHERE status='started'")
@@ -95,6 +111,7 @@ export class IntelRepository {
     await db.query("INSERT INTO intel_versions(document_id,version,payload,search_vector) VALUES($1,$2,$3,setweight(to_tsvector('simple',$4),'A')||setweight(to_tsvector('simple',$5),'D')) ON CONFLICT DO NOTHING",[m.id,m.version,JSON.stringify(m),searchTokens(m.title).join(' '),searchTokens(m.text).join(' ')])
     await db.query('INSERT INTO intel_observations(document_id,version,channel_id) VALUES($1,$2,$3) ON CONFLICT(document_id,version,channel_id) DO UPDATE SET seen_at=now()',[m.id,m.version,m.channel_id])
     if(advance||!old)await db.query('INSERT INTO intel_revision_log(document_id,version) VALUES($1,$2)',[m.id,m.version])
+    await db.query(wikiMetadataUpdate,[JSON.stringify([wikiMetadata(m)])])
     return !exists
   })}
   async get(id:string,version?:string):Promise<Entry|null>{const rows=await this.db.query<{payload:Material;analysis:Analysis|null;event_id:string|null;story_id:string|null;relation:Relation|null;observed_at:string;channel_policy:Channel|null}>(`
