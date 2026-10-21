@@ -2043,7 +2043,7 @@
         "T-TOPIC-EXPANSION-20261021"
       ],
       "goal": "接入元宝搜索并复用原文/RAG/公开采集链路",
-      "status": "implementing",
+      "status": "deployed_blocked_external_key",
       "write_scope": [
         "runtime/dsh",
         "packages/intelligence",

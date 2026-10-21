@@ -7,7 +7,8 @@ parser.add_argument('--known-hosts',default='D:/建工ai/.cache/haizhizi-known-h
 args=parser.parse_args()
 key_path=pathlib.Path(args.key_file).resolve(strict=True)
 root=pathlib.Path(__file__).resolve().parents[1]
-if key_path.is_relative_to(root):parser.error('Keep the key outside this repository.')
+common=pathlib.Path(subprocess.check_output(['git','rev-parse','--path-format=absolute','--git-common-dir'],cwd=root,text=True).strip()).parent
+if key_path.is_relative_to(root) or key_path.is_relative_to(common):parser.error('Keep the key outside this repository and its main workspace.')
 key=key_path.read_text(encoding='utf-8-sig').strip()
 if not re.fullmatch(r'[A-Za-z0-9_.\-]{16,500}',key):parser.error('Expected one service API Key, not a JSON credential file or shell command.')
 remote=r'''

@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-21T01:46:44.274435+00:00",
+  "configured": false,
+  "live_provider": null,
+  "scope": "Unauthenticated endpoint reachability only;not a successful search;no model call",
+  "http_status": 200,
+  "duration_ms": 93
+}

@@ -1,0 +1,1 @@
+runtime/dsh/tencent-web-search.ts(31,13): error TS2339: Property 'push' does not exist on type 'readonly WebSearchSource[]'.
