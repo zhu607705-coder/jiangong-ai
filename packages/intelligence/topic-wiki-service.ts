@@ -67,15 +67,17 @@ export class TopicWikiService{
   private async run(job:Job,signal:AbortSignal){
     await this.ready
     const frozen=job.payload.input as ReturnType<typeof topicInput>;topicOf(frozen.topic.id)
-    const entries=[]
-    for(const source of frozen.sources){const e=await this.intel.repo.get(source.id,source.version);if(!e||!publicWikiSource(e))throw Error('WIKI_SOURCE_POLICY_CHANGED');entries.push(e)}
+    const entries=[],archivePending:string[]=[]
+    for(const source of frozen.sources){const e=await this.intel.repo.get(source.id,source.version);if(!e||!publicWikiSource(e))throw Error('WIKI_SOURCE_POLICY_CHANGED');entries.push(e)
+      try{await this.intel.campaign.persist(e)}catch{archivePending.push(e.id+'@'+e.version)}
+    }
     const dailyLimit=intelligenceDailyModelBudget()
     const result=await this.intel.repo.receipt('topic_compile',frozen.topic.id,{...frozen,output_budget:TOPIC_MAX_TOKENS},config.DEEPSEEK_MODEL,()=>intelligenceJudge('topic',frozen,OUTPUT_SCHEMAS.topic,PROMPTS.topic,signal,config.DEEPSEEK_MODEL),dailyLimit)
     signal.throwIfAborted()
     let page=compileTopicPage(frozen,result.value,entries,result.model)
     page=await this.persist(page)
     await this.intel.repo.db.query('INSERT INTO intel_topic_pages(topic_id,input_hash,payload) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',[page.topic_id,page.input_hash,JSON.stringify(page)])
-    await this.intel.repo.jobResult(job.id,{topic_id:page.topic_id,input_hash:page.input_hash,claims:page.claims.length,review_items:page.review_items})
+    await this.intel.repo.jobResult(job.id,{topic_id:page.topic_id,input_hash:page.input_hash,claims:page.claims.length,review_items:page.review_items,archive_pending:archivePending})
     return {pending:false,progress:true}
   }
   async persist(page:TopicPage){
