@@ -2036,6 +2036,29 @@
         "docs"
       ],
       "definition_of_done": "21主题/5组可搜索翻页，有资料计数并保留旧页与草稿；按100预算编纂，真实原文引用/页面和发布验证。"
+    },
+    {
+      "id": "T-TENCENT-WSA-20261021",
+      "depends_on": [
+        "T-TOPIC-EXPANSION-20261021"
+      ],
+      "goal": "接入元宝搜索并复用原文/RAG/公开采集链路",
+      "status": "implementing",
+      "write_scope": [
+        "runtime/dsh",
+        "packages/intelligence",
+        "apps/host",
+        "packages/retrofit/research-execution.ts",
+        "packages/retrofit/research-rounds.ts",
+        "services/capabilities/research.ts",
+        "scripts/configure-tencent-wsa.py",
+        "tests/contracts/tencent-wsa*",
+        "agent",
+        "docs",
+        "research",
+        ".env.example"
+      ],
+      "definition_of_done": "服务Key协议与真实错误处理、同库月度调用记录、原文继续抓取、原路径回退；定向测试/构建及服务器部署；无Key明确blocked_external，原服务保持可用。"
     }
   ]
 }

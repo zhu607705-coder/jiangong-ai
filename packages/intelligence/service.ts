@@ -20,8 +20,7 @@ import {projectObjectLocation} from '../retrofit/object-binding'
 import {administrativeAddress} from '../research/evidence'
 import {retrievalScopeNames,queryObjectLocated} from '../experience/retrieval'
 import {CorpusCampaign} from './campaign'
-import {DeepSeekWebTools} from '../../runtime/dsh/deepseek-web-tools'
-import {ensureHarnessNetwork} from '../../runtime/dsh/public-web'
+import {createPublicWebTools,ensureHarnessNetwork} from '../../runtime/dsh/public-web'
 import type {ResearchWeb} from '../../services/capabilities/research'
 import {intelligenceDailyModelBudget} from './model-budget'
 
@@ -44,7 +43,7 @@ export class IntelligenceService {
     // Search-backed official catalogue templates, not invented RSS endpoints or live coverage claims.
     for(const s of PUBLIC_SOURCES){const id='catalog-'+s.id;if(!known.has(id))await this.repo.saveChannel(channelOf({id,name:s.name,kind:'native_search',url:'https://'+s.domain,domains:[s.domain],publisher_group:s.domain,city:'',config:{query:'存量建筑 改造 建设 项目'},enabled:false,interval_minutes:180,first_party:true}))}
     if(this.stopped)return
-    this.uninstall=installIntelligenceHooks({lookup:(r,s)=>this.lookup(r,s),remember:(s,c,o)=>this.remember(s,c,o),revision:async r=>hash(canonical((await this.repo.entries(r.city,200,undefined,r.name+' '+r.purpose,r.asOf)).entries.map(e=>[e.id,e.version,e.participation]).sort()))})
+    this.uninstall=installIntelligenceHooks({webCall:r=>this.campaign.recordProvider(r),lookup:(r,s)=>this.lookup(r,s),remember:(s,c,o)=>this.remember(s,c,o),revision:async r=>hash(canonical((await this.repo.entries(r.city,200,undefined,r.name+' '+r.purpose,r.asOf)).entries.map(e=>[e.id,e.version,e.participation]).sort()))})
     this.timer=setInterval(()=>{void this.tick().catch(()=>console.warn('INTELLIGENCE_WORKER_FAILED'))},5000);this.timer.unref()
   }
   async stop(){this.stopped=true;if(this.timer)clearInterval(this.timer);this.active?.controller.abort();this.uninstall?.();await this.ready.catch(()=>undefined);if(this.timer)clearInterval(this.timer);while(this.busy)await new Promise(resolve=>setTimeout(resolve,20))}
@@ -104,7 +103,7 @@ export class IntelligenceService {
     const q=await this.campaign.query(job.subject);if(!q)throw Error('CAMPAIGN_QUERY_NOT_FOUND')
     await this.repo.saveChannel(q.channel)
     await ensureHarnessNetwork()
-    const web=new DeepSeekWebTools({key:()=>process.env.DEEPSEEK_SEARCH_API_KEY||process.env.DEEPSEEK_API_KEY||'',includeContent:true,maxSearchRequests:3,onReceipt:r=>this.campaign.record(r)})
+    const web=createPublicWebTools({maxSearchUses:3,onReceipt:r=>this.campaign.record(r)})
     let created=0,chunks=0,archived=0,metadata=0,queued=0
     const result=await collectChannel(q.channel,signal,async(source,raw)=>{
       signal.throwIfAborted()
@@ -122,7 +121,7 @@ export class IntelligenceService {
     signal.throwIfAborted()
     const receipt={...result,created,archived,chunks,metadata,queued,query:q.query,calls:web.receipts}
     await this.campaign.outcome(q.id,receipt);await this.repo.jobResult(job.id,receipt);await this.repo.endJob(job.id,result.failed?'partial':'completed')
-    const auth=web.receipts.find(r=>r.status&&[401,402,403].includes(r.status));if(auth)await this.campaign.failed('DEEPSEEK_TOOLS_HTTP_'+auth.status)
+    const auth=web.receipts.find(r=>r.provider==='deepseek-tools'&&r.status&&[401,402,403].includes(r.status));if(auth)await this.campaign.failed('DEEPSEEK_TOOLS_HTTP_'+auth.status)
     else if(result.failed&&!result.saved&&!result.skipped)await this.campaign.failed('COLLECTION_RETRY_LATER')
   }
   async configureCampaign(value:Parameters<CorpusCampaign['configure']>[0]){await this.ready;await this.campaign.configure(value);if(!value.enabled&&this.active){const j=(await this.repo.db.query<Job>('SELECT * FROM intel_jobs WHERE id=$1',[this.active.id])).rows[0];if(j?.kind==='corpus_collect')await this.cancel(j.id)}}

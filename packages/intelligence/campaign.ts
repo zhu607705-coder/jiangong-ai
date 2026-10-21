@@ -12,6 +12,8 @@ INSERT INTO intel_corpus_campaign(id) VALUES(1) ON CONFLICT DO NOTHING;
 CREATE TABLE IF NOT EXISTS intel_corpus_queries(id TEXT PRIMARY KEY,query TEXT NOT NULL,payload JSONB NOT NULL,last_at TIMESTAMPTZ NOT NULL DEFAULT now(),job_id TEXT,result JSONB);
 CREATE TABLE IF NOT EXISTS intel_corpus_calls(id TEXT PRIMARY KEY,day TEXT NOT NULL,operation TEXT NOT NULL,payload JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS intel_corpus_calls_day ON intel_corpus_calls(day,operation);
+CREATE TABLE IF NOT EXISTS intel_provider_calls(id TEXT PRIMARY KEY,month TEXT NOT NULL,provider TEXT NOT NULL,payload JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS intel_provider_calls_month ON intel_provider_calls(provider,month);
 CREATE TABLE IF NOT EXISTS intel_corpus_archives(document_id TEXT NOT NULL,version TEXT NOT NULL,payload JSONB NOT NULL,archived_at TIMESTAMPTZ NOT NULL DEFAULT now(),fetched_at TIMESTAMPTZ,PRIMARY KEY(document_id,version),FOREIGN KEY(document_id,version) REFERENCES intel_versions(document_id,version));
 ALTER TABLE intel_corpus_archives ADD COLUMN IF NOT EXISTS fetched_at TIMESTAMPTZ;
 CREATE TABLE IF NOT EXISTS intel_corpus_discoveries(query_id TEXT NOT NULL REFERENCES intel_corpus_queries(id),url TEXT NOT NULL,document_id TEXT,version TEXT,seen_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(query_id,url));
@@ -25,8 +27,30 @@ export class CorpusCampaign {
   async initialize(){await this.repo.db.exec(MIGRATION)
     // Interrupted calls retain their worst-case reservation. Never declare them free.
     await this.repo.db.query(`UPDATE intel_corpus_calls SET payload=jsonb_set(jsonb_set(payload,'{outcome}','"unknown_outcome"'),'{billing_state}','"unknown"') WHERE payload->>'outcome'='in_flight'`)
+    await this.repo.db.query(`UPDATE intel_provider_calls SET payload=jsonb_set(payload,'{outcome}','"unknown_outcome"') WHERE payload->>'outcome'='in_flight'`)
   }
   async settings(){return (await this.repo.db.query<Settings>('SELECT * FROM intel_corpus_campaign WHERE id=1')).rows[0]}
+  async providerStatus(now=new Date()){
+    const month=beijingDay(now).slice(0,7),limit=this.tencentLimit()
+    const used=(await this.repo.db.query<{n:number}>("SELECT count(*)::int AS n FROM intel_provider_calls WHERE provider='tencent-wsa' AND month=$1",[month])).rows[0].n
+    return {provider:'tencent-wsa',configured:!!process.env.TENCENTCLOUD_WSA_APIKEY,month,timezone:'Asia/Shanghai',attempts:used,monthly_limit:limit,remaining:Math.max(0,limit-used),quota_scope:'this_workbench_attempts',billing_state:'account_quota_not_verified',fallback:'deepseek-tools',original_fetch:'existing_fetch_provider'}
+  }
+  private tencentLimit(){const n=Number(process.env.TENCENT_WSA_MONTHLY_LIMIT??2000);return Number.isInteger(n)&&n>=0?Math.min(n,2000):0}
+  async recordProvider(receipt:WebCallReceipt,now=new Date()){
+    if(receipt.provider!=='tencent-wsa')return
+    if(receipt.outcome!=='in_flight'){
+      await this.repo.db.query('UPDATE intel_provider_calls SET payload=$2 WHERE id=$1 AND provider=$3',[receipt.id,JSON.stringify(receipt),receipt.provider]);return
+    }
+    await this.repo.db.transaction(async db=>{
+      // Serialize with the existing singleton row; no second worker or quota database.
+      await db.query('SELECT id FROM intel_corpus_campaign WHERE id=1 FOR UPDATE')
+      if((await db.query('SELECT id FROM intel_provider_calls WHERE id=$1',[receipt.id])).rows.length)return
+      const month=beijingDay(now).slice(0,7)
+      const used=(await db.query<{n:number}>("SELECT count(*)::int AS n FROM intel_provider_calls WHERE provider='tencent-wsa' AND month=$1",[month])).rows[0].n
+      if(used>=this.tencentLimit())throw Error('TENCENT_WSA_MONTHLY_LIMIT')
+      await db.query('INSERT INTO intel_provider_calls(id,month,provider,payload) VALUES($1,$2,$3,$4)',[receipt.id,month,receipt.provider,JSON.stringify(receipt)])
+    })
+  }
   async configure(value:{enabled:boolean;daily_search_limit:number;daily_fetch_limit:number;daily_cny_limit:number}){
     if(!Number.isInteger(value.daily_search_limit)||value.daily_search_limit<1||value.daily_search_limit>1000||!Number.isInteger(value.daily_fetch_limit)||value.daily_fetch_limit<0||value.daily_fetch_limit>1000||!Number.isFinite(value.daily_cny_limit)||value.daily_cny_limit<0||value.daily_cny_limit>10)throw Error('INVALID_CAMPAIGN_LIMIT')
     if(value.enabled&&(!this.approved()||value.daily_cny_limit>this.approvedLimit()))throw Error('CAMPAIGN_COST_APPROVAL_REQUIRED')
@@ -68,7 +92,7 @@ export class CorpusCampaign {
       const c=(await db.query<Settings>('SELECT * FROM intel_corpus_campaign WHERE id=1 FOR UPDATE')).rows[0]
       if(!c.enabled||!this.approved())throw Error('CAMPAIGN_PAUSED')
       const u=await this.usage(beijingDay(now),db),used=receipt.operation==='search'?u.search_attempts:u.fetch_attempts,limit=receipt.operation==='search'?c.daily_search_limit:c.daily_fetch_limit
-      if(used>=limit||u.estimated_cny+0.005>Math.min(Number(c.daily_cny_limit),this.approvedLimit())+1e-9)throw Error('CAMPAIGN_DAILY_LIMIT')
+      if(used>=limit||u.estimated_cny+(receipt.estimated_cny??0.005)>Math.min(Number(c.daily_cny_limit),this.approvedLimit())+1e-9)throw Error('CAMPAIGN_DAILY_LIMIT')
       await db.query('INSERT INTO intel_corpus_calls(id,day,operation,payload) VALUES($1,$2,$3,$4)',[receipt.id,beijingDay(now),receipt.operation,JSON.stringify(receipt)])
     })
   }

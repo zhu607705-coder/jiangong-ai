@@ -659,6 +659,27 @@
         "no new database/search/modelclient/scheduler",
         "no topic draft promotion into formal project facts or rules"
       ]
+    },
+    {
+      "id": "tencent-wsa-20261021",
+      "reuse": [
+        "runtime/dsh/public-web.ts mountPublicWeb and DeepSeekWebTools fallback/Fetch",
+        "research-bridge hooks and IntelRepository transactions",
+        "CorpusCampaign singleton lock,call budget and original persist",
+        "collectChannel,collectSelectedEvidence and existing RAG supplements"
+      ],
+      "new_domain_logic": [
+        "Official SearchPro service-Key request and JSON-string Pages normalization",
+        "Provider factory shared by corpus/native source/project research",
+        "Monthly provider attempt receipts in same DB;unknown billing retained",
+        "Safe private key installation helper"
+      ],
+      "unchanged": [
+        "No extra scheduler/modelclient/database",
+        "Search summaries never enter original text as full bodies",
+        "No separate MCP runtime needed for backend API integration",
+        "Daily100modelcalls/1000campaignsearches/6CNYceiling preserved"
+      ]
     }
   ]
 }

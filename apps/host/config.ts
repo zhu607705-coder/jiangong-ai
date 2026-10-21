@@ -20,7 +20,10 @@ const env = z.object({
   COLLABORATIVE_WORKSPACE: z.enum(['true', 'false']).default('false'),
   DATA_DIR: z.string().default('data/local'), DATABASE_URL: z.string().optional(),
   DEEPSEEK_MODEL: z.string().default('deepseek-flash'),
-  RESEARCH_WEB_PROVIDER:z.enum(['legacy','deepseek_tools','deepseek_content']).default('deepseek_content'),
+  RESEARCH_WEB_PROVIDER:z.enum(['legacy','deepseek_tools','deepseek_content','tencent_wsa']).default('deepseek_content'),
+  TENCENT_WSA_TIMEOUT_MS:z.coerce.number().int().min(1000).max(20000).default(7000),
+  TENCENT_WSA_EDITION:z.enum(['auto','lite','standard','flagship']).default('auto'),
+  TENCENT_WSA_INDUSTRY:z.enum(['','gov','news','acad','finance']).default(''),
   QWEN_DECISION_ENABLED: z.enum(['true', 'false']).default('false'),
   QWEN_DECISION_MODEL: z.literal('decision-model-preview').default('decision-model-preview'),
   QWEN_DECISION_ENDPOINT: z.string().default(''),
@@ -41,5 +44,5 @@ export const config = {
   modelConfigured: Boolean(process.env.DEEPSEEK_API_KEY),
   decisionEnabled: env.QWEN_DECISION_ENABLED === 'true',
   decisionConfigured: Boolean(process.env.QWEN_DECISION_API_KEY && env.QWEN_DECISION_ENDPOINT),
-  searchConfigured: Boolean(process.env.DEEPSEEK_SEARCH_API_KEY || process.env.DEEPSEEK_API_KEY),
+  searchConfigured: Boolean(process.env.DEEPSEEK_SEARCH_API_KEY || process.env.DEEPSEEK_API_KEY || env.RESEARCH_WEB_PROVIDER==='tencent_wsa'&&process.env.TENCENTCLOUD_WSA_APIKEY),
 }

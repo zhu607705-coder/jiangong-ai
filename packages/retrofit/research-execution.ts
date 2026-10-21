@@ -13,5 +13,5 @@ export interface ResearchExecution {
   recordWebCall(receipt:{id:string;provider:string;operation:string;request_hash:string;outcome:string;billing_state:string;duration_ms:number;[key:string]:unknown}):Promise<void>
   readonly deadlineAt:number
   readonly resumed:boolean
-  readonly provider:'legacy'|'deepseek_tools'|'deepseek_content'
+  readonly provider:'legacy'|'deepseek_tools'|'deepseek_content'|'tencent_wsa'
 }

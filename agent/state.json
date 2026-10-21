@@ -4983,5 +4983,22 @@
     "runtime_commit": "f9560660cc1aa1620b8320d62f0d6bc4b1c20840",
     "ui_commit": "c407c37bb5e28bc3e17eca8b7a896932bb8aa709",
     "daily_model_budget": 100
+  },
+  "tencent_wsa_20261021": {
+    "status": "implementing",
+    "decisions": [
+      "Official POST https://api.wsa.cloud.tencent.com/SearchPro with Bearer service API Key",
+      "DSH provider and one existing factory;search snippets are not original bodies",
+      "Same IntelRepository DB/worker/archive/RAG;one provider receipt table for atomic monthly attempt ceiling2000",
+      "Unknown account free credits remain unknown;gross pre-credit price ceiling0.026CNY per request;original6CNY campaign daily ceiling unchanged",
+      "NoTencentkeyonserver;async user key-file request pending;keep defaultDeepSeek provideruntilconfigured"
+    ],
+    "artifacts": [
+      "docs/元宝搜索接入_20261021.md"
+    ],
+    "next_runnable_task": "Completefocusedtests,typecheck,deployinactiveprovider;configureprivatekeyifprovidedandverifyrealqueries.",
+    "unresolved_questions": [
+      "Tencent service key and account free quota not available yet."
+    ]
   }
 }
