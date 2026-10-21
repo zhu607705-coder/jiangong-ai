@@ -1,0 +1,6 @@
+apps/workspace/src/App.tsx(1197,66): error TS2339: Property 'status' does not exist on type 'Promise<SourceHitFocusResult>'.
+apps/workspace/src/App.tsx(1197,154): error TS2339: Property 'status' does not exist on type 'Promise<SourceHitFocusResult>'.
+apps/workspace/src/App.tsx(1241,88): error TS2339: Property 'status' does not exist on type 'Promise<SourceHitFocusResult>'.
+apps/workspace/src/App.tsx(1241,133): error TS2339: Property 'before' does not exist on type 'Promise<SourceHitFocusResult>'.
+apps/workspace/src/App.tsx(1241,213): error TS2339: Property 'quote' does not exist on type 'Promise<SourceHitFocusResult>'.
+apps/workspace/src/App.tsx(1241,246): error TS2339: Property 'after' does not exist on type 'Promise<SourceHitFocusResult>'.

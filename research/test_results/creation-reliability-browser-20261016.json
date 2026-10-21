@@ -1,0 +1,12 @@
+{
+  "emptyResearchName": true,
+  "horizontalOverflow": false,
+  "missingRequiredName": true,
+  "selectFont": "16px",
+  "selectHeight": 45,
+  "topLinks": [
+    "数据库结构"
+  ],
+  "url": "http://10.70.223.113/?view=projects",
+  "validationMessage": "请填写研究小区或片区名称。"
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "authorized-merge-receipt/1",
+  "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/30",
+  "state": "MERGED",
+  "merged_at": "2026-10-15T03:39:22Z",
+  "merge_commit": "f006c669e4f908f9468c8f07961199505c9b80d9",
+  "reviewed_head": "a07d5852468bb16870bb351b8892fab61d66c4ac",
+  "merged_tree_equals_reviewed_tree": true,
+  "local_branch": "main",
+  "deployed_application_commit": "7905d1c9cac754938380b321daeb68d9416e22a1",
+  "application_code_difference_from_merged_main": [],
+  "public_url": "http://10.70.223.113/",
+  "live_verification": "research/test_results/server-public-admin-verification-20261015.json",
+  "browser_fixture_verification": "research/test_results/browser-session-fixture-20261015.json",
+  "latest_ci_at_handoff": {
+    "intelligence_run": 38677351918,
+    "map_run": 38677347933,
+    "status": "in_progress; not claimed passed"
+  },
+  "pre_existing_check_limit": "Legacy neighborhood browser script still targets the prior overview layout; recorded as failed, not an acceptance result.",
+  "preserved_unrelated_tracked_edits": ["AGENTS.md", "agent/state.json"],
+  "deepseek": "deferred at user request; no new provider calls or outbound proxy"
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "authorized-merge-receipt/1",
+  "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/31",
+  "state": "MERGED",
+  "merged_at": "2026-10-15T04:19:27Z",
+  "merge_commit": "50b2ff100549022526ab34b043df36caf6f7852c",
+  "reviewed_head": "3d813c3",
+  "merged_tree_equals_reviewed_tree": true,
+  "local_branch": "main",
+  "deployed_application_commit": "ba11046445dcf8caa5fce9658bf47b29a6ebb6c6",
+  "application_code_difference_from_merged_main": [],
+  "actual_server_evidence": "research/test_results/evidence-navigation-server-20261015.json",
+  "latest_ci_at_handoff": {"intelligence_run": 38680834940, "map_run": 38680814571, "status": "in_progress; not claimed passed"},
+  "final_provider_head": {"http_status": 0, "curl_exit": 28, "timeout_seconds": 5, "model_generation_calls": 0},
+  "preserved_unrelated_tracked_edits": ["AGENTS.md", "agent/state.json"],
+  "temporary_cleanup": "Automatic approval rejected cleanup with blocked by policy; staging and duplicate temporary report copy retained."
+}

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/creation-research-reliability
+
+stderr | tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"6559b870b331d3eccf58e6bce483ac8ebab216e07ac1a966ab9d75ebe18d719b","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":5,"query_count":0,"model_calls":0,"model_duration_ms":0}
+
+ ❯ tests/contracts/research-rounds.test.ts (8 tests | 1 failed) 3423ms
+   × repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis 405ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/research-rounds.test.ts > repairs synthetic second-round survey claims through the existing DSH repair without suppressing the analysis
+AssertionError: expected 'failed' to be 'completed' // Object.is equality
+
+Expected: "completed"
+Received: "failed"
+
+ ❯ tests/contracts/research-rounds.test.ts:179:25
+    177|   ports.open.mockResolvedValueOnce({calls:[],close:async()=>{},call:wi…
+    178|   const second=await run(await createRound(p,['DOC-NEEDS'],first))
+    179|   expect(second.status).toBe('completed');expect(call).toHaveBeenCalle…
+       |                         ^
+    180|   expect(call.mock.calls[0][1]).toContain('居民样本、问卷、访谈和统计比例均为隔离模拟')
+    181|   expect(call.mock.calls[1][0]).toBe('renewal_strategy_quote_repair')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 69 passed (70)
+   Start at  11:39:01
+   Duration  7.91s (transform 1.08s, setup 0ms, import 2.40s, tests 4.94s, environment 0ms)
+

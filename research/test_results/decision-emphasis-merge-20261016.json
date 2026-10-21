@@ -1,0 +1,10 @@
+{
+  "pr": 40,
+  "state": "MERGED",
+  "head": "facfaee249a8120201db105530dfd8716962f87f",
+  "merge_commit": "e1a7a1d9d7c27af320600a300cbbfba082c1b1ce",
+  "checks": {
+    "Map workspace quality": "SUCCESS",
+    "Intelligence integration review": "SUCCESS"
+  }
+}

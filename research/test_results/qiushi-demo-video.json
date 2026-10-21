@@ -1,0 +1,18 @@
+{
+  "status": "recorded_and_rendered_verified",
+  "duration_seconds": 123,
+  "resolution": "1920x1080",
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "sha256": "c6915b56ea83193e92363e99ea1c332ae8e3fc3d911b8c51896d5d582f2d7bcd",
+  "bytes": 21385742,
+  "chapters": 14,
+  "model_calls": 0,
+  "professional_approvals": 0,
+  "scope": "Actual Qiushi workbench UI; hypothetical calculator inputs explicitly labeled; unreviewed library/skills remain unreviewed",
+  "artifact": "output/playwright/qiushi-demo/求是村_工作台演示_约2分钟.mp4",
+  "source_project": "P-73678dc3-b255-4ae4-848b-86f26266f0c0",
+  "full_decode": "passed",
+  "audio_peak_db": -1.5,
+  "source_library_unchanged": true
+}

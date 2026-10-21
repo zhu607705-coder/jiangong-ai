@@ -1,0 +1,30 @@
+{
+  "scope": "求是村公开挂牌租金样本",
+  "captured_at": "2026-10-12",
+  "data_class": "reference",
+  "observation_type": "asking_rent",
+  "source_url": "https://m.xflapp.com/zufang/neighbor-house-list/hz-7502420061791174656.html",
+  "samples": [
+    {
+      "rooms": "2室1厅",
+      "area_m2": 60,
+      "asking_rent_yuan_month": 4000,
+      "locator": "页面第3套（网页L10）",
+      "lease_signed_rent": null
+    },
+    {
+      "rooms": "2室2厅",
+      "area_m2": 60.25,
+      "asking_rent_yuan_month": 4200,
+      "locator": "页面第6套（网页L16）",
+      "lease_signed_rent": null
+    },
+    {
+      "rooms": "2室1厅",
+      "area_m2": 66,
+      "asking_rent_yuan_month": 3800,
+      "locator": "页面第8套（网页L20）",
+      "lease_signed_rent": null
+    }
+  ]
+}

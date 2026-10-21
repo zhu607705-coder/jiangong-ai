@@ -1,0 +1,10 @@
+{
+  "merged_at": "2026-10-16T11:33:56.496267+00:00",
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/48",
+  "merge_commit": "5f8cba1f92e0db4f85ea5a22714c9c407748b0c8",
+  "root_main_updated": true,
+  "existing_dirty_files_preserved": 12,
+  "live_https_and_renewal_verified": true,
+  "ci_at_merge": "running_not_claimed_passed",
+  "remaining_dependency": "campus IPv4 authentication or an official stable proxy is needed to remove desktop DNS egress dependency"
+}

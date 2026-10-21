@@ -1,0 +1,64 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/rag-ci-baseline
+
+stderr | tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":2,"input_hash":"43983adddc6bfabd178fbd1266244d0cd553e59a0b943855e3f401eb4b80b19f","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":8,"query_count":0,"model_calls":0,"model_duration_ms":0,"cause_type":"TypeError","location":"    at D:/建工ai/.cache/rag-ci-baseline/tests/contracts/research-rounds.test.ts:74:130\n    at Array.map (<anonymous>)"}
+
+stderr | tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result
+{"event":"renewal_strategy_failed","project_id":"P-ROUND-DEMO","context_version":3,"input_hash":"7999159c50de98ba9226302cad2196b544ceadcd942561ea463c39cc34ed6e94","diagnostic":{"code":"STRATEGY_FAILED"},"source_count":9,"query_count":0,"model_calls":0,"model_duration_ms":0,"cause_type":"TypeError","location":"    at D:/建工ai/.cache/rag-ci-baseline/tests/contracts/research-rounds.test.ts:74:130\n    at Array.map (<anonymous>)"}
+
+ ❯ tests/contracts/research-rounds.test.ts (8 tests | 1 failed) 4443ms
+   × runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result 941ms
+ ❯ tests/contracts/format-compatibility.test.ts (7 tests | 1 failed) 76ms
+   × keeps source IDs and every reference field compatible, including inherited identifiers above 250 characters 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/format-compatibility.test.ts > keeps source IDs and every reference field compatible, including inherited identifiers above 250 characters
+AssertionError: evidence_refs: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ walk tests/contracts/format-compatibility.test.ts:35:166
+     33|   let checked=0
+     34|   const walk=(node:unknown)=>{if(!node||typeof node!=='object')return;…
+     35|     if(keys.has(key)&&child&&typeof child==='object') {const contract=…
+       |                                                                                                                                                                      ^
+     36|     walk(child)
+     37|   }}
+ ❯ walk tests/contracts/format-compatibility.test.ts:36:5
+ ❯ walk tests/contracts/format-compatibility.test.ts:36:5
+ ❯ walk tests/contracts/format-compatibility.test.ts:36:5
+ ❯ walk tests/contracts/format-compatibility.test.ts:36:5
+ ❯ walk tests/contracts/format-compatibility.test.ts:36:5
+ ❯ walk tests/contracts/format-compatibility.test.ts:36:5
+ ❯ tests/contracts/format-compatibility.test.ts:38:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/research-rounds.test.ts > runs two isolated rounds with frozen selected materials, historical AI comparison and immutable first result
+AssertionError: expected undefined to deeply equal [ 'DOC-COST' ]
+
+- Expected:
+[
+  "DOC-COST",
+]
+
++ Received:
+undefined
+
+ ❯ tests/contracts/research-rounds.test.ts:96:75
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 13 passed (15)
+   Start at  10:19:11
+   Duration  5.82s (transform 470ms, setup 0ms, import 1.04s, tests 4.52s, environment 0ms)
+

@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "kind": "actual_provider_protocol_with_constructed_text",
+  "checked_at": "2026-10-16T04:57:15.965Z",
+  "model": "deepseek-flash",
+  "index": {
+    "eligible": 1,
+    "indexed": 1,
+    "pending": 0,
+    "reused": 0
+  },
+  "method": "api_semantic_bm25",
+  "hits": 1,
+  "answer_claims": 4,
+  "exact_quotes": true,
+  "warnings": [],
+  "calls": [
+    {
+      "stage": "rag_probe_RagQueryPlan",
+      "model": "deepseek-flash",
+      "finish_reason": "tool-calls"
+    },
+    {
+      "stage": "rag_probe_RagSemanticIndex",
+      "model": "deepseek-flash",
+      "finish_reason": "tool-calls"
+    },
+    {
+      "stage": "rag_probe_RagSemanticSelection",
+      "model": "deepseek-flash",
+      "finish_reason": "tool-calls"
+    },
+    {
+      "stage": "rag_probe_RagAnswer",
+      "model": "deepseek-flash",
+      "finish_reason": "tool-calls"
+    }
+  ],
+  "production_project_writes": 0,
+  "business_quality_claim": false
+}

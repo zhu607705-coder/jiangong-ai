@@ -1,0 +1,59 @@
+{
+  "schema_version": "user-round-map-workflow-readonly/1",
+  "status": "readback_failed_or_unverified",
+  "started_at": "2026-10-15T14:20:38.018666+00:00",
+  "base_url": "http://10.70.223.113",
+  "project_id": "P-e83ed15d-1739-46df-b1cb-dc3111afa399",
+  "round_id": "ROUND-6c4a4331-98e6-415f-a625-320196eb55b5",
+  "deployment_commit": "c52871fd78173c8d81bb3a9835935c7aca25f316",
+  "deployment_commit_evidence": "lead_supplied_not_independently_verified_by_api",
+  "transport": {
+    "methods": [
+      "GET"
+    ],
+    "environment_proxy_enabled": false,
+    "cookie_jar": true,
+    "redirects": "blocked"
+  },
+  "provider_calls_started_by_script": 0,
+  "rounds_created_by_script": 0,
+  "run_requests_by_script": 0,
+  "ndjson_phases": "not_verified_by_this_get_only_script",
+  "private_source_or_model_text_copied_to_receipt": false,
+  "failure": {
+    "type": "CheckFailed",
+    "check": "requested_round_has_saved_packet"
+  },
+  "preservation_checks": {
+    "non_login_workbench_session": true,
+    "requested_round_has_saved_packet": false
+  },
+  "http_requests": [
+    {
+      "method": "GET",
+      "path": "/api/session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-e83ed15d-1739-46df-b1cb-dc3111afa399"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-e83ed15d-1739-46df-b1cb-dc3111afa399/research-rounds"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/P-e83ed15d-1739-46df-b1cb-dc3111afa399/documents"
+    }
+  ],
+  "finished_at": "2026-10-15T14:20:38.292320+00:00",
+  "post_readback_cancellation_review": {
+    "observed_by": "/root",
+    "evidence": "Cua actual tab 8 changed project identity from P-e83ed15d to P-a8ccd007 prefix",
+    "classification": "request_aborted_on_project_identity_change",
+    "result_remains_null": true,
+    "runtime_budget_failure_established": false,
+    "no_retry_by_this_verifier": true,
+    "recorded_at": "2026-10-15T14:22:30.917540+00:00"
+  }
+}

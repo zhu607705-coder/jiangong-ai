@@ -1,0 +1,10 @@
+{
+  "alerts": 0,
+  "prematurePriority": false,
+  "resultPanels": 0,
+  "stage": "等待开始判定",
+  "topLinks": [
+    "数据库结构"
+  ],
+  "url": "http://10.70.223.113/?project=P-f47555b1-0175-4d49-85cf-1d56b17fcee1&view=assessment&section=direction"
+}

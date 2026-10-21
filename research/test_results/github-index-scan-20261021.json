@@ -1,0 +1,26 @@
+{
+  "staged_files": 181,
+  "staged_bytes": 34520898,
+  "largest_blobs": [
+    {
+      "bytes": 17870267,
+      "path": "data/imports/renewal-database-20261014/workbook-parsed-full.json"
+    },
+    {
+      "bytes": 7417660,
+      "path": "data/imports/renewal-database-20261014/complete-workbook.md"
+    },
+    {
+      "bytes": 1751389,
+      "path": "reference/2.png"
+    },
+    {
+      "bytes": 1351188,
+      "path": "reference/1.png"
+    }
+  ],
+  "ordinary_git_limit_passed": true,
+  "credential_candidates_reviewed": 23,
+  "actual_credential_findings": 0,
+  "review_basis": "Only model-call UUID session identifiers and a descriptive user-budget authorization note;no login cookies or service credentials"
+}

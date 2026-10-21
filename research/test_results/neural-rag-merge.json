@@ -1,0 +1,29 @@
+{
+  "pr": {
+    "headRefOid": "e7a63b73c51e9630c94c9993551edbee30804d61",
+    "mergeCommit": {
+      "oid": "7dd2478aca3071139088cdc3839dbc1b13c0e0a3"
+    },
+    "mergedAt": "2026-10-14T04:53:56Z",
+    "state": "MERGED",
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/24"
+  },
+  "local_branch": "main",
+  "local_head": "7dd2478aca3071139088cdc3839dbc1b13c0e0a3",
+  "verified_tree_equals_merged_tree": true,
+  "pull_request_checks": [
+    {
+      "conclusion": "success",
+      "databaseId": 38513308509,
+      "status": "completed",
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38513308509"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 38513308490,
+      "status": "completed",
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38513308490"
+    }
+  ],
+  "unrelated_state_preserved": true
+}

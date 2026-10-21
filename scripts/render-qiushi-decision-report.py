@@ -57,7 +57,7 @@ def report_frame(canvas, doc):
     canvas.line(44, height - 35, width - 44, height - 35)
     canvas.setFont("IntroBody", 8)
     canvas.setFillColor(colors.HexColor(builder.MUTED))
-    canvas.drawString(44, height - 26, "海之子  |  求是村更新决策研判与改造方案")
+    canvas.drawString(44, height - 26, "旧区新生  |  求是村更新决策研判与改造方案")
     canvas.drawString(44, 26, "2026-10-15  |  QS-R20261015")
     canvas.drawRightString(width - 44, 26, str(doc.page))
 
@@ -86,7 +86,7 @@ def report_table(data, *args, **kwargs):
 
 def report_doc(*args, **kwargs):
     kwargs["title"] = "求是村更新决策研判报告与改造方案"
-    kwargs["author"] = "海之子项目团队"
+    kwargs["author"] = "旧区新生项目团队"
     return existing_doc(*args, **kwargs)
 
 

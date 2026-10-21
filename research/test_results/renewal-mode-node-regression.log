@@ -1,0 +1,111 @@
+
+> haizhizi-decision-workspace@0.2.0 test
+> vitest run
+
+
+ RUN  v4.1.11 D:/建工ai
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts (37 tests | 5 failed) 57ms
+     × sends six fit questions and profile-specific priority choices through the existing transport 27ms
+     × keeps the unrequested demand score null even if the provider includes extra answers 2ms
+     × keeps a safety veto despite six high model grades 2ms
+     × does not let an independent rights veto turn conflicting safety claims into a safety veto 2ms
+     × cannot use fit to waive the independent professional rule confirmation 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > sends six fit questions and profile-specific priority choices through the existing transport
+AssertionError: expected [ 'renewal_mode', …(11) ] to have a length of 9 but got 12
+
+- Expected
++ Received
+
+- 9
++ 12
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts:97:41
+     95|     const result=await evaluateDecision(input,new AbortController().si…
+     96|     const body=JSON.parse((transport.mock.calls[0] as unknown as [stri…
+     97|     expect(Object.keys(body.questions)).toHaveLength(9)
+       |                                         ^
+     98|     expect(Object.keys(body.questions.priority_dimension.criteria)).to…
+     99|     expect(JSON.stringify(body.questions)).not.toMatch(/腾退|到岗|空置|收入路径/)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > keeps the unrequested demand score null even if the provider includes extra answers
+AssertionError: expected undefined to be null
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts:127:72
+    125|     const body=JSON.parse((transport.mock.calls[0] as unknown as [stri…
+    126|     expect(body.questions).not.toHaveProperty('fit_demand')
+    127|     expect(out.dashboard?.dimensions.find(d=>d.key==='demand')?.value)…
+       |                                                                        ^
+    128|     expect(out.dashboard?.status).toBe('partial')
+    129|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > keeps a safety veto despite six high model grades
+AssertionError: expected 'failed' to be 'completed' // Object.is equality
+
+Expected: "completed"
+Received: "failed"
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts:149:24
+    147|     const p=project();p.facts.push(fact('safety_veto','engineering_rev…
+    148|     const out=await evaluateDecision(projectDecisionInput(p),new Abort…
+    149|     expect(out.status).toBe('completed');expect(out.action).toBe('reso…
+       |                        ^
+    150|     expect(retrofitAdvice(p).decision).toBe('defer')
+    151|     expect(out.dashboard?.dimensions.every(d=>d.value===5)).toBe(true)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > does not let an independent rights veto turn conflicting safety claims into a safety veto
+AssertionError: expected null to be 'resolve_blocker' // Object.is equality
+
+- Expected:
+"resolve_blocker"
+
++ Received:
+null
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts:166:24
+    164|     expect(factors.find(f=>f.key==='implementation')).toMatchObject({s…
+    165|     const out=await evaluateDecision(projectDecisionInput(p),new Abort…
+    166|     expect(out.action).toBe('resolve_blocker');expect(out.priority).to…
+       |                        ^
+    167|   })
+    168|   it('cannot use fit to waive the independent professional rule confir…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/contracts/neighborhood-alignment.test.ts > source-bound project scoring and research route > cannot use fit to waive the independent professional rule confirmation
+AssertionError: expected 'failed' to be 'completed' // Object.is equality
+
+Expected: "completed"
+Received: "failed"
+
+ ❯ tests/contracts/neighborhood-alignment.test.ts:171:24
+    169|     const p=project();p.facts=p.facts.filter(f=>f.kind!=='retrofit.rul…
+    170|     const out=await evaluateDecision(projectDecisionInput(p),new Abort…
+    171|     expect(out.status).toBe('completed');expect(out.action).toBe('inve…
+       |                        ^
+    172|     expect(out.next_step).toContain('专业规则')
+    173|     expect(out.dashboard?.dimensions.every(d=>d.value===5)).toBe(true)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed | 64 passed (65)
+      Tests  5 failed | 1057 passed (1062)
+   Start at  01:38:42
+   Duration  210.26s (transform 1.62s, setup 0ms, import 12.71s, tests 189.89s, environment 3ms)
+

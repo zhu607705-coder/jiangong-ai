@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-18T02:20:24.468484+00:00",
+  "base_commit": "ad1d4d88ad814d13549e6761a1f758097f1fd45c",
+  "checked_patch_commit": "4a37d0c0f212aff6cd3cf3fd037389a04bc810e8",
+  "full_ci": {
+    "passed": 1722,
+    "failed": 2,
+    "run": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/39089398350"
+  },
+  "baseline_control": {
+    "passed": 13,
+    "failed": 2,
+    "same_failure_signatures": true,
+    "command": "npx vitest run tests/contracts/format-compatibility.test.ts tests/contracts/research-rounds.test.ts"
+  },
+  "existing_failures": [
+    "format-compatibility: inherited evidence_refs length",
+    "research-rounds: old fake provider compressed source context"
+  ],
+  "rag_checks_passed": true,
+  "existing_failures_not_marked_passed": true
+}

@@ -1,0 +1,486 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ❯ tests/contracts/admin-access.test.ts (29 tests | 3 failed) 64ms
+     × mounts the workbench with the matching viewer, administrator or local context ({ authentication: { enabled: true, role: 'viewer', public_read_only: true, expires_at: null } }) 16ms
+     × mounts the workbench with the matching viewer, administrator or local context ({ authentication: { enabled: true, role: 'admin', username: 'example-admin', expires_at: '2026-10-16T01:56:31.184Z' } }) 5ms
+     × mounts the workbench with the matching viewer, administrator or local context ({ authentication: { enabled: false, role: 'admin', public_read_only: false, collaborative_workspace: true } }) 2ms
+ ❯ tests/contracts/project-results-page.test.ts (13 tests | 1 failed) 86ms
+   × reports come from a completed project result and never link to the fixed debugging PDF 8ms
+ ❯ tests/contracts/renewal-mode-panel.test.ts (7 tests | 2 failed) 64ms
+   × before an actual mode decision, no default direction or result conditions are presented 36ms
+   × a cached model demolition preference cannot replace the current evidence gate in the headline 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/admin-access.test.ts > admin access protocol and entry gate > mounts the workbench with the matching viewer, administrator or local context ({ authentication: { enabled: true, role: 'viewer', public_read_only: true, expires_at: null } })
+ FAIL  tests/contracts/admin-access.test.ts > admin access protocol and entry gate > mounts the workbench with the matching viewer, administrator or local context ({ authentication: { enabled: true, role: 'admin', username: 'example-admin', expires_at: '2026-10-16T01:56:31.184Z' } })
+AssertionError: expected HTMLAnchorElement{ …(6), …(7) } to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="admin-public-decisions"
+  href="/?view=published"
+>
+  查看公开决策方案
+</a>
+
+ ❯ tests/contracts/admin-access.test.ts:63:69
+     61|       else expect(dom.document.querySelector('.admin-session-bar')).to…
+     62|       if (canWrite === 'false') expect([...dom.document.querySelectorA…
+     63|       expect(dom.document.querySelector('.admin-public-decisions')).to…
+       |                                                                     ^
+     64|       expect(dom.document.querySelector('.admin-session-report')).toBe…
+     65|       if (label === '校园协作') {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/contracts/admin-access.test.ts > admin access protocol and entry gate > mounts the workbench with the matching viewer, administrator or local context ({ authentication: { enabled: false, role: 'admin', public_read_only: false, collaborative_workspace: true } })
+AssertionError: expected HTMLAnchorElement{ …(6), …(7) } to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="admin-public-decisions"
+  href="/?view=published"
+>
+  查看决策方案
+</a>
+
+ ❯ tests/contracts/admin-access.test.ts:63:69
+     61|       else expect(dom.document.querySelector('.admin-session-bar')).to…
+     62|       if (canWrite === 'false') expect([...dom.document.querySelectorA…
+     63|       expect(dom.document.querySelector('.admin-public-decisions')).to…
+       |                                                                     ^
+     64|       expect(dom.document.querySelector('.admin-session-report')).toBe…
+     65|       if (label === '校园协作') {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/contracts/project-results-page.test.ts > reports come from a completed project result and never link to the fixed debugging PDF
+AssertionError: expected [ HTMLAnchorElement{ …(6), …(7) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/contracts/project-results-page.test.ts:226:19
+    224|   await render(packet(campus), campus)
+    225|   const links = () => [...container.querySelectorAll<HTMLAnchorElement…
+    226|   expect(links()).toHaveLength(0)
+       |                   ^
+    227|   expect(container.querySelector('.project-results-report')).not.toBeN…
+    228|   expect(container.querySelector('.project-results-report')?.textConte…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/contracts/renewal-mode-panel.test.ts > before an actual mode decision, no default direction or result conditions are presented
+AssertionError: expected HTMLElement{ …(4), …(7) } to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="renewal-direction is-comprehensive"
+>
+  <strong>
+    综合整治优先研究
+  </strong>
+  <dl
+    class="renewal-decision-brief"
+  >
+    <div
+      class="renewal-main-reason"
+    >
+      <dt>
+        主要原因
+      </dt>
+      <dd>
+        以保留建筑、分项更新组织方案，逐栋核实结构、改造范围与实施条件。
+      </dd>
+    </div>
+    <div
+      class="renewal-next"
+    >
+      <dt>
+        下一步
+      </dt>
+      <dd>
+        向产权单位和住建部门取得逐栋安全鉴定、修缮与重建两套技术意见。
+      </dd>
+    </div>
+  </dl>
+  <details
+    aria-label="判定标准与条件"
+    class="renewal-gate"
+  >
+    <summary>
+      <strong>
+        判定标准与条件
+      </strong>
+      <span
+        class="renewal-gate-counts"
+      >
+        <span
+          class="decision-status-badge"
+          data-tone="success"
+        >
+          拆建条件已满足 0/9
+        </span>
+        <span
+          class="decision-status-badge"
+          data-tone="warning"
+        >
+          待核 9
+        </span>
+      </span>
+      <svg
+        aria-hidden="true"
+        class="tabler-icon tabler-icon-chevron-down"
+        fill="none"
+        height="17"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="17"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M6 9l6 6l6 -6"
+        />
+      </svg>
+    </summary>
+    <h4>
+      何时切换为原拆原建优先论证
+    </h4>
+    <p>
+      先核实本对象拆建必要性和八项实施前提，再比较投入与使用效果。待核项保留为未知，逐项列明所需材料。
+    </p>
+    <div
+      class="renewal-gate-group"
+    >
+      <h5>
+        1. 本对象拆建必要性
+      </h5>
+      <ul>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              现有结构修缮不可行
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              以本对象逐栋专业鉴定和修缮论证，确认结构问题无法通过修缮解决的楼栋、范围及处置要求。
+            </p>
+          </details>
+        </li>
+      </ul>
+    </div>
+    <div
+      class="renewal-gate-group"
+    >
+      <h5>
+        2. 拆建实施可行前提
+      </h5>
+      <ul>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              拆除与保护条件允许
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              核对本对象拆除程序、保护要求与允许实施的楼栋范围，取得属地主管部门确认。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              权属与实施边界明确
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              以本对象不动产和共有权益记录确认权利主体、边界与实施责任。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              重建规划条件已确认
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              确认本对象适用的规划条件、新建指标和主管部门程序。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              适用的居民决议有效
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              按本项目适用程序，核验居民决议的参与范围、表决记录与生效条件。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              腾退、过渡与回搬已落实
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              核验逐户安置、过渡保障、回搬和特殊居民安排。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              本项目资金已落实
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              逐项登记责任主体、出资承诺、到位时点和现金流缺口，形成覆盖建设与过渡期的资金安排。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              同口径全周期方案已比选
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              在同一范围和价格年，比较修缮与重建的建设（含拆除）、腾退过渡、运维费用及使用效果，形成两方案费用—效果表。
+            </p>
+          </details>
+        </li>
+        <li
+          data-state="unknown"
+          data-tone="warning"
+        >
+          <div
+            class="renewal-gate-item"
+          >
+            <span>
+              后续维护责任已确认
+            </span>
+            <strong
+              class="decision-status-badge"
+              data-tone="warning"
+            >
+              未知
+            </strong>
+          </div>
+          <details>
+            <summary>
+              核验要求 · 待补依据
+            </summary>
+            <p>
+              确认交付后的接管主体、年度维护预算、资金来源和居民长期负担。
+            </p>
+          </details>
+        </li>
+      </ul>
+    </div>
+    <p
+      class="renewal-gate-result"
+    >
+      按以上状态补齐或核实条件，形成可比较的两方案费用—效果表。
+    </p>
+  </details>
+  <div
+    class="renewal-judge-actions"
+  >
+    <button>
+      <svg
+        class="tabler-icon tabler-icon-sparkles"
+        fill="none"
+        height="17"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="17"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6"
+        />
+      </svg>
+      判定改造模式
+    </button>
+  </div>
+</div>
+
+ ❯ tests/contracts/renewal-mode-panel.test.ts:17:56
+     15| test('before an actual mode decision, no default direction or result c…
+     16|   const { document } = parseHTML(renderToStaticMarkup(createElement(Re…
+     17|   expect(document.querySelector('.renewal-direction')).toBeNull()
+       |                                                        ^
+     18|   expect(document.querySelector('.renewal-mode-result')).toBeNull()
+     19|   expect(document.textContent).not.toContain('综合整治优先研究')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/contracts/renewal-mode-panel.test.ts > a cached model demolition preference cannot replace the current evidence gate in the headline
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/contracts/renewal-mode-panel.test.ts:43:73
+     41|   expect(document.querySelector('.renewal-next')?.textContent).toConta…
+     42|   expect(document.querySelector('.renewal-gate')?.tagName).toBe('DETAI…
+     43|   expect(document.querySelector('.renewal-gate')?.hasAttribute('open')…
+       |                                                                         ^
+     44|   expect(document.querySelector('.renewal-gate>summary')?.textContent)…
+     45|   expect(document.querySelector('.renewal-gate>summary')?.textContent)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  6 failed | 43 passed (49)
+   Start at  09:55:30
+   Duration  1.32s (transform 178ms, setup 0ms, import 736ms, tests 214ms, environment 0ms)
+

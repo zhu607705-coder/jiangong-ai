@@ -1,0 +1,20 @@
+{
+  "pr": 42,
+  "state": "MERGED",
+  "checked_head": "0a41dafa595b579a2a0e58e18c1a1e5f6174cab5",
+  "merge_commit": "b4afbd9557b585a7f68fe49a6830f91ce378bd71",
+  "checks": {
+    "Intelligence integration review": {
+      "run_id": 38848020983,
+      "conclusion": "SUCCESS"
+    },
+    "Map workspace quality": {
+      "run_id": 38848021023,
+      "conclusion": "SUCCESS"
+    }
+  },
+  "superseded_duplicate_map_run": {
+    "run_id": 38848017681,
+    "conclusion": "CANCELLED"
+  }
+}

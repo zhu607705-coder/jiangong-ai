@@ -1,0 +1,39 @@
+{
+  "pr": {
+    "headRefOid": "334c3c6ea1210e07039b489622c6d021b9d97ed4",
+    "mergeCommit": {
+      "oid": "489254a2b9aabd52f9cc60452723dc9308a98584"
+    },
+    "mergedAt": "2026-10-14T01:15:42Z",
+    "state": "MERGED",
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/23"
+  },
+  "local_branch": "main",
+  "local_head": "489254a2b9aabd52f9cc60452723dc9308a98584",
+  "verified_tree_equals_merged_tree": true,
+  "pull_request_checks": [
+    {
+      "conclusion": "success",
+      "databaseId": 38494212208,
+      "status": "completed",
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38494212208"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 38494212353,
+      "status": "completed",
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38494212353"
+    }
+  ],
+  "superseded_branch_push_check": {
+    "conclusion": "cancelled",
+    "status": "completed"
+  },
+  "post_merge_main_check_at_record": {
+    "conclusion": "",
+    "databaseId": 38494748098,
+    "status": "in_progress",
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38494748098"
+  },
+  "unrelated_dirty_state_and_generated_contract_preserved": true
+}

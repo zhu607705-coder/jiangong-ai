@@ -1,0 +1,29 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+·····················································x········
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/workspace-frame.test.ts > global content does not render project business content while the existing map remains mounted
+AssertionError: expected '返回地图海之子/项目空间PROJECT_CONTENT项目范围与运行记录R…' not to contain 'PROJECT_CONTENT'
+
+Expected: "PROJECT_CONTENT"
+Received: "返回地图海之子/项目空间PROJECT_CONTENT项目范围与运行记录RUN_RECORDSGLOBAL_CONTENT"
+
+ ❯ tests/contracts/workspace-frame.test.ts:62:72
+     60|   await render(props('projects'))
+     61|   expect(container.querySelector('.research-drawer')?.textContent).toC…
+     62|   expect(container.querySelector('.research-drawer')?.textContent).not…
+       |                                                                        ^
+     63|   expect(container.querySelector('.map-stage')?.hasAttribute('hidden')…
+     64|   expect(container.querySelector('.map-stage')?.textContent).toBe('ACT…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  1 failed | 61 passed (62)
+   Start at  19:46:50
+   Duration  3.87s (transform 893ms, setup 0ms, import 2.45s, tests 624ms, environment 0ms)
+

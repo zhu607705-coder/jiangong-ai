@@ -2059,6 +2059,19 @@
         ".env.example"
       ],
       "definition_of_done": "服务Key协议与真实错误处理、同库月度调用记录、原文继续抓取、原路径回退；定向测试/构建及服务器部署；无Key明确blocked_external，原服务保持可用。"
+    },
+    {
+      "id": "T-GITHUB-CLOSEOUT-20261021",
+      "depends_on": [],
+      "goal": "上传工作台剩余修改与公开交付物，核对GitHub并明确服务器清理范围",
+      "status": "github_uploaded_cleanup_pending_scope",
+      "write_scope": [
+        "preparedworktreeonly",
+        "source/docs/data/research",
+        "agent",
+        "GitHubmain/Release"
+      ],
+      "definition_of_done": "准备文件有散列清单，无密钥/私密材料；GitHubmain和Release读回一致；服务器删除范围未明确时保留网站与数据库。"
     }
   ]
 }

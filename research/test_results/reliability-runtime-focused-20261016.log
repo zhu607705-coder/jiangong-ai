@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/creation-research-reliability
+
+stderr | tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest
+{"event":"renewal_preflight_failed","code":"RENEWAL_RESEARCH_PLAN_SCOPE"}
+
+ ❯ tests/contracts/renewal-research-workflow.test.ts (31 tests | 1 failed) 149ms
+     × freezes a source snapshot before planning and rejects plans outside that manifest 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/renewal-research-workflow.test.ts > bounded native DSH renewal research workflow > freezes a source snapshot before planning and rejects plans outside that manifest
+Error: RENEWAL_RESEARCH_PREFLIGHT_FAILED
+ ❯ runRenewalResearch runtime/workflows/renewal-research.ts:227:15
+    225|         progress({ stage: 'planning', status: 'partial', message: '准备阶…
+    226|         console.warn(JSON.stringify({event:'renewal_preflight_failed',…
+    227|         throw new Error('RENEWAL_RESEARCH_PREFLIGHT_FAILED',{cause:err…
+       |               ^
+    228|       }
+    229|     }
+ ❯ tests/contracts/renewal-research-workflow.test.ts:219:22
+
+Caused by: Error: RENEWAL_RESEARCH_PLAN_SCOPE
+ ❯ runRenewalResearch runtime/workflows/renewal-research.ts:215:105
+ ❯ tests/contracts/renewal-research-workflow.test.ts:219:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 59 passed (60)
+   Start at  11:09:20
+   Duration  1.40s (transform 275ms, setup 0ms, import 812ms, tests 233ms, environment 0ms)
+

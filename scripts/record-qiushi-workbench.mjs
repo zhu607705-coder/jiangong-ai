@@ -1,0 +1,52 @@
+import { chromium } from 'playwright';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+const rehearsal=process.argv.includes('--rehearsal'); const root=process.cwd(), out=path.join(root,'output','playwright','qiushi-demo');await mkdir(out,{recursive:true});
+const chapters=JSON.parse((await readFile('data/templates/qiushi-demo-scenes.json','utf8')).replace(/^\uFEFF/,''));
+const browser=await chromium.launch({headless:false,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',args:['--window-size=1640,1040','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--enable-webgl','--ignore-gpu-blocklist']});
+const context=await browser.newContext({viewport:{width:1600,height:900},recordVideo:{dir:out,size:{width:1600,height:900}},deviceScaleFactor:1});
+await context.addInitScript(()=>localStorage.setItem('hzz_project','P-73678dc3-b255-4ae4-848b-86f26266f0c0'));
+const captureOrigin=performance.now();const page=await context.newPage();page.setDefaultTimeout(12000);const errors=[],requests=[],shots=[];
+page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(request.method()==='POST')requests.push(new URL(request.url()).pathname)});
+const sleep=ms=>page.waitForTimeout(ms);
+async function press(locator){await locator.scrollIntoViewIfNeeded();const box=await locator.boundingBox();if(box){await page.mouse.move(box.x+box.width/2,box.y+box.height/2,{steps:14});await sleep(150);await page.evaluate(({x,y})=>{const dot=document.getElementById('demo-click');if(dot){dot.style.left=x+'px';dot.style.top=y+'px';dot.animate([{opacity:1,transform:'scale(.4)'},{opacity:0,transform:'scale(2.3)'}],{duration:580})}},{x:box.x+box.width/2,y:box.y+box.height/2})}await locator.click();}
+async function focus(locator){await locator.waitFor();await locator.evaluate(el=>el.scrollIntoView({behavior:'smooth',block:'center'}));await sleep(550);}
+async function tab(name){await press(page.getByRole('button',{name,exact:true}));}
+await page.goto('http://127.0.0.1:5173/');await page.getByText('浙大求是村 · 片区研究',{exact:true}).first().waitFor();
+await press(page.getByRole('button',{name:'打开项目列表',exact:true}));await press(page.getByRole('region',{name:'项目空间列表',exact:true}).getByRole('button',{name:/浙大求是村/}));
+await page.getByRole('region',{name:'老旧小区改造工作台',exact:true}).waitFor();await press(page.getByRole('button',{name:'返回地图',exact:true}));
+await page.getByRole('button',{name:'放大地图',exact:true}).waitFor();await sleep(4500);
+await page.addStyleTag({content:`html{scroll-behavior:smooth}.atlas-layer-control{left:auto!important;right:24px!important;bottom:165px!important;z-index:800!important}.atlas-navigation{right:24px!important;bottom:165px!important;z-index:850!important}.atlas-layer-control{right:95px!important}#demo-caption{position:fixed;z-index:2147483646;bottom:24px;left:105px;right:40px;padding:17px 23px;border-radius:16px;background:rgba(13,40,39,.96);color:white;pointer-events:none;box-shadow:0 14px 40px #081f2433;backdrop-filter:blur(18px);font-family:'Microsoft YaHei',sans-serif}#demo-caption strong{display:block;font-size:25px;line-height:1.35;letter-spacing:.5px}#demo-caption p{margin:6px 0 0;font-size:17px;color:#c7e2df;line-height:1.5}#demo-brand{position:fixed;z-index:2147483646;right:30px;top:12px;background:#fffef5ed;color:#286661;font:600 12px 'Microsoft YaHei';padding:7px 12px;border-radius:8px;pointer-events:none}#demo-click{position:fixed;pointer-events:none;z-index:2147483647;width:25px;height:25px;border:2px solid #19ae9a;border-radius:50%;margin:-12px 0 0 -12px;opacity:0}.research-drawer-scroll{scroll-behavior:smooth}`});
+await page.evaluate(()=>{document.body.insertAdjacentHTML('beforeend','<aside id="demo-caption"><strong></strong><p></p></aside><div id="demo-brand">求是村 · 真实公开资料 / 草稿待复核</div><div id="demo-click"></div>')});
+const storyStart=performance.now(), timeline=[];
+const panel=()=>page.getByRole('region',{name:'知识沉淀操作面板',exact:true});
+const actions={
+ map:async()=>{await press(page.getByRole('button',{name:'缩小地图',exact:true}));await sleep(700);await press(page.getByRole('button',{name:'放大地图',exact:true}));await press(page.getByRole('button',{name:/^图层/}));await press(page.getByRole('button',{name:/^卫星影像/}));await sleep(1100);await press(page.getByRole('button',{name:/^城市地图/}));await press(page.getByRole('button',{name:/^图层/}));},
+ project:async()=>{await press(page.getByRole('button',{name:'打开项目列表',exact:true}));await press(page.getByRole('region',{name:'项目空间列表',exact:true}).getByRole('button',{name:/浙大求是村/}));await focus(page.getByRole('heading',{name:'浙大求是村 · 片区研究',exact:true}));},
+ dimensions:async()=>{await focus(page.getByRole('region',{name:'六维方案研判',exact:true}));await press(page.getByRole('region',{name:'六维方案研判',exact:true}).getByRole('button',{name:/居民需求/}));await sleep(1300);await press(page.locator('.retrofit-condition-panel summary'));await focus(page.locator('.retrofit-condition-grid'));},
+ calculator:async()=>{await press(page.locator('.retrofit-calculator summary'));const values={'基础类工程（万元）':'30','完善类工程（万元）':'10','提升类工程（万元）':'0','计划资金（万元）':'30','涉及户数（户）':'100'};for(const [key,value]of Object.entries(values))await page.getByRole('spinbutton',{name:key,exact:true}).fill(value);await press(page.getByRole('button',{name:'计算并与上次方案比较',exact:true}));await focus(page.locator('.retrofit-plan-result'));await sleep(1700);await page.getByRole('spinbutton',{name:'完善类工程（万元）',exact:true}).fill('5');await press(page.getByRole('button',{name:'计算并与上次方案比较',exact:true}));await focus(page.locator('.retrofit-plan-result'));},
+ graph:async()=>{await tab('资料与证据');const graph=page.getByRole('region',{name:'导入数据关系与分析',exact:true});await graph.getByRole('region',{name:'可交互的数据关系图',exact:true}).waitFor();await focus(graph);await press(graph.getByRole('button',{name:'字段',exact:true}));await sleep(1600);await press(graph.getByRole('button',{name:'调研覆盖',exact:true}));await focus(graph.getByRole('heading',{name:'初步调研资料覆盖',exact:true}));},
+ evidence:async()=>{const row=page.locator('.source-row').filter({has:page.getByRole('link',{name:'浙大求是社区推进二次供水改造 ↗',exact:true})}).first();await focus(row);await press(row.locator('summary'));await focus(row.locator('pre'));},
+ chunks:async()=>{await tab('项目经验');await press(page.getByRole('button',{name:'原文举措、导师因素政策与技能蒸馏',exact:true}));await panel().getByRole('button',{name:'切分原文：浙大求是社区推进二次供水改造.txt',exact:true}).waitFor();await press(panel().getByRole('button',{name:'切分原文：浙大求是社区推进二次供水改造.txt',exact:true}));await panel().getByRole('article',{name:/原文片段/}).first().waitFor();await focus(panel().getByRole('article',{name:/原文片段/}).first());await sleep(1500);const factor=panel().getByRole('article',{name:/措施因素：大家商讨/}).first();await focus(factor);await press(factor.locator('summary').first());},
+ cards:async()=>{await press(page.getByRole('button',{name:'原文举措、导师因素政策与技能蒸馏',exact:true}));const card=page.locator('.experience-card').filter({hasText:'形成委托物业托管的长效管理机制'}).first();await press(card.locator('.experience-card-heading'));await focus(card.locator('.experience-card-body'));},
+ policy:async()=>{await press(page.getByRole('button',{name:'原文举措、导师因素政策与技能蒸馏',exact:true}));await press(panel().getByRole('button',{name:'导师因素政策',exact:true}));await press(panel().getByRole('button',{name:'添加因素',exact:true}));await focus(panel().getByRole('form',{name:'因素政策编辑',exact:true}));},
+ groups:async()=>{await press(panel().getByRole('button',{name:'分组预览',exact:true}));await press(panel().getByRole('button',{name:'预览知识分组',exact:true}));await panel().getByLabel('本次分组结果',{exact:true}).waitFor();await focus(panel().getByLabel('本次分组结果',{exact:true}));},
+ match:async()=>{await press(page.getByRole('button',{name:'原文举措、导师因素政策与技能蒸馏',exact:true}));const k=page.getByRole('region',{name:'案例与规则匹配',exact:true});await k.getByLabel('举措标识',{exact:true}).fill('pipe_network');await k.getByLabel('本次决策问题',{exact:true}).fill('求是村二次供水改造与长效维护，需要先核实哪些条件？');await press(k.getByRole('button',{name:'匹配案例与规则',exact:true}));await sleep(1000);await focus(k);},
+ skills:async()=>{await press(page.getByRole('button',{name:'原文举措、导师因素政策与技能蒸馏',exact:true}));await press(panel().getByRole('button',{name:'技能蒸馏',exact:true}));await focus(panel().getByRole('heading',{name:'从已审核同举措卡片形成技能草稿',exact:true}));},
+ followup:async()=>{await tab('版本与变化');await focus(page.getByRole('heading',{name:'看见判断为什么改变',exact:true}));await sleep(1700);await tab('下一步调查');await focus(page.getByRole('heading',{name:'优先调查，最可能改变判断的事',exact:true}));},
+ end:async()=>{await tab('研判总览');await focus(page.getByRole('region',{name:'六维方案研判',exact:true}));}
+};
+let scheduled=0;
+try{
+ for(let i=0;i<chapters.length;i++){
+  const c=chapters[i],started=(performance.now()-storyStart)/1000;
+  await page.evaluate(c=>{document.querySelector('#demo-caption strong').textContent=c.title;document.querySelector('#demo-caption p').textContent=c.subtitle;document.getElementById('demo-caption').animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:420})},c);
+  console.log('scene',i,c.key);await actions[c.key]();
+  await page.screenshot({path:path.join(out,`${String(i+1).padStart(2,'0')}-${c.key}.png`)});
+  timeline.push({...c,start:started,actionEnd:(performance.now()-storyStart)/1000});scheduled+=rehearsal?0.2:c.seconds;
+  await sleep(Math.max(100,storyStart+scheduled*1000-performance.now()));
+ }
+ const v=page.video();await context.close();const raw=await v.path();
+ const meta={recorded_at:new Date().toISOString(),project_id:'P-73678dc3-b255-4ae4-848b-86f26266f0c0',raw_video:raw,trim_start_seconds:(storyStart-captureOrigin)/1000,duration_seconds:(performance.now()-storyStart)/1000,target_seconds:scheduled,timeline,errors,post_requests:requests,scenario_inputs:'UI-only operation assumptions 30/10/0, planned funding 30, households 100; no fact/approval writes',scope:'Actual workbench/case UI, no model generation or professional approval'};
+ await writeFile(path.join(out,'recording.json'),JSON.stringify(meta,null,2));console.log('RECORDED',raw,scheduled,requests);await browser.close();
+}catch(error){await page.screenshot({path:path.join(out,'failure.png')});await writeFile(path.join(out,'failure.txt'),String(error));await context.close();await browser.close();throw error}

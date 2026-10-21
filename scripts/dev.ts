@@ -21,5 +21,5 @@ function start(command: string, args: string[]) {
 start(python, ['-m', 'uvicorn', 'services.capabilities.app:app', '--host', '127.0.0.1', '--port', String(config.CAPABILITY_PORT), '--no-access-log'])
 start(process.execPath, ['--import', 'tsx', 'apps/host/server.ts'])
 start(process.execPath, ['node_modules/vite/bin/vite.js', '--config', 'apps/workspace/vite.config.ts', '--host', '127.0.0.1', '--port', String(config.WORKSPACE_PORT), '--strictPort'])
-console.log(`海之子工作台：http://localhost:${config.WORKSPACE_PORT}（${config.modelConfigured ? "模型接口已配置" : "离线工程模式"}）`)
+console.log(`旧区新生工作台：http://localhost:${config.WORKSPACE_PORT}（${config.modelConfigured ? "模型接口已配置" : "离线工程模式"}）`)
 process.once('SIGINT', stop); process.once('SIGTERM', stop)

@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-21T12:08:15.699438+00:00",
+  "release_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/tag/workbench-delivery-20261021",
+  "source_snapshot": "73763a4583326abe0bd98d113a556ffb1337e43f",
+  "assets": [
+    {
+      "asset": "manifest.json",
+      "bytes": 1042,
+      "sha256": "af5b1e65b38aac986da434abe37448ac4beb0b6d5cd6ef3f40afa6c7ea97c6fa",
+      "github_digest_matched": true
+    },
+    {
+      "asset": "qiushi-demo-20261015.mp4",
+      "bytes": 21385742,
+      "sha256": "c6915b56ea83193e92363e99ea1c332ae8e3fc3d911b8c51896d5d582f2d7bcd",
+      "github_digest_matched": true
+    },
+    {
+      "asset": "SHA256SUMS.txt",
+      "bytes": 287,
+      "sha256": "360a91494f06f5e2b45fab7aaf4eb25932d52fa69bc3ff79765b6c4bba86f1fe",
+      "github_digest_matched": true
+    },
+    {
+      "asset": "workbench-full-20261014.mp4",
+      "bytes": 34282917,
+      "sha256": "54fed8045229d6c66c003dba7f2b38a60f1919e7208085c79f3e8c86a759cc71",
+      "github_digest_matched": true
+    },
+    {
+      "asset": "workbench-under2min-20261014.mp4",
+      "bytes": 5293424,
+      "sha256": "1e30d2dd3207ce984e6fd9cdfadffa4c6aadce1d107363b2d7c7927a84f15520",
+      "github_digest_matched": true
+    }
+  ],
+  "all_assets_match": true,
+  "server_deletion_performed": false
+}

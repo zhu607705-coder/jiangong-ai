@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-10-17T02:09:41.731120+00:00",
+  "local_commit": "29f5ef08d8c520c09752278574732b53cc28a485",
+  "scope": "Read-only architecture inspection plus one live RAG question; no full research, deployment, new raw Search/Fetch call or project-data edits.",
+  "browser_question": "本项目机电配套、雨棚与消防通道的费用和资金来源分别是什么，金额属于预算还是结算？",
+  "browser_result": {
+    "sources": 21,
+    "hits": 5,
+    "answer_citations": 5,
+    "non_water_question_works": true,
+    "compound_answer_coverage_requires_evaluation": true
+  },
+  "ci": {
+    "pr": 52,
+    "run_id": 38927432010,
+    "job_url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38927432010/job/117062456206",
+    "files_passed": 129,
+    "files_failed": 3,
+    "tests_passed": 1622,
+    "tests_failed": 24,
+    "failed_files": [
+      "tests/contracts/floating-evidence-search.test.ts",
+      "tests/contracts/public-decision-entry.test.ts",
+      "tests/contracts/retrieval-workspace-navigation.test.ts"
+    ],
+    "observed_errors": [
+      "Unexpected decision-guidance request in workbench mocks",
+      "Relative /api URL sent to native Node fetch in retrieval tests"
+    ],
+    "production_search_failure_inferred_from_mock_errors": false
+  },
+  "provider_current": {
+    "search": "DSH DeepSeek Anthropic native web_search tool",
+    "fetch": "DSH HTTP fetch",
+    "new_standalone_apis_implemented": false
+  },
+  "reference_urls": [
+    "https://api-docs.deepseek.com/zh-cn/guides/search/",
+    "https://api-docs.deepseek.com/zh-cn/api/search/",
+    "https://api-docs.deepseek.com/api/fetch/",
+    "https://www.anthropic.com/engineering/building-effective-agents",
+    "https://docs.langchain.com/oss/javascript/langgraph/persistence",
+    "https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-overview",
+    "https://github.com/langchain-ai/open_deep_research/blob/main/src/open_deep_research/deep_researcher.py"
+  ],
+  "web_pro": {
+    "url": "https://chatgpt.com/c/6ad2d878-c1a0-83e8-9108-9aec217a9ee1",
+    "model_ui": "GPT-6 / Pro",
+    "submitted": true,
+    "final_response_collected": false,
+    "observed_progress": "Official sources searched; three scoped review tasks visible; output still generating."
+  }
+}

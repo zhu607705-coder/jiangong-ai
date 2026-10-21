@@ -1,0 +1,15 @@
+{
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/29",
+  "merge_commit": "12bcaf57a02a3b13cf054a5dd89d7c10e363e7b3",
+  "merged": true,
+  "local_main_matches_origin": true,
+  "server_application_commit": "e6b68b8e7ce9589acbc386d184612aa1ee2787f7",
+  "server_reports_commit": "12bcaf57a02a3b13cf054a5dd89d7c10e363e7b3",
+  "server_url": "http://127.0.0.1:15173/",
+  "report_download": "HTTP 200 application/pdf, 574272 bytes",
+  "report_sha256": "e3d52bea4e29477c81f8edb6548b5f4ca62307efae1240b818f5933104ab4ae3",
+  "verified": "document rendering, retrieval, production build, snapshot inventory and Qwen completed",
+  "github_checks": "still running at closeout; no claim they passed",
+  "deepseek": "TCP connection timeout; reverse proxy automatic approval rejected and not established",
+  "recovery": "Local native database snapshot and original DOCX backup retained; no source data retired"
+}

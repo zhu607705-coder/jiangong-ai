@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-16T15:08:13.262387+00:00",
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/51",
+  "previous_main": "15b4250d3242afe685606bd13b1ef6b0da045eb9",
+  "merged_main": "c1c81adc71c59c81a52c6f3499cbd690b0052da2",
+  "incoming_files": 33,
+  "protected_dirty_files": [
+    "AGENTS.md",
+    "apps/host/admin-login-page.ts",
+    "docs/侧栏混合检索与API索引.md",
+    "packages/corpus/corpus.ts",
+    "research/test_results/advisory-plan-ui-deployment-20261016.json",
+    "research/test_results/creation-reliability-ui-deployment-20261016.json",
+    "scripts/dev.ts",
+    "scripts/render-qiushi-decision-report.py"
+  ],
+  "unrelated_dirty_bytes_unchanged": true,
+  "unrelated_state_nodes_unchanged": true,
+  "staged_changes": false
+}

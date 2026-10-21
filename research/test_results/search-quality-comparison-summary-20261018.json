@@ -1,0 +1,50 @@
+{
+  "measured_at": "2026-10-18T11:46:29.741Z",
+  "measurement_kind": "one paired acquisition batch,3fixed queries,4source budget; not a decision accuracy test",
+  "same_url_set": true,
+  "old": {
+    "elapsed_ms": 8149,
+    "source_count": 4,
+    "paragraph_characters": 3812,
+    "reference_field_coverage": {
+      "slots": 9,
+      "covered": 6,
+      "conflicting": 0
+    }
+  },
+  "new": {
+    "elapsed_ms": 1143,
+    "source_count": 4,
+    "paragraph_characters": 5653,
+    "reference_field_coverage": {
+      "slots": 9,
+      "covered": 8,
+      "conflicting": 0
+    }
+  },
+  "speedup": 7.1294838145231845,
+  "latency_reduction_percent": 85.97373910909315,
+  "body_growth_percent": 48.29485834207765,
+  "field_coverage_percentage_points": 22.22222222222222,
+  "date_conflict_sources": 3,
+  "campaign_since_activation": {
+    "search_attempts": 52,
+    "database_documents_before": 177,
+    "database_documents_after": 844,
+    "new_documents": 667,
+    "archived_versions_before": 530,
+    "archived_versions_after": 1200,
+    "chunks_before": 4791,
+    "chunks_after": 41316,
+    "analyzed_before": 2,
+    "analyzed_after": 9,
+    "model_calls_today": 40
+  },
+  "interpretation": [
+    "raw source retrieval and body reuse faster",
+    "same4URLs, larger body and more rule-extractable fields; no independent decision-accuracy measurement",
+    "model organisation budget reached40/day; raw intake currently outpaces deep reading"
+  ],
+  "cache_note": "legacy_then_content; provider/service cache state uncontrolled",
+  "benchmark_writes_to_projects": 0
+}

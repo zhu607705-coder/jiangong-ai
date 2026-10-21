@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-16T14:20:53.932875+00:00",
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/50",
+  "merged": true,
+  "merge_commit": "15b4250d3242afe685606bd13b1ef6b0da045eb9",
+  "source_head": "bac70ed69e0cbf71f326b1662af0db1de6aab7db",
+  "runtime_source": "d985ab668b1a8aa14fce23bcf8aab7110eb231ea",
+  "ui_source": "69c59f40ec556f6fda61d79048a8f995379116c9",
+  "root_main_advanced": true,
+  "incoming_files": 63,
+  "unrelated_dirty_tracked_bytes_preserved": [
+    "docs/侧栏混合检索与API索引.md",
+    "research/test_results/creation-reliability-ui-deployment-20261016.json",
+    "apps/host/admin-login-page.ts",
+    "packages/corpus/corpus.ts",
+    "scripts/dev.ts",
+    "research/test_results/advisory-plan-ui-deployment-20261016.json",
+    "AGENTS.md",
+    "scripts/render-qiushi-decision-report.py"
+  ],
+  "unrelated_state_nodes_preserved": true,
+  "ci_at_merge": "Workflows still running; not claimed as passed",
+  "application_evidence": "research/test_results/research-recovery-browser-20261016.json"
+}
