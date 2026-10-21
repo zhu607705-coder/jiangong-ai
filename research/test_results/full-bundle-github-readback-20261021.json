@@ -1,0 +1,33 @@
+{
+  "release_url": "https://github.com/zhu607705-coder/jiangong-ai/releases/tag/workbench-full-backup-20261021",
+  "source_commit": "c54ef7571ccf1efe9991ef2660c113f8df658bdc",
+  "assets": [
+    {
+      "name": "jiuquxinsheng-full-20261021-aes256.zip",
+      "bytes": 664317501,
+      "sha256": "e8bd99df89d02a76c728c9b43c696ade39b3e67fef0d606b0c38bdf330468257",
+      "github_digest_matched": true
+    },
+    {
+      "name": "jiuquxinsheng-full-20261021-manifest.json",
+      "bytes": 1512,
+      "sha256": "cc727d878bd6920f3dbc3c53f4e08b978b32ddee3ae9c89546272c518804c612",
+      "github_digest_matched": true
+    },
+    {
+      "name": "jiuquxinsheng-full-20261021-SHA256SUMS.txt",
+      "bytes": 106,
+      "sha256": "00c8f4692a2dca231475f772cd8f70faaf3d13ffe011309fc259b9c9021fcfb0",
+      "github_digest_matched": true
+    },
+    {
+      "name": "RESTORE-README.md",
+      "bytes": 2541,
+      "sha256": "5f877fc49189e3a0f4992497159268a3fd83e9e58245e672e3a65391a1f2935e",
+      "github_digest_matched": true
+    }
+  ],
+  "all_assets_verified": true,
+  "password_uploaded": false,
+  "plaintext_database_uploaded": false
+}

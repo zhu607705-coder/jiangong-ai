@@ -1,0 +1,18 @@
+{
+  "source_commit": "c54ef7571ccf1efe9991ef2660c113f8df658bdc",
+  "snapshot_at": "2026-10-21T15:01:30.441420+00:00",
+  "snapshot_method": "Graceful close of live PGlite via host shutdown;checksum rsync while no host writer;restart before packaging",
+  "project_count": 43,
+  "production_ready_after_snapshot": true,
+  "maintenance_seconds": 8.99,
+  "environment_unchanged": true,
+  "frontend_unchanged": true,
+  "excluded": [
+    "server.env/API credentials/TLS keys",
+    "data/amap-credentials.json",
+    "obsolete postgres-before-migration copies"
+  ],
+  "destination_relative": "workbench/data/local",
+  "live_database_opened_by_second_process": false,
+  "source_version": "0.2.0"
+}

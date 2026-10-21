@@ -90,6 +90,11 @@ def validate(p,kind,protected):
 
 mode=sys.argv[1]
 if mode=='plan':
+ # A final dependency directory can exist while aliases through an old release break.
+ # Normalize aliases separately before cleanup, or retain their intermediate releases.
+ for name in ['node_modules','.venv']:
+  alias=CURRENT/name
+  assert alias.is_symlink() and alias.exists() and os.readlink(alias)==str(alias.resolve(strict=True)),'Normalize live dependency alias before planning: '+name
  protected=runtime_protected();releases=[p for p in (BASE/'releases').iterdir() if p.is_dir() and not p.is_symlink()]
  old=sorted([p for p in releases if str(p) not in protected],key=lambda p:p.stat().st_mtime_ns,reverse=True)
  rollback=None # Current source is in GitHub; preserve live dependencies, UI snapshots and all existing backend/config backups.
@@ -145,6 +150,7 @@ elif mode=='apply':
  assert digest(CURRENT/'apps/workspace/dist/index.html')==p['active_index_sha'] and fingerprint(CURRENT/'apps/workspace/dist')==p['active_assets_fingerprint']
  assert after['host_pid']==p['before']['host_pid'] and set(p['before']['project_ids'])<=set(after['project_ids'])
  assert all(Path(x).exists() for x in p['protected']) and DATA.is_dir()
+ assert all((CURRENT/name).exists() for name in ['node_modules','.venv']) and (CURRENT/'.venv/bin/python').is_file()
  report={'completed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'authorized_scope':p['authorization'],'deleted':deleted,'deleted_count':len(deleted),'allocated_bytes_removed':sum(x['allocated_bytes'] for x in deleted),'free_bytes_increase_resumed_phase':shutil.disk_usage(BASE).free-before_free,'previously_deleted_count':len(p.get('previous_deleted',[])),'initial_guard_pause':'Dangling links changed os.walk directory/file grouping;fixed ordering;alloriginalguardsretained','kept_releases':[str(x) for x in (BASE/'releases').iterdir()],'kept_ui_backups':sorted(str(x) for x in (CURRENT/'apps/workspace').glob('.dist-blue-*')),'current_unchanged':True,'active_frontend_files_unchanged':True,'env_content_and_mode_unchanged':True,'host_pid_unchanged':True,'host_restarted':False,'database_directory_untouched':True,'credentials_and_certificates_outside_cleanup_targets':True,'before_project_count':len(p['before']['project_ids']),'after_project_count':len(after['project_ids']),'ready_status':after['ready'],'capability_active':after['capability_active'],'skipped':p['skipped']}
  RECEIPT.write_text(json.dumps(report,indent=2)+'\n');RECEIPT.chmod(0o600)
  print(json.dumps(report))
@@ -162,6 +168,7 @@ elif mode=='finalize':
  assert digest(CURRENT/'apps/workspace/dist/index.html')==p['active_index_sha'] and fingerprint(CURRENT/'apps/workspace/dist')==p['active_assets_fingerprint']
  assert (BASE/'current').resolve()==CURRENT and after['host_pid']==p['before']['host_pid'] and set(p['before']['project_ids'])<=set(after['project_ids'])
  assert all(Path(x).exists() for x in p['protected']) and DATA.is_dir()
+ assert all((CURRENT/name).exists() for name in ['node_modules','.venv']) and (CURRENT/'.venv/bin/python').is_file()
  report={'completed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'authorized_scope':p['authorization'],'deleted':deleted,'deleted_count':len(deleted),'allocated_bytes_removed':sum(x['allocated_bytes'] for x in deleted),'free_bytes_increase_resumed_phase':shutil.disk_usage(BASE).free-progress['free_bytes_before_resumed_phase'],'previously_deleted_count':len(p.get('previous_deleted',[])),'initial_guard_pause':'Dangling links changed traversal grouping;verified regression and fixed ordering;frozen path guards retained','kept_releases':[str(x) for x in (BASE/'releases').iterdir()],'kept_ui_backups':sorted(str(x) for x in (CURRENT/'apps/workspace').glob('.dist-blue-*')),'current_unchanged':True,'active_frontend_files_unchanged':True,'env_content_and_mode_unchanged':True,'host_pid_unchanged':True,'host_restarted':False,'database_directory_untouched':True,'credentials_and_certificates_outside_cleanup_targets':True,'before_project_count':len(p['before']['project_ids']),'after_project_count':len(after['project_ids']),'ready_status':after['ready'],'capability_active':after['capability_active'],'skipped':p['skipped']+[{'path':e['path'],'reason':'root-owned certificate-tool bytecode retained;no permission changes','remaining_bytes':size(Path(e['path']))} for e in remaining]}
  RECEIPT.write_text(json.dumps(report,indent=2)+'\n');RECEIPT.chmod(0o600)
  print(json.dumps(report))

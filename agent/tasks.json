@@ -2091,7 +2091,7 @@
       "id": "T-FULL-ZIP-BUNDLE-20261021",
       "depends_on": [],
       "goal": "制作并上传可恢复的程序+数据库+原文完整ZIP",
-      "status": "preparing",
+      "status": "complete",
       "write_scope": [
         "bundlehelpers/docs/audits",
         "private snapshots/ZIP",
