@@ -23,3 +23,6 @@
 .topic-directory-pagination>div{display:flex;gap:8px}
 @media(max-width:760px){.topic-directory-controls{align-items:stretch;flex-direction:column;gap:7px}.topic-directory-controls>span{font-size:13px}.topic-group-tabs{margin-bottom:6px}.topic-wiki .topic-group-tabs button{font-size:14px}.topic-wiki-heading{margin:10px 0}.topic-wiki-heading>div>p{display:none}.topic-directory-pagination{gap:8px}.topic-directory-pagination button{padding-inline:10px}.topic-wiki-grid>article{min-height:215px}}
 @media(min-width:761px) and (max-width:1000px){.topic-wiki-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.topic-wiki-grid>article{padding:16px}.intel-panel .topic-wiki .topic-wiki-grid>article h3{font-size:18px}.topic-wiki-grid .topic-wiki-counts{gap:10px}}
+.topic-wiki-heading{margin:12px 0}
+.topic-directory-pagination{justify-content:flex-start;gap:24px}
+@media(max-width:760px){.topic-directory-pagination{gap:8px}}
