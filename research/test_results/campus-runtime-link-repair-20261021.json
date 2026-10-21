@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-21T14:53:08.772569+00:00",
+  "scope": "Atomic repair of live dependency aliases only;no service restart or data/environment edits",
+  "dependency_aliases": [
+    {
+      "name": "node_modules",
+      "target": "/home/zhuhangcheng/apps/haizhizi/releases/e6b68b8e7ce9589acbc386d184612aa1ee2787f7-20261015T015642Z/node_modules",
+      "resolves": true
+    },
+    {
+      "name": ".venv",
+      "target": "/home/zhuhangcheng/apps/haizhizi/releases/e6b68b8e7ce9589acbc386d184612aa1ee2787f7-20261015T015642Z/.venv",
+      "resolves": true
+    }
+  ],
+  "cold_node_import": "passed",
+  "cold_python_import": "passed",
+  "project_count": 43,
+  "ready": "ok",
+  "cause": "Raw aliases still traversed a removed intermediate release despite retaining canonical dependency directories"
+}
