@@ -38,3 +38,16 @@ research/baseline_logs/*
 output/playwright/minimal-map-*.png
 
 !research/baseline_logs/pr2-*.log
+
+# Private workspace material and regenerable media; final videos are GitHub Release assets.
+/AGENT_ERROR_RULES.md
+/light 4/
+/output/campus-network-auth/
+/output/documents/human-ai-cv-*/
+/output/documents/**/library-snapshot/
+/output/video/**/raw/
+/output/video/**/rendered/assembly/
+/output/video/**/short/clips/
+/output/**/*.mp4
+/output/**/*.webm
+/output/**/*.wav

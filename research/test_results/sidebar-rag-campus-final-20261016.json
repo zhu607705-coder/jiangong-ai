@@ -1,0 +1,32 @@
+{
+  "status": "deployed_and_verified",
+  "checked_at": "2026-10-16T05:18:11.865234+00:00",
+  "url": "http://10.70.223.113/",
+  "project_id": "P-f47555b1-0175-4d49-85cf-1d56b17fcee1",
+  "runtime_commit": "7983dfe914441f50adf348cfce2c2208462b7480",
+  "ui_commit": "fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23",
+  "source_scope": "Current owner/project/context-version registered and acquired public originals",
+  "semantic_index": {
+    "indexed": 10,
+    "eligible": 10,
+    "pending": 0
+  },
+  "browser": "Real Chrome extension, separate validation tab",
+  "method": "语义＋关键词",
+  "displayed_citations": 7,
+  "original_source_jump": {
+    "opened": true,
+    "originalPresent": true,
+    "title": "拱墅区如何做到“第一个吃螃蟹”？"
+  },
+  "horizontal_overflow": false,
+  "project_input_unchanged": true,
+  "nginx_unchanged": true,
+  "backup_runtime": "/home/zhuhangcheng/apps/haizhizi/shared/backups/sidebar-rag-7983dfe914441f50adf348cfce2c2208462b7480-20261016T051232Z",
+  "backup_ui": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23-20261016T051631Z",
+  "screenshots": [
+    "output/playwright/sidebar-rag/campus-search-published-20261016.png",
+    "output/playwright/sidebar-rag/campus-source-location-20261016.png"
+  ],
+  "initial_index_failure": "Initial summaries exceeded the 240-character metadata bound; widened to 2000, retained exact candidates; final real-project browser query used semantic retrieval with all 10 windows indexed."
+}

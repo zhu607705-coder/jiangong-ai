@@ -1,0 +1,15 @@
+{
+  "status": "completed",
+  "error": null,
+  "kind": "actual-provider-same-frozen-map-context",
+  "project_writes": 0,
+  "request_id": "7dd11b21-9037-44d0-a530-0a6ee6d47d14",
+  "answer_keys": [
+    "renewal_mode",
+    "renewal_priority",
+    "next_action",
+    "priority_dimension",
+    "evidence_sufficient",
+    "renewal_evidence"
+  ]
+}

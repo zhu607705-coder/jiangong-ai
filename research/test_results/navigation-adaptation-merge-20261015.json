@@ -1,0 +1,39 @@
+{
+  "schema_version": "navigation-adaptation-merge/1",
+  "status": "merged_deployed_product_verified_full_ci_rerunning",
+  "recorded_at": "2026-10-15T12:45:35.076315+00:00",
+  "pull_requests": [
+    {
+      "number": 36,
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/36",
+      "merge_commit": "9766fe0c8cd3389136a113985182d89b043d2fcf"
+    },
+    {
+      "number": 37,
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/37",
+      "merge_commit": "d98846c49dfb384dfe07e5e45849ea56f532cfbf"
+    }
+  ],
+  "local_branch": "main",
+  "local_head": "d98846c49dfb384dfe07e5e45849ea56f532cfbf",
+  "origin_main_matches": true,
+  "deployed_application_commit": "1479db36e3152d5cc163c691de65d24bf67ec229",
+  "deployed_product_code_matches_main": true,
+  "later_changes": "tests and acceptance records only",
+  "acceptance": "research/test_results/navigation-adaptation-browser-20261015.json",
+  "review": "research/test_results/concrete-work-plan-source-metric-review-20261015.json",
+  "ci_followup": "research/test_results/navigation-ci-compatibility-20261015.json",
+  "full_cloud_ci": {
+    "state": "IN_PROGRESS",
+    "runs": [
+      38736818555,
+      38736783849
+    ],
+    "not_claimed_passed": true
+  },
+  "unrelated_working_changes_preserved": [
+    "AGENTS.md",
+    "agent/state.json"
+  ],
+  "url": "http://10.70.223.113/?project=P-0529974d-63fe-4ae8-804d-e5efb049f60a&view=scenarios&section=detail&pane=content&scheme=comprehensive&baseline=14"
+}

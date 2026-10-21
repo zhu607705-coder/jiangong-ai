@@ -107,7 +107,15 @@
     "real_data_write": false,
     "unresolved_questions": [],
     "next_runnable_task": null,
-    "delivery": "User-authorized PR/merge pending final GitHub gates; preview kept open."
+    "delivery": {
+      "status": "merged_main_and_post_merge_ci_verified",
+      "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/22",
+      "head": "37132e68bb19a461245c78d10038df22627671bb",
+      "main": "8274f12fed65d8644ed60eb11d577898eb14a000",
+      "main_ci": 38435775336,
+      "receipt": "research/test_results/analysis-motion-merge.json",
+      "preview": "http://127.0.0.1:5173/"
+    }
   },
   "complete_community_data_demo": {
     "as_of": "2026-10-13",
@@ -1684,7 +1692,46 @@
       "Original AI research PDFs exceeding 100 chunks retain the existing split-limit error; public primary originals are displayed.",
       "Real Qiushi failed model run and missing typed facts remain separate from this UI/simulation delivery."
     ],
-    "next_task": "Collect authorized same-project settlement and seven original features; train with inner grouped tuning and external Zhejiang test. No trained accuracy or transferred weights claimed."
+    "next_task": "Collect authorized same-project settlement and seven original features; train with inner grouped tuning and external Zhejiang test. No trained accuracy or transferred weights claimed.",
+    "delivery": {
+      "pr": {
+        "headRefOid": "334c3c6ea1210e07039b489622c6d021b9d97ed4",
+        "mergeCommit": {
+          "oid": "489254a2b9aabd52f9cc60452723dc9308a98584"
+        },
+        "mergedAt": "2026-10-14T01:15:42Z",
+        "state": "MERGED",
+        "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/23"
+      },
+      "local_branch": "main",
+      "local_head": "489254a2b9aabd52f9cc60452723dc9308a98584",
+      "verified_tree_equals_merged_tree": true,
+      "pull_request_checks": [
+        {
+          "conclusion": "success",
+          "databaseId": 38494212208,
+          "status": "completed",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38494212208"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38494212353,
+          "status": "completed",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38494212353"
+        }
+      ],
+      "superseded_branch_push_check": {
+        "conclusion": "cancelled",
+        "status": "completed"
+      },
+      "post_merge_main_check_at_record": {
+        "conclusion": "",
+        "databaseId": 38494748098,
+        "status": "in_progress",
+        "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38494748098"
+      },
+      "unrelated_dirty_state_and_generated_contract_preserved": true
+    }
   },
   "cost_neural_and_rag": {
     "as_of": "2026-10-14",
@@ -1839,11 +1886,40 @@
       "workbook_history_rows": 148,
       "no_real_project_import": true,
       "raw_outputs_not_pushed": true
+    },
+    "delivery": {
+      "pr": {
+        "headRefOid": "e7a63b73c51e9630c94c9993551edbee30804d61",
+        "mergeCommit": {
+          "oid": "7dd2478aca3071139088cdc3839dbc1b13c0e0a3"
+        },
+        "mergedAt": "2026-10-14T04:53:56Z",
+        "state": "MERGED",
+        "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/24"
+      },
+      "local_branch": "main",
+      "local_head": "7dd2478aca3071139088cdc3839dbc1b13c0e0a3",
+      "verified_tree_equals_merged_tree": true,
+      "pull_request_checks": [
+        {
+          "conclusion": "success",
+          "databaseId": 38513308509,
+          "status": "completed",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38513308509"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38513308490,
+          "status": "completed",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38513308490"
+        }
+      ],
+      "unrelated_state_preserved": true
     }
   },
   "floating_evidence_report_review": {
     "as_of": "2026-10-14",
-    "status": "completed_local_ui_report_and_regression_verified",
+    "status": "merged_and_verified",
     "changed_files": [
       "apps/workspace/src/App.tsx",
       "apps/workspace/src/maps/MapWorkspace.tsx",
@@ -1876,7 +1952,52 @@
       "created_project_browser_fixture": "expanded-ready passed 6 assertions after actual response contract repair"
     },
     "unresolved_questions": [],
-    "next_runnable_task": "Run required PR checks and merge the authorized reviewed revision."
+    "next_runnable_task": null,
+    "delivery": {
+      "pr": {
+        "headRefOid": "d6db99f3dc438bf4f6c6e1c5d502c56343057e0b",
+        "mergeCommit": {
+          "oid": "f480e73b1d61f5a571e79baed6a283e8c1cfd63f"
+        },
+        "mergedAt": "2026-10-14T05:44:21Z",
+        "number": 25,
+        "state": "MERGED",
+        "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/25"
+      },
+      "checks": [
+        {
+          "conclusion": "success",
+          "databaseId": 38517492136,
+          "event": "pull_request",
+          "headSha": "d6db99f3dc438bf4f6c6e1c5d502c56343057e0b",
+          "status": "completed",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38517492136",
+          "workflowName": "Intelligence integration review"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38517492288,
+          "event": "pull_request",
+          "headSha": "d6db99f3dc438bf4f6c6e1c5d502c56343057e0b",
+          "status": "completed",
+          "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38517492288",
+          "workflowName": "Map workspace quality"
+        }
+      ],
+      "local_main": "f480e73b1d61f5a571e79baed6a283e8c1cfd63f",
+      "verified_feature_tree_equals_merged_tree": true,
+      "full_ci_tests": {
+        "javascript": 1051,
+        "python": 219,
+        "map_browser_assertions": 92
+      },
+      "local_full_browser_log": ".cache/floating-evidence-report/map-full-regression.log",
+      "report_pages": 30,
+      "report_sha256": "2362185afb7fc171efa207d9800e9422562212306c7c2a8067c9d369191767cb",
+      "unrelated_changes_preserved": true,
+      "cancelled_duplicate_push_run": 38517487032,
+      "cancelled_is_not_passed": true
+    }
   },
   "full_feature_video_and_database_20261014": {
     "as_of": "2026-10-14",
@@ -3015,6 +3136,33 @@
         "result": "Retained; no deletion retried. Running release, dependencies, project data and source report preserved."
       }
     },
+    "provider_latest_recheck": {
+      "checked_at": "2026-10-15T12:25:58.259026+08:00",
+      "evidence": "research/test_results/server-model-retry-20261015.json",
+      "status": "failed",
+      "generated_strategy": false,
+      "elapsed_seconds": 73.63,
+      "source_count": 13,
+      "diagnostic": {
+        "code": "MODEL_PROVIDER_FAILED",
+        "stage": "renewal_strategy",
+        "stop_reason": "error",
+        "provider_code": "TRANSPORT"
+      },
+      "model_calls": [
+        {
+          "stage": "renewal_strategy",
+          "error_code": "TRANSPORT",
+          "duration_ms": 10493,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "finish_reason": "error",
+          "requested_model": "deepseek-flash",
+          "returned_model": null
+        }
+      ],
+      "network_diagnosis": "Server DNS resolved; TCP443 timed out before TLS/auth. Local existing TUN path received unauthenticated HTTP401. No server network settings changed."
+    },
     "latest_model_recovery": "server_model_egress_repair_20261015; user subsequently requested repair and real generation completed"
   },
   "server_model_egress_repair_20261015": {
@@ -3611,7 +3759,7 @@
     "merge_checks": "PR41 exact 43bd608, both required workflows SUCCESS; merged"
   },
   "creation_and_expert_reliability_20261016": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "updated_at": "2026-10-16T11:56:16.225148+08:00",
     "branch": "codex/creation-research-reliability",
     "worktree": "D:\\建工ai\\.cache\\creation-research-reliability",
@@ -3631,7 +3779,7 @@
       "Create POST followed by failed refresh can leave a created project looking failed; inspect idempotent recovery",
       "Existing planner/experts use uniform3500 output tokens; workflow only keeps failed specialist for final repair; no model-call count caps per OPS435S"
     ],
-    "next_runnable_task": "Wait exact PR42 checks, merge, consolidate canonical main preserving unrelated working changes.",
+    "next_runnable_task": "Completed. Standalone Chrome remained unavailable; the current browser and HTTP-style capability regression are recorded.",
     "tests": "7 files 75 cases passed; production build passed",
     "test_log": "research/test_results/creation-reliability-focused-20261016.log",
     "build_log": "research/test_results/creation-reliability-build-20261016.log",
@@ -3644,10 +3792,19 @@
     "native_probe_result": "success: 1 actual native reader invocation, 2 provider requests, 0 native error records, 0 project writes",
     "runtime_recovery": "per-specialist truncation/schema recovery with more capacity within same deadline; semantic citation retry before synthesis; no request-count caps",
     "integration_test_log": "research/test_results/creation-rounds-integration-20261016.log",
-    "final_runtime_log": "research/test_results/creation-reliability-final-runtime-20261016.log"
+    "final_runtime_log": "research/test_results/creation-reliability-final-runtime-20261016.log",
+    "merge_commit": "b4afbd9557b585a7f68fe49a6830f91ce378bd71",
+    "merge_checks": "PR42 exact 0a41daf, latest Map workspace quality and Intelligence integration review SUCCESS",
+    "browser_readback": "research/test_results/creation-reliability-browser-20261016.json",
+    "browser_proof": "output/playwright/creation-reliability/create-inline-error-20261016.png",
+    "preserved_stash": "beb19af38498269022cc7298536403a7e97d7073",
+    "frontend_deployment_commit": "0a41dafa595b579a2a0e58e18c1a1e5f6174cab5",
+    "frontend_index_sha256": "250b38b520fb5cfcf87bb00560ad55326018bad7b05170f2e9453b6ed78b94d6",
+    "browser_validation": "required-name error visible in modal, select16px/45px, no horizontal overflow; invalid empty input only; no project created by browser check",
+    "canonical_main": "b4afbd9557b585a7f68fe49a6830f91ce378bd71"
   },
   "advisory_plan_review_20261016": {
-    "status": "deployed_actual_output_recovered_material_queue_verified",
+    "status": "deployed_recovered_material_queue_verified_and_merged",
     "request": "内容核验问题返回方案、待核清单与继续搜索阅读指引，不再丢弃完整模型输出",
     "changed_files": [
       "packages/retrofit/strategy.ts",
@@ -3669,11 +3826,14 @@
       "research/test_results/advisory-plan-campus-recovery-20261016.json",
       "research/test_results/advisory-plan-runtime-deployment-20261016.json",
       "research/test_results/advisory-plan-ui-deployment-20261016.json"
-    ]
+    ],
+    "merge_commit": "0ee09b219e3f01d959042379addbe910c0b105d6",
+    "ui_source_commit": "cafd130c9f3a31e62ef172e773b02b5d3d88eb0e",
+    "browser_evidence": "research/test_results/advisory-plan-browser-20261016.json"
   },
   "experience_file_chat_learning": {
     "as_of": "2026-10-16",
-    "status": "campus_deployed_native_api_browser_verified_ready_for_merge",
+    "status": "deployed_native_api_browser_verified_and_merged",
     "request": "文件和长聊天直接导入，自动构建经验、技能与规则更新对比；采用后进入后续知识检索",
     "changed_files": [
       "apps/host/experience.ts",
@@ -3693,7 +3853,7 @@
       "research/test_results/experience-learning-final-20261016.log",
       "research/test_results/experience-learning-ui-20261016.log"
     ],
-    "next_runnable_task": "合并PR44；用户从资料与条件的项目经验与约束入口手动导入实际材料。",
+    "next_runnable_task": "本次功能已完成；用户可从项目经验入口手动导入实际文件或聊天，采用生成的技能与规则。",
     "native_result": "1 actual provider call produced 2 experience cards, 1 skill, 1 rule candidate in isolated synthetic database; replay used 0 model calls",
     "preserved_deployed_sources": [
       "fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23",
@@ -3707,11 +3867,14 @@
     ],
     "ui_source_commit": "c0ffdf40b933e2c93f35f02c7bce58be30d6be34",
     "browser_evidence": "research/test_results/experience-learning-browser-20261016.json",
-    "production_project_writes": 0
+    "production_project_writes": 0,
+    "merge_commit": "fa527aa05ab1b11076bc119ddfad678ad5fba664",
+    "deployment_guard_merge_commit": "9b3114fa5ebbe7aff0bbb51b327e39403e7a0874",
+    "deployment_lock_evidence": "research/test_results/experience-learning-ui-lock-20261016.json"
   },
   "results_recovery_display_20261016": {
     "as_of": "2026-10-16",
-    "status": "campus_ui_deployed_browser_verified_ready_for_merge",
+    "status": "deployed_browser_verified_and_merged",
     "request": "成果与版本的旧失败记录按已保存恢复关联展示完整方案、报告和正确导出；原始记录保留在详情",
     "changed_files": [
       "packages/retrofit/research-round-recovery.ts",
@@ -3724,11 +3887,12 @@
       "research/test_results/results-recovery-focused-20261016.log",
       "research/test_results/results-recovery-build-20261016.log"
     ],
-    "next_runnable_task": "合并结果页恢复状态修正；使用者刷新成果页即可读取。",
+    "next_runnable_task": "本次修复已完成；刷新成果页查看恢复方案与报告。",
     "ui_source_commit": "dae40810699a498f37d8cc2351f84c3610152b77",
     "browser_evidence": "research/test_results/results-recovery-browser-20261016.json",
     "database_operations": 0,
-    "provider_calls": 0
+    "provider_calls": 0,
+    "merge_commit": "6daff6ebb677ebd9742c2bbe3567f319450ef11a"
   },
   "campus_domain_20261016": {
     "status": "https_deployed_server_direct_renewal_verified",
@@ -4028,7 +4192,7 @@
       "live": "Real Decision completed in 1329 ms; six provisional values; no DSH calls or external search",
       "browser": "Six provisional badges, per-dimension assumptions and evidence-only toggle verified"
     },
-    "status": "deployed_live_verified_merge_pending",
+    "status": "completed_deployed_live_verified_and_merged",
     "as_of": "2026-10-16",
     "artifacts": [
       "docs/Decision快速研判与推理暂估_20261016.md",
@@ -4038,17 +4202,21 @@
       "research/test_results/decision-estimates-live-20261016.json",
       "research/test_results/decision-estimates-browser-20261016.json"
     ],
-    "next_runnable_task": "Merge authorized reviewed source and preserve unrelated root worktree edits.",
+    "next_runnable_task": "No remaining work for this request.",
     "updated_at": "2026-10-16T15:06:34.016411+00:00",
     "deployment": {
       "runtime_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
       "ui_commit": "c89bb531bbd9f7eb21666540780582a7a3c1f143",
       "origin": "https://laneanew.cn/",
       "project_metadata_unchanged": 36
+    },
+    "merge": {
+      "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/51",
+      "commit": "c1c81adc71c59c81a52c6f3499cbd690b0052da2"
     }
   },
   "decision_project_guidance_20261016": {
-    "status": "deployed_live_and_browser_verified_merge_pending",
+    "status": "completed_deployed_live_verified_and_merged",
     "as_of": "2026-10-16",
     "changed_files": [
       "agent/mission.md",
@@ -4087,7 +4255,7 @@
       "research/test_results/decision-project-guidance-browser-20261016.json"
     ],
     "unresolved_questions": [],
-    "next_runnable_task": "Merge authorized branch and preserve unrelated root changes.",
+    "next_runnable_task": "No remaining implementation or deployment work for this request.",
     "updated_at": "2026-10-16T15:51:36.089514+00:00",
     "deployment": {
       "runtime_commit": "2e41aca94ab1a530266a123caef48fc48cdc4b9a",
@@ -4102,11 +4270,15 @@
     ],
     "known_limitations": [
       "Project P-0e40c5dd scope is registered as Tianjin while its existing analysis contains Hangzhou case material; this change preserves project inputs and does not certify the historical analysis factual identity."
-    ]
+    ],
+    "merge": {
+      "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/52",
+      "commit": "29f5ef08d8c520c09752278574732b53cc28a485"
+    }
   },
   "project_context_contract_20261017": {
-    "status": "deployed_live_and_browser_verified_merge_pending",
-    "updated_at": "2026-10-17T03:09:51.635242+00:00",
+    "status": "completed_deployed_live_browser_verified_and_merged",
+    "updated_at": "2026-10-17T03:10:56.282150+00:00",
     "scope": "Pro review first work order: object and canonical current-context contract, fenced result commit, shared Decision question limit, affected interface mocks.",
     "changed_files": [
       ".gitattributes",
@@ -4171,7 +4343,7 @@
       "No domain decision-quality or enterprise effectiveness validation",
       "No automatic full project/model research"
     ],
-    "next_runnable_task": "Merge authorized branch while preserving unrelated root changes; then continue review work order for existing workflow node receipts and recovery.",
+    "next_runnable_task": "Continue the Pro review next work order: reuse existing background run/artifact primitives for renewal workflow node receipts and recovery, then answer-slot coverage and controlled supplementation.",
     "deployment": {
       "origin": "https://laneanew.cn",
       "runtime_commit": "75eb1502d676b9c265fe68e69d19af15b0736f53",
@@ -4183,12 +4355,16 @@
       "canonical_result_equals_public_index": true,
       "new_model_research_calls": 0,
       "screenshot": "output/playwright/context-contract/material-followups.png"
+    },
+    "merge": {
+      "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/53",
+      "commit": "8d97cad04857c706694caeb7b179e5b9d1546e02"
     }
   },
   "research_complete_20261017": {
-    "status": "deployed_verified",
+    "status": "completed",
     "request": "一次完整落实Pro评审剩余三批改造，不在每个工单结束时停下",
-    "updated_at": "2026-10-17T04:48:50.127033+00:00",
+    "updated_at": "2026-10-17T04:50:10.070635+00:00",
     "implemented": [
       "shared background run registry and durable per-node leases/events/manifests/call receipts",
       "native DSH expert checkpoints, public-only supplementation and affected-task replay",
@@ -4211,10 +4387,8 @@
       "34 affected UI cases passed after actual historical-object presentation review",
       "release full suite:135 files /1677 tests passed; final object UI 24 tests passed"
     ],
-    "pending": [
-      "merge PR54"
-    ],
-    "next_runnable_task": "Merge verified implementation and reconcile main without overwriting unrelated root edits.",
+    "pending": [],
+    "next_runnable_task": "Await user manual project operation; no automatic demonstration or project research was started.",
     "runtime_commit": "cb0a9bd75496b4733c60c35df84e933d613abd65",
     "live": {
       "projects": 38,
@@ -4241,11 +4415,13 @@
       "research/test_results/research-complete-ui-final-deployment-20261017.json",
       "research/test_results/research-complete-deployed-providers-20261017.json",
       "research/test_results/research-complete-browser-live-20261017.json"
-    ]
+    ],
+    "merge_commit": "6e8ccb4e25a85bef49f30e7c3c4e0e6adab87449",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/54"
   },
   "case_task_import_20261017": {
-    "status": "deployed_verified",
-    "updated_at": "2026-10-17T07:29:43.718620+00:00",
+    "status": "completed",
+    "updated_at": "2026-10-17T07:32:27.819728+00:00",
     "requests": [
       "broaden and precisely match reference cases",
       "fix reversed/mixed context-compression character counts",
@@ -4265,11 +4441,9 @@
       "task upload/paste UI, tool receipts and original task baseline retained across upload revision",
       "public case Markdown/JSON and existing parser/extractor/round reuse"
     ],
-    "pending": [
-      "merge PR55"
-    ],
+    "pending": [],
     "worktree": "D:/建工ai/.cache/case-matching",
-    "next_runnable_task": "Merge PR55 and reconcile root without overwriting unrelated changes.",
+    "next_runnable_task": "User may upload real investigation files or paste records manually; no automatic project research was started.",
     "tests": [
       "56 focused cases passed; core source/tool tests13 passed",
       "7 real public URL fetches returned200; all8 new excerpts normalized-match",
@@ -4303,10 +4477,12 @@
       "research/test_results/case-task-browser-20261017.json",
       "research/test_results/case-task-runtime-deployment-20261017.json",
       "research/test_results/case-task-ui-final-deployment-20261017.json"
-    ]
+    ],
+    "merge_commit": "22bc5409aa22882a49dcf24ddd3cbe3596b3cbd8",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/55"
   },
   "context_compression_20261017": {
-    "status": "deployed_pending_merge",
+    "status": "completed",
     "updated_at": "2026-10-17T09:17:40.424248+00:00",
     "request": "real context reduction instead of 79-character cosmetic change",
     "root_causes": [
@@ -4333,7 +4509,7 @@
       "critical_fragments": 87
     },
     "real_project_runs": 0,
-    "next_runnable_task": "Merge verified branch; next manual project research uses deployed compression.",
+    "next_runnable_task": "Next user-initiated research uses deployed compression; old reports unchanged.",
     "runtime_commit": "46f04faf061f90d9442097801d1a6b50485122c6",
     "ui_commit": "46f04faf061f90d9442097801d1a6b50485122c6",
     "tests": [
@@ -4351,10 +4527,12 @@
       "research/test_results/context-compression-runtime-deployment-20261017.json",
       "research/test_results/context-compression-ui-deployment-20261017.json",
       "research/test_results/context-compression-deployed-replay-20261017.json"
-    ]
+    ],
+    "merge_commit": "5d3a4f23fdbbf2afe409be107225235fc4304abd",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/56"
   },
   "deepseek_search_model_1017": {
-    "status": "deployed_pending_merge",
+    "status": "completed",
     "updated_at": "2026-10-17T10:55:41.909256+00:00",
     "request": [
       "connect independent Search/Fetch following official docs",
@@ -4378,7 +4556,7 @@
       "dsh_calls": 1,
       "real_project_runs": 0
     },
-    "next_runnable_task": "Merge deployed source and receipts; new manual research uses updated provider/catalog.",
+    "next_runnable_task": "Next user-initiated research uses standalone Search/Fetch and the updated Flash catalog; old reports unchanged.",
     "runtime_commit": "0820f1caf081552dc800ebb40ebc4afcb456fc53",
     "tests": [
       "54 focused regressions passed",
@@ -4401,10 +4579,12 @@
       "model_ms": 626,
       "billing_estimate_standard_cny": 0.01,
       "unknown_tool_attempts": 0
-    }
+    },
+    "merge_commit": "db87df5ae9b175b41ba4079e267d97f6a17a8392",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/57"
   },
   "functional_evaluation_20261017": {
-    "status": "deployed_pending_merge",
+    "status": "completed",
     "updated_at": "2026-10-17T11:17:52.831849+00:00",
     "request": "Test actual search, model, full decision workflow and page effects",
     "worktree": "D:/建工ai/.cache/functional-evaluation",
@@ -4446,7 +4626,7 @@
       "same saved output after source-review fix:6 false issues->0 with0 model calls",
       "actual native zero-source regression completed without invented refs"
     ],
-    "next_runnable_task": "Merge verified fixes and report; full reanalysis of existing projects remains user initiated.",
+    "next_runnable_task": "User may manually start a fresh study; live evaluation and all discovered fixes are complete, original histories preserved.",
     "runtime_commit": "816660259079a96d988cf5cb79adff1085b073c2",
     "ui_commit": "816660259079a96d988cf5cb79adff1085b073c2",
     "browser_initial_check": {
@@ -4462,10 +4642,12 @@
       "research/test_results/functional-evaluation-runtime-final-20261017.json",
       "research/test_results/functional-evaluation-ui-final-20261017.json",
       "research/test_results/functional-evaluation-browser-20261017.json"
-    ]
+    ],
+    "merge_commit": "a17e9fed86eb85b7eab49146754666fd3ae3db02",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/58"
   },
   "task_deepseek_advice_20261017": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "updated_at": "2026-10-17T12:21:18.015331+00:00",
     "request": "Use DeepSeek V4.1 Flash to make yellow object warning suggestions precise",
     "worktree": "D:/建工ai/.cache/task-deepseek-advice",
@@ -4488,7 +4670,7 @@
       "production typecheck/build passed",
       "local real model call5664ms identified天津/杭州 mismatch and3 linked actions"
     ],
-    "next_runnable_task": "Merge verified card; same-context cache restores on next visit, manual refresh updates advice.",
+    "next_runnable_task": "Yellow reminder now restores precise cached DeepSeek advice; task and evidence links verified, original reports preserved.",
     "runtime_commit": "7e115f1e5e8fbaad2dc39e4fcfd4e754d18ab3c8",
     "ui_commit": "9675c09726a2e6c61552b0aaaa3b44b8bd9631a4",
     "server": {
@@ -4511,10 +4693,12 @@
       "research/test_results/investigation-advice-runtime-final-20261017.json",
       "research/test_results/investigation-advice-ui-deployment-20261017.json",
       "research/test_results/investigation-advice-browser-20261017.json"
-    ]
+    ],
+    "merge_commit": "ad1d4d88ad814d13549e6761a1f758097f1fd45c",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/59"
   },
   "rag_performance_20261018": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "request": "RAG搜索太慢且不够智能",
     "changed_files": [
       "apps/host/rag-retrieval.ts",
@@ -4549,10 +4733,12 @@
       "research/test_results/rag-performance-comparison-20261018.json",
       "research/test_results/rag-browser-20261018.json",
       "research/test_results/rag-runtime-final-20261018.json",
-      "research/test_results/rag-ui-deployment-20261018.json"
+      "research/test_results/rag-ui-deployment-20261018.json",
+      "research/test_results/rag-baseline-ci-20261018.json",
+      "research/test_results/rag-performance-merge-20261018.json"
     ],
     "unresolved": [],
-    "next_runnable_task": "Merge production-equivalent patch while preserving unrelated root edits; normal manual use needs no full research rerun.",
+    "next_runnable_task": "RAG direct and semantic routes deployed; next manual query uses snapshot-aware reuse. Existing reports preserved.",
     "runtime_commit": "5d100340506b4ef73cce89dee9c3d4fed080d153",
     "ui_commit": "7033f29c007d4267cb8cd2ea69dedef670c306dc",
     "server_measurement": {
@@ -4597,10 +4783,34 @@
       ],
       "screenshot": "output/playwright/rag-performance/answer-and-source.png",
       "no_full_research_started": true
+    },
+    "merge_commit": "4a00b5a51fbdb9cf8faf8d604a00cd411172b34e",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/60",
+    "existing_baseline_ci_issues": {
+      "checked_at": "2026-10-18T02:20:24.468484+00:00",
+      "base_commit": "ad1d4d88ad814d13549e6761a1f758097f1fd45c",
+      "checked_patch_commit": "4a37d0c0f212aff6cd3cf3fd037389a04bc810e8",
+      "full_ci": {
+        "passed": 1722,
+        "failed": 2,
+        "run": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/39089398350"
+      },
+      "baseline_control": {
+        "passed": 13,
+        "failed": 2,
+        "same_failure_signatures": true,
+        "command": "npx vitest run tests/contracts/format-compatibility.test.ts tests/contracts/research-rounds.test.ts"
+      },
+      "existing_failures": [
+        "format-compatibility: inherited evidence_refs length",
+        "research-rounds: old fake provider compressed source context"
+      ],
+      "rag_checks_passed": true,
+      "existing_failures_not_marked_passed": true
     }
   },
   "aihot_knowledge_closure_20261018": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "request": "恢复AIHOT范式并建立合理的资料数据库沉淀",
     "evidence": [
       "production has125 public documents141 versions",
@@ -4618,7 +4828,7 @@
       "restore knowledge archive entry and visible statistics",
       "existing model budget with next-day deferral"
     ],
-    "next_runnable_task": "Merge verified source; normal public research now archives and links originals continuously. Existing original backlog can be organized in bounded batches.",
+    "next_runnable_task": "Public originals, history and project lineage now archive continuously; bounded auto organization enabled. Existing projects and reports preserved.",
     "artifact_refs": [
       "docs/AIHOT资料沉淀与研判回流_20261018.md",
       "research/test_results/aihot-closure-server-20261018.json",
@@ -4677,10 +4887,12 @@
       ],
       "screenshot": "output/playwright/aihot-closure/archive-overview.png",
       "no_project_inputs_written": true
-    }
+    },
+    "merge_commit": "d7ddbb88ee620a3a50d9d2dbeb0cdd7144e6372c",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/61"
   },
   "archive_color_clarity_20261018": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "request": "当前页面色彩有问题",
     "scope": [
       "WorkspaceFrame view attribute",
@@ -4700,7 +4912,7 @@
       "minimum measured visible text contrast4.60:1",
       "backend unchanged, host PID unchanged, database operations0, provider calls0"
     ],
-    "next_runnable_task": "Merge UI-only verified palette; normal refresh loads semantic state colors.",
+    "next_runnable_task": "Current knowledge page uses neutral hierarchy and semantic work-state colors; backend and data preserved.",
     "ui_commit": "8e2d063a693a1087f4e1421275fb2aedfb735dcd",
     "artifacts": [
       "research/test_results/archive-color-browser-20261018.json",
@@ -4709,10 +4921,12 @@
       "output/playwright/archive-color-clarity/before.png",
       "output/playwright/archive-color-clarity/after-overview.png",
       "output/playwright/archive-color-clarity/after-results.png"
-    ]
+    ],
+    "merge_commit": "57c9d7e8ff007f0851ea809e886caf3b3f75394b",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/62"
   },
   "public_corpus_campaign_20261018": {
-    "status": "deployed_running_pending_merge",
+    "status": "completed",
     "changed_files": [
       "packages/intelligence/campaign.ts",
       "packages/intelligence/campaign-plan.ts",
@@ -4746,20 +4960,22 @@
       "output/playwright/public-corpus-campaign/live-collection.png"
     ],
     "constraints": [
-      "Independent Search/Fetch cost0.005CNY per successful request; daily1000Search/200Fetch/6CNY prepared but disabled pending explicit confirmation",
+      "Independent Search/Fetch cost0.005CNY per successful request; daily1000Search/200Fetch/6CNY enabled after explicit user confirmation",
       "Existing40-call model budget unchanged; no private/synthetic promotion",
       "Server has500GB root disk and477GB available; no separate mounted data volume"
     ],
-    "next_runnable_task": "Continuous collection active at1000Search/200Fetch/6CNY per Beijing day; finish merge, then evaluate daily net-new public originals and decision coverage from real receipts.",
+    "next_runnable_task": "Continuous public collection active1000Search/200Fetch/6CNY per Beijing day; inspect real daily net-new originals and evidence coverage using existing receipts.",
     "runtime_commit": "b0ed58c3aa45f2109f04b429dda93759bc53c3aa",
     "ui_commit": "bb0cc27a61f38294ec5d126febfa5082cf11f708",
     "activated_at": "2026-10-18T10:29:23+00:00",
     "user_authorization": "2026-10-18 用户回复没有关系并要求放心调用；按已说明1000Search/200Fetch/6CNY日上限启用。",
     "storage": "/home/zhuhangcheng/apps/haizhizi/shared/data/corpus-public",
-    "approved_daily_cny": 6
+    "approved_daily_cny": 6,
+    "merge_commit": "28d0891ea78ba80cd70e0129d1617e3d62fe9c61",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/63"
   },
   "mobile_navigation_20261018": {
-    "status": "deployed_pending_merge",
+    "status": "completed",
     "changed_files": [
       "apps/workspace/src/components/WorkspaceFrame.tsx",
       "apps/workspace/src/components/WorkspaceFrame.css",
@@ -4792,11 +5008,13 @@
       "output/playwright/mobile-navigation/mobile-expanded.png",
       "output/playwright/mobile-navigation/desktop.png"
     ],
-    "next_runnable_task": "Merge verified mobile UI; original project data,backend and ongoing collection remain unchanged.",
-    "ui_commit": "71d086d8247445939fcb89efb45284e6066f4fc7"
+    "next_runnable_task": "Mobile workspace navigation deployed and verified; compact56px header,full-width content and existing business entries available on demand; desktop restored above760px.",
+    "ui_commit": "71d086d8247445939fcb89efb45284e6066f4fc7",
+    "merge_commit": "b61a7855d045da7e0355e1655517cff3758b0b4b",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/64"
   },
   "mobile_cards_20261019": {
-    "status": "deployed_verified_pending_merge",
+    "status": "completed",
     "changed_files": [
       "apps/workspace/src/App.tsx",
       "apps/workspace/src/components/MobileProjectWorkspace.tsx",
@@ -4832,14 +5050,16 @@
       "output/playwright/mobile-workspace/mobile-overview.png",
       "output/playwright/mobile-workspace/mobile-investigation.png"
     ],
-    "next_runnable_task": "Merge verified mobile UI. Native phone summary uses local tabs/cards; full originals/forms remain available and preserve state.",
+    "next_runnable_task": "Native mobile project cards deployed and verified across6pages; local switching and paging, original tools and form state retained; desktop unchanged.",
     "unresolved_questions": [
       "Existing stage-unknown cost-reference groups can span disparate amounts;mobile shows source records rather than adopting the range."
     ],
-    "ui_commit": "f1885d9c9dcfccad9681fdcf86f9787ee6a87457"
+    "ui_commit": "f1885d9c9dcfccad9681fdcf86f9787ee6a87457",
+    "merge_commit": "e75da4eb9b32f2190882948d8da4eaafb37e66e1",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/65"
   },
   "reference_ui_20261020": {
-    "status": "deployed_verified",
+    "status": "completed",
     "reference_images": [
       "reference/1.png",
       "reference/2.png",
@@ -4882,11 +5102,13 @@
       "output/playwright/reference-ui/live-mobile.png"
     ],
     "unresolved_questions": [],
-    "next_runnable_task": "Normal merge and preserve unrelated local edits; deployed source already verified.",
-    "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf"
+    "next_runnable_task": "Three-reference UI deployed and browser verified; project search, responsive cards, map overlays and mobile chapter switching retained.",
+    "ui_commit": "458478d74aef4144a52f03a28189a022f7c807bf",
+    "merge_commit": "3e6452c1a1d7647c6baa13aa57c1b5eb41ae3ac9",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/66"
   },
   "topic_wiki_20261020": {
-    "status": "deployed_verified",
+    "status": "completed",
     "references": [
       "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
     ],
@@ -4930,17 +5152,19 @@
       "output/playwright/topic-wiki/topics-final.png",
       "output/playwright/topic-wiki/budget100.png"
     ],
-    "next_runnable_task": "Merge deployed topic pilot and budget100 fix;review domain details in compiled drafts before adopting rules.",
+    "next_runnable_task": "Topic Wiki pilot and100-call budget deployed/verified;maintain source-bound drafts and review before rule adoption.",
     "unresolved_questions": [
       "Model-generated pages are drafts:cross-region attribution and conflict-vs-statistical-scope require review;quote match is not semantic correctness."
     ],
     "authorization": "User confirmed100daily model calls on2026-10-21;supersedes old40fallback and temporary2pilot allowance.",
     "runtime_commit": "4bbd64c130b5155e46f5171ee2dde6e1480e02d2",
     "ui_commit": "8d0325830b59ebfebe71fc175ffcf4903f93fbf8",
-    "daily_model_budget": 100
+    "daily_model_budget": 100,
+    "merge_commit": "cdfbf370c263ba26ca1215a7b32881ea334ddc1d",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/67"
   },
   "topic_expansion_20261021": {
-    "status": "deployed_verified",
+    "status": "completed",
     "decisions": [
       "21topic catalogue in5business groups based on public renovation scope and existing source discovery",
       "same source/parser/index/worker/modelBudget100",
@@ -4966,7 +5190,7 @@
       "output/playwright/topic-expansion/desktop.png",
       "output/playwright/topic-expansion/mobile.png"
     ],
-    "next_runnable_task": "Merge verified21topic expansion;then integrate official Tencent Yuanbao search in existing provider chain. Service key missing;current daily model usage100/100 remains unchanged.",
+    "next_runnable_task": "Topic Wiki pilot and100-call budget deployed/verified;maintain source-bound drafts and review before rule adoption.",
     "unresolved_questions": [],
     "validation": [
       "36topic/storage/HTTPchecks passed before additional metadata-backfill case",
@@ -4982,7 +5206,9 @@
     ],
     "runtime_commit": "f9560660cc1aa1620b8320d62f0d6bc4b1c20840",
     "ui_commit": "c407c37bb5e28bc3e17eca8b7a896932bb8aa709",
-    "daily_model_budget": 100
+    "daily_model_budget": 100,
+    "merge_commit": "ac37c1466eaabb2fffccfe2334245340b710e7f6",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/68"
   },
   "tencent_wsa_20261021": {
     "status": "deployed_blocked_external_key",
@@ -5003,7 +5229,7 @@
       "research/test_results/tencent-wsa-live-readback-20261021.json",
       "scripts/configure-tencent-wsa.py"
     ],
-    "next_runnable_task": "ServiceAPIKeyisstillmissing:awaituserprivatekeyfilepath;installviahelper,verifycloudaccountfreequota,restartoriginalservicewhenidle,andrunfewsame-querysearch/originalfetchcomparisons.DefaultDeepSeekremainsactive.",
+    "next_runnable_task": "Tencentconnector deployed;await private serviceAPIKey and accountfreequota;configure/restartwhenidle and verify native search. DefaultDeepSeekactive.",
     "unresolved_questions": [
       "Tencent service key and account free quota not available yet."
     ],
@@ -5014,6 +5240,300 @@
       "Server13runtimefiles deployed,43projectsandhistoriespreserved",
       "Nativehealthok,statusconfiguredfalse/attempts0/limit2000;modeldailybudget100",
       "Realmissing-keyfallback returned4DSsearchresultsin405ms;0Tencentwirecalls;notTencentperformanceevaluation"
+    ],
+    "merge_commit": "b73d5ee1b3cec306eba8e5bd3efa00d4a9c22c20",
+    "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/69"
+  },
+  "creative_iteration_materials_side_20261015": {
+    "updated_at": "2026-10-15",
+    "status": "local_material_packet_delivered_static_checks_archive_readback_verified",
+    "scope": "Side conversation creative evidence collection only. No source, git, service, production project or original organizer document mutation.",
+    "artifact_directory": "C:/Users/123/.codex/visualizations/2026/10/15/01a13faa-8b89-7023-969a-9a744f743356/creative-materials",
+    "archive": "C:/Users/123/.codex/visualizations/2026/10/15/01a13faa-8b89-7023-969a-9a744f743356/旧区新生_创作与迭代材料_20261015.zip",
+    "repository_snapshot": "c52871fd78173c8d81bb3a9835935c7aca25f316",
+    "contents": "12 curated milestones, 4 debugging narratives, 9 original archived images, 132 reachable commit metadata rows including 50 first-parent rows, selected evidence JSON and log tails, archived 102-second video, numeric-only main-session Codex token/quota snapshots, standalone HTML and reusable Markdown.",
+    "privacy": "No credentials, account balance, full sessions, raw prompts or private reasoning text exported. Cached input and reasoning output are subsets. Shared-account historical quota snapshots are not project spending.",
+    "verification": "Local JavaScript syntax and relative-file checks passed, source/video hashes retained, ZIP entries physically read back and hashed. No new application tests or provider calls.",
+    "unresolved": "In-app browser policy rejected file:// preview. No alternate browser or serving workaround attempted. HTML browser visual acceptance not claimed. Dynamic research status remains scoped to attached historical evidence.",
+    "next_runnable_task": "Open the extracted index.html or select diagrams and narratives for the organizer document; no pending execution in this side task."
+  },
+  "competition_template_technical_local_edits_20261015": {
+    "updated_at": "2026-10-15",
+    "status": "tracked_document_ready_source_readonly_unchanged",
+    "scope": "Side conversation document editing only. Preserve organizer template and existing prose; no business runtime, service, git or deployment changes.",
+    "source": "C:/Users/123/Documents/xwechat_files/wxid_1980ghh2hh3u22_dbe8/msg/file/2026-10/说明文档模版(1).docx",
+    "source_sha256": "dba2cb38fd0ede0f3cc9b81aac80dbe222824c20e40f7ae5080b50a0bf5c0855",
+    "artifact": "C:/Users/123/.codex/visualizations/2026/10/15/01a13faa-8b89-7023-969a-9a744f743356/technical-draft/说明文档模版(1)_局部修订.docx",
+    "artifact_sha256": "3a242eda1bc15cd4e2374c14bf5637f6becf65bab927cb7815b0bd82f9d7b461",
+    "receipt": "C:/Users/123/.codex/visualizations/2026/10/15/01a13faa-8b89-7023-969a-9a744f743356/technical-draft/edit-receipt.json",
+    "changes": "Section 2.2 RAG, conditional inference, DSH roles, context selection; appendix C tool protocol and budgets; campus access sentence; four native Word comments. Existing 16 tables, figure, sections, cover and appendices A/B retained.",
+    "verification": "One DOCX package preservation/readback check and one bundled renderer pass via WSL LibreOffice. All 20 page images viewed. No model or application tests run for this document edit.",
+    "unresolved": "Source file has ReadOnly attribute; in-place save was denied, attribute untouched, original SHA unchanged. New workflow implementation is described from candidate local code, not newly verified as deployed.",
+    "next_runnable_task": "Open delivered DOCX in Word and accept or reject tracked edits and architecture comments; no pending implementation work in this side task."
+  },
+  "branding_titles_20261015": {
+    "status": "live_static_titles_updated_http_and_browser_verified",
+    "product_name": "旧区新生",
+    "changed_files": [
+      "apps/workspace/index.html",
+      "apps/workspace/src/AdminAccess.tsx",
+      "apps/workspace/src/components/WorkspaceFrame.tsx",
+      "apps/host/admin-login-page.ts",
+      "packages/corpus/corpus.ts",
+      "scripts/dev.ts",
+      "scripts/render-qiushi-decision-report.py"
+    ],
+    "verification": "Source title replacements and diff check passed. Live index and entry JS were patched with original SHA guards and backups; HTTP 200 readback and an isolated browser tab confirmed the new document title and page brand. No build, git commit, release switch or service restart was performed.",
+    "online_receipt": "research/test_results/branding-live-20261015.json",
+    "screenshot": "output/playwright/branding/title-live-20261015.png",
+    "scope": "Product-facing titles, login brand, generated ledger/report headers; historical competition names and existing artifact paths retained.",
+    "next_runnable_task": "Retain the seven source title edits in the next normal build/release so the verified live branding hotfix is preserved."
+  },
+  "sidebar_hybrid_rag_api_20261016": {
+    "as_of": "2026-10-16",
+    "status": "campus_deployed_real_api_index_and_chrome_source_jump_verified",
+    "scope": "Published only sidebar hybrid retrieval/API indexes and current-version research-original read projection. Root main unchanged; isolated release commits/worktree retained. Existing project input, schemes, access policy and nginx preserved.",
+    "changed_files": [
+      "apps/host/rag-retrieval.ts",
+      "packages/experience/retrieval.ts",
+      "packages/experience/semantic-index.ts",
+      "packages/experience/hybrid-retrieval.ts",
+      "apps/workspace/src/imports/RagEvidenceSearch.tsx",
+      "apps/workspace/src/imports/rag-evidence-search.css",
+      "packages/contracts/schema.json",
+      "apps/host/generated/contracts.ts",
+      "services/capabilities/generated/contracts.py",
+      "runtime/dsh/live-session.ts",
+      "services/capabilities/app.py",
+      "services/capabilities/analysis.py",
+      "tests/contracts/hybrid-rag.test.ts",
+      "tests/contracts/rag-api-ui.test.ts",
+      "tests/test_capabilities.py",
+      "packages/experience/retrieval-sources.ts",
+      "tests/contracts/retrieval-research-sources.test.ts"
+    ],
+    "checks": {
+      "focused_typescript": {
+        "files": 5,
+        "tests": 49,
+        "status": "passed"
+      },
+      "python_capabilities": {
+        "tests": 34,
+        "status": "passed"
+      },
+      "typecheck": "passed",
+      "production_build": "passed",
+      "actual_provider": {
+        "model": "deepseek-flash",
+        "calls": 4,
+        "status": "passed",
+        "data": "isolated constructed protocol sample",
+        "business_quality_evaluation": false,
+        "production_project_writes": 0
+      },
+      "release_tests": {
+        "files": 6,
+        "tests": 50,
+        "status": "passed",
+        "log": "research/test_results/sidebar-rag-release-tests-20261016.log"
+      },
+      "index_length_regression": {
+        "files": 2,
+        "tests": 12,
+        "status": "passed",
+        "log": "research/test_results/sidebar-rag-live-index-fix-20261016.log"
+      },
+      "real_project_browser": {
+        "status": "passed",
+        "method": "API semantic + keyword",
+        "indexed": 10,
+        "eligible": 10,
+        "source_jump": "opened actual original",
+        "fact_writes": 0
+      }
+    },
+    "artifacts": [
+      "docs/侧栏混合检索与API索引.md",
+      "research/test_results/sidebar-rag-api-live-probe-20261016.json",
+      "research/test_results/sidebar-rag-api-tests-20261016.log",
+      "research/test_results/sidebar-rag-api-python-20261016.log",
+      "research/test_results/sidebar-rag-api-build-20261016.log",
+      "research/test_results/sidebar-rag-campus-final-20261016.json",
+      "research/test_results/sidebar-rag-campus-browser-20261016.json",
+      "research/test_results/sidebar-rag-runtime-deployment-20261016.json",
+      "research/test_results/sidebar-rag-index-fix-deployment-20261016.json",
+      "research/test_results/sidebar-rag-ui-deployment-20261016.json"
+    ],
+    "next_runnable_task": "本次校园发布已完成；保留.cache/sidebar-rag-release内的不可变发布提交供后续主线集成，不再重复发布或模型测试。",
+    "deployment": {
+      "url": "http://10.70.223.113/",
+      "runtime_commit": "7983dfe914441f50adf348cfce2c2208462b7480",
+      "ui_commit": "fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23",
+      "semantic_index": {
+        "indexed": 10,
+        "eligible": 10,
+        "pending": 0
+      },
+      "original_source_jump": {
+        "opened": true,
+        "originalPresent": true,
+        "title": "拱墅区如何做到“第一个吃螃蟹”？"
+      },
+      "backup_runtime": "/home/zhuhangcheng/apps/haizhizi/shared/backups/sidebar-rag-7983dfe914441f50adf348cfce2c2208462b7480-20261016T051232Z",
+      "backup_ui": "/home/zhuhangcheng/apps/haizhizi/releases/d5a2fbaaf6da1d221adce3c8f437b98a2fb1fddf-map-workflow/apps/workspace/.dist-blue-fa2c06dfd87bbffbd954a4c4fd69a8eef185cd23-20261016T051631Z"
+    }
+  },
+  "format_compatibility_side_20261016": {
+    "status": "deployed_and_real_provider_verified",
+    "source_handoff_before": 1514,
+    "source_handoff_after": 74,
+    "project_source_count_limit_removed": true,
+    "source_reference_constraints_aligned": 35,
+    "checks": [
+      "research/test_results/format-compatibility-focused-20261016.log",
+      "research/test_results/format-compatibility-neighbor-20261016.log",
+      "research/test_results/format-compatibility-live-decision-20261016.json"
+    ],
+    "runtime_deployment": "research/test_results/format-compatibility-runtime-deployment-20261016.json",
+    "real_decision_status": "completed",
+    "request_project_writes": 0,
+    "next_runnable_task": "本次格式兼容修复已上线；真实输入和Decision已回放及实测，不重复运行。"
+  },
+  "map_selected_inspector_20261016": {
+    "status": "campus_deployed_actual_place_selection_verified",
+    "clarification": "用户所指侧边栏是地图选中地点后的右侧信息栏；资料问答窗的未发布布局改动已撤回。",
+    "base_ui": "c0ffdf40b933e2c93f35f02c7bce58be30d6be34",
+    "published_ui": "2cad24fbe43626304e70625f1995a34b10742c22",
+    "changed_production_ui_files": [
+      "apps/workspace/src/maps/MapWorkspace.tsx",
+      "apps/workspace/src/maps/PreliminaryCard.tsx",
+      "apps/workspace/src/maps/RenewalModePanel.css",
+      "apps/workspace/src/maps/RenewalModePanel.tsx",
+      "apps/workspace/src/maps/map.css"
+    ],
+    "other_published_experience_ui_unchanged": true,
+    "evidence_search_layout_unchanged": true,
+    "behavior": [
+      "地图使用模式初判摘要",
+      "完整条件与过程按需打开",
+      "单一栏内滚动",
+      "建立项目及地点详情保持可见",
+      "短内容高度自适应"
+    ],
+    "checks": [
+      "research/test_results/map-inspector-focused-20261016.log",
+      "research/test_results/map-inspector-campus-browser-20261016.json"
+    ],
+    "build": "research/test_results/map-inspector-final-build-20261016.log",
+    "deployment": "research/test_results/map-inspector-ui-deployment-20261016.json",
+    "screenshot": "output/playwright/map-inspector/campus-selected-place-panel-20261016.png",
+    "browser_metrics": {
+      "actions": [
+        "建立项目 ",
+        "查看地点详情"
+      ],
+      "compact": true,
+      "detailsClosed": true,
+      "footerVisible": true,
+      "horizontalOverflow": false,
+      "oneScroll": true,
+      "panelBounds": {
+        "bottom": 884.1771240234375,
+        "height": 708.1771240234375,
+        "left": 2132,
+        "right": 2532,
+        "top": 176,
+        "width": 400,
+        "x": 2132,
+        "y": 176
+      },
+      "prematureVerdict": false,
+      "title": "浙大求是社区-求是村11",
+      "viewport": [
+        2560,
+        1215
+      ]
+    },
+    "next_runnable_task": "本次已完成，保留.cache/map-inspector-release作为精确发布源。后续发布必须沿用线上版本及索引哈希守卫，避免并行覆盖。"
+  },
+  "architecture_pro_review_20261017": {
+    "status": "requested_context_and_browser_submission_completed_pro_response_in_progress",
+    "updated_at": "2026-10-17T02:17:07.313315+00:00",
+    "request": "通过实际浏览器和后端代码梳理搜索、Agent编排、Decision与科学性问题，借鉴同类架构并提交网页版Pro；纳入独立DeepSeek Search/Fetch。",
+    "changed_files": [
+      "docs/reviews/架构问题与Pro评审上下文_20261017.md",
+      "research/test_results/architecture-pro-review-evidence-20261017.json"
+    ],
+    "artifacts": [
+      "docs/reviews/架构问题与Pro评审上下文_20261017.md",
+      "research/test_results/architecture-pro-review-evidence-20261017.json",
+      "output/playwright/architecture-pro-review-20261017/pro-submitted.jpg",
+      "output/playwright/architecture-pro-review-20261017/workbench-query.txt",
+      "output/playwright/architecture-pro-review-20261017/pro-review-in-progress.jpg",
+      "output/playwright/architecture-pro-review-20261017/pro-current-state.txt"
+    ],
+    "web_pro": {
+      "url": "https://chatgpt.com/c/6ad2d878-c1a0-83e8-9108-9aec217a9ee1",
+      "browser": "Chrome",
+      "model_ui": "GPT-6 / Pro, fifth of five thinking levels",
+      "prompt_sha256": "afbf8e39a63ec11fe9a85b93bb242d4ee026ade340de74c6e887a410af9bdda9",
+      "observed_status": "Pro selected; prompt submitted in a persistent conversation; official-source search and three review tasks visible, final response still generating."
+    },
+    "validation": {
+      "live_browser_query": "21 sources, 5 hits, 5 answer citations; compound-answer coverage issue observed",
+      "ci": "PR52 immutable run: 129 files passed/3 failed, 1622 tests passed/24 failed; not fixed in this review",
+      "new_api_benchmark": "Not performed; independent API benefits are design hypotheses pending A/B"
+    },
+    "unresolved_questions": [
+      "Pro final architecture report is still generating; no final review approval or implementation is claimed.",
+      "Standalone Search/Fetch A/B, domain decision-quality calibration and the known CI failures remain outside this completed context-and-question submission."
+    ],
+    "next_runnable_task": "When continuing, read the final Pro response from the saved conversation, supply verified launchRun/executeRun reuse facts as needed, and save a prioritized synthesis before implementing architecture changes.",
+    "post_submission_findings": [
+      "Existing apps/host/server.ts:launchRun already returns 202 and runs background work independent of SSE view; runtime/workflows/run.ts reuses artifacts keyed by dependencies. Prefer extending these when assessing durable renewal research rather than adding a competing controller.",
+      "Store.open supports optional PostgreSQL through DATABASE_URL, while current observed deployment uses PGlite; persistence proposals must distinguish the two."
+    ]
+  },
+  "search_quality_comparison_20261018": {
+    "status": "completed",
+    "changed_files": [
+      "docs/公开资料持续采集与AIHOT沉淀_20261018.md"
+    ],
+    "validation": [
+      "server paired same3queries/4sources both completed; sameURLset",
+      "8149ms to1143ms;3812 to5653characters;6/9 to8/9 rule-detected fields",
+      "52campaign searches;177to844documents;530to1200archived versions;4791to41316chunks",
+      "40/day organisation calls reached;9analysed materials; no decision accuracy claim",
+      "benchmark did not write projects or launch full research"
+    ],
+    "artifacts": [
+      "research/test_results/search-quality-live-comparison-20261018.json",
+      "research/test_results/search-quality-comparison-summary-20261018.json"
+    ],
+    "next_runnable_task": "Use query/field coverage to prioritise high-value material organisation; current bottleneck40/day model-call cap, not search latency. No runtime change in this comparison."
+  },
+  "github_closeout_20261021": {
+    "status": "uploading",
+    "scope": "Workbenchchangesandpublicdeliverablesonly;serverdeletionnotauthorizedtospecifictargets",
+    "decisions": [
+      "MainbranchcontainslatestTencent/Topic/RAG/UIwork",
+      "175selectedsource/data/document/evidencefiles;36projectstateupdates;49otherresearchstatechangesremainlocal",
+      "ThreehistoricalfinalvideosinReleasewithSHA256manifest",
+      "NoAPIkeys,authprofiles,personalCV,otherresearchorfullthirdpartypaperspublished"
+    ],
+    "validation": [
+      "Pendingselectedtextcredentialscan0hits",
+      "TypeScriptcheckpassed;reportPythonsyntaxpassed",
+      "Prepared3videoassets60962083byteswithsource/copymatchinghashes"
+    ],
+    "artifacts": [
+      "research/test_results/github-upload-inventory-20261021.json",
+      "docs/GitHub归档与服务器清理范围_20261021.md"
+    ],
+    "next_runnable_task": "Pushpreparedsource/recordsandRelease;verifyremotebranchandassetdigests;awaituserserverdeletionscope.",
+    "unresolved_questions": [
+      "Servercleanupscopequestionpending;43projectdatabase/originalcorpusnotbackedupbyGitpush."
     ]
   }
 }

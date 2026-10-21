@@ -1,0 +1,33 @@
+{
+  "status": "branding_live_updated_and_http_verified",
+  "release": "/home/zhuhangcheng/apps/haizhizi/releases/1479db36e3152d5cc163c691de65d24bf67ec229-evidence-r2",
+  "backup_directory": "/home/zhuhangcheng/apps/haizhizi/shared/branding/20261015T132306527991Z",
+  "service_restarted": false,
+  "release_switched": false,
+  "project_data_changed": false,
+  "files": [
+    {
+      "path": "apps/workspace/dist/index.html",
+      "old_sha256": "a273026ff75ccd233a3c2d34ddd87247dddc0da090b898933955f6d4d49c2da7",
+      "new_sha256": "0ac5d7759945f5b4eadd38d6dfc09fff8df6d7183ac4cd4ecdb15462cb059bff"
+    },
+    {
+      "path": "apps/workspace/dist/assets/index-DWS1EC5o.js",
+      "old_sha256": "14828e34ecdb12aa6d484d103bcbfefbbec3dee3156a4dddd7fbed3b23221b3c",
+      "new_sha256": "0b14840f905b2b4297bbfdd55bae63f003aea3e80b5a3c07d4eb0923f9c2c0a5"
+    }
+  ],
+  "http_readback": {
+    "index.html": {
+      "status": 200,
+      "new_brand_count": 1,
+      "cache_control": "public, max-age=0"
+    },
+    "assets/index-DWS1EC5o.js": {
+      "status": 200,
+      "new_brand_count": 3,
+      "cache_control": "public, max-age=0"
+    }
+  },
+  "updated_at": "2026-10-15T13:23:06.567805+00:00"
+}

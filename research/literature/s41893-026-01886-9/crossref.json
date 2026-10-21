@@ -1,0 +1,938 @@
+{
+  "indexed": {
+    "date-parts": [
+      [
+        2026,
+        7,
+        14
+      ]
+    ],
+    "date-time": "2026-07-14T09:10:27Z",
+    "timestamp": 1784020227190,
+    "version": "3.55.0"
+  },
+  "reference-count": 72,
+  "publisher": "Springer Science and Business Media LLC",
+  "license": [
+    {
+      "start": {
+        "date-parts": [
+          [
+            2026,
+            7,
+            14
+          ]
+        ],
+        "date-time": "2026-07-14T00:00:00Z",
+        "timestamp": 1783987200000
+      },
+      "content-version": "tdm",
+      "delay-in-days": 0,
+      "URL": "https://www.springernature.com/gp/researchers/text-and-data-mining"
+    },
+    {
+      "start": {
+        "date-parts": [
+          [
+            2026,
+            7,
+            14
+          ]
+        ],
+        "date-time": "2026-07-14T00:00:00Z",
+        "timestamp": 1783987200000
+      },
+      "content-version": "vor",
+      "delay-in-days": 0,
+      "URL": "https://www.springernature.com/gp/researchers/text-and-data-mining"
+    }
+  ],
+  "content-domain": {
+    "domain": [
+      "link.springer.com"
+    ],
+    "crossmark-restriction": false
+  },
+  "short-container-title": [
+    "Nat Sustain"
+  ],
+  "DOI": "10.1038/s41893-026-01886-9",
+  "type": "journal-article",
+  "created": {
+    "date-parts": [
+      [
+        2026,
+        7,
+        14
+      ]
+    ],
+    "date-time": "2026-07-14T09:02:57Z",
+    "timestamp": 1784019777000
+  },
+  "update-policy": "https://doi.org/10.1007/springer_crossmark_policy",
+  "source": "Crossref",
+  "is-referenced-by-count": 0,
+  "title": [
+    "Human mobility dynamics for cost-effective flood emergency resource allocation"
+  ],
+  "prefix": "10.1038",
+  "author": [
+    {
+      "ORCID": "https://orcid.org/0000-0003-3343-8132",
+      "authenticated-orcid": false,
+      "given": "Junqing",
+      "family": "Tang",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0000-0002-3500-1201",
+      "authenticated-orcid": false,
+      "given": "Wei",
+      "family": "Lyu",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0000-0001-5373-5551",
+      "authenticated-orcid": false,
+      "given": "Pengjun",
+      "family": "Zhao",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0009-0008-1227-0899",
+      "authenticated-orcid": false,
+      "given": "Fengjue",
+      "family": "Huang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0000-0003-4386-1997",
+      "authenticated-orcid": false,
+      "given": "Jiaying",
+      "family": "Li",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0000-0002-5670-7860",
+      "authenticated-orcid": false,
+      "given": "Chao",
+      "family": "Fan",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0000-0001-8687-0901",
+      "authenticated-orcid": false,
+      "given": "Qiuchen",
+      "family": "Lu",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "given": "Jing",
+      "family": "Wang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "given": "Lingzhi",
+      "family": "Ye",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    },
+    {
+      "ORCID": "https://orcid.org/0009-0009-2296-5640",
+      "authenticated-orcid": false,
+      "given": "Zengjun",
+      "family": "Guo",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+        {
+          "vocabulary": "crossref",
+          "role": "author"
+        }
+      ]
+    }
+  ],
+  "member": "297",
+  "published-online": {
+    "date-parts": [
+      [
+        2026,
+        7,
+        14
+      ]
+    ]
+  },
+  "reference": [
+    {
+      "key": "1886_CR1",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1088/1748-9326/aacc76",
+      "volume": "13",
+      "author": "S Jevrejeva",
+      "year": "2018",
+      "unstructured": "Jevrejeva, S., Jackson, L. P., Grinsted, A., Lincke, D. & Marzeion, B. Flood damage costs under the sea level rise with warming of 1.5 °C and 2 °C. Environ. Res. Lett. 13, 074014 (2018).",
+      "journal-title": "Environ. Res. Lett."
+    },
+    {
+      "key": "1886_CR2",
+      "unstructured": "The International Disaster Database—EM-DAT (Centre for Research on the Epidemiology of Disasters (CRED), University of Louvain, 2023); https://www.emdat.be/"
+    },
+    {
+      "key": "1886_CR3",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1126/science.adw3443",
+      "volume": "388",
+      "author": "X Bai",
+      "year": "2025",
+      "unstructured": "Bai, X. & Shi, P. China’s urbanization at a turning point—challenges and opportunities. Science 388, eadw3443 (2025).",
+      "journal-title": "Science"
+    },
+    {
+      "key": "1886_CR4",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Intergovernmental Panel on Climate Change. Climate Change 2022—Impacts, Adaptation and Vulnerability: Working Group II Contribution to the Sixth Assessment Report of the Intergovernmental Panel on Climate Change (Cambridge Univ. Press, 2023).",
+      "DOI": "10.1017/9781009325844"
+    },
+    {
+      "key": "1886_CR5",
+      "doi-asserted-by": "publisher",
+      "first-page": "642",
+      "DOI": "10.1038/nclimate3350",
+      "volume": "7",
+      "author": "PJ Ward",
+      "year": "2017",
+      "unstructured": "Ward, P. J. et al. A global framework for future costs and benefits of river-flood protection in urban areas. Nat. Clim. Change 7, 642–646 (2017).",
+      "journal-title": "Nat. Clim. Change"
+    },
+    {
+      "key": "1886_CR6",
+      "unstructured": "Office of the United Nations Disaster Relief Coordinator. Shelter After Disaster: Guidelines for Assistance (United Nations, 1982); https://digitallibrary.un.org/record/48456?ln=en&v=pdf"
+    },
+    {
+      "key": "1886_CR7",
+      "unstructured": "United Nations. Sendai Framework for Disaster Risk Reduction 2015–2030 (United Nations Office for Disaster Risk Reduction, 2015); https://www.undrr.org/publication/sendai-framework-disaster-risk-reduction-2015-2030"
+    },
+    {
+      "key": "1886_CR8",
+      "unstructured": "Xinhua. Policy bank lends 20.4 bln yuan to support China’s dual-use public infrastructure in 2024. State Council of the People’s Republic of China https://english.www.gov.cn/news/202502/03/content_WS67a0c439c6d0868f4e8ef555.html (2025)."
+    },
+    {
+      "key": "1886_CR9",
+      "doi-asserted-by": "publisher",
+      "first-page": "728",
+      "DOI": "10.1038/s41893-020-0516-7",
+      "volume": "3",
+      "author": "D Yu",
+      "year": "2020",
+      "unstructured": "Yu, D. et al. Disruption of emergency response to vulnerable populations during floods. Nat. Sustain. 3, 728–736 (2020).",
+      "journal-title": "Nat. Sustain."
+    },
+    {
+      "key": "1886_CR10",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1038/s43247-023-01165-x",
+      "volume": "5",
+      "author": "A Ermagun",
+      "year": "2024",
+      "unstructured": "Ermagun, A., Smith, V. & Janatabadi, F. High urban flood risk and no shelter access disproportionally impacts vulnerable communities in the USA. Commun. Earth Environ. 5, 2 (2024).",
+      "journal-title": "Commun. Earth Environ."
+    },
+    {
+      "key": "1886_CR11",
+      "unstructured": "United Nations Office for the Coordination of Humanitarian Affairs (OCHA). Indonesian tsunami death toll climbs over 400 as government-led relief efforts are stepped up. United Nations https://news.un.org/en/story/2018/12/1029351 (2018)."
+    },
+    {
+      "key": "1886_CR12",
+      "unstructured": "At least 6,000 children still in temporary shelters, six months on from Sulawesi disaster. Save the Children https://www.savethechildren.net/news/least-6000-children-still-temporary-shelters-six-months-sulawesi-disaster (2019)."
+    },
+    {
+      "key": "1886_CR13",
+      "unstructured": "2 dead, 10 missing in flash flood in East China. Xinhua https://english.news.cn/20250722/c84386280a8245d4a2a4666b0aa79534/c.html (2025)."
+    },
+    {
+      "key": "1886_CR14",
+      "doi-asserted-by": "publisher",
+      "first-page": "539",
+      "DOI": "10.1016/j.ijdrr.2017.06.006",
+      "volume": "24",
+      "author": "F Hu",
+      "year": "2017",
+      "unstructured": "Hu, F., Yang, S., Hu, X. & Wang, W. Integrated optimization for shelter service area demarcation and evacuation route planning by a ripple-spreading algorithm. Int. J. Disaster Risk Reduct. 24, 539–548 (2017).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR15",
+      "doi-asserted-by": "publisher",
+      "first-page": "1612",
+      "DOI": "10.1080/13658816.2013.763944",
+      "volume": "27",
+      "author": "Z Chen",
+      "year": "2013",
+      "unstructured": "Chen, Z., Chen, X., Li, Q. & Chen, J. The temporal hierarchy of shelters: a hierarchical location model for earthquake-shelter planning. Int. J. Geogr. Inf. Sci. 27, 1612–1630 (2013).",
+      "journal-title": "Int. J. Geogr. Inf. Sci."
+    },
+    {
+      "key": "1886_CR16",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.jhydrol.2025.133026",
+      "volume": "656",
+      "author": "C Li",
+      "year": "2025",
+      "unstructured": "Li, C. et al. An overview of flood evacuation planning: models, methods, and future directions. J. Hydrol. 656, 133026 (2025).",
+      "journal-title": "J. Hydrol."
+    },
+    {
+      "key": "1886_CR17",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.ijdrr.2022.103435",
+      "volume": "84",
+      "author": "S Bera",
+      "year": "2023",
+      "unstructured": "Bera, S. et al. Assessment of shelter location-allocation for multi-hazard emergency evacuation. Int. J. Disaster Risk Reduct. 84, 103435 (2023).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR18",
+      "doi-asserted-by": "publisher",
+      "first-page": "96",
+      "DOI": "10.1038/nature10856",
+      "volume": "484",
+      "author": "F Simini",
+      "year": "2012",
+      "unstructured": "Simini, F., González, M. C., Maritan, A. & Barabási, A.-L. A universal model for mobility and migration patterns. Nature 484, 96–100 (2012).",
+      "journal-title": "Nature"
+    },
+    {
+      "key": "1886_CR19",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.compenvurbsys.2024.102160",
+      "volume": "113",
+      "author": "J Tang",
+      "year": "2024",
+      "unstructured": "Tang, J. et al. Predicting human mobility flows in response to extreme urban floods: a hybrid deep learning model considering spatial heterogeneity. Comput. Environ. Urban Syst. 113, 102160 (2024).",
+      "journal-title": "Comput. Environ. Urban Syst."
+    },
+    {
+      "key": "1886_CR20",
+      "doi-asserted-by": "publisher",
+      "first-page": "193",
+      "DOI": "10.1038/s41558-018-0085-1",
+      "volume": "8",
+      "author": "J Aerts",
+      "year": "2018",
+      "unstructured": "Aerts, J. et al. Integrating human behaviour dynamics into flood disaster risk assessment. Nat. Clim. Change 8, 193–199 (2018).",
+      "journal-title": "Nat. Clim. Change"
+    },
+    {
+      "key": "1886_CR21",
+      "doi-asserted-by": "publisher",
+      "first-page": "431",
+      "DOI": "10.1016/j.ijdrr.2017.01.007",
+      "volume": "22",
+      "author": "H Li",
+      "year": "2017",
+      "unstructured": "Li, H., Zhao, L., Huang, R. & Hu, Q. Hierarchical earthquake shelter planning in urban areas: a case for Shanghai in China. Int. J. Disaster Risk Reduct. 22, 431–446 (2017).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR22",
+      "doi-asserted-by": "publisher",
+      "first-page": "179",
+      "DOI": "10.1016/0749-5978(91)90020-T",
+      "volume": "50",
+      "author": "I Ajzen",
+      "year": "1991",
+      "unstructured": "Ajzen, I. The theory of planned behavior. Organ. Behav. Hum. Decis. Process. 50, 179–211 (1991).",
+      "journal-title": "Organ. Behav. Hum. Decis. Process."
+    },
+    {
+      "key": "1886_CR23",
+      "doi-asserted-by": "publisher",
+      "first-page": "104805",
+      "DOI": "10.1016/j.trc.2024.104805",
+      "volume": "167",
+      "author": "X Xia",
+      "year": "2024",
+      "unstructured": "Xia, X., Chen, J., Zhang, J. & Li, N. How the strength of social relationship affects pedestrian evacuation behavior: a multi-participant fire evacuation experiment in a virtual metro station. Transp. Res. C 167, 104805 (2024).",
+      "journal-title": "Transp. Res. C"
+    },
+    {
+      "key": "1886_CR24",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1093/nsr/nwad097",
+      "volume": "10",
+      "author": "J Tang",
+      "year": "2023",
+      "unstructured": "Tang, J. et al. Resilience patterns of human mobility in response to extreme urban floods. Natl Sci. Rev. 10, nwad097 (2023).",
+      "journal-title": "Natl Sci. Rev."
+    },
+    {
+      "key": "1886_CR25",
+      "doi-asserted-by": "publisher",
+      "first-page": "274",
+      "DOI": "10.1038/s44221-024-00210-z",
+      "volume": "2",
+      "author": "J Yin",
+      "year": "2024",
+      "unstructured": "Yin, J. et al. Strategic storm flood evacuation planning for large coastal cities enables more effective transfer of elderly populations. Nat. Water 2, 274–284 (2024).",
+      "journal-title": "Nat. Water"
+    },
+    {
+      "key": "1886_CR26",
+      "doi-asserted-by": "publisher",
+      "first-page": "487",
+      "DOI": "10.1038/35035023",
+      "volume": "407",
+      "author": "D Helbing",
+      "year": "2000",
+      "unstructured": "Helbing, D., Farkas, I. & Vicsek, T. Simulating dynamical features of escape panic. Nature 407, 487–490 (2000).",
+      "journal-title": "Nature"
+    },
+    {
+      "key": "1886_CR27",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1038/s41467-019-11841-2",
+      "volume": "10",
+      "author": "M Mazzoli",
+      "year": "2019",
+      "unstructured": "Mazzoli, M. et al. Field theory for recurrent mobility. Nat. Commun. 10, 3895 (2019).",
+      "journal-title": "Nat. Commun."
+    },
+    {
+      "key": "1886_CR28",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.cities.2023.104691",
+      "volume": "145",
+      "author": "Z Fang",
+      "year": "2024",
+      "unstructured": "Fang, Z., Feng, R. & Wang, Z. Spatiotemporal flow force model of source/sink human mobilities within city. Cities 145, 104691 (2024).",
+      "journal-title": "Cities"
+    },
+    {
+      "key": "1886_CR29",
+      "unstructured": "Ministry of Emergency Management of the People's Republic of China. Grading and Classification of Emergency Shelter (State Administration for Market Regulation & National Standardization Administration, 2023); https://www.mem.gov.cn/gk/zfxxgkpt/fdzdgknr/202308/W020230807642109912806.pdf"
+    },
+    {
+      "key": "1886_CR30",
+      "unstructured": "World Bank. Population, Total (World Bank Group, 2023); https://data.worldbank.org/indicator/SP.POP.TOTL"
+    },
+    {
+      "key": "1886_CR31",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Satopaa, V., Albrecht, J., Irwin, D. & Raghavan, B. Finding a “kneedle” in a haystack: detecting knee points in system behavior. In 2011 31st International Conference on Distributed Computing Systems Workshops 166–171 (IEEE, 2011).",
+      "DOI": "10.1109/ICDCSW.2011.20"
+    },
+    {
+      "key": "1886_CR32",
+      "doi-asserted-by": "publisher",
+      "unstructured": "Ministry of Housing and Urban-Rural Development & National Development and Reform Commission. Standard for construction of urban community emergency shelters. Zenodo https://doi.org/10.5281/zenodo.20755938 (2026).",
+      "DOI": "10.5281/zenodo.20755938"
+    },
+    {
+      "key": "1886_CR33",
+      "unstructured": "Introduction of Property Insurance (The People’s Insurance Company of China, 2025); https://e.picc.com/rbkt/caichanxian/"
+    },
+    {
+      "key": "1886_CR34",
+      "doi-asserted-by": "publisher",
+      "unstructured": "Ministry of Finance of the People's Republic of China. Central natural disaster relief funds. Zenodo https://doi.org/10.5281/zenodo.20755993 (2026).",
+      "DOI": "10.5281/zenodo.20755993"
+    },
+    {
+      "key": "1886_CR35",
+      "unstructured": "World Bank. Pricing of Carbon Around the World, 2024 (World Bank Group, 2025); https://carbonpricingdashboard.worldbank.org/compliance/price"
+    },
+    {
+      "key": "1886_CR36",
+      "unstructured": "Ministry of Housing and Urban–Rural Development. China’s urban planning compilation guideline. The State Council of the People's Republic of China https://www.gov.cn/zhengce/2022-01/25/content_5711996.htm (2006)."
+    },
+    {
+      "key": "1886_CR37",
+      "doi-asserted-by": "publisher",
+      "first-page": "779",
+      "DOI": "10.1038/nature06958",
+      "volume": "453",
+      "author": "MC González",
+      "year": "2008",
+      "unstructured": "González, M. C., Hidalgo, C. A. & Barabási, A.-L. Understanding individual human mobility patterns. Nature 453, 779–782 (2008).",
+      "journal-title": "Nature"
+    },
+    {
+      "key": "1886_CR38",
+      "doi-asserted-by": "publisher",
+      "first-page": "6884",
+      "DOI": "10.1073/pnas.1016507108",
+      "volume": "108",
+      "author": "M Moussaïd",
+      "year": "2011",
+      "unstructured": "Moussaïd, M., Helbing, D. & Theraulaz, G. How simple rules determine pedestrian behavior and crowd disasters. Proc. Natl Acad. Sci. USA 108, 6884–6888 (2011).",
+      "journal-title": "Proc. Natl Acad. Sci. USA"
+    },
+    {
+      "key": "1886_CR39",
+      "doi-asserted-by": "publisher",
+      "first-page": "588",
+      "DOI": "10.1038/s43588-023-00469-4",
+      "volume": "3",
+      "author": "L Pappalardo",
+      "year": "2023",
+      "unstructured": "Pappalardo, L., Manley, E., Sekara, V. & Alessandretti, L. Future directions in human mobility science. Nat. Comput. Sci. 3, 588–600 (2023).",
+      "journal-title": "Nat. Comput. Sci."
+    },
+    {
+      "key": "1886_CR40",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1038/s43247-025-02461-4",
+      "volume": "6",
+      "author": "Q Yao",
+      "year": "2025",
+      "unstructured": "Yao, Q., Wang, J., Li, M., Kwan, M.-P. & Yin, J. Cross-regional and multi-entity resource coordination can enhance the supply of disaster relief materials during flood events in China. Commun. Earth Environ. 6, 472 (2025).",
+      "journal-title": "Commun. Earth Environ."
+    },
+    {
+      "key": "1886_CR41",
+      "unstructured": "Zhengzhou Has Announced 2,889 Flood Emergency Shelter Sites (Zhengzhou Municipal People’s Government, 2022); https://www.henan.gov.cn/2022/07-20/2490634.html"
+    },
+    {
+      "key": "1886_CR42",
+      "doi-asserted-by": "publisher",
+      "first-page": "174",
+      "DOI": "10.1016/j.apgeog.2017.07.002",
+      "volume": "88",
+      "author": "ANL Kusumo",
+      "year": "2017",
+      "unstructured": "Kusumo, A. N. L., Reckien, D. & Verplanke, J. Utilising volunteered geographic information to assess resident’s flood evacuation shelters. Case study: Jakarta. Appl. Geogr. 88, 174–185 (2017).",
+      "journal-title": "Appl. Geogr."
+    },
+    {
+      "key": "1886_CR43",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Hewitt, K. In Handbook of Hazards and Disaster Risk Reduction (eds Wisner, B. et al.) Ch. 8 (Routledge, 2012).",
+      "DOI": "10.4324/9780203844236-11"
+    },
+    {
+      "key": "1886_CR44",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.crm.2023.100498",
+      "volume": "40",
+      "author": "MJ Azad",
+      "year": "2023",
+      "unstructured": "Azad, M. J. & Pritchard, B. Bonding, bridging, linking social capital as mutually reinforcing elements in adaptive capacity development to flood hazard: insights from rural Bangladesh. Clim. Risk Manag. 40, 100498 (2023).",
+      "journal-title": "Clim. Risk Manag."
+    },
+    {
+      "key": "1886_CR45",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Wisner, B., Gaillard, J.-C. & Kelman I. Handbook of Hazards and Disaster Risk Reduction (Routledge, 2012).",
+      "DOI": "10.4324/9780203844236"
+    },
+    {
+      "key": "1886_CR46",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.ijdrr.2025.105591",
+      "volume": "125",
+      "author": "Y Yang",
+      "year": "2025",
+      "unstructured": "Yang, Y., Yin, J., Feng, W., Yang, L. E. & Wang, J. Dynamic flood evacuation modelling for coastal cities: a case study of Shanghai. Int. J. Disaster Risk Reduct. 125, 105591 (2025).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR47",
+      "doi-asserted-by": "publisher",
+      "first-page": "291",
+      "DOI": "10.3763/ehaz.2009.0022",
+      "volume": "8",
+      "author": "K Haynes",
+      "year": "2009",
+      "unstructured": "Haynes, K. et al. ‘Shelter-in-place’ vs. evacuation in flash floods. Environ. Hazards 8, 291–303 (2009).",
+      "journal-title": "Environ. Hazards"
+    },
+    {
+      "key": "1886_CR48",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.ijdrr.2022.103044",
+      "volume": "77",
+      "author": "M-C Sun",
+      "year": "2022",
+      "unstructured": "Sun, M.-C., Sakai, K., Chen, A. Y. & Hsu, Y.-T. Location problems of vertical evacuation structures for dam-failure floods: considering shelter-in-place and horizontal evacuation. Int. J. Disaster Risk Reduct. 77, 103044 (2022).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR49",
+      "doi-asserted-by": "publisher",
+      "first-page": "422",
+      "DOI": "10.1111/tran.12279",
+      "volume": "44",
+      "author": "S Forrest",
+      "year": "2019",
+      "unstructured": "Forrest, S., Trell, E.-M. & Woltjer, J. Civil society contributions to local level flood resilience: before, during and after the 2015 Boxing Day floods in the Upper Calder Valley. Trans. Inst. Br. Geogr. 44, 422–436 (2019).",
+      "journal-title": "Trans. Inst. Br. Geogr."
+    },
+    {
+      "key": "1886_CR50",
+      "doi-asserted-by": "publisher",
+      "first-page": "2564",
+      "DOI": "10.1038/s41562-025-02282-7",
+      "volume": "9",
+      "author": "L Boucherie",
+      "year": "2025",
+      "unstructured": "Boucherie, L., Maier, B. F. & Lehmann, S. Decoupling geographical constraints from human mobility. Nat. Hum. Behav. 9, 2564–2575 (2025).",
+      "journal-title": "Nat. Hum. Behav."
+    },
+    {
+      "key": "1886_CR51",
+      "doi-asserted-by": "publisher",
+      "first-page": "329",
+      "DOI": "10.1016/0016-7185(76)90063-4",
+      "volume": "7",
+      "author": "T Hägerstrand",
+      "year": "1976",
+      "unstructured": "Hägerstrand, T. Geography and the study of interaction between nature and society. Geoforum 7, 329–334 (1976).",
+      "journal-title": "Geoforum"
+    },
+    {
+      "key": "1886_CR52",
+      "doi-asserted-by": "publisher",
+      "first-page": "14",
+      "DOI": "10.1016/j.envsoft.2017.06.007",
+      "volume": "96",
+      "author": "G Bernardini",
+      "year": "2017",
+      "unstructured": "Bernardini, G. et al. A preliminary combined simulation tool for the risk assessment of pedestrians’ flood-induced evacuation. Environ. Model. Softw. 96, 14–29 (2017).",
+      "journal-title": "Environ. Model. Softw."
+    },
+    {
+      "key": "1886_CR53",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016/j.ijdrr.2021.102437",
+      "volume": "63",
+      "author": "S Kubo",
+      "year": "2021",
+      "unstructured": "Kubo, S., Yoshida, H., Ichimura, T., Wijerathne, M. L. L. & Hori, M. Study on influence of prior recognition of flooding state on evacuation behavior. Int. J. Disaster Risk Reduct. 63, 102437 (2021).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR54",
+      "doi-asserted-by": "publisher",
+      "first-page": "84",
+      "DOI": "10.1016/j.trc.2009.04.020",
+      "volume": "18",
+      "author": "G Lämmel",
+      "year": "2010",
+      "unstructured": "Lämmel, G., Grether, D. & Nagel, K. The representation and implementation of time-dependent inundation in large-scale microscopic evacuation simulations. Transp. Res. C 18, 84–98 (2010).",
+      "journal-title": "Transp. Res. C"
+    },
+    {
+      "key": "1886_CR55",
+      "doi-asserted-by": "publisher",
+      "first-page": "37",
+      "DOI": "10.1016/j.ijdrr.2018.04.015",
+      "volume": "31",
+      "author": "S Appleby-Arnold",
+      "year": "2018",
+      "unstructured": "Appleby-Arnold, S., Brockdorff, N., Jakovljev, I. & Zdravković, S. Applying cultural values to encourage disaster preparedness: lessons from a low-hazard country. Int. J. Disaster Risk Reduct. 31, 37–44 (2018).",
+      "journal-title": "Int. J. Disaster Risk Reduct."
+    },
+    {
+      "key": "1886_CR56",
+      "doi-asserted-by": "publisher",
+      "first-page": "591",
+      "DOI": "10.1146/annurev.psych.55.090902.142015",
+      "volume": "55",
+      "author": "RB Cialdini",
+      "year": "2004",
+      "unstructured": "Cialdini, R. B. & Goldstein, N. J. Social influence: compliance and conformity. Annu. Rev. Psychol. 55, 591–621 (2004).",
+      "journal-title": "Annu. Rev. Psychol."
+    },
+    {
+      "key": "1886_CR57",
+      "doi-asserted-by": "publisher",
+      "first-page": "797",
+      "DOI": "10.2307/2118364",
+      "volume": "107",
+      "author": "AV Banerjee",
+      "year": "1992",
+      "unstructured": "Banerjee, A. V. A simple model of herd behavior. Q. J. Econ. 107, 797–817 (1992).",
+      "journal-title": "Q. J. Econ."
+    },
+    {
+      "key": "1886_CR58",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1038/s41597-020-0421-y",
+      "volume": "7",
+      "author": "Y Chen",
+      "year": "2020",
+      "unstructured": "Chen, Y. et al. Provincial and gridded population projection for China under shared socioeconomic pathways from 2010 to 2100. Sci. Data 7, 83 (2020).",
+      "journal-title": "Sci. Data"
+    },
+    {
+      "key": "1886_CR59",
+      "unstructured": "Peng, S. 1-km monthly precipitation dataset for China (1901–2023). National Tibetan Plateau/Third Pole Environment Data Center https://data.tpdc.ac.cn/zh-hans/data/faae7605-a0f2-4d18-b28f-5cee413766a2 (2024)."
+    },
+    {
+      "key": "1886_CR60",
+      "unstructured": "Peng, S. 1 km multi-scenario and multi-model monthly precipitation data for China (2021–2100). National Tibetan Plateau/Third Pole Environment Data Center https://data.tpdc.ac.cn/zh-hans/data/90a7b4b6-4009-463a-b34f-e8ebd0238617 (2025)."
+    },
+    {
+      "key": "1886_CR61",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1038/s41597-023-02637-7",
+      "volume": "10",
+      "author": "T Zhang",
+      "year": "2023",
+      "unstructured": "Zhang, T., Cheng, C. & Wu, X. Mapping the spatial heterogeneity of global land use and land cover from 2020 to 2100 at a 1 km resolution. Sci. Data 10, 748 (2023).",
+      "journal-title": "Sci. Data"
+    },
+    {
+      "key": "1886_CR62",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1038/s41467-025-60267-6",
+      "volume": "16",
+      "author": "J Fan",
+      "year": "2025",
+      "unstructured": "Fan, J. et al. Exploring how economic level drives urban flood risk. Nat. Commun. 16, 4857 (2025).",
+      "journal-title": "Nat. Commun."
+    },
+    {
+      "key": "1886_CR63",
+      "doi-asserted-by": "publisher",
+      "first-page": "77",
+      "DOI": "10.1038/s41586-022-05481-8",
+      "volume": "613",
+      "author": "B Gu",
+      "year": "2023",
+      "unstructured": "Gu, B. et al. Cost-effective mitigation of nitrogen pollution from global croplands. Nature 613, 77–84 (2023).",
+      "journal-title": "Nature"
+    },
+    {
+      "key": "1886_CR64",
+      "unstructured": "National Health Commission of the People’s Republic of China. Statistical Communiqué of the People’s Republic of China on the 2023 National Medical and Healthcare Development (The State Council of the People's Republic of China, 2023); https://www.gov.cn/lianbo/bumen/202408/content_6971241.htm"
+    },
+    {
+      "key": "1886_CR65",
+      "unstructured": "2023 National Overview of Natural Disasters in China (Ministry of Emergency Management of the People’s Republic of China, 2024); https://www.mem.gov.cn/xw/yjglbgzdt/202401/t20240120_475697.shtml"
+    },
+    {
+      "key": "1886_CR66",
+      "unstructured": "Well-to-wheel (wake/wing) GHG intensity of motorised passenger transport modes. International Energy Agency https://www.iea.org/data-and-statistics/charts/well-to-wheel-wake-wing-ghg-intensity-of-motorised-passenger-transport-modes-2 (2022)."
+    },
+    {
+      "key": "1886_CR67",
+      "unstructured": "Sun, L. & Fan, W. in China Shared Mobility Development Report (2022–2023) Ch. 20 (Social Sciences Academic Press, 2023)."
+    },
+    {
+      "key": "1886_CR68",
+      "doi-asserted-by": "publisher",
+      "first-page": "3547",
+      "DOI": "10.5194/essd-15-3547-2023",
+      "volume": "15",
+      "author": "Z Liu",
+      "year": "2023",
+      "unstructured": "Liu, Z., Tang, H., Feng, L. & Lyu, S. China building rooftop area: the first multi-annual (2016–2021) and high-resolution (2.5 m) building rooftop area dataset in China derived with super-resolution segmentation from Sentinel-2 imagery. Earth Syst. Sci. Data 15, 3547–3572 (2023).",
+      "journal-title": "Earth Syst. Sci. Data"
+    },
+    {
+      "key": "1886_CR69",
+      "doi-asserted-by": "publisher",
+      "unstructured": "Liu, Z., Tang, H., Feng, L. & Lyu, S. CBRA: the first multi-annual (2016–2021) and high-resolution (2.5 m) building rooftop area dataset in China derived with Super-Resolution Segmentation from Sentinel-2 Imagery (1.0). Zenodo https://doi.org/10.5281/zenodo.7500612 (2023).",
+      "DOI": "10.5281/zenodo.7500612"
+    },
+    {
+      "key": "1886_CR70",
+      "doi-asserted-by": "publisher",
+      "unstructured": "Chen, Y. et al. Provincial and gridded population projection for China under shared socioeconomic pathways from 2010 to 2100. figshare https://doi.org/10.6084/m9.figshare.c.4605713 (2020).",
+      "DOI": "10.6084/m9.figshare.c.4605713"
+    },
+    {
+      "key": "1886_CR71",
+      "doi-asserted-by": "publisher",
+      "unstructured": "Zhang, T., Cheng, C. & Wu, X. Global LULC projection dataset from 2020 to 2100 at a 1 km resolution. figshare https://doi.org/10.6084/m9.figshare.23542860 (2023).",
+      "DOI": "10.6084/m9.figshare.23542860"
+    },
+    {
+      "key": "1886_CR72",
+      "unstructured": "Tang J. et al. Code repository for human mobility dynamics for cost-effective flood emergency resource allocation. GitHub https://github.com/WeiLyu59/PKU-FIM.git (2026)."
+    }
+  ],
+  "container-title": [
+    "Nature Sustainability"
+  ],
+  "original-title": [],
+  "language": "en",
+  "link": [
+    {
+      "URL": "https://www.nature.com/articles/s41893-026-01886-9.pdf",
+      "content-type": "application/pdf",
+      "content-version": "vor",
+      "intended-application": "text-mining"
+    },
+    {
+      "URL": "https://www.nature.com/articles/s41893-026-01886-9",
+      "content-type": "text/html",
+      "content-version": "vor",
+      "intended-application": "text-mining"
+    },
+    {
+      "URL": "https://www.nature.com/articles/s41893-026-01886-9.pdf",
+      "content-type": "application/pdf",
+      "content-version": "vor",
+      "intended-application": "similarity-checking"
+    }
+  ],
+  "deposited": {
+    "date-parts": [
+      [
+        2026,
+        7,
+        14
+      ]
+    ],
+    "date-time": "2026-07-14T09:03:02Z",
+    "timestamp": 1784019782000
+  },
+  "score": 1,
+  "resource": {
+    "primary": {
+      "URL": "https://www.nature.com/articles/s41893-026-01886-9"
+    }
+  },
+  "subtitle": [],
+  "short-title": [],
+  "issued": {
+    "date-parts": [
+      [
+        2026,
+        7,
+        14
+      ]
+    ]
+  },
+  "references-count": 72,
+  "alternative-id": [
+    "1886"
+  ],
+  "URL": "https://doi.org/10.1038/s41893-026-01886-9",
+  "relation": {},
+  "ISSN": [
+    "2398-9629"
+  ],
+  "issn-type": [
+    {
+      "value": "2398-9629",
+      "type": "electronic"
+    }
+  ],
+  "subject": [],
+  "published": {
+    "date-parts": [
+      [
+        2026,
+        7,
+        14
+      ]
+    ]
+  },
+  "assertion": [
+    {
+      "value": "2 August 2025",
+      "order": 1,
+      "name": "received",
+      "label": "Received",
+      "group": {
+        "name": "ArticleHistory",
+        "label": "Article History"
+      }
+    },
+    {
+      "value": "1 June 2026",
+      "order": 2,
+      "name": "accepted",
+      "label": "Accepted",
+      "group": {
+        "name": "ArticleHistory",
+        "label": "Article History"
+      }
+    },
+    {
+      "value": "14 July 2026",
+      "order": 3,
+      "name": "first_online",
+      "label": "First Online",
+      "group": {
+        "name": "ArticleHistory",
+        "label": "Article History"
+      }
+    },
+    {
+      "value": "The authors declare no competing interests.",
+      "order": 1,
+      "name": "Ethics",
+      "group": {
+        "name": "EthicsHeading",
+        "label": "Competing interests"
+      }
+    }
+  ]
+}

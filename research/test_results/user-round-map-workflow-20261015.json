@@ -1,0 +1,92 @@
+{
+  "schema_version": "user-round-map-workflow/1",
+  "status": "recovery_failed_or_unverified_no_automatic_retry",
+  "started_at": "2026-10-15T13:52:14.911290+00:00",
+  "base_url": "http://10.70.223.113",
+  "project_id": "P-e83ed15d-1739-46df-b1cb-dc3111afa399",
+  "recovery_of_round_id": "ROUND-3b67cf84-6ef4-49e8-abf3-feb1b1650988",
+  "recovery_relation": "receipt_link_only_not_api_parent",
+  "api_parent_round_id": null,
+  "deployment_commit": "6ee45ebacfaf0f99b58e854ea9b0d106dde8c37d",
+  "deployment_commit_evidence": "lead_supplied_after_deployment_notification_not_http_verified",
+  "expected_context_version": 0,
+  "expected_project_input_sha256": "032cb6b920b5bf98d3e6eb4e7b9027755f4622144f320bd44af7893274f51cad",
+  "original_allow_internal_ai": false,
+  "original_material_intake": "none",
+  "original_document_ids": [],
+  "create_attempts": 1,
+  "paid_run_attempts": 1,
+  "automatic_paid_retries": 0,
+  "http_timeout_seconds": 660,
+  "checks": {
+    "campus_collaboration_session": true,
+    "model_configured": true,
+    "same_real_project_and_context_version": true,
+    "original_project_input_hash_unchanged": true,
+    "original_project_snapshot_unchanged": true,
+    "old_failed_round_matches_frozen_snapshot": true,
+    "preserve_original_false_consent_and_empty_manifest": true,
+    "old_failed_result_matches_frozen_snapshot": true,
+    "original_document_versions_empty_and_unchanged": true,
+    "no_other_round_added_since_preparation": true,
+    "new_draft_same_snapshot_scope": true,
+    "new_draft_no_false_parent_or_new_internal_consent": true,
+    "snapshot_still_current_immediately_before_run": true,
+    "ndjson_transport": true,
+    "bounded_stream_read_socket_available": true,
+    "ndjson_line_within_bound": true,
+    "one_terminal_event": false
+  },
+  "progress_counts": {
+    "sources": 2,
+    "research": 2
+  },
+  "private_source_or_model_text_copied_to_receipt": false,
+  "original": {
+    "round_input_hash": "ed86523a8ac8368dd38173733293e1d62c912fa71e52c59977a3984e24ea6445",
+    "round_sha256": "844578c10af67e7370c808d16f4557aa1a0bdb4f3ac867a338d1a66f3ed4cf92",
+    "result_sha256": "d69d4581fa6269d39b4cfecde3cee9b8cf66225d78511bb93f8698064deeb525",
+    "project_input_sha256": "032cb6b920b5bf98d3e6eb4e7b9027755f4622144f320bd44af7893274f51cad",
+    "project_snapshot_sha256": "34d187b211ac27ec673e52ed65f3a49b7d154787c6800757a81384f45e76452b",
+    "source_count": 300,
+    "sources_sha256": "1b42307b8fef7fec600f3b92c9b25699a1730a740d307a9317d83de56c782030",
+    "document_count": 0,
+    "document_metadata_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "frozen_files_verified": 8
+  },
+  "create_body": {
+    "expected_context_version": 0,
+    "material_intake": "none",
+    "document_ids": [],
+    "allow_internal_ai": false
+  },
+  "new_round": {
+    "id": "ROUND-121c8813-f61c-4236-837e-e5ae2378089a",
+    "round_number": 2,
+    "status": "draft",
+    "context_version": 0,
+    "input_hash": "03e78c4fafda15ac601677c9b813786e428fabc5b4fd19d1775a1e5bf72b951e",
+    "parent_round_id": null,
+    "first_round_id": "ROUND-121c8813-f61c-4236-837e-e5ae2378089a",
+    "allow_internal_ai": false,
+    "material_intake": "none"
+  },
+  "workflow_phases": [],
+  "stream_sha256": "4f59e99328540531fff44ab5515932930ff13ecf2e2121164dae60c3dfe198b8",
+  "elapsed_seconds": 25.752,
+  "failure": {
+    "type": "RecoveryCheckFailed",
+    "check": "one_terminal_event"
+  },
+  "observed_final_new_round_status": "failed",
+  "preservation": {
+    "project_input_unchanged": true,
+    "project_snapshot_unchanged": true,
+    "document_metadata_unchanged": true,
+    "old_failed_round_unchanged": true,
+    "old_failed_result_unchanged": true,
+    "only_one_new_round": true,
+    "frozen_failure_files_unchanged": true
+  },
+  "finished_at": "2026-10-15T13:52:41.859827+00:00"
+}

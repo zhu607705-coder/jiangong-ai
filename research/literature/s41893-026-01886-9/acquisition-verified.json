@@ -1,0 +1,27 @@
+{
+  "doi": "10.1038/s41893-026-01886-9",
+  "acquired_at": "2026-10-13",
+  "main_source": "https://www.nature.com/articles/s41893-026-01886-9.pdf",
+  "access_mode": "institutional_browser",
+  "institution_signal": "You have full access to this article via Zhejiang University Library.",
+  "supplementary_source": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41893-026-01886-9/MediaObjects/41893_2026_1886_MOESM1_ESM.pdf",
+  "prior_attempt_manifest": "manifest.json",
+  "files": [
+    {
+      "file": "article.pdf",
+      "bytes": 9379644,
+      "pages": 13,
+      "sha256": "82eca9684be993528a05e7ca0434fba7627caac5071b34ddd756acc3f57c874a",
+      "doi_found": true,
+      "text_chars": 79235
+    },
+    {
+      "file": "supplementary.pdf",
+      "bytes": 6962305,
+      "pages": 34,
+      "sha256": "f8ca90a6cd9b10ae2e2a4b01f1685d06bf9d7b669f117e0da315d424a80516fd",
+      "doi_found": true,
+      "text_chars": 39747
+    }
+  ]
+}

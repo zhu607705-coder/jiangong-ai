@@ -1,0 +1,140 @@
+{
+  "screen": {
+    "bodyFont": "15px",
+    "client": 788,
+    "mainHeading": "建议优先研究保留建筑的分项更新：以地下管网、屋面外墙防水、公共空间与餐厨服务设施、电梯更新为主线，按鉴定结论分栋组织。",
+    "scroll": 788,
+    "titleFont": "20px",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  "pages": [
+    {
+      "client": 788,
+      "footerBottom": 844,
+      "page": "菜单快乐鱼民宿 · 片区研究资料与条件",
+      "scroll": 788,
+      "tabs": [
+        "资料",
+        "对象",
+        "条件",
+        "补充"
+      ],
+      "viewport": 844
+    },
+    {
+      "client": 788,
+      "footerBottom": 844,
+      "page": "菜单快乐鱼民宿 · 片区研究改造研判",
+      "scroll": 788,
+      "tabs": [
+        "方向",
+        "六维",
+        "条件",
+        "对标"
+      ],
+      "viewport": 844
+    },
+    {
+      "client": 788,
+      "footerBottom": 844,
+      "page": "菜单快乐鱼民宿 · 片区研究方案与测算",
+      "scroll": 788,
+      "tabs": [
+        "方案",
+        "举措",
+        "资金",
+        "运营"
+      ],
+      "viewport": 844
+    },
+    {
+      "client": 788,
+      "footerBottom": 844,
+      "page": "菜单快乐鱼民宿 · 片区研究调查任务",
+      "scroll": 788,
+      "tabs": [
+        "调查",
+        "条件",
+        "回填",
+        "历史"
+      ],
+      "viewport": 844
+    },
+    {
+      "client": 788,
+      "footerBottom": 844,
+      "page": "菜单快乐鱼民宿 · 片区研究成果与版本",
+      "scroll": 788,
+      "tabs": [
+        "成果",
+        "变化",
+        "轮次",
+        "导出"
+      ],
+      "viewport": 844
+    }
+  ],
+  "sections": [
+    {
+      "cardBottom": 745.3333740234375,
+      "height": 844,
+      "outerScroll": 0,
+      "selected": "对象",
+      "title": "快乐鱼民宿"
+    },
+    {
+      "cardBottom": 745.3333740234375,
+      "height": 844,
+      "outerScroll": 0,
+      "selected": "调查",
+      "title": "逐栋可靠性与抗震鉴定"
+    },
+    {
+      "cardBottom": 745.3333740234375,
+      "height": 844,
+      "outerScroll": 0,
+      "selected": "进度",
+      "title": "已保存研究建议"
+    },
+    {
+      "cardBottom": 745.3333740234375,
+      "height": 844,
+      "outerScroll": 0,
+      "selected": "结论",
+      "title": "建议优先研究保留建筑的分项更新：以地下管网、屋面外墙防水、公共空间与餐厨服务设施、电梯更新为主线，按鉴定结论分栋组织。"
+    }
+  ],
+  "small": {
+    "actionsBottom": 477.3333435058594,
+    "bodyFont": "14px",
+    "documentWidth": 320,
+    "footerBottom": 568,
+    "outerClient": 512,
+    "outerScroll": 512,
+    "titleFont": "18px",
+    "viewport": [
+      320,
+      568
+    ]
+  },
+  "draft": {
+    "font": "16px",
+    "value": "12.34"
+  },
+  "reading": {
+    "footerBottom": 844,
+    "localClient": 445,
+    "localScroll": 445,
+    "outerScroll": 0,
+    "reader": true
+  },
+  "query": true,
+  "global": {
+    "global": "knowledge",
+    "nativeActive": "false",
+    "scrolling": "auto"
+  }
+}

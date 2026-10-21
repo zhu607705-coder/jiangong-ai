@@ -1,0 +1,15 @@
+{
+  "pull_request": "https://github.com/zhu607705-coder/jiangong-ai/pull/32",
+  "state": "MERGED",
+  "merge_commit": "9e895b41c3cb36aa414cfde52d2f7962e3c31ec2",
+  "merged_at": "2026-10-15T05:58:21Z",
+  "local_branch": "main",
+  "deployed_application_commit": "6caae15f2798cfab9abdf87dc97706364dc329ba",
+  "application_code_difference_from_merged_main": [],
+  "actual_model_result": "completed",
+  "recovery_evidence": "research/test_results/server-model-egress-repair-20261015.json",
+  "scheduled_task": "Haizhizi.ModelEgress",
+  "pc_dependency": "New model requests require the operator PC, logged-on account and existing proxy online; saved results remain on the server.",
+  "preserved_unrelated_edits": ["AGENTS.md", "agent/state.json"],
+  "ci": "Automatic CI is not claimed passed; focused checks, production build, actual provider generation, cache and browser readback were completed."
+}

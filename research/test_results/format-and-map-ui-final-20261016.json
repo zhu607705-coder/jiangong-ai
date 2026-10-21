@@ -1,0 +1,50 @@
+{
+  "status": "completed",
+  "checked_at": "2026-10-16T06:12:48.747605+00:00",
+  "base_ui": "c0ffdf40b933e2c93f35f02c7bce58be30d6be34",
+  "published_ui": "2cad24fbe43626304e70625f1995a34b10742c22",
+  "ui_diff_files": [
+    "apps/workspace/src/maps/MapWorkspace.tsx",
+    "apps/workspace/src/maps/PreliminaryCard.tsx",
+    "apps/workspace/src/maps/RenewalModePanel.css",
+    "apps/workspace/src/maps/RenewalModePanel.tsx",
+    "apps/workspace/src/maps/map.css"
+  ],
+  "browser": {
+    "actions": [
+      "建立项目 ",
+      "查看地点详情"
+    ],
+    "compact": true,
+    "detailsClosed": true,
+    "footerVisible": true,
+    "horizontalOverflow": false,
+    "oneScroll": true,
+    "panelBounds": {
+      "bottom": 884.1771240234375,
+      "height": 708.1771240234375,
+      "left": 2132,
+      "right": 2532,
+      "top": 176,
+      "width": 400,
+      "x": 2132,
+      "y": 176
+    },
+    "prematureVerdict": false,
+    "title": "浙大求是社区-求是村11",
+    "viewport": [
+      2560,
+      1215
+    ]
+  },
+  "format_fix": {
+    "count_limit_removed": true,
+    "source_merge": [
+      1514,
+      74
+    ],
+    "source_ref_fields_aligned": 35,
+    "live_decision": "completed"
+  },
+  "other_published_ui_preserved": true
+}

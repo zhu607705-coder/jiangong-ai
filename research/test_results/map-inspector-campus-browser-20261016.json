@@ -1,0 +1,27 @@
+{
+  "actions": [
+    "建立项目 ",
+    "查看地点详情"
+  ],
+  "compact": true,
+  "detailsClosed": true,
+  "footerVisible": true,
+  "horizontalOverflow": false,
+  "oneScroll": true,
+  "panelBounds": {
+    "bottom": 884.1771240234375,
+    "height": 708.1771240234375,
+    "left": 2132,
+    "right": 2532,
+    "top": 176,
+    "width": 400,
+    "x": 2132,
+    "y": 176
+  },
+  "prematureVerdict": false,
+  "title": "浙大求是社区-求是村11",
+  "viewport": [
+    2560,
+    1215
+  ]
+}

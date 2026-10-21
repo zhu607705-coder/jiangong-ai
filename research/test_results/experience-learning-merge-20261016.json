@@ -1,0 +1,35 @@
+{
+  "headRefOid": "988aaf17da83e28858d3d193a86dc2256f2fa6e7",
+  "mergeCommit": {
+    "oid": "fa527aa05ab1b11076bc119ddfad678ad5fba664"
+  },
+  "mergedAt": "2026-10-16T05:56:24Z",
+  "state": "MERGED",
+  "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/44",
+  "canonical_main": "fa527aa05ab1b11076bc119ddfad678ad5fba664",
+  "materialized_clean_or_new_files": [
+    "apps/host/experience.ts",
+    "apps/workspace/src/components/ExperienceLearningIntake.tsx",
+    "apps/workspace/src/components/ExperienceLibrary.tsx",
+    "apps/workspace/src/components/experience-learning.css",
+    "docs/案例规则库与条件迁移.md",
+    "packages/experience/knowledge-repository.ts",
+    "packages/experience/learning-windows.ts",
+    "packages/experience/learning.ts",
+    "packages/experience/pipeline.ts",
+    "packages/experience/repository.ts",
+    "packages/experience/service.ts",
+    "packages/experience/skill-distillation.ts",
+    "research/test_results/experience-learning-final-20261016.log",
+    "research/test_results/experience-learning-integration-20261016.log",
+    "research/test_results/experience-learning-ui-20261016.log",
+    "research/test_results/experience-learning-unified-build-20261016.log",
+    "scripts/deploy-campus-ui.ps1",
+    "scripts/live-experience-learning-smoke.ts",
+    "tests/contracts/experience-learning-ui.test.ts",
+    "tests/contracts/experience-learning.test.ts"
+  ],
+  "preserved_dirty_files": 30,
+  "unrelated_files_preserved": true,
+  "github_regression": "running_or_queued_at_merge; scoped tests, build, native API and browser checks passed"
+}

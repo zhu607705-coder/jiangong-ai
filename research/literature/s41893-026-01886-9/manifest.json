@@ -1,0 +1,60 @@
+{
+  "version": 2,
+  "generated_at": "2026-10-13T01:13:15.290Z",
+  "request": {
+    "topic": "",
+    "title": "",
+    "dois": [
+      "10.1038/s41893-026-01886-9"
+    ],
+    "pdf_url": "",
+    "si_requested": false,
+    "language_override": "",
+    "route_override": "open_access",
+    "source_url": "",
+    "api_fallback_web": null,
+    "api_fallback_web_for": [],
+    "no_api_fallback_web_for": []
+  },
+  "summary": {
+    "total": 1,
+    "downloaded": 0,
+    "seconds": 8.3
+  },
+  "results": [
+    {
+      "doi": "10.1038/s41893-026-01886-9",
+      "title": "Human mobility dynamics for cost-effective flood emergency resource allocation",
+      "language": "en",
+      "publisher": "Springer Science and Business Media LLC",
+      "route": "open_access",
+      "route_reason": "explicit_override",
+      "si_requested": false,
+      "status": "oa_not_found",
+      "provider": "open_access",
+      "oaAssessment": "confirmed_oa",
+      "oaChecks": {
+        "pmc": {
+          "checked": true,
+          "pmcid": "",
+          "error": ""
+        },
+        "unpaywall": {
+          "checked": false,
+          "error": "",
+          "is_oa": null
+        },
+        "crossref_license": "https://www.springernature.com/gp/researchers/text-and-data-mining"
+      },
+      "oaAttempts": [
+        {
+          "source": "publisher_oa",
+          "url": "https://www.nature.com/articles/s41893-026-01886-9.pdf",
+          "status": "invalid_or_unavailable",
+          "http_status": 200,
+          "reason": "not_fulltext_html"
+        }
+      ]
+    }
+  ]
+}

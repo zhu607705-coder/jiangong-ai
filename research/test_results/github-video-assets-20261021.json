@@ -1,0 +1,28 @@
+{
+  "created_at": "2026-10-21T12:02:19.715826+00:00",
+  "historical_recording_dates": [
+    "2026-10-14",
+    "2026-10-15"
+  ],
+  "not_current_UI_recordings": true,
+  "assets": [
+    {
+      "asset": "workbench-full-20261014.mp4",
+      "source_path": "output/video/full-feature-20261014/rendered/老旧小区改造工作台_全功能演示.mp4",
+      "bytes": 34282917,
+      "sha256": "54fed8045229d6c66c003dba7f2b38a60f1919e7208085c79f3e8c86a759cc71"
+    },
+    {
+      "asset": "workbench-under2min-20261014.mp4",
+      "source_path": "output/video/full-feature-20261014/short/老旧小区改造工作台_2分钟内精华版.mp4",
+      "bytes": 5293424,
+      "sha256": "1e30d2dd3207ce984e6fd9cdfadffa4c6aadce1d107363b2d7c7927a84f15520"
+    },
+    {
+      "asset": "qiushi-demo-20261015.mp4",
+      "source_path": "output/playwright/qiushi-demo/求是村_工作台演示_约2分钟.mp4",
+      "bytes": 21385742,
+      "sha256": "c6915b56ea83193e92363e99ea1c332ae8e3fc3d911b8c51896d5d582f2d7bcd"
+    }
+  ]
+}

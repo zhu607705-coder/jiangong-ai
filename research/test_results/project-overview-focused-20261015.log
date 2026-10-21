@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 D:/建工ai
+
+ ✓ tests/contracts/project-overview.test.ts > keeps the actual API recommendation independent from the user direction and opens evidence without navigating 18ms
+ ✓ tests/contracts/project-overview.test.ts > routes missing conditions, candidate comparison and object geometry to their actual work pages 5ms
+ ✓ tests/contracts/project-overview.test.ts > labels a prior-version result and links changed material impacts without passing it off as current 3ms
+ ✓ tests/contracts/project-overview.test.ts > retains a completed saved round on failure and keeps loading distinct from completion 3ms
+ ✓ tests/contracts/project-overview.test.ts > does not borrow another project or simulation and gives a truthful empty-material entry 4ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  19:19:33
+   Duration  462ms (transform 83ms, setup 0ms, import 311ms, tests 33ms, environment 0ms)
+

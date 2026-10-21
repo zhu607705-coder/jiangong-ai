@@ -1,0 +1,10 @@
+{
+  "merged_at": "2026-10-16T10:01:35.576121+00:00",
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/47",
+  "merge_commit": "e6fd1f4ddeb2571124c0d82c71180188ccb77ece",
+  "root_main_updated": true,
+  "existing_worktree_files_preserved": 14,
+  "contract_tests_passed": 19,
+  "ci_at_merge": "running_not_claimed_passed",
+  "https": "deferred_by_user"
+}

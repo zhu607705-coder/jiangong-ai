@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-16T12:27:47.783450+00:00",
+  "pr": "https://github.com/zhu607705-coder/jiangong-ai/pull/49",
+  "status": "merged",
+  "old_main": "5f8cba1f92e0db4f85ea5a22714c9c407748b0c8",
+  "merge_commit": "cfb4e4523ac58f4392fdd73aa15043354c6c813b",
+  "source_commit": "b541f66b0ddaad60c329c2e42b0977126fcc84c8",
+  "root_branch": "main",
+  "existing_modified_tracked_files_preserved": [
+    "AGENTS.md",
+    "agent/state.json",
+    "apps/host/admin-login-page.ts",
+    "docs/侧栏混合检索与API索引.md",
+    "docs/校园网域名配置.md",
+    "packages/corpus/corpus.ts",
+    "research/test_results/advisory-plan-ui-deployment-20261016.json",
+    "research/test_results/creation-reliability-ui-deployment-20261016.json",
+    "scripts/check-certbot-cleanup.py",
+    "scripts/dev.ts",
+    "scripts/haizhizi-certbot.py",
+    "scripts/render-qiushi-decision-report.py"
+  ],
+  "all_existing_modified_tracked_file_bytes_preserved": true,
+  "root_index_updated_without_checkout": true,
+  "live_server_direct_renewal_evidence": "research/test_results/laneanew-server-direct-renewal-20261016.json",
+  "ci_at_merge": "two workflows in progress; not reported as passed"
+}

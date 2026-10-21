@@ -1,0 +1,58 @@
+{
+  "status": "merged_main_and_post_merge_ci_verified",
+  "pr": {
+    "headRefOid": "37132e68bb19a461245c78d10038df22627671bb",
+    "mergeCommit": {
+      "oid": "8274f12fed65d8644ed60eb11d577898eb14a000"
+    },
+    "mergedAt": "2026-10-13T17:05:02Z",
+    "state": "MERGED",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-13T16:57:10Z",
+        "conclusion": "CANCELLED",
+        "detailsUrl": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38434401986/job/115424532658",
+        "name": "verify",
+        "startedAt": "2026-10-13T16:55:08Z",
+        "status": "COMPLETED",
+        "workflowName": "Map workspace quality"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-13T16:59:33Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38434415134/job/115424574622",
+        "name": "verify",
+        "startedAt": "2026-10-13T16:55:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Intelligence integration review"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-13T17:02:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38434415025/job/115425503222",
+        "name": "verify",
+        "startedAt": "2026-10-13T16:57:13Z",
+        "status": "COMPLETED",
+        "workflowName": "Map workspace quality"
+      }
+    ],
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/22"
+  },
+  "main_commit": "8274f12fed65d8644ed60eb11d577898eb14a000",
+  "feature_tree_equals_merged_tree": true,
+  "main_ci": {
+    "conclusion": "success",
+    "databaseId": 38435775336,
+    "event": "push",
+    "headSha": "8274f12fed65d8644ed60eb11d577898eb14a000",
+    "status": "completed",
+    "workflowName": "Map workspace quality"
+  },
+  "local_branch": "main",
+  "source_verification": "research/test_results/analysis-motion-verification.json",
+  "report_sha256": "95a9920cc88fa09232a40fbfd04a1df7079affacc1b7fe689fc6aedc1bc21787",
+  "preserved_unrelated_work": "Existing chemistry entries in agent/state.json, generated-contract stat-only difference and other worktrees retained."
+}

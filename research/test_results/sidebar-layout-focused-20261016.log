@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/建工ai/.cache/format-compat-release
+
+
+ Test Files  3 passed (3)
+      Tests  4 passed (4)
+   Start at  13:54:29
+   Duration  2.18s (transform 942ms, setup 0ms, import 1.65s, tests 192ms, environment 0ms)
+

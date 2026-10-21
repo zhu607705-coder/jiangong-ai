@@ -1,0 +1,614 @@
+{
+  "checked_at": "2026-10-18T11:46:29.741Z",
+  "scope": "Fixed public queries, same acquisition budget, no project database or model judgement labels. Small protocol/coverage experiment, not non-inferiority evidence.",
+  "model_token_cost": "not included; legacy search uses model turns and may have unknown token fees",
+  "results": [
+    {
+      "provider": "legacy",
+      "case_id": "hz-jianggong",
+      "status": "completed",
+      "elapsed_ms": 8149,
+      "queries": [
+        "杭州 建工新村 机电配套 交易公告",
+        "杭州 建工新村 雨棚 改造 交易公告",
+        "杭州 建工新村 消防通道 改造 成交公告"
+      ],
+      "source_count": 4,
+      "paragraph_characters": 3812,
+      "table_like_sources": 0,
+      "reference_field_coverage": {
+        "slots": 9,
+        "covered": 6,
+        "conflicting": 0
+      },
+      "sources": [
+        {
+          "id": "PUB-acf64a65d22febf6",
+          "url": "https://www.hzxh.gov.cn/art/2024/11/8/art_1229556853_59042544.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目（一期）交易公告",
+          "version": "a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_id": "REP-a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-68388708cf4ae0d9",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_ec8f87e7f83b44d1896bbacb84a85b7f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程交易公告 - 小额项目招投标",
+          "version": "c7fcb46b010546e214d59ffd969b38489b13e6226d62af6a8e8e3a18d5bd3329",
+          "representation_id": "REP-c7fcb46b010546e214d59ffd969b38489b13e6226d62af6a8e8e3a18d5bd3329",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-dfbce596fb3115f1",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_d202d49580994e47b15ae8b88715631f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目消防通道提升改造工程成交公示",
+          "version": "6cc6032fb69db32d19dc775eadfc56c35f3db873dd357e78dd5b9bb164ce989d",
+          "representation_id": "REP-6cc6032fb69db32d19dc775eadfc56c35f3db873dd357e78dd5b9bb164ce989d",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-c291a805fb8420a6",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_99b222b75e054f36aa19f5d377cdf6f5.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程成交公示",
+          "version": "de9d8882e9782308199006cbcf2f4bcf95243ca7e4cd40ecc19e1bc056ba179a",
+          "representation_id": "REP-de9d8882e9782308199006cbcf2f4bcf95243ca7e4cd40ecc19e1bc056ba179a",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "verified"
+        }
+      ],
+      "call_latency": {
+        "n": 0,
+        "p50_ms": null,
+        "p95_ms": null
+      },
+      "known_expected_tool_cost_cny": 0,
+      "unknown_charge_calls": 0,
+      "calls": [],
+      "warnings": [
+        "SOURCE_BODY_TRUNCATED:PUB-68388708cf4ae0d9",
+        "SOURCE_BODY_TRUNCATED:PUB-acf64a65d22febf6",
+        "SOURCE_BODY_TRUNCATED:PUB-dfbce596fb3115f1",
+        "SOURCE_BODY_TRUNCATED:PUB-c291a805fb8420a6"
+      ]
+    },
+    {
+      "provider": "deepseek_content",
+      "case_id": "hz-jianggong",
+      "status": "completed",
+      "elapsed_ms": 1143,
+      "queries": [
+        "杭州 建工新村 机电配套 交易公告",
+        "杭州 建工新村 雨棚 改造 交易公告",
+        "杭州 建工新村 消防通道 改造 成交公告"
+      ],
+      "source_count": 4,
+      "paragraph_characters": 5653,
+      "table_like_sources": 3,
+      "reference_field_coverage": {
+        "slots": 9,
+        "covered": 8,
+        "conflicting": 0
+      },
+      "sources": [
+        {
+          "id": "PUB-acf64a65d22febf6",
+          "url": "https://www.hzxh.gov.cn/art/2024/11/8/art_1229556853_59042544.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目（一期）交易公告",
+          "version": "a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_id": "REP-a6b51260d15ae1810dadb35be55a586ce6fef95ba7ad4d769c88b7e2c6b0a6d8",
+          "representation_kinds": [
+            "raw_html",
+            "raw_text"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-68388708cf4ae0d9",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_ec8f87e7f83b44d1896bbacb84a85b7f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程交易公告 - 小额项目招投标",
+          "version": "5fb4c946e5e0fa587f1481b0c35c2a8b86692be298a12a8baa063b3d026571d2",
+          "representation_id": "REP-5fb4c946e5e0fa587f1481b0c35c2a8b86692be298a12a8baa063b3d026571d2",
+          "representation_kinds": [
+            "search_content"
+          ],
+          "date_status": "conflict"
+        },
+        {
+          "id": "PUB-dfbce596fb3115f1",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_d202d49580994e47b15ae8b88715631f.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目消防通道提升改造工程成交公示",
+          "version": "04dc2c1d50eb340338925bd009033257fffcd0b058887c74826c6d9b3276c338",
+          "representation_id": "REP-04dc2c1d50eb340338925bd009033257fffcd0b058887c74826c6d9b3276c338",
+          "representation_kinds": [
+            "search_content"
+          ],
+          "date_status": "verified"
+        },
+        {
+          "id": "PUB-c291a805fb8420a6",
+          "url": "http://www.hzxh.gov.cn/col/col1229556853/art/2026/art_99b222b75e054f36aa19f5d377cdf6f5.html",
+          "title": "建工新村、日晖新村区块危旧房改造项目4号楼北侧雨棚改造工程成交公示",
+          "version": "f3d6d024223778807b8188118d8dabcab00e27cd47bba0cfbeb5b96a472829ca",
+          "representation_id": "REP-f3d6d024223778807b8188118d8dabcab00e27cd47bba0cfbeb5b96a472829ca",
+          "representation_kinds": [
+            "search_content"
+          ],
+          "date_status": "conflict"
+        }
+      ],
+      "call_latency": {
+        "n": 3,
+        "p50_ms": 335,
+        "p95_ms": 469
+      },
+      "known_expected_tool_cost_cny": 0.015,
+      "unknown_charge_calls": 0,
+      "calls": [
+        {
+          "id": "fe31ceec-05ac-4605-8329-9f4feab33cb9",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "f4c1686498624b0fe1f6e80086978533111dc676115966123fe2d10dd2457354",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 335,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "cf73d510-c23d-4e7d-b011-d01acf7bd5d1",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "792492da0c04545ea2679fc6c2156fa9798f53f8b7685ac7bbf3f88da76670f7",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 469,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        },
+        {
+          "id": "bb8de2ba-b65b-4d06-9153-2360e6c82d7a",
+          "operation": "search",
+          "provider": "deepseek-tools",
+          "request_hash": "dbe46785334dcc57d2c784e9db2c795f90dc748dc8bb9f289e354a978c8c104d",
+          "status": 200,
+          "outcome": "received",
+          "billing_state": "expected_charge",
+          "duration_ms": 285,
+          "attempt": 1,
+          "result_count": 4,
+          "estimated_cny": 0.005
+        }
+      ],
+      "warnings": [
+        "SOURCE_BODY_TRUNCATED:PUB-acf64a65d22febf6",
+        "SOURCE_DATE_CONFLICT:PUB-acf64a65d22febf6",
+        "TABLE_STRUCTURE_UNCLEAR:PUB-acf64a65d22febf6",
+        "USED_ORIGINAL_HTTP:PUB-acf64a65d22febf6",
+        "SOURCE_DATE_CONFLICT:PUB-68388708cf4ae0d9",
+        "SOURCE_DATE_CONFLICT:PUB-c291a805fb8420a6"
+      ]
+    }
+  ],
+  "server": "10.70.223.113",
+  "execution_host": "production_server_isolated_process",
+  "campaign_before": {
+    "policy": "public-corpus-v1",
+    "id": 1,
+    "enabled": true,
+    "daily_search_limit": 1000,
+    "daily_fetch_limit": 200,
+    "daily_cny_limit": 6,
+    "cursor": 52,
+    "next_at": "2026-10-18T11:47:26.901Z",
+    "error": null,
+    "cost_approved": true,
+    "approved_daily_cny": 6,
+    "day": "2026-10-18",
+    "timezone": "Asia/Shanghai",
+    "usage": {
+      "search_attempts": 52,
+      "fetch_attempts": 0,
+      "successful": 52,
+      "unknown": 0,
+      "estimated_cny": 0.26
+    },
+    "archive": {
+      "versions": 1200,
+      "chunks": 41316
+    },
+    "query_pool": 8640,
+    "recent": [
+      {
+        "query": "惠州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "0a61b853-08ee-4d85-af55-aae23be1660b",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 406,
+              "request_hash": "4ce2bf99eb7873b7aa40ad1020f804a288fd41c164e35e75e21465f26fd83026",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "惠州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+          "saved": 20,
+          "chunks": 2123,
+          "failed": 0,
+          "queued": 0,
+          "created": 20,
+          "skipped": 0,
+          "archived": 20,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "珠海 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "6a655358-fc29-4e80-8da5-fba374eabc4b",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 434,
+              "request_hash": "620c7024ee692f7eee20b158e91e2298f0b3e82fb980be7b4a4575f5846485d1",
+              "result_count": 6,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "珠海 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+          "saved": 3,
+          "chunks": 91,
+          "failed": 1,
+          "queued": 0,
+          "created": 3,
+          "skipped": 2,
+          "archived": 3,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "珠海 老旧小区改造 工程预算 招标控制价 site:ygp.gdzwfw.gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "98216570-2479-4f8a-a22c-afe7c62d1c7e",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 371,
+              "request_hash": "375fcae1e4fe44b848b723da6597732342ecc90ba78b1fd47aecbeb8c74d77de",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "珠海 老旧小区改造 工程预算 招标控制价 site:ygp.gdzwfw.gov.cn",
+          "saved": 4,
+          "chunks": 41,
+          "failed": 0,
+          "queued": 0,
+          "created": 4,
+          "skipped": 16,
+          "archived": 4,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "珠海 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "aa97b366-bb0e-4df8-9561-2ec2d7f30183",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 436,
+              "request_hash": "d47c73471498c87e36f23dd4ffe1a366f2449e346651532a145c6eb72e3564c5",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "珠海 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+          "saved": 18,
+          "chunks": 872,
+          "failed": 0,
+          "queued": 0,
+          "created": 18,
+          "skipped": 1,
+          "archived": 18,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "东莞 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "8ce96235-6fde-4581-9951-13bfef2e18c2",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 338,
+              "request_hash": "732b9dac67ae446563c0691ae42633a0c9243abf7cbf5143ff3268610af466fe",
+              "result_count": 3,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "东莞 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+          "saved": 2,
+          "chunks": 107,
+          "failed": 0,
+          "queued": 0,
+          "created": 2,
+          "skipped": 1,
+          "archived": 2,
+          "metadata": 0
+        }
+      }
+    ],
+    "storage": "corpus-public",
+    "search_unit_cny": 0.005,
+    "fetch_unit_cny": 0.005,
+    "uses_model_for_search": false,
+    "model_daily_budget": 40,
+    "pricing_source": "https://api-docs.deepseek.com/zh-cn/guides/search/",
+    "schedule": "均匀分布全天；同题至少间隔7天，正文7天复查；无结果也计入本地调用上限"
+  },
+  "campaign_after": {
+    "policy": "public-corpus-v1",
+    "id": 1,
+    "enabled": true,
+    "daily_search_limit": 1000,
+    "daily_fetch_limit": 200,
+    "daily_cny_limit": 6,
+    "cursor": 52,
+    "next_at": "2026-10-18T11:47:26.901Z",
+    "error": null,
+    "cost_approved": true,
+    "approved_daily_cny": 6,
+    "day": "2026-10-18",
+    "timezone": "Asia/Shanghai",
+    "usage": {
+      "search_attempts": 52,
+      "fetch_attempts": 0,
+      "successful": 52,
+      "unknown": 0,
+      "estimated_cny": 0.26
+    },
+    "archive": {
+      "versions": 1200,
+      "chunks": 41316
+    },
+    "query_pool": 8640,
+    "recent": [
+      {
+        "query": "惠州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "0a61b853-08ee-4d85-af55-aae23be1660b",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 406,
+              "request_hash": "4ce2bf99eb7873b7aa40ad1020f804a288fd41c164e35e75e21465f26fd83026",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "惠州 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+          "saved": 20,
+          "chunks": 2123,
+          "failed": 0,
+          "queued": 0,
+          "created": 20,
+          "skipped": 0,
+          "archived": 20,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "珠海 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "6a655358-fc29-4e80-8da5-fba374eabc4b",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 434,
+              "request_hash": "620c7024ee692f7eee20b158e91e2298f0b3e82fb980be7b4a4575f5846485d1",
+              "result_count": 6,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "珠海 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+          "saved": 3,
+          "chunks": 91,
+          "failed": 1,
+          "queued": 0,
+          "created": 3,
+          "skipped": 2,
+          "archived": 3,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "珠海 老旧小区改造 工程预算 招标控制价 site:ygp.gdzwfw.gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "98216570-2479-4f8a-a22c-afe7c62d1c7e",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 371,
+              "request_hash": "375fcae1e4fe44b848b723da6597732342ecc90ba78b1fd47aecbeb8c74d77de",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "珠海 老旧小区改造 工程预算 招标控制价 site:ygp.gdzwfw.gov.cn",
+          "saved": 4,
+          "chunks": 41,
+          "failed": 0,
+          "queued": 0,
+          "created": 4,
+          "skipped": 16,
+          "archived": 4,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "珠海 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "aa97b366-bb0e-4df8-9561-2ec2d7f30183",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 436,
+              "request_hash": "d47c73471498c87e36f23dd4ffe1a366f2449e346651532a145c6eb72e3564c5",
+              "result_count": 20,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "珠海 老旧小区改造 工程预算 招标控制价 site:gov.cn",
+          "saved": 18,
+          "chunks": 872,
+          "failed": 0,
+          "queued": 0,
+          "created": 18,
+          "skipped": 1,
+          "archived": 18,
+          "metadata": 0
+        }
+      },
+      {
+        "query": "东莞 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+        "result": {
+          "calls": [
+            {
+              "id": "8ce96235-6fde-4581-9951-13bfef2e18c2",
+              "status": 200,
+              "attempt": 1,
+              "outcome": "received",
+              "provider": "deepseek-tools",
+              "operation": "search",
+              "duration_ms": 338,
+              "request_hash": "732b9dac67ae446563c0691ae42633a0c9243abf7cbf5143ff3268610af466fe",
+              "result_count": 3,
+              "billing_state": "expected_charge",
+              "estimated_cny": 0.005
+            }
+          ],
+          "query": "东莞 老旧小区改造 工程预算 招标控制价 site:edu.cn",
+          "saved": 2,
+          "chunks": 107,
+          "failed": 0,
+          "queued": 0,
+          "created": 2,
+          "skipped": 1,
+          "archived": 2,
+          "metadata": 0
+        }
+      }
+    ],
+    "storage": "corpus-public",
+    "search_unit_cny": 0.005,
+    "fetch_unit_cny": 0.005,
+    "uses_model_for_search": false,
+    "model_daily_budget": 40,
+    "pricing_source": "https://api-docs.deepseek.com/zh-cn/guides/search/",
+    "schedule": "均匀分布全天；同题至少间隔7天，正文7天复查；无结果也计入本地调用上限"
+  },
+  "database_before": {
+    "documents": 844,
+    "versions": 1231,
+    "pending": 6
+  },
+  "database_after": {
+    "documents": 844,
+    "versions": 1231,
+    "pending": 6
+  },
+  "knowledge_before": {
+    "model_calls_today": 40,
+    "analyzed": 9,
+    "needs_review": 31,
+    "structured": 2,
+    "events": 8,
+    "stories": 8,
+    "project_links": 2590,
+    "linked_projects": 23
+  },
+  "knowledge_after": {
+    "model_calls_today": 40,
+    "analyzed": 9,
+    "needs_review": 31,
+    "structured": 2,
+    "events": 8,
+    "stories": 8,
+    "project_links": 2590,
+    "linked_projects": 23
+  },
+  "projects_unchanged": true,
+  "benchmark_project_writes": 0,
+  "full_research_started": false,
+  "order": "legacy_then_content; provider/service cache state uncontrolled",
+  "native_stdout": [
+    "{\"provider\":\"legacy\",\"status\":\"completed\",\"elapsed_ms\":8149,\"sources\":4}",
+    "{\"provider\":\"deepseek_content\",\"status\":\"completed\",\"elapsed_ms\":1143,\"sources\":4}"
+  ]
+}

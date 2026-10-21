@@ -1,0 +1,16 @@
+{
+  "headRefOid": "cafd130c9f3a31e62ef172e773b02b5d3d88eb0e",
+  "mergeCommit": {
+    "oid": "0ee09b219e3f01d959042379addbe910c0b105d6"
+  },
+  "mergedAt": "2026-10-16T05:03:24Z",
+  "state": "MERGED",
+  "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/43",
+  "local_branch": "main",
+  "local_head": "0ee09b219e3f01d959042379addbe910c0b105d6",
+  "dirty_tracked_files_preserved": 19,
+  "scoped_tests_passed": true,
+  "build_passed": true,
+  "github_final_regression": "in_progress_at_merge",
+  "full_previous_head_regression": "1576 passed; one moved aria-label regression fixed and rechecked in 16 passing UI tests"
+}

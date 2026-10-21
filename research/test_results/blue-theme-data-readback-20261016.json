@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-15T16:31:43.891760+00:00",
+  "method": "GET",
+  "packet_matches_fixed_demo": true,
+  "source_count": 31,
+  "reasoning_dimensions": 6,
+  "work_packages": 5,
+  "provider_requests_in_this_check": 0
+}

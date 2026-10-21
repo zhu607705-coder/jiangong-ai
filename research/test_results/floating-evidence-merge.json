@@ -1,0 +1,45 @@
+{
+  "pr": {
+    "headRefOid": "d6db99f3dc438bf4f6c6e1c5d502c56343057e0b",
+    "mergeCommit": {
+      "oid": "f480e73b1d61f5a571e79baed6a283e8c1cfd63f"
+    },
+    "mergedAt": "2026-10-14T05:44:21Z",
+    "number": 25,
+    "state": "MERGED",
+    "url": "https://github.com/zhu607705-coder/jiangong-ai/pull/25"
+  },
+  "checks": [
+    {
+      "conclusion": "success",
+      "databaseId": 38517492136,
+      "event": "pull_request",
+      "headSha": "d6db99f3dc438bf4f6c6e1c5d502c56343057e0b",
+      "status": "completed",
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38517492136",
+      "workflowName": "Intelligence integration review"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 38517492288,
+      "event": "pull_request",
+      "headSha": "d6db99f3dc438bf4f6c6e1c5d502c56343057e0b",
+      "status": "completed",
+      "url": "https://github.com/zhu607705-coder/jiangong-ai/actions/runs/38517492288",
+      "workflowName": "Map workspace quality"
+    }
+  ],
+  "local_main": "f480e73b1d61f5a571e79baed6a283e8c1cfd63f",
+  "verified_feature_tree_equals_merged_tree": true,
+  "full_ci_tests": {
+    "javascript": 1051,
+    "python": 219,
+    "map_browser_assertions": 92
+  },
+  "local_full_browser_log": ".cache/floating-evidence-report/map-full-regression.log",
+  "report_pages": 30,
+  "report_sha256": "2362185afb7fc171efa207d9800e9422562212306c7c2a8067c9d369191767cb",
+  "unrelated_changes_preserved": true,
+  "cancelled_duplicate_push_run": 38517487032,
+  "cancelled_is_not_passed": true
+}

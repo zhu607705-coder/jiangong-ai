@@ -12,6 +12,8 @@ One lead coding agent owns the mission. Delegate only tasks with satisfied depen
 ## Persistent context
 After each completed node, record changed files, tests, unresolved questions, artifact references and the next runnable task in `agent/state.json`. Save decisions, not private reasoning traces. A resumed agent reloads the files. Do not rely on an unbounded chat context.
 
+Shared correction experience follows the global operating defaults and the single `AGENT_ERROR_RULES.md` at this workspace root. Keep project evidence and scope explicit; do not create a competing per-agent copy. The shared file is local to the multi-project workspace; a fresh public checkout without it follows the checked-in project instructions and does not block setup.
+
 ## Verification
 Never equate fixture output with real analysis. Separate contract checks, live endpoint checks and decision-quality evaluation. Golden labels remain in the test harness, never model inputs. `skipped` is not `passed`; missing credentials produce `blocked_external`. Run the upstream baseline where feasible, then adapter tests, then end-to-end tests.
 

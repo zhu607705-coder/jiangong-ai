@@ -317,7 +317,7 @@ export async function saveBuild(rootDir: string, build: Build): Promise<string> 
   }))), { mode: 0o600 })
   const counts = build.report.counts as Record<string, number>
   const table = build.documents.map(d => `| ${d.title.replace(/\|/g, '／').replace(/\n/g, ' ')} | ${Array.from(d.text).length} | ${d.content_status} | [原始来源](${d.url}) |`).join('\n')
-  await writeFile(path.join(base, '语料台账.md'), `# 海之子语料台账\n\n当前版本：\`${build.id}\`。本地快照整理，没有重新核验政策时效。\n\n` +
+  await writeFile(path.join(base, '语料台账.md'), `# 旧区新生语料台账\n\n当前版本：\`${build.id}\`。本地快照整理，没有重新核验政策时效。\n\n` +
     `共 ${counts.documents} 条公开来源，${counts.with_text} 条有正文，${counts.chunks} 个可定位文本块，${counts.unlabeled_candidates} 条待标注候选。另登记 ${counts.regression_fixtures} 个合成回归输入和 ${counts.archived_model_records} 条模型记录；它们不进入监督训练。\n\n` +
     `| 来源 | 正文字数 | 内容状态 | 链接 |\n|---|---:|---|---|\n${table}\n\n` +
     `- [语料及来源](${directory}/documents.jsonl)\n- [待标注问题和原文](${directory}/candidates.jsonl)\n- [可填写的标注模板](${directory}/annotation-template.jsonl)\n- [质检与输入哈希](${directory}/report.json)\n- [整理与标注说明](${path.join(rootDir, 'data/corpus/README.md')})\n\n` +

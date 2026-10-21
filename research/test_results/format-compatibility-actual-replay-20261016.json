@@ -1,0 +1,17 @@
+{
+  "kind": "actual-failed-provider-response-local-replay",
+  "status": "completed",
+  "error": null,
+  "model_choice": {
+    "choice": "comprehensive",
+    "confidence": 0.63,
+    "probabilities": {
+      "comprehensive": 0.72,
+      "rebuild": 0.13,
+      "compare": 0.05,
+      "investigate": 0.1
+    }
+  },
+  "model_calls_added": 0,
+  "project_writes": 0
+}
