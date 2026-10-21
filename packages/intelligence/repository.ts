@@ -48,13 +48,15 @@ export class IntelRepository {
   constructor(readonly db:IntelDatabase){}
   async topicCounts(topics:readonly {id:string;terms:readonly string[]}[]){
     const catalog=topics.map(topic=>({id:topic.id,terms:topic.terms,expression:searchExpression(topic.terms.join(' '))}))
-    return (await this.db.query<{id:string;count:number}>(`SELECT t.id,(SELECT count(*)::int
+    return (await this.db.query<{id:string;count:number}>(`WITH topics AS MATERIALIZED (
+      SELECT id,terms,to_tsquery('simple',expression) AS query FROM jsonb_to_recordset($1::jsonb) AS t(id text,terms jsonb,expression text)
+    ), originals AS MATERIALIZED (
+      SELECT d.id,v.search_vector,v.payload->>'title' AS title,v.payload->>'text' AS body
       FROM intel_documents d JOIN intel_versions v ON v.document_id=d.id AND v.version=d.latest_version
-      LEFT JOIN intel_channels c ON c.id=v.payload->>'channel_id'
-      WHERE ${wikiPublicSql('v','c')} AND v.search_vector @@ to_tsquery('simple',t.expression)
-      AND EXISTS(SELECT 1 FROM jsonb_array_elements_text(t.terms) AS term(value)
-        WHERE strpos(v.payload->>'title',term.value)>0 OR strpos(v.payload->>'text',term.value)>0)) AS count
-      FROM jsonb_to_recordset($1::jsonb) AS t(id text,terms jsonb,expression text)`,[JSON.stringify(catalog)])).rows
+      LEFT JOIN intel_channels c ON c.id=v.payload->>'channel_id' WHERE ${wikiPublicSql('v','c')}
+    ) SELECT t.id,count(o.id)::int AS count FROM topics t LEFT JOIN originals o
+      ON o.search_vector @@ t.query AND EXISTS(SELECT 1 FROM jsonb_array_elements_text(t.terms) AS term(value)
+        WHERE strpos(o.title,term.value)>0 OR strpos(o.body,term.value)>0) GROUP BY t.id`,[JSON.stringify(catalog)])).rows
   }
   async visibleWikiVersions(refs:readonly {id:string;version:string}[]){
     if(!refs.length)return new Set<string>()
